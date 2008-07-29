@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<project name="etch-examples" basedir="." default="help">
+    <description>Etch Examples</description>
+    <property name="Etch.basedir" location="${basedir}/.." />
+    <import file="${Etch.basedir}/build-support/etch.common.xml" />
+
+    <!-- standard, supported targets -->
+    <target name="Debug"         depends="debug" />
+    <target name="Release"       depends="release" />
+    <target name="Clean"         depends="clean" />
+    <target name="debug"         depends="init-debug,component-all,post-debug"   />
+    <target name="release"       depends="init-release,component-all,post-release" />
+    <target name="clean"         depends="init-clean,component-all,post-clean" />
+    <target name="maven-install" depends="init-maven,release" />
+
+    <target name="init-maven" >
+        <property name="DO.maven.install" value="true" />
+    </target>
+
+    <target name="validate-dependencies" >
+        <mkdir dir="${Etch.logDirectory}" />
+    </target>
+
+    <target name="init-debug" depends="validate-dependencies" >
+        <property name="Etch.build.target" value="debug" />
+        <property name="Etch.javac.debug" value="on" />
+        <property name="Etch.javac.optimize" value="off" />
+    </target>
+
+    <target name="post-debug" >
+    </target>
+
+    <target name="init-release" depends="validate-dependencies">
+        <!-- For now, keep debug-symbols and no-optimize, even for release builds -->
+        <property name="Etch.build.target" value="release" />
+        <property name="Etch.javac.debug"  value="on" />
+        <property name="Etch.javac.optimize" value="off" />
+        <!--
+        <property name="Etch.javac.debug"  value="off" />
+        <property name="Etch.javac.optimize" value="on" />
+        -->
+    </target>
+
+    <target name="post-release" >
+    </target>
+
+    <target name="init-clean" depends="validate-dependencies">
+        <property name="Etch.build.target" value="clean" />
+    </target>
+
+    <target name="post-clean" >
+        <echo message="Executing clean" />
+        <delete dir="${basedir}/target" quiet="true" />
+    </target>
+
+    <target name="component-all" >
+        <mkdir dir="${basedir}/target" />
+        <build_example dir="perf" logdir="${basedir}/target/logs" />
+        <!-- <build_example dir="distmap" /> -->
+        <!-- <build_example dir="chat" /> -->
+    </target>
+
+</project>

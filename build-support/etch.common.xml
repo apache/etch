@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<project name="etch.common" basedir="." >
+
+    <!-- Static properties -->
+    <property name="Etch.copyrightNotice"    value="Copyright (c) 2007-2008 Cisco Systems, Inc. All rights reserved." />
+
+    <!-- Load Environment -->
+    <property environment="env" />
+
+    <!-- Validate properties -->
+    
+    <!-- Compute top of tree -->
+    <condition property="Etch.basedir" value="${basedir}" >
+        <not><isset property="Etch.basedir" /></not>
+    </condition>
+    <property name="Etch.runtime.workspace" value="${Etch.basedir}" />
+
+    <!-- load runtime properties -->
+    <property prefix="Etch.property."      file="${Etch.basedir}/etch.properties" />
+    <property prefix="Etch.runtime."       file="${Etch.basedir}/bamboo.properties" />
+    
+    <!-- Compute version numbers -->
+    <condition property="Etch.property.majorVersion" value="0">
+        <not><isset property="Etch.property.majorVersion" /></not>
+    </condition>
+    <condition property="Etch.property.minorVersion" value="0" >
+        <not><isset property="Etch.property.minorVersion" /></not>
+    </condition>
+    <condition property="Etch.property.patchVersion" value="0" >
+        <not><isset property="Etch.property.patchVersion" /></not>
+    </condition>
+    <condition property="Etch.runtime.buildKey" value="LOCAL" >
+        <not><isset property="Etch.runtime.buildKey" /></not>
+    </condition>
+    <condition property="Etch.runtime.buildNumber" value="0" >
+        <not><isset property="Etch.runtime.buildNumber" /></not>
+    </condition>
+    <condition property="Etch.runtime.revisionNumber" value="0" >
+        <not><isset property="Etch.runtime.revisionNumber" /></not>
+    </condition>
+
+
+    <property name="Etch.target"                location="${Etch.basedir}/target" />
+    <property name="Etch.dist"                  location="${Etch.target}/Installers/dist" />
+    <property name="Etch.clover-dist"           location="${Etch.target}/Installers/dist-clover" />
+    <property name="Etch.support"               location="${Etch.target}/Support/dist" />
+    <property name="Etch.clover-support"        location="${Etch.target}/Support/dist-clover" />
+
+    <property name="Etch.version"               value="${Etch.property.majorVersion}.${Etch.property.minorVersion}.${Etch.property.patchVersion}" />
+    <property name="Etch.shortversion"          value="${Etch.property.majorVersion}.${Etch.property.minorVersion}" />
+    <property name="Etch.buildTag"              value="${Etch.runtime.buildKey}-${Etch.runtime.buildNumber}" />
+    <property name="Etch.buildSupportDirectory" location="${Etch.basedir}/build-support" />
+    <property name="Etch.logDirectory"          location="${Etch.target}/BuildLogs" />
+    <property name="Etch.installerDirectory"    location="${Etch.target}/Installers" />
+
+    <condition property="Etch.runtime.tests.fail" value="${Etch.target}\fail">
+        <isset property="build.publish" />
+    </condition>
+
+    <!-- define artifacts -->
+    <property name="etch-compiler.jar"            value="etch-compiler-${Etch.version}.jar" />
+    <property name="etch-compiler-src.zip"        value="etch-compiler-${Etch.version}-src.zip" />
+    <property name="etch-java-compiler.jar"       value="etch-java-compiler-${Etch.version}.jar" />
+    <property name="etch-java-compiler-src.zip"   value="etch-java-compiler-${Etch.version}-src.zip" />
+    <property name="etch-java-runtime.jar"        value="etch-java-runtime-${Etch.version}.jar" />
+    <property name="etch-java-runtime-src.zip"    value="etch-java-runtime-${Etch.version}-src.zip" />
+    <property name="etch-csharp-compiler.jar"     value="etch-csharp-compiler-${Etch.version}.jar" />
+    <property name="etch-csharp-compiler-src.zip" value="etch-csharp-compiler-${Etch.version}-src.zip" />
+    <property name="etch-xml-compiler.jar"        value="etch-xml-compiler-${Etch.version}.jar" />
+    <property name="etch-xml-compiler-src.zip"    value="etch-xml-compiler-${Etch.version}-src.zip" />
+    <property name="etch-util.jar"                value="etch-util-${Etch.version}.jar" />
+    <property name="etch-util-src.zip"            value="etch-util-${Etch.version}-src.zip" />
+    <property name="etch-ant-task.jar"            value="etch-ant-plugin-${Etch.version}.jar" />
+    <property name="etch-ant-task-src.zip"        value="etch-ant-plugin-${Etch.version}-src.zip" />
+
+    <!-- Define filterset for build-time substitutions -->
+    <filterset id="Etch.buildTokens" >
+        <filter token="EtchVersion"               value="${Etch.version}" />
+        <filter token="EtchBuildTag"              value="${Etch.buildTag}" />
+        <filter token="EtchRuntimeRevisionNumber" value="${Etch.runtime.revisionNumber}" />
+        <filter token="EtchRuntimeBuildKey"       value="${Etch.runtime.buildKey}" />
+        <filter token="EtchRuntimeBuildNumber"    value="${Etch.runtime.buildNumber}" />
+        <filter token="EtchMajorVersion"          value="${Etch.property.majorVersion}" />
+        <filter token="EtchMinorVersion"          value="${Etch.property.minorVersion}" />
+        <filter token="EtchPatchVersion"          value="${Etch.property.patchVersion}" />
+    </filterset>
+
+    <!-- properties for examples -->
+    <property name="EXAMPLE.etch.home" value="${Etch.clover-dist}" />
+    <property name="EXAMPLE.etch.version" value="${Etch.version}" />
+
+
+    <!-- TODO: Migrate to .NET tasks for ANT -->
+    <property name="tool.vs-2k5-task" value="${Etch.runtime.workspace}/scripts/vs-2k5-task.bat" />
+
+    <!-- NSIS installer support -->
+    <property name="tool.makensis"    value="${env.NSIS_HOME}\makensis.exe" />
+    <condition property="NSIS.enabled">
+        <and>
+            <os family="windows" />
+            <available file="${tool.makensis}" />
+        </and>
+    </condition>
+    
+    <!-- Maven deploy support -->
+    <property name="tool.maven"       value="${env.MAVEN_HOME}/bin/mvn.bat" />
+
+    <tempfile property="Etch.build.tmpdir" destdir="/tmp" />
+
+    <property   name="Etch.dependency.javacc.home"
+                value="${Etch.basedir}/3rdparty/javacc-4.0" />
+    <property   name="Etch.dependency.junit.jar"
+                value="${Etch.basedir}/3rdparty/junit4.3.1/junit-4.3.1.jar" />
+    <!--
+    <property   name="Etch.dependency.velocity.jar"
+                value="${Etch.basedir}/3rdparty/velocity-1.5/velocity-1.5.jar" />
+    -->
+    <property   name="Etch.dependency.velocity-dep.jar"
+                value="${Etch.basedir}/3rdparty/velocity-1.5/velocity-dep-1.5.jar" />
+    <property   name="velocity-dep.jar" value="velocity-dep-1.5.jar" />
+    <property   name="Etch.dependency.ant-dotnet-1.0.jar"
+                value="${Etch.basedir}/3rdparty/ant-dotnet-1.0/ant-dotnet-1.0.jar" />
+    <!-- Csharp Support -->
+    <condition property="BUILD.csharp">
+        <os family="windows" />
+    </condition>
+    <condition property="USE.dotnet">
+        <os family="windows" />
+    </condition>
+    <condition property="USE.mono">
+        <not><os family="windows" /></not>
+    </condition>
+    <property name="tool.mdtool" value="mdtool" />
+
+    <!-- clover support -->
+    <!-- TODO: make this toggle-able -->
+    <property name="With.clover" value="true" />
+    <condition property="Clover.enabled" >
+        <and>
+            <available file="${env.CLOVER_HOME}/lib/clover.jar" />
+            <isset property="With.clover" />
+        </and>
+    </condition>
+    <property name="Etch.dependency.clover.jar" value="${env.CLOVER_HOME}/lib/clover.jar" />
+    <taskdef resource="cloverlib.xml" classpath="${Etch.dependency.clover.jar}" />
+    <!-- If Clover is enabled, use the clover version of the Etch build, this
+         allows code-coverage metrics to be collected throughout the build process -->
+    <condition property="Etch.HOME" value="${Etch.clover-dist}" >
+        <istrue value="${Clover.enabled}" />
+    </condition>
+    <condition property="Etch.HOME" value="${Etch.dist}" >
+        <not><isset property="Etch.HOME" /></not>
+    </condition>
+    <condition property="Etch.SUPPORT" value="${Etch.clover-support}" >
+        <istrue value="${Clover.enabled}" />
+    </condition>
+    <condition property="Etch.SUPPORT" value="${Etch.support}" >
+        <not><isset property="Etch.SUPPORT" /></not>
+    </condition>
+    <property name="Clover.path" location="${Etch.clover-dist}/clover" />
+    <property name="Clover.db.path" location="${Clover.path}/db" />
+    <property name="Clover.db" location="${Clover.db.path}/clover.master.db" />
+    <property name="Clover.coverage" location="${Clover.path}/code-coverage-results" />
+    
+    <!-- csharp support -->
+    <!-- <taskdef resource="org/apache/ant/dotnet/antlib.xml" classpath="${Etch.dependency.ant-dotnet-1.0.jar}" /> -->
+
+    <!-- dependencies -->
+    <!-- TODO: remove clover reference if clover-disabled -->
+    <path id="Etch.dependencies.jar.paths">
+        <pathelement location="${Etch.dependency.velocity-dep.jar}" />
+        <pathelement location="${Etch.dependency.junit.jar}" />
+        <pathelement location="${Etch.dependency.clover.jar}" />
+    </path>
+
+    <!-- macros -->
+    <macrodef name="build_component" >
+        <attribute name="root"     default="." />
+        <attribute name="dir"      />
+        <attribute name="target"   default="${Etch.build.target}" />
+        <attribute name="script"   default="build" />
+        <attribute name="antfile"  default="@{script}.xml" />
+        <attribute name="loglabel" default="@{dir}" />
+        <attribute name="output"   default="${Etch.logDirectory}/@{loglabel}.@{target}.txt" />
+        <element   name="componentAntElements" optional="true" implicit="true" />
+        <sequential>
+            <echo message="@{loglabel}.@{target}" />
+            <ant dir="@{root}/@{dir}" antfile="@{antfile}" inheritAll="false" inheritRefs="false" output="@{output}" target="@{target}">
+                <propertyset id="build-parameters">
+                    <propertyref name="DO.maven.install" />
+                    <propertyref name="build.tests.fail" />
+                </propertyset>
+                <componentAntElements />
+            </ant>
+        </sequential>
+    </macrodef>
+    
+    <macrodef name="build_example" >
+        <attribute name="root"     default="." />
+        <attribute name="dir"      />
+        <attribute name="script"   default="build" />
+        <attribute name="antfile"  default="@{script}.xml" />
+        <attribute name="loglabel" default="@{dir}" />
+        <attribute name="logdir"   default="logs" />
+        <attribute name="target"   default="${Etch.build.target}" />
+        <attribute name="output"   default="@{logdir}/@{loglabel}.txt" />
+        <element   name="componentAntElements" optional="true" implicit="true" />
+        <sequential>
+            <mkdir dir="@{logdir}" />
+            <echo message="@{loglabel}" />
+            <ant dir="@{root}/@{dir}" antfile="@{antfile}" inheritAll="false" inheritRefs="false" output="@{output}" target="@{target}">
+                <propertyset id="examples-parameters">
+                    <propertyref prefix="EXAMPLE" />
+                    <mapper type="glob" from="EXAMPLE.*" to="*" />
+                </propertyset>
+                <componentAntElements />
+            </ant>
+        </sequential>
+    </macrodef>    
+    
+
+    <!-- token filter macro -->
+    <macrodef name="update-tokens" >
+        <attribute name="filename" />
+        <sequential>
+            <!-- Generate version info -->
+            <copy tofile="@{filename}" file="@{filename}.tmpl" overwrite="true">
+                <filterset refid="Etch.buildTokens" />
+            </copy>
+        </sequential>
+    </macrodef>
+
+    <!-- NSIS macro -->
+    <macrodef name="makensis">
+        <attribute name="root"        default="." />
+        <attribute name="dir"         default="." />
+        <attribute name="target"      default="${Etch.build.target}" />
+        <attribute name="script"      default="myscript" />
+        <attribute name="loglabel"    default="@{script}" />
+        <attribute name="destfile"    default="@{script}-setup.exe" />
+        <attribute name="version"     default="${Etch.version}" />
+        <attribute name="output"      default="${Etch.logsDirectory}/@{loglabel}.@{target}.txt" />
+        <attribute name="failonerror" default="false" />
+        <sequential>
+            <exec executable="${tool.makensis}" dir="@{root}/@{dir}" failonerror="@{failonerror}" >
+                <arg value="/V4" />
+                <arg value="/DPRODUCT_VERSION=@{version}" />
+                <arg value="/DOUT_FILE=@{destfile}" />
+                <arg value="@{script}.nsi" />
+            </exec>
+        </sequential>
+    </macrodef>
+    
+    <!-- Clover macro -->
+    <macrodef name="initialize-clover" >
+        <attribute name="enabled"     default="${Clover.enabled}" />
+        <attribute name="suffix"      default="none" />
+        <element   name="options"     implicit="true" /> 
+        <sequential>
+            <!-- TODO: do not make directories if clover is disabled -->
+            <mkdir dir="${Clover.db.path}/@{suffix}" />
+            <clover-setup 
+                    initstring="${Clover.db.path}/@{suffix}/clover.db"
+                    enabled="@{enabled}"
+                    source="1.5"
+                    flushpolicy="threaded"
+                    flushinterval="90000" >
+                <options />
+            </clover-setup>
+        </sequential>
+    </macrodef>
+
+    <!-- MONO mdtool macro -->
+    <macrodef name="mdtool">
+        <attribute name="dir"         default="." />
+        <attribute name="failonerror" default="false" />
+        <attribute name="project"     default="project.csproj" />
+        <attribute name="target"      default="${Etch.build.target}" />
+        <sequential>
+            <exec executable="${tool.mdtool}" dir="@{dir}" failonerror="@{failonerror}" >
+                <arg value="build" />
+                <arg value="--buildfile:@{project}" />
+            </exec>
+        </sequential>
+    </macrodef>
+
+    <!-- Migrate to .NET Tasks for ANT -->
+    <macrodef name="visualstudio-task">
+        <attribute name="root" default="." />
+        <attribute name="dir"  default="." />
+        <attribute name="solution" default="@{dir}" />
+        <attribute name="target"   default="${Etch.build.target}" />
+        <attribute name="project"  default="" />
+        <attribute name="loglabel" default="@{solution}" />
+        <attribute name="logdir"   default="@{dir}" />
+        <attribute name="output"   default="@{logdir}/@{loglabel}.@{target}.txt" />
+        <attribute name="failonerror"    default="false" />
+        <sequential>
+            <!-- <echo message="Tool: ${tool.vs-2k5-task}" /> -->
+            <!-- <echo message="Dir:  @{root}/@{dir}" /> -->
+            <echo message="VS-2K5-TASK: @{solution} @{target} @{project}" />
+            <!-- <exec executable="${tool.vs-2k5-task}" dir="@{root}/@{dir}" output="@{output}" failonerror="@{failonerror}"> -->
+            <exec executable="${tool.vs-2k5-task}" dir="@{root}/@{dir}" failonerror="@{failonerror}">
+                <arg value="@{solution}.sln" />
+                <arg value="@{target}" />
+                <arg value="@{project}" />
+            </exec>
+        </sequential>
+    </macrodef>
+
+</project>

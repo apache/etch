@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<project name="etch" default="debug" basedir=".">
+    <description>Master build script for Etch</description>
+    <import file="build-support/etch.common.xml" />
+
+    <!-- standard, supported targets -->
+    <target name="Debug"         depends="debug" />
+    <target name="Release"       depends="release" />
+    <target name="Clean"         depends="clean" />
+    <target name="debug"         depends="init-debug,component-all,post-debug"   />
+    <target name="release"       depends="init-release,component-all,post-release" />
+    <target name="clean"         depends="init-clean,component-all,post-clean" />
+    <target name="realclean"     depends="clean,extra-clean" />
+    <target name="maven-install" depends="init-maven,release" />
+
+    <!-- Execute a clean, then 'debug' build -->
+    <target name="rebuild-debug">
+        <ant target="clean" />
+        <ant target="debug" />
+    </target>
+
+    <!-- Execute a clean, then 'release' build -->
+    <target name="rebuild-release">
+        <ant target="clean" />
+        <ant target="release" />
+    </target>
+
+    <!-- Execute a clean, then 'release' and then maven snapshot install (e.g. like running 'mvn clean install') -->
+    <target name="rebuild-maven-install">
+        <ant target="clean" />
+        <ant target="maven-install" />
+    </target>
+
+    <!-- framework targets, do not call these directly -->
+
+    <target name="init-maven" >
+        <property name="DO.maven.install" value="true" />
+    </target>
+
+    <target name="validate-dependencies" >
+        <tstamp />
+        <echo message="Workspace: ${Etch.basedir}" />
+        <echo message="SVN Revision: ${Etch.runtime.revisionNumber}" />
+        <echo message="Version: ${Etch.property.majorVersion}.${Etch.property.minorVersion}" />
+        <echo message="BuildKey: ${Etch.runtime.buildKey}" />
+        <echo message="BuildNumber: ${Etch.runtime.buildNumber}" />
+        <echo message="BuildDir: ${Etch.buildDirectory}" />
+        <echo message="LogDir: ${Etch.logDirectory}" />
+        <echo message="InstallDir: ${Etch.installerDirectory}" />
+        <mkdir dir="${Etch.logDirectory}" />
+    </target>
+
+    <target name="init-debug" depends="validate-dependencies,do-clover-init" >
+        <property name="Etch.build.target" value="Debug" />
+        <property name="Etch.javac.debug" value="on" />
+        <property name="Etch.javac.optimize" value="off" />
+    </target>
+
+    <target name="post-debug" depends="do-clover-report">
+    </target>
+
+    <target name="init-release" depends="validate-dependencies,do-clover-init">
+        <!-- For now, keep debug-symbols and no-optimize, even for release builds -->
+        <property name="Etch.build.target" value="Release" />
+        <property name="Etch.javac.debug"  value="on" />
+        <property name="Etch.javac.optimize" value="off" />
+        <!--
+        <property name="Etch.javac.debug"  value="off" />
+        <property name="Etch.javac.optimize" value="on" />
+        -->
+    </target>
+    
+    <target name="post-release" depends="do-clover-report">
+    </target>
+
+    <target name="do-clover-init" >
+    </target>
+        
+    <target name="do-clover-report" if="Clover.enabled" >
+        <!-- Generate Coverage Report -->
+        <mkdir dir="${Clover.coverage}" />
+        
+        <clover-merge initString="${Clover.db}">
+            <cloverDbSet dir="${Clover.db.path}">
+                <include name="**/clover.db" />
+            </cloverDbSet>
+        </clover-merge>
+        
+        <!-- TODO: implement a toggle for the PDF report -->
+        <!-- <clover-pdf-report initstring="${Clover.db}" outfile="${Clover.coverage}/coverage.pdf" /> -->
+        
+        <clover-report initstring="${Clover.db}" >
+            <current alwaysReport="true" outfile="${Clover.coverage}/coverage.xml">
+                <format type="xml"/>
+            </current>
+        </clover-report>
+
+        <!-- Clean Clover DB -->
+        <!-- <clover-clean initstring="${Clover.db}" keepdb="false" /> -->
+    </target>
+
+
+    <target name="init-clean" depends="validate-dependencies">
+        <property name="Etch.build.target" value="Clean" />
+    </target>
+
+    <target name="post-clean" >
+        <echo message="Executing clean" />
+        <delete quiet="true" dir="${Etch.target}" />
+    </target>
+
+    <target name="extra-clean">
+        <!-- remove files that were overwritten by the filtered copy -->
+        <delete file="compiler/src/main/java/etch/compiler/Version.java" />
+        <delete file="binding-java/compiler/src/main/java/etch/bindings/java/compiler/CompilerVersion.java" />
+        <delete file="binding-xml/compiler/src/main/java/etch/bindings/xml/compiler/CompilerVersion.java" />
+        <delete file="binding-csharp/compiler/src/main/java/etch/bindings/csharp/compiler/CompilerVersion.java" />
+        <delete file="binding-csharp/runtime/src/main/csharp/Properties/AssemblyInfo.cs" />
+    </target>    
+
+    <!-- Component targets; Add to this set -->
+
+    <target name="component-all" >
+        <!-- Core -->
+        <build_component dir="util" />
+        <build_component dir="compiler" />
+        
+        <!-- IDE/tool plugins -->
+        <build_component dir="plugins/ant" />
+        
+        <!-- Bindings -->
+        <build_component dir="binding-xml" />
+        <build_component dir="binding-java" />
+        <build_component dir="binding-csharp" />
+        
+        <!-- Examples -->
+        <build_component dir="examples" />
+        
+        <!-- Functional Tests -->
+        <!-- <build_component dir="tests" /> -->
+        
+        <!-- Installer/zip Bundles -->
+        <!-- <build_component dir="installers" /> -->
+    </target>
+
+</project>

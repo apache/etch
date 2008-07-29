@@ -1,0 +1,780 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{70701740-652A-4E07-9B85-59DDCC9D43D4}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>etch.tests</RootNamespace>
+    <AssemblyName>Tests</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="nunit.framework, Version=2.4.7.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+      <HintPath>$(NUNIT_HOME)\bin\nunit.framework.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="System" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\Async.cs">
+      <Link>etch.tests\Async.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\AsyncClient.cs">
+      <Link>etch.tests\AsyncClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\AsyncHelper.cs">
+      <Link>etch.tests\AsyncHelper.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\AsyncServer.cs">
+      <Link>etch.tests\AsyncServer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\Bar.cs">
+      <Link>etch.tests\Bar.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\BarClient.cs">
+      <Link>etch.tests\BarClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\BarHelper.cs">
+      <Link>etch.tests\BarHelper.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\BarServer.cs">
+      <Link>etch.tests\BarServer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\BaseAsyncClient.cs">
+      <Link>etch.tests\BaseAsyncClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\BaseAsyncServer.cs">
+      <Link>etch.tests\BaseAsyncServer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\BaseBarClient.cs">
+      <Link>etch.tests\BaseBarClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\BaseBarServer.cs">
+      <Link>etch.tests\BaseBarServer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\BaseBazClient.cs">
+      <Link>etch.tests\BaseBazClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\BaseBazServer.cs">
+      <Link>etch.tests\BaseBazServer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\BaseBigIdlClient.cs">
+      <Link>etch.tests\BaseBigIdlClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\BaseBigIdlServer.cs">
+      <Link>etch.tests\BaseBigIdlServer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\BaseClosingClient.cs">
+      <Link>etch.tests\BaseClosingClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\BaseClosingServer.cs">
+      <Link>etch.tests\BaseClosingServer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\BaseCuaeClient.cs">
+      <Link>etch.tests\BaseCuaeClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\BaseCuaeServer.cs">
+      <Link>etch.tests\BaseCuaeServer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\BaseFooClient.cs">
+      <Link>etch.tests\BaseFooClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\BaseFooServer.cs">
+      <Link>etch.tests\BaseFooServer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\BaseInheritanceClient.cs">
+      <Link>etch.tests\BaseInheritanceClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\BaseInheritanceServer.cs">
+      <Link>etch.tests\BaseInheritanceServer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\BaseTest1Client.cs">
+      <Link>etch.tests\BaseTest1Client.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\BaseTest1Server.cs">
+      <Link>etch.tests\BaseTest1Server.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\BaseTest2Client.cs">
+      <Link>etch.tests\BaseTest2Client.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\BaseTest2Server.cs">
+      <Link>etch.tests\BaseTest2Server.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\BaseTest3Client.cs">
+      <Link>etch.tests\BaseTest3Client.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\BaseTest3Server.cs">
+      <Link>etch.tests\BaseTest3Server.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\BaseTest4Client.cs">
+      <Link>etch.tests\BaseTest4Client.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\BaseTest4Server.cs">
+      <Link>etch.tests\BaseTest4Server.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\BaseTest6Client.cs">
+      <Link>etch.tests\BaseTest6Client.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\BaseTest6Server.cs">
+      <Link>etch.tests\BaseTest6Server.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\BaseTestIncludesClient.cs">
+      <Link>etch.tests\BaseTestIncludesClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\BaseTestIncludesServer.cs">
+      <Link>etch.tests\BaseTestIncludesServer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\BaseTypesClient.cs">
+      <Link>etch.tests\BaseTypesClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\BaseTypesServer.cs">
+      <Link>etch.tests\BaseTypesServer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\Baz.cs">
+      <Link>etch.tests\Baz.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\BazClient.cs">
+      <Link>etch.tests\BazClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\BazHelper.cs">
+      <Link>etch.tests\BazHelper.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\BazServer.cs">
+      <Link>etch.tests\BazServer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\BigIdl.cs">
+      <Link>etch.tests\BigIdl.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\BigIdlClient.cs">
+      <Link>etch.tests\BigIdlClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\BigIdlHelper.cs">
+      <Link>etch.tests\BigIdlHelper.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\BigIdlServer.cs">
+      <Link>etch.tests\BigIdlServer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\Closing.cs">
+      <Link>etch.tests\Closing.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\ClosingClient.cs">
+      <Link>etch.tests\ClosingClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\ClosingHelper.cs">
+      <Link>etch.tests\ClosingHelper.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\ClosingServer.cs">
+      <Link>etch.tests\ClosingServer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\Cuae.cs">
+      <Link>etch.tests\Cuae.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\CuaeClient.cs">
+      <Link>etch.tests\CuaeClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\CuaeHelper.cs">
+      <Link>etch.tests\CuaeHelper.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\CuaeServer.cs">
+      <Link>etch.tests\CuaeServer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\Foo.cs">
+      <Link>etch.tests\Foo.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\FooClient.cs">
+      <Link>etch.tests\FooClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\FooHelper.cs">
+      <Link>etch.tests\FooHelper.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\FooServer.cs">
+      <Link>etch.tests\FooServer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\ImplTest1Client.cs">
+      <Link>etch.tests\ImplTest1Client.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\ImplTest1Server.cs">
+      <Link>etch.tests\ImplTest1Server.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\ImplTestIncludesClient.cs">
+      <Link>etch.tests\ImplTestIncludesClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\ImplTestIncludesServer.cs">
+      <Link>etch.tests\ImplTestIncludesServer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\Inheritance.cs">
+      <Link>etch.tests\Inheritance.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\InheritanceClient.cs">
+      <Link>etch.tests\InheritanceClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\InheritanceHelper.cs">
+      <Link>etch.tests\InheritanceHelper.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\InheritanceServer.cs">
+      <Link>etch.tests\InheritanceServer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\MainTest1Client.cs">
+      <Link>etch.tests\MainTest1Client.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\MainTest1Listener.cs">
+      <Link>etch.tests\MainTest1Listener.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\MainTestIncludesClient.cs">
+      <Link>etch.tests\MainTestIncludesClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\MainTestIncludesListener.cs">
+      <Link>etch.tests\MainTestIncludesListener.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\RemoteAsync.cs">
+      <Link>etch.tests\RemoteAsync.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\RemoteAsyncClient.cs">
+      <Link>etch.tests\RemoteAsyncClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\RemoteAsyncServer.cs">
+      <Link>etch.tests\RemoteAsyncServer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\RemoteBar.cs">
+      <Link>etch.tests\RemoteBar.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\RemoteBarClient.cs">
+      <Link>etch.tests\RemoteBarClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\RemoteBarServer.cs">
+      <Link>etch.tests\RemoteBarServer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\RemoteBaz.cs">
+      <Link>etch.tests\RemoteBaz.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\RemoteBazClient.cs">
+      <Link>etch.tests\RemoteBazClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\RemoteBazServer.cs">
+      <Link>etch.tests\RemoteBazServer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\RemoteBigIdl.cs">
+      <Link>etch.tests\RemoteBigIdl.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\RemoteBigIdlClient.cs">
+      <Link>etch.tests\RemoteBigIdlClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\RemoteBigIdlServer.cs">
+      <Link>etch.tests\RemoteBigIdlServer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\RemoteClosing.cs">
+      <Link>etch.tests\RemoteClosing.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\RemoteClosingClient.cs">
+      <Link>etch.tests\RemoteClosingClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\RemoteClosingServer.cs">
+      <Link>etch.tests\RemoteClosingServer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\RemoteCuae.cs">
+      <Link>etch.tests\RemoteCuae.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\RemoteCuaeClient.cs">
+      <Link>etch.tests\RemoteCuaeClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\RemoteCuaeServer.cs">
+      <Link>etch.tests\RemoteCuaeServer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\RemoteFoo.cs">
+      <Link>etch.tests\RemoteFoo.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\RemoteFooClient.cs">
+      <Link>etch.tests\RemoteFooClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\RemoteFooServer.cs">
+      <Link>etch.tests\RemoteFooServer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\RemoteInheritance.cs">
+      <Link>etch.tests\RemoteInheritance.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\RemoteInheritanceClient.cs">
+      <Link>etch.tests\RemoteInheritanceClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\RemoteInheritanceServer.cs">
+      <Link>etch.tests\RemoteInheritanceServer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\RemoteTest1.cs">
+      <Link>etch.tests\RemoteTest1.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\RemoteTest1Client.cs">
+      <Link>etch.tests\RemoteTest1Client.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\RemoteTest1Server.cs">
+      <Link>etch.tests\RemoteTest1Server.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\RemoteTest2.cs">
+      <Link>etch.tests\RemoteTest2.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\RemoteTest2Client.cs">
+      <Link>etch.tests\RemoteTest2Client.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\RemoteTest2Server.cs">
+      <Link>etch.tests\RemoteTest2Server.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\RemoteTest3.cs">
+      <Link>etch.tests\RemoteTest3.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\RemoteTest3Client.cs">
+      <Link>etch.tests\RemoteTest3Client.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\RemoteTest3Server.cs">
+      <Link>etch.tests\RemoteTest3Server.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\RemoteTest4.cs">
+      <Link>etch.tests\RemoteTest4.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\RemoteTest4Client.cs">
+      <Link>etch.tests\RemoteTest4Client.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\RemoteTest4Server.cs">
+      <Link>etch.tests\RemoteTest4Server.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\RemoteTest6.cs">
+      <Link>etch.tests\RemoteTest6.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\RemoteTest6Client.cs">
+      <Link>etch.tests\RemoteTest6Client.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\RemoteTest6Server.cs">
+      <Link>etch.tests\RemoteTest6Server.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\RemoteTestIncludes.cs">
+      <Link>etch.tests\RemoteTestIncludes.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\RemoteTestIncludesClient.cs">
+      <Link>etch.tests\RemoteTestIncludesClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\RemoteTestIncludesServer.cs">
+      <Link>etch.tests\RemoteTestIncludesServer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\RemoteTypes.cs">
+      <Link>etch.tests\RemoteTypes.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\RemoteTypesClient.cs">
+      <Link>etch.tests\RemoteTypesClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\RemoteTypesServer.cs">
+      <Link>etch.tests\RemoteTypesServer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\StubAsync.cs">
+      <Link>etch.tests\StubAsync.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\StubAsyncClient.cs">
+      <Link>etch.tests\StubAsyncClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\StubAsyncServer.cs">
+      <Link>etch.tests\StubAsyncServer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\StubBar.cs">
+      <Link>etch.tests\StubBar.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\StubBarClient.cs">
+      <Link>etch.tests\StubBarClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\StubBarServer.cs">
+      <Link>etch.tests\StubBarServer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\StubBaz.cs">
+      <Link>etch.tests\StubBaz.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\StubBazClient.cs">
+      <Link>etch.tests\StubBazClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\StubBazServer.cs">
+      <Link>etch.tests\StubBazServer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\StubBigIdl.cs">
+      <Link>etch.tests\StubBigIdl.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\StubBigIdlClient.cs">
+      <Link>etch.tests\StubBigIdlClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\StubBigIdlServer.cs">
+      <Link>etch.tests\StubBigIdlServer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\StubClosing.cs">
+      <Link>etch.tests\StubClosing.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\StubClosingClient.cs">
+      <Link>etch.tests\StubClosingClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\StubClosingServer.cs">
+      <Link>etch.tests\StubClosingServer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\StubCuae.cs">
+      <Link>etch.tests\StubCuae.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\StubCuaeClient.cs">
+      <Link>etch.tests\StubCuaeClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\StubCuaeServer.cs">
+      <Link>etch.tests\StubCuaeServer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\StubFoo.cs">
+      <Link>etch.tests\StubFoo.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\StubFooClient.cs">
+      <Link>etch.tests\StubFooClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\StubFooServer.cs">
+      <Link>etch.tests\StubFooServer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\StubInheritance.cs">
+      <Link>etch.tests\StubInheritance.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\StubInheritanceClient.cs">
+      <Link>etch.tests\StubInheritanceClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\StubInheritanceServer.cs">
+      <Link>etch.tests\StubInheritanceServer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\StubTest1.cs">
+      <Link>etch.tests\StubTest1.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\StubTest1Client.cs">
+      <Link>etch.tests\StubTest1Client.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\StubTest1Server.cs">
+      <Link>etch.tests\StubTest1Server.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\StubTest2.cs">
+      <Link>etch.tests\StubTest2.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\StubTest2Client.cs">
+      <Link>etch.tests\StubTest2Client.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\StubTest2Server.cs">
+      <Link>etch.tests\StubTest2Server.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\StubTest3.cs">
+      <Link>etch.tests\StubTest3.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\StubTest3Client.cs">
+      <Link>etch.tests\StubTest3Client.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\StubTest3Server.cs">
+      <Link>etch.tests\StubTest3Server.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\StubTest4.cs">
+      <Link>etch.tests\StubTest4.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\StubTest4Client.cs">
+      <Link>etch.tests\StubTest4Client.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\StubTest4Server.cs">
+      <Link>etch.tests\StubTest4Server.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\StubTest6.cs">
+      <Link>etch.tests\StubTest6.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\StubTest6Client.cs">
+      <Link>etch.tests\StubTest6Client.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\StubTest6Server.cs">
+      <Link>etch.tests\StubTest6Server.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\StubTestIncludes.cs">
+      <Link>etch.tests\StubTestIncludes.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\StubTestIncludesClient.cs">
+      <Link>etch.tests\StubTestIncludesClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\StubTestIncludesServer.cs">
+      <Link>etch.tests\StubTestIncludesServer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\StubTypes.cs">
+      <Link>etch.tests\StubTypes.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\StubTypesClient.cs">
+      <Link>etch.tests\StubTypesClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\StubTypesServer.cs">
+      <Link>etch.tests\StubTypesServer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\Test1.cs">
+      <Link>etch.tests\Test1.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\Test1Client.cs">
+      <Link>etch.tests\Test1Client.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\Test1Helper.cs">
+      <Link>etch.tests\Test1Helper.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\Test1Server.cs">
+      <Link>etch.tests\Test1Server.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\Test2.cs">
+      <Link>etch.tests\Test2.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\Test2Client.cs">
+      <Link>etch.tests\Test2Client.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\Test2Helper.cs">
+      <Link>etch.tests\Test2Helper.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\Test2Server.cs">
+      <Link>etch.tests\Test2Server.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\Test3.cs">
+      <Link>etch.tests\Test3.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\Test3Client.cs">
+      <Link>etch.tests\Test3Client.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\Test3Helper.cs">
+      <Link>etch.tests\Test3Helper.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\Test3Server.cs">
+      <Link>etch.tests\Test3Server.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\Test4.cs">
+      <Link>etch.tests\Test4.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\Test4Client.cs">
+      <Link>etch.tests\Test4Client.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\Test4Helper.cs">
+      <Link>etch.tests\Test4Helper.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\Test4Server.cs">
+      <Link>etch.tests\Test4Server.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\Test6.cs">
+      <Link>etch.tests\Test6.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\Test6Client.cs">
+      <Link>etch.tests\Test6Client.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\Test6Helper.cs">
+      <Link>etch.tests\Test6Helper.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\Test6Server.cs">
+      <Link>etch.tests\Test6Server.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\TestIncludes.cs">
+      <Link>etch.tests\TestIncludes.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\TestIncludesClient.cs">
+      <Link>etch.tests\TestIncludesClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\TestIncludesHelper.cs">
+      <Link>etch.tests\TestIncludesHelper.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\TestIncludesServer.cs">
+      <Link>etch.tests\TestIncludesServer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\Types.cs">
+      <Link>etch.tests\Types.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\TypesClient.cs">
+      <Link>etch.tests\TypesClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\TypesHelper.cs">
+      <Link>etch.tests\TypesHelper.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\TypesServer.cs">
+      <Link>etch.tests\TypesServer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\ValueFactoryAsync.cs">
+      <Link>etch.tests\ValueFactoryAsync.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\ValueFactoryBar.cs">
+      <Link>etch.tests\ValueFactoryBar.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\ValueFactoryBaz.cs">
+      <Link>etch.tests\ValueFactoryBaz.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\ValueFactoryBigIdl.cs">
+      <Link>etch.tests\ValueFactoryBigIdl.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\ValueFactoryClosing.cs">
+      <Link>etch.tests\ValueFactoryClosing.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\ValueFactoryCuae.cs">
+      <Link>etch.tests\ValueFactoryCuae.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\ValueFactoryFoo.cs">
+      <Link>etch.tests\ValueFactoryFoo.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\ValueFactoryInheritance.cs">
+      <Link>etch.tests\ValueFactoryInheritance.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\ValueFactoryTest1.cs">
+      <Link>etch.tests\ValueFactoryTest1.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\ValueFactoryTest2.cs">
+      <Link>etch.tests\ValueFactoryTest2.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\ValueFactoryTest3.cs">
+      <Link>etch.tests\ValueFactoryTest3.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\ValueFactoryTest4.cs">
+      <Link>etch.tests\ValueFactoryTest4.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\ValueFactoryTest6.cs">
+      <Link>etch.tests\ValueFactoryTest6.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\ValueFactoryTestIncludes.cs">
+      <Link>etch.tests\ValueFactoryTestIncludes.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.tests\ValueFactoryTypes.cs">
+      <Link>etch.tests\ValueFactoryTypes.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\main\csharp\etch.tests\ImplAsyncClient.cs">
+      <Link>etch.tests\ImplAsyncClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\main\csharp\etch.tests\ImplAsyncServer.cs">
+      <Link>etch.tests\ImplAsyncServer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\main\csharp\etch.tests\ImplClosingClient.cs">
+      <Link>etch.tests\ImplClosingClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\main\csharp\etch.tests\ImplClosingServer.cs">
+      <Link>etch.tests\ImplClosingServer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\main\csharp\etch.tests\ImplCuaeClient.cs">
+      <Link>etch.tests\ImplCuaeClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\main\csharp\etch.tests\ImplCuaeServer.cs">
+      <Link>etch.tests\ImplCuaeServer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\main\csharp\etch.tests\ImplFooClient.cs">
+      <Link>etch.tests\ImplFooClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\main\csharp\etch.tests\ImplFooServer.cs">
+      <Link>etch.tests\ImplFooServer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\main\csharp\etch.tests\ImplInheritanceClient.cs">
+      <Link>etch.tests\ImplInheritanceClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\main\csharp\etch.tests\ImplInheritanceServer.cs">
+      <Link>etch.tests\ImplInheritanceServer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\main\csharp\etch.tests\ImplTypesClient.cs">
+      <Link>etch.tests\ImplTypesClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\main\csharp\etch.tests\ImplTypesServer.cs">
+      <Link>etch.tests\ImplTypesServer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\main\csharp\etch.tests\MainAsyncClient.cs">
+      <Link>etch.tests\MainAsyncClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\main\csharp\etch.tests\MainAsyncListener.cs">
+      <Link>etch.tests\MainAsyncListener.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\main\csharp\etch.tests\MainClosingClient.cs">
+      <Link>etch.tests\MainClosingClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\main\csharp\etch.tests\MainClosingListener.cs">
+      <Link>etch.tests\MainClosingListener.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\main\csharp\etch.tests\MainCuaeClient.cs">
+      <Link>etch.tests\MainCuaeClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\main\csharp\etch.tests\MainCuaeListener.cs">
+      <Link>etch.tests\MainCuaeListener.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\main\csharp\etch.tests\MainFooClient.cs">
+      <Link>etch.tests\MainFooClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\main\csharp\etch.tests\MainFooListener.cs">
+      <Link>etch.tests\MainFooListener.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\main\csharp\etch.tests\MainInheritanceClient.cs">
+      <Link>etch.tests\MainInheritanceClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\main\csharp\etch.tests\MainInheritanceListener.cs">
+      <Link>etch.tests\MainInheritanceListener.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\main\csharp\etch.tests\MainTypesClient.cs">
+      <Link>etch.tests\MainTypesClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\main\csharp\etch.tests\MainTypesListener.cs">
+      <Link>etch.tests\MainTypesListener.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\main\csharp\etch.tests\MyCuaeHelper.cs">
+      <Link>etch.tests\MyCuaeHelper.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\main\csharp\etch.tests\MyCuaeServerStub.cs">
+      <Link>etch.tests\MyCuaeServerStub.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\main\csharp\etch.tests\MyValueFactoryCuae.cs">
+      <Link>etch.tests\MyValueFactoryCuae.cs</Link>
+    </Compile>
+    <Compile Include="..\etch.tests\FakeTest1.cs">
+      <Link>FakeTest1.cs</Link>
+    </Compile>
+    <Compile Include="..\etch.tests\TestAsyncClient.cs">
+      <Link>TestAsyncClient.cs</Link>
+    </Compile>
+    <Compile Include="..\etch.tests\TestImplTest1.cs">
+      <Link>TestImplTest1.cs</Link>
+    </Compile>
+    <Compile Include="..\etch.tests\TestInheritance.cs">
+      <Link>TestInheritance.cs</Link>
+    </Compile>
+    <Compile Include="..\etch.tests\TestMainTest1Client.cs">
+      <Link>TestMainTest1Client.cs</Link>
+    </Compile>
+    <Compile Include="..\etch.tests\TestMainTest1Listener.cs">
+      <Link>TestMainTest1Listener.cs</Link>
+    </Compile>
+    <Compile Include="..\etch.tests\TestMixin.cs">
+      <Link>TestMixin.cs</Link>
+    </Compile>
+    <Compile Include="..\etch.tests\TestRemoteTest1DotCsharp.cs">
+      <Link>TestRemoteTest1DotCsharp.cs</Link>
+    </Compile>
+    <Compile Include="..\etch.tests\TestStubTest1DotCsharp.cs">
+      <Link>TestStubTest1DotCsharp.cs</Link>
+    </Compile>
+    <Compile Include="..\etch.tests\TestTest1DotCsharp.cs">
+      <Link>TestTest1DotCsharp.cs</Link>
+    </Compile>
+    <Compile Include="..\etch.tests\TestTest1Helper.cs">
+      <Link>TestTest1Helper.cs</Link>
+    </Compile>
+    <Compile Include="..\etch.tests\TestValueFactoryTest1DotCsharp.cs">
+      <Link>TestValueFactoryTest1DotCsharp.cs</Link>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\binding-csharp\runtime\src\main\csharp\EtchProj.csproj">
+      <Project>{0E518F2A-3016-4C2F-A21B-9BD52B2DC846}</Project>
+      <Name>EtchProj</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

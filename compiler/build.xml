@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<project name="etch-compiler" basedir="." default="help">
+    <description>Common utilities for compiler implementations and java binding</description>
+    <property name="Etch.basedir" location="${basedir}/.." />
+    <import file="${Etch.basedir}/build-support/etch.includes.xml" />
+
+    <!-- Static properties of the sub-project -->
+    <property name="proj"                 location="${Etch.basedir}/compiler" />
+    <property name="target"               location="${proj}/target" />
+    <property name="src"                  location="${proj}/src" />
+    <property name="generatedSrc"         location="${target}/generated-sources" />
+    <property name="classesDirectory"     location="${target}/classes" />
+    <property name="resourcesDirectory"   location="${target}/resources" />
+    <property name="testResultsDirectory" location="${target}/test-results" />
+
+    <!-- MACRO: init-target -->
+    <macrodef name="init-target" >
+        <sequential>
+            <delete dir="${classesDirectory}" failonerror="false" quiet="true" />
+            <mkdir dir="${classesDirectory}" />
+            <mkdir dir="${classesDirectory}/main" />
+            <mkdir dir="${classesDirectory}/test" />
+            <mkdir dir="${resourcesDirectory}" />
+            <mkdir dir="${testResultsDirectory}" />
+        </sequential>
+    </macrodef>
+
+    <!-- MACRO: compile-sources -->
+    <macrodef name="compile-sources" >
+        <attribute name="support" default="${Etch.support}" />
+        <sequential>
+            <mkdir dir="${classesDirectory}/main" />
+            <mkdir dir="${classesDirectory}/test" />
+
+            <!-- compile main -->
+            <javac  debug="${Etch.javac.debug}"
+                    target="1.5"
+                    optimize="${Etch.javac.optimize}"
+                    destdir="${classesDirectory}/main" >
+                <src path="${src}/main/java" />
+                <src path="${generatedSrc}/main/javacc/java" />
+                <exclude name="**/.svn/**" />
+                <classpath refid="Etch.dependencies.jar.paths" />
+                <classpath>
+                    <pathelement location="@{support}/lib/${etch-util.jar}" />
+                </classpath>
+            </javac>
+
+            <!-- main-resources -->
+            <copy todir="${classesDirectory}/main">
+                <fileset dir="${src}/main/resources">
+                    <include name="**/*.kwd" />
+                </fileset>
+            </copy>            
+
+            <!-- compile test -->
+            <javac  debug="${Etch.javac.debug}"
+                    target="1.5"
+                    optimize="${Etch.javac.optimize}"
+                    destdir="${classesDirectory}/test" >
+                <src path="${src}/test/java" />
+                <exclude name="**/.svn/**" />
+                <classpath refid="Etch.dependencies.jar.paths" />
+                <classpath>
+                    <pathelement location="${classesDirectory}/main" />
+                    <pathelement location="@{support}/lib/${etch-util.jar}" />
+                </classpath>
+            </javac>
+
+            <!-- test-resources -->
+            <copy todir="${classesDirectory}/test">
+                <fileset dir="${src}/test/resources">
+                    <include name="**/*.kwd" />
+                </fileset>
+            </copy>            
+
+        </sequential>
+    </macrodef>
+
+    <!-- MACRO: bundle-jars -->
+    <macrodef name="bundle-jars" >
+        <attribute name="dist" default="${Etch.dist}" />
+        <attribute name="support" default="${Etch.support}" />
+        <sequential>
+            <mkdir dir="@{dist}/lib" />
+            <mkdir dir="@{support}/lib" />
+
+            <!-- Copy 3rd party dependencies -->
+            <copy todir="@{dist}/lib" file="${Etch.dependency.velocity-dep.jar}" />
+            <copy todir="@{support}/lib" file="${Etch.dependency.velocity-dep.jar}" />
+
+            <!-- CREATE jars -->
+
+            <!-- Package up etch-compiler jar -->
+            <jar jarfile="@{support}/lib/${etch-compiler.jar}" >
+                <manifest>
+                    <attribute name="Copyright"    value="${Etch.copyrightNotice}" />
+                    <attribute name="Version"      value="${Etch.version}" />
+                    <attribute name="Build-Tag"    value="${Etch.buildTag}" />
+                    <attribute name="SVN-Revision" value="${Etch.runtime.revisionNumber}" />
+                    <attribute name="Class-Path"   value="${etch-util.jar}" />
+                    <attribute name="Main-Class"   value="etch.compiler.EtchMain" />
+                </manifest>
+                <fileset dir="${classesDirectory}/main">
+                    <include name="etch/compiler/**" />
+                    <!-- <include name="resources/**" /> -->
+                </fileset>
+            </jar>
+
+            <!-- placeholder -->
+            <jar jarfile="@{support}/lib/${etch-compiler.jar}" update="true" filesetmanifest="merge">
+               <manifest>
+                  <attribute name="Version" value="${Etch.version}" />
+               </manifest>   
+            </jar>
+
+            <!-- CREATE source archives -->
+
+            <!-- package up etch-compiler source -->
+            <zip destfile="@{dist}/lib/${etch-compiler-src.zip}" >
+                <fileset dir="${src}/main/java" >
+                    <include name="etch/compiler/**/*.java" />
+                </fileset>
+                <fileset dir="${src}/main/resources" >
+                    <include name="**/*.kwd" />
+                </fileset>
+            </zip>
+
+            <!-- Copy batch-scripts -->
+            <mkdir dir="@{dist}/bin" />
+            <copy  file="${src}/main/scripts/etch.sh" tofile="@{dist}/bin/etch" />
+            <chmod file="@{dist}/bin/etch" perm="755" />
+            <copy  file="${src}/main/scripts/etch.bat" todir="@{dist}/bin" />
+
+        </sequential>
+    </macrodef>
+
+    <!-- MACRO: update-jars -->
+    <macrodef name="update-jars" >
+        <attribute name="dist" default="${Etch.dist}" />
+        <attribute name="support" default="${Etch.support}" />
+        <sequential>
+            <mkdir dir="@{dist}/lib" />
+
+            <delete dir="${target}/tmp-compiler" quiet="true" />
+            <mkdir dir="${target}/tmp-compiler" />
+
+            <unjar src="@{support}/lib/${etch-util.jar}"     dest="${target}/tmp-compiler" />
+            <unjar src="@{support}/lib/${etch-compiler.jar}" dest="${target}/tmp-compiler" />
+
+            <jar jarfile="@{dist}/lib/${etch-compiler.jar}" update="true" filesetmanifest="merge" >
+                <fileset dir="${target}/tmp-compiler"  />
+            </jar>    
+        </sequential>
+    </macrodef>
+
+    <!-- INIT TARGET -->
+    <!-- Modify this target to define project specific properties that can only be set at runtime -->
+    <target name="do-init">
+        <delete dir="${target}" failonerror="false" quiet="true" />
+        <mkdir dir="${target}" />
+        <mkdir dir="${generatedSrc}" />
+        <mkdir dir="${classesDirectory}" />
+        <mkdir dir="${resourcesDirectory}" />
+        <mkdir dir="${testResultsDirectory}" />
+    </target>
+
+    <!-- CLEAN TARGET -->
+    <target name="do-clean">
+        <delete dir="${target}" />
+    </target>
+
+    <!-- BUILD TARGET -->
+
+    <target name="generate-sources" >
+        <!-- Generate version info -->
+        <update-tokens filename="${src}/main/java/etch/compiler/Version.java" />
+
+        <!-- Generate Parser -->
+        <mkdir dir="${generatedSrc}/main/javacc/java/etch/compiler" />
+        <javacc
+            target="${src}/main/javacc/EtchGrammar.jj"
+            javacchome="${Etch.dependency.javacc.home}"
+            outputdirectory="${generatedSrc}/main/javacc/java/etch/compiler"
+        />
+    </target>
+
+    <target name="compile-for-dist" >
+        <!-- Initialize target directories -->
+        <init-target />
+
+        <!-- Compile Source -->
+        <compile-sources support="${Etch.support}" />
+
+        <!-- Bundle Jars -->
+        <bundle-jars dist="${Etch.dist}" support="${Etch.support}" />
+        
+        <!-- Update Jars -->
+        <update-jars dist="${Etch.dist}" support="${Etch.support}" />
+    </target>
+
+    <!-- compile for unit-testing -->
+    <target name="compile-for-clover" if="Clover.enabled" >
+
+        <echo message="Rebuilding with clover" />
+
+        <!-- initialize-clover -->
+        <initialize-clover suffix="compiler">
+            <fileset dir="${src}/main/java">
+                <include name="**/*.java" />
+            </fileset>
+            <testsources dir="${src}/test/java">
+                <include name="**/*.java" />
+            </testsources>
+        </initialize-clover>
+
+        <!-- Initialize target directories -->
+        <init-target />
+
+        <!-- Compile Source -->
+        <compile-sources support="${Etch.support}" />
+
+        <!-- Bundle Jars -->
+        <bundle-jars dist="${Etch.clover-dist}" support="${Etch.clover-support}" />
+
+        <!-- Update Jars -->
+        <update-jars dist="${Etch.clover-dist}" support="${Etch.clover-support}" />
+
+    </target>
+
+    <target name="do-build" depends="generate-sources,compile-for-dist,compile-for-clover" />
+
+    <!-- TEST TARGET -->
+    <target name="do-test">
+
+        <!-- Run Unit Tests -->
+        <junit printsummary="yes" haltonfailure="no" dir="${classesDirectory}"
+            errorProperty="build.tests.fail" failureProperty="build.tests.fail">
+            <classpath>
+                <pathelement location="${classesDirectory}/main" />
+                <pathelement location="${classesDirectory}/test" />
+                <pathelement location="${Etch.dependency.junit.jar}" />
+                <pathelement location="${Etch.dependency.velocity-dep.jar}" />
+                <pathelement location="${Etch.SUPPORT}/lib/${etch-util.jar}" />
+                <!-- TODO: remove if clover not available -->
+                <pathelement location="${Etch.dependency.clover.jar}"/>
+            </classpath>
+            <formatter type="xml"/>
+            <batchtest fork="true" todir="${testResultsDirectory}">
+                <fileset dir="${src}/test/java">
+                    <include name="etch/compiler/**/Test*.java" />
+                    <!-- TODO: Move TestEtch to Java binding -->
+                    <exclude name="**/TestEtch.java" />
+                </fileset>
+            </batchtest>
+        </junit>
+    </target>
+
+    <!-- POSTBUILD TARGET -->
+    <target name="do-postbuild">
+    </target>
+
+    <target name="do-publish" if="build.tests.fail">
+        <!-- Set flag file if any tests failed -->
+        <touch file="${Etch.runtime.tests.fail}"/>
+    </target>
+
+</project>

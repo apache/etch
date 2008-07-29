@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<project name="etch-perf-example" basedir="." default="build-all">
+    <description>Perf Example</description>
+    
+    <!-- TODO better computation of etch.home, etch.version -->
+    <property environment="env" />
+    
+    <!-- compute ETCH_HOME -->
+    <property name="build.ETCH_HOME" location="${basedir}/../../target/Installers/dist" />
+    <condition property="etch.home" value="${env.ETCH_HOME}">
+        <isset property="${env.ETCH_HOME}" />
+    </condition>
+    <condition property="etch.home" value="${build.ETCH_HOME}" >
+        <not><isset property="etch.home" /></not>
+    </condition>
+    
+    <!-- compute etch.version -->
+    <condition property="etch.version" value="1.0.0" >
+        <not><isset property="etch.version" /></not>
+    </condition>
+
+    <!-- import etch task -->
+    <taskdef
+    	name="etch"
+        onerror="report"
+    	classname="etch.tools.ant.EtchCompileTask"
+    	classpath="${etch.home}/lib/etch-ant-plugin-${etch.version}.jar" />
+    
+    <!-- TODO  hack until the ant-task is working -->
+	<!--
+    <macrodef name="etch">
+        <attribute name="dir" default="." />
+        <attribute name="home" />
+        <attribute name="file" />
+        <attribute name="binding" />
+        <attribute name="version" default="${etch.version}" />
+        <attribute name="what"    default="all" />
+        <attribute name="output"  default="." />
+        <attribute name="failonerror" default="true" />
+        <sequential>
+            <exec executable="java" dir="@{dir}" >
+                <env key="ETCH_HOME" file="@{home}" />
+                <arg value="-cp" /><arg value="@{home}/lib/etch-compiler-@{version}.jar;@{home}/lib/etch-java-compiler-@{version}.jar;@{home}/lib/etch-util-@{version}.jar;@{home}/lib/velocity-dep-1.5.jar;${env.CLOVER_HOME}/lib/clover.jar" />
+                <arg value="etch.compiler.EtchMain" />
+                <arg value="-b" /><arg value="@{binding}" />
+                <arg value="-w" /><arg value="@{what}" />
+                <arg value="-d" /><arg value="@{output}" />
+                <arg value="@{file}" />                
+            </exec>
+        </sequential>
+    </macrodef>
+    -->
+	
+    <!-- set properties -->
+    <property name="target"            location="${basedir}/target" />
+    <property name="src"               location="${basedir}/src" />
+    <property name="bin"               location="${target}/bin" />
+    <property name="generated-sources" location="${target}/generated-sources" />
+    <property name="classes"           location="${target}/classes" />
+    <property name="test-results"      location="${target}/test-results" />
+
+    <!-- initialize -->
+    <target name="init" >
+        <mkdir dir="${target}" />
+        <mkdir dir="${bin}" />
+        <mkdir dir="${generated-sources}" />
+        <mkdir dir="${classes}" />
+        <mkdir dir="${test-results}" />
+    </target>
+    
+    <!-- build the server -->
+    <target name="build" depends="init" >
+
+        <!-- generate server binding -->
+        <mkdir dir="${generated-sources}/main/etch/java" />
+        <etch home="${etch.home}" 
+              file="${src}/main/etch/Perf.etch"
+              what="both"
+              binding="java"
+              output="${generated-sources}/main/etch/java"
+              />
+
+        <!-- compile sources -->
+        <mkdir dir="${classes}" />
+        <javac target="1.5" destdir="${classes}">
+            <src path="${generated-sources}/main/etch/java" />
+            <src path="${src}/main/java" />
+            <classpath>
+                <pathelement location="${etch.home}/lib/etch-java-runtime-${etch.version}.jar" />
+            </classpath>
+        </javac>
+
+        <!-- Create Jar -->
+        <jar jarfile="${bin}/perf.jar" >
+            <manifest>
+                <attribute name="Class-Path" value="etch-java-runtime-${etch.version}.jar" />
+            </manifest>
+            <fileset dir="${classes}">
+                <include name="**/*" />
+            </fileset>
+        </jar>
+
+        <!-- copy in dependencies -->
+        <copy todir="${bin}">
+            <fileset dir="${etch.home}/lib">
+                <include name="etch-java-runtime-*.jar" />
+            </fileset>
+        </copy>
+        
+    </target>
+
+    <!-- run unit tests -->
+    <target name="test" depends="build" >
+        <echo>
+
+Build Complete!
+
+To run the perf-test example, open two command-windows in this directory.
+
+cmd-window-1:
+  > cd target/bin
+  > java -cp perf.jar etch.examples.perf.MainPerfListener 
+
+cmd-window-2:
+  > cd target/bin
+  > java -cp perf.jar etch.examples.perf.MainPerfClient
+
+        </echo>
+    </target>
+
+    <!-- build everything -->
+    <target name="debug" depends="test" />
+    <target name="release" depends="test" />
+        
+    <!-- clean -->    
+    <target name="clean">
+        <delete dir="${target}" quiet="true" />
+    </target>
+
+</project>

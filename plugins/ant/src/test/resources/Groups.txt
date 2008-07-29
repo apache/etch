@@ -1,0 +1,232 @@
+////////////
+// Groups //
+////////////
+enum ComponentType 
+( 
+    /** 0 in db */
+    UNSPECIFIED,
+    /** 1 in db */
+    CORE,
+    /** 2 in db */
+    APPLICATION,
+    /** 3 in db */
+    PROVIDER,
+    /** 4 in db */
+    MEDIA_ENGINE,
+    /** 5 in db */
+    LOG_SERVER,
+    /** 6 in db */
+    RTP_RELAY,
+    /** Alarm Server 50 in db */
+    SMTP_MANAGER,
+    /** Alarm Server 51 in db */
+    SNMP_MANAGER,
+    /** Telephony Server 100 in db */
+    SCCP_DEVICE_POOL,
+    /** Telephony Server 101 in db */
+    H323_GATEWAY,
+    /** Telephony Server 102 in db */
+    SIP_DEVICE_POOL,
+    /** Telephony Server 103 in db */
+    CTI_DEVICE_POOL,
+    /** Telephony Server 104 in db */
+    CTI_ROUTE_POINT,
+    /** Telephony Server 105 in db */
+    SIP_TRUNK_INTERFACE,
+    /** Telephony Server 106 in db */
+    IETF_SIP_DEVICE_POOL,
+    /** Telephony Server 107 in db */
+    MONITORED_CTI_DEVICE_POOL,
+    /** Telephony Server 149 in db */
+    TEST_IPT
+)
+
+struct GroupMember
+(
+	/** The unique id of the member **/
+	string memberId,
+	/** The group id of the member **/
+	string groupId,
+	/** The name of the member **/
+	string name,
+	/** The display name of the member **/
+	string displayName,
+	/** The description of the member **/
+	string description,
+	/** The order of the in the group **/
+	string order
+)
+
+struct Group
+(
+
+	/** The unique id of the group **/
+	string groupId,
+	/** The name of the group **/
+	string name,
+	/** The type of the group **/
+	ComponentType type,
+	/** Whether the group is the default group for it's type **/
+	boolean defaultGroup,
+	/** The group description **/
+	string description,
+	/** The alarm group id of the group **/
+	string alarmGroupId,
+	/** The failover group id of the group **/
+	string failoverGroupId
+)
+
+/**
+ * Exception thrown when there are problems with groups.
+ * @param msg a detail message of the problem.
+ */
+exception GroupException( string msg )
+
+/**
+ * Counts the total number of members that belong to the group with the given id.
+ */
+int countMembersOfGroup(string groupId) throws GroupException
+
+/**
+ * Gets all of the members that belong to the group with the given id.
+ * 
+ * @param groupId the group whose members will be returned
+ * @param offset the index of the first GroupMember to return
+ * @param length the number of GroupMember toReturn
+ * 
+ * @return the groups that contain the component
+ * 
+ * @throws GroupException the group exception
+ */
+GroupMember[] listMembersOfGroup(string groupId, int offset, int length) throws GroupException
+
+/**
+ * Counts the total number of groups of the specified type that contain the component with the given id.
+ */
+int countGroupsContainingComponent(string componentId, ComponentType groupType) throws GroupException
+
+/**
+ * Gets all of the groups of the specified type that contain the component with the given id.
+ * 
+ * @param componentId the component whose existence within the groups is to be probed.
+ * @param groupType the type of groups to search through
+ * @param offset the index of the first Group to return
+ * @param length the number of Groups toReturn
+ * 
+ * @return the groups that contain the component
+ * 
+ * @throws GroupException the group exception
+ */
+Group[] listGroupsContainingComponent(string componentId, ComponentType groupType, int offset, int length) throws GroupException
+
+/**
+ * Removes the component with the given id from all groups.
+ * 
+ * @param memberId the id of the component the will be removed from all groups.
+ * 
+ * @throws GroupException the group exception
+ */
+void deleteMemberFromAllGroups(string memberId) throws GroupException
+
+/**
+ * Counts the total number of groups groups of the specified type.
+ */
+int countGroupsOfType(ComponentType groupType) throws GroupException
+
+/**
+ * Gets all of the existing groups of the specified type.
+ * 
+ * @param groupType the type of group to retrieve.
+ * @param offset the index of the first Group to return
+ * @param length the number of Groups toReturn
+ * 
+ * @return the groups that exist with the specified type
+ * 
+ * @throws GroupException the group exception
+ */
+Group[] listGroupsOfType(ComponentType groupType, int offset, int length) throws GroupException
+
+/**
+ * Returns a group with the given id.
+ * 
+ * @param groupId the group to retrieve
+ * 
+ * @return the group with the given id or null if not present.
+ * 
+ * @throws GroupException thrown due to an SQLException or trying to add an identically named group
+ */
+Group getGroup(string groupId) throws GroupException
+
+/**
+ * Adds a group to the db as well as any members it may contain.
+ * 
+ * @param group the group to Add
+ * 
+ * @return the group which will include the new unique id of the group.
+ * 
+ * @throws GroupException thrown due to an SQLException or trying to add an identically named group
+ */
+Group addGroup(Group group) throws GroupException
+
+/**
+ * Delete's a group and all of it's members from the db.
+ * 
+ * @param groupId the id of the group to delete.
+ * 
+ * @throws GroupException if the SQL messes up.
+ */
+void deleteGroup(string groupId) throws GroupException
+
+/**
+ * Updates the group information as well as the members it has.
+ * 
+ * @param groupId the id of the group to update
+ * @param group the new group contents
+ * 
+ * @throws GroupException the group exception
+ */
+void updateGroup(string groupId, Group group) throws GroupException
+
+/**
+ * Adds a group member to the db.
+ * 
+ * @param memberId the id of the member
+ * @param groupId the id of the group it will be a member of.
+ * 
+ * @return the group member that was added
+ * 
+ * @throws GroupException most likely due to a SQL Exception or trying to add the member to a group it already is a member of.
+ */
+GroupMember addGroupMember(string memberId, string groupId ) throws GroupException
+
+/**
+ * Deletes a group member from the db.
+ * 
+ * @param memberId the member id, should be the component id.
+ * @param groupId the id of the group that contains the member
+ * 
+ * @throws GroupException if the SQL messes up.
+ */
+void deleteGroupMember(string memberId, string groupId) throws GroupException
+
+/**
+ * Counts all possible members of the specified type.
+ */
+int countAllPossibleMembers(ComponentType type) throws GroupException
+
+/**
+ * Gets the all possible members of the specified type.  Note that the returned members 
+ * won't have a group id associated with them.
+ * 
+ * @param type the type of component to retrieve
+ * @param offset the index of the first GroupMember to return
+ * @param length the number of GroupMembers toReturn
+ * 
+ * @return the all possible components that can exist within a group of the given type.
+ * 
+ * @throws GroupException the group exception
+ */
+GroupMember[] listAllPossibleMembers(ComponentType type, int offset, int length) throws GroupException
+
+
+

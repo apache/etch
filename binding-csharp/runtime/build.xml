@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<project name="etch-csharp-runtime" basedir="." default="help">
+    <description>Etch-to-Csharp runtime binding implementation</description>
+    <property name="Etch.basedir" location="${basedir}/../.." />
+    <import file="${Etch.basedir}/build-support/etch.includes.xml" />
+
+    <taskdef resource="org/apache/ant/dotnet/antlib.xml" classpath="${Etch.dependency.ant-dotnet-1.0.jar}" />
+
+    <!-- Static properties of the sub-project -->
+    <property name="proj"                 location="${Etch.basedir}/binding-csharp/runtime" />
+    <property name="target"               location="${proj}/target" />
+    <property name="src"                  location="${proj}/src" />
+    <property name="rawNUnitResults"      location="${target}/nunit-results" />
+    <property name="testResultsDirectory" location="${target}/test-results"  />
+
+    <!-- INIT TARGET -->
+    <!-- Modify this target to define project specific properties that can only be set at runtime -->
+    <target name="do-init">
+        <delete dir="${target}" failonerror="false" quiet="true" />
+
+        <mkdir dir="${target}" />
+        <mkdir dir="${testResultsDirectory}" />
+    </target>
+
+    <!-- CLEAN TARGET -->
+    <target name="do-clean">
+        <delete dir="${target}" />
+        <delete dir="${src}/main/csharp/bin" />
+    <delete dir="${src}/main/csharp/obj" />
+    <delete dir="${src}/test/csharp/bin" />
+    <delete dir="${src}/test/csharp/obj" />
+    </target>
+
+    <!-- BUILD TARGET -->
+
+    <target name="generate-sources" >
+        <!-- Generate version info -->
+        <update-tokens filename="${src}/main/csharp/Properties/AssemblyInfo.cs" />
+    </target>
+
+    <target name="build-main-with-mono" if="USE.mono" >
+        <echo message="TODO: build w/ mono" />
+        <mdtool dir="${src}/main/csharp" project="EtchProj.csproj" />
+    </target>
+
+    <target name="build-main-with-dotnet" if="USE.dotnet" >
+        <!-- Build runtime -->
+        <msbuild buildfile="${src}/main/csharp/EtchProj.csproj">
+            <property name="Configuration" value="${Etch.build.target}" />
+        </msbuild>
+    </target>
+
+    <target name="build-main-csharp" depends="build-main-with-mono,build-main-with-dotnet" />
+
+    <target name="do-build" depends="generate-sources,build-main-csharp" if="BUILD.csharp" >
+
+        <mkdir dir="${Etch.dist}/lib" />
+        <mkdir dir="${Etch.clover-dist}/lib" />
+
+        <copy todir="${Etch.clover-dist}/lib" >
+            <fileset dir="${src}/main/csharp/bin/${Etch.build.target}">
+                <include name="*.pdb" />
+                <include name="*.dll" />
+            </fileset>
+        </copy>
+
+        <copy todir="${Etch.dist}/lib" >
+            <fileset dir="${src}/main/csharp/bin/${Etch.build.target}">
+                <include name="*.dll" />
+            </fileset>
+        </copy>
+    </target>
+
+    <!-- TEST TARGET -->
+    <target name="build-test-with-mono" if="USE.mono" >
+        <echo message="TODO: build w/ mono" />
+        <mdtool dir="${src}/test/csharp" project="EtchTestProj.csproj" />
+    </target>
+
+    <target name="build-test-with-dotnet" if="USE.dotnet" >
+        <msbuild buildfile="${src}/test/csharp/EtchTestProj.csproj" >
+            <property name="Configuration" value="${Etch.build.target}" />
+        </msbuild>
+    </target>
+
+    <target name="build-test-csharp" depends="build-test-with-mono,build-test-with-dotnet" />
+
+    <target name="do-test" depends="build-test-csharp" if="BUILD.csharp" >
+
+        <mkdir dir="${rawNUnitResults}" />
+
+        <nunit xmlout="${rawNUnitResults}/NUnitResults.xml">
+            <testassembly name="${src}/test/csharp/bin/${Etch.build.target}/EtchTest.dll" />
+        </nunit>
+
+        <xslt style="${Etch.buildSupportDirectory}/NUnitToJUnit.xsl"
+                in="${rawNUnitResults}/NUnitResults.xml" out="${testResultsDirectory}/TEST-NUnitResults.xml" />
+
+    </target>
+
+    <!-- POSTBUILD TARGET -->
+    <target name="do-postbuild">
+    </target>
+
+    <target name="do-publish" if="build.tests.fail">
+        <!-- Set flag file if any tests failed -->
+        <touch file="${Etch.runtime.tests.fail}"/>
+    </target>
+
+</project>
