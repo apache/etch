@@ -1,0 +1,73 @@
+Dependencies
+------------
+
+To build the compiler core and the Java and XML bindings and Java-based examples:
+
+ * Java JDK 1.5_011 or later
+ * Apache Ant 1.7+
+ * JavaCC 4.0
+ * Junit 4.3.1
+ * Velocity 1.5
+
+To compile the C# bindings and examples:
+
+ * Apache Ant DotNet 1.0
+ * Mono 1.9
+   - or -
+ * .NET Framework 2.0 (Visual Studio 2005)
+ * NUnit 2.4.7
+ 
+To compile NSIS installers:
+
+ * NSIS 2.23
+
+Setup development environment
+-----------------------------
+
+1. Install JDK. Make certain that you set your JAVA_HOME environment variable to point to the correct location.
+   
+Ant-based development
+---------------------
+
+1. Install Apache ANT (version 1.7 or later). 
+
+2. Put /path/to/apache-ant-1.7/bin in your PATH.
+
+3. If you have Mono, make certain MONO_HOME is set correctly. If you have .NET framework, make certain msbuild.exe is in your PATH.
+
+4. If building C#, make certain NUNIT_HOME is set correctly.
+
+5. If building on Win32 and you want to build the NSIS installers, set NSIS_HOME to /path/to/nsis/2.23.
+
+6. Update 'build.dependencies' with the correct paths to the jar's this project depends upon:
+
+  * javacc.home=/path/to/javacc-4.0      
+        ('${javacc.home}/bin/lib/javacc.jar' should exist)
+        
+  * junit.lib=/path/to/junit-4.3.1
+        ('${junit.lib}/junit-4.3.1.jar' should exist)
+        
+  * velocity.lib=/path/to/velocity-1.5            
+        ('${velocity.lib}/velocity-dep-1.5.jar' should exist)
+
+  --OPTIONAL--        
+  * ant-dotnet.lib=/path/to/apache-ant-dotnet-1.0 
+        ('${ant-dotnet.lib}/ant-dotnet-1.0.jar' should exist)
+
+
+Build
+-----
+
+At the shell prompt type:
+
+ > ant release
+
+This will build all compilers and all the bindings for which you have setup dependencies. It will also build and run all unit/functional tests and build all the examples in examples/.
+
+Once complete, the dist tree can be found in 'target/Installers/dist'. Copy this directory manually to the desired install location.
+
+Using Eclipse
+-------------
+
+See ECLIPSE_USERS_README.txt
+

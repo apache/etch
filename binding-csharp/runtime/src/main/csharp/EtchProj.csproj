@@ -1,0 +1,177 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{0E518F2A-3016-4C2F-A21B-9BD52B2DC846}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Etch</RootNamespace>
+    <AssemblyName>Etch</AssemblyName>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>etch.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Etch\Msg\AsyncMode.cs" />
+    <Compile Include="Etch\Msg\ComboValidator.cs" />
+    <Compile Include="Etch\Msg\Direction.cs" />
+    <Compile Include="Etch\Msg\Field.cs" />
+    <Compile Include="Etch\Msg\FieldMap.cs" />
+    <Compile Include="Etch\Msg\IdName.cs" />
+    <Compile Include="Etch\Msg\IdNameMap.cs" />
+    <Compile Include="Etch\Msg\ImportExportHelper.cs" />
+    <Compile Include="Etch\Msg\Message.cs" />
+    <Compile Include="Etch\Msg\StructValue.cs" />
+    <Compile Include="Etch\Msg\TypeMap.cs" />
+    <Compile Include="Etch\Msg\Validator.cs" />
+    <Compile Include="Etch\Msg\ValueFactory.cs" />
+    <Compile Include="Etch\Msg\XType.cs" />
+    <Compile Include="Etch\Support\AuthExceptionSerializer.cs" />
+    <Compile Include="Etch\Support\Class2TypeMap.cs" />
+    <Compile Include="Etch\Support\DefaultServerFactory.cs" />
+    <Compile Include="Etch\Support\DefaultValueFactory.cs" />
+    <Compile Include="Etch\Support\DeliveryService.cs" />
+    <Compile Include="Etch\Support\DummyValueFactory.cs" />
+    <Compile Include="Etch\Support\FreePool.cs" />
+    <Compile Include="Etch\Support\Mailbox.cs" />
+    <Compile Include="Etch\Support\NullPool.cs" />
+    <Compile Include="Etch\Support\ObjSession.cs" />
+    <Compile Include="Etch\Support\Pool.cs" />
+    <Compile Include="Etch\Support\QueuedPool.cs" />
+    <Compile Include="Etch\Support\RemoteBase.cs" />
+    <Compile Include="Etch\Support\RuntimeExceptionSerializer.cs" />
+    <Compile Include="Etch\Support\ServerFactory.cs" />
+    <Compile Include="Etch\Support\StubBase.cs" />
+    <Compile Include="Etch\Support\StubHelper.cs" />
+    <Compile Include="Etch\Support\TransportFactory.cs" />
+    <Compile Include="Etch\Support\TransportHelper.cs" />
+    <Compile Include="Etch\Support\TypeValidator.cs" />
+    <Compile Include="Etch\Support\Validator_boolean.cs" />
+    <Compile Include="Etch\Support\Validator_byte.cs" />
+    <Compile Include="Etch\Support\Validator_custom.cs" />
+    <Compile Include="Etch\Support\Validator_double.cs" />
+    <Compile Include="Etch\Support\Validator_float.cs" />
+    <Compile Include="Etch\Support\Validator_int.cs" />
+    <Compile Include="Etch\Support\Validator_long.cs" />
+    <Compile Include="Etch\Support\Validator_object.cs" />
+    <Compile Include="Etch\Support\Validator_RuntimeException.cs" />
+    <Compile Include="Etch\Support\Validator_short.cs" />
+    <Compile Include="Etch\Support\Validator_string.cs" />
+    <Compile Include="Etch\Support\Validator_StructValue.cs" />
+    <Compile Include="Etch\Support\Validator_void.cs" />
+    <Compile Include="Etch\Support\_Etch_AuthException.cs" />
+    <Compile Include="Etch\Support\_Etch_RuntimeException.cs" />
+    <Compile Include="Etch\Transport\ArrayValue.cs" />
+    <Compile Include="Etch\Transport\DefaultDeliveryService.cs" />
+    <Compile Include="Etch\Transport\Filter\AbstractMessageFilter.cs" />
+    <Compile Include="Etch\Transport\Filter\KeepAlive.cs" />
+    <Compile Include="Etch\Transport\Filter\Logger.cs" />
+    <Compile Include="Etch\Transport\Filter\PwAuth.cs" />
+    <Compile Include="Etch\Transport\Fmt\Binary\BinaryTaggedData.cs" />
+    <Compile Include="Etch\Transport\Fmt\Binary\BinaryTaggedDataFormatFactory.cs" />
+    <Compile Include="Etch\Transport\Fmt\Binary\BinaryTaggedDataInput.cs" />
+    <Compile Include="Etch\Transport\Fmt\Binary\BinaryTaggedDataOutput.cs" />
+    <Compile Include="Etch\Transport\Fmt\Binary\Validator_none.cs" />
+    <Compile Include="Etch\Transport\Fmt\ByteToSbyteConverter.cs" />
+    <Compile Include="Etch\Transport\Fmt\TaggedData.cs" />
+    <Compile Include="Etch\Transport\Fmt\TypeCode.cs" />
+    <Compile Include="Etch\Transport\FormatFactory.cs" />
+    <Compile Include="Etch\Transport\MailboxManager.cs" />
+    <Compile Include="Etch\Transport\Messagizer.cs" />
+    <Compile Include="Etch\Transport\PlainMailbox.cs" />
+    <Compile Include="Etch\Transport\PlainMailboxManager.cs" />
+    <Compile Include="Etch\Transport\SessionMessage.cs" />
+    <Compile Include="Etch\Transport\TaggedDataInput.cs" />
+    <Compile Include="Etch\Transport\TaggedDataOutput.cs" />
+    <Compile Include="Etch\Transport\TcpTransportFactory.cs" />
+    <Compile Include="Etch\Transport\TransportMessage.cs" />
+    <Compile Include="Etch\Transport\UnwantedMessage.cs" />
+    <Compile Include="Etch\Util\AbstractStartable.cs" />
+    <Compile Include="Etch\Util\AlarmListener.cs" />
+    <Compile Include="Etch\Util\AlarmManager.cs" />
+    <Compile Include="Etch\Util\ArrayIterator.cs" />
+    <Compile Include="Etch\Util\Assertion.cs" />
+    <Compile Include="Etch\Util\CharIterator.cs" />
+    <Compile Include="Etch\Util\CircularQueue.cs" />
+    <Compile Include="Etch\Util\Connection.cs" />
+    <Compile Include="Etch\Util\DateSerializer.cs" />
+    <Compile Include="Etch\Util\EmptyIterator.cs" />
+    <Compile Include="Etch\Util\EqualsHelper.cs" />
+    <Compile Include="Etch\Util\FlexBuffer.cs" />
+    <Compile Include="Etch\Util\HPTimer.cs" />
+    <Compile Include="Etch\Util\IdGenerator.cs" />
+    <Compile Include="Etch\Util\InputStream.cs" />
+    <Compile Include="Etch\Util\IntCounter.cs" />
+    <Compile Include="Etch\Util\Integer.cs" />
+    <Compile Include="Etch\Util\ListSerializer.cs" />
+    <Compile Include="Etch\Util\MapSerializer.cs" />
+    <Compile Include="Etch\Util\Monitor.cs" />
+    <Compile Include="Etch\Util\OutputStream.cs" />
+    <Compile Include="Etch\Util\Packetizer.cs" />
+    <Compile Include="Etch\Util\PerfTest.cs" />
+    <Compile Include="Etch\Util\Resources.cs" />
+    <Compile Include="Etch\Util\Runner.cs" />
+    <Compile Include="Etch\Util\RunnerHandler.cs" />
+    <Compile Include="Etch\Util\Session.cs" />
+    <Compile Include="Etch\Util\SessionConsts.cs" />
+    <Compile Include="Etch\Util\SessionData.cs" />
+    <Compile Include="Etch\Util\SessionListener.cs" />
+    <Compile Include="Etch\Util\SessionPacket.cs" />
+    <Compile Include="Etch\Util\SingleIterator.cs" />
+    <Compile Include="Etch\Util\Startable.cs" />
+    <Compile Include="Etch\Util\StringTokenizer.cs" />
+    <Compile Include="Etch\Util\StringUtil.cs" />
+    <Compile Include="Etch\Util\StrIntHashMap.cs" />
+    <Compile Include="Etch\Util\StrIntHashMapSerializer.cs" />
+    <Compile Include="Etch\Util\StrStrHashMap.cs" />
+    <Compile Include="Etch\Util\StrStrHashMapSerializer.cs" />
+    <Compile Include="Etch\Util\TcpConnection.cs" />
+    <Compile Include="Etch\Util\TcpListener.cs" />
+    <Compile Include="Etch\Util\TcpTransport.cs" />
+    <Compile Include="Etch\Util\Timer.cs" />
+    <Compile Include="Etch\Util\TlsConnection.cs" />
+    <Compile Include="Etch\Util\Todo.cs" />
+    <Compile Include="Etch\Util\TodoDelegateImpl.cs" />
+    <Compile Include="Etch\Util\TodoManager.cs" />
+    <Compile Include="Etch\Util\Transport.cs" />
+    <Compile Include="Etch\Util\TransportConsts.cs" />
+    <Compile Include="Etch\Util\TransportData.cs" />
+    <Compile Include="Etch\Util\TransportPacket.cs" />
+    <Compile Include="Etch\Util\URL.cs" />
+    <Compile Include="Etch\Util\URLSerializer.cs" />
+    <Compile Include="Etch\Util\Who.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="etch.snk" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

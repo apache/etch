@@ -1,0 +1,86 @@
+/** Information about a Media Engine */
+struct MediaEngine
+(
+	/** unique ID of this engine */
+	string mediaEngineId,
+	/** name of this engine */
+	string mediaEngineName,
+	/** Ip Address of the engine */
+	string ipAddress, 
+	
+	/** Password to connect to the media engine */
+	string password,
+	
+	/** DERIVED: If this engine is currently connected */
+	boolean connected,
+	
+	/** DERIVED: If this engine is currently enabled */
+	boolean enabled
+)
+
+/**
+ * Counts the number of Media Engines.
+ * @return the number of Media Engines
+ * @throws AppException
+ */
+int countMediaEngines() throws AppException
+
+/**
+ * Gets a list of all the media engines.
+ * @param offset the offset of the first item to return.
+ * @param count The count of items to return.
+ * @return the info for each trigger. If the number of items
+ * is < count, then the list is complete. If the number of items
+ * == count, then there might be more items starting at offset + count.
+ * @throws AppException
+ */
+MediaEngine[] listMediaEngines( int offset, int count ) throws AppException
+
+/**
+ * Gets the info for the specified media engine.
+ * @param mediaEngineId the unique id of the media engine.
+ * @return the info of the media engine or null.
+ * @throws AppException
+ */
+MediaEngine getMediaEngine( string mediaEngineId ) throws AppException
+
+/**
+ * Adds the media engine from the supplied info.
+ * Add only uses the fields for ipAddress, mediaEngineName and password, all
+ * other fields are ignored.  To enable or disable use enableMediaEngine and
+ * disableMediaEngine
+ * @param mediaEngine the info for the new media engine. 
+ * @return the updated media engine info, with all fields set.
+ * @throws AppException
+ */
+MediaEngine addMediaEngine( MediaEngine mediaEngine ) throws AppException
+
+/**
+ * Updates all fields for this media engine.
+ * Update only uses the fields for mediaEngineName and password, all
+ * other fields are ignored
+ * @param mediaEngine the updated media engine
+ * @throws AppException
+ */
+void updateMediaEngine( MediaEngine mediaEngine ) throws AppException
+
+/**
+ * Deletes the specified media engine.
+ * @param mediaEngineId the unique id of the media engine
+ * @throws AppException
+ */
+void deleteMediaEngine( string mediaEngineId ) throws AppException
+
+/**
+ * Enables a media engine
+ * @param mediaEngineId the unique id of the media engine throws AppException
+ * @throws AppException
+ */
+void enableMediaEngine( string mediaEngineId ) throws AppException
+
+/**
+ * Disables a media engine
+ * @param mediaEngineId the unique id of the media engine
+ * @throws AppException
+ */
+void disableMediaEngine( string mediaEngineId ) throws AppException

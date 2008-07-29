@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<project name="installers" basedir="." default="help">
+    <description>Installers, .zip and .tar.gz packages</description>
+    <property name="Etch.basedir" location="${basedir}/.." />
+    <import file="${Etch.basedir}/build-support/etch.includes.xml" />
+
+    <!-- Static properties of the sub-project -->
+    <property name="proj"                 location="${Etch.basedir}/installers" />
+    <property name="target"               location="${proj}/target" />
+    <property name="packageName"          value="etch-${Etch.version}" />
+
+    <!-- INIT TARGET -->
+    <!-- Modify this target to define project specific properties that can only be set at runtime -->
+    <target name="do-init">
+        <delete dir="${target}" failonerror="false" quiet="true" />
+        <mkdir dir="${Etch.dist}" />
+        <mkdir dir="${target}" />
+    </target>
+
+    <!-- CLEAN TARGET -->
+    <target name="do-clean">
+        <delete dir="${target}" />
+    </target>
+
+    <!-- BUILD TARGET -->
+
+    <target name="do-license">
+        <copy todir="${Etch.dist}" >
+            <fileset dir="${Etch.basedir}" includes="LICENSE.txt" />
+        </copy>
+    </target>
+
+    <target name="do-zips" >
+        <!-- create zipped binary distribution -->
+        <zip destfile="${target}/${packageName}.zip" >
+            <zipfileset dir="${Etch.dist}" prefix="${packageName}/" >
+                <exclude name="bin/etch" />
+            </zipfileset>
+            <zipfileset dir="${Etch.dist}" prefix="${packageName}/" filemode="755" >
+                <include name="bin/etch" />
+            </zipfileset>                
+        </zip>
+
+        <!-- create tar-gzip binary distribution -->
+        <tar destfile="${target}/${packageName}.tar.gz" compression="gzip" >
+            <tarfileset dir="${Etch.dist}" prefix="${packageName}/">
+                <exclude name="bin/etch" />
+            </tarfileset>
+            <tarfileset dir="${Etch.dist}" prefix="${packageName}/" filemode="755" >
+                <include name="bin/etch" />
+            </tarfileset>
+        </tar>
+    </target>
+
+    <target name="do-nsis" if="NSIS.enabled" >
+        <makensis destfile="${target}/${packageName}-setup.exe" root="${Etch.basedir}" dir="installers" script="etch-full-installer" />        
+    </target>
+
+    <target name="do-build" depends="do-license,do-nsis,do-zips" />
+
+    <!-- TEST TARGET -->
+    <target name="do-test">
+		<available property="build.tests.fail" file="${Etch.runtime.tests.fail}"/>
+    </target>
+
+    <!-- POSTBUILD TARGET -->
+    <target name="do-postbuild">
+        <mkdir dir="${Etch.basedir}/target/Installers" />
+        <copy todir="${Etch.basedir}/target/Installers/packages" >
+            <fileset dir="${target}">
+                <include name="**/*.zip" />
+                <include name="**/*.exe" />
+                <include name="**/*.tar.gz" />
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="do-publish" if="build.tests.fail">
+        <!-- Set flag file if any tests failed -->
+        <touch file="${Etch.runtime.tests.fail}"/>
+    </target>
+
+</project>

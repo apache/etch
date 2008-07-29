@@ -1,0 +1,101 @@
+/* $Id$
+ *
+ * Copyright 2007-2008 Cisco Systems Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy
+ * of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ */
+
+module etch.examples.chat
+
+/**
+ * The Chat example program implements a simple service
+ * for communicating between logged in users.
+ */
+@Authorize( isLoggedIn ) @Timeout( 4000 )
+service Chat
+{
+	/**
+	 * Exception thrown if Chat fails.
+	 *
+	 * @param msg the reason for the failure.
+	 */
+	exception Failure( string msg )
+	
+	//////////
+	// AUTH //
+	//////////
+	
+	/**
+	 * Marks the user as logged in if they are authentic and have the right
+	 * to utilize the service.
+	 *
+	 * @param name the name of the user.
+	 *
+	 * @param pwd the password of the user.
+	 *
+	 * @throws Failure if the user is already logged in, name or pwd don't
+	 * match authentication database, or if the user doesn't have the right
+	 * to utilize the service.
+	 */
+	@Authorize( true )
+	void login( string name, string pwd ) throws Failure
+	
+	/**
+	 * Marks the user as logged out.
+	 */
+	@Authorize( true )
+	void logout()
+	
+	/**
+	 * Checks if a user is logged in.
+	 *
+	 * @return true if a user is logged in.
+	 */
+	@Authorize( true ) @Direction( Both )
+	boolean isLoggedIn()
+	
+	//////////
+	// CHAT //
+	//////////
+	
+	/**
+	 * Reports the set of online users upon login.
+	 *
+	 * @param names the set of online users.
+	 */
+	@Oneway @Direction( Client )
+	void whoIsOnline( string[] names )
+	
+	/**
+	 * Reports a status change of a user.
+	 *
+	 * @param name the name of the user.
+	 *
+	 * @param online true if they are now online.
+	 */
+	@Oneway @Direction( Client )
+	void statusChange( string name, boolean online ) 
+	
+	/**
+	 * Sends a message to or from the named user.
+	 *
+	 * @param who the name of the recipient or the sender
+	 * depending upon the direction.
+	 *
+	 * @param msg the message to send.
+	 *
+	 * @throws Failure if the user is not online.
+	 */
+	@Direction( Both ) @AsyncReceiver( Queued )
+	void send( string who, string msg ) throws Failure
+}

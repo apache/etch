@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<project name="etch-dependencies" basedir="." default="check-all">
+    <description>Etch Dependencies</description>
+    <property name="Etch.basedir" location="${basedir}/.." />
+    
+    <!-- Load Environment -->
+    <property environment="env" />
+    
+    <!-- Load dependencies -->
+    <property file="${Etch.basedir}/build.dependencies" prefix="default" />
+    
+    <target name="check-javacc" >
+        <fail message="${default.javacc.home}/bin/lib/javacc.jar cannot be found. Please set 'javacc.home' in build.dependencies">
+            <condition>
+                <not><available file="${default.javacc.home}/bin/lib/javacc.jar" /></not>
+            </condition>
+        </fail>
+        <echo message="Using ${default.javacc.home}/bin/lib/javacc.jar ..." />
+    </target>
+    
+    <target name="check-junit">
+        <fail message="${default.junit.lib}/junit-4.3.1.jar cannot be found. Please set 'junit.lib' in build.dependencies">
+            <condition>
+                <not><available file="${default.junit.lib}/junit-4.3.1.jar" /></not>
+            </condition>
+        </fail>        
+        <echo message="Using ${default.junit.lib}/junit-4.3.1.jar ..." />
+    </target>
+    
+    <target name="check-velocity">
+        <fail message="${default.velocity.lib}/velocity-dep-1.5.jar cannot be found. Please set 'velocity.lib' in build.dependencies">
+            <condition>
+                <not><available file="${default.velocity.lib}/velocity-dep-1.5.jar" /></not>
+            </condition>
+        </fail>        
+        <echo message="Using ${default.velocity.lib}/velocity-dep-1.5.jar ..." />
+    </target>
+    
+    <target name="check-dotnet" >
+        <echo message="ANT-DOTNET" />
+    </target>
+    
+    <target name="check-all" depends="check-javacc,check-junit,check-velocity,check-dotnet" />
+    
+
+</project>

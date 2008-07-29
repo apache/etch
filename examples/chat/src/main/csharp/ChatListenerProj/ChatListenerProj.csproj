@@ -1,0 +1,95 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{574C28F9-1D0D-47CB-9F18-221E5128D5A6}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>etch.examples.chat</RootNamespace>
+    <AssemblyName>ChatListener</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.examples.chat\BaseChatClient.cs">
+      <Link>BaseChatClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.examples.chat\BaseChatServer.cs">
+      <Link>BaseChatServer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.examples.chat\Chat.cs">
+      <Link>Chat.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.examples.chat\ChatClient.cs">
+      <Link>ChatClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.examples.chat\ChatHelper.cs">
+      <Link>ChatHelper.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.examples.chat\ChatServer.cs">
+      <Link>ChatServer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.examples.chat\RemoteChat.cs">
+      <Link>RemoteChat.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.examples.chat\RemoteChatClient.cs">
+      <Link>RemoteChatClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.examples.chat\RemoteChatServer.cs">
+      <Link>RemoteChatServer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.examples.chat\StubChat.cs">
+      <Link>StubChat.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.examples.chat\StubChatClient.cs">
+      <Link>StubChatClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.examples.chat\StubChatServer.cs">
+      <Link>StubChatServer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.examples.chat\ValueFactoryChat.cs">
+      <Link>ValueFactoryChat.cs</Link>
+    </Compile>
+    <Compile Include="..\etch.examples.chat\ImplChatServer.cs">
+      <Link>ImplChatServer.cs</Link>
+    </Compile>
+    <Compile Include="..\etch.examples.chat\MainChatListener.cs">
+      <Link>MainChatListener.cs</Link>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\..\binding-csharp\runtime\src\main\csharp\EtchProj.csproj">
+      <Project>{0E518F2A-3016-4C2F-A21B-9BD52B2DC846}</Project>
+      <Name>EtchProj</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

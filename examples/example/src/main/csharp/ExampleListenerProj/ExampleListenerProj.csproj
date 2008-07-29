@@ -1,0 +1,98 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{7EEA2F47-0D96-4187-B9EF-CA0B9E839841}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>etch.examples.example</RootNamespace>
+    <AssemblyName>ExampleListener</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.examples.example\BaseExampleClient.cs">
+      <Link>BaseExampleClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.examples.example\BaseExampleServer.cs">
+      <Link>BaseExampleServer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.examples.example\Example.cs">
+      <Link>Example.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.examples.example\ExampleClient.cs">
+      <Link>ExampleClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.examples.example\ExampleHelper.cs">
+      <Link>ExampleHelper.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.examples.example\ExampleServer.cs">
+      <Link>ExampleServer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.examples.example\RemoteExample.cs">
+      <Link>RemoteExample.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.examples.example\RemoteExampleClient.cs">
+      <Link>RemoteExampleClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.examples.example\RemoteExampleServer.cs">
+      <Link>RemoteExampleServer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.examples.example\StubExample.cs">
+      <Link>StubExample.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.examples.example\StubExampleClient.cs">
+      <Link>StubExampleClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.examples.example\StubExampleServer.cs">
+      <Link>StubExampleServer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.examples.example\ValueFactoryExample.cs">
+      <Link>ValueFactoryExample.cs</Link>
+    </Compile>
+    <Compile Include="..\etch.examples.example\ImplExampleClient.cs">
+      <Link>ImplExampleClient.cs</Link>
+    </Compile>
+    <Compile Include="..\etch.examples.example\ImplExampleServer.cs">
+      <Link>ImplExampleServer.cs</Link>
+    </Compile>
+    <Compile Include="..\etch.examples.example\MainExampleListener.cs">
+      <Link>MainExampleListener.cs</Link>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\..\binding-csharp\runtime\src\main\csharp\EtchProj.csproj">
+      <Project>{0E518F2A-3016-4C2F-A21B-9BD52B2DC846}</Project>
+      <Name>EtchProj</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

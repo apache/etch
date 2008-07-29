@@ -1,0 +1,3 @@
+	const int INT2 = 2;
+	const int INT3 = 8
+	const string STR = "TEST";
