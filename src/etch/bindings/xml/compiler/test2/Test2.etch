@@ -1,0 +1,10 @@
+module etch.bindings.xml.compiler.test2
+
+service Test2
+{
+	Map test1( Map map )
+	
+	Set test2( Set set )
+	
+	List test3( List list )
+}

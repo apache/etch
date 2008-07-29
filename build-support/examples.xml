@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<project name="etch-examples" default="Debug" basedir=".">
+    <description>Template Build script for Etch examples</description>
+    <import file="build.includes.xml" />
+
+    <!-- Static properties of the sub-project -->
+    <property name="exampleName"      value="EXAMPLE" />
+    <property name="buildRoot"        value="${Etch.buildDirectory}/examples/${exampleName}" />
+    <property name="src"              value="src" />
+
+    <!-- INIT TARGET -->
+    <!-- Modify this target to define example-specific properties that can only be set at runtime -->
+    <target name="do-init">
+        <property name="buildDirectory"       value="${buildRoot}/${Etch.build.target}/src" />
+        <property name="classesDirectory"     value="${buildRoot}/${Etch.build.target}/classes" />
+        <property name="testResultsDirectory" value="${buildRoot}/${Etch.build.target}/test-results" />
+
+        <mkdir dir="${classesDirectory}" />
+        <mkdir dir="${buildDirectory}" />
+        <mkdir dir="${testResultsDirectory}" />
+    </target>
+
+    <!-- CLEAN TARGET -->
+    <!-- Modify this target to clean up the build products -->
+    <target name="do-clean">
+        <delete dir="${buildRoot}" />
+    </target>
+
+    <!-- BUILD TARGET -->
+    <!-- Modify this target to actually build the example -->
+    <target name="do-build">
+        <!-- Copy the source of the example to the build location -->
+        <copy todir="${buildDirectory}" >
+            <fileset dir="${src}" includes="/etch/examples/${exampleName}/**" />
+        </copy>
+
+        <!-- TODO: implement build for example -->
+    
+    </target>
+
+    <!-- TEST TARGET -->
+    <!-- Modify this target to build and execute test cases for the example -->
+    <target name="do-test">
+    </target>
+
+    <!-- POSTBUILD TARGET -->
+    <!-- Modify this target to publish any build products to the 'dist' directory -->
+    <target name="do-postbuild">
+    </target>
+
+</project>

@@ -1,0 +1,11 @@
+module etch.bindings.java.compiler.test;
+
+/**
+ * Test case for problem where there is a missing declaration for
+ * _mf_result if there are only oneway messages in the service.
+ */
+service Test2
+{
+	@Oneway
+	void foo()
+}

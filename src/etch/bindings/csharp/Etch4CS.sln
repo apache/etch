@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual Studio 2005
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Etch4CS", "Etch4CS.csproj", "{368B5086-063C-4C5E-A74F-0AC32946036C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Etch4CS_Tests", "Etch4CS_Tests.csproj", "{B1FA551D-EE27-48A2-A2A8-8910DF5DEFCD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{368B5086-063C-4C5E-A74F-0AC32946036C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{368B5086-063C-4C5E-A74F-0AC32946036C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{368B5086-063C-4C5E-A74F-0AC32946036C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{368B5086-063C-4C5E-A74F-0AC32946036C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B1FA551D-EE27-48A2-A2A8-8910DF5DEFCD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B1FA551D-EE27-48A2-A2A8-8910DF5DEFCD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B1FA551D-EE27-48A2-A2A8-8910DF5DEFCD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B1FA551D-EE27-48A2-A2A8-8910DF5DEFCD}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

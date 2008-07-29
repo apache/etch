@@ -1,0 +1,10 @@
+module etch.bindings.java.compiler.test;
+
+/** test case for defined types conflicting with standard types. */
+service Test3
+{
+	struct Message()
+	struct Mailbox()
+	struct DeliveryService()
+	Message foo( Message a, Mailbox b, DeliveryService c )
+}

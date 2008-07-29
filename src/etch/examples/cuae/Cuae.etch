@@ -1,0 +1,76 @@
+module etch.examples.cuae
+
+/** Examples of cuae-like server stub. */
+@Timeout( 497 )
+service Cuae
+{
+	/**
+	 * @param code
+	 */
+	struct Request( int code )
+
+	/**
+	 * @param msg
+	 */
+	struct ReqWithMessage( string msg ) extends Request
+	
+	/**
+	 * @param msg
+	 */
+	struct Response( string msg )
+
+	/**
+	 * @param code
+	 */
+	struct RespWithCode ( int code ) extends Response
+	
+	/**
+	 * @param req
+	 * @return response
+	 */
+	@Direction(Server)
+	@AsyncReceiver( Queued )
+	Response doit1( Request req )
+	
+	/**
+	 * @param req
+	 * @return response
+	 */
+	@Direction(Client)
+	@AsyncReceiver( Free )
+	Response doit2( Request req )
+	
+	/**
+	 * @param req
+	 * @return responses
+	 */
+	@Direction(Both)
+	Response[] doit3( Request[] req )
+	
+	/**
+	 * 
+	 */
+	@Direction(Both)
+	void doit4()
+	
+	/**
+	 * 
+	 */
+	@Direction(Server)
+	@Oneway
+	void test1()
+	
+	/**
+	 * 
+	 */
+	@Direction(Client)
+	@Oneway
+	void test2()
+	
+	/**
+	 * 
+	 */
+	@Direction(Both)
+	@Oneway
+	void test3()
+}

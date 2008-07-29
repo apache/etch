@@ -1,0 +1,122 @@
+This is a description of the etch-generated files for your service.
+
+----------------
+- How To Build -
+----------------
+
+In the directory where the etch file is located, execute the following command:
+
+etch -q -d . -I . -b csharp -w all Blah.etch
+
+This would compile the service description Blah.etch, generating all csharp files,
+into csharp namespaces rooted in the current directory (-d .), resolving includes
+and mixins from the current directory (-I .) and being quiet about it (-q).
+
+Assuming the Blah.etch specified a module of "demo" and a service of "Blah",
+the csharp files would be generated into a sub-directory demo of the current
+directory. you may now change to that directory and compile the resulting files:
+
+cd demo
+csc "/reference:%ETCH_HOME%\lib\Etch4CS.dll" /main:demo.MainBlahListener *.cs
+csc "/reference:%ETCH_HOME%\lib\Etch4CS.dll" /main:demo.MainBlahClient *.cs
+
+(Assuming windows; for unix, read the mono directions.)
+
+Depending upon how etch was installed, you may need to install the Etch4CS.dll
+into the system global assembly cache. This command will do the trick:
+
+copy /y "%ETCH_HOME%\lib\Etch4CS.dll" %windir%\assembly
+
+You only need to do this once after each installation of etch. And once the
+installer is fixed, you won't need to do it at all.
+
+To run the service (which initially won't do anything but make a connection and
+then close it, use the following two commands in separate shells (again, from
+the demo directory):
+
+MainBlahListener
+
+MainBlahClient
+
+The first command (MainBlahListener) starts the service listener which accepts
+connections. The second command (MainBlahClient) runs a sample client, which
+makes a connection to the running listener and then closes it again.
+
+Once you've compiled the service and tested the result, you may implement your
+service by adding content to the etch file, adding implementation details to the
+Impl*.cs and Main*.cs files, and recompiling using the above steps. You may also
+load these files into an IDE such as visual studio, or use a build management
+system such as msbuild or nant. Remember, whenever you change the etch file, you
+must re-etch the service description and then re-csc all the cs
+files.
+
+-------------------
+- Generated Files -
+-------------------
+
+Here is a description of the generated files for a service named Blah.
+
+Blah.cs
+BlahClient.cs
+BlahServer.cs
+
+These three files are the generated interface classes. Service defined constants
+and types are in Blah.cs, as well as direction "both" messages, which are
+messages which are shared between client and server. BlahClient.cs and
+BlahServer.cs are respectively the messages for just the direction client or
+server. You should not edit these files.
+
+RemoteBlah.cs
+RemoteBlahClient.cs
+RemoteBlahServer.cs
+
+RemoteBlah*.cs are the generated classes which implement the interfaces,
+with message implementations which encode the message type and arguments for
+transport to the connection peer and then receive and decode any response. You
+should not edit these files.
+
+StubBlah.cs
+StubBlahClient.cs
+StubBlahServer.cs
+
+StubBlah*.cs are the generated classes which receive messages encoded by
+RemoteBlah*.cs and decode them, calling the appropriate message implementation
+and then encoding and sending any result. You should not edit these files.
+
+ValueFactoryBlah.cs
+
+ValueFactoryBlah.cs is a generated class which contains helper code to
+serialize service defined types and also the meta data which describes the
+messages and fields, field types, timeouts, etc. You should not edit this file.
+
+BaseBlah.cs
+BaseBlahClient.cs
+BaseBlahServer.cs
+
+BaseBlah*.cs are generated classes which implement the interfaces, with
+message implementations which do nothing but throw UnsupportedOperationException.
+They can be used to supply an implementation when you don't want to immediately
+implement all the messages. You should not edit these files.
+
+ImplBlahClient.cs
+ImplBlahServer.cs
+
+ImplBlah*.cs are the generated sample client and server implementation
+classes. They extend the generated base classes. These are used by the sample
+main programs to provide implementations of the client or server messages. Edit
+these files as you wish to implement your service (overriding the default
+implementations from the generated base classes).
+
+BlahHelper.cs
+
+BlahHelper.cs is a generated class which includes static methods to help
+construct transports for client and listener. You should not edit this file.
+
+MainBlahClient.cs
+MainBlahListener.cs
+
+MainBlah*.cs are the generated sample client and server main programs.
+They show how to setup a transport and start it and how to create a session.
+Edit these files as you wish to implement your service, or just copy the code
+into your own application.
+

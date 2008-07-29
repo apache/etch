@@ -1,0 +1,40 @@
+# This is a simple test file designes to test mapWords in Backend.
+# Plain comment
+# Nested # Comments
+ # Space lead comment
+  # Multi space lead comment
+	# Tab lead comment
+		# Multi tab lead comment
+ 	# Mixed space comment
+
+
+
+
+# Whitespace betwixt comments
+key1
+key2#Comment following directly after a key
+key3 # Simple Comment
+key4  # Multi space comment
+
+key5 = value5
+key6 = value6#Comment following directly after a value
+key7 = value7 # Simple Comment
+key8 = value8  # Multi space comment
+key9=value9
+key10=value10#Comment following directly after a non-spaced value
+key11=value11 # Simple Comment
+key12 value12
+key13 value13#Comment following directly after a value
+key14 value14 # Simple Comment
+key15 value15  # Multi space comment
+
+key16 value16
+key16 value17
+key17
+key17 value17
+key18 value18
+key18
+
+Key19
+KEY20
+kEy21

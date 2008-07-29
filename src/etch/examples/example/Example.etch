@@ -1,0 +1,98 @@
+module etch.examples.example
+
+/**
+ * Service version of hello world.
+ */
+service Example
+{
+	/** the number of times to perform the action */
+	const int COUNT = 4
+	
+	/** a simple view of time */
+	enum Times
+	(
+		/** the past */
+		YESTERDAY,
+		/** right now */
+		TODAY,
+		/** the future */
+		TOMORROW
+	)
+	
+	/** a way to speak about places */
+	struct Point
+	(
+		/** the x-coordinate value */
+		double x,
+		/** the y-coordinate value */
+		double y,
+		/** the z-coordinate value */
+		double z
+	)
+	
+	/**
+	 * Exception thrown if ping doesn't work.
+	 * @param msg the explanation.
+	 */
+	exception PongException ( string msg )
+	
+	/**
+	 * Says hello to the server.
+	 * @param msg a greeting for the server.
+	 * @return the id of our hello
+	 */
+	@Timeout( 1234 )
+	@Direction( Server )
+	int helloServer( string msg )
+	
+	/**
+	 * Says hello to the client.
+	 * @param msg a greeting for the client.
+	 * @return the id of our hello
+	 */
+	@Timeout( 2345 )
+	@Direction( Client )
+	int helloClient( string msg )
+	
+	/**
+	 * Says hello to the client or server.
+	 * @param msg a greeting for the client or server.
+	 * @return the id of our hello
+	 */
+	@Timeout( 3456 )
+	@Direction( Both )
+	int hello( string msg )
+	
+	/**
+	 * Says howdy to the server. Oneway.
+	 * @param msg a greeting for the server.
+	 */
+	@Oneway
+	@Direction( Server )
+	void howdyServer( string msg )
+	
+	/**
+	 * Says howdy to the client. Oneway.
+	 * @param msg a greeting for the client.
+	 */
+	@Oneway
+	@Direction( Client )
+	void howdyClient( string msg )
+	
+	/**
+	 * Says howdy to the client or server. Oneway.
+	 * @param msg a greeting for the client or server.
+	 */
+	@Oneway
+	@Direction( Both )
+	void howdy( string msg )
+	
+	/**
+	 * Pings the other side.
+	 * @throws PongException
+	 */
+	@Timeout( 4567 )
+	@Direction( Both )
+	@AsyncReceiver( Queued )
+	void ping() throws PongException
+}

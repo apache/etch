@@ -1,0 +1,80 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{248476E1-D83D-49C8-9A55-94A6A18D1D38}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <NoStandardLibraries>false</NoStandardLibraries>
+    <AssemblyName>DistributedHashTable</AssemblyName>
+    <RootNamespace>DistributedHashTable</RootNamespace>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>.\bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>.\bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Etch4CS, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\bindings\csharp\bin\Debug\Etch4CS.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.framework, Version=2.4.1.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\bindings\csharp\bin\Debug\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="DistributedHashTable.cs" />
+    <Compile Include="DistributedHashTableClient.cs" />
+    <Compile Include="DistributedHashTableHelper.cs" />
+    <Compile Include="DistributedHashTableServer.cs" />
+    <Compile Include="DistributedHashTableServerImpl.cs" />
+    <Compile Include="ImplDistributedHashTableClient.cs" />
+    <Compile Include="ImplDistributedHashTableServer.cs" />
+    <Compile Include="MainDistributedHashTableListener.cs" />
+    <Compile Include="RemoteDistributedHashTable.cs" />
+    <Compile Include="RemoteDistributedHashTableClient.cs" />
+    <Compile Include="RemoteDistributedHashTableServer.cs" />
+    <Compile Include="StubDistributedHashTable.cs" />
+    <Compile Include="StubDistributedHashTableClient.cs" />
+    <Compile Include="StubDistributedHashTableServer.cs" />
+    <Compile Include="TestRemoteDistributedHashTableServer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ValueFactoryDistributedHashTable.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include=".svn\all-wcprops" />
+    <None Include=".svn\dir-prop-base" />
+    <None Include=".svn\entries" />
+    <None Include=".svn\format" />
+    <None Include=".svn\text-base\DistributedHashTable.etch.svn-base" />
+    <None Include=".svn\text-base\DistributedHashTableHelper.java.svn-base" />
+    <None Include=".svn\text-base\DistributedHashTableListener.java.svn-base" />
+    <None Include=".svn\text-base\DistributedHashTableServerImpl.java.svn-base" />
+    <None Include=".svn\text-base\TestRemoteDistributedHashTableServer.java.svn-base" />
+    <None Include="DistributedHashTable.etch" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include=".svn\prop-base\" />
+    <Folder Include=".svn\props\" />
+    <Folder Include=".svn\tmp\prop-base\" />
+    <Folder Include=".svn\tmp\props\" />
+    <Folder Include=".svn\tmp\text-base\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSHARP.Targets" />
+  <ProjectExtensions>
+    <VisualStudio AllowExistingFolder="true" />
+  </ProjectExtensions>
+</Project>

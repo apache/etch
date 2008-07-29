@@ -1,0 +1,578 @@
+module etch.bindings.java.compiler.test
+
+@Direction(Both)
+@Timeout(4000)
+service Test1
+{
+	/** */
+	const boolean BOOL1 = false
+	/** */
+	const boolean BOOL2 = true
+	
+	const byte BYTE1 = -128
+	/** */
+	const byte BYTE2 = -1
+	/** */
+	const byte BYTE3 = 0
+	/** */
+	const byte BYTE4 = 1
+	/** */
+	const byte BYTE5 = 127
+	
+	/** */
+	const short SHORT1 = -32768
+	/** */
+	const short SHORT2 = -1
+	/** */
+	const short SHORT3 = 0
+	/** */
+	const short SHORT4 = 1
+	/** */
+	const short SHORT5 = 32767
+	
+	/** */
+	const int INT1 = -2147483648
+	/** */
+	const int INT2 = -1
+	/** */
+	const int INT3 = 0
+	/** */
+	const int INT4 = 1
+	/** */
+	const int INT5 = 2147483647
+	
+	/** */
+	const long LONG1 = -9223372036854775808
+	/** */
+	const long LONG2 = -1
+	/** */
+	const long LONG3 = 0
+	/** */
+	const long LONG4 = 1
+	/** */
+	const long LONG5 = 9223372036854775807
+	
+	/** */
+	const float FLOAT1 = 1.4e-45
+	/** */
+	const float FLOAT2 = -1
+	/** */
+	const float FLOAT3 = 0
+	/** */
+	const float FLOAT4 = 1
+	/** */
+	const float FLOAT5 = 3.4028235e38
+	
+	/** */
+	const double DOUBLE1 = 4.9e-324
+	/** */
+	const double DOUBLE2 = -1
+	/** */
+	const double DOUBLE3 = 0
+	/** */
+	const double DOUBLE4 = 1
+	/** */
+	const double DOUBLE5 = 1.7976931348623157e308
+	
+	/** */
+	const string STRING1 = ""
+	/** */
+	const string STRING2 = "a"
+	/** */
+	const string STRING3 = "abc"
+	/** */
+	const string STRING4 = "a\tb\tc\r\n"
+	/** */
+	const string STRING5 = "x\u0020x" // space
+	/** */
+	const string STRING6 = "x\u00bfx" // inverted question mark
+	/** */
+	const string STRING7 = "x\u03a9x" // greek omega
+	/** */
+	const string STRING8 = "x\\x" // backslash
+	/** */
+	const string STRING9 = "x'x" // apostrophe
+	/** */
+	const string STRING10 = "x\"x" // double quote
+	
+	/** */
+	enum E1( /** value */ A, /** value */ B, /** value */ C )
+	
+	/** */
+	struct S1( /** value */ int x, /** value */ int y, /** value */ int z )
+	
+	/** */
+	struct S2( /** value */ S1 a, /** value */ S1 b, /** value */ E1 c )
+	
+	/** struct with object as param */
+	struct S3 ( /** value */ string type, /** value */ object x )
+	
+	/** struct with array of object as param */
+	struct S4 ( /** value */ string type, /** value */ object[] x )
+	
+	/** */
+	@Extern(java, "StrIntHashMap", "etch.bindings.java.util.StrIntHashMap",
+		"StrIntHashMapSerializer", "etch.bindings.java.util.StrIntHashMapSerializer")
+	@Extern(csharp, "StrIntHashMap", "Etch.Util.StrIntHashMap",
+		"StrIntHashMapSerializer", "Etch.Util.StrIntHashMapSerializer")
+	extern Blob
+	
+	/** */
+	exception Excp1( /** value */ string msg, /** value */ int code )
+	
+	/** */
+	@Unchecked
+	exception Excp2()
+	
+	/** */
+	@Unchecked(true)
+	exception Excp3()
+	
+	/** */
+	@Unchecked(false)
+	exception Excp4()
+	
+	/** Exception with object as param */
+	exception Excp5( /** value */ string msg, /** value */ int code, /** value */ object x )
+	
+	/** Exception with array of object as param */
+	exception Excp6( /** value */ string msg, /** value */ int code, /** value */ object[] x )	
+	
+	/** do absolutely nothing */
+	@AsyncReceiver(Free)
+	void nothing()
+	
+	/**
+	 * Increments a value by one.
+	 * @param x a value
+	 * @return a value one larger.
+	 */
+	@AsyncReceiver(Queued)
+	int incr( int x )
+
+	/**
+	 * @param x a value
+	 * @param y a value
+	 * @return a value
+	 */
+	int add(int x, int y )
+	
+	/**
+	 * @param x a value
+	 * @param y a value
+	 * @return a value
+	 */
+	int sub( int x, int y )
+	
+	/**
+	 * @param x a value
+	 * @return a value
+	 */
+	int sum( int[] x )
+	
+	/**
+	 * @param e a value
+	 * @param x a value
+	 * @return a value
+	 */
+	int trans( E1 e, int x )
+	
+	/**
+	 * @param a a value
+	 * @param b a value
+	 * @return a value
+	 */
+	double dist( S1 a, S1 b )
+	
+	/**
+	 * @param n a value
+	 * @param x a value
+	 * @return a value
+	 */
+	int[] fill( int n, int x )
+	
+	/**
+	 * @param n a value
+	 * @param o a value
+	 * @return a value
+	 */
+	object[] fillObject( int n, object o)
+	
+	/**
+	 * @param msg a value
+	 * @param code a value
+	 * @throws Excp1
+	 */
+	void blow( string msg, int code ) throws Excp1
+	
+	/**
+	 * @param e a value
+	 * @return a value
+	 * @throws Excp3
+	 * @throws Excp4
+	 */
+	int beets( E1 e ) throws Excp3, Excp4
+	
+	/**
+	 * @param msg
+	 * @param code
+	 * @param value
+	 * @throws Excp5
+	 */
+	void throwExcp5 ( string msg, int code, object value ) throws Excp5
+	
+	/**
+	 * @param msg
+	 * @param code
+	 * @param value
+	 * @throws Excp6
+	 */
+	void throwExcp6 ( string msg, int code, object[] value ) throws Excp6
+			
+	// try one of every type of parameter and result...
+	
+	/**
+	 * @param a
+	 * @return a
+	 */
+	boolean p_boolean( boolean a )
+	
+	/** 
+	 * @param a
+	 * @return a
+	 */
+	boolean[] p_boolean_array( boolean[] a )
+	
+	/** 
+	 * @param a
+	 * @return a
+	 */
+	byte p_byte( byte a )
+	
+	/** 
+	 * @param a
+	 * @return a
+	 */
+	byte[] p_byte_array( byte[] a )
+	
+	/** 
+	 * @param a
+	 * @return a
+	 */
+	short p_short( short a )
+	
+	/** 
+	 * @param a
+	 * @return a
+	 */
+	short[] p_short_array( short[] a )
+	
+	/** 
+	 * @param a
+	 * @return a
+	 */
+	int p_int( int a )
+	
+	/** 
+	 * @param a
+	 * @return a
+	 */
+	int[] p_int_array( int[] a )
+	
+	/** 
+	 * @param a
+	 * @return a
+	 */
+	long p_long( long a )
+	
+	/** 
+	 * @param a
+	 * @return a
+	 */
+	long[] p_long_array( long[] a )
+	
+	/** 
+	 * @param a
+	 * @return a
+	 */
+	float p_float( float a )
+	
+	/** 
+	 * @param a
+	 * @return a
+	 */
+	float[] p_float_array( float[] a )
+	
+	/** 
+	 * @param a
+	 * @return a
+	 */
+	double p_double( double a )
+	
+	/** 
+	 * @param a
+	 * @return a
+	 */
+	double[] p_double_array( double[] a )
+	
+	/** 
+	 * @param a
+	 * @return a
+	 */
+	string p_string( string a )
+	
+	/** 
+	 * @param a
+	 * @return a
+	 */
+	string[] p_string_array( string[] a )
+	
+	/** 
+	 * @param a
+	 * @return a
+	 */
+	E1 p_E1( E1 a )
+	
+	/** 
+	 * @param a
+	 * @return a
+	 */
+	E1[] p_E1_array( E1[] a )
+	
+	/** 
+	 * @param a
+	 * @return a
+	 */
+	S1 p_S1( S1 a )
+	
+	/** 
+	 * @param a
+	 * @return a
+	 */
+	S1[] p_S1_array( S1[] a )
+	
+	/** 
+	 * @param a
+	 * @return a
+	 */
+	S2 p_S2( S2 a )
+	
+	/** 
+	 * @param a
+	 * @return a
+	 */
+	S2[] p_S2_array( S2[] a )
+	
+	/** 
+	 * @param a
+	 * @return a
+	 */
+	Blob p_Blob( Blob a )
+	
+	/** 
+	 * @param a
+	 * @return a
+	 */
+	Blob[] p_Blob_array( Blob[] a )
+	
+	/** 
+	 * @param a
+	 * @return a
+	 */
+	object p_object( object a )
+		
+	/** 
+	 * @param a
+	 * @return a
+	 */
+	object[] p_object_array( object[] a )
+	
+	/** 
+	 * @param a
+	 * @return a
+	 */
+	S3 p_object_struct( S3 a )
+	
+	/** 
+	 * @param a
+	 * @return a
+	 */
+	S4 p_object_struct_array( S4 a )
+	
+	/**
+	 * @return a value
+	 */
+	@Authorize( isTrue )
+	int alwaysWorks()
+	
+	/**
+	 * @return a value
+	 */
+	boolean isTrue()
+	
+	/** */
+	@Authorize( isFalse )
+	void alwaysFails()
+	
+	/**
+	 * @return a value
+	 */
+	boolean isFalse()
+	
+	// null
+	
+	/** */
+	@Authorize( can_m1 )
+	void m1()
+	
+	/**
+	 * @return a value
+	 */
+	boolean can_m1()
+	
+	// literal constants
+	
+	/** */
+	@Authorize( can_m2, null )
+	void m2()
+	
+	/**
+	 * @param x a value
+	 * @return a value
+	 */
+	boolean can_m2( boolean x )
+	
+	/** */
+	@Authorize( can_m3, false )
+	void m3()
+	
+	/**
+	 * @param x a value
+	 * @return a value
+	 */
+	boolean can_m3( boolean x )
+	
+	/** */
+	@Authorize( can_m4, true )
+	void m4()
+	
+	/**
+	 * @param x a value
+	 * @return a value
+	 */
+	boolean can_m4( boolean x )
+	
+	/** */
+	@Authorize( can_m5, 23 )
+	void m5()
+	
+	/**
+	 * @param x a value
+	 * @return a value
+	 */
+	boolean can_m5( byte x )
+	
+	/** */
+	@Authorize( can_m6, 2323 )
+	void m6()
+	
+	/**
+	 * @param x a value
+	 * @return a value
+	 */
+	boolean can_m6( short x )
+	
+	/** */
+	@Authorize( can_m7, 23232323 )
+	void m7()
+	
+	/**
+	 * @param x a value
+	 * @return a value
+	 */
+	boolean can_m7( int x )
+	
+	/** */
+	@Authorize( can_m8, 2323232323232323 )
+	void m8()
+	
+	/**
+	 * @param x a value
+	 * @return a value
+	 */
+	boolean can_m8( long x )
+	
+	/** */
+	@Authorize( can_m9, 3.1415926535897932384626433832795 )
+	void m9()
+	
+	/**
+	 * @param x a value
+	 * @return a value
+	 */
+	boolean can_m9( float x )
+	
+	/** */
+	@Authorize( can_m10, 3.1415926535897932384626433832795 )
+	void m10()
+	
+	/**
+	 * @param x a value
+	 * @return a value
+	 */
+	boolean can_m10( double x )
+	
+	/** */
+	@Authorize( can_m11, "abc" )
+	void m11()
+	
+	/**
+	 * @param x a value
+	 * @return a value
+	 */
+	boolean can_m11( string x )
+	
+	/** */
+	@Authorize( can_m12, INT1 )
+	void m12()
+	
+	/**
+	 * @param x a value
+	 * @return a value
+	 */
+	boolean can_m12( int x )
+	
+	/**
+	 * @param k a value
+	 */
+	@Authorize( can_m13, k )
+	void m13( int k )
+	
+	/**
+	 * @param x a value
+	 * @return a value
+	 */
+	boolean can_m13( int x )
+	
+	/**
+	 * @param k a value
+	 */
+	@Authorize( can_m14, k.x )
+	void m14( S1 k )
+	
+	/**
+	 * @param x a value
+	 * @return a value
+	 */
+	boolean can_m14( int x )
+	
+	/** */
+	@Authorize( can_m15, E1.A )
+	void m15()
+	
+	/**
+	 * @param x a value
+	 * @return a value
+	 */
+	boolean can_m15( E1 x )
+}

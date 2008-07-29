@@ -1,0 +1,12 @@
+module etch.bindings.csharp.examples.types
+
+service Types
+{
+	Map test1( Map map )
+	
+	Set test2( Set set )
+	
+	List test3( List list )
+	
+	Datetime test4( Datetime datetime )
+}

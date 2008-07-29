@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ====================================================================== 
+	Feb 14, 2008 2:20:12 PM                                                        
+	
+	Build Etch Examples    
+	Builds examples in the etch source tree.
+	
+	Richard Bolkey                                                                
+	====================================================================== -->
+<project name="Build Etch Examples" default="build-examples">
+	<description>Builds examples in the etch source tree.</description>
+
+	<taskdef name="etch" classname="etch.tools.ant.EtchCompileTask" />
+
+	<target name="build-examples" depends="mixin-example" />
+
+	<target name="mixin-example">
+		<etch source="${basedir}/src/etch/examples/mixin/Foo.etch"
+			binding="java" outputDir="${basedir}/src">
+			<includes dir="${basedir}" includes="src" />
+		</etch>
+	</target>
+
+	<target name="csharp-mixin-example">
+		<property name="example.location"
+			value="${basedir}/src/etch/bindings/csharp/examples/mixin" />
+		<property name="example.output" value="${basedir}/tmp" />
+
+		<etch source="${example.location}/Foo.etch" binding="csharp"
+			suppressMixin="true" outputDir="${example.output}">
+			<includes dir="${basedir}" includes="src" />
+		</etch>
+
+		<etch source="${example.location}/bar/Bar.etch" binding="csharp"
+			suppressMixin="true" outputDir="${example.output}">
+			<includes dir="${basedir}" includes="src" />
+		</etch>
+
+		<etch source="${example.location}/baz/Baz.etch" binding="csharp"
+			suppressMixin="true" outputDir="${example.output}">
+			<includes dir="${basedir}" includes="src" />
+		</etch>
+	</target>
+
+
+</project>

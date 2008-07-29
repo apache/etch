@@ -1,0 +1,24 @@
+module etch.bindings.csharp.examples.mixin
+
+service Foo
+{
+	mixin etch.bindings.csharp.examples.mixin.bar.Bar
+	
+	
+	@Extern( java, "etch.bindings.java.util.StrStrHashMap", "",
+		"etch.bindings.java.util.StrStrHashMapSerializer", "" )
+	@Extern(csharp, "StrStrHashMap", "Etch.Util",
+		"StrStrHashMapSerializer", "")
+	extern FooTable
+
+	struct FooData( int code, FooTable fooTable, BarData barData, BazData bazData )
+	
+	@Direction( Both )
+	boolean foo1( FooData fooData );
+	
+	@Direction( Server )
+	boolean foo2( FooData fooData );
+	
+	@Direction( Client )
+	boolean foo3( FooData fooData );
+}

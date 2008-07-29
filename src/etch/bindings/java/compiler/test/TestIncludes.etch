@@ -1,0 +1,61 @@
+module etch.bindings.java.compiler.test
+
+service TestIncludes
+{
+	/* inlude some constants */
+	include "const1.txt" 
+	/* const1.txt also includes const2.txt */
+/*	
+	const boolean BOOL1 = false
+	const boolean BOOL2 = true
+	const int INT1 = 1
+	
+	const int INT2 = 2;
+	const int INT3 = 8
+	const string STR = "TEST";
+*/	
+	
+
+	include "enums.txt"  
+	
+	/* include some enums and structs */ 
+	/*
+	enum E1( A, B, C )
+	enum E2 (D, E, F);
+	enum E3 (G, H, I)
+	struct S1( int x, int y, int z )
+	struct S2 (string a, int b)
+	*/
+	/* Leave the following inline */
+	struct S5( S1 a, S2 b, E1 c );
+
+	
+	int incr( int x )	
+	
+	/* include a couple of messages */
+
+	@Direction (Client)
+	int testConst1(int x, int y )
+	
+	/* include a message */
+	include "message.txt" 
+	/*
+	@Direction (Both)	
+	int testConst2()
+	*/
+	int testConst3()
+
+	/*	Couple more messages to include */
+	/* include file "messages2" */
+	@Direction (Client)
+	int testEnum1();
+
+	int testEnum2();
+	
+	/* Leave the rest inline */	
+	@Direction (Both)
+	int doNothing( )
+
+
+	
+}

@@ -1,0 +1,59 @@
+
+<project name="DistributedHashTable" basedir=".">
+	<target name="generate_cs">
+		<description>
+			generate cs files from etch compiler 
+		</description>
+
+		<!-- set global properties for the build -->
+		<property name="build" location="build"/>
+
+		<exec dir="." executable="cmd">
+			<arg line="/c generate_cs.bat "/>
+		</exec>
+
+		<mkdir dir="bin"/>
+		<copy file="../../lib/Etch4CS.dll" todir="bin"/>
+		<exec dir="." executable="cmd">
+			<arg line="/c C:\WINDOWS\Microsoft.NET\Framework\v2.0.50727\Csc.exe /noconfig /nowarn:1701,1702 /define:DEBUG;TRACE /reference:bin\Etch4CS.dll /reference:C:\WINDOWS\Microsoft.NET\Framework\v2.0.50727\System.Data.dll /reference:C:\WINDOWS\Microsoft.NET\Framework\v2.0.50727\System.dll /reference:C:\WINDOWS\Microsoft.NET\Framework\v2.0.50727\System.Xml.dll /debug+ /debug:full /optimize- /out:bin\DistributedHashTable.exe /target:exe DistributedHashTable.cs DistributedHashTableClient.cs DistributedHashTableHelper.cs DistributedHashTableListener.cs DistributedHashTableServer.cs DistributedHashTableServerImpl.cs RemoteDistributedHashTable.cs RemoteDistributedHashTableClient.cs RemoteDistributedHashTableServer.cs StubDistributedHashTable.cs StubDistributedHashTableClient.cs StubDistributedHashTableServer.cs ValueFactoryDistributedHashTable.cs "/>
+		</exec>
+		
+		<exec dir="." executable="cmd">
+			<arg line = "/c C:\WINDOWS\Microsoft.NET\Framework\v2.0.50727\Csc.exe /noconfig /nowarn:1701,1702 /define:DEBUG;TRACE /reference:.\bin\DistributedHashTable.exe /reference:bin\Etch4CS.dll /reference:C:\WINDOWS\Microsoft.NET\Framework\v2.0.50727\System.Data.dll /reference:C:\WINDOWS\Microsoft.NET\Framework\v2.0.50727\System.dll /reference:C:\WINDOWS\Microsoft.NET\Framework\v2.0.50727\System.Xml.dll /debug+ /debug:full /optimize- /out:bin/DistributedHashTableClient.exe /target:exe TestRemoteDistMapCommandLine.cs" />
+		</exec> 
+	</target>
+
+	<target name="generate_java">
+		<description>
+			generate java files from etch compiler 
+		</description>
+
+		<!-- set global properties for the build -->
+		<property name="build" location="build"/>
+
+		<exec dir="." executable="cmd">
+			<arg line="/c generate_java.bat "/>
+		</exec>
+	</target>
+
+	<!--target name="server_java" depends="generate_java">
+		<mkdir dir="build"/>
+		<javac srcdir="." classpath="../../lib/etch-java-runtime.jar" destdir="build"/>
+		<java classname="etch.examples.distmap.DistributedHashTableListener" fork="yes">
+			<classpath>
+				<pathelement path="build"/>
+				<pathelement path="../../lib/etch-java-runtime.jar"/>
+			</classpath>
+		</java>
+	</target>
+
+	<target name="server_cs" depends="generate_cs">
+		<description>
+			run the chat listener for C#
+		</description>
+
+		<exec dir="bin" executable="cmd">
+			<arg line = "/c DistributedHashTable.exe"/>
+		</exec>
+	</target-->
+</project>

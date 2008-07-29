@@ -1,0 +1,180 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="NewDataSet" xmlns="" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+  <xs:element name="field">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="description" type="xs:string" minOccurs="0" msdata:Ordinal="0" />
+      </xs:sequence>
+      <xs:attribute name="name" type="xs:string" />
+      <xs:attribute name="fieldId" type="xs:string" />
+      <xs:attribute name="fieldName" type="xs:string" />
+      <xs:attribute name="type" type="xs:string" />
+      <xs:attribute name="isPrimitiveType" type="xs:string" />
+      <xs:attribute name="isArray" type="xs:string" />
+      <xs:attribute name="dimension" type="xs:string" />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="exception">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="description" type="xs:string" minOccurs="0" msdata:Ordinal="0" />
+        <xs:element ref="field" minOccurs="0" maxOccurs="unbounded" />
+      </xs:sequence>
+      <xs:attribute name="name" type="xs:string" />
+      <xs:attribute name="isUnchecked" type="xs:string" />
+      <xs:attribute name="typeId" type="xs:string" />
+      <xs:attribute name="typeName" type="xs:string" />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="module">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="description" type="xs:string" minOccurs="0" msdata:Ordinal="0" />
+        <xs:element name="service" minOccurs="0" maxOccurs="unbounded">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="description" type="xs:string" minOccurs="0" msdata:Ordinal="0" />
+              <xs:element name="consts" minOccurs="0" maxOccurs="unbounded">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="const" minOccurs="0" maxOccurs="unbounded">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="description" type="xs:string" minOccurs="0" msdata:Ordinal="0" />
+                        </xs:sequence>
+                        <xs:attribute name="name" type="xs:string" />
+                        <xs:attribute name="type" type="xs:string" />
+                        <xs:attribute name="value" type="xs:string" />
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="externs" minOccurs="0" maxOccurs="unbounded">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="extern" minOccurs="0" maxOccurs="unbounded">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="externmap" minOccurs="0" maxOccurs="unbounded">
+                            <xs:complexType>
+                              <xs:attribute name="language" type="xs:string" />
+                              <xs:attribute name="name" type="xs:string" />
+                              <xs:attribute name="nImport" type="xs:string" />
+                              <xs:attribute name="serializer" type="xs:string" />
+                              <xs:attribute name="sImport" type="xs:string" />
+                            </xs:complexType>
+                          </xs:element>
+                        </xs:sequence>
+                        <xs:attribute name="name" type="xs:string" />
+                        <xs:attribute name="typeId" type="xs:string" />
+                        <xs:attribute name="typeName" type="xs:string" />
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="enums" minOccurs="0" maxOccurs="unbounded">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="enum" minOccurs="0" maxOccurs="unbounded">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="description" type="xs:string" minOccurs="0" msdata:Ordinal="0" />
+                          <xs:element name="entry" minOccurs="0" maxOccurs="unbounded">
+                            <xs:complexType>
+                              <xs:attribute name="value" type="xs:string" />
+                              <xs:attribute name="entryId" type="xs:string" />
+                            </xs:complexType>
+                          </xs:element>
+                        </xs:sequence>
+                        <xs:attribute name="name" type="xs:string" />
+                        <xs:attribute name="typeId" type="xs:string" />
+                        <xs:attribute name="typeName" type="xs:string" />
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="structs" minOccurs="0" maxOccurs="unbounded">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="struct" minOccurs="0" maxOccurs="unbounded">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="description" type="xs:string" minOccurs="0" msdata:Ordinal="0" />
+                          <xs:element ref="field" minOccurs="0" maxOccurs="unbounded" />
+                        </xs:sequence>
+                        <xs:attribute name="name" type="xs:string" />
+                        <xs:attribute name="typeId" type="xs:string" />
+                        <xs:attribute name="typeName" type="xs:string" />
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="exceptions" minOccurs="0" maxOccurs="unbounded">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element ref="exception" minOccurs="0" maxOccurs="unbounded" />
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="methods" minOccurs="0" maxOccurs="unbounded">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="method" minOccurs="0" maxOccurs="unbounded">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="description" type="xs:string" minOccurs="0" msdata:Ordinal="0" />
+                          <xs:element ref="exception" minOccurs="0" maxOccurs="unbounded" />
+                          <xs:element name="authorize" minOccurs="0" maxOccurs="unbounded">
+                            <xs:complexType>
+                              <xs:attribute name="methodName" type="xs:string" />
+                            </xs:complexType>
+                          </xs:element>
+                          <xs:element ref="field" minOccurs="0" maxOccurs="unbounded" />
+                          <xs:element name="result" minOccurs="0" maxOccurs="unbounded">
+                            <xs:complexType>
+                              <xs:sequence>
+                                <xs:element name="description" type="xs:string" minOccurs="0" msdata:Ordinal="0" />
+                              </xs:sequence>
+                              <xs:attribute name="fieldId" type="xs:string" />
+                              <xs:attribute name="fieldName" type="xs:string" />
+                              <xs:attribute name="type" type="xs:string" />
+                              <xs:attribute name="isPrimitiveType" type="xs:string" />
+                              <xs:attribute name="isArray" type="xs:string" />
+                              <xs:attribute name="dimension" type="xs:string" />
+                            </xs:complexType>
+                          </xs:element>
+                        </xs:sequence>
+                        <xs:attribute name="name" type="xs:string" />
+                        <xs:attribute name="typeId" type="xs:string" />
+                        <xs:attribute name="typeName" type="xs:string" />
+                        <xs:attribute name="asyncReceiverMode" type="xs:string" />
+                        <xs:attribute name="isOneway" type="xs:string" />
+                        <xs:attribute name="messageDirection" type="xs:string" />
+                        <xs:attribute name="timeout" type="xs:string" />
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+            <xs:attribute name="name" type="xs:string" />
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+      <xs:attribute name="name" type="xs:string" />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="NewDataSet" msdata:IsDataSet="true" msdata:UseCurrentLocale="true">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element ref="field" />
+        <xs:element ref="exception" />
+        <xs:element ref="module" />
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

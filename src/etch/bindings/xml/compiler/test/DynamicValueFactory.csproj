@@ -1,0 +1,65 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{D752B65A-30FF-4072-A613-804E1625F842}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <NoStandardLibraries>false</NoStandardLibraries>
+    <AssemblyName>DynamicValueFactory</AssemblyName>
+    <RootNamespace>DynamicValueFactory</RootNamespace>
+    <StartupObject>
+    </StartupObject>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>.\bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>.\bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Etch4CS, Version=0.0.0.0, Culture=neutral, PublicKeyToken=f5c449a9231c16f1, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\csharp\bin\Debug\Etch4CS.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.framework, Version=2.4.6.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL" />
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include=".svn\all-wcprops" />
+    <None Include=".svn\dir-prop-base" />
+    <None Include=".svn\entries" />
+    <None Include=".svn\format" />
+    <None Include=".svn\prop-base\.Simple.etch.swp.svn-base" />
+    <None Include=".svn\text-base\.Simple.etch.swp.svn-base" />
+    <None Include=".svn\text-base\Test.etch.svn-base" />
+    <None Include=".svn\text-base\Test.java.svn-base" />
+    <None Include="Test.etch" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Test.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="DynamicValueFactory.cs" />
+    <Compile Include="Test.cs" />
+    <Compile Include="TestDynamicValueFactory.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include=".svn\props\" />
+    <Folder Include=".svn\tmp\prop-base\" />
+    <Folder Include=".svn\tmp\props\" />
+    <Folder Include=".svn\tmp\text-base\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSHARP.Targets" />
+  <ProjectExtensions>
+    <VisualStudio AllowExistingFolder="true" />
+  </ProjectExtensions>
+</Project>

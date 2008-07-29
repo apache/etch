@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<project name="etch-packages" basedir=".">
+    <description>Build script for Etch binary distribution kits</description>
+    <import file="build.includes.xml" />
+
+    <!-- Static properties of the sub-project -->
+    <property name="buildRoot"      value="${Etch.buildDirectory}/packages" />
+    <property name="packageName"    value="etch-${Etch.version}-${Etch.buildTag}" />
+
+    <!-- INIT TARGET -->
+    <!-- Modify this target to define sub-project specific properties that can only be set at runtime -->
+    <target name="do-init">
+        <property name="buildDirectory"     value="${buildRoot}" />
+
+        <mkdir dir="${buildDirectory}" />
+        <mkdir dir="${Etch.dist}" />
+    </target>
+
+    <!-- CLEAN TARGET -->
+    <!-- Modify this target to clean up the build products -->
+    <target name="do-clean">
+        <delete dir="${buildRoot}" />
+        <delete dir="${Etch.dist}" />
+        <delete dir="${Etch.installerDirectory}" />
+		<delete file="${Etch.runtime.tests.fail}" />
+    </target>
+
+    <!-- BUILD TARGET -->
+    <!-- Modify this target to actually build the binary packages -->
+    <target name="do-build">
+
+        <!-- create zipped binary distribution -->
+        <zip destfile="${buildDirectory}/${packageName}.zip" >
+            <zipfileset dir="${Etch.dist}" prefix="${packageName}/" />
+        </zip>
+
+        <!-- create tar-gzip binary distribution -->
+        <tar destfile="${buildDirectory}/${packageName}.tar.gz" compression="gzip" >
+            <tarfileset dir="${Etch.dist}" prefix="${packageName}/" />
+        </tar>
+        
+        <makensis destfile="${buildDirectory}/${packageName}-full.exe" root="${Etch.runtime.workspace}" dir="installers" script="etch-full-installer" />
+        <makensis destfile="${buildDirectory}/${packageName}-dev-dist.exe" root="${Etch.runtime.workspace}" dir="installers" script="etch-dev-dist-installer" />
+
+    </target>
+
+    <!-- TEST TARGET -->
+    <!-- Modify this target to implement tests on the package -->
+    <target name="do-test">
+		<available property="build.tests.fail" file="${Etch.runtime.tests.fail}"/>
+    </target>
+
+    <!-- POSTBUILD TARGET -->
+    <!-- Modify this target to move the binary distribution packages to the 'Installers' directory -->
+    <target name="do-postbuild">
+        <move todir="${Etch.installerDirectory}" >
+            <fileset file="${buildDirectory}/${packageName}.zip" />
+            <fileset file="${buildDirectory}/${packageName}.tar.gz" />
+            <fileset file="${buildDirectory}/${packageName}-full.exe" />
+            <fileset file="${buildDirectory}/${packageName}-dev-dist.exe" />
+        </move>
+    </target>
+
+	<!-- Publish -->
+	<target name="do-publish" unless="build.tests.fail">
+	<!-- Freezing publishing at build number 605 -->
+<!--		<publish_component buildkey="${Etch.runtime.buildKey}"
+			buildno="${Etch.runtime.buildNumber}"/> -->
+	</target>
+
+</project>

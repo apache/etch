@@ -1,0 +1,16 @@
+module etch.examples.async
+
+@Timeout( 500 )
+service Async
+{
+	@Direction( Both )
+	int sync( int count )
+	
+	@Direction( Both )
+	@AsyncReceiver( Queued )
+	int async_queued( int count )
+	
+	@Direction( Both )
+	@AsyncReceiver( Free )
+	int async_free( int count )
+}

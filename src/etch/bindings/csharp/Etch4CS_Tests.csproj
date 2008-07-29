@@ -1,0 +1,247 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{B1FA551D-EE27-48A2-A2A8-8910DF5DEFCD}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <NoStandardLibraries>false</NoStandardLibraries>
+    <AssemblyName>Etch4CS_Tests</AssemblyName>
+    <RootNamespace>Etch4CS_Tests</RootNamespace>
+    <StartupObject>
+    </StartupObject>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>.\bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>.\bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="nunit.framework, Version=2.4.1.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>$(NUNIT_HOME)\bin\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="compiler\test\Test1.etch" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="compiler\test\BaseTest1Client.cs" />
+    <Compile Include="compiler\test\BaseTest1Server.cs" />
+    <Compile Include="compiler\test\FakeTest1.cs" />
+    <Compile Include="compiler\test\ImplTest1Client.cs" />
+    <Compile Include="compiler\test\ImplTest1Server.cs" />
+    <Compile Include="compiler\test\MainTest1Client.cs" />
+    <Compile Include="compiler\test\MainTest1Listener.cs" />
+    <Compile Include="compiler\test\RemoteTest1.cs" />
+    <Compile Include="compiler\test\RemoteTest1Client.cs" />
+    <Compile Include="compiler\test\RemoteTest1Server.cs" />
+    <Compile Include="compiler\test\StubTest1.cs" />
+    <Compile Include="compiler\test\StubTest1Client.cs" />
+    <Compile Include="compiler\test\StubTest1Server.cs" />
+    <Compile Include="compiler\test\Test1.cs" />
+    <Compile Include="compiler\test\Test1Client.cs" />
+    <Compile Include="compiler\test\Test1Helper.cs" />
+    <Compile Include="compiler\test\Test1Server.cs" />
+    <Compile Include="compiler\test\TestAsyncClient.cs" />
+    <Compile Include="compiler\test\TestImplTest1.cs" />
+    <Compile Include="compiler\test\TestInheritance.cs" />
+    <Compile Include="compiler\test\TestMainTest1Client.cs" />
+    <Compile Include="compiler\test\TestMainTest1Listener.cs" />
+    <Compile Include="compiler\test\TestRemoteTest1DotCsharp.cs" />
+    <Compile Include="compiler\test\TestStubTest1DotCsharp.cs" />
+    <Compile Include="compiler\test\TestTest1DotCsharp.cs" />
+    <Compile Include="compiler\test\TestTest1Helper.cs" />
+    <Compile Include="compiler\test\TestValueFactoryTest1DotCsharp.cs" />
+    <Compile Include="compiler\test\ValueFactoryTest1.cs" />
+    <Compile Include="examples\async\Async.cs" />
+    <Compile Include="examples\async\AsyncClient.cs" />
+    <Compile Include="examples\async\AsyncHelper.cs" />
+    <Compile Include="examples\async\AsyncServer.cs" />
+    <Compile Include="examples\async\BaseAsyncClient.cs" />
+    <Compile Include="examples\async\BaseAsyncServer.cs" />
+    <Compile Include="examples\async\ImplAsyncClient.cs" />
+    <Compile Include="examples\async\ImplAsyncServer.cs" />
+    <Compile Include="examples\async\MainAsyncClient.cs" />
+    <Compile Include="examples\async\MainAsyncListener.cs" />
+    <Compile Include="examples\async\RemoteAsync.cs" />
+    <Compile Include="examples\async\RemoteAsyncClient.cs" />
+    <Compile Include="examples\async\RemoteAsyncServer.cs" />
+    <Compile Include="examples\async\StubAsync.cs" />
+    <Compile Include="examples\async\StubAsyncClient.cs" />
+    <Compile Include="examples\async\StubAsyncServer.cs" />
+    <Compile Include="examples\async\ValueFactoryAsync.cs" />
+    <Compile Include="examples\closing\BaseClosingClient.cs" />
+    <Compile Include="examples\closing\BaseClosingServer.cs" />
+    <Compile Include="examples\closing\Closing.cs" />
+    <Compile Include="examples\closing\ClosingClient.cs" />
+    <Compile Include="examples\closing\ClosingHelper.cs" />
+    <Compile Include="examples\closing\ClosingServer.cs" />
+    <Compile Include="examples\closing\ImplClosingClient.cs" />
+    <Compile Include="examples\closing\ImplClosingServer.cs" />
+    <Compile Include="examples\closing\MainClosingClient.cs" />
+    <Compile Include="examples\closing\MainClosingListener.cs" />
+    <Compile Include="examples\closing\RemoteClosing.cs" />
+    <Compile Include="examples\closing\RemoteClosingClient.cs" />
+    <Compile Include="examples\closing\RemoteClosingServer.cs" />
+    <Compile Include="examples\closing\StubClosing.cs" />
+    <Compile Include="examples\closing\StubClosingClient.cs" />
+    <Compile Include="examples\closing\StubClosingServer.cs" />
+    <Compile Include="examples\closing\ValueFactoryClosing.cs" />
+    <Compile Include="examples\cuae\BaseCuaeClient.cs" />
+    <Compile Include="examples\cuae\BaseCuaeServer.cs" />
+    <Compile Include="examples\cuae\Cuae.cs" />
+    <Compile Include="examples\cuae\CuaeClient.cs" />
+    <Compile Include="examples\cuae\CuaeHelper.cs" />
+    <Compile Include="examples\cuae\CuaeServer.cs" />
+    <Compile Include="examples\cuae\ImplCuaeClient.cs" />
+    <Compile Include="examples\cuae\MainCuaeClient.cs" />
+    <Compile Include="examples\cuae\MainCuaeListener.cs" />
+    <Compile Include="examples\cuae\MyCuaeHelper.cs" />
+    <Compile Include="examples\cuae\MyCuaeServerStub.cs" />
+    <Compile Include="examples\cuae\MyValueFactoryCuae.cs" />
+    <Compile Include="examples\cuae\RemoteCuae.cs" />
+    <Compile Include="examples\cuae\RemoteCuaeClient.cs" />
+    <Compile Include="examples\cuae\RemoteCuaeServer.cs" />
+    <Compile Include="examples\cuae\StubCuae.cs" />
+    <Compile Include="examples\cuae\StubCuaeClient.cs" />
+    <Compile Include="examples\cuae\StubCuaeServer.cs" />
+    <Compile Include="examples\cuae\ValueFactoryCuae.cs" />
+    <Compile Include="examples\inheritance\BaseInheritanceClient.cs" />
+    <Compile Include="examples\inheritance\BaseInheritanceServer.cs" />
+    <Compile Include="examples\inheritance\ImplInheritanceClient.cs" />
+    <Compile Include="examples\inheritance\ImplInheritanceServer.cs" />
+    <Compile Include="examples\inheritance\Inheritance.cs" />
+    <Compile Include="examples\inheritance\InheritanceClient.cs" />
+    <Compile Include="examples\inheritance\InheritanceHelper.cs" />
+    <Compile Include="examples\inheritance\InheritanceServer.cs" />
+    <Compile Include="examples\inheritance\MainInheritanceClient.cs" />
+    <Compile Include="examples\inheritance\MainInheritanceListener.cs" />
+    <Compile Include="examples\inheritance\RemoteInheritance.cs" />
+    <Compile Include="examples\inheritance\RemoteInheritanceClient.cs" />
+    <Compile Include="examples\inheritance\RemoteInheritanceServer.cs" />
+    <Compile Include="examples\inheritance\StubInheritance.cs" />
+    <Compile Include="examples\inheritance\StubInheritanceClient.cs" />
+    <Compile Include="examples\inheritance\StubInheritanceServer.cs" />
+    <Compile Include="examples\inheritance\ValueFactoryInheritance.cs" />
+    <Compile Include="examples\mixin\bar\Bar.cs" />
+    <Compile Include="examples\mixin\bar\BarClient.cs" />
+    <Compile Include="examples\mixin\bar\BarServer.cs" />
+    <Compile Include="examples\mixin\bar\RemoteBar.cs" />
+    <Compile Include="examples\mixin\bar\RemoteBarClient.cs" />
+    <Compile Include="examples\mixin\bar\RemoteBarServer.cs" />
+    <Compile Include="examples\mixin\bar\StubBar.cs" />
+    <Compile Include="examples\mixin\bar\StubBarClient.cs" />
+    <Compile Include="examples\mixin\bar\StubBarServer.cs" />
+    <Compile Include="examples\mixin\bar\ValueFactoryBar.cs" />
+    <Compile Include="examples\mixin\BaseFooClient.cs" />
+    <Compile Include="examples\mixin\BaseFooServer.cs" />
+    <Compile Include="examples\mixin\baz\Baz.cs" />
+    <Compile Include="examples\mixin\baz\BazClient.cs" />
+    <Compile Include="examples\mixin\baz\BazServer.cs" />
+    <Compile Include="examples\mixin\baz\RemoteBaz.cs" />
+    <Compile Include="examples\mixin\baz\RemoteBazClient.cs" />
+    <Compile Include="examples\mixin\baz\RemoteBazServer.cs" />
+    <Compile Include="examples\mixin\baz\StubBaz.cs" />
+    <Compile Include="examples\mixin\baz\StubBazClient.cs" />
+    <Compile Include="examples\mixin\baz\StubBazServer.cs" />
+    <Compile Include="examples\mixin\baz\ValueFactoryBaz.cs" />
+    <Compile Include="examples\mixin\Foo.cs" />
+    <Compile Include="examples\mixin\FooClient.cs" />
+    <Compile Include="examples\mixin\FooHelper.cs" />
+    <Compile Include="examples\mixin\FooServer.cs" />
+    <Compile Include="examples\mixin\ImplFooClient.cs" />
+    <Compile Include="examples\mixin\ImplFooServer.cs" />
+    <Compile Include="examples\mixin\MainFooClient.cs" />
+    <Compile Include="examples\mixin\MainFooListener.cs" />
+    <Compile Include="examples\mixin\RemoteFoo.cs" />
+    <Compile Include="examples\mixin\RemoteFooClient.cs" />
+    <Compile Include="examples\mixin\RemoteFooServer.cs" />
+    <Compile Include="examples\mixin\StubFoo.cs" />
+    <Compile Include="examples\mixin\StubFooClient.cs" />
+    <Compile Include="examples\mixin\StubFooServer.cs" />
+    <Compile Include="compiler\test\TestMixin.cs" />
+    <Compile Include="examples\mixin\ValueFactoryFoo.cs" />
+    <Compile Include="examples\types\BaseTypesClient.cs" />
+    <Compile Include="examples\types\BaseTypesServer.cs" />
+    <Compile Include="examples\types\ImplTypesClient.cs" />
+    <Compile Include="examples\types\ImplTypesServer.cs" />
+    <Compile Include="examples\types\MainTypesClient.cs" />
+    <Compile Include="examples\types\MainTypesListener.cs" />
+    <Compile Include="examples\types\RemoteTypes.cs" />
+    <Compile Include="examples\types\RemoteTypesClient.cs" />
+    <Compile Include="examples\types\RemoteTypesServer.cs" />
+    <Compile Include="examples\types\StubTypes.cs" />
+    <Compile Include="examples\types\StubTypesClient.cs" />
+    <Compile Include="examples\types\StubTypesServer.cs" />
+    <Compile Include="examples\types\Types.cs" />
+    <Compile Include="examples\types\TypesClient.cs" />
+    <Compile Include="examples\types\TypesHelper.cs" />
+    <Compile Include="examples\types\TypesServer.cs" />
+    <Compile Include="examples\types\ValueFactoryTypes.cs" />
+    <Compile Include="msg\test\TestValidator_byte.cs" />
+    <Compile Include="msg\test\TestValidator_double.cs" />
+    <Compile Include="msg\test\TestValidator_float.cs" />
+    <Compile Include="msg\test\TestValidator_long.cs" />
+    <Compile Include="msg\test\TestValidator_object.cs" />
+    <Compile Include="msg\test\TestValidator_short.cs" />
+    <Compile Include="msg\test\TestValidator_string.cs" />
+    <Compile Include="msg\test\TestValidator_StructValue.cs" />
+    <Compile Include="msg\test\TestValidator_void.cs" />
+    <Compile Include="support\test\TestPlainMailbox.cs" />
+    <Compile Include="support\test\TestTodoManager.cs" />
+    <Compile Include="util\test\TestHPTimer.cs" />
+    <Compile Include="util\test\TestCircularQueue1.cs" />
+    <Compile Include="util\test\TestDateSerializer.cs" />
+    <Compile Include="util\test\TestHelp.cs" />
+    <Compile Include="util\test\TestMonitor.cs" />
+    <Compile Include="util\test\TestStrIntHashMapSerializer.cs" />
+    <Compile Include="msg\test\TestArrayValue.cs" />
+    <Compile Include="msg\test\TestComboValidator.cs" />
+    <Compile Include="msg\test\TestField.cs" />
+    <Compile Include="msg\test\TestIdName.cs" />
+    <Compile Include="msg\test\TestMessage.cs" />
+    <Compile Include="msg\test\TestStructValue.cs" />
+    <Compile Include="msg\test\TestTypeValidator.cs" />
+    <Compile Include="msg\test\TestValidators.cs" />
+    <Compile Include="msg\test\TestValidator_boolean.cs" />
+    <Compile Include="msg\test\TestValidator_int.cs" />
+    <Compile Include="msg\test\TestXType.cs" />
+    <Compile Include="support\test\TestDefaultValueFactory.cs" />
+    <Compile Include="support\test\TestIdNameMap.cs" />
+    <Compile Include="support\test\TestRemoteBase.cs" />
+    <Compile Include="support\test\TestStubBase.cs" />
+    <Compile Include="transport\fmt\binary\test\TestBinaryTaggedDataInOut.cs" />
+    <Compile Include="transport\test\TestDefaultDeliveryService.cs" />
+    <Compile Include="transport\test\TestMailboxManager.cs" />
+    <Compile Include="transport\test\TestMessagizer.cs" />
+    <Compile Include="transport\test\TestPacketizer.cs" />
+    <Compile Include="transport\test\TestTcpConnection.cs" />
+    <Compile Include="util\test\TestCharIterator.cs" />
+    <Compile Include="util\test\TestNewFlexBuffer.cs" />
+    <Compile Include="util\test\TestStringUtil.cs" />
+    <Compile Include="util\test\TestStrStrHashMapSerializer.cs" />
+    <Compile Include="util\test\TestURL.cs" />
+    <Compile Include="util\test\TestUrlSerializer.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="Etch4CS.csproj">
+      <Project>{368B5086-063C-4C5E-A74F-0AC32946036C}</Project>
+      <Name>Etch4CS</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSHARP.Targets" />
+  <ProjectExtensions>
+    <VisualStudio AllowExistingFolder="true" />
+  </ProjectExtensions>
+</Project>

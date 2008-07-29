@@ -1,0 +1,181 @@
+module nipc.idl.test.constants;
+
+service constants
+{
+	// data types
+	
+	const boolean t1 = false
+	const byte t2 = 0
+	const short t3 = 0
+	const int t4 = 0
+	const long t5 = 0
+	const float t6 = 0
+	const double t7 = 0
+	const string t8 = ""
+	
+	// booleans
+	
+	const boolean t = true
+	const boolean f = false
+	
+	// integers
+	
+	const byte z = 0
+	const byte mz = -0
+	
+	const byte i1 = 1
+	const byte i10 = 10
+	const byte i100 = 100
+	const short i1000 = 1000
+	const short i10000 = 10000
+	const int i100000 = 100000
+	const int i1000000 = 1000000
+	const int i10000000 = 10000000
+	const int i100000000 = 100000000
+	const int i1000000000 = 1000000000
+	const long i10000000000 = 10000000000
+	const long i100000000000 = 100000000000
+	const long i1000000000000 = 1000000000000
+	const long i10000000000000 = 10000000000000
+	const long i100000000000000 = 100000000000000
+	const long i1000000000000000 = 1000000000000000
+	const long i10000000000000000 = 10000000000000000
+	const long i100000000000000000 = 100000000000000000
+	const long i1000000000000000000 = 1000000000000000000
+//	const long i10000000000000000000 = 10000000000000000000 // too big
+	
+	const byte mi1 = -1
+	const byte mi10 = -10
+	const byte mi100 = -100
+	const short mi1000 = -1000
+	const short mi10000 = -10000
+	const int mi100000 = -100000
+	const int mi1000000 = -1000000
+	const int mi10000000 = -10000000
+	const int mi100000000 = -100000000
+	const int mi1000000000 = -1000000000
+	const long mi10000000000 = -10000000000
+	const long mi100000000000 = -100000000000
+	const long mi1000000000000 = -1000000000000
+	const long mi10000000000000 = -10000000000000
+	const long mi100000000000000 = -100000000000000
+	const long mi1000000000000000 = -1000000000000000
+	const long mi10000000000000000 = -10000000000000000
+	const long mi100000000000000000 = -100000000000000000
+	const long mi1000000000000000000 = -1000000000000000000
+//	const long mi10000000000000000000 = -10000000000000000000 // too small
+	
+	// biggest and smallest
+	
+	const byte min_byte = -128
+	const byte max_byte = 127
+	
+	const short min_short = -32768
+	const short max_short = 32767
+	
+	const int min_int = -2147483648
+	const int max_int = 2147483647
+	
+	const long min_long = -9223372036854775808
+	const long max_long = 9223372036854775807
+	
+	const float min_float = 1.4e-45
+	const float max_float = 3.4028235e38
+	
+	const double min_double = 4.9e-324
+	const double max_double = 1.7976931348623157e308
+	
+	// binary
+	
+	const int b0 = 0b0
+	const int b0a = 0b00
+	const int b1 = 0b1
+	const int b1a = 0b01
+	const int b2 = 0b10
+	const int b3 = 0b11
+	
+	// octal
+	
+	const int o0 = 00
+	const int o1 = 01
+	const int o2 = 02
+	const int o3 = 03
+	const int o4 = 04
+	const int o5 = 05
+	const int o6 = 06
+	const int o7 = 07
+	const int o10 = 010
+	
+	// hex
+	
+	const int h0 = 0x0
+	const int h1 = 0x1
+	const int h2 = 0x2
+	const int h3 = 0x3
+	const int h4 = 0x4
+	const int h5 = 0x5
+	const int h6 = 0x6
+	const int h7 = 0x7
+	const int h8 = 0x8
+	const int h9 = 0x9
+	const int ha = 0xa
+	const int hb = 0xb
+	const int hc = 0xc
+	const int hd = 0xd
+	const int he = 0xe
+	const int hf = 0xf
+	const int h10 = 0x10
+	
+	// floating zeros
+	
+	const float f0a = 0
+	const float f0b = 0.
+	const float f0c = .0
+	const float f0d = 0.0
+	const float f0e = 0e0
+	
+	const float mf0a = -0
+	const float mf0b = -0.
+	const float mf0c = -.0
+	const float mf0d = -0.0
+	const float mf0e = -0e0
+	
+	// various floating non-zeros
+	
+	const float f1a = 1
+	const float f1b = 1.
+	const float f1c = .1
+	const float f1d = 1.1
+	const float f1e = 1e0
+	
+	const float mf1a = -1
+	const float mf1b = -1.
+	const float mf1c = -.1
+	const float mf1d = -1.1
+	const float mf1e = -1e0
+	
+	// floating big and small
+	
+	const float fbig = 1234567890.0987654321e1234567890
+	const float mfbig = -1234567890.0987654321e1234567890
+	const float fsmall = 1234567890.0987654321e-1234567890
+	const float mfsmall = -1234567890.0987654321e-1234567890
+	
+	// strings
+	
+	const string blank = ""
+	
+	const string s1 = "a"
+	const string s2 = "ab"
+	const string s3 = "abc"
+	const string s4 = "abcd"
+	const string s5 = "abcde"
+	
+	const string e1 = "\""
+	const string e2 = "\\"
+	const string e3 = "\t"
+	const string e4 = "\r"
+	const string e5 = "\n"
+	const string e6 = "\u0054his is a \u0074est of\u0020unicode escapes\u002e"
+	const string e7 = "\u00a1Use unicode escapes to \u201cquote\u201d things!"
+}

@@ -1,0 +1,4 @@
+	const boolean BOOL1 = false
+	const boolean BOOL2 = true
+	const int INT1 = 1
+	include "const2.txt" 

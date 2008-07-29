@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<project name="etch-support-csharp" basedir=".">
+    <description>Build script for Etch compiler C# support</description>
+    <import file="build.includes.xml" />
+
+    <!-- Static properties of the sub-project -->
+    <property name="buildRoot"      value="${Etch.buildDirectory}/csharp-support" />
+    <property name="buildRootVS"    value="${Etch.runtime.buildPath}/csharp-support" />
+    <property name="src"            value="src/etch/bindings/csharp" />
+
+    <!-- INIT TARGET -->
+    <!-- Modify this target to define sub-project specific properties that can only be set at runtime -->
+    <target name="do-init">
+        <property name="buildDirectory" location="${buildRoot}/${Etch.build.target}/src" />
+        <property name="testResultsDirectory" location="${buildRoot}/${Etch.build.target}/test-results" />
+        <property name="buildDirectoryVS" value="${buildRootVS}/${Etch.build.target}/src" />
+        <property name="testResultsDirectory" value="${buildRoot}/${Etch.build.target}/test-results" />
+        <property name="csharpTestsDirectory" value="${buildDirectory}/bin/${Etch.build.target}/" />
+        <property name="tempCsharpResults" value="${testResultsDirectory}/TestResult.xml" />
+        <property name="csharpResults" value="${testResultsDirectory}/TEST-NUnitResults.xml" />
+
+        <mkdir dir="${buildDirectory}" />
+        <mkdir dir="${testResultsDirectory}" />
+    </target>
+
+    <!-- CLEAN TARGET -->
+    <!-- Modify this target to clean up the csharp-support build artifacts -->
+    <target name="do-clean">
+        <!-- TODO: This is easy only because we are copying the entire source tree -->
+        <delete dir="${buildRoot}" />
+    </target>
+
+    <!-- BUILD TARGET -->
+    <!-- Modify this target to actually build the csharp-support dlls -->
+    <target name="do-build">
+        <!-- Copy source to build location and filter tokens -->
+        <!-- TODO: Louis really hates this, it should be deprecated asap, the correct thing to do is build in place and be aware of the artifacts produced. -->
+        <copy todir="${buildDirectory}">
+            <fileset dir="${src}" />
+            <filterset refid="Etch.buildTokens" />
+        </copy>
+
+	<!-- following explicit copy of signature file takes care of strong naming -->
+	<copy file="${src}/etch4cs.snk" tofile="${buildDirectory}/etch4cs.snk" overwrite="true">
+
+	</copy>
+        <!-- Build Etch4CS -->
+        <msbuild buildfile="${buildDirectory}/Etch4CS.sln">
+            <property name="Configuration" value="${Etch.build.target}"/>
+            <target name="Etch4CS" />
+        </msbuild>
+ <!--   <visualstudio-task  dir="${buildDirectoryVS}"
+                            solution="Etch4CS"
+                            project="Etch4CS"
+                            loglabel="csharp-support-library"
+                            logdir="${Etch.logDirectory}" /> -->
+    </target>
+
+    <!-- TEST TARGET -->
+    <!-- Compile and run unit tests -->
+    <target name="do-test">
+
+        <!-- Generate interfaces -->
+        <etch dir="${buildDirectory}/compiler/test" file="Test1.etch"  binding="csharp" who="all,force" />
+		<etch dir="${buildDirectory}/examples/mixin/baz" file="Baz.etch"  binding="csharp" who="both"  include="${Etch.runtime.workspace}/src" />
+		<etch dir="${buildDirectory}/examples/mixin/bar" file="Bar.etch"  binding="csharp" who="both" noMixinArtifact="true"  include="${Etch.runtime.workspace}/src" /> 
+ 		<etch dir="${buildDirectory}/examples/mixin" file="Foo.etch" binding="csharp" who="all" noMixinArtifact="true"  include="${Etch.runtime.workspace}/src" />
+		<etch dir="${buildDirectory}/examples/async" file="Async.etch" binding="csharp" who="all"  include="${Etch.runtime.workspace}/src" />
+		<etch dir="${buildDirectory}/examples/inheritance" file="Inheritance.etch" binding="csharp" who="all"  include="${Etch.runtime.workspace}/src" />
+		<etch dir="${buildDirectory}/examples/closing" file="Closing.etch" binding="csharp" who="all"  include="${Etch.runtime.workspace}/src" />
+    	<etch dir="${buildDirectory}/examples/cuae" file="Cuae.etch" binding="csharp" who="both,impl"  include="${Etch.runtime.workspace}/src" />
+		<etch dir="${buildDirectory}/examples/types" file="Types.etch" binding="csharp" who="all"  include="${Etch.runtime.workspace}/src" />
+        <!-- compile csharp-based tests -->
+        <msbuild buildfile="${buildDirectory}/Etch4CS.sln" >
+            <property name="Configuration" value="${Etch.build.target}"/>
+            <target name="Etch4CS_Tests" />
+        </msbuild>
+<!--    <visualstudio-task  dir="${buildDirectoryVS}"
+                            solution="Etch4CS"
+                            project="Tests"
+                            loglabel="csharp-support-library-unittest"
+                            logdir="${Etch.logDirectory}" /> -->
+
+        <!-- Run NUnit Tests -->
+        <nunit xmlout="${tempCsharpResults}">
+            <testassembly name="${csharpTestsDirectory}/Etch4CS_Tests.dll"  />
+        </nunit>
+        <xslt style="${Etch.buildSupportDirectory}/NUnitToJUnit.xsl"
+            in="${tempCsharpResults}" out="${csharpResults}" />
+        <delete file="${tempCsharpResults}" />
+
+    </target>
+
+    <!-- POSTBUILD TARGET -->
+    <!-- Publish the build artifacts to the 'dist' directory -->
+    <target name="do-postbuild">
+
+        <!-- Created distribution point -->
+        <mkdir dir="${Etch.dist}/lib" />
+
+        <!-- Copy .dll to lib directory -->
+        <copy todir="${Etch.dist}/lib" >
+            <fileset dir="${buildDirectory}/bin/${Etch.build.target}" includes="Etch4CS.*" />
+        </copy>
+    </target>
+
+</project>

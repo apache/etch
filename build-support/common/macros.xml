@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<project name="macros.xml" basedir=".">
+	<description>Common macros for CUAE builds.</description>
+
+	<!-- Include standard properties file -->
+	<property file="build-support/common/standard.properties"/>
+
+	<!-- Used to call sub-components' build scripts from a main script -->
+	<macrodef name="publish_component">
+		<!-- This should only be called from the publish task which is only
+			run from the bamboo server. Please redfine the following appropriate
+			common.runtime variables there. -->
+		<attribute name="buildkey" default="${common.runtime.project.key}"/>
+		<attribute name="buildno" default="${common.runtime.build.number}"/>
+
+		<attribute name="keyfile" default="${common.runtime.svn.keyfile}"/>
+		<attribute name="host" default="${common.runtime.svn.host}"/>
+		<attribute name="username" default="${common.runtime.svn.username}"/>
+		<attribute name="buildsdir" default="${common.runtime.svn.builds.dir}"/>
+		<attribute name="latest" default="${common.runtime.build.last}"/>
+		<attribute name="artifacts-dir" default="${common.runtime.svn.builds.dir}/@{buildkey}/download-data/artifacts"/>
+		<attribute name="curbuilddir" default="@{artifacts-dir}/build-@{buildno}"/>
+		<attribute name="lastbuilddir" default="@{artifacts-dir}/@{latest}"/>
+		<sequential>
+			<sshexec trust="true"
+				host="@{host}"
+				username="@{username}"
+				keyfile="@{keyfile}"
+				command="ln -sfn @{curbuilddir} @{lastbuilddir}"/>
+		</sequential>
+	</macrodef>
+</project>

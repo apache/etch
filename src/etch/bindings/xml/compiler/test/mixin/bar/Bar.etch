@@ -1,0 +1,25 @@
+module etch.bindings.xml.compiler.test.mixin.bar
+
+service Bar
+{
+	mixin etch.bindings.xml.compiler.test.mixin.baz.Baz
+
+	@Extern( java, "etch.bindings.java.util.StrStrHashMap", "",
+		"etch.bindings.java.util.StrStrHashMapSerializer", "" )
+	extern BarTable
+	
+	struct BarData( int code, BarTable barTable, BazData bazData )
+	
+	struct ExtendBazData( int extendBaz ) extends BazData
+	
+	boolean someFunction( ExtendBazData huhExtend );
+	
+	@Direction( Both )
+	boolean bar1( BarData barData );
+	
+	@Direction( Server )
+	boolean bar2( BarData barData );
+	
+	@Direction( Client )
+	boolean bar3( BarData barData );
+}

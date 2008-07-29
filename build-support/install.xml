@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<project name="install" default="Debug" basedir="." >
+    <description>Build script do install Etch jars to your local snapshots repository</description>
+    <import file="build.includes.xml" />
+
+    <!-- INIT TARGET -->
+    <target name="do-init">
+    </target>
+
+    <!-- CLEAN TARGET -->
+    <target name="do-clean">
+    </target>
+
+    <!-- BUILD TARGET -->
+    <target name="do-build" >
+    </target>
+
+    <!-- TEST TARGET -->
+    <target name="do-test">
+    </target>
+
+    <!-- POSTBUILD TARGET -->
+    <target name="do-postbuild">
+        <property name="dist" value="${Etch.buildDirectory}/Installers/dist" />
+        <mavenInstallFile groupId="com.cisco.etch" artifactId="etch" version="1.0-SNAPSHOT"
+            file="${dist}/bin/etch.jar" />
+        <mavenInstallFile groupId="com.cisco.etch" artifactId="etch-java-runtime" version="1.0-SNAPSHOT"
+            file="${dist}/lib/etch-java-runtime.jar" />
+        <mavenInstallFile groupId="com.cisco.etch" artifactId="etch-java-runtime" version="1.0-SNAPSHOT" classifier="sources"
+            file="${dist}/lib/etch-java-runtime-src.zip" />
+
+        <!-- TODO: remove -->
+        <mavenInstallFile groupId="etch" artifactId="etch" version="1.0-SNAPSHOT"
+            file="${dist}/bin/etch.jar" />
+        <mavenInstallFile groupId="etch" artifactId="etch-java-runtime" version="1.0-SNAPSHOT"
+            file="${dist}/lib/etch-java-runtime.jar" />
+        <mavenInstallFile groupId="etch" artifactId="etch-java-runtime" version="1.0-SNAPSHOT" classifier="sources"
+            file="${dist}/lib/etch-java-runtime-src.zip" />
+    </target>
+
+</project>

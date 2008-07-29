@@ -1,0 +1,2 @@
+	@Direction (Both)	
+	int testConst2()

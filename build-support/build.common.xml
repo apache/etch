@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<project name="build.common" basedir="." >
+
+	<!-- Include common macros -->
+	<import file="common/macros.xml" />
+
+
+    <!-- Static properties -->
+    <property name="Etch.copyrightNotice"    value="Copyright (c) 2007 Cisco Systems, Inc. All rights reserved." />
+
+    <!-- Load Environment -->
+    <property environment="env" />
+    <property prefix="Etch.property."      file="./etch.properties" />
+    <property prefix="Etch.runtime."       file="./bamboo.properties" />
+
+    <!-- Validate properties -->
+    <condition property="Etch.property.majorVersion" value="0">
+        <not><isset property="Etch.property.majorVersion" /></not>
+    </condition>
+    <condition property="Etch.property.minorVersion" value="0" >
+        <not><isset property="Etch.property.minorVersion" /></not>
+    </condition>
+    <condition property="Etch.property.patchVersion" value="0" >
+        <not><isset property="Etch.property.patchVersion" /></not>
+    </condition>
+
+    <condition property="Etch.runtime.workspace" value="${basedir}" >
+        <not><isset property="Etch.runtime.workspace" /></not>
+    </condition>
+
+    <condition property="Etch.runtime.buildKey" value="LOCAL" >
+        <not><isset property="Etch.runtime.buildKey" /></not>
+    </condition>
+    <condition property="Etch.runtime.buildNumber" value="0" >
+        <not><isset property="Etch.runtime.buildNumber" /></not>
+    </condition>
+    <condition property="Etch.runtime.revisionNumber" value="0" >
+        <not><isset property="Etch.runtime.revisionNumber" /></not>
+    </condition>
+
+	<condition property="Etch.runtime.buildPath" value="build" >
+	    <not><isset property="Etch.runtime.buildPath" /></not>
+	</condition>
+
+	<condition property="Etch.runtime.tests.fail" value="${Etch.runtime.buildPath}\fail">
+		<isset property="build.publish" />
+	</condition>
+
+    <property name="Etch.version" value="${Etch.property.majorVersion}.${Etch.property.minorVersion}.${Etch.property.patchVersion}" />
+    <property name="Etch.buildTag" value="${Etch.runtime.buildKey}-${Etch.runtime.buildNumber}" />
+
+	<property name="Etch.buildDirectory" value="${Etch.runtime.workspace}/${Etch.runtime.buildPath}" />
+	<property name="Etch.buildSupportDirectory" value="${Etch.runtime.workspace}/build-support" />
+    <property name="Etch.logDirectory"       value="${Etch.buildDirectory}/BuildLogs" />
+    <property name="Etch.installerDirectory" value="${Etch.buildDirectory}/Installers" />
+    <property name="Etch.dist"               value="${Etch.installerDirectory}/dist" />
+
+    <!-- Define filterset for build-time substitutions -->
+    <filterset id="Etch.buildTokens" >
+        <filter token="EtchVersion"               value="${Etch.version}" />
+        <filter token="EtchBuildTag"              value="${Etch.buildTag}" />
+        <filter token="EtchRuntimeRevisionNumber" value="${Etch.runtime.revisionNumber}" />
+        <filter token="EtchRuntimeBuildKey"       value="${Etch.runtime.buildKey}" />
+        <filter token="EtchRuntimeBuildNumber"    value="${Etch.runtime.buildNumber}" />
+        <filter token="EtchMajorVersion"          value="${Etch.property.majorVersion}" />
+        <filter token="EtchMinorVersion"          value="${Etch.property.minorVersion}" />
+        <filter token="EtchPatchVersion"          value="${Etch.property.patchVersion}" />
+    </filterset>
+
+    <!-- TODO: Migrate to .NET tasks for ANT -->
+    <property name="tool.vs-2k5-task" value="${Etch.runtime.workspace}/scripts/vs-2k5-task.bat" />
+
+    <!-- NSIS installer support -->
+    <property name="tool.makensis"    value="makensis.exe" />
+    <property name="tool.maven"       value="${env.MAVEN_HOME}/bin/mvn.bat" />
+
+    <tempfile property="Etch.build.tmpdir" destdir="/tmp" />
+
+    <property   name="Etch.dependency.javacc.home"
+                value="${Etch.runtime.workspace}/3rdparty/javacc-4.0" />
+    <property   name="Etch.dependency.junit.jar"
+                value="${Etch.runtime.workspace}/3rdparty/junit4.3.1/junit-4.3.1.jar" />
+    <property   name="Etch.dependency.velocity.jar"
+                value="${Etch.runtime.workspace}/3rdparty/velocity-1.5/velocity-1.5.jar" />
+    <property   name="Etch.dependency.velocity-dep.jar"
+                value="${Etch.runtime.workspace}/3rdparty/velocity-1.5/velocity-dep-1.5.jar" />
+	<property   name="Etch.dependency.ant-dotnet-1.0.jar"
+	                value="${Etch.runtime.workspace}/3rdparty/ant-dotnet-1.0/ant-dotnet-1.0.jar" />
+<!--	<property   name="Etch.dependency.clover.jar"
+		                value="${Etch.runtime.workspace}/3rdparty/clover-ant-2.0.3/lib/clover.jar" /> -->
+	<property   name="Etch.dependency.clover.jar"
+			                value="${env.CLOVER_HOME}/lib/clover.jar" />
+
+    <path id="Etch.dependencies.jar.paths">
+        <pathelement location="${Etch.dependency.velocity-dep.jar}" />
+        <pathelement location="${Etch.dependency.junit.jar}" />
+    	<pathelement location="${Etch.dependency.clover.jar}" />
+    </path>
+
+    <!-- macros -->
+    <macrodef name="build_component" >
+        <attribute name="root" default="." />
+        <attribute name="dir"  default="build-support" />
+        <attribute name="target" default="${Etch.build.target}" />
+        <attribute name="script" default="build" />
+        <attribute name="antfile" default="@{script}.xml" />
+        <attribute name="loglabel" default="@{script}" />
+        <attribute name="output" default="${Etch.logDirectory}/@{loglabel}.@{target}.txt" />
+        <element   name="componentAntElements" optional="true" implicit="true" />
+        <sequential>
+            <echo message="@{loglabel}.@{target}" />
+            <ant dir="@{root}" antfile="@{dir}/@{antfile}" inheritAll="false" inheritRefs="false" output="@{output}" target="@{target}">
+            	<propertyset id="build-parameters">
+					<propertyref name="build.publish" />
+					<propertyref name="build.tests.fail" />
+				</propertyset>
+                <componentAntElements />
+            </ant>
+        </sequential>
+    </macrodef>
+
+    <!-- NSIS macro -->
+    <macrodef name="makensis">
+        <attribute name="root"        default="." />
+        <attribute name="dir"         default="." />
+        <attribute name="target"      default="${Etch.build.target}" />
+        <attribute name="script"      default="myscript" />
+        <attribute name="loglabel"    default="@{script}" />
+        <attribute name="destfile"    default="@{script}-setup.exe" />
+        <attribute name="version"     default="${Etch.version}" />
+        <attribute name="output"      default="${Etch.logsDirectory}/@{loglabel}.@{target}.txt" />
+        <attribute name="failonerror" default="false" />
+        <sequential>
+            <exec executable="${tool.makensis}" dir="@{root}/@{dir}" failonerror="@{failonerror}" >
+                <arg value="/V4" />
+                <arg value="/DPRODUCT_VERSION=@{version}" />
+                <arg value="/DOUT_FILE=@{destfile}" />
+                <arg value="@{script}.nsi" />
+            </exec>
+        </sequential>
+    </macrodef>
+
+    <!-- etch macro -->
+    <macrodef name="etch">
+        <attribute name="home"              default="${Etch.dist}" />
+        <attribute name="jar"               default="@{home}/bin/etch.jar" />
+        <attribute name="dir"               default="." />
+        <attribute name="outputdir"         default="." />
+        <attribute name="file"              default="interface.etch" />
+        <attribute name="wordlist"          default="" />
+        <attribute name="ignoreglobal"      default="false" />
+        <attribute name="ignorelocal"       default="false" />
+        <attribute name="who"               default="both" />
+        <attribute name="binding"           default="java" />
+		<attribute name="include"	    	default="."/>
+		<attribute name="noMixinArtifact"	default="false"/>
+        <attribute name="failonerror"       default="true" />
+        <sequential>
+            <java jar="@{jar}" fork="true" dir="@{dir}" failonerror="@{failonerror}">
+    			<classpath>
+                    <pathelement location="${Etch.dependency.clover.jar}"/>
+    			</classpath>
+                <arg value="--binding" /><arg value="@{binding}" />
+                <arg value="--what" /><arg value="@{who}" />
+				<arg value="--include-path" /><arg value="@{include}" />
+				<arg value="--no-mixin-artifacts" />
+                <!-- <arg value="@{noMixinArtifact}" />				 -->
+                <arg value="@{file}" />
+            </java>
+        </sequential>
+    </macrodef>
+
+    <!-- Migrate to .NET Tasks for ANT -->
+    <macrodef name="visualstudio-task">
+        <attribute name="root" default="." />
+        <attribute name="dir"  default="." />
+        <attribute name="solution" default="@{dir}" />
+        <attribute name="target"   default="${Etch.build.target}" />
+        <attribute name="project"  default="" />
+        <attribute name="loglabel" default="@{solution}" />
+        <attribute name="logdir"   default="@{dir}" />
+        <attribute name="output"   default="@{logdir}/@{loglabel}.@{target}.txt" />
+        <attribute name="failonerror"    default="false" />
+        <sequential>
+            <!-- <echo message="Tool: ${tool.vs-2k5-task}" /> -->
+            <!-- <echo message="Dir:  @{root}/@{dir}" /> -->
+            <echo message="VS-2K5-TASK: @{solution} @{target} @{project}" />
+            <!-- <exec executable="${tool.vs-2k5-task}" dir="@{root}/@{dir}" output="@{output}" failonerror="@{failonerror}"> -->
+            <exec executable="${tool.vs-2k5-task}" dir="@{root}/@{dir}" failonerror="@{failonerror}">
+                <arg value="@{solution}.sln" />
+                <arg value="@{target}" />
+                <arg value="@{project}" />
+            </exec>
+        </sequential>
+    </macrodef>
+
+    <!-- TODO: generate output XML for Bamboo -->
+    <macrodef name="run-junit">
+        <attribute name="classname"     default="class.name" />
+        <attribute name="classdir"      default="." />
+        <attribute name="classpath-ref" default="Etch.dependencies.jar.paths" />
+        <sequential>
+            <java fork="true" classname="junit.textui.TestRunner" taskname="junit" failonerror="false">
+                <arg value="@{classname}" />
+                <classpath>
+                    <pathelement location="@{classesdir}" />
+                </classpath>
+                <classpath refid="@{classpath-ref}" />
+            </java>
+        </sequential>
+    </macrodef>
+
+    <!-- mavenDeployFile -->
+    <macrodef name="mavenDeployFile">
+        <attribute name="root"         default="." />
+        <attribute name="dir"          default="." />
+        <attribute name="failonerror"  default="${BUILD.runtime.failOnError}" />
+
+        <attribute name="groupId"      default="com.cisco.etch" />
+        <attribute name="artifactId"   default="" />
+        <attribute name="version"      default="1.0-SNAPSHOT" />
+        <attribute name="packaging"    default="jar" />
+        <attribute name="repositoryId" default="archiva.snapshots" />
+        <attribute name="file"         default="foo.jar" />
+        <attribute name="url"          default="http://cuae.cisco.com/archiva/repository/snapshots/" />
+
+        <sequential>
+          <echo message="Deploying @{file} to @{url}..." />
+
+          <exec executable="${tool.maven}" dir="@{root}/@{dir}" failonerror="@{failonerror}" >
+            <arg value="deploy:deploy-file" />
+            <arg value="-DgroupId=@{groupId}" />
+            <arg value="-DartifactId=@{artifactId}" />
+            <arg value="-Dversion=@{version}" />
+            <arg value="-Dpackaging=@{packaging}" />
+            <arg value="-Dfile=@{file}" />
+            <arg value="-DrepositoryId=@{repositoryId}" />
+            <arg value="-Durl=@{url}" />
+          </exec>
+        </sequential>
+    </macrodef>
+    
+    <!-- mavenInstallFile -->
+    <macrodef name="mavenInstallFile">
+        <attribute name="root"         default="." />
+        <attribute name="dir"          default="." />
+        <attribute name="failonerror"  default="${BUILD.runtime.failOnError}" />
+
+        <attribute name="groupId"      default="com.cisco.etch" />
+        <attribute name="artifactId"   default="" />
+        <attribute name="version"      default="1.0-SNAPSHOT" />
+        <attribute name="packaging"    default="jar" />
+        <attribute name="file"         default="foo.jar" />
+        <attribute name="classifier"   default="" />
+
+        <sequential>
+          <echo message="Deploying @{file} to local repository..." />
+
+          <exec executable="${tool.maven}" dir="@{root}/@{dir}" failonerror="@{failonerror}" >
+            <arg value="install:install-file" />
+            <arg value="-DgroupId=@{groupId}" />
+            <arg value="-DartifactId=@{artifactId}" />
+            <arg value="-Dversion=@{version}" />
+            <arg value="-Dpackaging=@{packaging}" />
+            <arg value="-Dfile=@{file}" />
+            <arg value="-Dclassifier=@{classifier}" />
+            <arg value="-DgeneratePom=true" />
+          </exec>
+        </sequential>
+    </macrodef>
+</project>

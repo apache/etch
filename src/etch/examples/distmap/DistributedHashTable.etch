@@ -1,0 +1,53 @@
+module etch.examples.distmap
+
+/**
+ * The DistributedHashTable example program implements a simple service
+ * for modifying a distributed hash table.
+ */
+service DistributedHashTable
+{
+	/**
+	 * Puts a value in the hash table.
+	 *
+	 * @param key the key for the value.
+	 * @param value the value of the key.
+	 * @return the old value of the key, or null if this is a new entry.
+	 */
+	object putObject(string key, object value)
+
+	/**
+	 * Gets a value from the hash table.
+	 *
+	 * @param key the key for the value.
+	 * @return the value of the key, or null if there is no entry for the key.
+	 */
+	object getObject(string key)
+	
+	/**
+	 * Removes the value from the hash table.
+	 *
+	 * @param key the key for the value.
+	 * @return the old value of the key, or null if there was no entry for
+	 * the key.
+	 */
+	object removeObject(string key)
+ 	
+	/**
+ 	 * An entry in the hash table.
+ 	 * @param key the key for the value.
+ 	 * @param value the value of the key.
+ 	 */
+	struct Entry(string key, object value)
+ 	
+	/**
+ 	 * Gets all entries in the hash table.
+ 	 *
+ 	 * @return an array of all the entries in the hash table.
+ 	 */
+	Entry[] getAll()
+
+	/**
+	 * Gets the number of entries in the hash table.
+	 */
+	int size()
+}

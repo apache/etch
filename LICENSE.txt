@@ -1,0 +1,6 @@
+License
+=======
+
+This is the license file for Etch.
+
+Copyright 2008 (c) Cisco Systems, Inc. All Rights Reserved.

@@ -1,0 +1,7 @@
+module etch.examples.closing
+
+service Closing
+{
+	@Oneway
+	void close()
+}

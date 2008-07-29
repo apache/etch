@@ -1,0 +1,16 @@
+module etch.bindings.csharp.examples.async
+
+@Timeout(20000 )
+service Async
+{
+	@Direction( Both )
+	int sync( int count )
+	
+	@Direction( Both )
+	@AsyncReceiver( Queued )
+	int async_queued( int count )
+	
+	@Direction( Both )
+	@AsyncReceiver( Free )
+	int async_free( int count )
+}

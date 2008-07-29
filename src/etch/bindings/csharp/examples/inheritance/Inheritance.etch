@@ -1,0 +1,103 @@
+module etch.bindings.csharp.examples.inheritance
+
+/** Inheritance example */
+service Inheritance
+{
+	/**
+	 * E1 descr.
+	 * @param a blah about a.
+	 * @param b blah about b.
+	 */
+	exception E1 ( int a, int b )
+	
+	/**
+	 * E2 descr.
+	 * @param c blah about c.
+	 * @param d blah about d.
+	 */
+	exception E2 ( int c, int d ) extends E1
+	
+	/**
+	 * E3 descr.
+	 * @param e blah about e.
+	 * @param f blah about f.
+	 */
+	exception E3 ( int e, int f ) extends E2
+	
+	/**
+	 * S1 descr.
+	 * @param a blah about a.
+	 * @param b blah about b.
+	 */
+	struct S1 ( int a, int b )
+	
+	/**
+	 * S2 descr.
+	 * @param c blah about c.
+	 * @param d blah about d.
+	 */
+	struct S2 ( int c, int d ) extends S1
+	
+	/**
+	 * S3 descr.
+	 * @param e blah about e.
+	 * @param f blah about f.
+	 */
+	struct S3 ( int e, int f ) extends S2
+	
+	/**
+	 * Blah about f1.
+	 * @param v a value.
+	 * @return the same value.
+	 */
+	object f1( object v )
+	
+	/**
+	 * Blah about f2.
+	 * @param v a value.
+	 * @return the same value.
+	 */
+	S1 f2( S1 v )
+	
+	/**
+	 * Blah about f3.
+	 * @param v a value.
+	 * @return the same value.
+	 */
+	S2 f3( S2 v )
+	
+	/**
+	 * Blah about f4.
+	 * @param v a value.
+	 * @return the same value.
+	 */
+	S3 f4( S3 v )
+	
+	/**
+	 * Blah about f5.
+	 * @param v a value.
+	 * @return the same value.
+	 */
+	object[] f5( object[] v )
+	
+	/**
+	 * Blah about f6.
+	 * @param v a value.
+	 * @return the same value.
+	 */
+	S1[] f6( S1[] v )
+	
+	/**
+	 * Blah about f7.
+	 * @param v a value.
+	 * @return the same value.
+	 */
+	S2[] f7( S2[] v )
+	
+	/**
+	 * Blah about f8.
+	 * @param v a value.
+	 * @return the same value.
+	 */
+	S3[] f8( S3[] v )
+}

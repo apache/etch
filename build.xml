@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<project name="etch" default="debug" basedir=".">
+    <description>Master build script for Etch</description>
+    <import file="build-support/build.common.xml" />
+
+    <!-- standard, supported targets -->
+    <target name="Debug"           depends="debug" />
+    <target name="Release"         depends="release" />
+    <target name="Clean"           depends="clean" />
+    <target name="debug"           depends="init-debug,component-all"   />
+    <target name="release"         depends="init-release,component-all" />
+    <target name="release-deploy"  depends="release,component-deploy" />
+    <target name="test-java-support" depends="init-release,component-java-support" />
+    <target name="clean"           depends="init-clean,component-all,post-clean" />
+
+    <!-- Execute a clean, then 'debug' build -->
+    <target name="rebuild-debug">
+        <ant target="clean" />
+        <ant target="debug" />
+    </target>
+
+    <!-- Execute a clean, then 'release' build -->
+    <target name="rebuild-release">
+        <ant target="clean" />
+        <ant target="release" />
+    </target>
+
+    <!-- Execute a clean, then 'release' and snapshot deploy -->
+    <target name="rebuild-deploy">
+        <ant target="clean" />
+        <ant target="release-deploy" />
+    </target>
+
+    <!-- framework targets, do not call these directly -->
+    <target name="validate-dependencies" >
+        <tstamp />
+        <echo message="Workspace: ${Etch.runtime.workspace}" />
+        <echo message="SVN Revision: ${Etch.runtime.revisionNumber}" />
+        <echo message="Version: ${Etch.property.majorVersion}.${Etch.property.minorVersion}" />
+        <echo message="BuildKey: ${Etch.runtime.buildKey}" />
+        <echo message="BuildNumber: ${Etch.runtime.buildNumber}" />
+        <echo message="BuildDir: ${Etch.buildDirectory}" />
+        <echo message="LogDir: ${Etch.logDirectory}" />
+        <echo message="InstallDir: ${Etch.installerDirectory}" />
+        <mkdir dir="${Etch.buildDirectory}" />
+        <mkdir dir="${Etch.logDirectory}" />
+        <mkdir dir="${Etch.installerDirectory}" />
+    </target>
+
+    <target name="init-debug" depends="validate-dependencies" >
+        <property name="Etch.build.target" value="Debug" />
+    <property name="Etch.javac.debug" value="on" />
+    <property name="Etch.javac.optimize" value="off" />
+    </target>
+
+    <target name="init-release" depends="validate-dependencies">
+    <property name="Etch.build.target" value="Release" />
+    <property name="Etch.javac.debug"  value="off" />
+    <property name="Etch.javac.optimize" value="on" />
+    </target>
+
+    <target name="init-clean" depends="validate-dependencies">
+    <property name="Etch.build.target" value="Clean" />
+    </target>
+
+    <target name="post-clean" >
+        <echo message="Executing clean" />
+    </target>
+
+    <!-- Component targets, do not call these directly; Add to this set -->
+    <target name="component-compiler" >
+        <build_component script="compiler" />
+    </target>
+
+    <target name="component-csharp-support" >
+        <build_component script="csharp-support" />
+    </target>
+    
+    <target name="component-plugins-support" >
+        <build_component script="plugins-support" />
+    </target>
+
+    <target name="component-java-support" >
+        <build_component script="java-support" />
+    </target>
+
+    <target name="component-xml-support" depends="component-compiler" >
+        <!-- <build_component script="xml-support" /> -->
+    </target>
+
+    <target name="component-all-support" depends="component-csharp-support, component-plugins-support, component-xml-support, component-java-support" />
+
+    <target name="component-examples" depends="component-all-support" >
+        <echo message="TODO: add build scripts for examples" />
+
+        <!-- TODO: Update with one call to 'build_component' for each example, use 'build-support/examples.xml' as a template -->
+        <!-- <build_component script="example-FOO1" /> -->
+        <!-- <build_component script="example-FOO2" /> -->
+        <!-- <build_component script="example-FOO3" /> -->
+    </target>
+
+    <target name="component-docs" >
+        <build_component script="docs" />
+    </target>
+
+    <target name="component-packages" depends="component-compiler,component-all-support,component-examples,component-docs" >
+        <build_component script="packages" />
+    </target>
+
+    <target name="component-all" depends="component-packages,component-install" />
+
+    <target name="component-install" depends="component-packages" >
+        <build_component script="install" />
+    </target>    
+
+    <target name="component-deploy" depends="component-all" >
+        <build_component script="deploy" />
+    </target>
+</project>

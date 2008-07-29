@@ -1,0 +1,49 @@
+Request: StructValue( _mt_Request )
+Response: StructValue( _mt_Response )
+
+Response doit( Request req )
+
+Class<?> clss = obj.getClass();
+if (clss == Request.class ||
+	(clss == StructValue.class && ((StructValue) obj).isType( _mt_Request )))
+{
+	...
+}
+
+let's make the call:
+
+Response resp = server.doit( new Request( 23 ) );
+
+the message _mt_doit is created, and the req field stuffed
+with the Request object. the validator must allow this. it
+is a custom validator accepting Request.class, so it is happy.
+
+eventually the message is to be written, and the validator
+for the field returns TypeCode.CUSTOM. vf's exportCustomValue
+is called, which calls the helper for Request.class, which
+turns the instance into a StructValue with type _mt_Request,
+which is then written.
+
+outgoing stream:
+
+...
+CUSTOM
+_mt_Request // type
+1 // size
+_mf_code // code: key
+23 // code: value
+NONE // end of _mt_Request
+
+when the homebrew server reads this:
+
+readStruct() will do the right thing, but then importCustomValue
+will be called. this calls helper.importValue(). all works as it
+should.
+
+next the validator for doit's req field will be given the StructValue
+and must allow it.
+
+eventually doit returns a StructValue( _mt_Response ). this is stuffed
+into the _result_doit message. the validator must allow that.
+
+time comes to 

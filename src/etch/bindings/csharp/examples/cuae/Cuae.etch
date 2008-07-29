@@ -1,0 +1,23 @@
+module etch.bindings.csharp.examples.cuae
+
+service Cuae
+{
+	struct Request( int code )
+	
+	struct ReqWithMessage( string msg ) extends Request
+	
+	struct Response( string msg )
+	
+	struct RespWithCode ( int code ) extends Response
+	
+	@Direction(Server)
+	@AsyncReceiver( Queued )
+	Response doit( Request req )
+	
+	@Direction(Client)
+	@AsyncReceiver( Free )
+	Response doit2( Request req )
+	
+	@Direction(Server)
+	Response[] doit3( Request[] req )
+}

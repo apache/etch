@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<project name="deploy" default="Debug" basedir="." >
+    <description>Build script do deploy Etch jars to our common snapshots repository</description>
+    <import file="build.includes.xml" />
+
+    <!-- Static properties of the sub-project -->
+    <property name="buildRoot" value="${Etch.buildDirectory}" />
+
+    <!-- INIT TARGET -->
+    <target name="do-init">
+    </target>
+
+    <!-- CLEAN TARGET -->
+    <target name="do-clean">
+    </target>
+
+    <!-- BUILD TARGET -->
+    <target name="do-build" >
+    </target>
+
+    <!-- TEST TARGET -->
+    <target name="do-test">
+    </target>
+
+    <!-- POSTBUILD TARGET -->
+    <target name="do-postbuild">
+        <property name="dist" value="${Etch.buildDirectory}/Installers/dist" />
+        <!-- Deploy suppressed -->
+        <!--
+        <mavenDeployFile groupId="etch" artifactId="etch" version="1.0-SNAPSHOT"
+            file="${dist}/bin/etch.jar" />
+        <mavenDeployFile groupId="etch" artifactId="etch-java-runtime" version="1.0-SNAPSHOT"
+            file="${dist}/lib/etch-java-runtime.jar" />
+        -->
+  </target>
+
+</project>

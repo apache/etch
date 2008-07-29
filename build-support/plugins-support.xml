@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<project name="etch-support-plugins" default="Debug" basedir=".">
+    <description>Build script for Etch compiler Plugins support</description>
+    <import file="build.includes.xml" />
+
+    <!-- Static properties of the sub-project -->
+    <property name="buildRoot"      value="${Etch.buildDirectory}/plugins" />
+    <property name="buildRootVS"    value="${Etch.runtime.buildPath}/plugins" />
+    <property name="src"            value="plugins" />
+
+    <!-- INIT TARGET -->
+    <!-- Modify this target to define sub-project specific properties that can only be set at runtime -->
+    <target name="do-init">
+        <property name="buildDirectory" location="${buildRoot}/${Etch.build.target}/plugins" />
+        <property name="buildDirectoryVS" value="${buildRootVS}/${Etch.build.target}/plugins" />
+        <mkdir dir="${buildDirectory}" />
+    </target>
+
+    <!-- CLEAN TARGET -->
+    <!-- Modify this target to clean up the csharp-support build artifacts -->
+    <target name="do-clean">
+        <!-- TODO: This is easy only because we are copying the entire source tree -->
+        <delete dir="${buildRoot}" />
+    </target>
+
+    <!-- BUILD TARGET -->
+    <!-- Modify this target to actually build the csharp-support dlls -->
+    <target name="do-build">
+        <copy todir="${buildDirectory}">
+            <fileset dir="${src}" />
+        </copy>
+        <!-- Make Addin -->
+        <msbuild buildfile="${buildDirectory}/visualstudio-addin/visualstudio-addin.sln" >
+          <property name="Configuration" value="${Etch.build.target}" />
+        </msbuild>
+<!--    <visualstudio-task  dir="${buildDirectoryVS}/visualstudio-addin"
+                            solution="visualstudio-addin"
+                            loglabel="plugins"
+                            logdir="${Etch.logDirectory}" /> -->
+        <!-- invoke NSIS -->
+        <!-- TODO: suppress plugin installer build for now -->
+        <!--
+        <makensis  dir="${buildDirectoryVS}/visualstudio-addin/installer"
+                            output="${Etch.logDirectory}"
+                            script="visualstudio" />
+        -->                    
+    </target>
+
+    <!-- TEST TARGET -->
+    <!-- Compile and run unit tests -->
+    <target name="do-test">
+    </target>
+
+    <!-- POSTBUILD TARGET -->
+    <!-- Publish the build artifacts to the 'dist' directory -->
+    <target name="do-postbuild">
+        <!-- Docs distribution structure -->
+        <mkdir dir="${Etch.dist}/plugins" />
+
+        <!-- Copy all docs form the buildDirectory -->
+        <copy todir="${Etch.dist}/plugins" >
+            <fileset dir="${buildDirectoryVS}/visualstudio-addin/installer" includes="VSAddInSetup.exe" />
+        </copy>
+    </target>
+
+</project>

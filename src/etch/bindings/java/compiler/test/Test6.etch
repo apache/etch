@@ -1,0 +1,13 @@
+module etch.bindings.java.compiler.test
+
+service Test6
+{
+	@Direction(Both)
+	void m1()
+	
+	@Direction(Client)
+	void m2()
+	
+	@Direction(Server)
+	void m3()
+}

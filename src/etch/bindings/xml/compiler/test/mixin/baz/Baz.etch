@@ -1,0 +1,22 @@
+module etch.bindings.xml.compiler.test.mixin.baz
+
+service Baz
+{	
+	@Extern( java, "etch.bindings.java.util.StrStrHashMap", "",
+		"etch.bindings.java.util.StrStrHashMapSerializer", "" )
+	extern BazTable
+	
+	struct BazData( int code, BazTable bazTable )
+	
+	@Direction( Both )
+	boolean baz1( BazData bazData )
+	
+	@Direction( Server )
+	boolean baz2( BazData bazData )
+	
+	@Direction( Client )
+	boolean baz3( BazData bazData )
+	
+	@Oneway
+	void blah()
+}
