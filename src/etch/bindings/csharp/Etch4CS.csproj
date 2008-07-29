@@ -1,0 +1,203 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{368B5086-063C-4C5E-A74F-0AC32946036C}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <NoStandardLibraries>false</NoStandardLibraries>
+    <AssemblyName>Etch4CS</AssemblyName>
+    <RootNamespace>Etch4CS</RootNamespace>
+    <StartupObject>
+    </StartupObject>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>.\bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>.\bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include=".svn\all-wcprops" />
+    <None Include=".svn\dir-prop-base" />
+    <None Include=".svn\entries" />
+    <None Include=".svn\format" />
+    <None Include=".svn\text-base\AssemblyInfo.cs.svn-base" />
+    <None Include=".svn\text-base\AssemblyInfoCommon.cs.svn-base" />
+    <None Include=".svn\text-base\BuildConst.cs.svn-base" />
+    <None Include=".svn\text-base\BuildConst.cs.tmpl.svn-base" />
+    <None Include=".svn\text-base\Etch4CS.csproj.svn-base" />
+    <None Include=".svn\text-base\Etch4CS.resharper.svn-base" />
+    <None Include=".svn\text-base\Etch4CS.sln.svn-base" />
+    <None Include=".svn\text-base\Tests.csproj.svn-base" />
+    <None Include="transport\fmt\.svn\all-wcprops" />
+    <None Include="transport\fmt\.svn\entries" />
+    <None Include="transport\fmt\.svn\format" />
+    <None Include="transport\fmt\.svn\prop-base\ByteToSbyteConverter.cs.svn-base" />
+    <None Include="transport\fmt\.svn\prop-base\TaggedData.cs.svn-base" />
+    <None Include="transport\fmt\.svn\prop-base\TypeCode.cs.svn-base" />
+    <None Include="transport\fmt\.svn\text-base\ByteToSbyteConverter.cs.svn-base" />
+    <None Include="transport\fmt\.svn\text-base\TaggedData.cs.svn-base" />
+    <None Include="transport\fmt\.svn\text-base\TypeCode.cs.svn-base" />
+    <None Include="transport\fmt\binary\.svn\all-wcprops" />
+    <None Include="transport\fmt\binary\.svn\entries" />
+    <None Include="transport\fmt\binary\.svn\format" />
+    <None Include="transport\fmt\binary\.svn\prop-base\BinaryTaggedData.cs.svn-base" />
+    <None Include="transport\fmt\binary\.svn\prop-base\BinaryTaggedDataInput.cs.svn-base" />
+    <None Include="transport\fmt\binary\.svn\prop-base\BinaryTaggedDataOutput.cs.svn-base" />
+    <None Include="transport\fmt\binary\.svn\text-base\BinaryTaggedData.cs.svn-base" />
+    <None Include="transport\fmt\binary\.svn\text-base\BinaryTaggedDataInput.cs.svn-base" />
+    <None Include="transport\fmt\binary\.svn\text-base\BinaryTaggedDataOutput.cs.svn-base" />
+    <None Include="transport\fmt\binary\.svn\text-base\Validator_none.cs.svn-base" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="msg\ArrayIterator.cs" />
+    <Compile Include="transport\ArrayValue.cs" />
+    <Compile Include="msg\ComboValidator.cs" />
+    <Compile Include="msg\EqualsHelper.cs" />
+    <Compile Include="msg\Field.cs" />
+    <Compile Include="msg\IdName.cs" />
+    <Compile Include="msg\Message.cs" />
+    <Compile Include="msg\StructValue.cs" />
+    <Compile Include="transport\TaggedDataInput.cs" />
+    <Compile Include="transport\TaggedDataOutput.cs" />
+    <Compile Include="msg\TypeValidator.cs" />
+    <Compile Include="msg\Validator.cs" />
+    <Compile Include="msg\Validator_ArrayValue.cs" />
+    <Compile Include="msg\Validator_boolean.cs" />
+    <Compile Include="msg\Validator_byte.cs" />
+    <Compile Include="msg\Validator_custom.cs" />
+    <Compile Include="msg\Validator_double.cs" />
+    <Compile Include="msg\Validator_float.cs" />
+    <Compile Include="msg\Validator_int.cs" />
+    <Compile Include="msg\Validator_long.cs" />
+    <Compile Include="msg\Validator_object.cs" />
+    <Compile Include="msg\Validator_RuntimeException.cs" />
+    <Compile Include="msg\Validator_short.cs" />
+    <Compile Include="msg\Validator_string.cs" />
+    <Compile Include="msg\Validator_StructValue.cs" />
+    <Compile Include="msg\Validator_void.cs" />
+    <Compile Include="msg\ValueFactory.cs" />
+    <Compile Include="msg\XType.cs" />
+    <Compile Include="support\Close.cs" />
+    <Compile Include="support\Converter.cs" />
+    <Compile Include="support\DefaultValueFactory.cs" />
+    <Compile Include="support\DeliveryService.cs" />
+    <Compile Include="support\FreePool.cs" />
+    <Compile Include="support\IdNameMap.cs" />
+    <Compile Include="support\IntCounter.cs" />
+    <Compile Include="support\Mailbox.cs" />
+    <Compile Include="support\MessageHandler.cs" />
+    <Compile Include="support\Pool.cs" />
+    <Compile Include="support\QueuedPool.cs" />
+    <Compile Include="support\RemoteBase.cs" />
+    <Compile Include="support\StubBase.cs" />
+    <Compile Include="support\Todo.cs" />
+    <Compile Include="support\TodoManager.cs" />
+    <Compile Include="support\Unwanted.cs" />
+    <Compile Include="support\Who.cs" />
+    <Compile Include="support\_Etch_AuthException.cs" />
+    <Compile Include="support\_Etch_RuntimeException.cs" />
+    <Compile Include="transport\AbstractDeliveryService.cs" />
+    <Compile Include="transport\AbstractStartable.cs" />
+    <Compile Include="transport\Connection.cs" />
+    <Compile Include="transport\DataHandler.cs" />
+    <Compile Include="transport\DataSource.cs" />
+    <Compile Include="transport\DefaultDeliveryService2.cs" />
+    <Compile Include="transport\DefaultListenerHandler.cs" />
+    <Compile Include="transport\DefaultMessageHandler.cs" />
+    <Compile Include="transport\FlexBuffer.cs" />
+    <Compile Include="transport\fmt\binary\BinaryTaggedData.cs" />
+    <Compile Include="transport\fmt\binary\BinaryTaggedDataInput.cs" />
+    <Compile Include="transport\fmt\binary\BinaryTaggedDataOutput.cs" />
+    <Compile Include="transport\fmt\binary\Validator_none.cs" />
+    <Compile Include="transport\fmt\ByteToSbyteConverter.cs" />
+    <Compile Include="transport\fmt\TaggedData.cs" />
+    <Compile Include="transport\fmt\TypeCode.cs" />
+    <Compile Include="transport\InputStream.cs" />
+    <Compile Include="transport\Listener.cs" />
+    <Compile Include="transport\ListenerHandler.cs" />
+    <Compile Include="transport\MailboxManager.cs" />
+    <Compile Include="transport\MailboxMessageSource.cs" />
+    <Compile Include="transport\MessageHandler.cs" />
+    <Compile Include="transport\Messagizer.cs" />
+    <Compile Include="transport\MessagizerMessageSource.cs" />
+    <Compile Include="transport\Monitor.cs" />
+    <Compile Include="transport\OutputStream.cs" />
+    <Compile Include="transport\PacketHandler.cs" />
+    <Compile Include="transport\Packetizer.cs" />
+    <Compile Include="transport\PacketSource.cs" />
+    <Compile Include="transport\PlainMailbox.cs" />
+    <Compile Include="transport\Runner.cs" />
+    <Compile Include="transport\RunnerHandler.cs" />
+    <Compile Include="transport\Session.cs" />
+    <Compile Include="transport\Source.cs" />
+    <Compile Include="transport\SourceHandler.cs" />
+    <Compile Include="transport\Startable.cs" />
+    <Compile Include="transport\TCPConnection.cs" />
+    <Compile Include="transport\Transport.cs" />
+    <Compile Include="util\AlarmListener.cs" />
+    <Compile Include="util\CharIterator.cs" />
+    <Compile Include="util\CircularQueue.cs" />
+    <Compile Include="util\EmptyIterator.cs" />
+    <Compile Include="util\HPTimer.cs" />
+    <Compile Include="util\IdGenerator.cs" />
+    <Compile Include="util\PerfTest.cs" />
+    <Compile Include="util\SingleIterator.cs" />
+    <Compile Include="util\StringUtil.cs" />
+    <Compile Include="util\Timer.cs" />
+    <Compile Include="util\URL.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="support\FieldMap.cs" />
+    <Compile Include="support\MessageSource.cs" />
+    <Compile Include="support\ObjSession.cs" />
+    <Compile Include="support\TypeMap.cs" />
+    <Compile Include="transport\BinaryTaggedDataFormatFactory.cs" />
+    <Compile Include="transport\DefaultDeliveryService.cs" />
+    <Compile Include="transport\FormatFactory.cs" />
+    <Compile Include="transport\Resources.cs" />
+    <Compile Include="transport\ServerFactory.cs" />
+    <Compile Include="transport\SessionConsts.cs" />
+    <Compile Include="transport\TcpTransportFactory.cs" />
+    <Compile Include="transport\TransportConsts.cs" />
+    <Compile Include="transport\TransportFactory.cs" />
+    <Compile Include="transport\TransportHelper.cs" />
+    <Compile Include="util\DateSerializer.cs" />
+    <Compile Include="util\StrIntHashMap.cs" />
+    <Compile Include="util\StrIntHashMapSerializer.cs" />
+    <Compile Include="util\StrStrHashMap.cs" />
+    <Compile Include="util\StrStrHashMapSerializer.cs" />
+    <Compile Include="util\URLSerializer.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include=".svn\prop-base\" />
+    <Folder Include=".svn\props\" />
+    <Folder Include=".svn\tmp\prop-base\" />
+    <Folder Include=".svn\tmp\props\" />
+    <Folder Include=".svn\tmp\text-base\" />
+    <Folder Include="transport\fmt\.svn\props\" />
+    <Folder Include="transport\fmt\.svn\tmp\prop-base\" />
+    <Folder Include="transport\fmt\.svn\tmp\props\" />
+    <Folder Include="transport\fmt\.svn\tmp\text-base\" />
+    <Folder Include="transport\fmt\binary\.svn\props\" />
+    <Folder Include="transport\fmt\binary\.svn\tmp\prop-base\" />
+    <Folder Include="transport\fmt\binary\.svn\tmp\props\" />
+    <Folder Include="transport\fmt\binary\.svn\tmp\text-base\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSHARP.Targets" />
+  <ProjectExtensions>
+    <VisualStudio AllowExistingFolder="true" />
+  </ProjectExtensions>
+</Project>

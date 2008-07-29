@@ -1,0 +1,1 @@
+thrift -java Perf.thrift

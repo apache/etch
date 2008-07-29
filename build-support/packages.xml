@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<project name="etch-packages" default="Debug" basedir=".">
+    <description>Build script for Etch binary distribution kits</description>
+    <import file="build.includes.xml" />
+  
+    <!-- Static properties of the sub-project -->
+    <property name="buildRoot"      value="${Etch.buildDirectory}/packages" />
+    <property name="packageName"    value="etch-${Etch.version}-${Etch.buildTag}" />
+
+    <!-- INIT TARGET -->
+    <!-- Modify this target to define sub-project specific properties that can only be set at runtime -->
+    <target name="do-init">
+        <property name="buildDirectory"     value="${buildRoot}" />    
+
+        <mkdir dir="${buildDirectory}" />
+        <mkdir dir="${Etch.dist}" />
+    </target>
+
+    <!-- CLEAN TARGET -->
+    <!-- Modify this target to clean up the build products -->
+    <target name="do-clean">
+        <delete dir="${buildRoot}" />
+        <delete dir="${Etch.dist}" />
+        <delete dir="${Etch.installerDirectory}" />
+    </target>
+
+    <!-- BUILD TARGET -->
+    <!-- Modify this target to actually build the binary packages -->
+    <target name="do-build">
+
+        <!-- create zipped binary distribution -->
+        <zip destfile="${buildDirectory}/${packageName}.zip" >
+            <zipfileset dir="${Etch.dist}" prefix="${packageName}/" />
+        </zip>
+
+        <!-- create tar-gzip binary distribution -->
+        <tar destfile="${buildDirectory}/${packageName}.tar.gz" compression="gzip" >
+            <tarfileset dir="${Etch.dist}" prefix="${packageName}/" />
+        </tar>
+
+    </target>
+
+    <!-- TEST TARGET -->
+    <!-- Modify this target to implement tests on the package -->
+    <target name="do-test">
+    </target>
+
+    <!-- POSTBUILD TARGET -->
+    <!-- Modify this target to move the binary distribution packages to the 'Installers' directory -->
+    <target name="do-postbuild">
+        <move todir="${Etch.installerDirectory}" >
+            <fileset file="${buildDirectory}/${packageName}.zip" />
+            <fileset file="${buildDirectory}/${packageName}.tar.gz" />
+        </move>
+    </target>
+
+</project>

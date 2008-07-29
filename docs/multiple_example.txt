@@ -1,0 +1,105 @@
+i was always thinking that a certain message might provoke multiple
+return messages, and that those return messages would be different
+types (foo might provoke bar, baz, bif, etc.) instead of just multiple
+results (foo provokes multiple _result_foo messages). the problem with
+results being multiple unrelated messages is how to deliver them "cooked"
+instead of just as java Message objects. running them through the client
+stub and delivering them as method calls requires a whole lot of syntax
+glob and gets very messy.
+
+clearly louis, in an example he drew on the board one day, was thinking
+of the latter. and there is something nice and clean about it. and with
+structured return types there can be a variety of content all with a
+very simple mechanism.
+
+here is one model:
+
+service CallControl
+{
+	struct Call
+	{
+		...
+	}
+	
+	@Multiple(mb)
+	Call makecall( string number )
+}
+
+the @Multiple declares that this method will return multiple results.
+the interface is actually expressed like this in java:
+
+public interface CallControl
+{
+	public void makecall( String number, Mailbox<Call> mb );
+}
+
+the client uses it like this:
+
+CallControl cc;
+...
+Mailbox<Call> mb = new ClientMailbox<Call>( timeout );
+cc.makecall( "12345", mb );
+while (mb.hasNext())
+{
+	Call c = mb.next();
+	... do something with the updated call ...
+}
+
+mb.next() will wait forever for another message to show up,
+up to the mailbox timeout itself. you could also call
+mb.next( timeout ) to use a temporary timeout. when the remote
+side closes the mailbox, a message is sent which might deliver
+a value and then close the mailbox. then mb.next() would return
+false.
+
+if the remote side sends an exception as the result, then
+mb.next() will throw that exception.
+
+the server does this:
+
+public class CallControlImpl
+{
+	public void makecall( String number, Mailbox<Call> mb )
+	{
+		Call c = new Call();
+		c.status = Status.NEW;
+		c.callId = nextCallId();
+		mb.deliver( c, true ); // true means keep the mailbox open.
+		// ... start making the call ...
+		c.status = Status.ESTABLISHED;
+		mb.deliver( c, false ); // false means close the mailbox.
+	}
+}
+
+the server could also use mb.close() to send a message closing the
+mailbox without delivering a value. if the server method throws an
+exception, that would be written into the mailbox and the mailbox
+closed by the stub.
+
+if the server wants, it can save the mailbox somewhere and then
+return. nothing bad will happen. the mailbox will still be open,
+and able to send responses.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 

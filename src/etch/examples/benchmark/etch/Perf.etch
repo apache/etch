@@ -1,0 +1,28 @@
+module etch.examples.benchmark.etch
+
+/** A service to test performance */
+service Perf
+{
+	/**
+	 * Adds two integers and returns the sum.
+	 * @param x the first integer.
+	 * @param y the second integer.
+	 * @return the sum of x and y.
+	 */
+	int add( int x, int y )
+	
+	/**
+	 * Adds an array of integers and returns the sum.
+	 * @param values an array of integers to be summed.
+	 * @return the sum of values.
+	 */
+	int sum( int[] values )
+	
+	/**
+	 * Reports the event defined by code and a descriptive message.
+	 * @param code a simple code describing the event.
+	 * @param msg a descriptive message.
+	 */
+	@Oneway
+	void report( int code, string msg )
+}

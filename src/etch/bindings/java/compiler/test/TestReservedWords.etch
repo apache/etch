@@ -1,0 +1,14 @@
+module etch.bindings.java.compiler.test
+
+@Direction(Both)
+@Timeout(4000)
+service Test
+{
+	enum E1( goto, abstract, interface )
+
+	struct S1( int if, int else, int new )
+
+	extern new
+
+	exception Excp1( string try, int catch )
+}

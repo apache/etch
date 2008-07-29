@@ -1,0 +1,70 @@
+module etch.examples.log
+
+@Timeout(4000)
+service Log
+{
+	const string WRITE_RIGHT = "Log.write";
+	
+	/**
+	 * throws exception if login fails
+	 */
+	exception Failure( string msg )
+	
+	const int DEBUG   = 1
+	const int VERBOSE = 2
+	const int INFO 	  = 3
+	const int WARNING = 4
+	const int ERROR   = 5
+	
+	/**
+	 * Checks if the user is already logged in, can be authenticated & 
+	 * has the appropriate rights with which s/he can access the server 
+	 * If the user don't have rights/authentication then the
+	 * Failure exception is thrown
+	 * 
+	 * @param name login username of the user
+	 * @param pwd login password of the user
+	 * @throws Failure exception
+	 */
+     void login( string name, string pwd ) throws Failure
+      
+     /**
+      * Logs the user out of the server
+      */
+     void logout()
+    
+    /**
+     * Checks if the user is already logged in or not
+     * 
+     * @return true if the user is logged in; returns false otherwise
+     */
+     boolean isLoggedIn()	
+	
+	 /**
+	  * Used to log in the message with the level of the message
+	  * 
+	  * @param level is the level set by the server
+	  * @param msg is the message that is being logged by the user
+	  */ 
+	 @Oneway
+	 @Authorize(isLoggedIn)
+	 void log( int level, string msg )
+	
+	 /**
+	  * Used to obtain the level of the message that is logged in
+	  * 
+	  * @return the int instance of the level that is returned 
+	  */
+	 @Authorize(isLoggedIn)
+	 int getLevel()
+	 
+	 /**
+	  * Used to set the level of the log messages that are logged in; If the
+	  * set level is beyond the limits then throws exception
+	  * 
+	  * @param level is the level of the message that is logged in
+	  * @throws Failure exception
+	  */
+	 @Authorize(isLoggedIn)
+	 void setLevel( int level ) throws Failure
+}

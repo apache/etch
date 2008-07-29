@@ -1,0 +1,4 @@
+// this policy file should only be used for testing and not deployed
+grant {
+    permission java.security.AllPermission;
+};

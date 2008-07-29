@@ -1,0 +1,53 @@
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual Studio 2005
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProviderExample", "ProviderExample.csproj", "{5C03FFD6-068F-4D1B-A269-3773A4F8940C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{58F3D7C4-B660-45B3-81A8-7D1A56DFFD05}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PostBuild", "PostBuild\PostBuild.csproj", "{2D861A88-063A-4E10-B414-EEB4E9D915A1}"
+	ProjectSection(ProjectDependencies) = postProject
+		{EE8C0F40-6481-428F-8BA6-8A45937DA76A} = {EE8C0F40-6481-428F-8BA6-8A45937DA76A}
+		{44575151-4BD7-4284-BAEB-0409DB923959} = {44575151-4BD7-4284-BAEB-0409DB923959}
+		{5C03FFD6-068F-4D1B-A269-3773A4F8940C} = {5C03FFD6-068F-4D1B-A269-3773A4F8940C}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleEtchClient", "..\SampleEtchClient\SampleEtchClient.csproj", "{44575151-4BD7-4284-BAEB-0409DB923959}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleEtchServer", "..\SampleEtchServer\SampleEtchServer.csproj", "{EE8C0F40-6481-428F-8BA6-8A45937DA76A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		DebugMethodCallTrace|Any CPU = DebugMethodCallTrace|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5C03FFD6-068F-4D1B-A269-3773A4F8940C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5C03FFD6-068F-4D1B-A269-3773A4F8940C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5C03FFD6-068F-4D1B-A269-3773A4F8940C}.DebugMethodCallTrace|Any CPU.ActiveCfg = Debug|Any CPU
+		{5C03FFD6-068F-4D1B-A269-3773A4F8940C}.DebugMethodCallTrace|Any CPU.Build.0 = Debug|Any CPU
+		{5C03FFD6-068F-4D1B-A269-3773A4F8940C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5C03FFD6-068F-4D1B-A269-3773A4F8940C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2D861A88-063A-4E10-B414-EEB4E9D915A1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2D861A88-063A-4E10-B414-EEB4E9D915A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2D861A88-063A-4E10-B414-EEB4E9D915A1}.DebugMethodCallTrace|Any CPU.ActiveCfg = DebugMethodCallTrace|Any CPU
+		{2D861A88-063A-4E10-B414-EEB4E9D915A1}.DebugMethodCallTrace|Any CPU.Build.0 = DebugMethodCallTrace|Any CPU
+		{2D861A88-063A-4E10-B414-EEB4E9D915A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2D861A88-063A-4E10-B414-EEB4E9D915A1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{44575151-4BD7-4284-BAEB-0409DB923959}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{44575151-4BD7-4284-BAEB-0409DB923959}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{44575151-4BD7-4284-BAEB-0409DB923959}.DebugMethodCallTrace|Any CPU.ActiveCfg = Debug|Any CPU
+		{44575151-4BD7-4284-BAEB-0409DB923959}.DebugMethodCallTrace|Any CPU.Build.0 = Debug|Any CPU
+		{44575151-4BD7-4284-BAEB-0409DB923959}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{44575151-4BD7-4284-BAEB-0409DB923959}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EE8C0F40-6481-428F-8BA6-8A45937DA76A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EE8C0F40-6481-428F-8BA6-8A45937DA76A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EE8C0F40-6481-428F-8BA6-8A45937DA76A}.DebugMethodCallTrace|Any CPU.ActiveCfg = Debug|Any CPU
+		{EE8C0F40-6481-428F-8BA6-8A45937DA76A}.DebugMethodCallTrace|Any CPU.Build.0 = Debug|Any CPU
+		{EE8C0F40-6481-428F-8BA6-8A45937DA76A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EE8C0F40-6481-428F-8BA6-8A45937DA76A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

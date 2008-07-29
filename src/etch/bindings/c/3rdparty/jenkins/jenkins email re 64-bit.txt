@@ -1,0 +1,29 @@
+I don't have any.  However, Thomas Wang came up with this one:
+
+public long hash64shift(long key)
+{
+  key = (~key) + (key << 21); // key = (key << 21) - key - 1;
+  key = key ^ (key >>> 24);
+  key = (key + (key << 3)) + (key << 8); // key * 265
+  key = key ^ (key >>> 14);
+  key = (key + (key << 2)) + (key << 4); // key * 21
+  key = key ^ (key >>> 28);
+  key = key + (key << 31);
+  return key;
+}
+
+I haven't tested it, but the functions of his that I have tested aren't bad, and the operations look about like what I'd expect is needed.  My preliminary stabs at a 64-bit functions said 8 or 9 shifts are needed, he's got 10, but many are done in parallel, so it does look like a promising function.
+
+James DeCocq (jadecocq) wrote:
+> Hi Bob,
+>  
+> First off, thanks very much for making your hash table code and 
+> knowledge available!
+>  
+> Have you tried the code in 64 bits? I don't currently have the ability 
+> to do so, but a glance at some of the code, specifically the renew() 
+> macro, seems as if it might assume that a pointer is the same size as 
+> an int. If it is the case that it makes assumptions as to 32 bits, are 
+> there specific tweaks you may have made for 64 bits that you can share?
+>  
+> Much obliged!

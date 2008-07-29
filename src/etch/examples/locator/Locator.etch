@@ -1,0 +1,278 @@
+module etch.examples.locator
+
+/**
+ * The Locator service is used to maintain a mapping between a description
+ * URL and a contact URL for a service instance. The data may be statically
+ * or dynamically configured. Queries of the registry may be performed on
+ * the various attributes of the service instance description. In all cases,
+ * the description, contact, and query are specifies as URLs:
+ *
+ * Description URL
+ *
+ * The description URL for a service instance is specified like this:
+ *
+ * etch://type/protocol/instance?props
+ *
+ * The description URL of a service includes its service type (the fully
+ * qualified name of the service, e.g., etch.examples.locator.Locator),
+ * the protocol used to contact the instance (tcp, udp, tcp-tls, udp-aes256,
+ * etc.), and the instance name (e.g., aus04-1).
+ *
+ * The type, protocol, and instance are what uniquely defines the service
+ * instance. A service instance may be available using multiple protocols.
+ *
+ * Additionally, properies may be associated with the description which
+ * might be used in matching.
+ *
+ * Examples of Description URL
+ *
+ * etch://etch.examples.locator.Locator/tcp/aus04-1
+ * (tcp-based Locator named aus04-1)
+ *
+ * etch://etch.examples.locator.Locator/tcp/aus04-1?zipcode=79759
+ * (as above, but with a zipcode property added)
+ *
+ * Contact URL
+ *
+ * A contact URL for a service instance is specified like this:
+ *
+ * protocol:location
+ *
+ * The protocol is as specified in the description, while location is
+ * interpreted by the protocol in question. The protocol must be
+ * supported by the caller in order the use the service.
+ *
+ * Examples of Contact URL:
+ *
+ * tcp://host:port
+ * udp://host:port
+ *
+ * Query URL
+ *
+ * A query URL is specified like a description URL, except that
+ * type, protocol, and instance may be wildcarded by specifying
+ * them as ".". Protocol may also be specified as a comma separated
+ * list such as "tcp,udp" which specifies the priority order you'd
+ * like (you'd rather have tcp, but would settle for udp).
+ *
+ * Any properties specified on the query URL must match exactly
+ * properties on a description in order for there to be a match.
+ * That said, there may be certain predefined query props which
+ * match computationally (e.g., near-zip=78759 might check for
+ * descriptions with zipcode attributes and try to figure out
+ * how close they are...).
+ *
+ * Examples of Query URL
+ *
+ * etch://etch.examples.locator.Locator/tcp/aus04-1
+ * (match exactly the tcp-based Locator named aus04-1)
+ *
+ * etch://etch.examples.locator.Locator/./aus04-1
+ * (match any Locator named aus04-1, no matter the protocol)
+ *
+ * etch://etch.examples.locator.Locator/tcp/.
+ * (match any tcp-based Locator)
+ *
+ * etch://etch.examples.locator.Locator/tcp/.?group=austin
+ * (match any tcp-based Locator in the austin group)
+ *
+ * etch://././.?who=scott
+ * (match any instance registered by scott)
+ */
+@Timeout(4000) @Authorize( canRead )
+service Locator
+{
+	/** The right to read the registry. */
+	const string READ_RIGHT = "Locator.read"
+	
+	/** The right to update the registry. */
+	const string UPDATE_RIGHT = "Locator.update"
+	
+	/**
+	 * Exception thrown if authentication fails.
+	 *
+	 * @param msg the reason for the failure.
+	 */
+	exception Failure( string msg )
+	
+	@Extern( java, "java.util.Date", "", "etch.bindings.java.util.DateSerializer", "" )
+	extern Timestamp
+	
+	@Extern( java, "metreos.util.URL", "", "etch.bindings.java.util.URLSerializer", "" )
+	extern URL
+	
+	/**
+	 * A Registration for a service instance includes its instance
+	 * description URL, the instance contact URL, who and when it
+	 * was registered, and the expiration time.
+	 **/
+	struct Registration
+	(
+		/** The instance description URL. */
+		URL description,
+		
+		/** The instance contact URL. */
+		URL contact,
+		
+		/** The user who registered the instance. */
+		string who,
+		
+		/** When the instance was registered. */
+		Timestamp registered,
+		
+		/** When the instance will expire. */
+		Timestamp expires
+	)
+	
+	//////////
+	// AUTH //
+	//////////
+	
+	/**
+	 * Marks the user as logged in if they are authentic and have the
+	 * right to utilize the service.
+	 *
+	 * @param name the name of the user.
+	 *
+	 * @param pwd the password of the user.
+	 *
+	 * @throws Failure if the user is already logged in, name or pwd
+	 * doesn't match an authorized user, or if the user doesn't have
+	 * the right to utilize the service.
+	 */
+	@Authorize( true )
+	void login( string name, string pwd ) throws Failure
+	
+	/**
+	 * Marks the user as logged out.
+	 */
+	@Authorize( true )
+	void logout()
+	
+	/**
+	 * Checks if a user is logged in.
+	 *
+	 * @return true if a user is logged in.
+	 */
+	@Authorize( true )
+	boolean isLoggedIn()
+	
+	/**
+	 * Checks if the session can read the registry.
+	 *
+	 * @return true if the session can read the registry.
+	 */
+	@Authorize( true )
+	boolean canRead()
+	
+	/**
+	 * Checks if the session can write the registry.
+	 *
+	 * @param description the instance description URL.
+	 *
+	 * @return true if the session can write the registry.
+	 */
+	@Authorize( true )
+	boolean canWrite( URL description )
+	
+	/////////////
+	// LOCATOR //
+	/////////////
+	
+	/**
+	 * Returns registrations matching the query URL.
+	 *
+	 * @param query selects zero or more registrations.
+	 *
+	 * @param offset the offset in the matching set of registrations
+	 * to return. Offset 0 specifies the beginning.
+	 *
+	 * @param length the count of the number of registrations from the
+	 * matching set of registrations to return (starting at offset).
+	 *
+	 * @return registrations from the matching set, starting at offset
+	 * for length. If the requested number of registrations is returned,
+	 * there may be more available. If less than the requested number of
+	 * registrations is returned, there are no more available.
+	 *
+	 * The set of registrations may change between successive calls to
+	 * find. When trying to enumerate the entire set (or a significant
+	 * subset) of the registry, you should subscribe to all changes, and
+	 * if any occur, you should wait a bit and then start over and try
+	 * again.
+	 **/ 
+	Registration[] find( URL query, int offset, int length )
+	
+	/**
+	 * Adds a subscription to registry updates. New, updated, or removed
+	 * registrations which match the query are passed to the client via
+	 * the update message (existing registrations are not reported).
+	 *
+	 * You may have multiple subscriptions.
+	 *
+	 * @param query is a URL which is used to select one or more
+	 * registrations.
+	 */
+	void subscribe( URL query )
+	
+	/**
+	 * Removes a subscription to registry updates. The query must exactly
+	 * match a query previously passed to subscribe.
+	 *
+	 * @param query is a URL passed to subscribe.
+	 */
+	void unsubscribe( URL query )
+	
+	/**
+	 * Removes all subscriptions to registry updates. When a session
+	 * terminates, all subscriptions are removed.
+	 */
+	void unsubscribeAll()
+	
+	/**
+	 * Notifies the client about an update to the registry which matches
+	 * one of their subscriptions.
+	 *
+	 * @param query is a URL previously passed to subscribe. This is the
+	 * query that was matched. Only one match per session allowed.
+	 *
+	 * @param registration a new, updated, or removed registration.
+	 *
+	 * @param updated flag indicating that the registration is new or
+	 * updated. If updated is false, it means the registration is being
+	 * removed.
+	 */
+	@Direction( client ) @Oneway @Authorize( true )
+	void update( URL query, Registration registration, boolean updated )
+	
+	/**
+	 * Adds the service contact information of the instance to the
+	 * registry if the caller is allowed to do so. The type, protocol,
+	 * and instance of the description URL are used to determine uniqueness
+	 * of the registration. Any existing registration with the same type,
+	 * protocol, and instance will be replaced. Effectively, the old
+	 * description is removed, and the new one added.
+	 *
+	 * @param description the instance description URL.
+	 *
+	 * @param contact the instance contact URL.
+	 *
+	 * @param lifetime the lifetime in seconds of the registration. If
+	 * the registration has not be updated after this many seconds, the
+	 * registration will be removed.
+	 */
+	@Authorize( canWrite, description )
+	void register( URL description, URL contact, int lifetime )
+	
+	/**
+	 * Removes the service contact information of the instance from the
+	 * registry if the caller is allowed to do so. The type, protocol,
+	 * and instance of the description URL are used to determine uniqueness
+	 * of the registration. Any existing registration with the same type,
+	 * protocol, and instance will be removed.
+	 *
+	 * @param description the instance description URL.
+	 */
+	@Authorize( canWrite, description )
+	void unregister( URL description )
+}

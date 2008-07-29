@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<project name="etch-docs" default="Debug" basedir=".">
+    <description>Build script for Etch compiler docs</description>
+    <import file="build.includes.xml" />
+
+    <!-- Static properties of the sub-project -->
+    <property name="buildRoot" value="${Etch.buildDirectory}/docs" />
+    <property name="src"       value="docs" />
+
+    <!-- INIT TARGET -->
+    <!-- Modify this target to define sub-project specific properties that can only be set at runtime -->
+    <target name="do-init">
+        <property name="buildDirectory" value="${buildRoot}/${Etch.build.target}/docs" />
+
+        <mkdir dir="${buildDirectory}" />
+    </target>
+
+    <!-- CLEAN TARGET -->
+    <!-- Modify this target to clean up the documentation build products -->
+    <target name="do-clean">
+        <delete dir="${buildRoot}" />
+    </target>
+
+    <!-- BUILD TARGET -->
+    <!-- Modify this target to actually 'build' the documents -->
+    <target name="do-build" >
+
+        <!-- TODO: This is a 'hokey' document build. -->
+        <!-- All this does is copy a set of documents from ${basedir}/docs to ${Etch.dist}/docs -->
+        <!-- What should _really_ be happening is that the documents should be compiled from a -->
+        <!-- source format like Markdown or DocBook into a presentation format like PDF and HTML. -->
+
+        <copy todir="${buildDirectory}">
+            <fileset dir="${src}" >
+                <include name="*.doc" />
+                <include name="*.txt" />
+            	<exclude name="README.txt" />
+				<exclude name="LICENSE.txt" />
+            </fileset>
+        </copy>
+
+    	<!-- Copy README.txt and licenses to root distribution dir -->
+		<copy todir="${Etch.dist}">
+			<fileset file="${src}/README.txt" />
+			<fileset file="${src}/LICENSE.txt" />
+		</copy>
+    </target>
+
+    <!-- TEST TARGET -->
+    <!-- Modify this target to implement 'tests' on the docs .. whatever that actually means -->
+    <target name="do-test">
+    </target>
+
+    <!-- POSTBUILD TARGET -->
+    <!-- Publish the docs to the correct location in the 'dist' directory -->
+    <target name="do-postbuild">
+        <!-- Docs distribution structure -->
+        <mkdir dir="${Etch.dist}/docs" />
+
+        <!-- Copy all docs form the buildDirectory -->
+        <copy todir="${Etch.dist}/docs" >
+            <fileset dir="${buildDirectory}" includes="**/*" />
+        </copy>
+    </target>
+
+</project>

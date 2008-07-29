@@ -1,0 +1,90 @@
+module etch.examples.configuration
+
+/**
+ * The configuration service allows an authorized user to get
+ * their configuration.
+ */
+@Timeout(4000)
+@Authorize(isLoggedIn)
+service Configuration
+{
+	/**
+	 * The right required of a user to login and use the other messages.
+	 */
+	const string READ_RIGHT = "Configuration.read"
+	
+	/**
+	 * Exception thrown if Configuration fails.
+	 *
+	 * @param msg the reason for the failure.
+	 */
+	exception Failure( string msg )
+	
+	//////////
+	// AUTH //
+	//////////
+
+	/**
+	 * Marks the user as logged in if they are authentic and have the right
+	 * to utilize the service.
+	 *
+	 * @param name the name of the user.
+	 *
+	 * @param pwd the password of the user.
+	 *
+	 * @throws Failure if the user is already logged in, name or pwd don't
+	 * match authentication database, or if the user doesn't have the right
+	 * to utilize the service.
+	 */
+	@Authorize
+	void login( string name, string pwd ) throws Failure
+
+	/**
+	 * Marks the user as logged out.
+	 */
+	@Authorize
+	void logout()
+
+	/**
+	 * Checks if a user is logged in.
+	 *
+	 * @return true if a user is logged in.
+	 */
+	@Authorize
+	boolean isLoggedIn()
+
+	/**
+	 * StrStrHashMap is an externally accessed class
+	 */
+	@Extern(java, "StrStrHashMap", "etch.bindings.java.util.StrStrHashMap",
+		"StrStrHashMapSerializer", "etch.bindings.java.util.StrStrHashMapSerializer")
+	extern StrStrHashMap
+	
+	///////////////////
+	// CONFIGURATION //
+	///////////////////
+	
+	/**
+	 * Returns the configuration variables of the specified path.
+	 *
+	 * @param path the path specifying which configuration variables.
+	 *
+	 * @return map of the configuration variables, or null if the
+	 * path is not known.
+	 */
+	StrStrHashMap getAllConfig( string path )
+
+	/**
+	 * Returns the configuration variable of the specified path.
+	 *
+	 * @param path the path specifying which configuration variables.
+	 *
+	 * @param name the name of the varible.
+	 *
+	 * @return the value of the configuration variable or null if variable
+	 * is not known.
+	 *
+	 * @throws Failure if the path is not known.
+	 */
+	string getConfig( string path, string name ) throws Failure
+}

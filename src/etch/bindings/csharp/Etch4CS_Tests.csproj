@@ -1,0 +1,238 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{B1FA551D-EE27-48A2-A2A8-8910DF5DEFCD}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <NoStandardLibraries>false</NoStandardLibraries>
+    <AssemblyName>Etch4CS_Tests</AssemblyName>
+    <RootNamespace>Etch4CS_Tests</RootNamespace>
+    <StartupObject>
+    </StartupObject>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>.\bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>.\bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="nunit.framework, Version=2.4.1.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL" />
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include=".svn\all-wcprops" />
+    <None Include=".svn\dir-prop-base" />
+    <None Include=".svn\entries" />
+    <None Include=".svn\format" />
+    <None Include=".svn\text-base\AssemblyInfo.cs.svn-base" />
+    <None Include=".svn\text-base\AssemblyInfoCommon.cs.svn-base" />
+    <None Include=".svn\text-base\BuildConst.cs.svn-base" />
+    <None Include=".svn\text-base\BuildConst.cs.tmpl.svn-base" />
+    <None Include=".svn\text-base\Etch4CS.csproj.svn-base" />
+    <None Include=".svn\text-base\Etch4CS.resharper.svn-base" />
+    <None Include=".svn\text-base\Etch4CS.sln.svn-base" />
+    <None Include=".svn\text-base\Tests.csproj.svn-base" />
+    <None Include="compiler\test\.svn\all-wcprops" />
+    <None Include="compiler\test\.svn\dir-prop-base" />
+    <None Include="compiler\test\.svn\entries" />
+    <None Include="compiler\test\.svn\format" />
+    <None Include="compiler\test\.svn\text-base\FakeTest.cs.svn-base" />
+    <None Include="compiler\test\.svn\text-base\StrIntHashMap.cs.svn-base" />
+    <None Include="compiler\test\.svn\text-base\StrIntHashMapSerializer.cs.svn-base" />
+    <None Include="compiler\test\.svn\text-base\Test.etch.svn-base" />
+    <None Include="compiler\test\.svn\text-base\TestRemoteTestDotCsharp.cs.svn-base" />
+    <None Include="compiler\test\.svn\text-base\TestStrIntHashMapSerializer.cs.svn-base" />
+    <None Include="compiler\test\.svn\text-base\TestStubTestDotCsharp.cs.svn-base" />
+    <None Include="compiler\test\.svn\text-base\TestTestDotCsharp.cs.svn-base" />
+    <None Include="compiler\test\.svn\text-base\TestValueFactoryTestDotCsharp.cs.svn-base" />
+    <None Include="compiler\test\Test.etch" />
+    <None Include="msg\test\.svn\all-wcprops" />
+    <None Include="msg\test\.svn\entries" />
+    <None Include="msg\test\.svn\format" />
+    <None Include="msg\test\.svn\prop-base\TestArrayValue.cs.svn-base" />
+    <None Include="msg\test\.svn\prop-base\TestField.cs.svn-base" />
+    <None Include="msg\test\.svn\prop-base\TestIdName.cs.svn-base" />
+    <None Include="msg\test\.svn\prop-base\TestMessage.cs.svn-base" />
+    <None Include="msg\test\.svn\prop-base\TestStructValue.cs.svn-base" />
+    <None Include="msg\test\.svn\prop-base\TestXType.cs.svn-base" />
+    <None Include="msg\test\.svn\text-base\TestArrayValue.cs.svn-base" />
+    <None Include="msg\test\.svn\text-base\TestField.cs.svn-base" />
+    <None Include="msg\test\.svn\text-base\TestIdName.cs.svn-base" />
+    <None Include="msg\test\.svn\text-base\TestMessage.cs.svn-base" />
+    <None Include="msg\test\.svn\text-base\TestStructValue.cs.svn-base" />
+    <None Include="msg\test\.svn\text-base\TestValidator_boolean.cs.svn-base" />
+    <None Include="msg\test\.svn\text-base\TestXType.cs.svn-base" />
+    <None Include="support\test\.svn\all-wcprops" />
+    <None Include="support\test\.svn\entries" />
+    <None Include="support\test\.svn\format" />
+    <None Include="support\test\.svn\prop-base\TestDefaultValueFactory.cs.svn-base" />
+    <None Include="support\test\.svn\prop-base\TestIdNameMap.cs.svn-base" />
+    <None Include="support\test\.svn\prop-base\TestRemoteBase.cs.svn-base" />
+    <None Include="support\test\.svn\prop-base\TestStubBase.cs.svn-base" />
+    <None Include="support\test\.svn\text-base\TestDefaultValueFactory.cs.svn-base" />
+    <None Include="support\test\.svn\text-base\TestIdNameMap.cs.svn-base" />
+    <None Include="support\test\.svn\text-base\TestRemoteBase.cs.svn-base" />
+    <None Include="support\test\.svn\text-base\TestStubBase.cs.svn-base" />
+    <None Include="transport\fmt\.svn\all-wcprops" />
+    <None Include="transport\fmt\.svn\entries" />
+    <None Include="transport\fmt\.svn\format" />
+    <None Include="transport\fmt\.svn\prop-base\ByteToSbyteConverter.cs.svn-base" />
+    <None Include="transport\fmt\.svn\prop-base\TaggedData.cs.svn-base" />
+    <None Include="transport\fmt\.svn\prop-base\TypeCode.cs.svn-base" />
+    <None Include="transport\fmt\.svn\text-base\ByteToSbyteConverter.cs.svn-base" />
+    <None Include="transport\fmt\.svn\text-base\TaggedData.cs.svn-base" />
+    <None Include="transport\fmt\.svn\text-base\TypeCode.cs.svn-base" />
+    <None Include="transport\fmt\binary\.svn\all-wcprops" />
+    <None Include="transport\fmt\binary\.svn\entries" />
+    <None Include="transport\fmt\binary\.svn\format" />
+    <None Include="transport\fmt\binary\.svn\prop-base\BinaryTaggedData.cs.svn-base" />
+    <None Include="transport\fmt\binary\.svn\prop-base\BinaryTaggedDataInput.cs.svn-base" />
+    <None Include="transport\fmt\binary\.svn\prop-base\BinaryTaggedDataOutput.cs.svn-base" />
+    <None Include="transport\fmt\binary\.svn\text-base\BinaryTaggedData.cs.svn-base" />
+    <None Include="transport\fmt\binary\.svn\text-base\BinaryTaggedDataInput.cs.svn-base" />
+    <None Include="transport\fmt\binary\.svn\text-base\BinaryTaggedDataOutput.cs.svn-base" />
+    <None Include="transport\fmt\binary\.svn\text-base\Validator_none.cs.svn-base" />
+    <None Include="transport\fmt\binary\test\.svn\all-wcprops" />
+    <None Include="transport\fmt\binary\test\.svn\entries" />
+    <None Include="transport\fmt\binary\test\.svn\format" />
+    <None Include="transport\fmt\binary\test\.svn\prop-base\TestBinaryTaggedDataInOut.cs.svn-base" />
+    <None Include="transport\fmt\binary\test\.svn\text-base\TestBinaryTaggedDataInOut.cs.svn-base" />
+    <None Include="transport\test\.svn\all-wcprops" />
+    <None Include="transport\test\.svn\entries" />
+    <None Include="transport\test\.svn\format" />
+    <None Include="transport\test\.svn\prop-base\TestMailboxManager.cs.svn-base" />
+    <None Include="transport\test\.svn\prop-base\TestMessagizer.cs.svn-base" />
+    <None Include="transport\test\.svn\prop-base\TestPacketizer.cs.svn-base" />
+    <None Include="transport\test\.svn\prop-base\TestTcpConnection.cs.svn-base" />
+    <None Include="transport\test\.svn\text-base\TestDefaultDeliveryService.cs.svn-base" />
+    <None Include="transport\test\.svn\text-base\TestInterop.cs.svn-base" />
+    <None Include="transport\test\.svn\text-base\TestMailboxManager.cs.svn-base" />
+    <None Include="transport\test\.svn\text-base\TestMessagizer.cs.svn-base" />
+    <None Include="transport\test\.svn\text-base\TestPacketizer.cs.svn-base" />
+    <None Include="transport\test\.svn\text-base\TestTcpConnection.cs.svn-base" />
+    <None Include="util\test\.svn\all-wcprops" />
+    <None Include="util\test\.svn\entries" />
+    <None Include="util\test\.svn\format" />
+    <None Include="util\test\.svn\prop-base\TestCircularQueue.cs.svn-base" />
+    <None Include="util\test\.svn\prop-base\TestFlexBuffer.cs.svn-base" />
+    <None Include="util\test\.svn\text-base\TestCircularQueue.cs.svn-base" />
+    <None Include="util\test\.svn\text-base\TestFlexBuffer.cs.svn-base" />
+    <None Include="util\test\.svn\text-base\TestNewFlexBuffer.cs.svn-base" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="compiler\test\FakeTest.cs" />
+    <Compile Include="compiler\test\ImplTestClient.cs" />
+    <Compile Include="compiler\test\ImplTestServer.cs" />
+    <Compile Include="compiler\test\MainTestClient.cs" />
+    <Compile Include="compiler\test\MainTestListener.cs" />
+    <Compile Include="compiler\test\RemoteTest.cs" />
+    <Compile Include="compiler\test\RemoteTestClient.cs" />
+    <Compile Include="compiler\test\RemoteTestServer.cs" />
+    <Compile Include="compiler\test\StubTest.cs" />
+    <Compile Include="compiler\test\StubTestClient.cs" />
+    <Compile Include="compiler\test\StubTestServer.cs" />
+    <Compile Include="compiler\test\Test.cs" />
+    <Compile Include="compiler\test\TestClient.cs" />
+    <Compile Include="compiler\test\TestHelper.cs" />
+    <Compile Include="compiler\test\TestHelperTestDotCsharp.cs" />
+    <Compile Include="compiler\test\TestImplGenerate.cs" />
+    <Compile Include="compiler\test\TestMainServiceClient.cs" />
+    <Compile Include="compiler\test\TestMainServiceListener.cs" />
+    <Compile Include="compiler\test\TestRemoteTestDotCsharp.cs" />
+    <Compile Include="compiler\test\TestServer.cs" />
+    <Compile Include="support\test\TestTodoManager.cs" />
+    <Compile Include="util\test\TestStrIntHashMapSerializer.cs" />
+    <Compile Include="compiler\test\TestStubTestDotCsharp.cs" />
+    <Compile Include="compiler\test\TestTestDotCsharp.cs" />
+    <Compile Include="compiler\test\TestValueFactoryTestDotCsharp.cs" />
+    <Compile Include="compiler\test\ValueFactoryTest.cs" />
+    <Compile Include="msg\test\TestArrayValue.cs" />
+    <Compile Include="msg\test\TestComboValidator.cs" />
+    <Compile Include="msg\test\TestField.cs" />
+    <Compile Include="msg\test\TestIdName.cs" />
+    <Compile Include="msg\test\TestMessage.cs" />
+    <Compile Include="msg\test\TestStructValue.cs" />
+    <Compile Include="msg\test\TestTypeValidator.cs" />
+    <Compile Include="msg\test\TestValidators.cs" />
+    <Compile Include="msg\test\TestValidator_boolean.cs" />
+    <Compile Include="msg\test\TestValidator_int.cs" />
+    <Compile Include="msg\test\TestXType.cs" />
+    <Compile Include="support\test\TestDefaultValueFactory.cs" />
+    <Compile Include="support\test\TestIdNameMap.cs" />
+    <Compile Include="support\test\TestRemoteBase.cs" />
+    <Compile Include="support\test\TestStubBase.cs" />
+    <Compile Include="transport\fmt\binary\test\TestBinaryTaggedDataInOut.cs" />
+    <Compile Include="transport\test\TestDefaultDeliveryService.cs" />
+    <Compile Include="transport\test\InteropTest.cs" />
+    <Compile Include="transport\test\TestMailboxManager.cs" />
+    <Compile Include="transport\test\TestMessagizer.cs" />
+    <Compile Include="transport\test\TestPacketizer.cs" />
+    <Compile Include="transport\test\TestTcpConnection.cs" />
+    <Compile Include="util\test\TestCharIterator.cs" />
+    <Compile Include="util\test\TestCircularQueue.cs" />
+    <Compile Include="util\test\TestNewFlexBuffer.cs" />
+    <Compile Include="util\test\TestStringUtil.cs" />
+    <Compile Include="util\test\TestStrStrHashMapSerializer.cs" />
+    <Compile Include="util\test\TestURL.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="Etch4CS.csproj">
+      <Project>{368B5086-063C-4C5E-A74F-0AC32946036C}</Project>
+      <Name>Etch4CS</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include=".svn\prop-base\" />
+    <Folder Include=".svn\props\" />
+    <Folder Include=".svn\tmp\prop-base\" />
+    <Folder Include=".svn\tmp\props\" />
+    <Folder Include=".svn\tmp\text-base\" />
+    <Folder Include="compiler\test\.svn\prop-base\" />
+    <Folder Include="compiler\test\.svn\props\" />
+    <Folder Include="compiler\test\.svn\tmp\prop-base\" />
+    <Folder Include="compiler\test\.svn\tmp\props\" />
+    <Folder Include="compiler\test\.svn\tmp\text-base\" />
+    <Folder Include="msg\test\.svn\props\" />
+    <Folder Include="msg\test\.svn\tmp\prop-base\" />
+    <Folder Include="msg\test\.svn\tmp\props\" />
+    <Folder Include="msg\test\.svn\tmp\text-base\" />
+    <Folder Include="support\test\.svn\props\" />
+    <Folder Include="support\test\.svn\tmp\prop-base\" />
+    <Folder Include="support\test\.svn\tmp\props\" />
+    <Folder Include="support\test\.svn\tmp\text-base\" />
+    <Folder Include="transport\fmt\.svn\props\" />
+    <Folder Include="transport\fmt\.svn\tmp\prop-base\" />
+    <Folder Include="transport\fmt\.svn\tmp\props\" />
+    <Folder Include="transport\fmt\.svn\tmp\text-base\" />
+    <Folder Include="transport\fmt\binary\.svn\props\" />
+    <Folder Include="transport\fmt\binary\.svn\tmp\prop-base\" />
+    <Folder Include="transport\fmt\binary\.svn\tmp\props\" />
+    <Folder Include="transport\fmt\binary\.svn\tmp\text-base\" />
+    <Folder Include="transport\fmt\binary\test\.svn\props\" />
+    <Folder Include="transport\fmt\binary\test\.svn\tmp\prop-base\" />
+    <Folder Include="transport\fmt\binary\test\.svn\tmp\props\" />
+    <Folder Include="transport\fmt\binary\test\.svn\tmp\text-base\" />
+    <Folder Include="transport\test\.svn\props\" />
+    <Folder Include="transport\test\.svn\tmp\prop-base\" />
+    <Folder Include="transport\test\.svn\tmp\props\" />
+    <Folder Include="transport\test\.svn\tmp\text-base\" />
+    <Folder Include="util\test\.svn\props\" />
+    <Folder Include="util\test\.svn\tmp\prop-base\" />
+    <Folder Include="util\test\.svn\tmp\props\" />
+    <Folder Include="util\test\.svn\tmp\text-base\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSHARP.Targets" />
+  <ProjectExtensions>
+    <VisualStudio AllowExistingFolder="true" />
+  </ProjectExtensions>
+</Project>

@@ -1,0 +1,151 @@
+/** My module description
+ * isn't half-bad.
+ */
+module etch.bindings.xml.compiler.test
+
+/** My Service description
+ * is most amazing.
+ */
+@Direction(Both)
+@Timeout(4000)
+service Test
+{
+	/** Testing a description of a constant
+	 */
+	const boolean BOOL1 = false
+	const boolean BOOL2 = true
+	
+	const byte BYTE1 = -128
+	const byte BYTE2 = -1
+	const byte BYTE3 = 0
+	const byte BYTE4 = 1
+	const byte BYTE5 = 127
+	
+	const short SHORT1 = -32768
+	const short SHORT2 = -1
+	const short SHORT3 = 0
+	const short SHORT4 = 1
+	const short SHORT5 = 32767
+	
+	const int INT1 = -2147483648
+	const int INT2 = -1
+	const int INT3 = 0
+	const int INT4 = 1
+	const int INT5 = 2147483647
+	
+	const long LONG1 = -9223372036854775808
+	const long LONG2 = -1
+	const long LONG3 = 0
+	const long LONG4 = 1
+	const long LONG5 = 9223372036854775807
+	
+	const float FLOAT1 = 1.4e-45
+	const float FLOAT2 = -1
+	const float FLOAT3 = 0
+	const float FLOAT4 = 1
+	const float FLOAT5 = 3.4028235e38
+	
+	const double DOUBLE1 = 4.9e-324
+	const double DOUBLE2 = -1
+	const double DOUBLE3 = 0
+	const double DOUBLE4 = 1
+	const double DOUBLE5 = 1.7976931348623157e308
+	
+	const string STRING1 = ""
+	const string STRING2 = "a"
+	const string STRING3 = "abc"
+	const string STRING4 = "a\tb\tc\r\n"
+	const string STRING5 = "x\u0020x" // space
+	const string STRING6 = "x\u00bfx" // inverted question mark
+	const string STRING7 = "x\u03a9x" // greek omega
+	const string STRING8 = "x\\x" // backslash
+	const string STRING9 = "x'x" // apostrophe
+	const string STRING10 = "x\"x" // double quote
+	
+	enum E1( A, B, C)
+
+	/** Omg
+	 * Its an enum
+	 * Ma'am!!
+	 */ 
+	enum E2( A, B, C, D)
+	
+	struct S1( S1 a, S1 b, E1 c )
+
+	/** Omg
+	 * It's true
+	 * Sir!!
+         * @param x X marks the spot
+	 * @param y Y 
+         * is the thing
+         * @param z Zebra!
+	 */ 
+	struct S2( int x, int y, int z, int[] w )
+	
+	
+	@Extern(java, "StrIntHashMap", "etch.bindings.java.util.StrIntHashMap",
+		"StrIntHashMapSerializer", "etch.bindings.java.util.StrIntHashMapSerializer")
+	@Extern(csharp, "StrIntHashMap", "Etch.Util.StrIntHashMap",
+		"StrIntHashMapSerializer", "Etch.Util.StrIntHashMapSerializer")
+	extern Blob
+	
+	/** This is a big error
+	 * NO Way!!
+	 * Hello
+	 * @param msg hehhehe my message
+	 * @param code tsktsk tks code
+	 */ 
+	exception Excp1( string msg, int code )
+	
+	@Unchecked
+	exception Excp2()
+	
+	@AsyncReceiver(Free)
+	void nothing()
+	
+	@AsyncReceiver(Queued)
+	int incr( int x )
+
+	int sum( int[] x )
+	
+	int[] fill( int n, int x )
+
+	@Authorize( isTrue )
+	int alwaysWorks()
+	
+	boolean isTrue()
+	
+	@Oneway
+	@Authorize( isFalse )
+	void alwaysFails()
+	
+	boolean isFalse()
+	
+	// null
+	
+	@Authorize( can_m1 ) void m3()
+	boolean can_m1()
+	
+	// literal constants
+	
+	
+	@Direction(Client)
+        /** Test
+	 * 1 
+	 * 2
+	 * @param x hi
+	 * @throws Excp1 Exception test
+	 */
+	void m1( boolean x ) throws Excp1
+
+	@Direction(Both)
+	/** Test
+ 	 * a line is here
+         * @param a test for A parameter
+	 * @param b test for B parameter
+         * @throws Excp1 Exception test value again
+	 * @return There is much to say about void!
+	 */
+	boolean m2( string a, string[] b) throws Excp1
+}
+

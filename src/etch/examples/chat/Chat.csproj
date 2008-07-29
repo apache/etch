@@ -1,0 +1,80 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{AA18E17E-E159-4331-80C5-4800854937B2}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <NoStandardLibraries>false</NoStandardLibraries>
+    <AssemblyName>Chat</AssemblyName>
+    <RootNamespace>Chat</RootNamespace>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>.\bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>.\bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Etch4CS, Version=0.95.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\bindings\csharp\bin\Debug\Etch4CS.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.framework, Version=2.4.1.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL" />
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Chat.cs" />
+    <Compile Include="ChatClient.cs" />
+    <Compile Include="ChatClientImpl.cs" />
+    <Compile Include="ChatHelper.cs" />
+    <Compile Include="ChatServer.cs" />
+    <Compile Include="ChatServerImpl.cs" />
+    <Compile Include="ImplChatClient.cs" />
+    <Compile Include="ImplChatServer.cs" />
+    <Compile Include="MainChatListener.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="RemoteChat.cs" />
+    <Compile Include="RemoteChatClient.cs" />
+    <Compile Include="RemoteChatServer.cs" />
+    <Compile Include="StubChat.cs" />
+    <Compile Include="StubChatClient.cs" />
+    <Compile Include="StubChatServer.cs" />
+    <Compile Include="ValueFactoryChat.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include=".svn\all-wcprops" />
+    <None Include=".svn\dir-prop-base" />
+    <None Include=".svn\entries" />
+    <None Include=".svn\format" />
+    <None Include=".svn\text-base\Chat.etch.svn-base" />
+    <None Include=".svn\text-base\ChatClientImpl.java.svn-base" />
+    <None Include=".svn\text-base\ChatHelper.java.svn-base" />
+    <None Include=".svn\text-base\ChatServerImpl.java.svn-base" />
+    <None Include=".svn\text-base\Chatter.java.svn-base" />
+    <None Include=".svn\text-base\TestRemoteChatListener.java.svn-base" />
+    <None Include=".svn\text-base\TestRemoteChatServer.java.svn-base" />
+    <None Include="Chat.etch" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include=".svn\prop-base\" />
+    <Folder Include=".svn\props\" />
+    <Folder Include=".svn\tmp\prop-base\" />
+    <Folder Include=".svn\tmp\props\" />
+    <Folder Include=".svn\tmp\text-base\" />
+    <Folder Include="test\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSHARP.Targets" />
+  <ProjectExtensions>
+    <VisualStudio AllowExistingFolder="true" />
+  </ProjectExtensions>
+</Project>

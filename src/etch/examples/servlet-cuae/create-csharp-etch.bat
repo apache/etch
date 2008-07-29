@@ -1,0 +1,1 @@
+etch -java -ruby provider\generatedsrc BasicBridge.etch

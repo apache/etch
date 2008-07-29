@@ -1,0 +1,13 @@
+module HelloApp
+{
+  typedef sequence<long> Values;
+  
+  interface Hello
+  {
+    long add( in long x, in long y );
+    
+    long sum( in Values values );
+    
+    oneway void report( in long code, in string msg );
+  };
+};

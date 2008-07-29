@@ -1,0 +1,69 @@
+div.phone 
+	 {
+		margin:3px 0 0 3px;	
+	 }
+
+	 div.line
+	 {
+		 display:none;
+	 }
+
+	 div.speed
+	 {
+		display:none;
+	 }
+
+	 img.clicker
+	 {
+		 cursor:pointer;
+		 margin-right:5px;
+	 }
+
+	 span.description
+	 {
+		 font-weight:normal;
+		 font-style:normal;
+	 }
+
+	 span.marker
+	 {
+		 font-weight:normal;
+		 font-style:normal;
+		 margin-left:5px;
+		 font-size:small;
+		 color:gray;
+ 	 }
+
+	div.phone span.description
+	{
+		
+	}
+
+	div.children span.description
+	{
+		padding: 2px;
+	}
+	
+	img.line, img.speed
+	{
+		margin:0 5px 0 35px;
+	}
+
+	img.speed
+	{
+		cursor:pointer;
+	}
+	
+	input
+	{
+		width:110px;
+	}
+
+	span.updating
+	{
+		font-size:small;
+		font-style:italic;
+		margin-left:15px;
+		color:green;
+	}
+	

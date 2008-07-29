@@ -1,0 +1,376 @@
+x) add arrays to the idl compiler.
+
+x) reduce the range of types allowed for const.
+
+x) make qualified name a first class token.
+
+x) allow qualified name as an argument to an annotation.
+
+x) check all constants for having types allowed constants.
+
+x) check all constant values for being appropriate for the type.
+
+x) check all parameter lists for defined types.
+
+x) check all methods for defined return types.
+
+x) check all methods for defined thrown exceptions.
+
+x) fix backend so it works again:
+	x) simple example
+	x) const
+	x) enum
+	x) struct
+	x) exception
+	x) int array types
+	x) array types (non-int)
+
+x) refactor tree with etch compiler at the top and java subtree.
+
+x) host source tree somewhere safer.
+
+x) blank constructor for structs and exceptions.
+
+x) native (non-ref) types for constants.
+
+x) toString formatter for structs and exceptions.
+
+x) turn @Foo (annotation) into reflected construction of
+nipc.idl.compiler.opt.Foo, which is then responsible for
+parsing and validating its argument list.
+
+x) format parsed strings (expanding escapes, removing surrounding quotes).
+
+x) oneway opt instead of automatic determination of oneway
+
+x) force no parameters and no throws still a voidcall.
+
+x) format strings for output as constants.
+
+x) check constant values to be appropriate range for type.
+
+x) conversions for custom types (in Stub) are having
+problems as the stub does not implement the interface.
+so we need to qualify those names (<svc>.<type>) or
+import them. qualify is probably better. [qualified]
+
+x) handle runtime exception impl -> stub -> remote -> caller
+
+x) define mechanisms of annotation influence upon generated code.
+
+x) fix opts so that they complain if attached to the wrong type of
+item.
+
+x) fix opts to throw parse exceptions instead of illegal args.
+
+x) support for external types:
+
+@extern(java, "java.util.Date", importStmt, importExportClass)
+@extern(ruby, "Time", importStmt, importExportClass)
+@extern(python, "time", importStmt, importExportClass)
+extern Date
+
+x) serialize and deserialize arrays so that compiler support is
+not needed. this is the last barrier to an object type which allows
+for generic interfaces.
+
+x) louis bug where _mf__result was not declared but needed if there were no two-way methods declared.
+
+x) allow adjust max packet size
+
+x) eliminate dependence upon jdk 1.6
+
+x) version code on binary transport
+
+x) need Pool implementations
+
+*) meta data
+
+*) rfe:
+
+*) deprecated items
+
+*) obsolete items
+
+*) bump
+
+*) sender filters
+
+*) allow object type
+
+*) value constraints
+@Constraint( x, 0, null )
+means x must be >= 0
+
+*) simplify client / server init / startup.
+
+*) mechanism for multiple return values separated by time.
+
+*) implement mixin.
+
+*) reserved identifier list
+
+*) modules for generated ruby
+
+*) ruby class name -> file name translation
+
+*) ruby package name -> directory name translation
+
+mixin and authentication example:
+
+Suppose we have a well defined authentication interface:
+
+module com.swift
+service Auth
+{
+	public boolean login( String username, String password )
+	  
+	public boolean isAuthenticated()
+	  
+	@Authorize(isAuth)
+	public void logout()
+}
+
+The Auth service assumes a secure connection where passing the
+username and password across the network is not a security
+risk. It also assumes a session and a persistent connection
+which will maintain the authentication state between calls.
+The logout method is only authorized on an authenticated
+connection, and the method used on the server side to test
+that is isAuthenticated().
+
+Now, suppose we have a mail service defined which is not
+authenticated:
+
+module org.doit
+service Mail
+{
+	public boolean send( String from, String[] to, String message )
+}
+
+We want to add authentication to this, such that only authenticated
+users are authorized to send mail.
+
+We have toolkits from vendors which support using Auth and also
+which support using Mail. We want to create an AuthMail service.
+There are two different challeges. One is to create a new interface
+which is both Auth and Mail (so we can pass it to the Auth using
+toolkits to get us authenticated, and so we can pass it to the Mail
+using toolkits to format and send our mail). The second challenge
+is to create a server backend which can use our existing systems
+to authenticate the user and then deliver the mail. Since we are
+using well defined interfaces, these two implementations can be
+from different vendors than the client toolkits mentioned above,
+and could even use different interfaces and mechanisms altogether.
+
+module com.cisco.cuae
+service AuthMail
+{
+  mixin com.swift.Auth
+  
+  @Authorize(isAuthenticated)
+  mixin org.doit.Mail
+}
+
+All the methods defined in org.doit.Mail are required to test
+authorization using the method isAuthenticated() before being
+allowed to run. It is convenient (but not required) that we
+can tag onto such method from the Auth service. This test is
+performed on the server.
+
+The (java) result is an AuthMail interface:
+
+public interface AuthMail extends com.swift.Auth, org.doit.Mail
+{
+	// nothing extra added.
+}
+
+Since this interface extends both of our desired interfaces, we can
+pass it into either of our client toolkits to implement our client.
+
+The etch compiler produces a RemoteAuthMail class which extends
+AuthMail. The RemoteAuthMail implementation translates the method
+calls (defined for AuthMail) into messages to a server, where
+(an etch compiler produced) StubAuthMail translates them back into
+method calls on an implementation of the AuthMail interface,
+carefully calling isAuthenticated() first for the appropriate
+methods.
+
+We could construct an AuthMailImpl like this:
+
+package com.cisco.cuae;
+
+public class AuthMailImpl implements AuthMail
+{
+	public AuthMailImpl( com.swift.Auth auth, org.doit.Mail mail )
+	{
+		this.auth = auth;
+		this.mail = mail;
+	}
+	
+	private final com.swift.Auth auth;
+	
+	private final org.doit.Mail mail;
+	
+	public boolean login( String username, String password )
+	{
+		return auth.login( username, password );
+	}
+	
+	public boolean isAuthenticated()
+	{
+		return auth.isAuthenticated();
+	}
+	
+	public void logout()
+	{
+		auth.logout();
+	}
+	
+	public boolean send( String from, String[] to, String message )
+	{
+		return mail.send( from, to, message );
+	}
+}
+
+Now, our implementation is free to actually use whatever authentication
+and mail services we want, but i chose to allow the use of any compatible
+com.swift.Auth and org.doit.Mail service, either locally or remotely
+hosted. Alternatively, we could put the implemention inline.
+
+Rest assured that isAuthenticated() will be called always before send(),
+and send() will only be called if isAuthenticated() returned true. To
+really be safe, this imposes another requirement:
+
+	The call to isAuthenticated() and a subsequent send() must be performed
+	as if wrapped by a transaction, such that the authentication state cannot
+	be changed during their entwined execution. One way to accomplish
+	this is to synchronize message delivery such that the authentication
+	state cannot be changed while the send message is being processed.
+	That requires that no other local access to auth is allowed. In this case,
+	though, probably it doesn't matter that your authentication state might
+	change, as long as you were once and recently authenticated.
+
+The client cannot subvert this authorization mechanism by fiddling the
+idl, since all the action occurs on the server (the server was built using
+the unfiddled idl). Also, the declarations in the idl also serve as
+documentation of what exactly are the pre-conditions to each service method.
+
+Different levels of service could also be supported, depending upon the
+access rights of the user. Consider this Log service:
+
+service Log
+{
+	mixin com.swift.Auth
+	
+	enum Level( normal, admin )
+	
+	enum Priority (debug, info, error)
+	
+	boolean isLevel( Level level )
+	
+	@Authorize( isLevel( Level.normal ) )
+	void report( string logname, Date when, Priority prio, string format,
+		string[] args )
+	
+	@Authorize( isLevel( Level.admin ) )
+	string[] list()
+	
+	@Authorize( isLevel( Level.admin ) )
+	boolean delete( string logfile )
+}
+
+We've defined a method to test authentication based on access rights, and
+defined two different classes of methods based on those rights. Any normal
+user can create log entries, while any admin can list the logs and delete
+them. The Auth service is mixed in, but we're not using its isAuthenticated()
+method directly. Instead, we have to implement isLevel():
+
+boolean isLevel( Level level )
+{
+	if (!auth.isAuthenticated())
+		return false;
+	
+	// user is authenticated, check their group membership.
+	
+	switch (level)
+	{
+		case normal:
+			return auth.inGroup("users");
+		case admin:
+			return auth.inGroup("admins");
+		default:
+			return false;
+	}
+}
+
+Probably this could be abbreviated by just testing group membership,
+because unauthenticated users would not be in the users or admins
+groups.
+
+Note that it is up to the server to implement what test is appropriate
+for each user level. The idl, though, documents what the levels are
+and binds them to the methods.
+
+The service implementor could always choose to implement the service
+levels differently, but could not change the binding of particular
+methods to levels. (A degenerate form of this would be to have isLevel()
+return true no matter what, and then insert specific code into each
+method implementation to implement some other policy.)
+
+Surely the inGroup() test would want a cache in front of it so that
+the auth service would not be pounded to death.
+
+Note also that the isLevel() interface is available at the client. The
+client could use this to drive a user interface, offering admin users
+a file management menu which normal users would not see.
+
+Also, it is possible that additional authorization checks might be
+needed per the permissible values of the logname passed to report. Why
+should jtapi be allowed to log a message in mediaserver's log file?
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+JDL, 08/03/2007
+Question: How does server broadcast message to all connected clients?  The scenarios may include:
+1) Server shutting down, notify clients to fell over.
+2) A chat server, one client enters a message, server relays the message to all other clients.
+3) Populate presence information to all connected clients.
+
+Scott's comments about this question:
+hmmm. certainly you might want a broadcast to all clients sort of thing. 
+you might want
+them in groups. i would see it as an explicit thing, though. the server registers the client to receive events (typically, by client request). there would be an explicit registery, and code to remove you from it when you wanted to opt out. none of this would call for enum all clients.
+
+for example, in an instant messaging server the client would be registered to be notified about all their buddies online status. in cuae we will have a big need of this sort of event registration / distribution infrastructure.
+
+the one sort of global event notify everyone thing i can think of is the server itself going down. this would give the clients a chance to failover to their backup server before the service goes down.
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+Manoj, 08/10/2007 
+
+Ruby update: 
+------------
+
+What has been done in Ruby ? 
+	- The complete "Message" and "Support" modules along with their test cases.
+	- A significant subset of the compiler itself along with tests ( the much famed, 
+	  Scott's "monstrous" test cases ... :-) ) for them. 
+		- Exceptions.
+		- Enums.
+		- Basic datatypes, boolean and ints. 
+		- User defined structs.
+		- Functions (that accept built-in datatypes, user-defined structs, 
+		  arrays of the above and exceptions as parameters ). 
+		- Functions that throw exceptions correctly.   
+
+What remains ? 
+	- Er ... Everything else ?? 
+	- Compiler
+		- Specific typing information what Scott & me talked about where 
+		  the compiler puts in the required information during code generation!
+		- Declaration of non-ruby built-in types like doubles, bytes, short, etc. 
+		- Functions that accept these parameters. 
+	- Transport
+		- The complete Transport layer is left to do. 
+
+		

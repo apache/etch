@@ -1,0 +1,19 @@
+module etch.examples.simpleecho
+
+service SimpleEcho
+{
+    /**
+     * Write a new message to the server.
+     */
+    @Oneway
+    void write (string msg)
+
+    /**
+     * Call back indicating a new message was received.
+     * The returned message will be slightly modified by
+     * the server.
+     */
+    @Direction (client)
+    @Oneway
+    void onNewMessage (string msg)
+}

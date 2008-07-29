@@ -1,0 +1,22 @@
+module etch.examples.simpleecho
+
+/**
+ * Global setting with both directions for each function.  Each peer acts as Client and Server.
+ */
+@Direction (Both)
+service SimpleEcho
+{
+    /**
+     * Write a new message to the peer.
+     */
+    @Oneway
+    void write (string msg)
+
+    /**
+     * Call back indicating a new message was received.
+     * The returned message will be slightly modified by
+     * the peer.
+     */
+    @Oneway
+    void onNewMessage (string msg)
+}

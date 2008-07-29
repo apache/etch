@@ -1,0 +1,178 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectType>Local</ProjectType>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{5C03FFD6-068F-4D1B-A269-3773A4F8940C}</ProjectGuid>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ApplicationIcon>
+    </ApplicationIcon>
+    <AssemblyKeyContainerName>
+    </AssemblyKeyContainerName>
+    <AssemblyName>TwoWay</AssemblyName>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+    <DefaultClientScript>JScript</DefaultClientScript>
+    <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
+    <DefaultTargetSchema>IE50</DefaultTargetSchema>
+    <DelaySign>false</DelaySign>
+    <OutputType>Library</OutputType>
+    <RootNamespace>Cisco.Providers.TwoWay</RootNamespace>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+    <StartupObject>
+    </StartupObject>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>full</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>TRACE</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>false</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>true</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>none</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Library, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\..\etch-0.9\lib\bindings\csharp\Library.dll</HintPath>
+    </Reference>
+    <Reference Include="Metreos.Core">
+      <Name>Metreos.Core</Name>
+      <HintPath>X:\Build\Framework\1.0\CoreAssemblies\Metreos.Core.dll</HintPath>
+      <AssemblyFolderKey>hklm\dn\metreos</AssemblyFolderKey>
+    </Reference>
+    <Reference Include="Metreos.Interfaces">
+      <Name>Metreos.Interfaces</Name>
+      <HintPath>X:\Build\Framework\1.0\CoreAssemblies\Metreos.Interfaces.dll</HintPath>
+      <AssemblyFolderKey>hklm\dn\metreos</AssemblyFolderKey>
+    </Reference>
+    <Reference Include="Metreos.LoggingFramework">
+      <Name>Metreos.LoggingFramework</Name>
+      <HintPath>X:\Build\Framework\1.0\CoreAssemblies\Metreos.LoggingFramework.dll</HintPath>
+      <AssemblyFolderKey>hklm\dn\metreos</AssemblyFolderKey>
+    </Reference>
+    <Reference Include="Metreos.Messaging">
+      <Name>Metreos.Messaging</Name>
+      <HintPath>X:\Build\Framework\1.0\CoreAssemblies\Metreos.Messaging.dll</HintPath>
+      <AssemblyFolderKey>hklm\dn\metreos</AssemblyFolderKey>
+    </Reference>
+    <Reference Include="Metreos.PackageGeneratorCore">
+      <Name>Metreos.PackageGeneratorCore</Name>
+      <HintPath>X:\Build\Framework\1.0\CoreAssemblies\Metreos.PackageGeneratorCore.dll</HintPath>
+      <AssemblyFolderKey>hklm\dn\metreos</AssemblyFolderKey>
+    </Reference>
+    <Reference Include="Metreos.ProviderFramework">
+      <Name>Metreos.ProviderFramework</Name>
+      <HintPath>X:\Build\Framework\1.0\CoreAssemblies\Metreos.ProviderFramework.dll</HintPath>
+      <AssemblyFolderKey>hklm\dn\metreos</AssemblyFolderKey>
+    </Reference>
+    <Reference Include="Metreos.Utilities">
+      <Name>Metreos.Utilities</Name>
+      <HintPath>X:\Build\Framework\1.0\CoreAssemblies\Metreos.Utilities.dll</HintPath>
+      <AssemblyFolderKey>hklm\dn\metreos</AssemblyFolderKey>
+    </Reference>
+    <Reference Include="MySql.Data">
+      <Name>MySql.Data</Name>
+      <HintPath>X:\Build\Framework\1.0\CoreAssemblies\MySql.Data.dll</HintPath>
+      <AssemblyFolderKey>hklm\dn\metreos</AssemblyFolderKey>
+    </Reference>
+    <Reference Include="nunit.framework, Version=2.4.1.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL" />
+    <Reference Include="System">
+      <Name>System</Name>
+    </Reference>
+    <Reference Include="System.Data">
+      <Name>System.Data</Name>
+    </Reference>
+    <Reference Include="System.Xml">
+      <Name>System.XML</Name>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\generatedsrc\cisco\etch\examples\RemoteTwoWay.cs">
+      <Link>RemoteTwoWay.cs</Link>
+    </Compile>
+    <Compile Include="..\generatedsrc\cisco\etch\examples\RemoteTwoWayClient.cs">
+      <Link>RemoteTwoWayClient.cs</Link>
+    </Compile>
+    <Compile Include="..\generatedsrc\cisco\etch\examples\RemoteTwoWayServer.cs">
+      <Link>RemoteTwoWayServer.cs</Link>
+    </Compile>
+    <Compile Include="..\generatedsrc\cisco\etch\examples\StubTwoWay.cs">
+      <Link>StubTwoWay.cs</Link>
+    </Compile>
+    <Compile Include="..\generatedsrc\cisco\etch\examples\StubTwoWayClient.cs">
+      <Link>StubTwoWayClient.cs</Link>
+    </Compile>
+    <Compile Include="..\generatedsrc\cisco\etch\examples\StubTwoWayServer.cs">
+      <Link>StubTwoWayServer.cs</Link>
+    </Compile>
+    <Compile Include="..\generatedsrc\cisco\etch\examples\TwoWay.cs">
+      <Link>TwoWay.cs</Link>
+    </Compile>
+    <Compile Include="..\generatedsrc\cisco\etch\examples\TwoWayClient.cs">
+      <Link>TwoWayClient.cs</Link>
+    </Compile>
+    <Compile Include="..\generatedsrc\cisco\etch\examples\TwoWayServer.cs">
+      <Link>TwoWayServer.cs</Link>
+    </Compile>
+    <Compile Include="..\generatedsrc\cisco\etch\examples\ValueFactoryTwoWay.cs">
+      <Link>ValueFactoryTwoWay.cs</Link>
+    </Compile>
+    <Compile Include="AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ProviderTemplate.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TwoWayServerImpl.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+</Project>

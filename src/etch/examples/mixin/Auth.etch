@@ -1,0 +1,11 @@
+module etch.examples.mixin
+
+@Direction(Both)
+service Auth
+{
+	void login( string name, string pw )
+	
+	void logout()
+	
+	boolean isLoggedIn()
+}

@@ -1,0 +1,36 @@
+The XML binding is less of a true binding and more of a means to represent an Etch IDL by XML, to increase its parseability.
+
+  
+
+Conventions followed in translating to XML
+------------------------------------------
+
+* The topmost concern of the XML binding is to create an XML document that is mapped structurally to the Etch IDL document it originated from.  Exceptions will be made but it should be intuitive for someone familiar with Etch IDL to figure out what's going on in the Etch XML.
+
+* keywords in etch should be mapped to the same name in XML
+
+* descriptions originating from doc annotations should be a subelement to the element as a <description> tag.  Newlines should be preserved for multiline descriptions.
+
+* Etch IDL elements that can occur in multiple are governed by a parent element.  For example, every <method> is contained in a <methods> tag, to help with parseability (arguable if this matters that much...).
+
+* For anything that can be serialized, the XML binding should reflect the Etchified name and numeric id of each such element, so that a system which has loaded the XML document can dynamically generate Etch messages solely from the information contained in the XML document.  In general, the name, typeId, and typeName attributes serve this purpose.
+
+* Etch understands methods as 1 or 2 individual messages (a request and, if not oneway, a response), but the XML Binding refers to methods instead of messages, in keeping with the 1:1 mapping with the IDL.  (Etch IDL makers don't thnik 'message', they think 'methods').
+
+* Const declarations include a value that is treated as a literal string value by the XML binding. This means that a string const of "" will be not serialized as "", but as """" (escaped, of course); null will not be an absent atttribute, but "null".   
+
+
+Etch IDL keyword/element to XML Element Matching
+----------------------------------------
+
+module : module
+service : service
+const : const
+enum : enum
+exception : exception
+struct: struct
+Any methods : method
+extern : extern
+@Extern : externmap
+
+

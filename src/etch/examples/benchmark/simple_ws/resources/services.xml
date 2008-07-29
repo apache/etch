@@ -1,0 +1,24 @@
+<!-- This file was auto-generated from WSDL -->
+<!-- by the Apache Axis2 version: #axisVersion# #today# -->
+<serviceGroup>
+<service name="SimpleWebService">
+<messageReceivers>
+<messageReceiver mep="http://www.w3.org/ns/wsdl/in-out" class="etch.examples.simple.SimpleWebServiceMessageReceiverInOut"/>
+<messageReceiver mep="http://www.w3.org/ns/wsdl/in-only" class="etch.examples.simple.SimpleWebServiceMessageReceiverInOnly"/>
+</messageReceivers>
+<parameter name="ServiceClass" locked="false">etch.examples.simple.SimpleWebServiceSkeleton</parameter>
+<parameter name="useOriginalwsdl" locked="false">true</parameter>
+<parameter name="modifyUserWSDLPortAddress" locked="false">true</parameter>
+<operation name="add" mep="http://www.w3.org/ns/wsdl/in-out">
+<actionMapping>urn:add</actionMapping>
+<outputActionMapping>urn:add</outputActionMapping>
+</operation>
+<operation name="sum" mep="http://www.w3.org/ns/wsdl/in-out">
+<actionMapping>urn:sum</actionMapping>
+<outputActionMapping>urn:sum</outputActionMapping>
+</operation>
+<operation name="echoVoid" mep="http://www.w3.org/ns/wsdl/in-only">
+<actionMapping>urn:echoVoid</actionMapping>
+</operation>
+</service>
+</serviceGroup>

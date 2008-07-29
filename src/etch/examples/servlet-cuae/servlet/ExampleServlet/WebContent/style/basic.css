@@ -1,0 +1,21 @@
+@CHARSET "ISO-8859-1";
+
+html, body
+{
+	background-color:#f3f3f3;
+}
+
+#status
+{
+	color:red;
+}
+
+.message
+{
+	font-size:large;
+}
+
+.input
+{
+	width:120px;
+}

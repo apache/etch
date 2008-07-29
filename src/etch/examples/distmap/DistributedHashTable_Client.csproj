@@ -1,0 +1,131 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{69EA6251-22EA-4D84-9D5A-3117905BCFDE}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <NoStandardLibraries>false</NoStandardLibraries>
+    <AssemblyName>DistributedHashTable_Client</AssemblyName>
+    <RootNamespace>DistributedHashTable_Client</RootNamespace>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>.\bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>.\bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="DistributedHashTable, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <ExecutableExtension>.exe</ExecutableExtension>
+    </Reference>
+    <Reference Include="Etch4CS, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\bindings\csharp\bin\Debug\Etch4CS.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.framework, Version=2.4.1.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\Debug\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="MainDistributedHashTableClient.cs" />
+    <Compile Include="TestRemoteDistMapCommandLine.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include=".svn\.svn\entries" />
+    <None Include=".svn\.svn\format" />
+    <None Include=".svn\all-wcprops" />
+    <None Include=".svn\dir-prop-base" />
+    <None Include=".svn\entries" />
+    <None Include=".svn\format" />
+    <None Include=".svn\prop-base\.svn\entries" />
+    <None Include=".svn\prop-base\.svn\format" />
+    <None Include=".svn\props\.svn\entries" />
+    <None Include=".svn\props\.svn\format" />
+    <None Include=".svn\text-base\.svn\entries" />
+    <None Include=".svn\text-base\.svn\format" />
+    <None Include=".svn\text-base\DistributedHashTable.csproj.svn-base" />
+    <None Include=".svn\text-base\DistributedHashTable.etch.svn-base" />
+    <None Include=".svn\text-base\DistributedHashTable.resharper.svn-base" />
+    <None Include=".svn\text-base\DistributedHashTable.sln.svn-base" />
+    <None Include=".svn\text-base\DistributedHashTableHelper.cs.svn-base" />
+    <None Include=".svn\text-base\DistributedHashTableHelper.java.svn-base" />
+    <None Include=".svn\text-base\DistributedHashTableListener.cs.svn-base" />
+    <None Include=".svn\text-base\DistributedHashTableListener.java.svn-base" />
+    <None Include=".svn\text-base\DistributedHashTableServerImpl.cs.svn-base" />
+    <None Include=".svn\text-base\DistributedHashTableServerImpl.java.svn-base" />
+    <None Include=".svn\text-base\TestRemoteDistributedHashTableServer.cs.svn-base" />
+    <None Include=".svn\tmp\.svn\entries" />
+    <None Include=".svn\tmp\.svn\format" />
+    <None Include=".svn\tmp\prop-base\.svn\entries" />
+    <None Include=".svn\tmp\prop-base\.svn\format" />
+    <None Include=".svn\tmp\props\.svn\entries" />
+    <None Include=".svn\tmp\props\.svn\format" />
+    <None Include=".svn\tmp\text-base\.svn\entries" />
+    <None Include=".svn\tmp\text-base\.svn\format" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include=".svn\.svn\prop-base\" />
+    <Folder Include=".svn\.svn\props\" />
+    <Folder Include=".svn\.svn\text-base\" />
+    <Folder Include=".svn\.svn\tmp\prop-base\" />
+    <Folder Include=".svn\.svn\tmp\props\" />
+    <Folder Include=".svn\.svn\tmp\text-base\" />
+    <Folder Include=".svn\prop-base\.svn\prop-base\" />
+    <Folder Include=".svn\prop-base\.svn\props\" />
+    <Folder Include=".svn\prop-base\.svn\text-base\" />
+    <Folder Include=".svn\prop-base\.svn\tmp\prop-base\" />
+    <Folder Include=".svn\prop-base\.svn\tmp\props\" />
+    <Folder Include=".svn\prop-base\.svn\tmp\text-base\" />
+    <Folder Include=".svn\props\.svn\prop-base\" />
+    <Folder Include=".svn\props\.svn\props\" />
+    <Folder Include=".svn\props\.svn\text-base\" />
+    <Folder Include=".svn\props\.svn\tmp\prop-base\" />
+    <Folder Include=".svn\props\.svn\tmp\props\" />
+    <Folder Include=".svn\props\.svn\tmp\text-base\" />
+    <Folder Include=".svn\text-base\.svn\prop-base\" />
+    <Folder Include=".svn\text-base\.svn\props\" />
+    <Folder Include=".svn\text-base\.svn\text-base\" />
+    <Folder Include=".svn\text-base\.svn\tmp\prop-base\" />
+    <Folder Include=".svn\text-base\.svn\tmp\props\" />
+    <Folder Include=".svn\text-base\.svn\tmp\text-base\" />
+    <Folder Include=".svn\tmp\.svn\prop-base\" />
+    <Folder Include=".svn\tmp\.svn\props\" />
+    <Folder Include=".svn\tmp\.svn\text-base\" />
+    <Folder Include=".svn\tmp\.svn\tmp\prop-base\" />
+    <Folder Include=".svn\tmp\.svn\tmp\props\" />
+    <Folder Include=".svn\tmp\.svn\tmp\text-base\" />
+    <Folder Include=".svn\tmp\prop-base\.svn\prop-base\" />
+    <Folder Include=".svn\tmp\prop-base\.svn\props\" />
+    <Folder Include=".svn\tmp\prop-base\.svn\text-base\" />
+    <Folder Include=".svn\tmp\prop-base\.svn\tmp\prop-base\" />
+    <Folder Include=".svn\tmp\prop-base\.svn\tmp\props\" />
+    <Folder Include=".svn\tmp\prop-base\.svn\tmp\text-base\" />
+    <Folder Include=".svn\tmp\props\.svn\prop-base\" />
+    <Folder Include=".svn\tmp\props\.svn\props\" />
+    <Folder Include=".svn\tmp\props\.svn\text-base\" />
+    <Folder Include=".svn\tmp\props\.svn\tmp\prop-base\" />
+    <Folder Include=".svn\tmp\props\.svn\tmp\props\" />
+    <Folder Include=".svn\tmp\props\.svn\tmp\text-base\" />
+    <Folder Include=".svn\tmp\text-base\.svn\prop-base\" />
+    <Folder Include=".svn\tmp\text-base\.svn\props\" />
+    <Folder Include=".svn\tmp\text-base\.svn\text-base\" />
+    <Folder Include=".svn\tmp\text-base\.svn\tmp\prop-base\" />
+    <Folder Include=".svn\tmp\text-base\.svn\tmp\props\" />
+    <Folder Include=".svn\tmp\text-base\.svn\tmp\text-base\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSHARP.Targets" />
+  <ProjectExtensions>
+    <VisualStudio AllowExistingFolder="true" />
+  </ProjectExtensions>
+</Project>

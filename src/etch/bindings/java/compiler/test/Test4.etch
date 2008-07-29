@@ -1,0 +1,18 @@
+module etch.bindings.java.compiler.test
+
+/**
+ * Test blank auth and true and false.
+ */
+service Test4
+{
+	void always_call_method1()
+	
+	@Authorize
+	void always_call_method2()
+	
+	@Authorize( true )
+	void always_call_method3()
+	
+	@Authorize( false )
+	void never_call_method()
+}

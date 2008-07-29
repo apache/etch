@@ -1,0 +1,37 @@
+module etch.examples.ccmuser
+
+service CcmUser
+{
+	struct UserConfiguration
+	(
+		Device[] devices
+	)	
+
+	struct Device
+	(
+		string name,
+		string description,
+		string type,
+		Speeddial[] speeddials
+	)
+
+	struct Speeddial
+	(
+		string pkid,
+		string number,
+		string label
+	)
+
+	void login(string serverIP, string username, string password)
+
+	void logout()
+
+	UserConfiguration getUserConfig (string user)
+
+	void setSpeeddialLabel(string pkid, string newLabel)
+
+	void setSpeeddialNumber(string pkid, string newNumber)
+
+	@Direction(client)
+	void DoINeedThis()
+}

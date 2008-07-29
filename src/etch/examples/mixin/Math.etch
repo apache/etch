@@ -1,0 +1,13 @@
+module etch.examples.mixin
+
+@Direction(Both)
+service Math
+{
+	mixin etch.examples.mixin.Auth
+	
+	//@Authorize(isLoggedIn)
+	int add( int x, int y )
+	
+	//@Authorize(isLoggedIn)
+	int sub( int x, int y )
+}

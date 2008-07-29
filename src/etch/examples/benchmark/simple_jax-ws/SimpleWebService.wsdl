@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:axis2="http://simple.examples.etch" xmlns:ns1="http://org.apache.axis2/xsd" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:ns0="http://simple.examples.etch/xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://simple.examples.etch">
+    <wsdl:types>
+        <xs:schema xmlns:xsd="http://simple.examples.etch/xsd" attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://simple.examples.etch/xsd">
+            <xs:element name="add">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="x" type="xs:int"/>
+                        <xs:element minOccurs="0" name="y" type="xs:int"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="addResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" type="xs:int"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="sum">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="vals" type="xs:int"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="sumResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" type="xs:int"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="report">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="code" type="xs:int"/>
+                        <xs:element minOccurs="0" name="msg" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:schema>
+    </wsdl:types>
+    <wsdl:message name="reportRequest">
+        <wsdl:part name="parameters" element="ns0:report"/>
+    </wsdl:message>
+    <wsdl:message name="sumRequest">
+        <wsdl:part name="parameters" element="ns0:sum"/>
+    </wsdl:message>
+    <wsdl:message name="sumResponse">
+        <wsdl:part name="parameters" element="ns0:sumResponse"/>
+    </wsdl:message>
+    <wsdl:message name="addRequest">
+        <wsdl:part name="parameters" element="ns0:add"/>
+    </wsdl:message>
+    <wsdl:message name="addResponse">
+        <wsdl:part name="parameters" element="ns0:addResponse"/>
+    </wsdl:message>
+    <wsdl:portType name="SimpleServicePortType">
+        <wsdl:operation name="report">
+            <wsdl:input message="axis2:reportRequest" wsaw:Action="urn:report"/>
+        </wsdl:operation>
+        <wsdl:operation name="sum">
+            <wsdl:input message="axis2:sumRequest" wsaw:Action="urn:sum"/>
+            <wsdl:output message="axis2:sumResponse" wsaw:Action="urn:sumResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="add">
+            <wsdl:input message="axis2:addRequest" wsaw:Action="urn:add"/>
+            <wsdl:output message="axis2:addResponse" wsaw:Action="urn:addResponse"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <!--
+    <wsdl:binding name="SimpleServiceSOAP11Binding" type="axis2:SimpleServicePortType">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <wsdl:operation name="report">
+            <soap:operation soapAction="urn:report" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+        </wsdl:operation>
+        <wsdl:operation name="sum">
+            <soap:operation soapAction="urn:sum" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="add">
+            <soap:operation soapAction="urn:add" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    -->
+    <wsdl:binding name="SimpleServiceSOAP12Binding" type="axis2:SimpleServicePortType">
+        <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <wsdl:operation name="report">
+            <soap12:operation soapAction="urn:report" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+        </wsdl:operation>
+        <wsdl:operation name="sum">
+            <soap12:operation soapAction="urn:sum" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="add">
+            <soap12:operation soapAction="urn:add" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <!--
+    <wsdl:binding name="SimpleServiceHttpBinding" type="axis2:SimpleServicePortType">
+        <http:binding verb="POST"/>
+        <wsdl:operation name="report">
+            <http:operation location="SimpleService/report"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="report"/>
+            </wsdl:input>
+        </wsdl:operation>
+        <wsdl:operation name="sum">
+            <http:operation location="SimpleService/sum"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="sum"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="sum"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="add">
+            <http:operation location="SimpleService/add"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="add"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="add"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    -->
+    <wsdl:service name="SimpleService">
+        <!--
+        <wsdl:port name="SimpleServiceSOAP11port_http" binding="axis2:SimpleServiceSOAP11Binding">
+            <soap:address location="http://localhost:8080/axis2/services/SimpleService"/>
+        </wsdl:port>
+        -->
+        <wsdl:port name="SimpleServiceSOAP12port_http" binding="axis2:SimpleServiceSOAP12Binding">
+            <soap12:address location="http://localhost:8080/axis2/services/SimpleService"/>
+        </wsdl:port>
+        <!--
+        <wsdl:port name="SimpleServiceHttpport" binding="axis2:SimpleServiceHttpBinding">
+            <http:address location="http://localhost:8080/axis2/services/SimpleService"/>
+        </wsdl:port>
+        -->
+    </wsdl:service>
+</wsdl:definitions>

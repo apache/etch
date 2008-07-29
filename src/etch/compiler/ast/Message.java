@@ -1,0 +1,423 @@
+/* $Id$
+ *
+ * Created by sccomer on March 28, 2007.
+ *
+ * Copyright (c) 2007 Cisco Systems, Inc. All rights reserved.
+ */
+
+package etch.compiler.ast;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import etch.bindings.java.msg.IdName;
+import etch.compiler.Backend;
+import etch.compiler.EtchGrammarConstants;
+import etch.compiler.ParseException;
+import etch.compiler.opt.AsyncReceiver;
+import etch.compiler.opt.Authorize;
+import etch.compiler.opt.Direction;
+import etch.compiler.opt.Oneway;
+import etch.compiler.opt.Timeout;
+
+/**
+ * Description of Message.
+ */
+public class Message extends ParamList<Service>
+{
+	/**
+	 * Constructs the Message.
+	 * @param intf
+	 * @param name
+	 * @param nOpts
+	 * @param type
+	 */
+	public Message( Service intf, Name name, Map<String, Opt> nOpts, TypeRef type )
+	{
+		super( intf, name, nOpts );
+
+		this.md = getMessageDirection();
+		this.type = type;
+
+		suffix = MsgDirHelper.getSuffix( md );
+		vname = intf.parent().name().name.replace( '.', '_' )+'_'+intf.name()+suffix+'_'+name;
+		fqname = intf.parent().name().name+'.'+intf.name().name+suffix+'.'+name.name;
+		id = IdName.hash( fqname );
+	}
+
+	private MessageDirection md;
+
+	private final TypeRef type;
+
+	private final String suffix;
+
+	private final String vname;
+
+	private final String fqname;
+
+	private final Integer id;
+
+	/**
+	 * @return the direction of this message.
+	 */
+	public MessageDirection msgDir()
+	{
+		return md;
+	}
+
+	/**
+	 * @param other
+	 * @return true if this message's direction equals other.
+	 */
+	public boolean isMsgDir( MessageDirection other )
+	{
+		return md == other;
+	}
+
+	/**
+	 *
+	 * @return trus if this message's direction is both
+	 */
+	public boolean isMsgDirBoth()
+	{
+		return md == MessageDirection.BOTH;
+	}
+
+	/**
+	 * @return the message direction per the Direction opt.
+	 */
+	public MessageDirection getMessageDirection()
+	{
+		Opt o = getOpt( "Direction" );
+
+		if (o == null)
+			return MessageDirection.SERVER;
+
+		Direction d = (Direction) o;
+		return d.getMessageDirection();
+	}
+
+	/**
+	 * @return the message timeout per the Timeout opt.
+	 */
+	public int getTimeout()
+	{
+		Opt o = getOpt( "Timeout" );
+
+		if (o == null)
+			return 0;
+
+		Timeout t = (Timeout) o;
+		return t.timeout();
+	}
+
+	/**
+	 * @return the type of this message.
+	 */
+	public TypeRef type()
+	{
+		return type;
+	}
+
+	@Override
+	public String vname( Backend helper )
+	{
+		return helper.mtvname( vname );
+	}
+
+	/**
+	 * @return the fully qualified name of this message.
+	 */
+	@Override
+	public String fqname()
+	{
+		return fqname;
+	}
+
+	/**
+	 * @return the id of this message.
+	 */
+	@Override
+	public Integer id()
+	{
+		return id;
+	}
+
+	@Override
+	public String toString()
+	{
+		return String.format( "message %s %s %s (%s) throws %s", md, type, name(), getParameters(), thrown );
+	}
+
+	/**
+	 * @return the message description.
+	 */
+	public List<String> returnDescr()
+	{
+		return returnDescr;
+	}
+
+	/**
+	 * @param returnDescr
+	 */
+	public void setReturnDescr( List<String> returnDescr )
+	{
+		this.returnDescr = returnDescr;
+	}
+
+	private List<String> returnDescr = new ArrayList<String>();
+
+	/**
+	 * @return the message used to return a result from a call.
+	 */
+	public Message getResultMessage()
+	{
+		return resultMessage;
+	}
+
+	/**
+	 * @param resultMessage
+	 */
+	public void setResultMessage( Message resultMessage )
+	{
+		this.resultMessage = resultMessage;
+	}
+
+	private Message resultMessage;
+
+	/**
+	 * @return true if this is a message which contributes to the
+	 * types and fields but should not appear in the interface
+	 * (because it is a response message)
+	 */
+	public boolean isHidden()
+	{
+		return name().name.startsWith( RESULT_MESSAGE_NAME_PREFIX );
+	}
+
+	/**
+	 * @return the expected name of a result message.
+	 */
+	public Name getResultMessageName()
+	{
+		return new Name( null, RESULT_MESSAGE_NAME_PREFIX+name().name );
+	}
+
+	/**
+	 * The name of the parameter of a result message.
+	 */
+	public static final String RESULT_PARAM_NAME = "result";
+
+	/**
+	 * The prefix to apply to the name of a result message.
+	 */
+	public static final String RESULT_MESSAGE_NAME_PREFIX = "_result_";
+
+	/**
+	 * @return the name of the result parameter.
+	 */
+	public Name getResultParamName()
+	{
+		return new Name( null, RESULT_PARAM_NAME );
+	}
+
+	/**
+	 * @return the result parameter.
+	 */
+	public Parameter getResultParam()
+	{
+		return getParameter( RESULT_PARAM_NAME );
+	}
+
+	/**
+	 * @return true if this is a call (i.e., returns a value.
+	 */
+	public boolean hasReturn()
+	{
+		return type.type().kind != EtchGrammarConstants.VOID;
+	}
+
+	@Override
+	public void dump( String indent )
+	{
+		System.out.printf( "%smethod %s %s %s\n", indent, md, type, name().name );
+
+		String sIndent = indent+"  ";
+
+		for (String s: descr())
+			System.out.printf( "%sdescr %s\n", sIndent, s );
+
+		for (Opt o: opts())
+			o.dump( sIndent );
+
+		for (Parameter p: this)
+			p.dump( sIndent );
+
+		if (hasReturn())
+			System.out.printf( "%sreturnDescr %s\n", sIndent, returnDescr );
+
+		for (Thrown n: thrown)
+			n.dump( sIndent );
+	}
+
+	/**
+	 * Adds a name to the list of exceptions thrown by this message.
+	 * @param n
+	 * @return the representation object for a thrown exception.
+	 * @throws ParseException
+	 */
+	public Thrown addThrown( Name n ) throws ParseException
+	{
+		if (isOneway())
+			throw new ParseException( String.format(
+				"Oneway message cannot throw exception at line %d", n.token.beginLine ) );
+
+		thrown.check( n );
+		Thrown t = new Thrown( this, n );
+		thrown.add( n, t );
+		return t;
+	}
+
+	/**
+	 * @param n
+	 * @return any thrown exception by the specified name.
+	 */
+	public Thrown getThrown( String n )
+	{
+		return thrown.get( n );
+	}
+
+	private final NameList<Thrown> thrown = new NameList<Thrown>();
+
+	/**
+	 * @return true if this message has thrown exceptions.
+	 */
+	public boolean hasThrown()
+	{
+		return !thrown.list().isEmpty();
+	}
+
+	/**
+	 * @return the async receiver mode.
+	 */
+	public AsyncReceiverMode getAsyncReceiver()
+	{
+		AsyncReceiver ar = (AsyncReceiver) getOpt( "AsyncReceiver" );
+
+		if (ar == null)
+			return AsyncReceiverMode.NONE;
+
+		return ar.getMode();
+	}
+
+	/**
+	 * @return true if this method is marked to have an asynchronous
+	 * receiver.
+	 */
+	public boolean isAsyncReceiver()
+	{
+		return getAsyncReceiver() != AsyncReceiverMode.NONE;
+	}
+
+	/**
+	 * @return true if this is a oneway message which does not wait
+	 * for any response from the other end.
+	 */
+	public boolean isOneway()
+	{
+		Oneway oneway = (Oneway) getOpt( "Oneway" );
+		return oneway != null && oneway.isOneway();
+	}
+
+	/**
+	 * @return true if this message requires authorization.
+	 */
+	public Authorize getAuth()
+	{
+		return (Authorize) getOpt( "Authorize" );
+	}
+
+	/**
+	 * @return true if this message requires authorization.
+	 */
+	public boolean hasAuth()
+	{
+		Authorize auth = getAuth();
+		return auth != null && auth.hasAuth();
+	}
+
+	@Override
+	public void check() throws ParseException
+	{
+		type.check( parent() );
+
+		for (Parameter p: this)
+			p.check();
+
+		for (Thrown n: thrown)
+			n.check();
+
+		Authorize auth = getAuth();
+		if (auth != null)
+			auth.check( parent(), this );
+	}
+
+	@Override
+	public Service service()
+	{
+		return parent();
+	}
+
+	/**
+	 * @return the list of thrown exceptions.
+	 */
+	public NameList<Thrown> thrown()
+	{
+		return thrown;
+	}
+
+	/**
+	 * Sets the message direction of this message.
+	 * @param mc
+	 */
+	public void setMessageDirection( MessageDirection mc )
+	{
+		this.md = mc;
+	}
+
+	/**
+	 * @return the request message of this result message.
+	 */
+	public Message getRequestMessage()
+	{
+		return reqMsg;
+	}
+
+	/**
+	 * Sets the request message of this result message.
+	 * @param reqMsg
+	 */
+	public void setRequestMessage( Message reqMsg )
+	{
+		this.reqMsg = reqMsg;
+	}
+
+	private Message reqMsg;
+
+	@Override
+	public void treewalk( TreeWalker walker ) throws ParseException
+	{
+		walker.preMessage( this );
+
+		walker.doTypeRef( type );
+
+		for (Parameter p: this)
+			p.treewalk( walker );
+
+		for (Thrown n: thrown)
+			n.treewalk( walker );
+
+		walker.postMessage( this );
+	}
+}

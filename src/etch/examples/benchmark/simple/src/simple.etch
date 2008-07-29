@@ -1,0 +1,34 @@
+module etch.examples.simple
+
+service Simple
+{
+	/** 
+	 * Pass a string to service
+	 * @param code the code of the message.
+	 * @param msg the string to send to service
+	 */
+	@Oneway
+	void report( int code, string msg )
+	 
+    /**
+     * Add two numbers on service then return to client.
+     * @param x value #1
+     * @param y value #2
+     * @return the sum of x and y
+     */
+    int add(int x, int y)
+
+    /**
+     * Add array of numbers on service then return to client
+     * @param vals array of integer numbers
+     * @return sum of all numbers
+     * 
+     */    
+    int sum(int[] vals)
+
+    /**
+     * Temporary work around an etch bug.
+     */
+    @Direction (client)
+    void bogus ()
+}

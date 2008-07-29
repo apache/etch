@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Module>
+	<ModulePrefs title="SpeedDial Demo" height="150" scaling="false" />
+	<UserPref name="e" display_name="Etch Server IP Address" required="true" />
+	<UserPref name="a" display_name="CUCM AXL Username" required="true" />
+	<UserPref name="p" display_name="CUCM AXL Password" required="true" />
+	<UserPref name="s" display_name="CUCM Pub IP Address" required="true" />
+	<UserPref name="c" display_name="CUAE Pub IP Address" required="true" />
+	<UserPref name="u" display_name="My Username" required="true" />
+	<UserPref name="pre" display_name="Dial Prefix" required="false" />
+	<Content type="url" href="http://localhost:8080/userconfigservlet/ConfigServer.jsp">
+  </Content>
+</Module>
+

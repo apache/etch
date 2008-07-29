@@ -1,0 +1,243 @@
+lightweight ipc/rpc
+
+languages: java, c#, c++, ruby, python, javascript
+
+transports: udp, tcp, pipe, http (soap), jabber, flatmapipc, rmi, corba, ...
+
+semantics: message / event (one way call), two way call
+
+two way call is just message sent + wait for message received
+
+super high level:
+
+	query operations -> currently enabled list of operations.
+	
+	query operation -> currently enabled list of fields, with type
+	of each field and validation parameters.
+	
+high level:
+
+	message with type and map (key, value)
+	support for translating message type and field key from string <--> int 
+	value is boolean, int, float, string, byte[], value[], and map
+	support for extended types using customer codecs.
+	each original message has message-id field.
+	each response message has message-id field + in-reply-to field.
+
+low level:
+
+message transport dictates supported message formats:
+
+	udp, tcp, pipe: binary format (flatmap or compressed)
+	http (soap), jabber: xml
+	flatmapipc: binary format or xml
+	rmi, corba: standard format
+
+messaging style:
+
+	stream (tcp): session, unicast, connection through firewall, "call semantics"
+	datagram (udp): sessionless, unicast, broadcast, multicast
+
+sending messages, receiving responses:
+
+	int send( msg ) -- sends the message, does not wait for response, returns messageId
+	int send( msg, replies ) -- sends the message, does not wait for response, forwards replies, returns messageId
+	
+	void add( messageId, replies ) -- creates the connection between messageId and replies
+	replies remove( messageId ) -- removes the connection between messageId and replies
+	
+	msg call( msg ) -- sends the message, waits for one response
+	msg call( msg, timeout ) -- sends the message, waits specified amount for one response
+
+replies methods:
+
+	boolean connect( int messageId ) - return true means ok, false means don't make connection to messageId
+	boolean receive( message msg ) - return true means ok, false means break connection to messageId
+
+a special replies object, a mailbox, may be used like this:
+
+	mailbox mb = new mailbox();
+	try
+	{
+		send( msg, mb );
+		message resp;
+		while ((resp = mb.read( timeout )) != null)
+		{
+			... process response ...
+		}
+	}
+	finally
+	{
+		mb.close();
+	}
+
+call( msg ) is just shorthand for call( msg, 0 )
+
+call( msg, timeout ) is just shorthand for:
+
+	mailbox mb = new mailbox();
+	try
+	{
+		send( msg, mb );
+		return mb.read( timeout );
+	}
+	finally
+	{
+		mb.close();
+	}
+
+send with replies:
+
+	allocates messageId and adds it to the message
+	adds the connection between the messageId and replies
+	(this calls the replies.connect method, too)
+	sends the message
+
+mailbox:
+
+	records messageId when connect is called, returns true if
+	mailbox is open
+	
+	buffers the message when receive is called and the mailbox
+	is open, returns true if mailbox is open
+	
+	close marks the mailbox as closed and breaks link with messageId
+	if connect has been called and marks the mailbox as closed.
+
+idl:
+
+	interface drawing
+	
+	  struct point
+	    double x
+	    double y
+	  end
+	
+	  enum color
+	    red
+	    green
+	    blue
+	    black
+	    white
+	  end
+	  
+	  double distance( point a, point b )
+	  
+	  void setcolor( color c )
+	  
+	  void drawline( point a, point b )
+	  
+	  void drawlinec( point a, point b, color c )
+	  
+	  void drawrect( point a, point b )
+	  
+	  void drawrectc( point a, point b, color c )
+	  
+	  void drawcircle( point a, int radius )
+	  
+	  void drawcirclec( point a, int radius, color c )
+	  
+	end
+
+java:
+
+	public interface drawing
+	{
+		public class point
+		{
+			public double x;
+			public double y;
+		}
+		
+		public interface color
+		{
+			int red = 1;
+			int green = 2;
+			int blue = 3;
+			int black = 4;
+			int white = 5;
+		}
+		
+		public double distance( point a, point b );
+		  
+		public void setcolor( int c );
+		  
+		public void drawline( point a, point b );
+		  
+		public void drawlinec( point a, point b, int c );
+		  
+		public void drawrect( point a, point b );
+		  
+		public void drawrectc( point a, point b, int c );
+		  
+		public void drawcircle( point a, int radius );
+		  
+		public void drawcirclec( point a, int radius, int c );
+	}
+	
+	public final class remote_drawing implements drawing
+	{
+		private final static MessageType _m_distance = new MessageType( 1, "distance" );
+		private final static MessageType _m__resp_distance = new MessageType( 2, "_resp_distance" );
+		
+		private final static Field = _f_a = new Field( 1, "a" );
+		private final static Field = _f_b = new Field( 2, "b" );
+		private final static Field = _f__result = new Field( 3, "_result" );
+		
+		private final static int _t_point = 1;
+		
+		public int checkCustomValue( Object value, boolean forReal )
+		{
+			if (value instanceof point)
+				return _t_point;
+			return BAD_CUSTOM_VALUE;
+		}
+		
+		public Object readValue( int code, TaggedDataInput tdi )
+		{
+			if (code == _t_point)
+			{
+				point p;
+				p.x = Value.toDouble( tdi.readValue() );
+				p.y = Value.toDouble( tdi.readValue() );
+				return p;
+			}
+			throw new IllegalArgumentException( "type code unknown: "+code );
+		}
+		
+		public void writeValue( int code, Object value, TaggedDataOutput tdo )
+		{
+			if (code == _t_point)
+			{
+				point p = (point) value;
+				tdo.writeValue( p.x );
+				tdo.writeValue( p.y );
+				return;
+			}
+			throw new IllegalArgumentException( "type code unknown: "+code );
+		}
+		
+		public double distance( point a, point b )
+		{
+			Message message = new Message( _m_distance, this );
+			message.put( _f_a, a );
+			message.put( _f_b, b );
+			Message resp = _call( message );
+			_check_message( resp, _m__resp_distance );
+			return _to_double( resp.get( _f_result ) );
+		}
+		  
+		public void setcolor( int c );
+		  
+		public void drawline( point a, point b );
+		  
+		public void drawlinec( point a, point b, int c );
+		  
+		public void drawrect( point a, point b );
+		  
+		public void drawrectc( point a, point b, int c );
+		  
+		public void drawcircle( point a, int radius );
+		  
+		public void drawcirclec( point a, int radius, int c );
+	}

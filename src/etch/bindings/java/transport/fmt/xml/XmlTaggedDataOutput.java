@@ -1,0 +1,244 @@
+/* $Id$
+ *
+ * Created by sccomer on Jan 17, 2007.
+ *
+ * Copyright (c) 2007 Cisco Systems, Inc. All rights reserved.
+ */
+
+package etch.bindings.java.transport.fmt.xml;
+
+import java.io.IOException;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.util.Stack;
+
+import metreos.core.xml.XmlParser.DefaultTagElement;
+import metreos.core.xml.XmlParser.TagElement;
+import metreos.util.FlexBuffer;
+import etch.bindings.java.msg.ArrayValue;
+import etch.bindings.java.msg.Field;
+import etch.bindings.java.msg.Message;
+import etch.bindings.java.msg.StructValue;
+import etch.bindings.java.msg.TaggedDataOutput;
+import etch.bindings.java.msg.ValueFactory;
+import etch.bindings.java.transport.fmt.TypeCode;
+
+/**
+ * Description of TaggedDataOutputStream.
+ */
+final public class XmlTaggedDataOutput extends XmlTaggedData
+	implements TaggedDataOutput, XmlTags
+{
+	/**
+	 * Constructs the TaggedDataOutputStream.
+	 *
+	 * @param wtr
+	 * @param vf 
+	 */
+	public XmlTaggedDataOutput( Writer wtr, ValueFactory vf )
+	{
+		super( vf );
+		this.wtr = wtr;
+	}
+	
+	private final Writer wtr;
+	
+	private final Stack<TagElement> stack = new Stack<TagElement>();
+
+	public void startMessage( Message msg )
+	{
+		stack.clear();
+		TagElement te = new DefaultTagElement( MESSAGE_TAG );
+		te.setAttr( null, STRUCT_TYPE_ATTR, msg.type().getId() );
+		stack.push( te );
+	}
+
+	public void endMessage( Message msg ) throws IOException
+	{
+		TagElement te = stack.pop();
+		if (!stack.isEmpty())
+			throw new IOException( "stack sequence error: "+stack );
+		te.toString( wtr );
+	}
+
+	public void startStruct( StructValue struct )
+	{
+		// the caller has already created an element tag for us.
+		TagElement te = stack.peek();
+		te.setAttr( null, STRUCT_TYPE_ATTR, struct.type().getId() );
+	}
+
+	public void endStruct( StructValue struct )
+	{
+		// stack.pop();
+	}
+
+	public void startArray( ArrayValue array )
+	{
+		// the caller has already created an element tag for us.
+		// TagElement te = stack.peek();
+	}
+
+	public void endArray( ArrayValue array )
+	{
+		// stack.pop();
+	}
+
+	public void writeStructElement( Field key, Object value ) throws IOException
+	{
+		TagElement te = stack.peek().addTag( ELEMENT_TAG );
+		te.setAttr( null, KEY_ATTR, key.getId() );
+		stack.push( te );
+		writeValue( value );
+		stack.pop();
+	}
+
+	public void writeArrayElement( Object value ) throws IOException
+	{
+		TagElement te = stack.peek().addTag( ELEMENT_TAG );
+		stack.push( te );
+		writeValue( value );
+		stack.pop();
+	}
+	
+	public void close() throws IOException
+	{
+		wtr.close();
+	}
+	
+	private void writeValue( Object value ) throws IOException
+	{
+		// the caller has already created an element for us.
+		
+		TagElement te = stack.peek();
+		
+		int type = checkValue( value );
+		
+		switch (type)
+		{
+			case TypeCode.NULL:
+			{
+				te.setAttr( null, ELEMENT_TYPE_ATTR, NULL_TYPE );
+				break;
+			}
+			
+			case TypeCode.BOOLEAN_FALSE:
+			case TypeCode.BOOLEAN_TRUE:
+			{
+				te.setAttr( null, ELEMENT_TYPE_ATTR, BOOLEAN_TYPE );
+				te.addCdata( value.toString() );
+				break;
+			}
+			
+			case TypeCode.BYTE1:
+			case TypeCode.SHORT1:
+			case TypeCode.SHORT2:
+			case TypeCode.INT1:
+			case TypeCode.INT2:
+			case TypeCode.INT4:
+			{
+				te.setAttr( null, ELEMENT_TYPE_ATTR, INTEGER_TYPE );
+				te.addCdata( value.toString() );
+				break;
+			}
+			
+			case TypeCode.LONG8:
+			{
+				te.setAttr( null, ELEMENT_TYPE_ATTR, LONG_TYPE );
+				te.addCdata( value.toString() );
+				break;
+			}
+			
+			case TypeCode.FLOAT4:
+			{
+				te.setAttr( null, ELEMENT_TYPE_ATTR, FLOAT_TYPE );
+				te.addCdata( value.toString() );
+				break;
+			}
+			
+			case TypeCode.FLOAT8:
+			{
+				te.setAttr( null, ELEMENT_TYPE_ATTR, DOUBLE_TYPE );
+				te.addCdata( value.toString() );
+				break;
+			}
+			
+			case TypeCode.BYTES:
+			{
+				byte[] b = (byte[]) value;
+				te.setAttr( null, ELEMENT_TYPE_ATTR, BYTES_TYPE );
+				te.addCdata( bytes2string( b ) );
+				break;
+			}
+			
+			case TypeCode.EMPTY_STRING:
+			case TypeCode.STRING:
+			{
+				String s = (String) value;
+				te.setAttr( null, ELEMENT_TYPE_ATTR, STRING_TYPE );
+				te.addCdata( s );
+				break;
+			}
+			
+			case TypeCode.STRUCT:
+				te.setAttr( null, ELEMENT_TYPE_ATTR, STRUCT_TYPE );
+				((StructValue) value).writeStruct( this );
+				break;
+			
+			case TypeCode.ARRAY:
+				te.setAttr( null, ELEMENT_TYPE_ATTR, ARRAY_TYPE );
+				if (value instanceof ArrayValue)
+					((ArrayValue) value).write( this );
+				else
+					toArrayValue( value ).write( this );
+				break;
+				
+			case TypeCode.CUSTOM:
+			{
+				StructValue struct = vf.exportCustomValue( value );
+				
+				if (struct == null)
+					throw new UnsupportedOperationException( "unsupported type "+value.getClass() );
+				
+				te.setAttr( null, ELEMENT_TYPE_ATTR, CUSTOM_TYPE );
+				struct.writeStruct( this );
+				break;
+			}
+			
+			default:
+				throw new IllegalArgumentException( "unsupported type code "+type );
+		}
+	}
+
+	private String bytes2string( byte[] buf )
+	{
+		StringBuffer sb = new StringBuffer();
+		for (byte b: buf)
+		{
+			if (sb.length() > 0)
+				sb.append( ' ' );
+			sb.append( Integer.toString( b, 16 ) );
+		}
+		return sb.toString();
+	}
+
+	/**
+	 * @param msg
+	 * @param vf 
+	 * @return the xml of the specified message.
+	 * @throws IOException
+	 */
+	public static String getXml( Message msg, ValueFactory vf ) throws IOException
+	{
+		StringWriter sw = new StringWriter();
+		TaggedDataOutput tdo = new XmlTaggedDataOutput( sw, vf );
+		msg.writeMessage( tdo );
+		return sw.toString();
+	}
+
+	public void setBuffer( FlexBuffer msgBuf )
+	{
+		// TODO Auto-generated method stub
+		
+	}
+}

@@ -1,0 +1,85 @@
+add.id() = 0x27e9b79c
+x.id() = 0x150a2cb3
+y.id() = 0x150a2cb4
+_mf__messageId.id() = 0x6306b468
+msgid = 0x123456789abcdef
+
+msg = add: {_messageId=0x0123456789abcdef, y=2, x=1}
+
+byte[33] buf =
+{
+	// version:
+		01,
+	// struct type:
+		f7, // int4
+		9c, b7, e9, 27, // add
+	// field:
+		f7, // int4
+		b4, 2c, 0a, 15, // y
+	// value:
+		42, // int4: 2
+	// field:
+		f7, // int4
+		68, b4, 06, 63, // _mf__messageId
+	// value:
+		f3, // long8
+		ef, cd, ab, 89, 67, 45, 23, 01,
+	// field:
+		f7, // int4
+		b3, 2c, 0a, 15, // x
+	// value:
+		41, // int4: 1
+	// field:
+		ea // none
+}
+
+byte[33] buf =
+{
+	// version:
+		1,
+	// struct type:
+		-9, // int4
+		-100, -73, -23, 39,
+	// field:
+		-9, // int4
+		104, -76, 6, 99,
+	// value:
+		-13, // long8
+		-128, 99, 38, -13, -37, -42, 9, 0,
+	// field:
+		-9, // int4
+		-76, 44, 10, 21,
+	// value:
+		64, // small int4 = 0
+	// field:
+		-9, // int4
+		-77, 44, 10, 21,
+	// value:
+		64, // small int4 = 0
+	// field:
+		-22 // none
+}
+
+only the "useful content":
+	msg type add; 4 bytes
+	field x = 0; 8 bytes
+	field y = 0; 8 bytes
+	field _message_id = n; 12 bytes
+	32 bytes
+
+text style:
+	add,x=0,y=0,_message_id=1234567890123456
+	40 bytes
+
+rpcgen style:
+	msg type add; 4 bytes
+	field _message_id = n; 8 bytes
+	field x = 0; 4 bytes
+	field y = 0; 4 bytes
+	20 bytes
+
+-----------------------------
+
+msg = add: {_messageId=2770946098373274, y=2000000000, x=1000000000}
+
+byte[41] buf = { 1, -9, -100, -73, -23, 39, -9, 104, -76, 6, 99, -13, -59, 83, 111, -13, -37, -42, 9, 0, -9, -76, 44, 10, 21, -9, 0, -108, 53, 119, -9, -77, 44, 10, 21, -9, 0, -54, -102, 59, -22 }

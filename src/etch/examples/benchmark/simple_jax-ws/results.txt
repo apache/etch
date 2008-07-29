@@ -1,0 +1,56 @@
+scott, laptop, nod32 disabled.
+
+     [java] Testing add...
+     [java] add( 1, 2 ) result=3
+     [java] add( 2, 3 ) result=5
+     [java] Testing sum...
+     [java] sum( 1, 2, 3 ) result=6
+     [java] sum( 2, 3, 4 ) result=9
+     [java] Invoking report...
+     [java] add: 32 took 0.161862, trying 64 to get >= 1 second
+     [java] add: 64 took 0.304463, trying 128 to get >= 1 second
+     [java] add: 128 took 0.543614, trying 256 to get >= 1 second
+     [java] add: 256 took 0.971044, trying 512 to get >= 1 second
+     [java] add: 512 took 1.581923, trying 647 for 2 seconds
+     [java] add: 647 took 1.983476, trying 1304 for 4 seconds
+     [java] add: 1304 took 1.983663, using 6573 for 10 seconds
+     [java] add 1/5     6573    9.013759        729.218497
+     [java] add 2/5     6573    9.032192        727.730294
+     [java] add 3/5     6573    9.045191        726.684449
+     [java] add 4/5     6573    8.932860        735.822532
+     [java] add 5/5     6573    8.996117        730.648604
+     [java] add min     726.684449
+     [java] add median  729.218497
+     [java] add avg     730.020875
+     [java] add max     735.822532
+     [java] sum: 32 took 0.169556, trying 64 to get >= 1 second
+     [java] sum: 64 took 0.323648, trying 128 to get >= 1 second
+     [java] sum: 128 took 0.646242, trying 256 to get >= 1 second
+     [java] sum: 256 took 1.288347, trying 397 for 2 seconds
+     [java] sum: 397 took 2.003848, trying 792 for 4 seconds
+     [java] sum: 792 took 3.963627, using 1998 for 10 seconds
+     [java] sum 1/5     1998    9.820330        203.455491
+     [java] sum 2/5     1998    9.765253        204.602985
+     [java] sum 3/5     1998    9.799457        203.888838
+     [java] sum 4/5     1998    9.831724        203.219703
+     [java] sum 5/5     1998    9.791215        204.060481
+     [java] sum min     203.219703
+     [java] sum median  203.888838
+     [java] sum avg     203.845500
+     [java] sum max     204.602985
+     [java] report: 128 took 0.129570, trying 256 to get >= 1 second
+     [java] report: 256 took 0.254525, trying 512 to get >= 1 second
+     [java] report: 512 took 0.536234, trying 1024 to get >= 1 second
+     [java] report: 1024 took 0.965272, trying 2048 to get >= 1 second
+     [java] report: 2048 took 1.825500, trying 2243 for 2 seconds
+     [java] report: 2243 took 1.982720, trying 4525 for 4 seconds
+     [java] report: 4525 took 4.026150, using 11239 for 10 seconds
+     [java] report 1/5  11239   10.030387       1120.495171
+     [java] report 2/5  11239   10.018850       1121.785385
+     [java] report 3/5  11239   10.053240       1117.948075
+     [java] report 4/5  11239   10.060238       1117.170378
+     [java] report 5/5  11239   10.038960       1119.538281
+     [java] report min  1117.170378
+     [java] report median       1119.538281
+     [java] report avg  1119.387458
+     [java] report max  1121.785385

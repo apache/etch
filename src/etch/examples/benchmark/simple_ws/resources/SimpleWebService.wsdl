@@ -1,0 +1,38 @@
+<wsdl:definitions xmlns:ns="http://simple.examples.etch" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:xsd="http://simple.examples.etch/xsd" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://simple.examples.etch"><wsdl:types><xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://simple.examples.etch/xsd">
+<xs:element name="add">
+<xs:complexType>
+<xs:sequence>
+<xs:element name="x" nillable="true" type="xs:int" />
+<xs:element name="y" nillable="true" type="xs:int" />
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+<xs:element name="addResponse">
+<xs:complexType>
+<xs:sequence>
+<xs:element name="return" nillable="true" type="xs:int" />
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+<xs:element name="sum">
+<xs:complexType>
+<xs:sequence>
+<xs:element maxOccurs="unbounded" name="vals" nillable="true" type="xs:int" />
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+<xs:element name="sumResponse">
+<xs:complexType>
+<xs:sequence>
+<xs:element name="return" nillable="true" type="xs:int" />
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+<xs:element name="echoVoid">
+<xs:complexType>
+<xs:sequence>
+<xs:element name="str" nillable="true" type="xs:string" />
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+</xs:schema></wsdl:types><wsdl:message name="addMessage"><wsdl:part name="part1" element="xsd:add" /></wsdl:message><wsdl:message name="addResponseMessage"><wsdl:part name="part1" element="xsd:addResponse" /></wsdl:message><wsdl:message name="sumMessage"><wsdl:part name="part1" element="xsd:sum" /></wsdl:message><wsdl:message name="sumResponseMessage"><wsdl:part name="part1" element="xsd:sumResponse" /></wsdl:message><wsdl:message name="echoVoidMessage"><wsdl:part name="part1" element="xsd:echoVoid" /></wsdl:message><wsdl:portType name="SimpleWebServicePortType"><wsdl:operation name="add"><wsdl:input xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" wsaw:Action="urn:add" message="ns:addMessage" /><wsdl:output xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" message="ns:addResponseMessage" wsaw:Action="urn:add" /></wsdl:operation><wsdl:operation name="sum"><wsdl:input xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" wsaw:Action="urn:sum" message="ns:sumMessage" /><wsdl:output xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" message="ns:sumResponseMessage" wsaw:Action="urn:sum" /></wsdl:operation><wsdl:operation name="echoVoid"><wsdl:input xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" wsaw:Action="urn:echoVoid" message="ns:echoVoidMessage" /></wsdl:operation></wsdl:portType><wsdl:binding name="SimpleWebServiceSOAP11Binding" type="ns:SimpleWebServicePortType"><soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document" /><wsdl:operation name="add"><soap:operation soapAction="urn:add" style="document" /><wsdl:input><soap:body use="literal" /></wsdl:input><wsdl:output><soap:body use="literal" /></wsdl:output></wsdl:operation><wsdl:operation name="sum"><soap:operation soapAction="urn:sum" style="document" /><wsdl:input><soap:body use="literal" /></wsdl:input><wsdl:output><soap:body use="literal" /></wsdl:output></wsdl:operation><wsdl:operation name="echoVoid"><soap:operation soapAction="urn:echoVoid" style="document" /><wsdl:input><soap:body use="literal" /></wsdl:input></wsdl:operation></wsdl:binding><wsdl:binding name="SimpleWebServiceSOAP12Binding" type="ns:SimpleWebServicePortType"><soap12:binding transport="http://schemas.xmlsoap.org/soap/http" style="document" /><wsdl:operation name="add"><soap12:operation soapAction="urn:add" style="document" /><wsdl:input><soap12:body use="literal" /></wsdl:input><wsdl:output><soap12:body use="literal" /></wsdl:output></wsdl:operation><wsdl:operation name="sum"><soap12:operation soapAction="urn:sum" style="document" /><wsdl:input><soap12:body use="literal" /></wsdl:input><wsdl:output><soap12:body use="literal" /></wsdl:output></wsdl:operation><wsdl:operation name="echoVoid"><soap12:operation soapAction="urn:echoVoid" style="document" /><wsdl:input><soap12:body use="literal" /></wsdl:input></wsdl:operation></wsdl:binding><wsdl:service name="SimpleWebService"><wsdl:port name="SimpleWebServiceSOAP11port" binding="ns:SimpleWebServiceSOAP11Binding"><soap:address location="http://localhost:8080/axis2/services/SimpleWebService" /></wsdl:port><wsdl:port name="SimpleWebServiceSOAP12port" binding="ns:SimpleWebServiceSOAP12Binding"><soap12:address location="http://localhost:8080/axis2/services/SimpleWebService" /></wsdl:port></wsdl:service></wsdl:definitions>

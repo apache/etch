@@ -1,0 +1,80 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{15A299DE-E6AE-4E4B-8ED3-C95C3FE8930A}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>common</RootNamespace>
+    <AssemblyName>common</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Library, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\etch-0.9\lib\bindings\csharp\Library.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\generatedsrc\etch\examples\ccmuser\CcmUser.cs">
+      <Link>CcmUser.cs</Link>
+    </Compile>
+    <Compile Include="..\generatedsrc\etch\examples\ccmuser\CcmUserClient.cs">
+      <Link>CcmUserClient.cs</Link>
+    </Compile>
+    <Compile Include="..\generatedsrc\etch\examples\ccmuser\CcmUserServer.cs">
+      <Link>CcmUserServer.cs</Link>
+    </Compile>
+    <Compile Include="..\generatedsrc\etch\examples\ccmuser\RemoteCcmUser.cs">
+      <Link>RemoteCcmUser.cs</Link>
+    </Compile>
+    <Compile Include="..\generatedsrc\etch\examples\ccmuser\RemoteCcmUserClient.cs">
+      <Link>RemoteCcmUserClient.cs</Link>
+    </Compile>
+    <Compile Include="..\generatedsrc\etch\examples\ccmuser\RemoteCcmUserServer.cs">
+      <Link>RemoteCcmUserServer.cs</Link>
+    </Compile>
+    <Compile Include="..\generatedsrc\etch\examples\ccmuser\StubCcmUser.cs">
+      <Link>StubCcmUser.cs</Link>
+    </Compile>
+    <Compile Include="..\generatedsrc\etch\examples\ccmuser\StubCcmUserClient.cs">
+      <Link>StubCcmUserClient.cs</Link>
+    </Compile>
+    <Compile Include="..\generatedsrc\etch\examples\ccmuser\StubCcmUserServer.cs">
+      <Link>StubCcmUserServer.cs</Link>
+    </Compile>
+    <Compile Include="..\generatedsrc\etch\examples\ccmuser\ValueFactoryCcmUser.cs">
+      <Link>ValueFactoryCcmUser.cs</Link>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

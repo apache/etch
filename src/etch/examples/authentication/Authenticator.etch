@@ -1,0 +1,204 @@
+module etch.examples.authentication
+
+/**
+ * The authenticator service allows an authorized user to check the
+ * authentication of other users and also check their rights. Admin
+ * users may also add users and grant them rights.
+ */
+@Timeout(4000)
+@Authorize( isAdmin )
+service Authenticator
+{
+	/**
+	 * The right required of a user to login and use the other messages.
+	 */
+	const string CHECK_RIGHT = "Authenticator.check"
+
+	/**
+	 * The right required of a user to use the addUser and grantRight
+	 * messages.
+	 */
+	const string ADMIN_RIGHT = "Authenticator.admin"
+
+	/**
+	 * Exception thrown if Authenticator fails.
+	 *
+	 * @param msg the reason for the failure.
+	 */
+	exception Failure( string msg )
+	
+	//////////
+	// AUTH //
+	//////////
+
+	/**
+	 * Marks the user as logged in if they are authentic and have the right
+	 * to utilize the service.
+	 *
+	 * @param name the name of the user.
+	 *
+	 * @param pwd the password of the user.
+	 *
+	 * @throws Failure if the user is already logged in, name or pwd don't
+	 * match authentication database, or if the user doesn't have the right
+	 * to utilize the service.
+	 */
+	@Authorize
+	void login( string name, string pwd ) throws Failure
+
+	/**
+	 * Marks the user as logged out.
+	 */
+	@Authorize
+	void logout()
+
+	/**
+	 * Checks if a user is logged in.
+	 *
+	 * @return true if a user is logged in.
+	 */
+	@Authorize
+	boolean isLoggedIn()
+
+	/**
+	 * Checks if the logged in user is an administrator.
+	 *
+	 * @return true if the logged in user is an administrator.
+	 */
+	@Authorize
+	boolean isAdmin()
+	
+	///////////
+	// USERS //
+	///////////
+
+	/**
+	 * Checks if the user is authentic.
+	 *
+	 * @param name the name of the user.
+	 *
+	 * @param pwd the password of the user.
+	 *
+	 * @return true if the user is authentic.
+	 */
+	@Authorize( isLoggedIn )
+	boolean isAuthentic( string name, string pwd )
+	
+	/**
+	 * Gets the names of the authorized users matching the pattern.
+	 *
+	 * @param pattern a pattern used to filter the list
+	 * of returned users. Null means return them all. The
+	 * pattern may contain the wildcard character "*", which
+	 * will match a sequence of zero or more characters. For
+	 * example, the pattern "fred*" will match all names starting
+	 * with "fred".
+	 *
+	 * @param offset the offset into the result set of the first
+	 * name to return.
+	 *
+	 * @param length the number of names to return from the result
+	 * set. If less than this number of names are returned, there
+	 * are no more names after these.
+	 *
+	 * @return the matching names of the authorized users.
+	 */
+	string[] getUsers( string pattern, int offset, int length )
+	
+	/**
+	 * Checks if the user is in the authentication database.
+	 *
+	 * @param name the name of the user.
+	 *
+	 * @return true if the user is in the authentication database.
+	 *
+	 * @throws Failure if name is null.
+	 */
+	boolean hasUser( string name ) throws Failure
+
+	/**
+	 * Adds the user to the authentication database.
+	 *
+	 * @param name the name of the user.
+	 *
+	 * @param pwd the password of the user.
+	 *
+	 * @throws Failure if name is null, pwd is null, name is not a
+	 * valid user name, or a user with that name already exists.
+	 */
+	void addUser( string name, string pwd ) throws Failure
+
+	/**
+	 * Changes the user's password.
+	 *
+	 * @param name the name of the user.
+	 *
+	 * @param pwd the new password of the user.
+	 *
+	 * @throws Failure if name is null, pwd is null, or a user with
+	 * that name doesn't exist.
+	 */
+	void changePassword( string name, string pwd ) throws Failure
+	
+	/**
+	 * Removes the user from the authentication database.
+	 *
+	 * @param name the name of the user.
+	 *
+	 * @throws Failure if name is null, or a user with that name
+	 * doesn't exist.
+	 */
+	void removeUser( string name ) throws Failure
+
+	////////////
+	// RIGHTS //
+	////////////
+	
+	/**
+	 * Checks if the user has the right.
+	 *
+	 * @param name the name of the user.
+	 *
+	 * @param right the right to check for.
+	 *
+	 * @return true if the user has the right.
+	 */
+	@Authorize( isLoggedIn )
+	boolean hasRight( string name, string right )
+	
+	/**
+	 * Gets the rights of the specified user.
+	 *
+	 * @param name the name of the user.
+	 *
+	 * @return  the rights of the specified user.
+	 *
+	 * @throws Failure if name is null, right is null, or the user
+	 * doesn't exist.
+	 */
+	string[] getRights( string name ) throws Failure
+	
+	/**
+	 * Grants the user the right.
+	 *
+	 * @param name the name of the user.
+	 *
+	 * @param right the right to grant the user.
+	 *
+	 * @throws Failure if name is null, right is null, the user
+	 * doesn't exist, or right is not valid right name.
+	 */
+	void grantRight( string name, string right ) throws Failure
+
+	/**
+	 * Denies the user the right.
+	 *
+	 * @param name the name of the user.
+	 *
+	 * @param right the right to deny the user.
+	 *
+	 * @throws Failure if name is null, right is null, or the user
+	 * doesn't exist.
+	 */
+	void denyRight( string name, string right ) throws Failure
+}

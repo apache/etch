@@ -1,0 +1,21 @@
+module etch.examples.example
+
+/**
+ * Service version of hello world.
+ */
+service Example
+{
+	/**
+	 * Says hello to the server.
+	 * @param msg a greeting for the server.
+	 */
+	@Timeout( 4000 )
+	void hello( string msg )
+	
+	/**
+	 * Says hello back to the client.
+	 * @param msg a greeting for the client.
+	 */
+	@Oneway @Direction( Client )
+	void howdy( string msg )
+}

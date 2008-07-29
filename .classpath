@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry excluding="etch/bindings/java/compiler/test/res1/|etch/examples/benchmark/corba/|etch/examples/benchmark/rmi/|etch/examples/benchmark/simple/|etch/examples/benchmark/simple_jax-ws/|etch/examples/benchmark/simple_ws/|etch/examples/benchmark/simple_wsc/|etch/examples/ccmuser_cs/|etch/examples/servlet-cuae/|etch/examples/simpleecho/|metreos/core/io/test/TestInterop.java" kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry kind="lib" path="libs/velocity-dep-1.5.jar"/>
+	<classpathentry kind="lib" path="libs/libthrift.jar"/>
+	<classpathentry kind="output" path="build"/>
+</classpath>

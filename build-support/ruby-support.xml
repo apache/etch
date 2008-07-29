@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<project name="etch-support-ruby" default="Debug" basedir=".">
+    <description>Build script for Etch compiler Ruby support</description>
+    <import file="build.includes.xml" />
+
+    <!-- Static properties of the sub-project -->
+    <property name="buildRoot"      value="${Etch.buildDirectory}/ruby-support" />
+    <property name="src"            location="src" />
+
+    <!-- INIT TARGET -->
+    <!-- Modify this target to define sub-project specific properties that can only be set at runtime -->
+    <target name="do-init">
+        <property name="buildDirectory" value="${buildRoot}/${Etch.build.target}/src" />
+        <property name="testResultsDirectory" value="${buildRoot}/${Etch.build.target}/test-results" />
+
+        <mkdir dir="${buildDirectory}" />
+        <mkdir dir="${testResultsDirectory}" />
+    </target>
+
+    <!-- CLEAN TARGET -->
+    <!-- Modify this target to clean up the build products -->
+    <target name="do-clean" >
+        <delete dir="${buildRoot}" />
+    </target>
+
+    <!-- BUILD TARGET -->
+    <!-- Modify this target to actually build :-) -->
+    <target name="do-build" >
+
+    </target>
+
+    <!-- TEST TARGET -->
+    <!-- Modify this target to actually test :-) -->
+    <target name="do-test" >
+
+    </target>
+
+    <!-- POSTBUILD TARGET -->
+    <!-- Modify this target to copy build products to 'dist' structure -->
+    <target name="do-postbuild" >
+
+    </target>
+
+</project>

@@ -1,0 +1,47 @@
+module cisco.uc
+
+service Messaging
+{
+	struct Mail
+	(
+		long receivedOn,
+		byte[] data,
+		long id,
+		string to,
+		string from,
+		boolean isNew
+	)
+
+	struct MailStore
+	(
+		long id,
+		string name,
+		string owner
+	)
+	
+	exception AuthorizationException()
+
+	void login(string serverIPAddress, string username, string password) 
+		throws AuthorizationException
+
+	void logout()
+
+	MailStore openMailbox(string username)
+
+	void closeMailStore(long mailstoreId)
+
+	Mail[] getMessages(long mailstoreId)
+
+	void startVoiceData(long mailstoreId, long mailId)
+
+	byte[] getVoiceData(long mailstoreId, long mailId, int mymaxbuffersize)
+
+	void subscribeMailStored(long mailstoreId)
+	
+	@Oneway
+	@Direction(client)
+	void notifyMailStored(long mailstoreId, Mail mail)
+
+	@Direction(client)
+	void bogus()	
+}

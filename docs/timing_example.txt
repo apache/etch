@@ -1,0 +1,16 @@
+there are various options for timing of calls to the remote
+interface and timing of the stub execution of the implementation:
+
+say i have a service Foo.
+
+Foo foo = new RemoteFoo( ... );
+
+// straight call / return
+int sum = foo.add( 1, 2 );
+
+// caller returns immediately, later reads delayed answer...
+Mailbox<Integer> mb = new ClientMailbox<Integer>();
+foo.add( 1, 2, mb );
+...
+int sum = mb.next();
+

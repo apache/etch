@@ -1,0 +1,19 @@
+module cisco.etch.examples
+
+service TwoWay
+{
+	enum Selection (Water, Coke, HotDog)
+    
+	void sendCUAEMessage (string msg)
+
+   	@Direction (client)
+    	void sendServletMessage (Selection selection)
+
+    	/**
+     	* Temporary work around an etch bug.
+     	*/
+    
+	@Direction (client)
+	@Oneway
+    	void bogus ()
+}

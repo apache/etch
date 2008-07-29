@@ -1,0 +1,14 @@
+// Test various uses of reserved words.
+
+module etch.bindings.java.compiler.test.res1
+
+service res2
+{
+	const boolean res3 = true
+	enum res4 ( res5 )
+	struct res6 ( int res7 )
+	@Extern( java, "res8", "foo", "bar", "baz" )
+	extern res8
+	exception res9 ( int res10 )
+	void res11( int res12 )
+}

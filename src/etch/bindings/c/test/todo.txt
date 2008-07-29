@@ -1,0 +1,116 @@
+
+___ 1. on all cache accessors lazy load cache if necessary.
+       this way we don't have to call init code in tests.
+
+___ 2. determine why in cachetest if we ask memtable to clean up
+       and there are two allocations, mem.first is OK and then
+       mem.next wraps. possibly a bug in hfirst or hnext.
+       POSSIBLY ADDRESSED, J.D. found no problems, possibly some combination
+       of funky linker and cache code error. Keep an eye on it.
+
+___ 3. jenkins_clear uses free when asked 
+       why were keys and values not etch_malloc'ed? maybe this is OK.
+
+___ 4. write a true iterator for hashtable interface and all collections.
+       this will be a struct object that when instantiated, calls first()
+       and stores the current position as instance data. the iterator 
+       has three methods, next(), is_more(?), and destroy(). Each time next()   
+       is called it returns the current position, and calls next internally, 
+       storing the new current pos. it should probably permit a startat also.
+       current position instance data will probably be specific to the collection
+       and therefore would be a heap allocated member of the iterator object.
+       To do this entirely generally all collections would want to be objectized
+       with vtables similarly to the way instance data is done, and implement  
+       at least first() and next(). Add a destroy() handler as well, which might
+       want to have freekey and freeval arguments.
+       
+___ 4.1 install iterator in struct value
+
+___ 4.2 install iterator in array value       
+
+OK  5. cache the etch_object vtable in a global variable, and reference this
+       in new_etchobject, in order that we don't have to do a cache lookup
+       on every object construction. DONE.
+
+___ 6. write tests for boxed objects ensuring that values are valid, that
+       the constructors and destructors work, and that memory is freed
+       as expected by vtab->destroy(); we need a new boxed primitive test,
+       and then to augment existing tests with their boxed objects,
+       such as :
+       ETCH_ID_NAME* new_etch_id_name(etch_id_name* value);
+       ETCH_ID_NAME* new_etch_id_name_2(wchar_t* name, size_t len, etch_id_name*);
+       ETCH_ID_NAME* new_etch_id_name_3(unsigned int id, wchar_t* name, size_t len, etch_id_name*);
+       void destroy_id_name_value(ETCH_ID_NAME* thisp, etch_id_name* value);
+       ** PARTLY DONE, all primitive tests plus string, need others as above.
+
+___ 7. configure etch_free to not necessarily complain if allocation untracked.
+       not sure how atm, we definitely can't have another parameter.
+
+___ 8. deal with the discontinuity between memory tracking table and the vtable cache.
+       when we clear the memtable after each test, we compromise the final cleanup of
+       the cache, which now has dangling pointers into the memtable. we deal with this
+       currently by not etch_malloc'ing vtables. maybe this is OK, but there is something
+       less than satisying about this arrangement.
+
+___ 9. make shallow copy non-virtual in etchobject. 
+
+___ 10. write ctor with dedicated vtable for boxed arraylist type, that permits destruction
+        of the boxed object with or without freeing memory for the list contents. since we
+        can't pass a "don't free content" parameter with the etchobjects's destroy(),
+        we'll need to be able to set a flag somewhere in the object itself to so indicate,
+        prior to calling destroy(). One way we can do this is by adding a parameter to 
+        new_etch_arraylist, which will set the is_readonly flag on the underlying etch_arraylist,
+        causing arraylist_destroy() to ignore its is_free_content parameter. PARTLY DONE 11/1.
+        we added the ctor flag to prevent memory cleanup attempt. we did not yet add a custom
+        ctor, so clone and destroy cleanup is still invoked from the default clone and destroy.
+
+___ 11. add an optional content destroy handler callback to collections. this would be made
+		simpler given item (4), objectizing collections with first() and next(), since we
+		would now have a vtable to which we would only need to add another virtual method.
+
+___ 12. add a content type property to collections differentiating between content for which
+        memory can be freed as a unit, and content consisting of multiple heap allocations
+        in particular etchobject. ** PARTLY DONE - done for etch_arraylist.
+
+___ 13. etchobject.size is not accurate for objects which have dynamic underlying content.
+		this is not critical, but it is funky.
+
+___ 14. change new_xxxxx ctors which construct aliased etchobject, to syntax new_boxed_xxxxx().
+	    this is not pretty but it is descriptive of what is happening, which the current ctor
+	    names are not. PARTLY DONE, MAY BE A STRAGGLER OR TWO.
+
+___ 15. add __LINE, __FILE, to exception object ctor
+ 
+___ 16. consider moving impl* and impl_type to etchobject, meaning we could always 
+        call destroy_instancedata on the impl, and would no longer need to subclass
+        objects simply because they have instance data.
+ 
+___ 17. define default exceptions
+
+___ 18. create startup hashtable of exceptions, augmentable at runtime.
+
+___ 19. determine how we are going to hash using complex objects as keys.
+
+___ 20. consider do-over as raw com.
+
+___ 21. allow destroy hashtable to etch_free content configurably. currently it free's
+		meaning we can't etch_malloc content. possibly a system hashtable should free,
+		others should etch_free. see also 21.1
+		
+___ 21.1 change memtable to a system hashtable. lose is_memtable_instance.		
+
+___ 22. circular ref problems with id_name and typedef'ed derivatives. problem arises
+		from putting the wrapped object defs in with the native object defs, meaning
+		we have to include all the object headers and code, along with hash, arraylist,
+		etc etc. Move this stuff out and into another file, but do this only after a
+		clean checkin, so we can back out the code if need be.
+
+___ 23. 
+
+___ 24. 
+
+___ 25. 
+
+   
+
+

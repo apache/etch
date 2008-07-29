@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<project name="etch-compiler" default="Debug" basedir=".">
+    <description>Build script for Etch compiler and Java-binding support library</description>
+    <import file="build.includes.xml" />
+
+    <!-- Static properties of the sub-project -->
+    <property name="buildRoot"      value="${Etch.buildDirectory}/compiler" />
+    <property name="src"            location="src" />
+
+    <!-- INIT TARGET -->
+    <!-- Modify this target to define sub-project specific properties that can only be set at runtime -->
+    <target name="do-init">
+        <property name="buildDirectory"       value="${buildRoot}/${Etch.build.target}/src" />
+        <property name="classesDirectory"     value="${buildRoot}/${Etch.build.target}/classes" />
+        <property name="jarDirectory"         value="${buildRoot}/${Etch.build.target}/jar" />
+        <property name="testResultsDirectory" value="${buildRoot}/${Etch.build.target}/test-results" />
+        <property name="etch.jar"             value="${jarDirectory}/etch.jar" />
+
+        <mkdir dir="${classesDirectory}" />
+        <mkdir dir="${buildDirectory}" />
+        <mkdir dir="${testResultsDirectory}" />
+        <mkdir dir="${jarDirectory}" />
+    </target>
+
+    <!-- CLEAN TARGET -->
+    <!-- Modify this target to clean up the compiler build products -->
+    <target name="do-clean">
+        <!-- TODO: This is easy only because we are copying the entire source tree -->
+        <delete dir="${buildRoot}" />
+    </target>
+
+    <!-- BUILD TARGET -->
+    <!-- Modify this target to actually build the compiler jar and the java-support jar -->
+    <target name="do-build">
+        <!-- Copy source to build location and filter -->
+        <!-- TODO: Louis really hates this, it should be deprecated asap, the correct thing to do is build in place and be aware of the artifacts produced. -->
+        <copy todir="${buildDirectory}">
+            <fileset dir="${src}" excludes="**/examples/**,**/.svn/**" />
+            <filterset refid="Etch.buildTokens" />
+        </copy>
+
+        <!-- Generate Parser -->
+        <javacc target="${buildDirectory}/etch/compiler/EtchGrammar.jj" javacchome="${Etch.dependency.javacc.home}" />
+
+        <!-- Compile Source -->
+        <javac  debug="${Etch.javac.debug}"
+                optimize="${Etch.javac.optimize}"
+                srcdir="${buildDirectory}"
+                destdir="${classesDirectory}"
+                excludes="**/test/**" >
+            <classpath refid="Etch.dependencies.jar.paths" />
+        </javac>
+        <!-- copy in velocity templates and compiler *Keywords -->
+        <copy todir="${classesDirectory}">
+            <fileset dir="${buildDirectory}" includes="**/*.vm" />
+            <fileset dir="${buildDirectory}" includes="**/*.kwd" />
+        </copy>
+
+        <!-- TODO: confirm that this Jar "re-bundling" is legal and does not make IP/licensing issues "confused"!!!! -->
+        <!-- package compiler jar file -->
+        <unjar src="${Etch.dependency.velocity-dep.jar}" dest="${classesDirectory}" />
+
+        <!-- rename/preserve the velocity manifest files -->
+        <move file="${classesDirectory}/META-INF" todir="${classesDirectory}/velocity-META-INF" />
+
+        <!-- Package up new 'compiler' jar -->
+        <jar    jarfile="${etch.jar}"
+                basedir="${classesDirectory}"
+                includes="velocity-META-INF/**,etch/bindings/java/**,etch/bindings/**/compiler/**,etch/compiler/**,metreos/**,org/**" >
+            <manifest>
+                <attribute name="Main-Class"   value="etch.compiler.Etch2" />
+                <attribute name="Copyright"    value="${Etch.copyrightNotice}" />
+                <attribute name="Version"      value="${Etch.version}" />
+                <attribute name="Build-Tag"    value="${Etch.buildTag}" />
+                <attribute name="SVN-Revision" value="${Etch.runtime.revisionNumber}" />
+            </manifest>
+        </jar>
+
+        <!-- While we are here, package up the 'java-support' jar -->
+        <!-- TODO: add 'java-support' packaging -->
+
+    </target>
+
+    <!-- TEST TARGET -->
+    <!-- Compile and run unit tests -->
+    <target name="do-test">
+
+        <!-- Generate Interfaces required for java-binding unit tests-->
+        <!-- TODO: need a proper 'etch' task for Ant -->
+        <etch jar="${etch.jar}" dir="${buildDirectory}/etch/bindings/java/compiler/test" file="Test.etch"  binding="java" />
+        <etch jar="${etch.jar}" dir="${buildDirectory}/etch/bindings/java/compiler/test" file="Test2.etch" binding="java" />
+        <etch jar="${etch.jar}" dir="${buildDirectory}/etch/bindings/java/compiler/test" file="Test3.etch" binding="java" />
+		<etch jar="${etch.jar}" dir="${buildDirectory}/etch/bindings/java/compiler/test" file="Test4.etch" binding="java" />
+        <!-- <etch jar="${etch.jar}" dir="${buildDirectory}/etch/bindings/java/compiler/test" file="Test5.etch" binding="java" /> -->
+		<!-- <etch jar="${etch.jar}" dir="${buildDirectory}/etch/bindings/java/compiler/test" file="TestReservedWords.etch" binding="java" /> -->
+
+		<!-- Generate Interfaces required for xml-binding unit tests-->
+		<etch jar="${etch.jar}" dir="${buildDirectory}/etch/bindings/xml/compiler/test" file="Test.etch" binding="xml" />
+
+        <!-- Compile Tests -->
+        <javac  debug="${Etch.javac.debug}"
+                optimize="${Etch.javac.optimize}"
+                srcdir="${buildDirectory}"
+                includes="**/test/**"
+				excludes="**/test/TestInterop.java" >
+            <classpath refid="Etch.dependencies.jar.paths" />
+        </javac>
+
+        <!-- Run Unit Tests -->
+	    <junit printsummary="yes" haltonfailure="no" dir="${buildDirectory}">
+			<classpath>
+				<pathelement location="${buildDirectory}"/>
+	            <pathelement location="${Etch.dependency.junit.jar}"/>
+				<pathelement location="${Etch.dependency.velocity-dep.jar}"/>
+			</classpath>
+	        <formatter type="xml"/>
+		    <batchtest fork="yes" todir="${testResultsDirectory}">
+			    <fileset dir="${buildDirectory}">
+                    <include name="**/test/Test*.java" />
+					<exclude name="etch/bindings/java/compiler/test/Test.java" />
+					<exclude name="etch/bindings/java/compiler/test/Test2Client.java" />
+					<exclude name="etch/bindings/java/compiler/test/Test2Server.java" />
+					<exclude name="etch/bindings/java/compiler/test/Test3.java" />
+					<exclude name="etch/bindings/java/compiler/test/Test3Client.java" />
+					<exclude name="etch/bindings/java/compiler/test/Test3Server.java" />
+					<exclude name="etch/bindings/java/compiler/test/Test4Client.java" />
+					<exclude name="etch/bindings/java/compiler/test/Test4Server.java" />
+					<exclude name="etch/bindings/java/compiler/test/TestClient.java" />
+					<exclude name="etch/bindings/java/compiler/test/TestServer.java" />
+			    	<exclude name="etch/bindings/java/compiler/test/TestHelper.java" />
+					<exclude name="etch/bindings/java/compiler/test/TestHelper.java" />
+			    	<exclude name="metreos/core/io/test/TestInterop.java" />
+			    </fileset>
+		    </batchtest>
+	    </junit>
+    </target>
+
+    <!-- POSTBUILD TARGET -->
+    <!-- Publish the jar's and script wrappers to the correct location in the
+    	'dist' directory.  Please note that the processing and inclusion of
+    	documentation is handled by docs.xml. Likewise, libraries are included
+    	in their respective post-build targets. -->
+    <target name="do-postbuild">
+        <!-- Build distribution structure -->
+        <mkdir dir="${Etch.dist}/bin" />
+        <mkdir dir="${Etch.dist}/lib" />
+		<mkdir dir="${Etch.dist}/src" />
+		<mkdir dir="${Etch.dist}/include" />
+		<mkdir dir="${Etch.dist}/examples" />
+		<mkdir dir="${Etch.dist}/plugins" />
+		<mkdir dir="${Etch.dist}/installers" />
+
+        <!-- Copy in Etch and wrapper scripts.  -->
+        <copy file="scripts/etch.sh" todir="${Etch.dist}/bin" />
+        <copy file="scripts/etch.bat" todir="${Etch.dist}/bin" />
+		<copy file="${etch.jar}" todir="${Etch.dist}/bin" />
+
+		<!-- Copy src -->
+		<copy todir="${Etch.dist}/src" >
+			<fileset dir="${Etch.runtime.workspace}/src/" >
+				<include name="**/*" />
+				<exclude name="**/examples/**" />
+				<exclude name="**/test/**" />
+				<!-- TODO: Need to remove files generated during the etch build
+					for dist. -->
+			</fileset>
+		</copy>
+
+		<!-- Copy C includes for C developers -->
+		<copy todir="${Etch.dist}/include" >
+			<fileset dir="${Etch.runtime.workspace}/src/etch/bindings/c/inc/" >
+				<include name="**/*.c" />
+				<include name="**/*.h" />
+			</fileset>
+		</copy>
+
+		<!-- Copy examples -->
+		<!-- TODO: Refactor/finalize an intuitive dir structure for examples.-->
+    	<copy todir="${Etch.dist}/examples">
+			<fileset dir="${Etch.runtime.workspace}/src/etch/examples">
+				<include name="**/*.etch" />
+				<include name="**/*.java" />
+				<include name="**/*.cs" />
+				<include name="**/*.rb" />
+				<include name="**/*.py" />
+				<include name="**/*.xml" />
+				<include name="**/*.c" />
+				<include name="**/*.h" />
+				<include name="**/*.bat" />
+				<include name="**/*.txt" />
+				<exclude name="**/test/**" />
+			</fileset>
+		</copy>
+
+		<!-- Copy plugins -->
+		<!-- TODO: construct and copy plugins for dist. -->
+
+		<!-- Copy installers -->
+		<!-- TODO: construct and copy installers for dist. -->
+    </target>
+
+</project>

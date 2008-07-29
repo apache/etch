@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<project name="java-support" default="Debug" basedir=".">
+    <description>Build etch-java-runtime jar file</description>
+    <import file="build.includes.xml" />
+
+    <!-- Static properties of the sub-project -->
+    <property name="buildRoot"      value="${Etch.buildDirectory}/java-support" />
+    <property name="src"            location="src" />
+
+    <!-- INIT TARGET -->
+    <!-- Modify this target to define sub-project specific properties that can only be set at runtime -->
+    <target name="do-init">
+        <property name="buildDirectory"       value="${buildRoot}/${Etch.build.target}/src" />
+        <property name="classesDirectory"     value="${buildRoot}/${Etch.build.target}/classes" />
+        <property name="jarDirectory"         value="${buildRoot}/${Etch.build.target}/jar" />
+        <property name="testResultsDirectory" value="${buildRoot}/${Etch.build.target}/test-results" />
+        <property name="etch-java-runtime.jar"             value="${jarDirectory}/etch-java-runtime.jar" />
+	<property name="etch-java-runtime-src.zip"         value="${jarDirectory}/etch-java-runtime-src.zip" />
+
+        <mkdir dir="${classesDirectory}" />
+        <mkdir dir="${buildDirectory}" />
+        <mkdir dir="${testResultsDirectory}" />
+        <mkdir dir="${jarDirectory}" />
+    </target>
+
+    <!-- CLEAN TARGET -->
+    <!-- Modify this target to clean up the compiler build products -->
+    <target name="do-clean">
+        <!-- TODO: This is easy only because we are copying the entire source tree -->
+        <delete dir="${buildRoot}" />
+    </target>
+
+    <!-- BUILD TARGET -->
+    <!-- Modify this target to actually build the compiler jar and the java-support jar -->
+    <target name="do-build">
+        <!-- Copy source to build location and filter -->
+        <!-- TODO: Louis really hates this, it should be deprecated asap, the correct thing to do is build in place and be aware of the artifacts produced. -->
+        <copy todir="${buildDirectory}">
+            <fileset dir="${src}" excludes="**/examples/**" />
+            <filterset refid="Etch.buildTokens" />
+        </copy>
+
+        <!-- Generate Parser -->
+        <javacc target="${buildDirectory}/etch/compiler/EtchGrammar.jj" javacchome="${Etch.dependency.javacc.home}" />
+
+        <!-- Compile Source -->
+        <javac  debug="${Etch.javac.debug}"
+                optimize="${Etch.javac.optimize}"
+                srcdir="${buildDirectory}"
+                destdir="${classesDirectory}"
+                excludes="**/test/**" >
+            <classpath refid="Etch.dependencies.jar.paths" />
+        </javac>
+
+
+        <!-- java runtime jar file -->
+        <jar    jarfile="${etch-java-runtime.jar}"
+                basedir="${classesDirectory}"
+		includes="etch/bindings/java/msg/**, etch/bindings/java/support/**, etch/bindings/java/transport/**, etch/bindings/java/util/**, metreos/**"
+                excludes="**/test/**,**/examples/**" >
+  		<manifest>
+                	<attribute name="Copyright"    value="${Etch.copyrightNotice}" />
+                	<attribute name="Version"      value="${Etch.version}" />
+                	<attribute name="Build-Tag"    value="${Etch.buildTag}" />
+                	<attribute name="SVN-Revision" value="${Etch.runtime.revisionNumber}" />
+            </manifest>
+        </jar>
+
+   	<!-- java src zip file -->
+        <zip    destfile="${etch-java-runtime-src.zip}"
+                basedir="${buildDirectory}"
+		includes="etch/bindings/java/msg/**, etch/bindings/java/support/**, etch/bindings/java/transport/**, etch/bindings/java/util/**, metreos/**"
+                excludes="**/test/**,**/examples/**" >
+        </zip>
+
+	<!-- Copy the runtime jar and zip to distribution -->
+		<copy todir="${Etch.dist}/lib">
+	    	<fileset dir="${jarDirectory}">
+				<include name="etch-java-runtime*.*" />
+			</fileset>
+	    </copy>
+
+    </target>
+
+</project>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

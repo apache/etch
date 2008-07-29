@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<project name="build.include" default="help" basedir=".">
+  <description>Etch Ant Include file</description>
+
+  <!-- Standard Properties shared by all sub-projects -->
+  <import file="build.common.xml" />
+
+  <!-- Ant Libraries -->
+  <taskdef resource="org/apache/ant/dotnet/antlib.xml">
+    <classpath>
+      <pathelement location="${Etch.buildSupportDirectory}/ant-dotnet-1.0.jar" />
+    </classpath>
+  </taskdef>
+
+  <!-- Standard targets, do not modify or overload. Overload the "do-*" targets in each sub-project -->
+  <target name="debug"           depends="init-Debug,all" />
+  <target name="Debug"           depends="init-Debug,all" />
+  <target name="release"         depends="init-Release,all" />
+  <target name="Release"         depends="init-Release,all" />
+  <target name="clean"           depends="init-Clean,init,do-clean" />
+  <target name="Clean"           depends="init-Clean,init,do-clean" />
+  <target name="help"            depends="init-Help" />
+  <target name="Help"            depends="init-Help" />
+  <target name="debug-rebuild"   depends="Clean,Debug" />
+  <target name="release-rebuild" depends="Clean,Release" />
+
+  <target name="init-Help" depends="do-help">
+     <!-- Generic help message -->
+     <echo>
+     The following Generic targets are supported:
+        Debug           := Debug build
+        Release         := Release build
+        Clean           := Clean action
+        debug-rebuild   := Clean then Debug build
+        release-rebuild := Clean then Release build
+     </echo>
+  </target>
+
+  <target name="init-Debug">
+     <!-- Debug Target -->
+     <tstamp />
+     <property name="Etch.build.target"       value="Debug" />
+     <!-- <property name="Etch.build.identifierFQ" value="${Etch.build.releaseNumber}-${Etch.build.buildNumber}-${Etch.build.target}" /> -->
+
+     <property name="Etch.javac.debug"    value="on" />
+     <property name="Etch.javac.optimize" value="off" />
+  </target>
+
+  <target name="init-Release">
+    <!-- Release Target -->
+    <tstamp />
+    <property name="Etch.build.target"       value="Release" />
+    <!-- <property name="Etch.build.identifierFQ" value="${Etch.build.releaseNumber}-${Etch.build.buildNumber}" /> -->
+
+    <property name="Etch.javac.debug" value="off" />
+    <property name="Etch.javac.optimize" value="on" />
+
+  </target>
+
+  <target name="init-Clean">
+     <!-- Clean Target -->
+     <property name="Etch.build.target" value="Clean" />
+  </target>
+
+  <target name="property-init" >
+     <!-- Initialize target-specific properties -->
+     <mkdir dir="${Etch.buildDirectory}" />
+     <mkdir dir="${Etch.logDirectory}" />
+  </target>
+
+  <target name="init" depends="property-init,do-init">
+     <!-- Initialization Target -->
+  </target>
+
+  <target name="build" depends="init,do-build">
+     <!-- Build target -->
+  </target>
+
+  <target name="postbuild" depends="build,do-postbuild">
+     <!-- Post-build Target -->
+  </target>
+
+  <target name="test" depends="postbuild,do-test">
+     <!-- Test Target -->
+  </target>
+
+  <target name="all" depends="test">
+     <!-- all target -->
+  </target>
+
+  <!-- Overload these targets in each sub-project -->
+  <target name="do-init">
+    <!-- Use this target for any pre-build initialization
+         (directory creation, etc.), the following parameters will be defined
+         before this target is called:
+
+         Etch.build.identifier  :=  official label for this instance of the
+                                       build, this value should be used
+                                       and dynamically inserted into the source
+                                       during the build.
+         Etch.build.target      :=  One of "Debug" or "Release"
+    -->
+    <echo message="No Initialization defined." />
+  </target>
+
+  <target name="do-build">
+    <!-- Use this target for the actual build
+         logic. "do-init" will be called before
+         this target.
+    -->
+  </target>
+
+  <target name="do-clean">
+    <!-- Use this target to implement any build-clean
+         logic. "do-init" will *not* be called before
+         this target.
+    -->
+    <echo message="No Clean target defined." />
+  </target>
+
+  <target name="do-postbuild">
+    <!-- Use this target to copy the build products
+         to the common workspace build dir, i.e. X:\Build.
+         The "do-build" target must complete successfully
+         before this target is called.
+    -->
+    <echo message="No Postbuild defined." />
+  </target>
+
+  <target name="do-test">
+    <!-- Use this target to execute unit tests -->
+    <echo message="No Unit Tests Defined." />
+  </target>
+
+  <target name="do-help">
+    <!-- Use this target to list any special targets
+         or help messages for the subproject.
+    -->
+    <echo>
+    The following special targets are supported:
+        None
+    </echo>
+  </target>
+
+</project>
