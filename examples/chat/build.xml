@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<project name="etch-chat-example" basedir="." default="help">
+    <description>Chat Example</description>
+    <target name="help"><echo>Please select a target...</echo></target>
+    
+    <!-- TODO better computation of etch.home, etch.version -->
+    <property environment="env" />
+    
+    <!-- compute ETCH_HOME -->
+    <property name="build.ETCH_HOME" location="${basedir}/../../target/Installers/dist" />
+    <condition property="etch.home" value="${env.ETCH_HOME}">
+        <isset property="${env.ETCH_HOME}" />
+    </condition>
+    <condition property="etch.home" value="${build.ETCH_HOME}" >
+        <not><isset property="etch.home" /></not>
+    </condition>
+    
+    <!-- compute etch.version -->
+    <condition property="etch.version" value="1.0.0" >
+        <not><isset property="etch.version" /></not>
+    </condition>
+
+    <!-- Csharp Support -->
+    <condition property="USE.dotnet">
+        <and>
+            <os family="windows" />
+            <available file="${env.SystemRoot}/Microsoft.NET/Framework/v2.0.50727/msbuild.exe" />
+        </and>
+    </condition>
+    <condition property="USE.mono">
+        <and>
+            <not><os family="windows" /></not>
+            <available file="${env.MONO_HOME}/bin/mdtool" />
+        </and>
+    </condition>
+    <condition property="BUILD.csharp">
+        <or>
+            <isset property="USE.dotnet" />
+            <isset property="USE.mono" />
+        </or>
+    </condition>
+
+    <!-- import etch task -->
+    <taskdef
+        name="etch"
+        onerror="report"
+        classname="etch.tools.ant.EtchCompileTask"
+        classpath="${etch.home}/lib/etch-ant-plugin-${etch.version}.jar" />
+
+    <!-- import dotnet task -->
+    <condition property="ant.dotnet.jar" value="ant-dotnet-1.0.jar" >
+        <not><isset property="ant.dotnet.jar" /></not>
+    </condition>
+    
+    <taskdef 
+        onerror="report"
+        resource="org/apache/ant/dotnet/antlib.xml"
+        classpath="${ant.dotnet.jar}" />
+
+    <macrodef name="mdtool">
+        <attribute name="dir"         default="." />
+        <attribute name="failonerror" default="false" />
+        <attribute name="project"     default="project.csproj" />
+        <attribute name="target"      default="${build.target}" />
+        <sequential>
+            <exec executable="${env.MONO_HOME}/bin/mdtool" dir="@{dir}" failonerror="@{failonerror}" >
+                <arg value="build" />
+                <arg value="--buildfile:@{project}" />
+            </exec>
+        </sequential>
+    </macrodef>
+    
+    <!-- set properties -->
+    <property name="target"            location="${basedir}/target" />
+    <property name="src"               location="${basedir}/src" />
+    <property name="bin"               location="${target}/bin" />
+    <property name="generated-sources" location="${target}/generated-sources" />
+    <property name="classes"           location="${target}/classes" />
+    <property name="test-results"      location="${target}/test-results" />
+
+    <!-- initialize -->
+    <target name="init" >
+        <mkdir dir="${target}" />
+        <mkdir dir="${bin}" />
+        <mkdir dir="${generated-sources}" />
+        <mkdir dir="${classes}" />
+        <mkdir dir="${test-results}" />
+    </target>
+    
+    <!-- build the server -->
+    <target name="generate-sources" depends="init" >
+        <!-- generate sources -->
+        <mkdir dir="${generated-sources}/main/etch/java" />
+        <etch home="${etch.home}" 
+              file="${src}/main/etch/Chat.etch"
+              what="both"
+              binding="java"
+              output="${generated-sources}/main/etch/java"
+              />
+        
+        <mkdir dir="${generated-sources}/main/etch/csharp" />
+        <etch home="${etch.home}" 
+              file="${src}/main/etch/Chat.etch"
+              what="both"
+              binding="csharp"
+              output="${generated-sources}/main/etch/csharp"
+              />
+    </target>
+    
+    <target name="build-java" depends="generate-sources" >
+        <!-- compile sources -->
+        <mkdir dir="${classes}" />
+        <javac target="1.5" destdir="${classes}">
+            <src path="${generated-sources}/main/etch/java" />
+            <src path="${src}/main/java" />
+            <classpath>
+                <pathelement location="${etch.home}/lib/etch-java-runtime-${etch.version}.jar" />
+            </classpath>
+        </javac>
+
+        <!-- Create Jar -->
+        <jar jarfile="${bin}/chat.jar" >
+            <manifest>
+                <attribute name="Class-Path" value="etch-java-runtime-${etch.version}.jar" />
+            </manifest>
+            <fileset dir="${classes}">
+                <include name="**/*" />
+            </fileset>
+        </jar>
+
+        <!-- copy in dependencies -->
+        <copy todir="${bin}">
+            <fileset dir="${etch.home}/lib">
+                <include name="etch-java-runtime-*.jar" />
+            </fileset>
+        </copy>
+        
+    </target>
+
+    <target name="build-csharp-with-mono" depends="generate-sources" if="USE.mono" >
+        <mdtool dir="${src}/main/csharp/ChatClientProj" project="ChatClientProj.csproj" />
+        <mdtool dir="${src}/main/csharp/ChatListenerProj" project="ChatListenerProj.csproj" />
+    </target>
+    
+    <target name="build-csharp-with-dotnet" depends="generate-sources" if="USE.dotnet" >
+        <msbuild buildfile="${src}/main/csharp/ChatListenerProj/ChatListenerProj.csproj">
+            <property name="Configuration" value="${build.target}" />
+        </msbuild>
+        <msbuild buildfile="${src}/main/csharp/ChatClientProj/ChatClientProj.csproj">
+            <property name="Configuration" value="${build.target}" />
+        </msbuild>
+        <copy todir="${bin}">
+            <fileset dir="${src}/main/csharp/ChatListenerProj/bin/${build.target}">
+                <include name="*" />
+            </fileset>
+            <fileset dir="${src}/main/csharp/ChatClientProj/bin/${build.target}">
+                <include name="*" />
+            </fileset>
+        </copy>
+    </target>
+    
+    <target name="build-csharp" depends="build-csharp-with-mono,build-csharp-with-dotnet" />
+    
+    <target name="build" depends="build-java,build-csharp" />
+        
+    <!-- run unit tests -->
+    <target name="test" depends="build" >
+        <echo>
+
+Build Complete!
+
+To run the chat-test example, open three command-windows in this directory.
+
+cmd-window-1:
+  > cd target/bin
+  > java -cp chat.jar etch.examples.chat.MainChatListener 
+
+cmd-window-2:
+  > cd target/bin
+  > java -cp chat.jar etch.examples.chat.MainChatClient
+
+cmd-window-3:
+  > cd target/bin
+  > java -cp chat.jar etch.examples.chat.MainChatClient
+
+cmd-window-2 and cmd-window-2 can now chat with each other !!!
+
+        </echo>
+    </target>
+
+    <!-- build everything -->
+    <target name="init-debug">
+        <property name="build.target" value="Debug" />
+    </target>
+    <target name="init-release">
+        <property name="build.release" value="Release" />
+    </target>
+    
+    <target name="debug" depends="init-debug,test" />
+    <target name="release" depends="init-release,test" />
+        
+    <!-- clean -->    
+    <target name="clean">
+        <delete dir="${target}" quiet="true" />
+    </target>
+
+</project>

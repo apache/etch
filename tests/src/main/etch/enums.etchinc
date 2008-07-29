@@ -1,0 +1,7 @@
+	/* include some enums and structs */ 
+	
+	enum E1( A, B, C )
+	enum E2 (D, E, F);
+	enum E3 (G, H, I)
+	struct S1( int x, int y, int z )
+	struct S2 (string a, int b);	

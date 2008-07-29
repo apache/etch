@@ -1,0 +1,108 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{39699FEE-D21E-42AC-ADD7-22484A985C27}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>DistMapTestProj</RootNamespace>
+    <AssemblyName>DistMapTestProj</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Etch, Version=0.96.0.0, Culture=neutral, PublicKeyToken=f5c449a9231c16f1, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\binding-csharp\runtime\src\main\csharp\bin\Debug\Etch.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.framework, Version=2.4.7.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+      <HintPath>$(NUNIT_HOME)\bin\nunit.framework.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.examples.distmap\BaseDistributedHashTableClient.cs">
+      <Link>BaseDistributedHashTableClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.examples.distmap\BaseDistributedHashTableServer.cs">
+      <Link>BaseDistributedHashTableServer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.examples.distmap\DistributedHashTable.cs">
+      <Link>DistributedHashTable.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.examples.distmap\DistributedHashTableClient.cs">
+      <Link>DistributedHashTableClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.examples.distmap\DistributedHashTableHelper.cs">
+      <Link>DistributedHashTableHelper.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.examples.distmap\DistributedHashTableServer.cs">
+      <Link>DistributedHashTableServer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.examples.distmap\RemoteDistributedHashTable.cs">
+      <Link>RemoteDistributedHashTable.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.examples.distmap\RemoteDistributedHashTableClient.cs">
+      <Link>RemoteDistributedHashTableClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.examples.distmap\RemoteDistributedHashTableServer.cs">
+      <Link>RemoteDistributedHashTableServer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.examples.distmap\StubDistributedHashTable.cs">
+      <Link>StubDistributedHashTable.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.examples.distmap\StubDistributedHashTableClient.cs">
+      <Link>StubDistributedHashTableClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.examples.distmap\StubDistributedHashTableServer.cs">
+      <Link>StubDistributedHashTableServer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.examples.distmap\ValueFactoryDistributedHashTable.cs">
+      <Link>ValueFactoryDistributedHashTable.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\main\csharp\etch.examples.distmap\ImplDistributedHashTableClient.cs">
+      <Link>ImplDistributedHashTableClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\main\csharp\etch.examples.distmap\ImplDistributedHashTableServer.cs">
+      <Link>ImplDistributedHashTableServer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\main\csharp\etch.examples.distmap\MainDistributedHashTableClient.cs">
+      <Link>MainDistributedHashTableClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\main\csharp\etch.examples.distmap\MainDistributedHashTableListener.cs">
+      <Link>MainDistributedHashTableListener.cs</Link>
+    </Compile>
+    <Compile Include="..\etch.examples.distmap\TestDistributedHashTable.cs">
+      <Link>TestDistributedHashTable.cs</Link>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

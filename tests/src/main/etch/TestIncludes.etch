@@ -1,0 +1,78 @@
+/* $Id$
+ *
+ * Copyright 2007-2008 Cisco Systems Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy
+ * of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ */
+
+module etch.tests
+
+service TestIncludes
+{
+	/* inlude some constants */
+	include "const1.etchinc" 
+	/* const1.etchinc also includes const2.etchinc */
+/*	
+	const boolean BOOL1 = false
+	const boolean BOOL2 = true
+	const int INT1 = 1
+	
+	const int INT2 = 2;
+	const int INT3 = 8
+	const string STR = "TEST";
+*/	
+	
+
+	include "enums.etchinc"  
+	
+	/* include some enums and structs */ 
+	/*
+	enum E1( A, B, C )
+	enum E2 (D, E, F);
+	enum E3 (G, H, I)
+	struct S1( int x, int y, int z )
+	struct S2 (string a, int b)
+	*/
+	/* Leave the following inline */
+	struct S5( S1 a, S2 b, E1 c );
+
+	
+	int incr( int x )	
+	
+	/* include a couple of messages */
+
+	@Direction (Client)
+	int testConst1(int x, int y )
+	
+	/* include a message */
+	include "message.etchinc" 
+	/*
+	@Direction (Both)	
+	int testConst2()
+	*/
+	int testConst3()
+
+	/*	Couple more messages to include */
+	/* include file "messages2" */
+	@Direction (Client)
+	int testEnum1();
+
+	int testEnum2();
+	
+	/* Leave the rest inline */	
+	@Direction (Both)
+	int doNothing( )
+
+
+	
+}

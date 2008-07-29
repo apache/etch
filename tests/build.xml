@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<project name="etch-tests" basedir="." default="build-all">
+    <description>Functional Tests</description>
+    <property name="Etch.basedir" location="${basedir}/.." />
+    <import file="${Etch.basedir}/build-support/etch.includes.xml" />
+    
+    <!-- import etch task -->
+    <taskdef name="etch"
+        onerror="report"
+        classname="etch.tools.ant.EtchCompileTask"
+        classpath="${Etch.HOME}/lib/${etch-ant-task.jar}" />
+
+    <!-- set properties -->
+    <property name="target"            location="${basedir}/target" />
+    <property name="src"               location="${basedir}/src" />
+    <property name="bin"               location="${target}/bin" />
+    <property name="generated-sources" location="${target}/generated-sources/" />
+    <property name="classes"           location="${target}/classes" />
+    <property name="test-results"      location="${target}/test-results" />        
+
+    <!-- macros -->
+    <macrodef name="etch-test">
+        <attribute name="home" default="${Etch.HOME}" />
+        <attribute name="binding" />
+        <attribute name="file" />
+        <attribute name="what" default="both" />
+        <attribute name="output" default="${generated-sources}/main/etch/@{binding}" />
+        <attribute name="templateoutput" default="${src}/main/@{binding}" />
+        <element name="etchelements" implicit="true" optional="true" />
+        <sequential>
+            <etch home="@{home}" binding="@{binding}" output="@{output}" what="@{what}" file="@{file}" >
+                <etchelements />
+            </etch>
+        </sequential>
+    </macrodef>
+    
+    <macrodef name="generate-sources">
+        <attribute name="binding" />
+        <sequential>
+            
+            <!-- generate sources -->
+            <mkdir dir="${generated-sources}/main/etch/@{binding}" />
+            <etch-test binding="@{binding}" file="${src}/main/etch/Async.etch" />
+            <etch-test binding="@{binding}" file="${src}/main/etch/Bar.etch" />
+            <etch-test binding="@{binding}" file="${src}/main/etch/Baz.etch" />
+            <!-- <etch-test binding="@{binding}" file="${src}/main/etch/BigIdl.etch" /> -->
+            <etch-test binding="@{binding}" file="${src}/main/etch/Closing.etch" />
+            <etch-test binding="@{binding}" file="${src}/main/etch/Cuae.etch" />
+            <etch-test binding="@{binding}" file="${src}/main/etch/Foo.etch" />
+            <etch-test binding="@{binding}" file="${src}/main/etch/Inheritance.etch" />
+            <etch-test binding="@{binding}" what="both,force,impl,main" file="${src}/main/etch/Test1.etch" />
+            <etch-test binding="@{binding}" file="${src}/main/etch/Test2.etch" />
+            <etch-test binding="@{binding}" file="${src}/main/etch/Test3.etch" />
+            <etch-test binding="@{binding}" file="${src}/main/etch/Test4.etch" />
+            <etch-test binding="@{binding}" file="${src}/main/etch/Test6.etch" />
+            <etch-test binding="@{binding}" what="both,force,impl,main" file="${src}/main/etch/TestIncludes.etch" />
+            <etch-test binding="@{binding}" file="${src}/main/etch/Types.etch" />
+        
+            <!-- negative tests -->
+            <!-- <etch-test binding="@{binding}" file="${src}/main/etch/Test5.etch" /> -->
+            <!-- <etch-test binding="@{binding}" file="${src}/main/etch/TestReservedWords.etch" /> -->
+
+        </sequential>
+    </macrodef>
+    
+    <!-- initialize -->
+    <target name="init" >
+        <mkdir dir="${target}" />
+        <mkdir dir="${bin}" />
+        <mkdir dir="${generated-sources}" />
+        <mkdir dir="${classes}" />
+        <mkdir dir="${test-results}" />
+    </target>
+    
+    <!-- build the server -->
+    <target name="generate-java" >
+        <generate-sources binding="java" />
+    </target>
+
+    <target name="generate-xml" >
+        <generate-sources binding="xml" />
+    </target>
+    
+    <target name="generate-csharp" >
+        <generate-sources binding="csharp" />
+    </target>
+    
+    <target name="init-sources-for-clover" if="Clover.enabled">
+        <initialize-clover suffix="etchtests" >
+            <fileset dir="${src}/main/java" >
+                <include name="**/*.java" />
+            </fileset>
+            <fileset dir="${generated-sources}/main/etch/java" >
+                <include name="**/*.java" />
+                <!-- <exclude name="**/*Test1*.java" /> -->
+                <!-- <exclude name="**/*TestXml*.java" /> -->
+                <!-- <exclude name="**/*TestIncludes*.java" /> -->
+                
+            </fileset>
+            <testsources dir="${src}/test/java" >
+                <include name="**/FakeTest1.java" />
+                <include name="**/Test*.java" />
+                <!-- <exclude name="**/*Test1*.java" /> -->
+                <!-- <exclude name="**/*Test*Xml*.java" /> -->
+                <!-- <exclude name="**/*Test*Includes*.java" /> -->
+
+            </testsources>
+        </initialize-clover>
+    </target>
+    
+    <target name="build-java" depends="generate-java,init-sources-for-clover">
+        <!-- compile sources -->
+        <mkdir dir="${classes}" />
+        <javac target="1.5" destdir="${classes}">
+            <src path="${generated-sources}/main/etch/java" />
+            <src path="${src}/main/java" />
+            <src path="${src}/test/java" />
+            <!-- <exclude name="**/*Test1*.java" /> -->
+            <!-- <exclude name="**/*Test*Xml*.java" /> -->
+            <!-- <exclude name="**/*Test*Includes*.java" /> -->
+                      
+            <classpath>
+                <pathelement location="${Etch.HOME}/lib/${etch-java-runtime.jar}" />
+                <pathelement location="${Etch.HOME}/lib/${etch-compiler.jar}" />
+                <pathelement location="${Etch.dependency.junit.jar}" />
+            </classpath>
+        </javac>
+    </target>
+    
+    <target name="test-java" depends="build-java" >
+        <!-- Run Unit Tests -->
+        <junit printsummary="yes" haltonfailure="no" dir="${classes}"
+            errorProperty="build.tests.fail" failureProperty="build.tests.fail">
+            <classpath>
+                <pathelement location="${classes}" />
+                <pathelement location="${Etch.dependency.junit.jar}" />
+                <pathelement location="${Etch.HOME}/lib/${etch-java-runtime.jar}" />
+                <pathelement location="${Etch.HOME}/lib/${etch-compiler.jar}" />
+
+                <!-- TODO: remove if clover not available -->
+                <pathelement location="${Etch.dependency.clover.jar}"/>
+            </classpath>
+            <formatter type="xml"/>
+            <batchtest fork="true" todir="${test-results}">
+                <fileset dir="${src}/test/java">
+                    <include name="**/Test*.java" />
+
+                    <!-- <include name="**/FakeTest1.java" /> -->
+                    <!-- TODO   debug Test*Xml failures -->
+                    <exclude name="**/*Test*Xml*.java" />
+                    
+                </fileset>
+            </batchtest>
+        </junit>
+    </target>
+    
+    <target name="build-csharp" depends="generate-csharp" >
+    
+    </target>
+    
+    <target name="test-csharp" depends="build-csharp" >
+    
+    </target>
+    
+    <target name="build-xml" depends="generate-xml" >
+    
+    </target>
+    
+    <target name="test-xml" depends="build-xml" >
+    
+    </target>
+    
+    <!-- build sources -->
+    <target name="build" depends="init,build-java,build-csharp,build-xml" />
+
+    <!-- run unit tests -->
+    <target name="test" depends="build,test-java,test-csharp,test-xml" />
+
+    <!-- build everything -->
+    <target name="debug" depends="test" />
+    <target name="release" depends="test" />
+        
+    <!-- clean -->    
+    <target name="clean">
+        <delete dir="${target}" quiet="true" />
+    </target>
+
+</project>
