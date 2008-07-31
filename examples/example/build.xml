@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<project name="etch-perf-example" basedir="." default="build-all">
+<project name="etch-example-example" basedir="." default="help">
     <description>Simple Example</description>
-    
+    <target name="help"><echo>Please select a target...</echo></target>
+	
     <!-- TODO better computation of etch.home, etch.version -->
     <property environment="env" />
     
@@ -25,7 +26,7 @@
         onerror="report"
         classname="etch.tools.ant.EtchCompileTask"
         classpath="${etch.home}/lib/etch-ant-plugin-${etch.version}.jar" />
-        
+    
     <!-- set properties -->
     <property name="target"            location="${basedir}/target" />
     <property name="src"               location="${basedir}/src" />

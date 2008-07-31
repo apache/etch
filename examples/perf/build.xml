@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <project name="etch-perf-example" basedir="." default="help">
     <description>Perf Example</description>
-	<target name="help"><echo>Please select a target...</echo></target>
-    
+    <target name="help"><echo>Please select a target...</echo></target>
+	
     <!-- TODO better computation of etch.home, etch.version -->
     <property environment="env" />
     
@@ -22,36 +22,11 @@
 
     <!-- import etch task -->
     <taskdef
-    	name="etch"
+        name="etch"
         onerror="report"
-    	classname="etch.tools.ant.EtchCompileTask"
-    	classpath="${etch.home}/lib/etch-ant-plugin-${etch.version}.jar" />
+        classname="etch.tools.ant.EtchCompileTask"
+        classpath="${etch.home}/lib/etch-ant-plugin-${etch.version}.jar" />
     
-    <!-- TODO  hack until the ant-task is working -->
-	<!--
-    <macrodef name="etch">
-        <attribute name="dir" default="." />
-        <attribute name="home" />
-        <attribute name="file" />
-        <attribute name="binding" />
-        <attribute name="version" default="${etch.version}" />
-        <attribute name="what"    default="all" />
-        <attribute name="output"  default="." />
-        <attribute name="failonerror" default="true" />
-        <sequential>
-            <exec executable="java" dir="@{dir}" >
-                <env key="ETCH_HOME" file="@{home}" />
-                <arg value="-cp" /><arg value="@{home}/lib/etch-compiler-@{version}.jar;@{home}/lib/etch-java-compiler-@{version}.jar;@{home}/lib/etch-util-@{version}.jar;@{home}/lib/velocity-dep-1.5.jar;${env.CLOVER_HOME}/lib/clover.jar" />
-                <arg value="etch.compiler.EtchMain" />
-                <arg value="-b" /><arg value="@{binding}" />
-                <arg value="-w" /><arg value="@{what}" />
-                <arg value="-d" /><arg value="@{output}" />
-                <arg value="@{file}" />                
-            </exec>
-        </sequential>
-    </macrodef>
-    -->
-	
     <!-- set properties -->
     <property name="target"            location="${basedir}/target" />
     <property name="src"               location="${basedir}/src" />
