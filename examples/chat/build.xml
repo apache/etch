@@ -193,7 +193,7 @@ cmd-window-2 and cmd-window-2 can now chat with each other !!!
         <property name="build.target" value="Debug" />
     </target>
     <target name="init-release">
-        <property name="build.release" value="Release" />
+        <property name="build.target" value="Release" />
     </target>
     
     <target name="debug" depends="init-debug,test" />
