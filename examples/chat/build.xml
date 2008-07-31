@@ -2,7 +2,7 @@
 <project name="etch-chat-example" basedir="." default="help">
     <description>Chat Example</description>
     <target name="help"><echo>Please select a target...</echo></target>
-    
+	
     <!-- TODO better computation of etch.home, etch.version -->
     <property environment="env" />
     
@@ -24,7 +24,7 @@
     <condition property="USE.dotnet">
         <and>
             <os family="windows" />
-            <available file="${env.SystemRoot}/Microsoft.NET/Framework/v2.0.50727/msbuild.exe" />
+            <available file="${env.DOTNET_HOME}/msbuild.exe" />
         </and>
     </condition>
     <condition property="USE.mono">
@@ -131,7 +131,7 @@
         <!-- copy in dependencies -->
         <copy todir="${bin}">
             <fileset dir="${etch.home}/lib">
-                <include name="etch-java-runtime-*.jar" />
+                <include name="etch-java-runtime-${etch.version}.jar" />
             </fileset>
         </copy>
         
@@ -162,7 +162,7 @@
     <target name="build-csharp" depends="build-csharp-with-mono,build-csharp-with-dotnet" />
     
     <target name="build" depends="build-java,build-csharp" />
-        
+    
     <!-- run unit tests -->
     <target name="test" depends="build" >
         <echo>
@@ -183,7 +183,7 @@ cmd-window-3:
   > cd target/bin
   > java -cp chat.jar etch.examples.chat.MainChatClient
 
-cmd-window-2 and cmd-window-2 can now chat with each other !!!
+cmd-window-2 and cmd-window-3 can now chat with each other !!!
 
         </echo>
     </target>
@@ -193,7 +193,7 @@ cmd-window-2 and cmd-window-2 can now chat with each other !!!
         <property name="build.target" value="Debug" />
     </target>
     <target name="init-release">
-        <property name="build.release" value="Release" />
+        <property name="build.target" value="Release" />
     </target>
     
     <target name="debug" depends="init-debug,test" />

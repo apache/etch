@@ -29,7 +29,7 @@ namespace etch.examples.distmap
         public static void Main(String[] args)
         {
             // TODO: Change to correct URI
-            string uri = "tcp://localhost:4009";
+            string uri = "tcp://localhost:4007";
 
             RemoteDistributedHashTableServer server = DistributedHashTableHelper.NewServer(uri, null, new MainDistributedHashTableClient());
 
