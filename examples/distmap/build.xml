@@ -16,7 +16,7 @@
     </condition>
     
     <!-- compute etch.version -->
-    <condition property="etch.version" value="1.0.0" >
+    <condition property="etch.version" value="1.0.1" >
         <not><isset property="etch.version" /></not>
     </condition>
 
@@ -89,7 +89,7 @@
     
     <!-- build the server -->
     <target name="generate-sources" depends="init" >
-        <!-- generate sources -->
+		<!-- generate sources -->
         <mkdir dir="${generated-sources}/main/etch/java" />
         <etch home="${etch.home}" 
               file="${src}/main/etch/DistributedHashTable.etch"
@@ -97,7 +97,7 @@
               binding="java"
               output="${generated-sources}/main/etch/java"
               />
-        
+		
         <mkdir dir="${generated-sources}/main/etch/csharp" />
         <etch home="${etch.home}" 
               file="${src}/main/etch/DistributedHashTable.etch"
@@ -108,7 +108,7 @@
     </target>
     
     <target name="build-java" depends="generate-sources" >
-       <!-- compile sources -->
+		<!-- compile sources -->
         <mkdir dir="${classes}" />
         <javac target="1.5" destdir="${classes}">
             <src path="${generated-sources}/main/etch/java" />
