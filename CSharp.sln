@@ -36,12 +36,24 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestsProj", "tests\src\test\csharp\TestsProj\TestsProj.csproj", "{70701740-652A-4E07-9B85-59DDCC9D43D4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DistMapTestProj", "examples\distmap\src\test\csharp\DistMapTestProj\DistMapTestProj.csproj", "{39699FEE-D21E-42AC-ADD7-22484A985C27}"
+	ProjectSection(ProjectDependencies) = postProject
+		{0E518F2A-3016-4C2F-A21B-9BD52B2DC846} = {0E518F2A-3016-4C2F-A21B-9BD52B2DC846}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExampleTestProj", "examples\example\src\test\csharp\ExampleTestProj\ExampleTestProj.csproj", "{36991AC6-21DE-4F7A-8672-8CFCC8AF70C7}"
+	ProjectSection(ProjectDependencies) = postProject
+		{0E518F2A-3016-4C2F-A21B-9BD52B2DC846} = {0E518F2A-3016-4C2F-A21B-9BD52B2DC846}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PerfTestProj", "examples\perf\src\test\csharp\PerfTestProj\PerfTestProj.csproj", "{47FDB15C-6DE2-4191-A41C-1993B714B4CD}"
+	ProjectSection(ProjectDependencies) = postProject
+		{0E518F2A-3016-4C2F-A21B-9BD52B2DC846} = {0E518F2A-3016-4C2F-A21B-9BD52B2DC846}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatTestProj", "examples\chat\src\test\csharp\ChatTestProj\ChatTestProj.csproj", "{01A7F0CC-78AB-4CFE-88DB-32AAC6D6C00B}"
+	ProjectSection(ProjectDependencies) = postProject
+		{0E518F2A-3016-4C2F-A21B-9BD52B2DC846} = {0E518F2A-3016-4C2F-A21B-9BD52B2DC846}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
