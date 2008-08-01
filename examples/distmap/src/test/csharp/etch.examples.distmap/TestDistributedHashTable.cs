@@ -45,7 +45,7 @@ namespace etch.examples.distmap
         [TestFixtureSetUp]
         public void StartListener()
         {
-            String uri = "tcp://localhost:4007";
+            String uri = "tcp://localhost:4010";
 
             MainDistributedHashTableListener implFactory = new MainDistributedHashTableListener();
             listener = DistributedHashTableHelper.NewListener(uri, null, implFactory);
