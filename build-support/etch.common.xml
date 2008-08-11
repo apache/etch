@@ -59,20 +59,23 @@
     </condition>
 
     <!-- define artifacts -->
-    <property name="etch-compiler.jar"            value="etch-compiler-${Etch.version}.jar" />
-    <property name="etch-compiler-src.zip"        value="etch-compiler-${Etch.version}-src.zip" />
-    <property name="etch-java-compiler.jar"       value="etch-java-compiler-${Etch.version}.jar" />
-    <property name="etch-java-compiler-src.zip"   value="etch-java-compiler-${Etch.version}-src.zip" />
-    <property name="etch-java-runtime.jar"        value="etch-java-runtime-${Etch.version}.jar" />
-    <property name="etch-java-runtime-src.zip"    value="etch-java-runtime-${Etch.version}-src.zip" />
-    <property name="etch-csharp-compiler.jar"     value="etch-csharp-compiler-${Etch.version}.jar" />
-    <property name="etch-csharp-compiler-src.zip" value="etch-csharp-compiler-${Etch.version}-src.zip" />
-    <property name="etch-xml-compiler.jar"        value="etch-xml-compiler-${Etch.version}.jar" />
-    <property name="etch-xml-compiler-src.zip"    value="etch-xml-compiler-${Etch.version}-src.zip" />
-    <property name="etch-util.jar"                value="etch-util-${Etch.version}.jar" />
-    <property name="etch-util-src.zip"            value="etch-util-${Etch.version}-src.zip" />
-    <property name="etch-ant-task.jar"            value="etch-ant-plugin-${Etch.version}.jar" />
-    <property name="etch-ant-task-src.zip"        value="etch-ant-plugin-${Etch.version}-src.zip" />
+    <property name="etch-compiler.jar"           	 value="etch-compiler-${Etch.version}.jar" />
+    <property name="etch-compiler-src.zip"        	value="etch-compiler-${Etch.version}-src.zip" />
+    <property name="etch-java-compiler.jar"       	value="etch-java-compiler-${Etch.version}.jar" />
+    <property name="etch-java-compiler-src.zip"   	value="etch-java-compiler-${Etch.version}-src.zip" />
+    <property name="etch-java-runtime.jar"        	value="etch-java-runtime-${Etch.version}.jar" />
+    <property name="etch-java-runtime-src.zip"    	value="etch-java-runtime-${Etch.version}-src.zip" />
+    <property name="etch-csharp-compiler.jar"     	value="etch-csharp-compiler-${Etch.version}.jar" />
+    <property name="etch-csharp-compiler-src.zip" 	value="etch-csharp-compiler-${Etch.version}-src.zip" />
+    <property name="etch-xml-compiler.jar"        	value="etch-xml-compiler-${Etch.version}.jar" />
+    <property name="etch-xml-compiler-src.zip"    	value="etch-xml-compiler-${Etch.version}-src.zip" />
+    <property name="etch-javascript-runtime-src.zip"    value="etch-javascript-runtime-${Etch.version}-src.zip" />
+    <property name="etch-javascript-compiler.jar"       value="etch-javascript-compiler-${Etch.version}.jar" />
+    <property name="etch-javascript-compiler-src.zip"	value="etch-javascript-compiler-${Etch.version}-src.zip" />
+    <property name="etch-util.jar"                	value="etch-util-${Etch.version}.jar" />
+    <property name="etch-util-src.zip"            	value="etch-util-${Etch.version}-src.zip" />
+    <property name="etch-ant-task.jar"            	value="etch-ant-plugin-${Etch.version}.jar" />
+    <property name="etch-ant-task-src.zip"        	value="etch-ant-plugin-${Etch.version}-src.zip" />
 
     <!-- Define filterset for build-time substitutions -->
     <filterset id="Etch.buildTokens" >

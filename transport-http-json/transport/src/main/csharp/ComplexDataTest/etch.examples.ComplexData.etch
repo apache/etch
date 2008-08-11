@@ -1,0 +1,91 @@
+module etch.examples
+
+@Direction(Both)
+@Timeout( 5000 )
+service ComplexData
+{
+	exception CustomException
+	(
+		int value
+	)
+
+	struct A
+	(
+		string value,
+		int value2
+	)
+
+	struct B
+	(
+		A value,
+		int vaule3
+	)
+
+	struct BaseA
+	(
+		long a
+	)
+
+	struct BaseB
+	(
+		long b
+
+	) extends BaseA
+
+	struct BaseC
+	(
+		long c
+
+	) extends BaseA
+
+	void sendObject(object value)
+	object receiveObject()
+
+	void sendBoolean(boolean value)
+	boolean receiveBoolean()
+
+	void sendByte(byte value)
+	byte receiveByte()	
+
+	void sendShort(short value)
+	short receiveShort()
+
+	void sendInt(int value)
+	int receiveInt()
+
+	void sendLong(long value)
+	long receiveLong()
+
+	void sendDouble(double value)
+	double receiveDouble()
+
+	void sendFloat(float value)
+	float receiveFloat()
+
+	void sendString(string value)
+	string receiveString()
+
+	void sendDatetime(Datetime value)
+	Datetime receiveDatetime()
+
+	void sendMap(Map value)
+	Map receiveMap()
+
+	void sendException() throws CustomException
+
+	void sendObjectArray(object[] values)
+	object[] receiveObjectArray()
+
+	void sendStringArray(string[] values)
+	string[] receiveStringArray()
+
+	void sendBaseArray(BaseA[] values)
+	BaseA[] receiveBaseArray()
+	
+	void sendDerivedArray(BaseB[] values)
+	BaseB[] receiveDerivedArray()
+
+	void sendList(List values)
+	List receiveList()
+}
+

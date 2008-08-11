@@ -1,0 +1,31 @@
+The 'json2.js' from http://www.JSON.org/json2.js has been modified slightly for the purposes of this HttpJson transport.
+
+The change is shown in the diff below.  The short of it is, prototype derivation is used throughout the Javascript languange binding,
+and without commenting out the 'hasOwnProperty' check, we are unable to recurse into inherited fields.  
+
+Implementator note: I'd much rather not change the Json2.js file, and instead change my own implementation to play nice with hasOwnProperty.
+The main reason for this is that the hasOwnProperty check adds to the overall robustness of serialization (specifically, if someone overrides Object or
+other Javascript base types, these overridden fields become serialized too. The Etch server-side should just drop unknown fields, but even if that's true,
+we are serializing potentially alot of data needlessly in the case that someone has added new fields to 'Object').
+The reason I have not done the change is simply due to a lack of a good idea as to how to do it. 
+
+
+Index: C:/workspace/etch-javascript/WebResources/libs/json2/json2.js
+===================================================================
+--- C:/workspace/etch-javascript/WebResources/libs/json2/json2.js	(revision 2202)
++++ C:/workspace/etch-javascript/WebResources/libs/json2/json2.js	(revision 2203)
+@@ -321,12 +321,12 @@
+ // Otherwise, iterate through all of the keys in the object.
+ 
+                     for (k in value) {
+-                        if (Object.hasOwnProperty.call(value, k)) {
++                       // if (Object.hasOwnProperty.call(value, k)) {
+                             v = str(k, value, rep);
+                             if (v) {
+                                 partial.push(quote(k) + (gap ? ': ' : ':') + v);
+                             }
+-                        }
++                       // }
+                     }
+                 }
+

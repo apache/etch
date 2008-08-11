@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Etch")]
-[assembly: AssemblyDescription("Etch C# Runtime DLL")]
+[assembly: AssemblyDescription("Etch Javascript Runtime DLL")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Cisco Systems")]
 [assembly: AssemblyProduct("Etch")]
@@ -19,8 +19,6 @@ using System.Runtime.InteropServices;
 // COM, set the ComVisible attribute to true on that type.
 [assembly: ComVisible(false)]
 
-// The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("dfb6c903-751f-4473-8400-d50c1f0968f8")]
 
 // Version information for an assembly consists of the following four values:
 //

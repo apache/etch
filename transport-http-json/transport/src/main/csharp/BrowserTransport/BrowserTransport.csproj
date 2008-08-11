@@ -1,0 +1,82 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{2F225596-A8D5-48A8-9388-D2AD9D28C7FD}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>HttpJsonTransport</RootNamespace>
+    <AssemblyName>HttpJsonTransport</AssemblyName>
+    <StartupObject>
+    </StartupObject>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>etch4javascript.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Etch, Version=1.0.1.0, Culture=neutral, PublicKeyToken=f5c449a9231c16f1, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\target\Installers\dist\lib\Etch.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ClientDirectedMessage.cs" />
+    <Compile Include="ClientDirectedMethod.cs" />
+    <Compile Include="ClientDirectedResponse.cs" />
+    <Compile Include="etch\JsonOutputParser.cs" />
+    <Compile Include="PrebuiltClientDirectedMethod.cs" />
+    <Compile Include="etch\BrowserTransporter.cs" />
+    <Compile Include="etch\BrowserTransportFactory.cs" />
+    <Compile Include="etch\HttpServerHandler.cs" />
+    <Compile Include="etch\JsonHandler.cs" />
+    <Compile Include="etch\JsonInputParser.cs" />
+    <Compile Include="etch\JsonSource.cs" />
+    <Compile Include="HttpServerImpl.cs" />
+    <Compile Include="HttpSession.cs" />
+    <Compile Include="HttpSessionHandler.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SessionIdFactory.cs" />
+    <Compile Include="SimpleSessionIdFactory.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="etch4javascript.snk" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="postbuild.xml" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+    <PostBuildEvent>ant -buildfile $(ProjectDir)\postbuild.xml $(ConfigurationName)</PostBuildEvent>
+  </PropertyGroup>
+</Project>

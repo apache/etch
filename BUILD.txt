@@ -25,6 +25,17 @@ Setup development environment
 -----------------------------
 
 1. Install JDK. Make certain that you set your JAVA_HOME environment variable to point to the correct location.
+
+--OPTIONAL for HTTP-Json Transport in C# --
+
+2. Download the JsonFx.Json.dll (http://jsonfx.net/BuildTools/) and place on your dev machine hard drive.  
+   Be sure to update the build.dependencies file to reflect the path of where you downloaded it to.
+
+--OPTIONAL for Javascript Runtime --
+
+3. Download jQuery 1.2.5 (http://docs.jquery.com/Downloading_jQuery) and place on your dev machine hard drive.
+   Be sure to update the build.dependencies file to reflect the path of where you downloaded it to.
+
    
 Ant-based development
 ---------------------
@@ -54,6 +65,14 @@ Ant-based development
   * ant-dotnet.lib=/path/to/apache-ant-dotnet-1.0 
         ('${ant-dotnet.lib}/ant-dotnet-1.0.jar' should exist)
 
+  --OPTIONAL for Javascript languange binding--
+  * jsonfx-json.lib=/path/to/JsonFx.Json-1.0.0802.2707
+	('${jsonfx-json.lib}/JsonFx.Json.dll' should exist)
+
+  --OPTIONAL for Javascript languange binding--
+  * jQuery.lib=/path/to/jquery-1.2.5
+        ('${jQuery.lib}/jquery.js' should exist)
+
 
 Build
 -----
@@ -70,4 +89,3 @@ Using Eclipse
 -------------
 
 See ECLIPSE_USERS_README.txt
-
