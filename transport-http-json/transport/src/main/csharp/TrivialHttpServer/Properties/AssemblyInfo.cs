@@ -1,26 +1,26 @@
-using System.Reflection;
+﻿using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Etch")]
-[assembly: AssemblyDescription("Etch C# Runtime DLL")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Cisco Systems")]
-[assembly: AssemblyProduct("Etch")]
-[assembly: AssemblyCopyright("Copyright � Cisco Systems 2008")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
+[assembly: AssemblyTitle( "TrivialHttpServer" )]
+[assembly: AssemblyDescription( "" )]
+[assembly: AssemblyConfiguration( "" )]
+[assembly: AssemblyCompany( "Cisco Systems" )]
+[assembly: AssemblyProduct( "TrivialHttpServer" )]
+[assembly: AssemblyCopyright( "Copyright © Cisco Systems 2008" )]
+[assembly: AssemblyTrademark( "" )]
+[assembly: AssemblyCulture( "" )]
 
 // Setting ComVisible to false makes the types in this assembly not visible 
 // to COM components.  If you need to access a type in this assembly from 
 // COM, set the ComVisible attribute to true on that type.
-[assembly: ComVisible(false)]
+[assembly: ComVisible( false )]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("dfb6c903-751f-4473-8400-d50c1f0968f8")]
+[assembly: Guid( "d6668f8d-793b-4211-80d8-0075413ee8e6" )]
 
 // Version information for an assembly consists of the following four values:
 //
@@ -31,5 +31,5 @@ using System.Runtime.InteropServices;
 //
 // You can specify all the values or you can default the Revision and Build Numbers 
 // by using the '*' as shown below:
-[assembly: AssemblyVersion("1.0.1")]
-[assembly: AssemblyFileVersion("1.0.1")]
+[assembly: AssemblyVersion( "1.0.0.0" )]
+[assembly: AssemblyFileVersion( "1.0.0.0" )]

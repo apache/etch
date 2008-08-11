@@ -2,3 +2,5 @@ javacc.home=${env.TOOLS_DIR}/javacc/4.0
 junit.lib=${env.TOOLS_DIR}/junit/4.3.1
 velocity.lib=${env.TOOLS_DIR}/velocity/1.5
 ant-dotnet.lib=${env.TOOLS_DIR}/apache-ant-dotnet/1.0
+jsonfx-json.lib=${env.TOOLS_DIR}/JsonFx.Json/1.0.0802.2707
+jQuery.lib=${env.TOOLS_DIR}/jquery/1.2.5

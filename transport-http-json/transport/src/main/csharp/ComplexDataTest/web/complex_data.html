@@ -1,0 +1,1795 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" 
+                    "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+	<script src="json2.js" language="javascript" type="text/javascript"></script>
+	<script src="jquery.js" language="javascript" type="text/javascript"></script>
+	<script src="transport.js" language="javascript" type="text/javascript"></script>
+	<script src="etch.examples.ComplexData.js" language="javascript" type="text/javascript"></script>
+
+	<script>
+
+	var svc = null;
+
+	var receiveBaseArrayCounter = 0;	
+	var receiveDerivedArrayCounter = 0;
+	var receiveObjectArrayCounter = 0;
+	var receiveListCounter = 0;
+
+	var sendByteCounter = 0;
+	var sendIntCounter = 0;
+	var sendLongCounter = 0;
+	var sendDoubleCounter = 0;
+	var sendFloatCounter = 0;
+	var sendDatetimeCounter = 0;
+	var sendShortCounter = 0;
+	var sendStringCounter = 0;
+	var sendStringArrayCounter = 0;
+	var sendObjectArrayCounter = 0;
+	var sendBaseArrayCounter = 0;
+	var sendDerivedArrayCounter = 0;
+	var sendListCounter = 0;
+	var sendExceptionCounter = 0;
+
+  	$(document).ready( hookupUI );	
+
+	function assertInstanceOf(expected, value)
+	{
+		if(!(value instanceof expected))
+		{
+			throw "AssertInstanceOf: expected: " + expected + ", value: " + value;
+		}
+	}
+
+	function assertEquals(expected, value)
+	{
+		if(expected !== value)
+		{
+			throw "AssertEquals: expected: " + expected + ", value: " + value;
+		}
+	}
+
+	function hookupUI()
+	{
+		$("#connect").click(connect);
+		
+		$("#receiveBoolean").click(receiveBoolean);
+		$("#receiveByte").click(receiveByte);
+		$("#receiveInt").click(receiveInt);
+		$("#receiveLong").click(receiveLong);
+		$("#receiveDouble").click(receiveDouble);
+		$("#receiveFloat").click(receiveFloat);
+		$("#receiveShort").click(receiveShort);
+		$("#receiveString").click(receiveString);
+		$("#receiveDatetime").click(receiveDatetime);
+		$("#receiveMap").click(receiveMap);
+		$("#receiveObject").click(receiveObject);
+		$("#receiveObjectArray").click(receiveObjectArray);
+		$("#receiveStringArray").click(receiveStringArray);
+		$("#receiveBaseArray").click(receiveBaseArray);
+		$("#receiveDerivedArray").click(receiveDerivedArray);
+		$("#receiveList").click(receiveList);
+
+		$("#sendBoolean").click(sendBoolean);
+		$("#sendByte").click(sendByte);
+		$("#sendInt").click(sendInt);
+		$("#sendLong").click(sendLong);
+		$("#sendDouble").click(sendDouble);
+		$("#sendFloat").click(sendFloat);
+		$("#sendShort").click(sendShort);
+		$("#sendString").click(sendString);
+		$("#sendDatetime").click(sendDatetime);
+		$("#sendMap").click(sendMap);
+		$("#sendObject").click(sendObject);
+		$("#sendObjectArray").click(sendObjectArray);
+		$("#sendStringArray").click(sendStringArray);
+		$("#sendBaseArray").click(sendBaseArray);
+		$("#sendDerivedArray").click(sendDerivedArray);
+		$("#sendList").click(sendList);
+		$("#sendException").click(sendException);
+	}
+
+	function receiveBoolean()
+	{
+		svc.receiveBoolean(
+		{
+			onSuccess: function(value)
+			{
+				if(value === true)
+				{
+					updateResult(true, "receiveBoolean success");
+				}	
+				else
+				{
+					updateResult(false, "receiveBoolean failure");
+				}
+			},
+			onError: function()
+			{
+				updateResult(false, "Exception in receiveBoolean");
+			}
+		});	
+	}
+
+	function receiveByte()
+	{
+		svc.receiveByte(
+		{
+			onSuccess: function(value)
+			{
+				if(value === 55)
+				{
+					updateResult(true, "receiveByte success");
+				}	
+				else
+				{
+					updateResult(false, "receiveByte failure");
+				}
+			},
+			onError: function()
+			{
+				updateResult(false, "Exception in receiveByte");
+			}
+		});		
+	}
+
+	function receiveInt()
+	{
+		svc.receiveInt(
+		{
+			onSuccess: function(value)
+			{
+				if(value === 2147483647)
+				{
+					updateResult(true, "receiveInt success");
+				}	
+				else
+				{
+					updateResult(false, "receiveInt failure");
+				}
+			},
+			onError: function()
+			{
+				updateResult(false, "Exception in receiveInt");
+			}
+		});		
+	}
+
+	function receiveLong()
+	{
+		svc.receiveLong(
+		{
+			onSuccess: function(value)
+			{
+				if(value === 9223372036854775807) 
+				{	     
+					updateResult(true, "receiveLong success");
+				}	
+				else
+				{
+					updateResult(false, "receiveLong failure");
+				}
+			},
+			onError: function()
+			{
+				updateResult(false, "Exception in receiveLong");
+			}
+		});	
+	}
+
+	function receiveDouble()
+	{
+		svc.receiveDouble(
+		{
+			onSuccess: function(value)
+			{
+			
+				if(value === Number.MAX_VALUE) 
+				{	     
+					updateResult(true, "receiveDouble success");
+				}	
+				else
+				{
+					updateResult(false, "receiveDouble failure");
+				}
+			},
+			onError: function()
+			{
+				updateResult(false, "Exception in receiveDouble");
+			}
+		});	
+	}
+
+	function receiveFloat()
+	{
+		svc.receiveFloat(
+		{
+			onSuccess: function(value)
+			{
+				if(value === 3.40282347e+38) 
+				{	     
+					updateResult(true, "receiveFloat success");
+				}	
+				else
+				{
+					updateResult(false, "receiveFloat failure");
+				}
+			},
+			onError: function()
+			{
+				updateResult(false, "Exception in receiveFloat");
+			}
+		});	
+	}
+
+	function receiveShort()
+	{
+		svc.receiveShort(
+		{
+			onSuccess: function(value)
+			{
+				if(value === 32767) 
+				{	     
+					updateResult(true, "receiveShort success");
+				}	
+				else
+				{
+					updateResult(false, "receiveShort failure");
+				}
+			},
+			onError: function()
+			{
+				updateResult(false, "Exception in receiveShort");
+			}
+		});
+	}
+
+	function receiveString()
+	{
+		svc.receiveString(
+		{
+			onSuccess: function(value)
+			{
+				if(value === "test") 
+				{	     
+					updateResult(true, "receiveString success");
+				}	
+				else
+				{
+					updateResult(false, "receiveString failure");
+				}
+			},
+			onError: function()
+			{
+				updateResult(false, "Exception in receiveString");
+			}
+		});
+	}
+
+	function receiveDatetime()
+	{
+		svc.receiveDatetime(
+		{
+			onSuccess: function(value)
+			{
+				alert(value.getTime());
+				if(value.getTime() == Date.UTC(9999, 11, 31, 23, 59, 59) ) 
+				{	     
+					updateResult(true, "receiveDatetime success");
+				}	
+				else
+				{
+					updateResult(false, "receiveDatetime failure");
+				}
+			},
+			onError: function()
+			{
+				updateResult(false, "Exception in receiveDatetime");
+			}
+		});	
+	}
+
+	function receiveMap()
+	{
+		svc.receiveMap(
+		{
+			onSuccess: function(value)
+			{
+				if(false) 
+				{	     
+					updateResult(true, "receiveMap success");
+				}	
+				else
+				{
+					updateResult(false, "receiveMap failure");
+				}
+			},
+			onError: function()
+			{
+				updateResult(false, "Exception in receiveMap");
+			}
+		});	
+	}
+
+	function receiveObject()
+	{
+		svc.receiveObject(
+		{
+			onSuccess: function(value)
+			{
+				if(false) 
+				{	     
+					updateResult(true, "receiveObject success");
+				}	
+				else
+				{
+					updateResult(false, "receiveObject failure");
+				}
+			},
+			onError: function()
+			{
+				updateResult(false, "Exception in receiveObject");
+			}
+		});	
+	}
+
+	function receiveObjectArray()
+	{
+		receiveObjectArrayCounter++;
+
+		svc.receiveObjectArray(
+		{
+			onSuccess: function(value)
+			{
+				try
+				{
+					var success = true;
+					var stop = false;
+
+					switch(receiveObjectArrayCounter)
+					{
+						case 1:
+							assertEquals(null, value);		
+							break;
+
+						case 2:
+							assertEquals(1, value.length);
+							assertEquals(null, value[0]);
+							break;
+
+						case 3:
+							assertEquals(1, value.length);
+							assertEquals(2, value[0]);
+							break;
+
+
+						case 4:
+							assertEquals(1, value.length);
+							assertEquals(1, value[0]);
+							break;
+
+
+						case 5:
+							assertEquals(3, value.length);
+							assertEquals(1, value[0]);
+							assertEquals(true, value[1]);
+							assertEquals("hi", value[2]);
+							break;
+
+
+						case 6:
+							assertEquals(5, value.length);
+							assertEquals(1, value[0]);
+							assertEquals(false, value[1]);
+							var baseA = value[2];
+							var baseB = value[3];
+							var baseC = value[4];
+
+							assertInstanceOf(etch.examples.ComplexData.BaseA, baseA);
+							assertInstanceOf(etch.examples.ComplexData.BaseB, baseB);
+							assertInstanceOf(etch.examples.ComplexData.BaseC, baseC);
+
+							assertEquals(1, baseA.a);
+							assertEquals(2, baseB.a);
+							assertEquals(3, baseB.b);
+							assertEquals(4, baseC.a);
+							assertEquals(5, baseC.c);
+							
+							break;
+
+
+						case 7:
+							assertEquals(3, value.length);
+							assertEquals(1, value[0]);
+							var stringArray = value[1];
+							var boolArray = value[2];
+
+							assertInstanceOf(Array, stringArray);
+							assertInstanceOf(Array, boolArray);
+
+							assertEquals(3, stringArray.length);
+							assertEquals(3, boolArray.length);
+							
+							assertEquals("one", stringArray[0]);
+							assertEquals("two", stringArray[1]);
+							assertEquals("three", stringArray[2]);
+
+							assertEquals(true, boolArray[0]);
+							assertEquals(false, boolArray[1]);
+							assertEquals(true, boolArray[2]);
+							break;
+
+						case 8:
+							assertEquals(0, value.length);
+							stop = true;
+							break;
+					}
+				}
+				catch(e)
+				{
+					success = false;
+				}
+
+				if(!success) 
+				{	    
+					console.log(e);
+					updateResult(false, "receiveObjectArray failure");
+				}	
+				else if(stop)
+				{	
+					updateResult(true, "receiveObjectArray success");
+				}
+				else
+				{
+					receiveObjectArray();
+				}
+			},
+			onError: function()
+			{
+				updateResult(false, "Exception in receiveObjectArray");
+			}
+		});
+	}
+
+
+	function receiveStringArray()
+	{
+		svc.receiveStringArray(
+			{
+			onSuccess: function(value)
+			{
+				
+				if(value[0] === "one" && value[1] === "two" && value[2] === "three" ) 
+				{	     
+					updateResult(true, "receiveStringArray success");
+				}	
+				else
+				{
+					updateResult(false, "receiveStringArray failure");
+				}
+			},
+			onError: function()
+			{
+				updateResult(false, "Exception in receiveStringArray");
+			}
+		});
+	}
+
+
+	function receiveBaseArray()
+	{
+
+		receiveBaseArrayCounter++;
+
+		svc.receiveBaseArray(
+		{
+			onSuccess: function(value)
+			{
+				try
+				{
+				var success = true;
+				var stop = false;
+
+				switch(receiveBaseArrayCounter)
+				{
+					case 1:
+						assertEquals(null, value);		
+						break;
+
+					case 2:
+						assertEquals(0, value.length);
+						break;
+
+					case 3:
+						assertEquals(3, value.length);
+						var index0 = value[0];
+						var index1 = value[1];
+						var index2 = value[2];
+
+						assertInstanceOf(etch.examples.ComplexData.BaseA, index0);
+						assertInstanceOf(etch.examples.ComplexData.BaseA, index1);
+						assertInstanceOf(etch.examples.ComplexData.BaseA, index2);
+
+						assertEquals(0, index0.a);
+						assertEquals(1, index1.a);
+						assertEquals(null, index2.a);
+						break;
+				
+					case 4:
+						assertEquals(3, value.length);
+						var index0 = value[0];
+						var index1 = value[1];
+						var index2 = value[2];
+
+						assertInstanceOf(etch.examples.ComplexData.BaseA, index0);
+						assertInstanceOf(etch.examples.ComplexData.BaseB, index1);
+						assertInstanceOf(etch.examples.ComplexData.BaseC, index2);
+
+						assertEquals(0, index0.a);
+						assertEquals(1, index1.a);
+						assertEquals(2, index1.b);
+						assertEquals(3, index2.a);
+						assertEquals(4, index2.c);
+						stop = true;
+						break;
+
+				}
+				}
+				catch(e)
+				{
+					success = false;
+				}
+
+				if(!success) 
+				{	    
+					console.log(e);
+					updateResult(false, "receiveBaseArray failure");
+				}	
+				else if(stop)
+				{	
+					updateResult(true, "receiveBaseArray success");
+				}
+				else
+				{
+					receiveBaseArray();
+				}
+			},
+			onError: function()
+			{
+				updateResult(false, "Exception in receiveBaseArray");
+			}
+		});
+	}
+
+	function receiveDerivedArray()
+	{
+		receiveDerivedArrayCounter++;
+
+		svc.receiveDerivedArray(
+		{
+			onSuccess: function(value)
+			{
+				try
+				{
+					var success = true;
+					var stop = false;
+
+					switch(receiveDerivedArrayCounter)
+					{
+						case 1:
+							assertEquals(null, value);		
+							break;
+
+						case 2:
+							assertEquals(0, value.length);
+							break;
+
+						case 3:
+							assertEquals(3, value.length);
+							var index0 = value[0];
+							var index1 = value[1];
+							var index2 = value[2];
+
+							assertInstanceOf(etch.examples.ComplexData.BaseB, index0);
+							assertInstanceOf(etch.examples.ComplexData.BaseB, index1);
+							assertInstanceOf(etch.examples.ComplexData.BaseB, index2);
+
+							assertEquals(0, index0.a);
+							assertEquals(1, index0.b);
+							assertEquals(2, index1.a);
+							assertEquals(3, index1.b);
+							assertEquals(null, index2.a);
+							assertEquals(null, index2.b);
+							stop = true;
+							break;
+					}
+				}
+				catch(e)
+				{
+					success = false;
+				}
+
+				if(!success) 
+				{	    
+					console.log(e);
+					updateResult(false, "receiveDerivedArray failure");
+				}	
+				else if(stop)
+				{	
+					updateResult(true, "receiveDerivedArray success");
+				}
+				else
+				{
+					receiveDerivedArray();
+				}
+			},
+			onError: function()
+			{
+				updateResult(false, "Exception in receiveDerivedArray");
+			}
+		});
+	}
+
+	function receiveList()
+	{
+		receiveListCounter++;
+
+		svc.receiveList(
+		{
+			onSuccess: function(value)
+			{
+				try
+				{
+					var success = true;
+					var stop = false;
+
+					switch(receiveListCounter)
+					{
+						case 1:
+							assertEquals(null, value);		
+							break;
+
+						case 2:
+							assertEquals(1, value.length);
+							assertEquals(null, value[0]);
+							break;
+
+						case 3:
+							assertEquals(1, value.length);
+							assertEquals(2, value[0]);
+							break;
+
+
+						case 4:
+							assertEquals(1, value.length);
+							assertEquals(1, value[0]);
+							break;
+
+
+						case 5:
+							assertEquals(3, value.length);
+							assertEquals(1, value[0]);
+							assertEquals(true, value[1]);
+							assertEquals("hi", value[2]);
+							break;
+
+
+						case 6:
+							assertEquals(5, value.length);
+							assertEquals(1, value[0]);
+							assertEquals(false, value[1]);
+							var baseA = value[2];
+							var baseB = value[3];
+							var baseC = value[4];
+
+							assertInstanceOf(etch.examples.ComplexData.BaseA, baseA);
+							assertInstanceOf(etch.examples.ComplexData.BaseB, baseB);
+							assertInstanceOf(etch.examples.ComplexData.BaseC, baseC);
+
+							assertEquals(1, baseA.a);
+							assertEquals(2, baseB.a);
+							assertEquals(3, baseB.b);
+							assertEquals(4, baseC.a);
+							assertEquals(5, baseC.c);
+							
+							break;
+
+
+						case 7:
+							assertEquals(3, value.length);
+							assertEquals(1, value[0]);
+							var stringArray = value[1];
+							var boolArray = value[2];
+
+							assertInstanceOf(Array, stringArray);
+							assertInstanceOf(Array, boolArray);
+
+							assertEquals(3, stringArray.length);
+							assertEquals(3, boolArray.length);
+							
+							assertEquals("one", stringArray[0]);
+							assertEquals("two", stringArray[1]);
+							assertEquals("three", stringArray[2]);
+
+							assertEquals(true, boolArray[0]);
+							assertEquals(false, boolArray[1]);
+							assertEquals(true, boolArray[2]);
+							break;
+
+						case 8:
+							assertEquals(0, value.length);
+							stop = true;
+							break;
+					}
+				}
+				catch(e)
+				{
+					success = false;
+				}
+
+				if(!success) 
+				{	    
+					console.log(e);
+					updateResult(false, "receiveList failure");
+				}	
+				else if(stop)
+				{	
+					updateResult(true, "receiveList success");
+				}
+				else
+				{
+					receiveList();
+				}
+			},
+			onError: function()
+			{
+				updateResult(false, "Exception in receiveList");
+			}
+		});
+	}
+
+	function sendBoolean()
+	{
+		svc.sendBoolean(
+		{
+			value: true,
+			onSuccess: sendBoolean2,
+			onError: function()
+			{
+				updateResult(false, "Exception in sendBoolean");
+			}
+		});
+	}
+
+	function sendBoolean2()
+	{
+		svc.sendBoolean(
+		{
+			value: false,
+			onSuccess: sendBoolean3,
+			onError: function()
+			{
+				updateResult(false, "Exception in sendBoolean");
+			}
+		});
+	}
+
+
+	function sendBoolean3()
+	{
+		svc.sendBoolean(
+		{
+			value: null,
+			onSuccess: function()
+			{
+				updateResult(true, "sendBoolean success");	
+			},
+			onError: function()
+			{
+				updateResult(false, "Exception in sendBoolean");
+			}
+		});
+	}
+
+
+	function sendByte()
+	{
+		var value = null;
+		sendByteCounter++;
+
+		switch(sendByteCounter)
+		{
+			case 1:
+				value = 0;
+				break;
+
+			case 2:
+				value = 1;
+				break;
+
+			case 3:
+				value = -1;
+				break;
+
+			case 4:
+				value = 127;
+				break;
+
+			case 5:
+				value = -128;
+				break;
+
+			case 6:
+				value = null;
+				break;
+
+			default:
+				updateResult(true, "sendByte success");
+				return;
+		}
+
+		svc.sendByte(
+		{
+			value: value,
+			onSuccess: sendByte,
+			onError: function()
+			{
+				updateResult(false, "Exception in sendByte");
+			}
+		});	
+	}
+
+
+	function sendInt()
+	{
+		var value = null;
+		sendIntCounter++;
+
+		switch(sendIntCounter)
+		{
+			case 1:
+				value = 0;
+				break;
+
+			case 2:
+				value = 1;
+				break;
+
+			case 3:
+				value = -1;
+				break;
+
+			case 4:
+				value = 2147483647;
+				break;
+
+			case 5:
+				value = -2147483648;
+				break;
+
+			case 6:
+				value = null;
+				break;
+
+			default:
+				updateResult(true, "sendInt success");
+				return;
+		}
+
+		svc.sendInt(
+		{
+			value: value,
+			onSuccess: sendInt,
+			onError: function()
+			{
+				updateResult(false, "Exception in sendInt");
+			}
+		});
+	}
+
+	function sendLong()
+	{
+		var value = null;
+		sendLongCounter++;
+
+		switch(sendLongCounter)
+		{
+			case 1:
+				value = 0;
+				break;
+
+			case 2:
+				value = 1;
+				break;
+
+			case 3:
+				value = -1;
+				break;
+
+			case 4:
+				value = 100000000000000;
+				break;
+
+			case 5:
+				value = -100000000000000;
+				break;
+
+			case 6:
+				value = null;
+				break;
+
+			default:
+				updateResult(true, "sendLong success");
+				return;
+		}
+
+		svc.sendLong(
+		{
+			value: value,
+			onSuccess: sendLong,
+			onError: function()
+			{
+				updateResult(false, "Exception in sendLong");
+			}
+		});
+	}
+
+
+	function sendDouble()
+	{
+		var value = null;
+		sendDoubleCounter++;
+
+		switch(sendDoubleCounter)
+		{
+			case 1:
+				value = 0.0;
+				break;
+
+			case 2:
+				value = 1.1;
+				break;
+
+			case 3:
+				value = -1.1;
+				break;
+
+			case 4:
+				value = 1.7976931348623157e+308;
+				break;
+
+			case 5:
+				value = -1.7976931348623157e+308;
+				break;
+
+			case 6:
+				value = null;
+				break;
+
+			case 7:
+				value = Infinity;
+				break;
+
+			case 8:
+				value = -Infinity;
+				break;
+
+			default:
+				updateResult(true, "sendDouble success");
+				return;
+		}
+
+		svc.sendDouble(
+		{
+			value: value,
+			onSuccess: sendDouble,
+			onError: function()
+			{
+				updateResult(false, "Exception in sendDouble");
+			}
+		});
+	}
+
+	function sendFloat()
+	{
+		var value = null;
+		sendFloatCounter++;
+
+		switch(sendFloatCounter)
+		{
+			case 1:
+				value = 0.0;
+				break;
+
+			case 2:
+				value = 1.1;
+				break;
+
+			case 3:
+				value = -1.1;
+				break;
+
+			case 4:
+				value = 5.5;
+				break;
+
+			case 5:
+				value = -5.5;
+				break;
+
+			case 6:
+				value = null;
+				break;
+
+			case 7:
+				value = Infinity;
+				break;
+
+			case 8:
+				value = -Infinity;
+				break;
+
+			default:
+				updateResult(true, "sendFloat success");
+				return;
+		}
+
+		svc.sendFloat(
+		{
+			value: value,
+			onSuccess: sendFloat,
+			onError: function()
+			{
+				updateResult(false, "Exception in sendFloat");
+			}
+		});
+	}
+
+	function sendShort()
+	{
+		var value = null;
+		sendShortCounter++;
+
+		switch(sendShortCounter)
+		{
+			case 1:
+				value = 0;
+				break;
+
+			case 2:
+				value = 1;
+				break;
+
+			case 3:
+				value = -1;
+				break;
+
+			case 4:
+				value = 32767;
+				break;
+
+			case 5:
+				value = -32768;
+				break;
+
+			case 6:
+				value = null;
+				break;
+
+			default:
+				updateResult(true, "sendShort success");
+				return;
+		}
+
+		svc.sendShort(
+		{
+			value: value,
+			onSuccess: sendShort,
+			onError: function()
+			{
+				updateResult(false, "Exception in sendShort");
+			}
+		});
+	}
+
+
+	function sendString()
+	{
+		var value = null;
+		sendStringCounter++;
+
+		switch(sendStringCounter)
+		{
+			case 1:
+				value = "";
+				break;
+
+			case 2:
+				value = '';
+				break;
+
+			case 3:
+				value = "a";
+				break;
+
+			case 4:
+				value = "\u0009"; //tab
+				break;
+
+			case 5:
+				value = "\u00A9"; // copyright symbol
+				break;
+
+			case 6:
+				value = null;
+				break;
+
+			default:
+				updateResult(true, "sendString success");
+				return;
+		}
+
+		svc.sendString(
+		{
+			value: value,
+			onSuccess: sendString,
+			onError: function()
+			{
+				updateResult(false, "Exception in sendString");
+			}
+		});
+	}
+
+	function sendDatetime()
+	{
+		var value = null;
+		sendDatetimeCounter++;
+
+		switch(sendDatetimeCounter)
+		{
+			case 1:
+				value = new Date(Date.UTC(9999, 11, 31, 23, 59, 59));
+				break;
+
+			case 2:
+				value = new Date(Date.UTC(0001, 00, 00, 00, 00, 00));
+				break;
+
+			case 3:
+				value = null;
+				break;
+
+			default:
+				updateResult(true, "sendDatetime success");
+				return;
+		}
+
+		svc.sendDatetime(
+		{
+			value: value,
+			onSuccess: sendDatetime,
+			onError: function()
+			{
+				updateResult(false, "Exception in sendDatetime");
+			}
+		});
+	}
+
+	function sendMap()
+	{
+
+	}
+
+	function sendObject()
+	{
+		var a = new etch.examples.ComplexData.A();
+
+		svc.sendObject(
+		{
+			value: a,
+			onSuccess: sendObject2,
+			onError: function()
+			{
+				updateResult(false, "Exception in sendObject");
+			}
+		});
+
+	}
+
+	function sendObject2()
+	{
+ 		var b = new etch.examples.ComplexData.B();
+
+		svc.sendObject(
+		{
+			value: b,
+			onSuccess: sendObject3,
+			onError: function()
+			{
+				updateResult(false, "Exception in sendObject");
+			}
+		});
+	}
+
+	function sendObject3()
+	{
+		var baseA = new etch.examples.ComplexData.BaseA();
+
+		svc.sendObject(
+		{
+			value: baseA,
+			onSuccess: sendObject4,
+			onError: function()
+			{
+				updateResult(false, "Exception in sendObject");
+			}
+		});	
+	}
+
+	function sendObject4()
+	{
+		var baseB = new etch.examples.ComplexData.BaseB();
+
+		svc.sendObject(
+		{
+			value: baseB,
+			onSuccess: sendObject5,
+			onError: function()
+			{
+				updateResult(false, "Exception in sendObject");
+			}
+		});
+	}
+
+	function sendObject5()
+	{
+		var baseC = new etch.examples.ComplexData.BaseC();
+
+		svc.sendObject(
+		{
+			value: baseC,
+			onSuccess: sendObject6,
+			onError: function()
+			{
+				updateResult(false, "Exception in sendObject");
+			}
+		});					
+	}
+
+	function sendObject6()
+	{
+		var a = new etch.examples.ComplexData.A();
+		a.value = "Hello";
+		a.value2 = 0;
+
+		svc.sendObject(
+		{
+			value: a,
+			onSuccess: sendObject7,
+			onError: function()
+			{
+				updateResult(false, "Exception in sendObject");
+			}
+		});					
+	}
+
+	function sendObject7()
+	{
+		var b = new etch.examples.ComplexData.B();
+		var a = new etch.examples.ComplexData.A();
+		a.value = "Hello";
+		a.value2 = 0;
+		b.value = a;
+		b.vaule3 = 0;
+
+		svc.sendObject(
+		{
+			value: b,
+			onSuccess: sendObject8,
+			onError: function()
+			{
+				updateResult(false, "Exception in sendObject");
+			}
+		});					
+	}
+
+	function sendObject8()
+	{
+		var baseA = new etch.examples.ComplexData.BaseA();
+		baseA.a = 1000;
+
+		svc.sendObject(
+		{
+			value: baseA,
+			onSuccess: sendObject9,
+			onError: function()
+			{
+				updateResult(false, "Exception in sendObject");
+			}
+		});					
+	}
+
+	function sendObject9()
+	{
+		var baseB = new etch.examples.ComplexData.BaseB();
+		baseB.a = 1000;
+		baseB.b = 1001;
+		svc.sendObject(
+		{
+			value: baseB,
+			onSuccess: sendObject10,
+			onError: function()
+			{
+				updateResult(false, "Exception in sendObject");
+			}
+		});					
+	}
+
+	function sendObject10()
+	{
+		var baseC = new etch.examples.ComplexData.BaseC();
+		baseC.a = 1000;
+		baseC.c = 1002;
+		svc.sendObject(
+		{
+			value: baseC,
+			onSuccess: function()
+			{
+				updateResult(true, "sendObject success");
+			},
+			onError: function()
+			{
+				updateResult(false, "Exception in sendObject");
+			}
+		});					
+	}
+
+
+	function sendObjectArray()
+	{
+		var value = null;
+		sendObjectArrayCounter++;
+
+		switch(sendObjectArrayCounter)
+		{
+			case 1:
+				value = [ 1.1, "one", true ];
+				break;
+
+			case 2:
+				value = [["one", "two", "three"], "one", true ];
+				break;
+
+			case 3:
+				value = ["one", "two", "three"];
+				break;
+
+			case 4:
+				value = ["one", null, "three"];
+				break;
+
+			case 5:
+				value = [1.1, 1.2, 1.3];
+				break;
+
+			case 6:
+				value = [null];
+				break;
+
+			case 7:
+				value = null;
+				break;
+
+			case 8:
+				value = [["one", null, "three"], "one", true ];
+				break;
+
+			
+			case 9:
+				var a = new etch.examples.ComplexData.A();
+				a.value = "Hello";
+				a.value2 = 0;
+
+				value = [ a ];
+				break;
+
+			case 10:
+				var a = new etch.examples.ComplexData.A();
+				a.value = "Hello";
+				a.value2 = 0;
+
+				value = [[ a ], "one", true];
+				break;
+
+			/*case : // need to test dates
+				value = [[new Date(Date.UTC(9999, 11, 31, 23, 59, 59)], "one", true ];
+				break;*/
+
+			default:
+				updateResult(true, "sendObjectArray success");
+				return;
+		}
+
+		svc.sendObjectArray(
+		{
+			values: value,
+			onSuccess: sendObjectArray,
+			onError: function()
+			{
+				updateResult(false, "Exception in sendObjectArray");
+			}
+		});
+	}
+
+	function sendStringArray()
+	{
+		var value = null;
+		sendStringArrayCounter++;
+
+		switch(sendStringArrayCounter)
+		{
+			case 1:
+				value = [ "one" ];
+				break;
+
+			case 2:
+				value = [ "one", "two" ];
+				break;
+
+			case 3:
+				value = [ "one", "two", "three" ];
+				break;
+
+			case 4:
+				value = null;
+				break;
+
+			case 5:
+				value = [];
+				break;
+
+			default:
+				updateResult(true, "sendStringArray success");
+				return;
+		}
+
+		svc.sendStringArray(
+		{
+			values: value,
+			onSuccess: sendStringArray,
+			onError: function()
+			{
+				updateResult(false, "Exception in sendStringArray");
+			}
+		});
+	}
+
+	function sendBaseArray()
+	{
+		var value = null;
+		sendBaseArrayCounter++;
+
+		switch(sendBaseArrayCounter)
+		{
+			case 1:
+				value = [];
+				break;
+
+			case 2:
+				var a = new etch.examples.ComplexData.BaseA();
+				a.a = 1000;
+				value = [a];
+				break;
+
+			case 3:
+				var b = new etch.examples.ComplexData.BaseB();
+				b.a = 1001;
+				b.b = 1002;
+				value = [b];
+				break;
+
+			case 4:
+				var c = new etch.examples.ComplexData.BaseC();
+				c.a = 1003;
+				c.c = 1004;
+				value = [c];
+				break;
+
+			case 5:
+				value = null;
+				break;
+
+			case 6:
+				value = [null];
+				break;	
+
+			case 7:
+				var a = new etch.examples.ComplexData.BaseA();
+				a.a = 1005;
+				var b = new etch.examples.ComplexData.BaseB();
+				b.a = 1006;
+				b.b = 1007;
+				var c = new etch.examples.ComplexData.BaseC();
+				c.a = 1008;
+				c.c = 1009;
+				value = [a, b, c, null];
+				break;
+
+			default:
+				updateResult(true, "sendBaseArray success");
+				return;
+		}
+
+		svc.sendBaseArray(
+		{
+			values: value,
+			onSuccess: sendBaseArray,
+			onError: function()
+			{
+				updateResult(false, "Exception in sendBaseArray");
+			}
+		});
+	}
+
+	function sendDerivedArray()
+	{
+		var value = null;
+		sendDerivedArrayCounter++;
+
+		switch(sendDerivedArrayCounter)
+		{
+			case 1:
+				value = [];
+				break;
+
+			case 2:
+				var b = new etch.examples.ComplexData.BaseB();
+				b.a = 1000;
+				b.b = 1001;
+				value = [b];
+				break;
+
+			case 3:
+				value = null;
+				break;
+
+			case 4:
+				value = [null];
+				break;	
+
+			case 5:
+				var b1 = new etch.examples.ComplexData.BaseB();
+				b1.a = 1002;
+				b1.b = 1003;
+				var b2 = new etch.examples.ComplexData.BaseB();
+				b2.a = 1004;
+				b2.b = 1005;
+				value = [b1, b2, null];
+				break;
+
+			default:
+				updateResult(true, "sendDerivedArray success");
+				return;
+		}
+
+		svc.sendDerivedArray(
+		{
+			values: value,
+			onSuccess: sendDerivedArray,
+			onError: function()
+			{
+				updateResult(false, "Exception in sendDerivedArray");
+			}
+		});
+	}
+
+	function sendList()
+	{
+		var value = null;
+		sendListCounter++;
+
+		switch(sendListCounter)
+		{
+			case 1:
+				value = []; // List is treated treated like Array
+				break;
+
+			case 2:
+				value = null;
+				break;
+
+			case 3:
+				value = [null];
+				break;	
+
+			case 4:
+				value = [1];
+				break;
+
+			case 5:
+				var a = new etch.examples.ComplexData.A();
+				a.value = "test";
+				a.value2 = -1;
+
+				var baseA = new etch.examples.ComplexData.BaseA();
+				baseA.a = 1000;
+
+				var baseB = new etch.examples.ComplexData.BaseB();
+				baseB.a = 1001;
+
+				var baseC = new etch.examples.ComplexData.BaseC();
+				baseC.a = 1002;
+				baseC.c = -1002;
+
+				value = [1, false, ["one", "two", "three"], a, [baseA, baseB, baseC]];
+				break;
+			default:
+				updateResult(true, "sendList success");
+				return;
+		}
+
+		svc.sendList(
+		{
+			values: value,
+			onSuccess: sendList,
+			onError: function()
+			{
+				updateResult(false, "Exception in sendList");
+			}
+		});
+	}
+
+	function sendException()
+	{
+		var value = null;
+		sendExceptionCounter++;
+
+		svc.sendException(
+		{
+			onSuccess: function()
+			{
+				updateResult(false, "Error: Non-exception response in sendException");
+			},
+			onError: function(exception)
+			{
+				var success;
+				var stop = false;
+				switch(sendExceptionCounter)
+				{
+					case 1:
+					success = exception instanceof etch.poc.TimeoutException;
+						break;
+
+					case 2:
+						success = exception instanceof etch.poc.RuntimeException;
+						success == success && (exception.msg.indexOf("testing runtime exception") > -1);
+						break;
+
+					case 3:
+						success = exception instanceof etch.examples.ComplexData.CustomException;
+						success == success && exception.value === 10;
+						stop = true;
+						break;
+				}
+
+				if(!success)
+				{
+					updateResult(false, "Error response was not as expected in sendException");
+				}
+				else if(stop)
+				{
+					updateResult(true, "sendException success");	
+				}
+				else // carry on if success === true and stop === false
+				{
+					sendException();
+				}
+			}
+		});
+	}
+
+	function connect()
+	{
+		updateStatus("Connecting ...");
+
+		svc = new etch.examples.ComplexData();
+
+		setupCallbacks();
+
+		svc.init("http://localhost:12221/proxy");
+
+		svc.connect(
+		{
+			timeoutValue: 5000,
+			onSuccess: function() 
+			{
+			}
+		});
+	}
+
+	function setupCallbacks()
+	{
+		svc.callbacks._sessionNotify = function(eventObj)
+		{
+			if(eventObj === "UP")
+			{
+				updateStatus("Connected");
+			}
+			else if(eventObj === "DOWN")
+			{
+				updateStatus("Disconnected");
+			}
+		}	
+	}
+
+	function updateStatus(message)
+	{
+		$("#status").text(message);
+	}
+
+	function updateResult(success, message)
+	{
+		$("#result").text(success);
+		$("#resultMessage").text(message);
+	}
+
+  </script>
+  <style type="text/css" title="style" media="screen">@import "complex_data.css";</style>
+	
+</head>
+<body>
+	<div id="container">
+		<h1>Complex Data Demo</h1>
+		<div id="status">Not connected</div>
+		<div id="result"></div>
+		<div id="resultMessage"></div>
+		<div id="connect" class="control" >Connect</div>
+		<div id="receiveBoolean" class="control">receiveBoolean</div>
+		<div id="receiveByte" class="control">receiveByte</div>
+		<div id="receiveDouble" class="control">receiveDouble</div>
+		<div id="receiveFloat" class="control">receiveFloat</div>
+		<div id="receiveInt" class="control">receiveInt</div>
+		<div id="receiveLong" class="control">receiveLong</div>
+		<div id="receiveObject" class="control">receiveObject</div>
+		<div id="receiveShort" class="control">receiveShort</div>
+		<div id="receiveString" class="control">receiveString</div>
+		<div id="receiveDatetime" class="control">receiveDatetime</div>
+		<div id="receiveMap" class="control">receiveMap</div>
+		<div id="receiveStringArray" class="control">receiveStringArray</div>
+		<div id="receiveObjectArray" class="control">receiveObjectArray</div>
+		<div id="receiveBaseArray" class="control">receiveBaseArray</div>
+		<div id="receiveDerivedArray" class="control">receiveDerivedArray</div>
+		<div id="receiveList" class="control">receiveList</div>
+
+		<div id="sendBoolean" class="sendControl">sendBoolean</div>
+		<div id="sendByte" class="sendControl">sendByte</div>
+		<div id="sendDouble" class="sendControl">sendDouble</div>
+		<div id="sendFloat" class="sendControl">sendFloat</div>
+		<div id="sendInt" class="sendControl">sendInt</div>
+		<div id="sendLong" class="sendControl">sendLong</div>
+		<div id="sendObject" class="sendControl">sendObject</div>
+		<div id="sendShort" class="sendControl">sendShort</div>
+		<div id="sendString" class="sendControl">sendString</div>
+		<div id="sendDatetime" class="sendControl">sendDatetime</div>
+		<div id="sendMap" class="sendControl">sendMap</div>
+		<div id="sendStringArray" class="sendControl">sendStringArray</div>
+		<div id="sendObjectArray" class="sendControl">sendObjectArray</div>
+		<div id="sendBaseArray" class="sendControl">sendBaseArray</div>
+		<div id="sendDerivedArray" class="sendControl">sendDerivedArray</div>
+		<div id="sendList" class="sendControl">sendList</div>
+		<div id="sendException" class="sendControl">sendException</div>
+
+		<div id="messages">
+			Messages
+			<div id="messagelist"></div>
+			<div id="messagebox">
+				Type
+				<textarea id="newmessage" name="newmessage" rows="3" cols="80"></textarea>
+				<input id="send" name="send" value="Send" type="submit" />
+			</div>	
+		</div>
+	</div>
+</body>
+</html>
+
+

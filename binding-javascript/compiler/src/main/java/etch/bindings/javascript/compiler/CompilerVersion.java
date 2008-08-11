@@ -15,7 +15,7 @@
  * under the License.
  */
 
-package etch.bindings.xml.compiler;
+package etch.bindings.javascript.compiler;
 
 /**
  * The version info of this Etch backend (compiler).
@@ -26,5 +26,5 @@ public interface CompilerVersion
 	// of VERSION below with whatever it wants the version string to actually be.
 	
 	/** The version of this Etch backend (compiler) */
-	public String VERSION = "xml 1.0.1 (LOCAL-0)";
+	public String VERSION = "javascript 1.0.1 (LOCAL-0)";
 }

@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<project name="etch-javascript-runtime" basedir="." default="help">
+    <description>Etch-to-Javascript runtime binding implementation</description>
+    <property name="Etch.basedir" location="${basedir}/../.." />
+    <import file="${Etch.basedir}/build-support/etch.includes.xml" />
+
+    <!-- Static properties of the sub-project -->
+    <property name="proj"                 location="${Etch.basedir}/binding-javascript/runtime" />
+    <property name="target"               location="${proj}/target" />
+    <property name="src"                  location="${proj}/src" />
+    <property name="generatedSrc"         location="${target}/generated-sources" />
+    <property name="classesDirectory"     location="${target}/classes" />
+    <property name="resourcesDirectory"   location="${target}/resources" />
+    <property name="testResultsDirectory" location="${target}/test-results" />
+
+    <!-- MACRO: init-target -->
+    <macrodef name="init-target" >
+        <sequential>
+            <delete dir="${classesDirectory}"   failonerror="false" quiet="true" />
+            <delete dir="${resourcesDirectory}" failonerror="false" quiet="true" />
+            <mkdir dir="${classesDirectory}" />
+            <mkdir dir="${classesDirectory}/main" />
+            <mkdir dir="${classesDirectory}/test" />
+            <mkdir dir="${resourcesDirectory}" />
+        </sequential>
+    </macrodef>
+
+    <!-- MACRO: bundle-jars -->
+    <macrodef name="copy-sources" >
+        <attribute name="dist" default="${Etch.dist}" />
+        <sequential>
+	    <mkdir dir="@{dist}/lib" />
+	    <mkdir dir="@{dist}/lib/etch-javascript-runtime" />
+	    <mkdir dir="@{dist}/lib/etch-javascript-runtime/json2" />
+	    <mkdir dir="@{dist}/lib/etch-javascript-runtime/jquery" />
+
+            <!-- Copy Etch-Javascript library source over to dist -->
+	    <copy file="${src}/main/javascript/etch/bindings/javascript/transport.js" todir="@{dist}/lib/etch-javascript-runtime" />
+	
+	    <!-- Copy Etch-Javascript dependant libraries over to dist... -->
+
+	    <!-- Copying Json2.js -->
+	    <copy file="${src}/main/javascript/etch/bindings/javascript/json2/json2.js" todir="@{dist}/lib/etch-javascript-runtime/json2" />
+
+	    <!-- copying jQuery from custom path (user-downloaded) to avoid any license issues until they have been fully vetted -->
+	    <copy file="${build.jQuery.lib}/jquery.js" todir="@{dist}/lib/etch-javascript-runtime/jquery" />
+
+	    <!-- package up etch-java-runtime src -->
+            <zip destfile="@{dist}/lib/${etch-javascript-runtime-src.zip}" >
+                <fileset dir="${src}/main/javascript" >
+                    <include name="etch/bindings/**/*.js" />
+	        </fileset>
+                <fileset dir="${build.jQuery.lib}" >
+                    <include name="jquery.js" />
+                </fileset>
+            </zip>
+
+        </sequential>
+    </macrodef>
+
+
+    <!-- INIT TARGET -->
+    <!-- Modify this target to define project specific properties that can only be set at runtime -->
+    <target name="do-init">
+        <delete dir="${target}" failonerror="false" quiet="true" />
+
+        <mkdir dir="${target}" />
+        <mkdir dir="${generatedSrc}" />
+        <mkdir dir="${classesDirectory}" />
+        <mkdir dir="${resourcesDirectory}" />
+        <mkdir dir="${testResultsDirectory}" />
+    </target>
+
+    <!-- CLEAN TARGET -->
+    <target name="do-clean">
+        <delete dir="${target}" />
+    </target>
+
+    <!-- BUILD TARGET -->
+
+    <target name="generate-sources" >
+    </target>
+
+    <target name="compile-for-dist" >
+        <!-- Initialize target directories -->
+        <init-target />
+
+        <!-- Compile Source -->
+        <copy-sources dist="${Etch.dist}" />
+    </target>
+
+    <target name="do-build" depends="generate-sources,compile-for-dist" />
+
+    <!-- TEST TARGET -->
+    <target name="do-test">
+
+    </target>
+
+    <!-- POSTBUILD TARGET -->
+    <target name="do-postbuild">
+    </target>
+
+    <target name="do-publish" if="build.tests.fail">
+        <!-- Set flag file if any tests failed -->
+        <touch file="${Etch.runtime.tests.fail}"/>
+    </target>
+
+</project>

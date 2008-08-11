@@ -129,11 +129,15 @@
         <!-- IDE/tool plugins -->
         <build_component dir="plugins/ant" />
         
-        <!-- Bindings -->
-        <build_component dir="binding-xml" />
+	<!-- Bindings -->
+	<build_component dir="binding-xml" />
         <build_component dir="binding-java" />
-        <build_component dir="binding-csharp" />
-        
+	<build_component dir="binding-csharp" />
+	<build_component dir="binding-javascript" />
+
+	<!-- Additional Transports -->
+	<build_component dir="transport-http-json" />
+
         <!-- Examples -->
         <build_component dir="examples" />
         

@@ -1,0 +1,91 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{25C63799-BA35-467C-9DF9-6FD7E239DA04}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ComplexDataTest</RootNamespace>
+    <AssemblyName>ComplexDataTest</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Etch, Version=1.0.1.0, Culture=neutral, PublicKeyToken=f5c449a9231c16f1, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\target\Installers\dist\lib\Etch.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.framework, Version=2.4.7.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\tools\nunit\2.4.7\bin\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="etch-source\server\etch.examples\BaseComplexDataServer.cs" />
+    <Compile Include="etch-source\server\etch.examples\ComplexData.cs" />
+    <Compile Include="etch-source\server\etch.examples\ComplexDataClient.cs" />
+    <Compile Include="etch-source\server\etch.examples\ComplexDataHelper.cs" />
+    <Compile Include="etch-source\server\etch.examples\ComplexDataServer.cs" />
+    <Compile Include="etch-source\server\etch.examples\RemoteComplexData.cs" />
+    <Compile Include="etch-source\server\etch.examples\RemoteComplexDataClient.cs" />
+    <Compile Include="etch-source\server\etch.examples\StubComplexData.cs" />
+    <Compile Include="etch-source\server\etch.examples\StubComplexDataServer.cs" />
+    <Compile Include="etch-source\server\etch.examples\ValueFactoryComplexData.cs" />
+    <Compile Include="ImplComplexDataServer.cs" />
+    <Compile Include="MainComplexDataListener.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BrowserTransport\BrowserTransport.csproj">
+      <Project>{2F225596-A8D5-48A8-9388-D2AD9D28C7FD}</Project>
+      <Name>BrowserTransport</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TrivialHttpServer\TrivialHttpServer.csproj">
+      <Project>{A89C22EC-948A-46B4-A58E-9E2809528925}</Project>
+      <Name>TrivialHttpServer</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="etch.examples.ComplexData.etch" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="etch-source\client\etch.examples\etch.examples.ComplexData.js" />
+    <Content Include="etch-source\server\etch.examples\readme-etch-csharp-files.txt" />
+    <Content Include="postbuild.xml" />
+    <Content Include="prebuild.xml" />
+    <Content Include="web\complex_data.css" />
+    <Content Include="web\complex_data.html" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <PropertyGroup>
+    <PostBuildEvent>ant -buildfile $(ProjectDir)\postbuild.xml $(ConfigurationName)</PostBuildEvent>
+    <PreBuildEvent>ant -buildfile $(ProjectDir)\prebuild.xml $(ConfigurationName)</PreBuildEvent>
+  </PropertyGroup>
+</Project>

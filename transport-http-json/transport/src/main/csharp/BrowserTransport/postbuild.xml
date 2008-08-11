@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<project name="etch-transport-http-json-postbuild" basedir="." default="help">
+    <description>Operations that must occur after build of the Visual Studio .NET project for the HTTP/JSON transport</description>
+    <property name="Etch.basedir" location="${basedir}/../../../../../.." />
+    <import file="${Etch.basedir}/build-support/etch.includes.xml" />
+
+    <taskdef resource="org/apache/ant/dotnet/antlib.xml" classpath="${Etch.dependency.ant-dotnet-1.0.jar}" />
+
+    <!-- Load dependencies -->
+    <property file="${Etch.basedir}/build.dependencies" prefix="default" />
+
+    <!-- Static properties of the sub-project -->
+    <property name="proj"                 location="${Etch.basedir}/transport-http-json/transport" />
+    <property name="src"                  location="${proj}/src" />
+
+    <target name="do-build">
+
+	<mkdir dir="${Etch.dist}/lib" />
+	<mkdir dir="${Etch.clover-dist}/lib" />
+
+ 	   <copy todir="${Etch.clover-dist}/lib" >
+		<fileset dir="${src}/main/csharp/BrowserTransport/bin/${Etch.build.target}">
+              		<include name="*.pdb" />
+               		<include name="*.dll" />
+        	</fileset>
+    	</copy>
+
+    	<copy todir="${Etch.dist}/lib">
+   		<fileset dir="${src}/main/csharp/BrowserTransport/bin/${Etch.build.target}">
+               		<include name="*.dll" />
+         	</fileset>
+	</copy>
+
+	<!-- Copy user-downloaded JsonFx.Json library to dist -->
+	<copy file="${default.jsonfx-json.lib}/JsonFx.Json.dll" todir="${Etch.dist}/lib" />		
+    </target>
+</project>

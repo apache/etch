@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<project name="etch-transport-http-json-prebuild" basedir="." default="help">
+    <description>Operations that must occur before build of the Visual Studio .NET project for the HTTP/JSON transport</description>
+    <property name="Etch.basedir" location="${basedir}/../../../../../.." />
+    <import file="${Etch.basedir}/build-support/etch.includes.xml" />
+
+    <taskdef resource="org/apache/ant/dotnet/antlib.xml" classpath="${Etch.dependency.ant-dotnet-1.0.jar}" />
+
+    <!-- Static properties of the sub-project -->
+    <property name="proj"                 location="${Etch.basedir}/transport-http-json/transport" />
+    <property name="src"                  location="${proj}/src" />
+
+    <!-- TODO better computation of etch.home, etch.version -->
+    <property environment="env" />
+    
+    <!-- compute ETCH_HOME -->
+    <property name="build.ETCH_HOME" location="${Etch.basedir}/target/Installers/dist" />
+    <condition property="etch.home" value="${env.ETCH_HOME}">
+        <isset property="${env.ETCH_HOME}" />
+    </condition>
+    <condition property="etch.home" value="${build.ETCH_HOME}" >
+        <not><isset property="etch.home" /></not>
+    </condition>
+    
+    <!-- compute etch.version -->
+    <condition property="etch.version" value="1.0.1" >
+        <not><isset property="etch.version" /></not>
+    </condition>
+
+
+    <!-- import etch task -->
+    <taskdef
+        name="etch"
+        onerror="report"
+        classname="etch.tools.ant.EtchCompileTask"
+	classpath="${etch.home}/lib/etch-ant-plugin-${etch.version}.jar" />
+
+    <!-- BUILD TARGET -->
+    <target name="generate-sources" >
+	<!-- Generate Etch code for the ComplexDataTest manual testing project -->
+
+        <etch home="${etch.home}" 
+	      file="${src}/main/csharp/ComplexDataTest/etch.examples.ComplexData.etch"
+              what="server,helper,force"
+              binding="csharp"
+	      output="${src}/main/csharp/ComplexDataTest/etch-source/server"
+	      />
+
+        <etch home="${etch.home}" 
+	      file="${src}/main/csharp/ComplexDataTest/etch.examples.ComplexData.etch"
+              what="ALL"
+              binding="javascript"
+	      output="${src}/main/csharp/ComplexDataTest/etch-source/client"
+	      />
+    </target>
+
+    <target name="do-build" depends="generate-sources" >
+
+    </target>
+</project>
+
+

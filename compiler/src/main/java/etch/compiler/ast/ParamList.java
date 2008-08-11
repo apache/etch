@@ -107,6 +107,20 @@ abstract public class ParamList<P extends Named<?>> extends Named<P>
 	}
 
 	/**
+	 * @return the number of parameters
+	 */
+	public int size()
+	{
+		int value = 0;
+		if(list != null && list.list() != null)
+		{
+			value = list.list().size();
+		}
+
+		return value;
+	}
+
+	/**
 	 * @return the service that we are part of.
 	 */
 	abstract public Service service();

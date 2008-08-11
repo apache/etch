@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<project name="etch-transport-http-json-postbuild" basedir="." default="help">
+    <description>Operations that must occur after build of the Visual Studio .NET project for the manual complex data tester</description>
+    <property name="Etch.basedir" location="${basedir}/../../../../../.." />
+    <import file="${Etch.basedir}/build-support/etch.includes.xml" />
+
+    <!-- Load dependencies -->
+    <property file="${Etch.basedir}/build.dependencies" prefix="default" />
+
+    <taskdef resource="org/apache/ant/dotnet/antlib.xml" classpath="${Etch.dependency.ant-dotnet-1.0.jar}" />
+
+    <!-- Static properties of the sub-project -->
+    <property name="proj"                 location="${Etch.basedir}/transport-http-json/transport" />
+    <property name="src"                  location="${proj}/src" />
+
+    <target name="do-build">
+        <!-- Copy user-downloaded JsonFx.Json library to all bins that require it for debugging purposes,
+	     which is necessary since the HttpJsonTransport.dll expects JsonFx.Json.dll to be colocated with it -->
+	     <copy file="${default.jsonfx-json.lib}/JsonFx.Json.dll" todir="${src}/main/csharp/ComplexDataTest/bin/${Etch.build.target}" />	
+
+	     <!-- Copy web resources specific this project, and Etch standard javascript libraries, to the bin/target directory.
+	     As a matter of convention, the exe associated with this manual test expects to be in the exe's directory -->
+	     <copy todir="${src}/main/csharp/ComplexDataTest/bin/${Etch.build.target}" flatten="true">
+		     <fileset dir="${src}/main/csharp/ComplexDataTest/web">
+		     	<include name="*.html" />
+			<include name="*.css" />
+		     </fileset>
+		     <fileset dir="${src}/main/csharp/ComplexDataTest/etch-source">
+			<include name="client/**/*.js" />
+		     </fileset>
+		     <fileset dir="${Etch.dist}/lib/etch-javascript-runtime">
+			<include name="**/*.js" />
+		     </fileset>
+	     </copy>
+    </target>
+</project>
