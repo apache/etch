@@ -101,26 +101,26 @@ etch.poc.Transport.prototype.fixupData = function(key, value)
 		// and construct the proper Etch type out of the JSON object
 		var typeField = value["@type"];
 
-		console.log("typeField: " + typeField);
+		//console.log("typeField: " + typeField);
 		if(typeField !== undefined)
 		{
 			var typeConstructor = etch.poc.TypeMap[typeField];
 			
 			if(typeConstructor != null)
 			{
-				console.log(typeConstructor);
+				//console.log(typeConstructor);
 				var wrappedType = new typeConstructor(value);
-				console.log("Type Wrapped: " + wrappedType);
+				//console.log("Type Wrapped: " + wrappedType);
 				return wrappedType;
 			}
 			else
 			{
-				console.log("No constructor defined for: " + typeField);
+				//console.log("No constructor defined for: " + typeField);
 			}
 		}
 		else
 		{
-			console.log("No @type in JSON object. Ignoring...");
+			//console.log("No @type in JSON object. Ignoring...");
 		}
 	}
 	else if (typeof value === 'string') 
@@ -148,7 +148,7 @@ etch.poc.Transport.prototype.connect = function(args) {
   
 	var that = this;
 
-	console.log("Opening against host: " + this.startUri	);
+	//console.log("Opening against host: " + this.startUri	);
 
 	this.running = true;
 
@@ -173,15 +173,15 @@ etch.poc.Transport.prototype.connect = function(args) {
 
 			that.sessionId = data.sessionId;
 
-			console.log("Connection success. code: " + textStatus + ", sessionId: " + that.sessionId);
+			//console.log("Connection success. code: " + textStatus + ", sessionId: " + that.sessionId);
 
-			console.log("Opening event channel");
+			//console.log("Opening event channel");
 	
 			that.startEventChannel();
 			
 			if(args.onSuccess != null)
 			{
-				console.log("Calling user-defined connect success callback");
+				//console.log("Calling user-defined connect success callback");
 
 				if(that.service.callbacks._sessionNotify != null)
 				{
@@ -189,7 +189,7 @@ etch.poc.Transport.prototype.connect = function(args) {
 				}
 				args.onSuccess();
 
-				console.log("Return from user-defined connect success callback");
+				//console.log("Return from user-defined connect success callback");
 			}	
 		},
 		error: function(xhr, textStatus, exceptionObject) {
@@ -199,15 +199,15 @@ etch.poc.Transport.prototype.connect = function(args) {
 				delete that.pendingTransactions[transactionId];
 			}
 
-			console.log("Connection failure. code: " + textStatus);
+			//console.log("Connection failure. code: " + textStatus);
 
 			if(args.onError != null)
 			{
-				console.log("Calling user-defined connect error callback");
+				//console.log("Calling user-defined connect error callback");
 
 				args.onError();
 
-				console.log("Return from user-defined connect error callback");
+				//console.log("Return from user-defined connect error callback");
 			}
 		}
 		});
@@ -239,11 +239,11 @@ etch.poc.Transport.prototype.openEventChannel = function()
 {
 	if(!this.running)
 	{
-		//console.log("Exiting event channel");
+		////console.log("Exiting event channel");
 		return;
 	}
 
-	//	console.log("Opening against host: " + this.eventUri	);
+	//	//console.log("Opening against host: " + this.eventUri	);
 
 	var that = this;
 	
@@ -267,7 +267,7 @@ etch.poc.Transport.prototype.openEventChannel = function()
 				delete that.pendingTransactions[transactionId];
 			}
 
-			console.log("Eventing success. code: " + textStatus);
+			//console.log("Eventing success. code: " + textStatus);
 	
 			//setTimeout(theService.openEventChannel, 1); // re-initiate eventing
 
@@ -284,7 +284,7 @@ etch.poc.Transport.prototype.openEventChannel = function()
 				delete that.pendingTransactions[transactionId];
 			}
 
-			console.log("Eventing failure. code: " + textStatus);
+			//console.log("Eventing failure. code: " + textStatus);
 
 			if(that.service.callbacks._sessionNotify != null)
 			{
@@ -337,7 +337,7 @@ etch.poc.Transport.prototype.onewayToServer = function(methodName, args, methodT
 		timeout: 30000, /** methodTimeout removed... but how long should we wait on the transport side, just to send a timeout? */ 
 		success: function(data, textStatus) {
         	
-			console.log(methodName + " success. code: " + textStatus);
+			//console.log(methodName + " success. code: " + textStatus);
 
 			if(that.pendingTransactions[transactionId] != null)
 			{
@@ -346,16 +346,16 @@ etch.poc.Transport.prototype.onewayToServer = function(methodName, args, methodT
 
 			if(onSuccess != null)
 			{
-				console.log("Calling user-defined " + methodName + " success callback");
+				//console.log("Calling user-defined " + methodName + " success callback");
 
 				onSuccess();
 
-				console.log("Return from user-defined " + methodName + " success callback");
+				//console.log("Return from user-defined " + methodName + " success callback");
 			}	
 		},
 		error: function(xhr, textStatus, exceptionObject) {
 		
-			console.log(methodName + " failure. code: " + textStatus);
+			//console.log(methodName + " failure. code: " + textStatus);
 
 			if(that.pendingTransactions[transactionId] != null)
 			{
@@ -364,11 +364,11 @@ etch.poc.Transport.prototype.onewayToServer = function(methodName, args, methodT
 
 			if(onError != null)
 			{
-				console.log("Calling user-defined " + methodName + " error callback");
+				//console.log("Calling user-defined " + methodName + " error callback");
 
 				onError();
 
-				console.log("Return from user-defined " + methodName + " error callback");
+				//console.log("Return from user-defined " + methodName + " error callback");
 			}
 		}
 		});
@@ -425,7 +425,7 @@ etch.poc.Transport.prototype.twowayToServer = function(methodName, args, methodT
 			{
 				transaction.timerId = setTimeout(function(){
 				
-					console.log("Timeout fired for method: " + methodName + ", transaction: " + transactionId);
+					//console.log("Timeout fired for method: " + methodName + ", transaction: " + transactionId);
 
 					if(that.pendingTransactions[transactionId] != null)
 					{
@@ -433,11 +433,11 @@ etch.poc.Transport.prototype.twowayToServer = function(methodName, args, methodT
 
 						if(onError != null)
 						{
-							console.log("Calling user-defined " + methodName + " error callback due to timeout");
+							//console.log("Calling user-defined " + methodName + " error callback due to timeout");
 		
 							onError(new etch.poc.TimeoutException());
 
-							console.log("Return from user-defined " + methodName + " error callback due to timeout");
+							//console.log("Return from user-defined " + methodName + " error callback due to timeout");
 						}
 					}
 
@@ -446,13 +446,13 @@ etch.poc.Transport.prototype.twowayToServer = function(methodName, args, methodT
 		},
 		success: function(data, textStatus) {
         	
-			console.log(methodName + " send success. code: " + textStatus);		
+			//console.log(methodName + " send success. code: " + textStatus);		
 		},
 		error: function(xhr, textStatus, exceptionObject) {
 		
-			console.log(methodName + " failure. code: " + textStatus);
+			//console.log(methodName + " failure. code: " + textStatus);
 
-			console.log("clearing message timer");
+			//console.log("clearing message timer");
 
 			clearTimeout(transaction.timerId);
 
@@ -462,11 +462,11 @@ etch.poc.Transport.prototype.twowayToServer = function(methodName, args, methodT
 
 				if(onError != null)
 				{
-					console.log("Calling user-defined " + methodName + " error callback");
+					//console.log("Calling user-defined " + methodName + " error callback");
 
 					onError();
 
-					console.log("Return from user-defined " + methodName + " error callback");
+					//console.log("Return from user-defined " + methodName + " error callback");
 				}	
 			}
 		}
@@ -482,13 +482,13 @@ etch.poc.Transport.prototype.handleMessage = function(data)
 	// does this contain any real data form the server?
 	if(data.eventMessages != null)
 	{
-		console.log("messages.length: " + data.eventMessages.length);
+		//console.log("messages.length: " + data.eventMessages.length);
 
 		for (var i = 0; i < data.eventMessages.length; i++)
 		{
 			var message = data.eventMessages[i];
 
-			console.log("message: " + JSON.stringify(message));
+			//console.log("message: " + JSON.stringify(message));
 
 			// In the case that this message is a response to a previously invoked two-way, server message...
 			if(message.type == "messageResult")
@@ -512,7 +512,7 @@ etch.poc.Transport.prototype.handleMessage = function(data)
 							}
 							else
 							{
-								console.log("Unable to fire successCallback for transaction: " + transactionId);
+								//console.log("Unable to fire successCallback for transaction: " + transactionId);
 							}
 						}
 						else if(message.errorData !== undefined)
@@ -523,22 +523,22 @@ etch.poc.Transport.prototype.handleMessage = function(data)
 							}
 							else
 							{
-								console.log("Unable to fire errorCallback for transaction: " + transactionId);
+								//console.log("Unable to fire errorCallback for transaction: " + transactionId);
 							}
 						}
 						else
 						{
-							console.log("Unable to find 'data' or 'errorData' in response");
+							//console.log("Unable to find 'data' or 'errorData' in response");
 						}
 					}
 					else
 					{
-						console.log("Unable to locate a pending transaction for: " + transactionId);
+						//console.log("Unable to locate a pending transaction for: " + transactionId);
 					}
 				}
 				else
 				{	
-					console.log("Validity error: received a null transactionId");
+					//console.log("Validity error: received a null transactionId");
 				}
 			}
 			// Or in the case that this message is a new message from the server or client
@@ -557,7 +557,7 @@ etch.poc.Transport.prototype.handleMessage = function(data)
 					}
 					catch(err)
 					{
-						console.log("Unable to initiate callback: " + err);
+						//console.log("Unable to initiate callback: " + err);
 						// TODO: try/catch and fault back to server if failed
 						continue;
 					}
@@ -565,7 +565,7 @@ etch.poc.Transport.prototype.handleMessage = function(data)
 					if(this.service.definitions[methodName].isOneway)
 					{
 						// one way messages, so no response necessary
-						console.log("Done with oneway message received from server.");
+						//console.log("Done with oneway message received from server.");
 					}
 					else
 					{
@@ -575,7 +575,7 @@ etch.poc.Transport.prototype.handleMessage = function(data)
 				}
 				else
 				{
-					console.log("Validity error: received a null method name in client directed message");
+					//console.log("Validity error: received a null method name in client directed message");
 				}
 			}
 		}
@@ -585,7 +585,7 @@ etch.poc.Transport.prototype.handleMessage = function(data)
 	{
 		// need to figure out what other types of messages there would be
 		// maybe a graceful server going down message?
-		console.log("Received a result message not tied to a pending message");
+		//console.log("Received a result message not tied to a pending message");
 	}
 	
 }
@@ -594,7 +594,7 @@ etch.poc.Transport.prototype.respondToServer = function(transactionId, methodNam
 {
 	var that = this;
 
-	console.log("Responding to client-directed, twoway message");
+	//console.log("Responding to client-directed, twoway message");
 
 	var transaction = { transactionId : transactionId };
 
@@ -615,7 +615,7 @@ etch.poc.Transport.prototype.respondToServer = function(transactionId, methodNam
 			{
 				delete that.pendingTransactions[transactionId];
 			}
-			console.log("twowayToClient response send success. code: " + textStatus);		
+			//console.log("twowayToClient response send success. code: " + textStatus);		
 		},
 		error: function(xhr, textStatus, exceptionObject) {
 		
@@ -623,7 +623,7 @@ etch.poc.Transport.prototype.respondToServer = function(transactionId, methodNam
 			{
 				delete that.pendingTransactions[transactionId];
 			}
-			console.log("twowayToClient response failure. code: " + textStatus);
+			//console.log("twowayToClient response failure. code: " + textStatus);
 	
 			// where to call this out?
 		}
@@ -681,5 +681,5 @@ etch.poc.TypeMap["_Etch_AuthException"] = etch.poc.AuthorizationException.protot
 
 etch.poc.TimeoutException = function()  	
 {
-	console.log("constructing timeoutException");	
+	//console.log("constructing timeoutException");	
 }
