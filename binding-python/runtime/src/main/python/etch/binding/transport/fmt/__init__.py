@@ -1,5 +1,5 @@
 """
-etch.transport.fmt.xml
+$Id$
 
 # Copyright 2007-2008 Cisco Systems Inc.
 #
@@ -16,4 +16,11 @@ etch.transport.fmt.xml
 # under the License.
 #
 """
+from __future__ import absolute_import
+from .TaggedData import *
+from .TypeCode import *
 
+#from .binary import *
+#from .xml import *
+import binary
+import xml

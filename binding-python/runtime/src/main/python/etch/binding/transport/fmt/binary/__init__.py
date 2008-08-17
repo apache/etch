@@ -1,5 +1,5 @@
 """
-etch.transport.fmt.binary
+$Id$
 
 # Copyright 2007-2008 Cisco Systems Inc.
 #
@@ -16,4 +16,10 @@ etch.transport.fmt.binary
 # under the License.
 #
 """
+from __future__ import absolute_import
+from .BinaryTaggedData import *
+from .BinaryTaggedDataFormatFactory import *
+from .BinaryTaggedDataInput import *
+from .BinaryTaggedDataOutput import *
+from .Validator_none import *
 

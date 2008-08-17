@@ -18,19 +18,12 @@ $Id$
 """
 from __future__ import absolute_import
 
-class MessageHandler(object):
-    """
-    Interface used to deliver messages from a message source.
-    """
-
-    # TODO: original signature 'boolean message(Who sender, Message msg)', maybe call this 'queueMessage'??
-    def deliverMessage(self, sender, msg):
-        """
-        Delivers a message from a message source.
-        
-        @param sender - the message sender (meaning depends upon the message source)
-        @param msg - the message from the message source
-        @return - True if the message was processed
-        @raise Exception
-        """
-        raise UnimplementedInterfaceMethodException
+class Direction:
+    NONE = "Direction.BOTH"
+    """Message is both toward client and toward server"""
+    
+    QUEUED = "Direction.SERVER"
+    """Message is toward server"""
+    
+    FREE = "Direction.CLIENT"
+    """Message is toward client"""

@@ -17,11 +17,4 @@ $Id$
 #
 """
 from __future__ import absolute_import
-from ..support.MessageSource import *
-from ...util.core.io.Source import *
-
-class MessagizerMessageSource(MessageSource,Source):
-    """
-    A combination of MessageSource and Source
-    """
-    pass
+from .Session import *

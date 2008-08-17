@@ -17,12 +17,12 @@ $Id$
 #
 """
 from __future__ import absolute_import
-from ...python.Types import Integer
+from ...util.Hash import *
 from ...python.Exceptions import *
 
 __all__ = ['IdName']
 
-class IdName(object):
+class IdName(Hash):
     """
     An IdName is a base class of Field or Type. It is used to bind together a
     type or field name with the associated id. The id is used for certain
@@ -100,19 +100,4 @@ class IdName(object):
         TODO: is this really necessary or equivalent to Java's .hashCode method?
         """
         return id(self.__id) ^ id(self.__name)
-
-    @staticmethod
-    def hash(name):
-        """
-        Computes the hash value of the name to be used as the id
-        when constructing an IdName.
-
-        @param name    the name of the type or field
-        @return        a hash of name
-        """
-        hash   = Integer(5381)
-        for c in name:
-            h6    = hash << 6
-            hash  = (h6 << 10) + h6 - hash + ord(c)
-        return hash
 

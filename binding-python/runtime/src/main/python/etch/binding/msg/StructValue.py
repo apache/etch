@@ -19,6 +19,7 @@ $Id$
 from __future__ import absolute_import
 from ...python.Exceptions import *
 from .Type import *
+from .Validator import *
 
 class StructValue(dict):
     """
@@ -31,13 +32,17 @@ class StructValue(dict):
     serialVersionUID = 1
     """Bogus serial version uid"""
 
-    def __init__(self, typ, length=None):
+    DEFAULT_SIZE = 8
+    """magic number 6 results in super(8) in dict constructor"""
+
+    def __init__(self, typ, vf, length=0):
         """
         Constructs the StructValue
 
         @param structType   The type of the struct (or the action or event
                             if this is a message)
-        @param length       The expected size of the hash (ignored, artifact of Java derivation)
+        @param vf           the value factory
+        @param length       The expected size of the dict (ignored)
         """
         if not typ:
             raise IllegalArgumentException, "typ == None"
@@ -45,7 +50,8 @@ class StructValue(dict):
         if not isinstance(typ, Type):
             raise IllegalArgumentException, "typ must be of type %s" % repr(Type)
 
-        self.__type = typ
+        self.__type  = typ
+        self.__level = vf.getLevel()
 
     def isEmpty(self):
         return self.size() == 0
@@ -55,6 +61,12 @@ class StructValue(dict):
         Alias for len(self)
         """
         return super(StructValue,self).__len__()
+    
+    def level(self):
+        """
+        @return validation level
+        """
+        return self.__level
         
     def type(self):
         """
@@ -108,8 +120,12 @@ class StructValue(dict):
             super(StructValue,self).__delitem__(key)
 
         # TODO - disable validate on put?
-        if True:
+        if self.__level == Validator.NONE:
             v = self.__type.getValidator(key)
+            
+            if self.__level == Validator.FULL and v is None:
+                raise IllegalArgumentException, "validator missing for type %s field %s" % (repr(self.__type), key)
+                
             if not v or not v.validate(value):
                 raise IllegalArgumentException, "Validator %s failed for type %s field %s: value %s" % (repr(v), repr(self.__type), repr(key), repr(value))
 

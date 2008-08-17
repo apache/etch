@@ -1,5 +1,5 @@
 """
-etch.compiler
+$Id$
 
 # Copyright 2007-2008 Cisco Systems Inc.
 #
@@ -16,3 +16,5 @@ etch.compiler
 # under the License.
 #
 """
+from __future__ import absolute_import
+

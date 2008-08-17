@@ -1,4 +1,5 @@
 """
+$Id$
 
 # Copyright 2007-2008 Cisco Systems Inc.
 #
@@ -15,8 +16,8 @@
 # under the License.
 #
 """
-from XmlTaggedData import *
-from XmlTaggedDataInput import *
-from XmlTaggedDataOutput import *
-from XmlTags import *
-
+from __future__ import absolute_import
+from .XmlTaggedData import *
+from .XmlTaggedDataInput import *
+from .XmlTaggedDataOutput import *
+from .XmlTags import *

@@ -21,9 +21,9 @@ from __future__ import absolute_import
 import types
 from .IdName                  import *
 from ...python.Exceptions     import *
-from ..support.FieldMap       import *
-from ..support.ComboValidator import *
-from ..support.AsyncMode      import *
+from .FieldMap       import *
+from .ComboValidator import *
+from .AsyncMode      import *
 
 class Type(IdName):
     """

@@ -17,11 +17,17 @@ $Id$
 #
 """
 from __future__ import absolute_import
+from .AsyncMode          import *
+from .ComboValidator     import *
+from .Direction          import *
 from .Field              import *
+from .FieldMap           import *
 from .IdName             import *
+from .IdNameMap          import *
 from .ImportExportHelper import *
 from .Message            import *
 from .StructValue        import *
 from .Type               import *
+from .TypeMap            import *
 from .Validator          import *
 from .ValueFactory       import *

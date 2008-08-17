@@ -25,10 +25,11 @@ class ImportExportHelper(object):
     service defined objects.
     """
 
-    def exportValue(self, value):
+    def exportValue(self, vf, value):
         """
         Exports a value by creating an equivalent StructValue.
 
+        @param vf           The value factory for this connection
         @param value        A service defined type to export
         @return             A StructValue representing the exported value
         """

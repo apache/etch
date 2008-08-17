@@ -17,12 +17,14 @@ $Id$
 #
 """
 from __future__ import absolute_import
-from .. import support
-from ...util.core.io.SourceHandler import *
+from .IdNameMap import *
+from .Type import *
 
-class MessageHandler(SourceHandler, support.MessageHandler):
+class TypeMap(IdNameMap):
     """
-    Interface used to deliver messages from the messagizer.
+    TypeMap is a IdNameMap for Type
     """
-    pass
     
+    def makeNew(self, name):
+        return Type(name)
+

@@ -29,6 +29,15 @@ class Validator(object):
 
     MAX_CACHED = 4
     """The maximum number of validators to cache per type."""
+    
+    NONE = "Validator.NONE"
+    """No validation on put or output"""
+    
+    MISSING_OK = "Validator.MISSING_OK"
+    """Validation on put or output if validator defined"""
+    
+    FULL = "Validator.FULL"
+    """Like MISSING_OK, but fail if no validator defined"""
 
     def elementValidator(self):
         """

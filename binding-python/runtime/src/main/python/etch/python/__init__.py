@@ -17,14 +17,9 @@ $Id$
 #
 """
 from __future__ import absolute_import
-from .IdNameMap import *
-from ..msg.Type import *
-
-class TypeMap(IdNameMap):
-    """
-    TypeMap is a IdNameMap for Type
-    """
-    
-    def makeNew(self, name):
-        return Type(name)
-
+from .Array import *
+from .Exceptions import *
+from .Singleton import *
+from .SynchronizedMap import *
+from .SynchronizedOn import *
+from .Types import *

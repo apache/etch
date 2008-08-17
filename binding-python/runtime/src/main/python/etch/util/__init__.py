@@ -17,28 +17,9 @@ $Id$
 #
 """
 from __future__ import absolute_import
-from ...python.Exceptions import *
+from .FlexBuffer import *
+from .Hash import *
+from .Todo import *
+from .TodoManager import *
 
-class MailboxManagerIntf(object):
-    """
-    Interface to the mailbox manager as needed by Mailbox implementers
-    """
-    
-    def unregister(self, mb):
-        """
-        Removes the mailbox from the set of mailbox receiving responses to messages
-        
-        @param mb
-        """
-        raise UnimplementedInterfaceMethodException
-    
-    def redeliver(self, sender, msg):
-        """
-        Redelivers defunct messages from a closed mailbox
-        
-        @param sender
-        @param msg
-        @raises Exception
-        """
-        raise UnimplementedInterfaceMethodException
-        
+import core

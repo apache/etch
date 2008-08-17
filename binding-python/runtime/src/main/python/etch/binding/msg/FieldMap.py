@@ -18,7 +18,7 @@ $Id$
 """
 from __future__ import absolute_import
 from .IdNameMap import *
-from ..msg.Field import *
+from .Field import *
 
 class FieldMap(IdNameMap):
     """

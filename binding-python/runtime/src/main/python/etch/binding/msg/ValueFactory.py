@@ -36,6 +36,28 @@ class ValueFactory(object):
         """
         raise UndefinedInterfaceMethodException
 
+    def addType(self, typ):
+        """
+        Adds the type if it doesn't already exist. Use this to dynamically add types to
+        a ValueFactory. The type is per instance of the ValueFactory, not global. Not available
+        if dynamic typing is locked.
+        
+        @param typ
+        """
+        raise UndefinedInterfaceMethodException
+        
+    def lockDynamicTypes(self):
+        """
+        Locks the dynamic typing so that no new types may be created by addType or getType
+        """
+        raise UndefinedInterfaceMethodException
+    
+    def unlockDynamicTypes(self):
+        """
+        Unlocks the dynamic typing so that new types may be created by addType or getType.
+        """
+        raise UndefinedInterfaceMethodException
+
     def getTypes(self):
         """
         @return   a collection of all the types
@@ -72,6 +94,12 @@ class ValueFactory(object):
         @param msgid      the value of the well-known message-id field
         """
         raise UndefinedInterfaceMethodException
+
+    def get_mf__messageId(self):
+        """
+        @return well-known message field for message id
+        """
+        raise UndefinedInterfaceMethodException
         
     ## IN REPLY TO
 
@@ -86,6 +114,13 @@ class ValueFactory(object):
         """
         @param msg        The message wholes well-known in-reply-to field is to be set
         @param msgid      The valud ot the well-known in-reply-to field        
+        """
+        raise UndefinedInterfaceMethodException
+
+
+    def get_mf__inReplyTo(self):
+        """
+        @return well-known message field for in reply to
         """
         raise UndefinedInterfaceMethodException
 
@@ -125,3 +160,17 @@ class ValueFactory(object):
         """
         raise UndefinedInterfaceMethodException
 
+    def getLevel(self):
+        """
+        @return the validation level of field StructValue.put and TaggedDataOutput
+        """
+        raise UndefinedInterfaceMethodException
+    
+    def setLevel(self, level):
+        """
+        Sets the validation level of field StructValue.put and TaggedDataOutput
+        
+        @param level
+        @return the old value
+        """
+        raise UndefinedInterfaceMethodException

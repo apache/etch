@@ -17,16 +17,21 @@ $Id$
 #
 """
 from __future__ import absolute_import
-from ...python.Exceptions import *
+from ..python.Types import Integer
 
-class ServerFactory(object):
-    """
-    Interface to use for constructing new server instances by TransportHelper.
-    """
-    
-    def newServer(self, d):
+class Hash(object):
+
+    @staticmethod
+    def hash(name):
         """
-        @param d - the delivery service to use with the new server
-        @raises Exception
+        Computes the hash value of the name to be used as the id
+        when constructing an IdName.
+
+        @param name    the name of the type or field
+        @return        a hash of name
         """
-        raise UnimplementedInterfaceMethodException
+        hash   = Integer(5381)
+        for c in name:
+            h6    = hash << 6
+            hash  = (h6 << 10) + h6 - hash + ord(c)
+        return hash

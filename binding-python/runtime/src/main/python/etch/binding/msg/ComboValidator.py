@@ -18,7 +18,7 @@ $Id$
 """
 from __future__ import absolute_import
 from ...python.Exceptions import *
-from ..msg.Validator import *
+from .Validator import *
 
 class ComboValidator(Validator):
     """
