@@ -17,3 +17,57 @@ $Id$
 #
 """
 from __future__ import absolute_import
+from .StrIntHashMap import *
+from ..msg.Field import *
+from ..msg.ImportExportHelper import *
+from ..msg.StructValue import *
+from ..msg.Type import *
+from ..msg.ValueFactory import *
+from ..support.Class2TypeMap import *
+from ..support.Validator_object import *
+
+class StrIntHashMapSerializer(ImportExportHelper):
+    """
+    etch serializer for StrIntHashMap
+    """
+    
+    FIELD_NAME = "keysAndValues"
+    
+    @classmethod
+    def init(cls, typ, class2type):
+        """
+        Defines custom fields in the value factory so that the importer can find them
+        @param typ
+        @param class2type
+        """
+        field = typ.getField(cls.FIELD_NAME)
+        class2type.put( StrIntHashMap , typ )
+        typ.setComponentType( StrIntHashMap )
+        typ.setImportExportHelper( StrIntHashMapSerializer(typ, field))
+        typ.putValidator(field, Validator_object.get(1))
+        typ.lock()
+        
+    def __init__(self, typ, field):
+        self.__type = typ
+        self.__field = field
+        
+    
+    def importHelper(self, struct):
+        m = StrIntHashMap()
+        keysAndValues = struct.get(self.__field)
+        for i in range(0, len(keysAndValues), 2):
+            m[keysAndValues[i]] = keysAndValues[i+1]
+        return m
+    
+    def exportValue(self, vf, value):
+        m = StrIntHashMap(value)
+        keysAndValues = []
+        for i in m.keys():
+            keysAndValues.append(i)
+            keysAndValues.append(m[i])
+        
+        struct = StructValue(self.__type, vf)
+        struct.put(self.__field, keysAndValues)
+        return struct
+        
+        

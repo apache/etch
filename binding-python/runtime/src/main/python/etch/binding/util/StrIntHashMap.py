@@ -17,3 +17,11 @@ $Id$
 #
 """
 from __future__ import absolute_import
+
+class StrIntHashMap(dict):
+    """
+    dict
+    """
+    serialVersionUID = -9162231227512652630L
+    
+    

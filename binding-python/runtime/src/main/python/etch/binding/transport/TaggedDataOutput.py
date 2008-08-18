@@ -32,4 +32,4 @@ class TaggedDataOutput:
         @param buf - the buffer to write to
         @raises IOException
         """
-        raise UnimplementedInterfaceMethodException
+        raise UndefinedInterfaceMethodException

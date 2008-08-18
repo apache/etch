@@ -33,4 +33,4 @@ class TaggedDataInput(object):
         @return - a message read from the buffer
         @raise IOException
         """
-        raise UnimplementedInterfaceMethodException
+        raise UndefinedInterfaceMethodException

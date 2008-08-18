@@ -17,3 +17,38 @@ $Id$
 #
 """
 from __future__ import absolute_import
+from ..msg.Field import *
+from ..msg.ImportExportHelper import *
+from ..msg.StructValue import *
+from ..msg.ValueFactory import *
+from ..support.Class2TypeMap import *
+from ..support.Validator_object import *
+
+class SetSerializer(ImportExportHelper):
+    """
+    Serializer for generic Set.
+    """
+    
+    FIELD_NAME = "keys"
+    
+    @classmethod
+    def init(cls, typ, class2type):
+        field = typ.getField(cls.FIELD_NAME)
+        class2type.put(set, typ)
+        typ.setComponentType(set)
+        typ.setImportExportHelper(SetSerializer(typ, field))
+        typ.putValidator(field, Validator_object.get(1))
+        typ.lock()
+        
+    def __init__(self, typ, field):
+        self.__type = typ
+        self.__field = field
+        
+    def importValue(self, struct):
+        struct.checkType(self.__type)
+        return set(struct.get(self.__field))
+    
+    def exportValue(self, vf, value):
+        struct = StructValue(self.__type, vf)
+        struct.put(self.__field, list(value))
+        return struct

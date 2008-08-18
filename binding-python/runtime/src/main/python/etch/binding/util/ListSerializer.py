@@ -17,3 +17,47 @@ $Id$
 #
 """
 from __future__ import absolute_import
+from ..msg.Field import *
+from ..msg.ImportExportHelper import *
+from ..msg.StructValue import *
+from ..msg.Type import *
+from ..msg.ValueFactory import *
+from ..support.Class2TypeMap import *
+from ..support.Validator_object import *
+import types
+
+class ListSerializer(ImportExportHelper):
+    """
+    Serializer for generic list
+    """
+    
+    FIELD_NAME = "values"
+    
+    @classmethod
+    def init(cls, typ, class2type):
+        """
+        Defines custom fields in the value factory so that the import can find them.
+        @param typ
+        @param class2type
+        """
+        field = typ.getField(cls.FIELD_NAME)
+        class2type.put(types.ListType, typ)
+        typ.setComponentType(types.ListType)
+        typ.setImportExportHelper( ListSerializer(typ, field))
+        typ.putValidator(field, Validator_object.get(1))
+        typ.lock()
+    
+    def __init__(self, typ, field):
+        self.__type  = typ
+        self.__field = field
+    
+    def importValue(self, struct):
+        struct.checkType(self.__type)
+        values = struct.get(self.__field)
+        return values
+    
+    def exportValue(self, vf, values):
+        struct = StructValue(self.__type, vf)
+        struct.put(field, values)
+        return struct
+        

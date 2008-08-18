@@ -24,15 +24,13 @@ from ...python.Exceptions     import *
 from .FieldMap       import *
 from .ComboValidator import *
 from .AsyncMode      import *
+from .Direction      import *
 
 class Type(IdName):
     """
     Type denotes the type of a struct or message. When used with a message it
     typically denotes an action or event.
     """
-
-    runValidators   = True
-    """Validators flag"""
 
     def __init__(self, *args, **kwargs):
         """
@@ -50,7 +48,9 @@ class Type(IdName):
         self.__timeout         = 0
         self.__responseField   = None
         self.__stubHelper      = None
+        self.__superType       = None
         self.__asyncMode       = AsyncMode.NONE
+        self.__direction       = Direction.BOTH
         self.__validators      = {}    # TODO: self.__validators should be synchronized?
         self.__fields          = FieldMap()
 
@@ -59,27 +59,7 @@ class Type(IdName):
         @param key
         @return       The validator for this key of this type
         """
-
-        if not self.__class__.runValidators:
-            return None
-
         return self.__validators.get(key, None)
-
-    @classmethod
-    def getRunValidators(cls):
-        """
-        @return       The current setting of runValidators
-        """
-        return cls.runValidators
-
-    @classmethod
-    def setRunValidators(cls, value):
-        """
-        Enables or disables type validation for messages
-
-        @param value
-        """
-        cls.runValidators = value
 
     def putValidator(self, key, vldtr):
         """
@@ -109,7 +89,7 @@ class Type(IdName):
         @param key
         """
         self.checkNotLocked()
-        self.__validators.remove(key)
+        del self.__validators[key]
 
     def getResult(self):
         """
@@ -141,20 +121,12 @@ class Type(IdName):
         self.checkNotLocked()
         self.__helper = helper
 
-    def getClss(self):
+
+    def getComponentType(self):
         """
-        @return       The associated class
+        @return the associated component type for an array of this type
         """
         return self.__clss
-
-    def setClss(self, clss):
-        """
-        Sets the associated class
-
-        @param clss
-        """
-        self.checkNotLocked()
-        self.__clss = clss
 
     def setComponentType(self, clss):
         """
@@ -231,6 +203,7 @@ class Type(IdName):
         """
         @param timeout  the time in milliseconds to wait for this response message
         """
+        self.checkNotLocked()
         if not isinstance(timeout, (types.LongType, types.IntType)):
             raise IllegalArgumentException, "timeout must be an integer"
         if timeout < 0:
@@ -248,19 +221,20 @@ class Type(IdName):
         """
         @param responseField    the field with the value of this response
         """
+        self.checkNotLocked()
         self.__responseField = responseField
     
-    def isAssignableFrom(self, otherType):
+    def isAssignableFrom(self, other):
         """
-        Checks whether this type is assignment compatible with otherType. This 
-        means that the otherType is a subclass of this one
+        Checks whether this type is assignment compatible with other. This 
+        means that the other is a subclass of this one
 
-        @param otherType
+        @param other
         @return     True if this type is assignable from other
         """
-        return other != None and (self == other or self.isAssignableFrom(otherType.superType()))
+        return other != None and (self == other or self.isAssignableFrom(other.superType()))
 
-    def checkIsAssignableFrom(self, otherType):
+    def checkIsAssignableFrom(self, other):
         """
         Checks to see if this type is assignable from the other type.
 
@@ -268,7 +242,7 @@ class Type(IdName):
         @raises IllegalArgumentException if self is not assignable from otherType
 
         """
-        if not self.isAssignableFrom(otherType):
+        if not self.isAssignableFrom(other):
             raise IllegalArgumentException "This is not a super type of other"
             
     def superType(self):
@@ -296,6 +270,23 @@ class Type(IdName):
         Sets the AsyncMode for this type.
         @param mode
         """
+        self.checkNotLocked()
         self.__asyncMode = mode
+    
+    def getDirection(self):
+        """
+        @return the message direction
+        """
+        return self.__direction
+    
+    def setDirection(self, direction):
+        """
+        Sets the message direction
+        @param direction the direction to set
+        """
+        if self.checkNotLocked()
+        self.__direction = direction
+
+
 
     

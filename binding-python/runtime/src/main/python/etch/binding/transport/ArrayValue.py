@@ -18,7 +18,6 @@ $Id$
 """
 from __future__ import absolute_import
 from ...python.Exceptions import *
-from ...util.ArrayIterator import *
 from ..msg.Type import *
 
 class ArrayValue(object):

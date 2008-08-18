@@ -17,3 +17,45 @@ $Id$
 #
 """
 from __future__ import absolute_import
+from ..msg.Field import *
+from ..msg.ImportExportHelper import *
+from ..msg.StructValue import *
+from ..msg.Type import *
+from ..msg.ValueFactory import *
+from ..support.Class2TypeMap import *
+from ..support.Validator_string import *
+from ...util.URL import *
+
+class URLSerializer(ImportExportHelper):
+    """
+    An etch serializer for URL
+    """
+    
+    FIELD_NAME = "urlStr"
+    
+    @classmethod
+    def init(cls, typ, class2type):
+        """
+        Defines custom fields in the value factory so that the importer can find them.
+        
+        @param typ
+        @param class2type
+        """
+        field = typ.getField(cls.FIELD_NAME)
+        class2type.put(URL, typ)
+        typ.setComponentType(URL)
+        typ.setImportExportHelper( URLSerializer(typ, field))
+        typ.putValidator( field, Validator_string.get(0))
+        typ.lock()
+    
+    def __init__(self, typ, field):
+        self.__type = typ
+        self.__field = field
+        
+    def importValue(self, struct):
+        return URL(struct.get(field))
+    
+    def exportValue(self, vf, value):
+        struct = StructValue(self.__type, vf)
+        struct.put(self.__field, repr(value))
+        return struct

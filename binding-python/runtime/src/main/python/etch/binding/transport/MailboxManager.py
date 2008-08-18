@@ -17,161 +17,45 @@ $Id$
 #
 """
 from __future__ import absolute_import
-from __future__ import with_statement
-from .MailboxManagerIntf import *
-from .MessageHandler import *
-from .MailboxMessageSource import *
-from .PlainMailbox import *
-from ..msg.Message import *
-from ..support.Mailbox import *
-from ...util.IdGenerator import *
-from ...util.Log import *
-from ...util.Resources import *
-from ...util.core.Who import *
 from ...python.Exceptions import *
-from ...python.SynchronizeOn import *
+from ..msg.Message import *
+from ..support.DeliveryService import *
+from ..support.Mailbox import *
+from ...util.core.Who import *
 
-class MailboxManager(MailboxManagerIntf,MessageHandler,MailboxMessageSource):
+class MailboxManager(SessionMessage,TransportMessage):
     """
-    MailboxManager is a MessageHandler which accepts packets for possible delivery
-    to a mailbox, or to another message handler if an appropriate mailbox cannot
-    be found. MailboxManager is also a MessageSource, tagging messages with
-    msgids and then forwarding them to another MessageSource. If requested, a
-    mailbox is created with a message's msgid and added to the set of mailboxes
-    waiting for messages.
+    Interface to the mailbox manager as needed by DeliveryService and Mailbox implementors
     """
     
-    def __init__(self, defaultHandler=None, maxDelay=0, uri=None, resources=None):
+    def transportCall(self, recipient, msg):
         """
-        @param defaultHandler - a message handler to receive messages which
-        cannot be delivered to a mailbox
-        @param maxDelay - maximum amount of time to wait for a full mailbox
-        to allow a new message before giving up and delivering to the message
-        handler. 0 means wait forever, -1 means don't wait at all.
-        @param uri - not used
-        @param resources - not used
+        Sends a message which begins a call after allocating a Mailbox to receive any responses
+        
+        @param recipient specifies the recipient when there is the possibility of more than one
+        @param msg the message which begins the call
+        @return the mailbox which will receive responses to this call
         """
-        self.__handler  = defaultHandler
-        self.__maxDelay = maxDelay
-        
-        self.__src = None
-        self.__idGen = IdGenerator(time.time(), 37)
+        raise UndefinedInterfaceMethodException
     
-    def __repr__(self):
-        return "MailboxManager/%s" % repr(self.__src)
-
-    def message(self, *args, **kwargs):
-        # sigh .. overloading
-        if len(args) == 2:
-            return self.isMessageDelivered(*args)
-        else:
-            return self.sendMessage(*args)
-    
-    ## MessageHandler Methods
-    
-    ## TODO: replace calls to (boolean) message(...) with 'queueMessage'??
-    ## boolean message(Who sender, Message msg)
-    def isMessageDelivered(self, sender, message):
-        #Log.report("MailboxManager.recv", "msg", msg)
-        msgid = msg.getInReplyTo()
-        if msgid != None:
-            mb = self.getMailbox(msgid)
-            #Log.report("MailboxManager.recv", "msg", msg, "mb", mb)
-            if mb == None:
-                try:
-                    return mb.message(sender, msg)
-                except InterrupedException, e:
-                    # timeout or mailbox closed -- fall through
-                    pass
-        delivered = handler.message(sender, msg)
-        if not delivered:
-            Log.report("MailboxManager.undelivered", "msg", msg)
-        return delivered
-        
-        
-    ## MessageSource Methods
-    
-    def messagex(self, recipient, msg):
-        msg.setMessageId(self.__idGen.next())
-        # Log.report("MailboxManager.send", "msg", msg)
-        self.__src.messagex(recipient, msg)
-    
-    ## TODO: replace calls to (Mailbox) message(...) with 'getMessageMailbox'
-    ## Mailbox message(Who recipient, Message msg, int maxMessages, int lifetime)
-    def sendMessage(self, recipient, msg, maxMessages, lifetime):
-        if lifetime < 0:
-            raise IllegalArgumentException, "lifetime < 0"
-        
-        msgid = self.__idGen.next()
-        msg.setMessageId(msgid)
-        
-        mb = PlainMailbox(self, msgid, maxDelay, lifetime, maxMessages)
-        self.register(mb)
-        
-        #Log.report("MailboxManager.send", "msg", msg)
-        try:
-            self.__src.messagex(recipient, msg)
-        except Exception, e:
-            self.unregister(mb)
-            raise Exception, e
-        
-        return mb
-    
-    ## Mailbox Methods
-    
-    def register(self, mb):
-        """
-        Adds a mailbox to the set of mailbox receiving responses to messages
-        @param mb
-        """
-        msgid = mb.getMessageId()
-        with SynchronizedOn(self.__mailboxes):
-            if msgid in self.__mailboxes:
-                raise IllegalArgumentException, "Duplicate msgid in mailboxes"
-            self.__mailboxes[msgid] = mb
-
     def unregister(self, mb):
-        with SynchronizedOn(self.__mailboxes):
-            del self.__mailboxes[mb.getMessageId()]
-    
-    def getMailbox(self, msgid):
-        with SynchronizedOn(self.__mailboxes):
-            return self.__mailboxes.get(msgid,None)
+        """
+        Removes the mailbox from the set of mailboxes receiving responses to messages.
+        @param mb a mailbox as returned by 'transportCall(Who, Message)
+        """
+        raise UndefinedInterfaceMethodException
     
     def redeliver(self, sender, msg):
-        self.__handler.message(sender, msg)
-    
-    ## SourceHandler methods
-    
-    def getSource(self):
-        return self.__src
-    
-    def setSource(self, src):
-        self.__src = src
-    
-    def sessionQuery(self, query):
-        return self.__handler.sessionQuery(query)
-    
-    def sessionControl(self, control, value):
-        self.__handler.sessionControl(control, value)
-    
-    def sessionNotify(self, event):
-        self.__handler.sessionNotify(event)
-    
-    ## Source Methods
-    
-    def getHandler(self):
-        return self.__handler
+        """
+        Re-delivers dead letter message from a closed mailbox
         
-    def setHandler(self, handler):
-        self.__handler = handler
-        self.__handler.setSource(self)
+        @param sender
+        @param msg
+        """
+        raise UndefinedInterfaceMethodException
     
-    def transportQuery(self, query):
-        return self.__src.transportQuery(control, value)
     
-    def transportNotify(self, event):
-        self.__src.transportNotify(event)
+        
     
 
     
