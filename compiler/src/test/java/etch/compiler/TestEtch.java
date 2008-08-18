@@ -55,7 +55,7 @@ public class TestEtch
 	public void setup()
 	{
 		cmdLineOption = new CmdLineOptions();
-		cmdLineOption.binding = Backend.BINDING_JAVA;
+		cmdLineOption.binding = "java";
 		HashSet<String> set = new HashSet<String>();
 		set.add( Backend.WHAT_ALL );
 		cmdLineOption.what = set;
@@ -77,7 +77,8 @@ public class TestEtch
 		TestEtchLogHandler logHandler = new TestEtch.TestEtchLogHandler();
 		logHandler.push( source, null );
 		InputStream is1 = new ByteArrayInputStream( source.getBytes() );
-		Etch2.doCompile( options, is1, logHandler );
+		options.lh = logHandler;
+//		Etch2.doCompile( options, is1, logHandler );
 		logHandler.pop();
 		return logHandler;
 	}

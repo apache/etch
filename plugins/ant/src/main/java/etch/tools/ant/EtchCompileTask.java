@@ -18,21 +18,15 @@
 package etch.tools.ant;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.StringTokenizer;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DirectoryScanner;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.types.DirSet;
-import org.apache.tools.ant.types.FileSet;
-import org.apache.tools.ant.types.Path;
 
+import etch.compiler.CmdLineOptions;
 import etch.compiler.EtchCompiler;
-import etch.compiler.EtchMain;
 
 /**
  * Ant task for compiling Etch sources files.
@@ -40,16 +34,15 @@ import etch.compiler.EtchMain;
  */
 public class EtchCompileTask extends Task
 {
-    private static String WHO_DELIMITER = ", ";
-    
     /**
      * Creates a new ant task for running the Etch compiler.
      */
     public EtchCompileTask()
     {
-        includePath  = new LinkedList<File>();
-        what         = new LinkedList<String>();
+        // nothing to do.
     }
+    
+    private CmdLineOptions clo = new CmdLineOptions();
 
     /////////
 
@@ -62,11 +55,8 @@ public class EtchCompileTask extends Task
     {
         DirectoryScanner ds = dirset.getDirectoryScanner( getProject() );
         for (String dir : ds.getIncludedDirectories())
-        {
-            includePath.add(new File(ds.getBasedir(), dir));
-        }
+            clo.includePath.add(new File(ds.getBasedir(), dir));
     }
-    private List<File> includePath;
 
     /**
      * Specifies a source file to compile.
@@ -75,13 +65,10 @@ public class EtchCompileTask extends Task
      */
     public void setFile( File file )
     {
-    	if (sourceFile != null)
+    	if (clo.sourceFile != null)
     		throw new BuildException( "only one file at a time, please" );
-    	System.out.println( "setFile: "+file );
-        sourceFile = file;
+        clo.sourceFile = file;
     }
-    
-    private File sourceFile;
 
     /**
      * Sets the output directory for compiler generated files.
@@ -90,9 +77,8 @@ public class EtchCompileTask extends Task
      */
     public void setOutput( File output )
     {
-        outputDirectory = output;
+        clo.outputDir = output;
     }
-    private File outputDirectory = null;
 
     /**
      * Sets the binding name
@@ -101,22 +87,20 @@ public class EtchCompileTask extends Task
      */
     public void setBinding( String binding )
     {
-        bindingName = binding;
+    	clo.binding = binding;
     }
-    private String bindingName = null;
 
     /**
      * Sets the set of pieces the compiler should generate
      *
      * @param what
      */
-    public void setWhat( String value )
+    public void setWhat( String what )
     {
-        StringTokenizer st = new StringTokenizer(value, WHO_DELIMITER );
+        StringTokenizer st = new StringTokenizer(what, CmdLineOptions.WHAT_DELIMETER );
         while (st.hasMoreElements())
-            what.add(st.nextToken().toUpperCase());            
+            clo.what.add(st.nextToken().toUpperCase());            
     }
-    private List<String> what;
     
     /**
      * Set to ignore the globally reserved words list
@@ -125,9 +109,8 @@ public class EtchCompileTask extends Task
      */
     public void setIgnoreglobal( boolean ignoreglobal )
     {
-        ignoreGlobal = ignoreglobal;
+    	clo.ignoreGlobalWordsList = ignoreglobal;
     }
-    private boolean ignoreGlobal = false;
     
     /**
      * Set to ignore the locally reserved words list
@@ -136,9 +119,8 @@ public class EtchCompileTask extends Task
      */
     public void setIgnorelocal( boolean ignorelocal )
     {
-        ignoreLocal = ignorelocal;
+    	clo.ignoreLocalWordsList = ignorelocal;
     }
-    private boolean ignoreLocal = false;
     
     /**
      * Specify a user-defined reserved words list
@@ -147,31 +129,28 @@ public class EtchCompileTask extends Task
      */
     public void setWordlist(File wordlist)
     {
-        userWordList = wordlist;
+    	clo.userWordsList = wordlist;
     }
-    private File userWordList = null;
 
     /**
      * Ignore the ETCH_INCLUDE_PATH envvar
      *
-     * @param ignoreenv
+     * @param ignoreincludepath
      */
-    public void setIgnoreenv( boolean ignoreenv )
+    public void setIgnoreincludepath( boolean ignoreincludepath )
     {
-        ignoreEnvironmentIncludePath = ignoreenv;
+    	clo.ignoreIncludePath = ignoreincludepath;
     }
-    private boolean ignoreEnvironmentIncludePath = false;
     
     /**
-     * Suppress mixin artifacts
+     * Do not generate mixin artifacts
      *
-     * @param suppressmixin
+     * @param nomixinartifacts
      */
-    public void setSuppressmixin( boolean suppressmixin )
+    public void setNomixinartifacts( boolean nomixinartifacts )
     {
-        suppressMixin = suppressmixin;
+    	clo.noMixinArtifacts = nomixinartifacts;
     }
-    private boolean suppressMixin = false;
     
     /**
      * Set mixin output directory
@@ -180,56 +159,37 @@ public class EtchCompileTask extends Task
      */
     public void setMixinoutput( File mixinoutput )
     {
-        mixinOutputDirectory = mixinoutput;
+    	clo.mixinOutputDir = mixinoutput;
     }
-    private File mixinOutputDirectory = null;
 
     /**
-     * Set to flatten packages
+     * Set to not flatten packages
      *
-     * @param flatten
+     * @param noflattenpackages
      */
-    public void setNoflatten( boolean noFlatten )
+    public void setNoflattenpackages( boolean noflattenpackages )
     {
-        noFlattenPackages = noFlatten;
+    	clo.noFlattenPackages = noflattenpackages;
     }
-    private boolean noFlattenPackages = false;
     
     /**
-     * set to force overwrite of user-modifiable templates
-     *  Impl*Client, Impl*Server, Main*Client, and Main*Listener
+     * Set output directory for compiler generated user editable files.
      *
-     * @param overwrite
+     * @param tmploutputdir
      */
-    public void setOverwritetemplate( boolean overwrite )
+    public void setTemplateoutput(File tmploutputdir)
     {
-        overwriteTemplate = overwrite;
+        clo.templateOutputDir = tmploutputdir;
     }
-    private boolean overwriteTemplate = false;
     
     /**
-     * set to path to output user-modifiable templates
-     *  Impl*Client, Impl*Server, Main*Client, Main*Listener
-     *
-     * @param value
+     * Sets quiet flag.
+     * @param quiet
      */
-    public void setTemplateoutput(File value)
+    public void setQuiet(boolean quiet)
     {
-        templateOutputDirectory = value;
+    	clo.quiet = quiet;
     }
-    private File templateOutputDirectory = null;
-    
-    /**
-     * Sets the path of the directory of jar files for the compiler bindings.
-     * @param value
-     */
-    //public void setEtchLib(String value)
-    //{
-//    	System.out.println("etchLib = "+value);
-    //	this.etchLib = value;
-    //}
-    
-    //private String etchLib;
 
     /** 
      * sets etch.home
@@ -240,6 +200,7 @@ public class EtchCompileTask extends Task
     {
         this.etchHome = value;
     }
+    
     private File etchHome;
 
     /** EXECUTION **/
@@ -254,12 +215,12 @@ public class EtchCompileTask extends Task
     	
     	try
 		{
-			cl = EtchMain.setupClassLoader(etchHome + File.separator + "lib");
+			cl = EtchCompiler.setupClassLoader( etchHome );
 		}
 		catch ( Exception e )
 		{
 			e.printStackTrace();
-			throw new BuildException( "problem setting up etch compiler", e );
+			throw new BuildException( "problem setting up etch compiler class loader", e );
 		}
     	
         EtchCompiler etchCompiler;
@@ -267,70 +228,80 @@ public class EtchCompileTask extends Task
         try
         {
             // Instantiate a new compiler instance
-            etchCompiler = new EtchCompiler(cl);
-            etchCompiler.setQuiet( false );
+            etchCompiler = new EtchCompiler( cl );
         }
         catch (Exception e)
         {
-            throw new BuildException(e.getMessage());
+        	e.printStackTrace();
+            throw new BuildException( "problem setting up etch compiler", e );
+        }
+        
+        try
+        {
+        	etchCompiler.run( clo );
+        }
+        catch ( Exception e )
+        {
+        	e.printStackTrace();
+        	throw new BuildException( "problem running etch compiler", e );
         }
 
         // VALIDATE
 
-        if (bindingName == null)
-            throw new BuildException ("No binding specified.");
-            
-        try
-        {
-            etchCompiler.setBindingName(bindingName);
-            etchCompiler.setIgnoreEnvironmentIncludePath(ignoreEnvironmentIncludePath);        
-            etchCompiler.setMixinSuppressed(suppressMixin);
-            etchCompiler.setFlattenPackages(!noFlattenPackages);        
-            etchCompiler.setOverwriteTemplate(overwriteTemplate);
-            etchCompiler.setIgnoreLocal(ignoreLocal);
-            etchCompiler.setIgnoreGlobal(ignoreGlobal);
-        
-            for (File f: includePath)
-                etchCompiler.addIncludePath(f);
-            
-            for (String w: what)
-                etchCompiler.addWhat(w);
-
-            if (outputDirectory != null)
-                etchCompiler.setOutputDirectory(outputDirectory);
-        
-            if (userWordList != null)
-                etchCompiler.setUserWordsList(userWordList);
-        
-            if (mixinOutputDirectory != null)
-                etchCompiler.setMixinOutputDirectory(mixinOutputDirectory);
-        
-            if (templateOutputDirectory != null)
-                etchCompiler.setTemplateOutputDirectory(templateOutputDirectory);
-        }
-        catch (Exception e)
-        {
-            throw new BuildException("Invalid parameter passed to the compiler:\n" + e.getMessage());
-        }
-        
-        // EXECUTE 
-        
-        boolean status = true;
-    	System.out.println( "compiling "+sourceFile );
-        try
-        {
-            etchCompiler.validateEtchFile(sourceFile);
-            etchCompiler.compile(sourceFile);
-        }
-        catch ( Exception e )
-        { 
-            String msg = String.format("Error Compiling %s: %s", sourceFile, e.getMessage());
-            // TODO log appropriately
-            System.out.println(msg);
-            e.printStackTrace();
-            status = false;
-        }
-        if (!status)
-            throw new BuildException("One or more .etch files failed to compile.");
+//        if (bindingName == null)
+//            throw new BuildException ("No binding specified.");
+//            
+//        try
+//        {
+//            etchCompiler.setBindingName(bindingName);
+//            etchCompiler.setIgnoreEnvironmentIncludePath(ignoreEnvironmentIncludePath);        
+//            etchCompiler.setMixinSuppressed(suppressMixin);
+//            etchCompiler.setFlattenPackages(!noFlattenPackages);        
+//            etchCompiler.setOverwriteTemplate(overwriteTemplate);
+//            etchCompiler.setIgnoreLocal(ignoreLocal);
+//            etchCompiler.setIgnoreGlobal(ignoreGlobal);
+//        
+//            for (File f: includePath)
+//                etchCompiler.addIncludePath(f);
+//            
+//            for (String w: what)
+//                etchCompiler.addWhat(w);
+//
+//            if (outputDirectory != null)
+//                etchCompiler.setOutputDirectory(outputDirectory);
+//        
+//            if (userWordList != null)
+//                etchCompiler.setUserWordsList(userWordList);
+//        
+//            if (mixinOutputDirectory != null)
+//                etchCompiler.setMixinOutputDirectory(mixinOutputDirectory);
+//        
+//            if (templateOutputDirectory != null)
+//                etchCompiler.setTemplateOutputDirectory(templateOutputDirectory);
+//        }
+//        catch (Exception e)
+//        {
+//            throw new BuildException("Invalid parameter passed to the compiler:\n" + e.getMessage());
+//        }
+//        
+//        // EXECUTE 
+//        
+//        boolean status = true;
+//    	System.out.println( "compiling "+sourceFile );
+//        try
+//        {
+//            etchCompiler.validateEtchFile(sourceFile);
+//            etchCompiler.compile(sourceFile);
+//        }
+//        catch ( Exception e )
+//        { 
+//            String msg = String.format("Error Compiling %s: %s", sourceFile, e.getMessage());
+//            // TODO log appropriately
+//            System.out.println(msg);
+//            e.printStackTrace();
+//            status = false;
+//        }
+//        if (!status)
+//            throw new BuildException("One or more .etch files failed to compile.");
     }
 }

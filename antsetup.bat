@@ -6,7 +6,7 @@
 
 rem -- java builds --
 
-set TOOLS_DIR=C:\wks\tools
+set TOOLS_DIR=C:\workspace-etch\tools
 set ANT_HOME=%TOOLS_DIR%\apache-ant\1.7.0
 set JAVA_HOME=C:\Program Files\Java\jdk1.6.0_06
 rem optional
