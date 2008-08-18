@@ -91,11 +91,10 @@ public class TestMapWords
 		}
 
 		@Override
-		public void generate( Module module, CmdLineOptions options, LogHandler lh )
+		public void generate( Module module, CmdLineOptions options )
 			throws Exception
 		{
 			// Not needed for testing
-
 		}
 
 		@Override

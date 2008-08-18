@@ -17,7 +17,6 @@
 
 package etch.bindings.xml.compiler;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringReader;
@@ -37,6 +36,7 @@ import etch.compiler.Backend;
 import etch.compiler.CmdLineOptions;
 import etch.compiler.EtchGrammarConstants;
 import etch.compiler.LogHandler;
+import etch.compiler.Output;
 import etch.compiler.ParseException;
 import etch.compiler.Token;
 import etch.compiler.Version;
@@ -190,52 +190,53 @@ public class Compiler extends Backend
 	private final Template vf_vm;
 
 	@Override
-	public void generate( Module module, CmdLineOptions options,
-		LogHandler lh )
+	public void generate( Module module, CmdLineOptions options )
 		throws Exception
 	{
-
-		this.lh = lh;
+		this.lh = options.lh;
 		
-		File dir = options.outputDir;
+		Output dir = options.output;
 		
-		// ok, we're ready to generate code. make sure the
-		// output directories exist.
-
-		if (dir != null && module.name().name.length() > 0)
+		String m = module.name().name;
+		if (m.length() > 0)
 		{
-			String path = module.name().name.replace( '.', '/' );
-			dir = new File( dir, path );
+			dir = dir.newPackage( m );
 		}
-		else
-		{
-			dir = new File( "." );
-		}
-
-		// System.out.println( "generating to "+dir );
-
-		dir.mkdirs();
 
 		// generate code for each service.
 
 		for (Service intf : module)
 		{
+			// TODO flush gIntf
 			gIntf = intf;
-			generate( intf/*, what*/, dir );
+			try
+			{
+				generate( intf, dir );
+			}
+			finally
+			{
+				// TODO flush gIntf
+				gIntf = null;
+			}
 		}
-		gIntf = null;
 	}
 
+	// TODO flush gIntf
+	@Deprecated
 	private Service gIntf;
 
-	private void generate( final Service intf, /*MessageDirection what, */File dir )
+	private void generate( final Service intf, Output dir )
 		throws Exception
 	{
 		// Generate the value factory file
 
-		doFile( dir, getVfName( intf )+fnSuffix, true,
-			true, new Gen() { public void run( PrintWriter pw ) throws Exception
-				{ generateVf( pw, intf ); } }, lh );
+		doFile( dir, getVfName( intf ) + fnSuffix, lh, new Gen()
+		{
+			public void run( PrintWriter pw ) throws Exception
+			{
+				generateVf( pw, intf );
+			}
+		} );
 	}
 
 	/**

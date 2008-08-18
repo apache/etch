@@ -25,10 +25,20 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * This class contains options to be passed to the Etch compiler.
+ * This class defines options to be passed to the Etch compiler.
  */
 public class CmdLineOptions
 {
+	/**
+	 * Name of the environment variable which contributes to the include path.
+	 */
+	public final static String ETCH_INCLUDE_PATH = "ETCH_INCLUDE_PATH";
+	
+    /**
+     * Separators for items in the "what" list.
+     */
+    public static String WHAT_DELIMETER = ",;: ";
+	
 	/**
 	 * Constructs a new CmdLineOptions from an existing one.
 	 * @param other
@@ -36,19 +46,29 @@ public class CmdLineOptions
 	public CmdLineOptions( CmdLineOptions other )
 	{
 		includePath = new ArrayList<File>(other.includePath);
-		ignoreGlobal = other.ignoreGlobal;
-		ignoreLocal = other.ignoreLocal;
+		ignoreGlobalWordsList = other.ignoreGlobalWordsList;
+		ignoreLocalWordsList = other.ignoreLocalWordsList;
 		userWordsList = other.userWordsList;
 		outputDir = other.outputDir;
 		binding = other.binding;
 		what = new HashSet<String>(other.what);
-		bindingClass = other.bindingClass;
 		mixinOutputDir = other.mixinOutputDir;
 		noMixinArtifacts = other.noMixinArtifacts;
-		isMixinPresent = other.isMixinPresent;
 		noFlattenPackages = other.noFlattenPackages;
 		quiet = other.quiet;
+		templateOutputDir = other.templateOutputDir;
+		ignoreIncludePath = other.ignoreIncludePath;
+		sourceFile = other.sourceFile;
+		// EPHEMERAL STUFF //
+		cl = other.cl;
 		lh = other.lh;
+		isMixinPresent = other.isMixinPresent;
+		effectiveIncludePath = other.effectiveIncludePath;
+		noDirOnOutputFiles = other.noDirOnOutputFiles;
+		workingDir = other.workingDir;
+		output = other.output;
+		templateOutput = other.templateOutput;
+		mixinOutput = other.mixinOutput;
 	}
 	
 	/**
@@ -56,7 +76,8 @@ public class CmdLineOptions
 	 */
 	public CmdLineOptions()
 	{
-		// nothing to do.
+		includePath = new ArrayList<File>();
+		what = new HashSet<String>();
 	}
 	
 	/**
@@ -68,21 +89,23 @@ public class CmdLineOptions
 	 * Flag indicates whether to ignore the globally reserved word list (-g
 	 * option).
 	 */
-	public boolean ignoreGlobal;
+	public boolean ignoreGlobalWordsList;
 
 	/**
 	 * Flag indicates whether to ignore the locally reserved word list (-l
 	 * option).
 	 */
-	public boolean ignoreLocal;
+	public boolean ignoreLocalWordsList;
 
 	/**
 	 * The path of the user-defined reserved words list (-W option).
 	 */
-	public String userWordsList;
+	public File userWordsList;
 
 	/**
-	 * The location of the generated files (-d option).
+	 * The destination directory of the generated files (-d option). If not
+	 * specified, the same directory of the source file. Not specifying also
+	 * turns on {@link #noDirOnOutputFiles}.
 	 */
 	public File outputDir;
 
@@ -95,33 +118,22 @@ public class CmdLineOptions
 	/**
 	 * This specifies the file(s) we need to generate (-w option). Valid values
 	 * depend upon the binding, but examples include ALL, BOTH, SERVER, CLIENT,
-	 * IMPL, MAIN, and NONE.
+	 * IMPL, MAIN, and NONE. HELP might give you some.
 	 */
 	public Set<String> what;
 
 	/**
-	 * This class specifies the binding to use. If the string binding is
-	 * specified then this variable does not need to be defined. It is currently
-	 * only used internally by Etch2.
-	 * @deprecated the compiler should really specify binding name.
-	 */
-	@Deprecated
-	public Class<?> bindingClass;
-
-	/**
-	 * The location of the generated mixin files (-m option).
+	 * The destination directory of the generated mixin files (-m option). If
+	 * not specifed, and if {@link #noMixinArtifacts} allows, mixin artifacts
+	 * are generated into {@link #outputDir}.
 	 */
 	public File mixinOutputDir;
 
 	/**
 	 * Flag indicates that mixin artifacts should not be generated (-n option).
+	 * If false, mixin artifacts are generated into {@link #mixinOutputDir}.
 	 */
 	public boolean noMixinArtifacts;
-
-	/**
-	 * Flag indicates that a mixin has been detected.
-	 */
-	public boolean isMixinPresent;
 
 	/**
 	 * Flag indicates whether the module name should should be flattened to
@@ -134,9 +146,74 @@ public class CmdLineOptions
 	 * Flag indicates that the compiler should not report progress (-q option).
 	 */
 	public boolean quiet;
+
+	/**
+	 * Destination directory of the user editable template files. If not
+	 * specified, same as {@link #outputDir}.
+	 */
+	public File templateOutputDir;
+
+	/**
+	 * Ignore the ETCH_INCLUDE_PATH environment variable.
+	 */
+	public boolean ignoreIncludePath;
+
+	/**
+	 * The source file to compile.
+	 */
+	public File sourceFile;
+
+	/////////////////////
+	// EPHEMERAL STUFF //
+	/////////////////////
+
+	/**
+	 * The binding class loader.
+	 */
+	public ClassLoader cl;
 	
 	/**
 	 * Destination of various error or status messages.
 	 */
 	public LogHandler lh;
+
+	/**
+	 * Flag indicates that mixin artifacts have been generated.
+	 */
+	public boolean isMixinPresent;
+
+	/**
+	 * Computed effective includePath, including parent dir of source file,
+	 * include path command line elements, and path elements from system
+	 * environment variable.
+	 */
+	public List<File> effectiveIncludePath;
+	
+	/**
+	 * If true, output files are not qualified with a directory name derived
+	 * from the module name. If false, output files are qualified with a
+	 * directory name under control of {@link #noFlattenPackages}.
+	 */
+	public boolean noDirOnOutputFiles;
+
+	/**
+	 * The parent directory of the source. This is where we search for include
+	 * files and also where we put output files if outputDir is not specified.
+	 */
+	public File workingDir;
+
+	/**
+	 * Output for service generated files.
+	 */
+	public Output output;
+
+	/**
+	 * Output for service user-editable generated files.
+	 */
+	public Output templateOutput;
+
+	/**
+	 * Output for mixed in artifacts.
+	 */
+	public Output mixinOutput;
 }
