@@ -231,7 +231,7 @@ public class Compiler extends Backend
 
 		boolean ignoreGlobal = options.ignoreGlobalWordsList;
 		boolean ignoreLocal = options.ignoreLocalWordsList;
-		String userWords = options.userWordsList.getPath();
+		String userWords = options.userWordsList != null ? options.userWordsList.getPath() : null;
 		Set<String> what = options.what;
 
 		// Load the reserved words lists if any have been provided.

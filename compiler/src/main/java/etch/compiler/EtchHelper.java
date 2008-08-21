@@ -628,7 +628,7 @@ public class EtchHelper
 		InputStream oStream = null;
 
 		// Search the etch path for the file
-		for (File f : servobj.getCmdLineOptions().includePath)
+		for (File f : servobj.getCmdLineOptions().effectiveIncludePath)
 		{
 			try
 			{

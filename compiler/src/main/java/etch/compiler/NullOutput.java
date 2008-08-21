@@ -26,7 +26,7 @@ public class NullOutput implements Output
 		return this;
 	}
 	
-	public void report()
+	public void report( String what )
 	{
 		// ignore.
 	}

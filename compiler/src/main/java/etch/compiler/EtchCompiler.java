@@ -20,7 +20,6 @@ package etch.compiler;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -62,26 +61,38 @@ public class EtchCompiler
     {
     	clo.cl = cl;
     	
-    	clo.lh = new CompilerLogHandler( "Command" );
-    	clo.lh.setQuiet( clo.quiet );
+    	if (clo.lh == null)
+    	{
+	    	clo.lh = new CompilerLogHandler( "Command" );
+	    	clo.lh.setQuiet( clo.quiet );
+    	}
     	
-    	if (!initBinding( clo ))
+    	if (!initBindingClass( clo ))
     		return;
     	
     	if (!checkSourceFile( clo ))
     		return;
     	
+    	initOutput( clo );
+        
 		compile( clo );
+    	
+        clo.lh.logMessage( LogHandler.LEVEL_INFO, null, "Saving Resources...\n");
+        
+        saveOutput( clo );
     }
 
-	private boolean initBinding( CmdLineOptions clo )
+	private static boolean initBindingClass( CmdLineOptions clo )
 	{
+		if (clo.bindingClass != null)
+			return true;
+
 		String n = clo.binding;
 		
 		if (n == null || n.length() == 0)
 		{
 			clo.lh.logMessage( LogHandler.LEVEL_ERROR, null,
-				"Binding not specified." );
+				"Binding not specified.\n" );
 			return false;
 		}
 		
@@ -89,59 +100,74 @@ public class EtchCompiler
 		{
 			// TODO find some way to list the bindings?
 			clo.lh.logMessage( LogHandler.LEVEL_ERROR, null,
-				"Binding help not implemented." );
+				"Binding help not implemented.\n" );
 			return false;
+		}
+		
+		if (n.equalsIgnoreCase( "null" ))
+		{
+			clo.bindingClass = NullCompiler.class;
+			return true;
 		}
 		
 		String cn = String.format( BINDING_FORMAT, n );
 		
 		try
 		{
-			bindingClass = cl.loadClass( cn );
+			clo.bindingClass = clo.cl.loadClass( cn );
+			return true;
 		}
 		catch ( ClassNotFoundException e )
 		{
-			clo.lh.logMessage( LogHandler.LEVEL_ERROR, null,
-				String.format( "Binding '%s' could not be loaded; class '%s' not in classpath.", n, cn ) );
+			clo.lh.logMessage( LogHandler.LEVEL_ERROR, null, String.format(
+				"Binding '%s' could not be loaded; class '%s' not in classpath.\n",
+				n, cn ) );
 			return false;
 		}
-		
-		try
+		catch ( RuntimeException e )
 		{
-			binding = (Backend) bindingClass.newInstance();
-		}
-		catch ( Exception e )
-		{
-			clo.lh.logMessage( LogHandler.LEVEL_ERROR, null,
-				String.format( "Binding '%s' could not be initialized; caught exception %s.", n, e ) );
+			clo.lh.logMessage( LogHandler.LEVEL_ERROR, null, String.format(
+				"Binding '%s' could not be loaded; class '%s' threw exception %s\n",
+				n, cn, e ) );
 			e.printStackTrace();
 			return false;
 		}
-		
-		return true;
+	}
+	
+	private static boolean initBackend( CmdLineOptions clo )
+	{
+		try
+		{
+			clo.backend = (Backend) clo.bindingClass.newInstance();
+			return true;
+		}
+		catch ( Exception e )
+		{
+			clo.lh.logMessage( LogHandler.LEVEL_ERROR, null, String.format(
+				"Binding '%s' could not be initialized; caught exception %s.\n",
+				clo.binding, e ) );
+			e.printStackTrace();
+			return false;
+		}
 	}
     
     private final static String BINDING_FORMAT = "etch.bindings.%s.compiler.Compiler";
-    
-    private Class<?> bindingClass;
-    
-    private Backend binding;
 
-	private boolean checkSourceFile( CmdLineOptions clo )
+	private static boolean checkSourceFile( CmdLineOptions clo )
 	{
 		File f = clo.sourceFile;
 		
 		if (!f.isFile())
 		{
-			clo.lh.logMessage( LogHandler.LEVEL_ERROR, null,
-				String.format( "Source file '%s' does not exist or is not a file.", f ) );
+			clo.lh.logMessage( LogHandler.LEVEL_ERROR, null, String.format(
+				"Source file '%s' does not exist or is not a file.\n", f ) );
 			return false;
 		}
 		
 		if (!f.getName().endsWith( ".etch" ))
 		{
-			clo.lh.logMessage( LogHandler.LEVEL_ERROR, null,
-				String.format( "Source file '%s' must have .etch extension.", f ) );
+			clo.lh.logMessage( LogHandler.LEVEL_ERROR, null, String.format(
+				"Source file '%s' must have .etch extension.\n", f ) );
 			return false;
 		}
 		
@@ -207,7 +233,7 @@ public class EtchCompiler
             
             if (!d.isDirectory() || !d.canRead())
             	throw new IOException( String.format(
-            		"Specified $ETCH_HOME/lib is not a directory: %s", s ) );
+            		"Specified $ETCH_HOME/lib is not a directory: %s\n", s ) );
 
             d = d.getCanonicalFile();
             
@@ -220,7 +246,7 @@ public class EtchCompiler
                 if (!x.endsWith( ".jar" ))
                     continue;
                 if (!mainClassPath.contains( x ))
-                    ncl.addURL( f.toURL() );
+                    ncl.addURL( f.toURI().toURL() );
             }
             cl = ncl;
         }
@@ -249,16 +275,29 @@ public class EtchCompiler
     
     // includePath
 
-    private void initIncludePath( CmdLineOptions clo )
+    /**
+     * Initialize {@link CmdLineOptions#effectiveIncludePath} given the
+     * compilation we are about to perform.
+     * @param clo
+     */
+    private static void initIncludePath( CmdLineOptions clo ) throws IOException
     {
-    	if (clo.effectiveIncludePath != null)
-    		return;
+    	System.out.println( "initIncludePath: sourceFile = "+clo.sourceFile );
+    	System.out.println( "initIncludePath: workingDir = "+clo.workingDir );
+    	System.out.println( "initIncludePath: includePath = "+clo.includePath );
     	
     	// includePath is composed of the source file's directory, then
     	// the paths specifies by -I command line directives, then the
     	// paths specified by the ETCH_INCLUDE_PATH environment variable.
     	
-    	clo.effectiveIncludePath = new ArrayList<File>();
+    	clo.effectiveIncludePath = new ArrayList<File>( );
+    	
+    	// add directory of source file.
+    	if (clo.sourceFile != null)
+    		clo.effectiveIncludePath.add(
+    			clo.sourceFile.getCanonicalFile().getParentFile() );
+    	
+    	// add working directory.
     	if (clo.workingDir != null)
     		clo.effectiveIncludePath.add( clo.workingDir );
     	
@@ -268,7 +307,7 @@ public class EtchCompiler
     			clo.effectiveIncludePath.add( f );
     		else
     			clo.lh.logMessage( LogHandler.LEVEL_WARNING, null,
-            		"Include path element doesn't exist: "+f );
+            		"Include path element doesn't exist: "+f+"\n" );
     	}
     	
     	if (!clo.ignoreIncludePath)
@@ -284,20 +323,19 @@ public class EtchCompiler
 	                	clo.effectiveIncludePath.add( f );
 	                else
 	                	clo.lh.logMessage( LogHandler.LEVEL_WARNING, null,
-	                		"Environment include path element doesn't exist: "+f );
+	                		"Environment include path element doesn't exist: "+f+"\n" );
 	            }
 	        }
     	}
+    	System.out.println( "initIncludePath: effectiveIncludePath = "+clo.effectiveIncludePath );
     }
 
-	private void compile( CmdLineOptions clo ) throws Exception
+	private static Module compile( CmdLineOptions clo ) throws Exception
 	{
 		InputStream is = new BufferedInputStream( new FileInputStream( clo.sourceFile ) );
-		clo.workingDir = clo.sourceFile.getCanonicalFile().getParentFile();
-    	
     	try
 		{
-			compile( clo, is );
+			return compile( clo, is );
 		}
 		finally
 		{
@@ -305,39 +343,42 @@ public class EtchCompiler
 		}
 	}
     
-    private void compile( CmdLineOptions options, InputStream is ) throws Exception
+    private static Module compile( CmdLineOptions clo, InputStream is ) throws Exception
 	{
-    	initIncludePath( options );
+    	initIncludePath( clo );
     	
-    	options.lh.logMessage( LogHandler.LEVEL_INFO, null,
-    		options.sourceFile != null
-    			? String.format( "Compiling %s ...\n", options.sourceFile )
+    	if (!initBackend( clo ))
+    		return null;
+    	
+    	clo.lh.logMessage( LogHandler.LEVEL_INFO, null,
+    		clo.sourceFile != null
+    			? String.format( "Compiling %s ...\n", clo.sourceFile )
     			: "Compiling ...\n" );
 
-    	final EtchGrammar parser = new EtchGrammar( binding, is );
+    	final EtchGrammar parser = new EtchGrammar( clo.backend, is );
         
         final Module m;
         
         // Parse .etch source
         try
         {
-            m = parser.module( options );
-            options.lh.logMessage( LogHandler.LEVEL_INFO, null, " Parsed Ok.\n");
+            m = parser.module( clo );
+            clo.lh.logMessage( LogHandler.LEVEL_INFO, null, "Parsed Ok.\n");
             m.check();
-            options.lh.logMessage( LogHandler.LEVEL_INFO, null, " Checked Ok.\n");
+            clo.lh.logMessage( LogHandler.LEVEL_INFO, null, "Checked Ok.\n" );
         }
         catch ( ParseException e )
         {
             String fmt = e.getMessage();
-            options.lh.logMessage( LogHandler.LEVEL_ERROR, e.currentToken, fmt);
-            // TODO better exception
+            clo.lh.logMessage( LogHandler.LEVEL_ERROR, e.currentToken, fmt+"\n" );
+            // TODO better report of a ParseException
             throw new Exception(e.currentToken + " " + fmt);
         }
         catch ( Exception e)
         {
             String fmt = e.getMessage();
-            options.lh.logMessage( LogHandler.LEVEL_ERROR, null, fmt);
-            // TODO better exception
+            clo.lh.logMessage( LogHandler.LEVEL_ERROR, null, fmt+"\n" );
+            // TODO better report of an Exception
             throw e;
         }
         
@@ -345,18 +386,12 @@ public class EtchCompiler
         
         try
         {
-        	initOutput( options );
-        	
             // TODO report work lists?
-        	options.lh.logMessage( LogHandler.LEVEL_INFO, null, " Generating Resources... \n");
+        	clo.lh.logMessage( LogHandler.LEVEL_INFO, null, "Generating Resources...\n");
             
             // TODO integrate includePath with code generation.
-            binding.generate( m, options );
+            clo.backend.generate( m, clo );
 
-            options.lh.logMessage( LogHandler.LEVEL_INFO, null, " Saving Resources... \n");
-            
-            saveOutput( options );
-            
             // Move generated code to target location
             //   the parser will set 'isMixinPresent' if a "mixin" directive is in the .etch file
             // TODO would be nice if the backend just put things in the right place from the start .. sigh re-factor later        
@@ -365,14 +400,15 @@ public class EtchCompiler
         catch ( Exception e )
         {
             String fmt = e.getMessage();
-            // TODO better exception
+            // TODO better report of an Exception
             e.printStackTrace();
             throw new Exception(fmt);
         }
 
         // Complete
 
-        options.lh.logMessage( LogHandler.LEVEL_INFO, null, " Compile Done.\n");
+        clo.lh.logMessage( LogHandler.LEVEL_INFO, null, "Compile Done.\n");
+        return m;
     }
 
 //    private static class GeneratedFiles
@@ -504,17 +540,30 @@ public class EtchCompiler
 //        
 //    }
 
-	private void initOutput( CmdLineOptions options )
+	private static void initOutput( CmdLineOptions clo )
 	{
-		options.output = new FileOutput();
-		options.templateOutput = new FileOutput();
-		options.mixinOutput = options.noMixinArtifacts ? new NullOutput() : new FileOutput();
+		clo.output = new FileOutput();
+		clo.templateOutput = new FileOutput();
+		clo.mixinOutput = clo.noMixinArtifacts ? new NullOutput() : new FileOutput();
 	}
 
-	private void saveOutput( CmdLineOptions options )
+	private static void saveOutput( CmdLineOptions clo )
 	{
-		// TODO Auto-generated method stub
-		options.output.report();
+		// TODO implement saveOutput
+		clo.output.report( "output" );
+		clo.templateOutput.report( "templateOutput" );
+		clo.mixinOutput.report( "mixinOutput" );
+		
+		if (clo.testing)
+			return;
+		
+//		options.outputDir;
+//		options.templateOutputDir;
+//		options.mixinOutputDir;
+//		options.noMixinArtifacts;
+//		options.noFlattenPackages;
+//		options.workingDir;
+//		options.noDirOnOutputFiles;
 	}
 
 	/**
@@ -523,150 +572,257 @@ public class EtchCompiler
 	 * @param n
 	 * @param opts
 	 * @return the constructed Mixin object, or null.
+	 * @throws Exception 
 	 */
-	public static Module parseModule( Service intf, Name n, Map<String, Opt> opts )
+	public static Module parseModule( Service intf, Name n, Map<String,
+		Opt> opts ) throws Exception
 	{
-		CmdLineOptions clo = intf.getCmdLineOptions();
+		CmdLineOptions clo = new CmdLineOptions( intf.getCmdLineOptions() );
+		
+		// find the mixin file
+		
+		String fn = n.name;
+		
+		// fn is something like a.b.c.d or perhaps just plain d.
+		//
+		// we will look for d.etch, a/b/c/d.etch, and a.b.c/d.etch.
+		//
+		// we can look in the same directory as the original source we are
+		// compiling (the working dir), or any of the include path directories.
+		
+		String module;
+		String file;
+		int i = fn.lastIndexOf( '.' );
+		if (i >= 0)
+		{
+			module = fn.substring( 0, i );
+			file = fn.substring( i+1 );
+		}
+		else
+		{
+			module = null;
+			file = fn;
+		}
+		
+		file = file + ".etch";
+		
+		System.out.printf( "searching for mixin '%s' module '%s'\n", file, module );
+		System.out.println( "includePath = "+clo.includePath );
+		System.out.println( "effectiveIncludePath = "+clo.effectiveIncludePath );
+		
+		List<File> list = new ArrayList<File>();
+		
+		// look for the unqualified name
+		find( list, clo, null, file );
+		
+		if (module != null)
+		{
+			// look for the qualified name
+			find( list, clo, module, file );
+			find( list, clo, module.replace( '.', '/' ), file );
+		}
+		
+		if (list.isEmpty())
+			return null;
+		
+		File f = list.get( 0 );
+		System.out.println( "mixing in = "+f );
+		
+		return parseModule0( clo, n, f );
+	}
+	
+	private static void find( List<File> list, CmdLineOptions clo, String path,
+		String file ) throws IOException
+	{
+		for (File d: clo.effectiveIncludePath)
+		{
+			File f = d;
+			
+			if (path != null)
+				f = new File( f, path );
+			
+			f = new File( f, file ).getCanonicalFile();
+			
+			if (f.isFile() && !list.contains( f ))
+				list.add( f );
+		}
+	}
+
+	/**
+	 * @param clo
+	 * @param n
+	 * @param f
+	 * @return the parsed module of the mixin.
+	 * @throws Exception
+	 */
+	public static Module parseModule0( CmdLineOptions clo, Name n, File f )
+		throws Exception
+	{
+		clo.sourceFile = f;
+		clo.output = clo.mixinOutput;
+		
+		clo.templateOutput = new NullOutput();
+		clo.what.remove( Backend.WHAT_MAIN );
+		clo.what.remove( Backend.WHAT_IMPL );
+		
+		if (clo.noMixinArtifacts)
+		{
+			clo.what.clear();
+			clo.what.add( Backend.WHAT_NONE );
+		}
+		
+		clo.lh.logMessage( LogHandler.LEVEL_INFO, n.token,
+			"Compiling mixin file: " + n.name + " at line : "
+				+ n.token.beginLine + "\n" );
+		clo.lh.push( f.getName(), n.token.beginLine );
 		try
 		{
+			return compile( clo );
+		}
+		finally
+		{
+			clo.lh.pop();
 			clo.lh.logMessage( LogHandler.LEVEL_INFO, n.token,
-			" Checking Mixin file: " + n.name + " at line : "
-				+ n.token.beginLine + "\n" );
-			
-			String filename = n.name;
-			filename = filename.replace( '.', '/' );
-			filename = filename + ".etch";
-			List<File> list = clo.includePath;
-			String searchPath = null;
-			File etchFile = null;
-			boolean mixinFileExist = false;
-			
-			if (list != null)
-			{
-				for (int i = 0; i < list.size(); i++)
-				{
-					File f = list.get( i );
-					if (f != null)
-					{
-						searchPath = f.getAbsolutePath() + "/" + filename;
-						etchFile = new File( searchPath );
-						if (etchFile.exists())
-						{
-							mixinFileExist = true;
-							break;
-						}
-					}
-				}
-				if (mixinFileExist)
-				{
-	
-					clo.lh.logMessage( LogHandler.LEVEL_INFO, n.token,
-						" Found mixin file " + etchFile.getAbsolutePath()
-							+ " in Include Path \n" );
-					// System.out.println(" We found the file " + etchFile.getName()
-					// + "
-					// Now lets try to generate the parsed tree");
-					
-					// Does -d or -dm option exist. If not return
-					if (!clo.noMixinArtifacts)
-					{
-						if (clo.outputDir == null
-							&& clo.mixinOutputDir == null)
-						{
-							clo.lh
-							.logMessage(
-								LogHandler.LEVEL_ERROR,
-								n.token,
-								"-d or -m option is not specified. Please specify one of these"
-								+ " options. Mixin artifacts will only be generated when atleast one of these options"
-								+ " is present \n" );
-	
-							return null;
-						}
-					}
-					
-					InputStream is = null;
-					try
-					{
-						is = new java.io.FileInputStream( etchFile );
-					}
-					catch ( FileNotFoundException e1 )
-					{
-						e1.printStackTrace();
-					}
-	
-					clo.lh.logMessage( LogHandler.LEVEL_INFO, null,
-						"Parsing file " + etchFile.getAbsolutePath() + "\n" );
-					
-					clo.lh.push( etchFile.getName(), new Integer(
-						n.token.beginLine ) );
-					
-					try
-					{
-						CmdLineOptions cmdLineObject = new CmdLineOptions(clo);
-						HashSet<String> mixinWhat = new HashSet<String>();
-						if (cmdLineObject.noMixinArtifacts)
-						{
-							cmdLineObject.isMixinPresent = false;
-							mixinWhat.add(Backend.WHAT_NONE);
-						}
-						else
-						{
-							cmdLineObject.isMixinPresent = true;
-							mixinWhat = whatForMixin(cmdLineObject.what);
-						}
-						cmdLineObject.what = mixinWhat;
-						
-//						EtchCompiler.compile( intf.getCmdLineOptions(), is );
-					}
-					finally
-					{
-						clo.lh.pop();
-					}
-				}
-				clo.lh.logMessage( LogHandler.LEVEL_ERROR, n.token,
-					" Mixin file does not exist in Include Path. \n" );
-			}
-			else
-			{
-				clo.lh.logMessage( LogHandler.LEVEL_ERROR, n.token,
-					" No Include Path defined for Mixin File \n" );
-			}
+				"Done compiling mixin file: " + n.name + " at line : "
+					+ n.token.beginLine + "\n" );
 		}
-		catch (Exception e) {
-			clo.lh.logMessage( LogHandler.LEVEL_ERROR, n.token,
-			" Unexpected Error occured during parsing mixin \n" );
-			e.printStackTrace();
-		}
-
-		return null;
+		
+//		try
+//		{
+//			
+//			String filename = n.name;
+//			filename = filename.replace( '.', '/' );
+//			filename = filename + ".etch";
+//			List<File> list = clo.includePath;
+//			String searchPath = null;
+//			File etchFile = null;
+//			boolean mixinFileExist = false;
+//			
+//			if (list != null)
+//			{
+//				for (int i = 0; i < list.size(); i++)
+//				{
+//					File f = list.get( i );
+//					if (f != null)
+//					{
+//						searchPath = f.getAbsolutePath() + "/" + filename;
+//						etchFile = new File( searchPath );
+//						if (etchFile.exists())
+//						{
+//							mixinFileExist = true;
+//							break;
+//						}
+//					}
+//				}
+//				if (mixinFileExist)
+//				{
+//	
+//					clo.lh.logMessage( LogHandler.LEVEL_INFO, n.token,
+//						" Found mixin file " + etchFile.getAbsolutePath()
+//							+ " in Include Path \n" );
+//					// System.out.println(" We found the file " + etchFile.getName()
+//					// + "
+//					// Now lets try to generate the parsed tree");
+//					
+//					// Does -d or -dm option exist. If not return
+//					if (!clo.noMixinArtifacts)
+//					{
+//						if (clo.outputDir == null
+//							&& clo.mixinOutputDir == null)
+//						{
+//							clo.lh
+//							.logMessage(
+//								LogHandler.LEVEL_ERROR,
+//								n.token,
+//								"-d or -m option is not specified. Please specify one of these"
+//								+ " options. Mixin artifacts will only be generated when atleast one of these options"
+//								+ " is present \n" );
+//	
+//							return null;
+//						}
+//					}
+//					
+//					InputStream is = null;
+//					try
+//					{
+//						is = new java.io.FileInputStream( etchFile );
+//					}
+//					catch ( FileNotFoundException e1 )
+//					{
+//						e1.printStackTrace();
+//					}
+//	
+//					clo.lh.logMessage( LogHandler.LEVEL_INFO, null,
+//						"Parsing file " + etchFile.getAbsolutePath() + "\n" );
+//					
+//					clo.lh.push( etchFile.getName(), n.token.beginLine );
+//					
+//					try
+//					{
+//						CmdLineOptions cmdLineObject = new CmdLineOptions(clo);
+//						HashSet<String> mixinWhat = new HashSet<String>();
+//						if (cmdLineObject.noMixinArtifacts)
+//						{
+//							cmdLineObject.isMixinPresent = false;
+//							mixinWhat.add(Backend.WHAT_NONE);
+//						}
+//						else
+//						{
+//							cmdLineObject.isMixinPresent = true;
+//							mixinWhat = whatForMixin(cmdLineObject.what);
+//						}
+//						cmdLineObject.what = mixinWhat;
+//						
+////						EtchCompiler.compile( intf.getCmdLineOptions(), is );
+//					}
+//					finally
+//					{
+//						clo.lh.pop();
+//					}
+//				}
+//				clo.lh.logMessage( LogHandler.LEVEL_ERROR, n.token,
+//					" Mixin file does not exist in Include Path. \n" );
+//			}
+//			else
+//			{
+//				clo.lh.logMessage( LogHandler.LEVEL_ERROR, n.token,
+//					" No Include Path defined for Mixin File \n" );
+//			}
+//		}
+//		catch (Exception e) {
+//			clo.lh.logMessage( LogHandler.LEVEL_ERROR, n.token,
+//			" Unexpected Error occured during parsing mixin \n" );
+//			e.printStackTrace();
+//		}
+//
+//		return null;
 	}
 	
-	private static HashSet<String> whatForMixin( Set<String> what )
-	{
-		HashSet<String> mixinWhat = new HashSet<String>();
-
-		if (what.contains( Backend.WHAT_BOTH ))
-		{
-			mixinWhat.add( Backend.WHAT_BOTH );
-		}
-
-		if (what.contains( Backend.WHAT_CLIENT ))
-		{
-			mixinWhat.add( Backend.WHAT_CLIENT );
-		}
-
-		if (what.contains( Backend.WHAT_SERVER ))
-		{
-			mixinWhat.add( Backend.WHAT_SERVER );
-		}
-
-		if (what.contains( Backend.WHAT_NONE ))
-		{
-			mixinWhat.clear();
-			mixinWhat.add( Backend.WHAT_NONE );
-		}
-
-		return mixinWhat;
-	}
+//	private static HashSet<String> whatForMixin( Set<String> what )
+//	{
+//		HashSet<String> mixinWhat = new HashSet<String>();
+//
+//		if (what.contains( Backend.WHAT_BOTH ))
+//		{
+//			mixinWhat.add( Backend.WHAT_BOTH );
+//		}
+//
+//		if (what.contains( Backend.WHAT_CLIENT ))
+//		{
+//			mixinWhat.add( Backend.WHAT_CLIENT );
+//		}
+//
+//		if (what.contains( Backend.WHAT_SERVER ))
+//		{
+//			mixinWhat.add( Backend.WHAT_SERVER );
+//		}
+//
+//		if (what.contains( Backend.WHAT_NONE ))
+//		{
+//			mixinWhat.clear();
+//			mixinWhat.add( Backend.WHAT_NONE );
+//		}
+//
+//		return mixinWhat;
+//	}
 }

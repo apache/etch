@@ -36,15 +36,24 @@ public class EtchMain extends Program
      */
     public static void main( String[] args ) throws Exception
     {
-        try
-        {
-            main( new EtchMain(), args );
-        }
+    	new EtchMain().doMain( args );
+    }
+    
+    /**
+     * Runs the main program, parsing command line arguments and performing
+     * the action.
+     * @param args
+     * @throws Exception
+     */
+    public void doMain( String[] args ) throws Exception
+    {
+    	try
+    	{
+    		main( this, args );
+    	}
         catch ( Throwable e )
         {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-            System.exit( 3 );
+            exit( 3, toString(), e.toString(), true );
             return;
         }
     }
@@ -122,6 +131,8 @@ public class EtchMain extends Program
         cp.defineNullOption( "-f|--no-flatten-packages", "noFlattenPackages",
             "namespace directory tree should not be flattened",
             Option.SINGLETON );
+        
+        cp.defineNullOption( "--testing", "setTesting", "", Option.HIDDEN );
 
         cp.defineFileParameter( "file", "setFile",
             "etch source file to compile", true, false, null );
@@ -304,10 +315,28 @@ public class EtchMain extends Program
      * @param option
      * @param token
      */
-    public void noFlattenPackages( CommandParser cp, Option option, String token)
+    public void noFlattenPackages( CommandParser cp, Option option, String token )
     {
     	clo.noFlattenPackages = true;
     }
+    
+    /**
+     * Sets the hidden testing flag.
+     * @param cp
+     * @param option
+     * @param token
+     */
+    public void setTesting( CommandParser cp, Option option, String token )
+    {
+    	clo.testing = true;
+    	testingClo = clo;
+    }
+    
+    /**
+     * If --testing is on the command line, the CmdLineOptions is saved
+     * here for reference by unit testing programs.
+     */
+    public CmdLineOptions testingClo;
 
     /**
      * Sets the etch source file to compile.
@@ -323,67 +352,11 @@ public class EtchMain extends Program
     @Override
     protected void run() throws Exception
     {
-        // Instantiate a new compiler instance
+        // Instantiate a new compiler instance and run it.
     	ClassLoader cl = EtchCompiler.setupClassLoader( null );
         EtchCompiler etchCompiler = new EtchCompiler( cl );
         etchCompiler.run( clo );
-        
-//
-//        // VALIDATE
-//
-//        try
-//        {
-//            etchCompiler.setBindingName(bindingName);
-//            etchCompiler.setIgnoreEnvironmentIncludePath(ignoreEnvironmentIncludePath);        
-//            etchCompiler.setMixinSuppressed(mixinSuppressed);
-//            etchCompiler.setFlattenPackages(!noFlattenPackages);        
-//            etchCompiler.setOverwriteTemplate(false);
-//            etchCompiler.setIgnoreLocal(ignoreLocal);
-//            etchCompiler.setIgnoreGlobal(ignoreGlobal);
-//        
-//            for (File f: includePath)
-//                etchCompiler.addIncludePath(f);
-//            
-//            for (String w: what)
-//                etchCompiler.addWhat(w);
-//
-//            if (outputDirectory != null)
-//                etchCompiler.setOutputDirectory(outputDirectory);
-//        
-//            if (userWordList != null)
-//                etchCompiler.setUserWordsList(userWordList);
-//        
-//            if (mixinOutputDirectory != null)
-//                etchCompiler.setMixinOutputDirectory(mixinOutputDirectory);
-//        
-//            if (templateOutputDirectory != null)
-//                etchCompiler.setTemplateOutputDirectory(templateOutputDirectory);
-//        }
-//        catch (Exception e)
-//        {
-//            throw new Exception("Invalid parameter passed to the compiler:\n" + e.getMessage());
-//        }
-//        
-//        // EXECUTE 
-//        
-//        boolean status = true;
-//        for (File name: sourceFiles)
-//        {
-//            try
-//            {
-//                etchCompiler.validateEtchFile(name);
-//                etchCompiler.compile(name);
-//            }
-//            catch ( Exception e )
-//            {
-//                System.out.println(String.format("Error Compiling %s: %s", name.getName(), e.getMessage()));
-//                e.printStackTrace();
-//                status = false;
-//            }
-//        }
-//        if (!status)
-//        {
-//            throw new Exception("One or more .etch files failed to compile.");
-//        }
+        if (clo.lh.hasError())
+        	exit( 3, "EtchMain", "errors during compile", false );
     }
 }

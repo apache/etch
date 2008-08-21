@@ -394,11 +394,12 @@ abstract public class Option extends OptParamBase
 	 */
 	private boolean checkOkToDeliver( String token, boolean hiddenOk )
 	{
-		if (isHidden() && !hiddenOk)
-		{
-			getCommandParser().report( "option '"+toString( token )+"' not allowed", null, null );
-			return false;
-		}
+		// allow hidden option to be specified. just don't show it in help.
+//		if (isHidden() && !hiddenOk)
+//		{
+//			getCommandParser().report( "option '"+toString( token )+"' not allowed", null, null );
+//			return false;
+//		}
 		
 		if (getCommandParser().isAlreadySpecified( this, true ) && isSingleton())
 		{
