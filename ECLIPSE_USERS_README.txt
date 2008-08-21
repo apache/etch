@@ -1,8 +1,9 @@
 After you checkout the project in eclipse, you will likely be told that there are
-build path problems. There are two dependent projects you need to get going with
+build path problems. There are three dependent projects you need to get going with
 etch for eclipse, and one plugin:
 
 javacc 4.0
+ant 1.7.0
 junit 4.3.1
 velocity 1.5
 
@@ -18,9 +19,13 @@ http://sourceforge.net/projects/junit/
 
 http://velocity.apache.org/engine/releases/velocity-1.5/
 
+http://archive.apache.org/dist/ant/binaries/
+
 Once downloaded, you will need to create an environment variable (for example):
 
 ETCH_DEPENDENT_JARS=C:\workspace-etch\tools\velocity\1.5\velocity-dep-1.5.jar
+
+These are the extra jar files required to actually run the compiler.
 
 You will need to restart eclipse if it is running.
 
@@ -48,6 +53,8 @@ Navigate to junit-4.3.1.jar and select it.
 With ETCH_DEPENDENT_JARS selected, click Add JARs... again...
 
 Navigate to velocity-dep-1.5.jar and select it.
+
+Navigate to ant.jar and select it.
 
 Click Ok.
 

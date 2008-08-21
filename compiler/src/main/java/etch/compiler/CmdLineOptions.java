@@ -45,30 +45,33 @@ public class CmdLineOptions
 	 */
 	public CmdLineOptions( CmdLineOptions other )
 	{
-		includePath = new ArrayList<File>(other.includePath);
+		includePath = new ArrayList<File>( other.includePath );
 		ignoreGlobalWordsList = other.ignoreGlobalWordsList;
 		ignoreLocalWordsList = other.ignoreLocalWordsList;
 		userWordsList = other.userWordsList;
 		outputDir = other.outputDir;
 		binding = other.binding;
-		what = new HashSet<String>(other.what);
+		what = new HashSet<String>( other.what );
 		mixinOutputDir = other.mixinOutputDir;
 		noMixinArtifacts = other.noMixinArtifacts;
 		noFlattenPackages = other.noFlattenPackages;
 		quiet = other.quiet;
 		templateOutputDir = other.templateOutputDir;
 		ignoreIncludePath = other.ignoreIncludePath;
+		testing = other.testing;
 		sourceFile = other.sourceFile;
 		// EPHEMERAL STUFF //
 		cl = other.cl;
 		lh = other.lh;
 		isMixinPresent = other.isMixinPresent;
-		effectiveIncludePath = other.effectiveIncludePath;
+		effectiveIncludePath = new ArrayList<File>( other.effectiveIncludePath );
 		noDirOnOutputFiles = other.noDirOnOutputFiles;
 		workingDir = other.workingDir;
 		output = other.output;
 		templateOutput = other.templateOutput;
 		mixinOutput = other.mixinOutput;
+		bindingClass = other.bindingClass;
+		backend = other.backend;
 	}
 	
 	/**
@@ -78,6 +81,7 @@ public class CmdLineOptions
 	{
 		includePath = new ArrayList<File>();
 		what = new HashSet<String>();
+		effectiveIncludePath = new ArrayList<File>();
 	}
 	
 	/**
@@ -159,6 +163,11 @@ public class CmdLineOptions
 	public boolean ignoreIncludePath;
 
 	/**
+	 * We're just testing the compiler, don't write any files.
+	 */
+	public boolean testing;
+
+	/**
 	 * The source file to compile.
 	 */
 	public File sourceFile;
@@ -179,7 +188,9 @@ public class CmdLineOptions
 
 	/**
 	 * Flag indicates that mixin artifacts have been generated.
+	 * @deprecated
 	 */
+	@Deprecated
 	public boolean isMixinPresent;
 
 	/**
@@ -216,4 +227,14 @@ public class CmdLineOptions
 	 * Output for mixed in artifacts.
 	 */
 	public Output mixinOutput;
+    
+	/**
+	 * The class which implements the binding.
+	 */
+	public Class<?> bindingClass;
+    
+	/**
+	 * The instance of bindingClass used to generated code.
+	 */
+	public Backend backend;
 }

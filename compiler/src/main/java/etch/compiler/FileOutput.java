@@ -19,17 +19,17 @@ public class FileOutput implements Output
 	
 	private final String pn;
 	
-	public void report()
+	public void report( String what )
 	{
-		report( "" );
+		report( what, "" );
 	}
 	
-	private void report( String indent )
+	private void report( String what, String indent )
 	{
 		if (pn != null)
 			System.out.printf( "%spackage %s", indent, pn );
 		else
-			System.out.printf( "%soutput", indent );
+			System.out.printf( "%s%s", indent, what );
 		System.out.println();
 		
 		String sindent = indent+"  ";
@@ -38,7 +38,7 @@ public class FileOutput implements Output
 			report( sindent, me.getKey(), me.getValue() );
 		
 		for (FileOutput p: packages.values())
-			p.report( sindent );
+			p.report( what, sindent );
 	}
 
 	private void report( String indent, String fn, ByteArrayOutputStream value )

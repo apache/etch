@@ -78,13 +78,28 @@ public class Service extends Named<Module> implements OptList, Iterable<Named<?>
 	{
 		optsCheck( Mixin.class, nOpts );
 		
-		Module module = EtchCompiler.parseModule( this, n, nOpts );
-		if (module == null)
-			return null;
-		
-		Mixin mixin = new Mixin( this, n, nOpts, module );
-		nameList.add( n, mixin );
-		return mixin;
+		try
+		{
+			Module module = EtchCompiler.parseModule( this, n, nOpts );
+			if (module == null)
+				throw new ParseException( String.format(
+					"could not find mixin '%s' at line %d",
+					n.name, n.token.beginLine ) );
+			
+			Mixin mixin = new Mixin( this, n, nOpts, module );
+			nameList.add( n, mixin );
+			return mixin;
+		}
+		catch ( ParseException e )
+		{
+			throw e;
+		}
+		catch ( Exception e )
+		{
+			throw new ParseException( String.format(
+				"could not find mixin '%s' at line %d: %s",
+				n.name, n.token.beginLine, e ) );
+		}
 	}
 	
 	/**
