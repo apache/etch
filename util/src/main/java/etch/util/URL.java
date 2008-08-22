@@ -580,26 +580,6 @@ public class URL
 	{
 		return hasTerm( name, value.toString() );
 	}
-
-	/**
-	 * @param name
-	 * @param value
-	 * @return true if there is a query term with the specified value.
-	 */
-	public boolean hasTerm( String name, int value )
-	{
-		return hasTerm( name, valueToString( value ) );
-	}
-
-	/**
-	 * @param name
-	 * @param value
-	 * @return true if there is a query term with the specified value.
-	 */
-	public boolean hasTerm( String name, double value )
-	{
-		return hasTerm( name, valueToString( value ) );
-	}
 	
 	/**
 	 * @param name
@@ -647,9 +627,15 @@ public class URL
 		if (obj instanceof Set)
 		{
 			Iterator<String> i = ((Set<String>) obj).iterator();
+			if (!i.hasNext())
+				return null;
+			
 			String s = i.next();
+			
 			if (i.hasNext())
-				throw new UnsupportedOperationException( "term has multiple values" );
+				throw new UnsupportedOperationException( String.format(
+					"term '%s' has multiple values", name ) );
+			
 			return s;
 		}
 		
@@ -668,6 +654,64 @@ public class URL
 			return defaultValue;
 		return value;
 	}
+	
+	/**
+	 * Gets the Integer value of the specified query term.
+	 * @param name
+	 * @return the Integer value, or null if not found.
+	 * @see #getTerm(String)
+	 */
+	public Integer getIntegerTerm( String name )
+	{
+		String s = getTerm( name );
+		if (s == null)
+			return null;
+		return Integer.valueOf( s );
+	}
+
+	/**
+	 * Gets the integer value of the specified query term.
+	 * @param name
+	 * @param defaultValue the value to return if the term is not found.
+	 * @return the integer value, or defaultValue if not found.
+	 * @see #getTerm(String)
+	 */
+	public int getIntegerTerm( String name, int defaultValue )
+	{
+		Integer value = getIntegerTerm( name );
+		if (value == null)
+			return defaultValue;
+		return value;
+	}
+	
+	/**
+	 * Gets the Double value of the specified query term.
+	 * @param name
+	 * @return the Double value, or null if not found.
+	 * @see #getTerm(String)
+	 */
+	public Double getDoubleTerm( String name )
+	{
+		String s = getTerm( name );
+		if (s == null)
+			return null;
+		return Double.valueOf( s );
+	}
+
+	/**
+	 * Gets the double value of the specified query term.
+	 * @param name
+	 * @param defaultValue the value to return if the term is not found.
+	 * @return the double value, or defaultValue if not found.
+	 * @see #getTerm(String)
+	 */
+	public double getDoubleTerm( String name, double defaultValue )
+	{
+		Double value = getDoubleTerm( name );
+		if (value == null)
+			return defaultValue;
+		return value;
+	}
 
 	/**
 	 * Gets the boolean value of the specified query term.
@@ -680,7 +724,7 @@ public class URL
 		String s = getTerm( name );
 		if (s == null)
 			return null;
-		return new Boolean( s );
+		return Boolean.valueOf( s );
 	}
 
 	/**
@@ -692,53 +736,10 @@ public class URL
 	 */
 	public boolean getBooleanTerm( String name, boolean defaultValue )
 	{
-		String s = getTerm( name );
-		if (s == null)
+		Boolean value = getBooleanTerm( name );
+		if (value == null)
 			return defaultValue;
-		return Boolean.valueOf( s );
-	}
-	
-	/**
-	 * Gets the integer value of the specified query term.
-	 * @param name
-	 * @return the integer value, or null if not found.
-	 * @see #getTerm(String)
-	 */
-	public Integer getIntegerTerm( String name )
-	{
-		String s = getTerm( name );
-		if (s == null)
-			return null;
-		return new Integer( s );
-	}
-
-	/**
-	 * Gets the integer value of the specified query term.
-	 * @param name
-	 * @param defaultValue the value to return if the term is not found.
-	 * @return the integer value, or defaultValue if not found.
-	 * @see #getTerm(String)
-	 */
-	public int getIntegerTerm( String name, int defaultValue )
-	{
-		Integer i = getIntegerTerm( name );
-		if (i == null)
-			return defaultValue;
-		return i;
-	}
-	
-	/**
-	 * Gets the double value of the specified query term.
-	 * @param name
-	 * @return the double value, or null if not found.
-	 * @see #getTerm(String)
-	 */
-	public Double getDoubleTerm( String name )
-	{
-		String s = getTerm( name );
-		if (s == null)
-			return null;
-		return new Double( s );
+		return value;
 	}
 	
 	/**
@@ -783,6 +784,11 @@ public class URL
 	@SuppressWarnings(value={"unchecked"})
 	public void addTerm( String name, String value )
 	{
+		checkName( name );
+		
+		if (value == null)
+			return;
+		
 		ensureTerms();
 		
 		Object obj = terms.get( name );
@@ -798,10 +804,12 @@ public class URL
 			return;
 		}
 		
+		// obj is not a set but we need one, so replace obj in terms with a set.
 		Set<String> values = new HashSet<String>();
-		values.add( (String) obj );
-		values.add( value );
 		terms.put( name, values );
+		values.add( (String) obj );
+
+		values.add( value );
 	}
 
 	/**
@@ -812,7 +820,7 @@ public class URL
 	 */
 	public void addTerm( String name, Integer value )
 	{
-		addTerm( name, value.toString() );
+		addTerm( name, toString( value ) );
 	}
 
 	/**
@@ -823,7 +831,7 @@ public class URL
 	 */
 	public void addTerm( String name, Double value )
 	{
-		addTerm( name, value.toString() );
+		addTerm( name, toString( value ) );
 	}
 
 	/**
@@ -832,20 +840,14 @@ public class URL
 	 * @param name
 	 * @param value
 	 */
-	public void addTerm( String name, int value )
+	public void addTerm( String name, Boolean value )
 	{
-		addTerm( name, valueToString( value ) );
+		addTerm( name, toString( value ) );
 	}
 
-	/**
-	 * Adds the specified query term to the set of query terms. Duplicate
-	 * name/value pairs are suppressed.
-	 * @param name
-	 * @param value
-	 */
-	public void addTerm( String name, double value )
+	private static String toString( Object value )
 	{
-		addTerm( name, valueToString( value ) );
+		return value != null ? value.toString() : null;
 	}
 	
 	/**
@@ -855,6 +857,8 @@ public class URL
 	 */
 	public boolean removeTerm( String name )
 	{
+		checkName( name );
+		
 		if (terms == null)
 			return false;
 		
@@ -870,6 +874,11 @@ public class URL
 	@SuppressWarnings(value={"unchecked"})
 	public boolean removeTerm( String name, String value )
 	{
+		checkName( name );
+		
+		if (value == null)
+			return false;
+		
 		if (terms == null)
 			return false;
 		
@@ -881,13 +890,57 @@ public class URL
 		{
 			Set<String> x = (Set<String>) obj;
 			boolean ok = x.remove( value );
-			if (x.size() == 1)
-				terms.put( name, x.iterator().next() );
+			if (x.isEmpty())
+				terms.remove( name );
 			return ok;
 		}
 		
-		terms.remove( name );
-		return true;
+		if (obj.equals( value ))
+		{
+			terms.remove( name );
+			return true;
+		}
+		
+		return false;
+	}
+	
+	private static void checkName( String name )
+	{
+		if (name == null || name.length() == 0)
+			throw new IllegalArgumentException( "name null or empty" );
+	}
+
+	/**
+	 * Removes the specified name/value pair from the set of query terms.
+	 * @param name
+	 * @param value
+	 * @return true if the name/value pair was found and removed.
+	 */
+	public boolean removeTerm( String name, Integer value )
+	{
+		return removeTerm( name, toString( value ) );
+	}
+
+	/**
+	 * Removes the specified name/value pair from the set of query terms.
+	 * @param name
+	 * @param value
+	 * @return true if the name/value pair was found and removed.
+	 */
+	public boolean removeTerm( String name, Double value )
+	{
+		return removeTerm( name, toString( value ) );
+	}
+
+	/**
+	 * Removes the specified name/value pair from the set of query terms.
+	 * @param name
+	 * @param value
+	 * @return true if the name/value pair was found and removed.
+	 */
+	public boolean removeTerm( String name, Boolean value )
+	{
+		return removeTerm( name, toString( value ) );
 	}
 	
 	/**
@@ -1244,16 +1297,6 @@ public class URL
 		{
 			throw new IllegalArgumentException( name+" is not integer" );
 		}
-	}
-	
-	private static String valueToString( int value )
-	{
-		return Integer.toString( value );
-	}
-	
-	private static String valueToString( double value )
-	{
-		return Double.toString( value );
 	}
 
 	private static Set<String> copyParams( Set<String> params )
