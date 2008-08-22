@@ -228,6 +228,9 @@ public class Compiler extends Backend
 	public void generate( Module module, CmdLineOptions options )
 		throws Exception
 	{
+		// java always wants to not flatten packages:
+		options.noFlattenPackages = true;
+		
 		lh = options.lh;
 
 		boolean ignoreGlobal = options.ignoreGlobalWordsList;

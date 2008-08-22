@@ -283,7 +283,6 @@ public class EtchCompiler
     private static void initIncludePath( CmdLineOptions clo ) throws IOException
     {
     	System.out.println( "initIncludePath: sourceFile = "+clo.sourceFile );
-    	System.out.println( "initIncludePath: workingDir = "+clo.workingDir );
     	System.out.println( "initIncludePath: includePath = "+clo.includePath );
     	
     	// includePath is composed of the source file's directory, then
@@ -296,10 +295,6 @@ public class EtchCompiler
     	if (clo.sourceFile != null)
     		clo.effectiveIncludePath.add(
     			clo.sourceFile.getCanonicalFile().getParentFile() );
-    	
-    	// add working directory.
-    	if (clo.workingDir != null)
-    		clo.effectiveIncludePath.add( clo.workingDir );
     	
     	for (File f: clo.includePath)
     	{
@@ -547,7 +542,7 @@ public class EtchCompiler
 		clo.mixinOutput = clo.noMixinArtifacts ? new NullOutput() : new FileOutput();
 	}
 
-	private static void saveOutput( CmdLineOptions clo )
+	private static void saveOutput( CmdLineOptions clo ) throws IOException
 	{
 		// TODO implement saveOutput
 		clo.output.report( "output" );
@@ -557,13 +552,57 @@ public class EtchCompiler
 		if (clo.testing)
 			return;
 		
+		// Destination directory of generated artifacts. Use source file's
+		// parent directory if not specified.
+		
+		File outputDir = clo.outputDir;
+		boolean noQualOutputDir = false;
+		if (outputDir == null)
+		{
+			outputDir = clo.sourceFile.getCanonicalFile().getParentFile();
+			noQualOutputDir = true;
+		}
+
+		// Destination directory of generated user-editable artifacts. Use
+		// outputDir if not specified.
+		
+		File templateOutputDir = clo.templateOutputDir;
+		boolean noQualTemplateOutputDir = false;
+		if (templateOutputDir == null)
+		{
+			templateOutputDir = outputDir;
+			noQualTemplateOutputDir = noQualOutputDir;
+		}
+		
+		// Destination directory of mixin generated artifacts. Use outputDir
+		// if not specified.
+		
+		File mixinOutputDir = clo.mixinOutputDir;
+		boolean noQualMixinOutputDir = false;
+		if (mixinOutputDir == null)
+		{
+			mixinOutputDir = outputDir;
+			noQualMixinOutputDir = noQualOutputDir;
+		}
+		
+		boolean force = clo.what.contains( Backend.WHAT_FORCE );
+
+		saveFiles( clo.output, outputDir, noQualOutputDir, clo.noFlattenPackages, true );
+		saveFiles( clo.templateOutput, templateOutputDir, noQualTemplateOutputDir, clo.noFlattenPackages, force );
+		saveFiles( clo.mixinOutput, mixinOutputDir, noQualMixinOutputDir, clo.noFlattenPackages, true );
+		
 //		options.outputDir;
 //		options.templateOutputDir;
 //		options.mixinOutputDir;
 //		options.noMixinArtifacts;
 //		options.noFlattenPackages;
-//		options.workingDir;
-//		options.noDirOnOutputFiles;
+	}
+
+	private static void saveFiles( Output output, File outputDir,
+		boolean noQualOutputDir, boolean noFlattenPackages, boolean force )
+		throws IOException
+	{
+		output.saveFiles( outputDir, noQualOutputDir, noFlattenPackages, force );
 	}
 
 	/**

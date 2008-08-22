@@ -120,8 +120,6 @@ public class TestEtchMain
 		assertFalse( prog.testingClo.quiet );
 		assertFalse( prog.testingClo.ignoreIncludePath );
 		assertTrue( prog.testingClo.testing );
-		assertFalse( prog.testingClo.isMixinPresent );
-		assertFalse( prog.testingClo.noDirOnOutputFiles );
 	}
 
 	/** @throws Exception */
@@ -137,8 +135,6 @@ public class TestEtchMain
 		assertTrue( prog.testingClo.quiet );
 		assertFalse( prog.testingClo.ignoreIncludePath );
 		assertTrue( prog.testingClo.testing );
-		assertFalse( prog.testingClo.isMixinPresent );
-		assertFalse( prog.testingClo.noDirOnOutputFiles );
 	}
 
 	/** @throws Exception */
@@ -154,8 +150,6 @@ public class TestEtchMain
 		assertTrue( prog.testingClo.quiet );
 		assertFalse( prog.testingClo.ignoreIncludePath );
 		assertTrue( prog.testingClo.testing );
-		assertFalse( prog.testingClo.isMixinPresent );
-		assertFalse( prog.testingClo.noDirOnOutputFiles );
 	}
 
 	/** @throws Exception */
@@ -171,8 +165,6 @@ public class TestEtchMain
 		assertFalse( prog.testingClo.quiet );
 		assertFalse( prog.testingClo.ignoreIncludePath );
 		assertTrue( prog.testingClo.testing );
-		assertFalse( prog.testingClo.isMixinPresent );
-		assertFalse( prog.testingClo.noDirOnOutputFiles );
 	}
 
 	/** @throws Exception */
@@ -188,8 +180,6 @@ public class TestEtchMain
 		assertFalse( prog.testingClo.quiet );
 		assertFalse( prog.testingClo.ignoreIncludePath );
 		assertTrue( prog.testingClo.testing );
-		assertFalse( prog.testingClo.isMixinPresent );
-		assertFalse( prog.testingClo.noDirOnOutputFiles );
 	}
 
 	/** @throws Exception */
@@ -205,8 +195,6 @@ public class TestEtchMain
 		assertFalse( prog.testingClo.quiet );
 		assertFalse( prog.testingClo.ignoreIncludePath );
 		assertTrue( prog.testingClo.testing );
-		assertFalse( prog.testingClo.isMixinPresent );
-		assertFalse( prog.testingClo.noDirOnOutputFiles );
 	}
 
 	/** @throws Exception */
@@ -222,8 +210,6 @@ public class TestEtchMain
 		assertFalse( prog.testingClo.quiet );
 		assertFalse( prog.testingClo.ignoreIncludePath );
 		assertTrue( prog.testingClo.testing );
-		assertFalse( prog.testingClo.isMixinPresent );
-		assertFalse( prog.testingClo.noDirOnOutputFiles );
 	}
 
 	/** @throws Exception */
@@ -239,8 +225,6 @@ public class TestEtchMain
 		assertFalse( prog.testingClo.quiet );
 		assertTrue( prog.testingClo.ignoreIncludePath );
 		assertTrue( prog.testingClo.testing );
-		assertFalse( prog.testingClo.isMixinPresent );
-		assertFalse( prog.testingClo.noDirOnOutputFiles );
 	}
 
 	/** @throws Exception */
@@ -256,8 +240,6 @@ public class TestEtchMain
 		assertFalse( prog.testingClo.quiet );
 		assertTrue( prog.testingClo.ignoreIncludePath );
 		assertTrue( prog.testingClo.testing );
-		assertFalse( prog.testingClo.isMixinPresent );
-		assertFalse( prog.testingClo.noDirOnOutputFiles );
 	}
 
 	/** @throws Exception */
@@ -273,8 +255,6 @@ public class TestEtchMain
 		assertFalse( prog.testingClo.quiet );
 		assertFalse( prog.testingClo.ignoreIncludePath );
 		assertTrue( prog.testingClo.testing );
-		assertFalse( prog.testingClo.isMixinPresent );
-		assertFalse( prog.testingClo.noDirOnOutputFiles );
 	}
 
 	/** @throws Exception */
@@ -290,8 +270,6 @@ public class TestEtchMain
 		assertFalse( prog.testingClo.quiet );
 		assertFalse( prog.testingClo.ignoreIncludePath );
 		assertTrue( prog.testingClo.testing );
-		assertFalse( prog.testingClo.isMixinPresent );
-		assertFalse( prog.testingClo.noDirOnOutputFiles );
 	}
 
 	/** @throws Exception */
@@ -307,8 +285,6 @@ public class TestEtchMain
 		assertFalse( prog.testingClo.quiet );
 		assertFalse( prog.testingClo.ignoreIncludePath );
 		assertTrue( prog.testingClo.testing );
-		assertFalse( prog.testingClo.isMixinPresent );
-		assertFalse( prog.testingClo.noDirOnOutputFiles );
 	}
 
 	/** @throws Exception */
@@ -324,8 +300,6 @@ public class TestEtchMain
 		assertFalse( prog.testingClo.quiet );
 		assertFalse( prog.testingClo.ignoreIncludePath );
 		assertTrue( prog.testingClo.testing );
-		assertFalse( prog.testingClo.isMixinPresent );
-		assertFalse( prog.testingClo.noDirOnOutputFiles );
 	}
 	
 	private String findTestTxt() throws Exception
