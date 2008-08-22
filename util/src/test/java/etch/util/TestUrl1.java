@@ -34,7 +34,7 @@ import org.junit.Test;
  * @author jacapps
  *
  */
-public class testURL
+public class TestUrl1
 {
 	String nullScheme = null;
 	String nullUser = null;
