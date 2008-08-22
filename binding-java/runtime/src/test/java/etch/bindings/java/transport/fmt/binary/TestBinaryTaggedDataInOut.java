@@ -47,6 +47,7 @@ import etch.bindings.java.transport.fmt.TypeCode;
 import etch.util.FlexBuffer;
 import etch.util.Log;
 import etch.util.Resources;
+import etch.util.URL;
 import etch.util.core.Who;
 import etch.util.core.io.SessionPacket;
 import etch.util.core.io.Transport;
@@ -79,7 +80,7 @@ public class TestBinaryTaggedDataInOut
 		// the parking lot, you don't wanna go there.
 		
 //		ValueFactory vf = new DummyValueFactory();
-		BinaryTaggedDataOutput btdo = new BinaryTaggedDataOutput( vf, "tcp:" );
+		BinaryTaggedDataOutput btdo = new BinaryTaggedDataOutput( vf, "none:" );
 		
 		// byte values
 		for (byte i: getBytes( Byte.MIN_VALUE, 256 ))
@@ -300,7 +301,7 @@ public class TestBinaryTaggedDataInOut
 		Field _mf__messageId = DefaultValueFactory._mf__messageId;
 		add.putValidator( _mf__messageId, Validator_long.get( 0 ) );
 		
-		long msgid = 0x0123456789abcdefL;
+		long msgid = 0x0102030405060708L;
 		
 //		System.out.printf( "add.id() = %04x\n", add.getId() );
 //		System.out.printf( "x.id() = %04x\n", x.getId() );
@@ -312,21 +313,35 @@ public class TestBinaryTaggedDataInOut
 		msg.put( x, 1 );
 		msg.put( y, 2 );
 		msg.put( _mf__messageId, msgid );
-//		System.out.println( "msg = "+msg );
-		/* byte[] buf = */ msg2bytes( msg );
-//		dump( buf );
-//		buf = null;
+		testmsg2bytes( msg, null,  new byte[] { 3, -122, 39, -23, -73, -100, 3, -122, 21, 10, 44, -77, 1, -122, 99, 6, -76, 104, -121, 1, 2, 3, 4, 5, 6, 7, 8, -122, 21, 10, 44, -76, 2, -127 } );
+		testmsg2bytes( msg, false, new byte[] { 3, -122, 39, -23, -73, -100, 3, -122, 21, 10, 44, -77, 1, -122, 99, 6, -76, 104, -121, 1, 2, 3, 4, 5, 6, 7, 8, -122, 21, 10, 44, -76, 2, -127 } );
+		testmsg2bytes( msg, true,  new byte[] { 3, -109, 3, 97, 100, 100, 3, -109, 1, 120, 1, -109, 10, 95, 109, 101, 115, 115, 97, 103, 101, 73, 100, -121, 1, 2, 3, 4, 5, 6, 7, 8, -109, 1, 121, 2, -127 } );
 		
 		msg = new Message( add, vf );
 		msg.put( x, 1000000000 );
 		msg.put( y, 2000000000 );
 		msg.put( _mf__messageId, msgid );
-//		System.out.println( "msg = "+msg );
-		/* buf = */ msg2bytes( msg );
-//		dump( buf );
-//		buf = null;
+		testmsg2bytes( msg, null,  new byte[] { 3, -122, 39, -23, -73, -100, 3, -122, 21, 10, 44, -77, -122, 59, -102, -54, 0, -122, 99, 6, -76, 104, -121, 1, 2, 3, 4, 5, 6, 7, 8, -122, 21, 10, 44, -76, -122, 119, 53, -108, 0, -127 } );
+		testmsg2bytes( msg, false, new byte[] { 3, -122, 39, -23, -73, -100, 3, -122, 21, 10, 44, -77, -122, 59, -102, -54, 0, -122, 99, 6, -76, 104, -121, 1, 2, 3, 4, 5, 6, 7, 8, -122, 21, 10, 44, -76, -122, 119, 53, -108, 0, -127 } );
+		testmsg2bytes( msg, true,  new byte[] { 3, -109, 3, 97, 100, 100, 3, -109, 1, 120, -122, 59, -102, -54, 0, -109, 10, 95, 109, 101, 115, 115, 97, 103, 101, 73, 100, -121, 1, 2, 3, 4, 5, 6, 7, 8, -109, 1, 121, -122, 119, 53, -108, 0, -127 } );
 	}
 	
+	private void testmsg2bytes( Message msg, Boolean stringTypeAndField,
+		byte[] expected ) throws Exception
+	{
+		byte[] actual = msg2bytes( msg, stringTypeAndField );
+		try
+		{
+			assertArrayEquals( expected, actual );
+		}
+		catch ( AssertionError e )
+		{
+			dump( expected );
+			dump( actual );
+			throw e;
+		}
+	}
+
 	/** Tests reading a pre-canned add message.
 	 * @throws Exception */
 	@Test public void test_add_in() throws Exception
@@ -617,32 +632,36 @@ public class TestBinaryTaggedDataInOut
 	@Test
 	public void badtype() throws Exception
 	{
+		@SuppressWarnings("unused")
 		Message msg = bytes2msg( new byte[] { 3, 1, 0, -127 } );
-		System.out.println( "msg = "+msg );
+//		System.out.println( "msg = "+msg );
 	}
 	
 	/** @throws Exception */
 	@Test( expected = IllegalArgumentException.class )
 	public void badmsglen1() throws Exception
 	{
+		@SuppressWarnings("unused")
 		Message msg = bytes2msg( new byte[] { 3, 1, -1, -127 } );
-		System.out.println( "msg = "+msg );
+//		System.out.println( "msg = "+msg );
 	}
 	
 	/** @throws Exception */
 	@Test( expected = IllegalArgumentException.class )
 	public void badmsglen2() throws Exception
 	{
+		@SuppressWarnings("unused")
 		Message msg = bytes2msg( new byte[] { 3, 1, 99, -127 } );
-		System.out.println( "msg = "+msg );
+//		System.out.println( "msg = "+msg );
 	}
 	
 	/** @throws Exception */
 	@Test
 	public void badfield() throws Exception
 	{
+		@SuppressWarnings("unused")
 		Message msg = bytes2msg( new byte[] { 3, 1, 1, 2, 2, -127 }, Level.MISSING_OK );
-		System.out.println( "msg = "+msg );
+//		System.out.println( "msg = "+msg );
 	}
 	
 	private void assertValueToBytes( Object value, byte[] expectedBytes ) throws Exception
@@ -653,7 +672,7 @@ public class TestBinaryTaggedDataInOut
 		
 		Message msg = new Message( t, vf );
 		msg.put( f, value );
-		System.out.println( "msg = "+msg );
+//		System.out.println( "msg = "+msg );
 		
 		BinaryTaggedDataOutput btdo = new BinaryTaggedDataOutput( vf, "none:" );
 		FlexBuffer buf = new FlexBuffer();
@@ -662,7 +681,7 @@ public class TestBinaryTaggedDataInOut
 		
 		buf.setIndex( 0 );
 		byte[] b = buf.getAvailBytes();
-		dump( b );
+//		dump( b );
 		assertArrayEquals( expectedBytes, b );
 	}
 	
@@ -725,10 +744,15 @@ public class TestBinaryTaggedDataInOut
 		}
 	}
 	
-	private byte[] msg2bytes( Message msg ) throws IOException
+	private byte[] msg2bytes( Message msg, Boolean stringTypeAndField ) throws IOException
 	{
 		FlexBuffer buf = new FlexBuffer();
-		BinaryTaggedDataOutput btdo = new BinaryTaggedDataOutput( vf, "" );
+		
+		URL u = new URL( "none:" );
+		if (stringTypeAndField != null)
+			u.addTerm( BinaryTaggedDataOutput.STRING_TYPE_AND_FIELD, stringTypeAndField );
+		
+		BinaryTaggedDataOutput btdo = new BinaryTaggedDataOutput( vf, u.toString() );
 		btdo.writeMessage( msg, buf );
 		buf.setIndex( 0 );
 		return buf.getAvailBytes();
@@ -765,8 +789,9 @@ public class TestBinaryTaggedDataInOut
 				testx( Array.get( x, i ), v.elementValidator() );
 			}
 		}
-		Object y = test( x, v );
-		assertEquals( x, y );
+		test( x, v, null );
+		test( x, v, false );
+		test( x, v, true );
 	}
 	
 	/**
@@ -778,8 +803,8 @@ public class TestBinaryTaggedDataInOut
 	private final Type mt_foo = vf.getType( "foo" );
 	
 	private final Field mf_x = new Field( "x" );
-
-	private Object test( Object x, Validator v ) throws Exception
+	
+	private void test( Object x, Validator v, Boolean stringTypeAndField ) throws Exception
 	{
 //		System.out.println( "-----------------------------------------" );
 		
@@ -790,15 +815,17 @@ public class TestBinaryTaggedDataInOut
 		msg.put( mf_x, x );
 //		System.out.println( "msg = "+msg );
 		
-		byte[] bufx = msg2bytes( msg );
+		byte[] bufx = msg2bytes( msg, stringTypeAndField );
 //		dump( bufx );
 		Message msg2 = bytes2msg( bufx );
 		
 //		System.out.println( "msg2 = "+msg2 );
 		msg2.checkType( mt_foo );
 		Assert.assertEquals( 1, msg2.size() );
-		msg.containsKey( mf_x );
-		return msg2.get( mf_x );
+		Assert.assertTrue( msg.containsKey( mf_x ) );
+		Object y = msg2.get( mf_x );
+		
+		assertEquals( x, y );
 	}
 	
 	@SuppressWarnings("unused")
