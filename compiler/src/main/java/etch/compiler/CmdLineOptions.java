@@ -63,10 +63,7 @@ public class CmdLineOptions
 		// EPHEMERAL STUFF //
 		cl = other.cl;
 		lh = other.lh;
-		isMixinPresent = other.isMixinPresent;
 		effectiveIncludePath = new ArrayList<File>( other.effectiveIncludePath );
-		noDirOnOutputFiles = other.noDirOnOutputFiles;
-		workingDir = other.workingDir;
 		output = other.output;
 		templateOutput = other.templateOutput;
 		mixinOutput = other.mixinOutput;
@@ -108,8 +105,7 @@ public class CmdLineOptions
 
 	/**
 	 * The destination directory of the generated files (-d option). If not
-	 * specified, the same directory of the source file. Not specifying also
-	 * turns on {@link #noDirOnOutputFiles}.
+	 * specified, the same directory of the source file.
 	 */
 	public File outputDir;
 
@@ -187,31 +183,11 @@ public class CmdLineOptions
 	public LogHandler lh;
 
 	/**
-	 * Flag indicates that mixin artifacts have been generated.
-	 * @deprecated
-	 */
-	@Deprecated
-	public boolean isMixinPresent;
-
-	/**
 	 * Computed effective includePath, including parent dir of source file,
 	 * include path command line elements, and path elements from system
 	 * environment variable.
 	 */
 	public List<File> effectiveIncludePath;
-	
-	/**
-	 * If true, output files are not qualified with a directory name derived
-	 * from the module name. If false, output files are qualified with a
-	 * directory name under control of {@link #noFlattenPackages}.
-	 */
-	public boolean noDirOnOutputFiles;
-
-	/**
-	 * The parent directory of the source. This is where we search for include
-	 * files and also where we put output files if outputDir is not specified.
-	 */
-	public File workingDir;
 
 	/**
 	 * Output for service generated files.

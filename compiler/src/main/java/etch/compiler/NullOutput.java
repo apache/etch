@@ -1,5 +1,6 @@
 package etch.compiler;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -22,12 +23,18 @@ public class NullOutput implements Output
 
 	public Output newPackage( String pn )
 	{
-		// we don't care what the package is.
+		// ignore, we don't care what the package is.
 		return this;
 	}
 	
 	public void report( String what )
 	{
-		// ignore.
+		// ignore, nothing to report.
+	}
+
+	public void saveFiles( File outputDir, boolean noQualOutputDir,
+		boolean noFlattenPackages, boolean force )
+	{
+		// ignore, nothing to save.
 	}
 }
