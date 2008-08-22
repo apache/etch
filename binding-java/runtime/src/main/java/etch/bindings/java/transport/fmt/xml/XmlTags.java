@@ -41,11 +41,27 @@ public interface XmlTags
 	public String ELEMENT_TAG = "e";
 	
 	// attributes
+	
+	/**
+	 * The version of the message.
+	 */
+	public String VERSION_ATTR = "v";
 
 	/**
-	 * The integer type of the message.
+	 * The type of the message.
 	 */
-	public String STRUCT_TYPE_ATTR = "t";
+	public String TYPE_ATTR = "t";
+	
+	/**
+	 * The size of the msg, struct, or array.
+	 */
+	public String SIZE_ATTR = "s";
+	
+	public String DIM_ATTR = "d";
+	
+	public String TYPE_CODE_ATTR = "c";
+	
+	public String FIELD_ATTR = "f";
 
 	/**
 	 * The type of the element.

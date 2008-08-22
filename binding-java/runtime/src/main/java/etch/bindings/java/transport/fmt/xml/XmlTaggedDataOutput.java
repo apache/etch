@@ -18,15 +18,20 @@
 package etch.bindings.java.transport.fmt.xml;
 
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.Map;
 import java.util.Stack;
 
 import etch.bindings.java.msg.Field;
 import etch.bindings.java.msg.Message;
 import etch.bindings.java.msg.StructValue;
+import etch.bindings.java.msg.Type;
 import etch.bindings.java.msg.Validator;
 import etch.bindings.java.msg.ValueFactory;
+import etch.bindings.java.msg.Validator.Level;
 import etch.bindings.java.transport.ArrayValue;
 import etch.bindings.java.transport.TaggedDataOutput;
 import etch.bindings.java.transport.fmt.TypeCode;
@@ -41,62 +46,172 @@ import etch.util.core.xml.XmlParser.TagElement;
 final public class XmlTaggedDataOutput extends XmlTaggedData
 	implements TaggedDataOutput, XmlTags
 {
+	public class FlexBufferOutputStream extends OutputStream
+	{
+		public FlexBufferOutputStream( FlexBuffer buf )
+		{
+			this.buf = buf;
+		}
+		
+		private final FlexBuffer buf;
+
+		@Override
+		public void write( int b ) throws IOException
+		{
+			buf.put( b );
+		}
+	}
+
+	private static final byte VERSION = 1;
+
 	/**
-	 * Constructs the TaggedDataOutputStream.
-	 *
-	 * @param wtr
-	 * @param vf
+	 * Constructs the XmlTaggedDataOutput.
+	 * 
+	 * @param vf the value factory for the service.
+	 * @param uri the uri used to construct the transport stack.
 	 */
-	public XmlTaggedDataOutput( Writer wtr, ValueFactory vf )
+	public XmlTaggedDataOutput( ValueFactory vf, String uri )
 	{
 		super( vf );
-		this.wtr = wtr;
+		level = vf.getLevel();
 	}
-	
-	private final Writer wtr;
+
+	private final Level level;
 	
 	private final Stack<TagElement> stack = new Stack<TagElement>();
-
-	public void startMessage( Message msg )
+	
+	public void writeMessage( Message msg, FlexBuffer buf ) throws IOException
 	{
-		stack.clear();
+		try
+		{
+			startMessage( msg );
+			writeKeysAndValues( msg );
+			endMessage( msg, buf );
+		}
+		finally
+		{
+			stack.clear();
+		}
+	}
+
+	private void writeStruct( StructValue sv ) throws IOException
+	{
+		startStruct( sv );
+		writeKeysAndValues( sv );
+		endStruct( sv );
+	}
+
+	private void writeArray( ArrayValue av, Validator v ) throws IOException
+	{
+		startArray( av );
+		writeValues( av, v );
+		endArray( av );
+	}
+
+	private void writeKeysAndValues( StructValue sv ) throws IOException
+	{
+		Type t = sv.type();
+		for (Map.Entry<Field, Object> me: sv)
+		{
+			Field f = me.getKey();
+			TagElement te = writeValue( t.getValidator( f ), me.getValue() );
+			setFieldAttr( te, f );
+		}
+	}
+
+	private void writeValues( ArrayValue av, Validator v )
+		throws IOException
+	{
+		Validator ev = v.elementValidator();
+		for (Object value: av)
+			writeValue( ev, value );
+	}
+	
+	/////////////////////////
+	// Main output methods //
+	/////////////////////////
+
+	private void startMessage( Message msg )
+	{
 		TagElement te = new DefaultTagElement( MESSAGE_TAG );
-		te.setAttr( null, STRUCT_TYPE_ATTR, msg.type().getId() );
+		te.setAttr( null, VERSION_ATTR, VERSION );
+		setTypeAttr( te, msg.type() );
+		setSizeAttr( te, msg.size() );
 		stack.push( te );
 	}
 
-	public void endMessage( Message msg ) throws IOException
+	private void endMessage( Message msg, FlexBuffer buf ) throws IOException
 	{
 		TagElement te = stack.pop();
 		if (!stack.isEmpty())
-			throw new IOException( "stack sequence error: "+stack );
-		te.toString( wtr );
+			throw new IOException( "end of message stack sequence error: "+stack );
+		te.toString( new OutputStreamWriter( new FlexBufferOutputStream( buf ) ) );
 	}
 
-	public void startStruct( StructValue struct )
+	private void startStruct( StructValue struct )
 	{
 		// the caller has already created an element tag for us.
 		TagElement te = stack.peek();
-		te.setAttr( null, STRUCT_TYPE_ATTR, struct.type().getId() );
+		setTypeAttr( te, struct.type() );
+		setSizeAttr( te, struct.size() );
 	}
 
-	public void endStruct( StructValue struct )
+	private void endStruct( StructValue struct )
 	{
-		// stack.pop();
+		// the caller will pop this element off the stack
 	}
 
-	public void startArray( ArrayValue array )
+	private void startArray( ArrayValue array )
 	{
 		// the caller has already created an element tag for us.
-		// TagElement te = stack.peek();
+		TagElement te = stack.peek();
+		byte type = array.typeCode();
+		setTypeCodeAttr( te, type );
+		if (type == TypeCode.CUSTOM)
+			setTypeAttr( te, array.customStructType() );
+		setDimAttr( te, array.dim() );
+		setSizeAttr( te, array.size() );
 	}
 
-	public void endArray( ArrayValue array )
+	private void endArray( ArrayValue array )
 	{
-		// stack.pop();
+		// the caller will pop this element off the stack
 	}
 
-	public void writeStructElement( Field key, Object value ) throws IOException
+	private void setTypeAttr( TagElement te, Type type )
+	{
+		te.setAttr( null, TYPE_ATTR, type.getName() );
+	}
+
+	private void setSizeAttr( TagElement te, int size )
+	{
+		te.setAttr( null, SIZE_ATTR, size );
+	}
+
+	private void setDimAttr( TagElement te, int dim )
+	{
+		te.setAttr( null, DIM_ATTR, dim );
+	}
+
+	private void setTypeCodeAttr( TagElement te, byte tc )
+	{
+		te.setAttr( null, TYPE_CODE_ATTR, tc );
+	}
+
+	private void setFieldAttr( TagElement te, Field field )
+	{
+		te.setAttr( null, FIELD_ATTR, field.getName() );
+	}
+	
+	//////////////////////////////////////////////
+
+	private TagElement writeValue( Validator validator, Object value )
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	private void writeStructElement( Field key, Object value ) throws IOException
 	{
 		TagElement te = stack.peek().addTag( ELEMENT_TAG );
 		te.setAttr( null, KEY_ATTR, key.getId() );
@@ -105,17 +220,12 @@ final public class XmlTaggedDataOutput extends XmlTaggedData
 		stack.pop();
 	}
 
-	public void writeArrayElement( Object value ) throws IOException
+	private void writeArrayElement( Object value ) throws IOException
 	{
 		TagElement te = stack.peek().addTag( ELEMENT_TAG );
 		stack.push( te );
 		writeValue( value );
 		stack.pop();
-	}
-	
-	public void close() throws IOException
-	{
-		wtr.close();
 	}
 	
 	@SuppressWarnings("deprecation")
@@ -226,43 +336,5 @@ final public class XmlTaggedDataOutput extends XmlTaggedData
 			sb.append( Integer.toString( b, 16 ) );
 		}
 		return sb.toString();
-	}
-
-	/**
-	 * @param msg
-	 * @param vf
-	 * @return the xml of the specified message.
-	 * @throws IOException
-	 */
-	public static String getXml( Message msg, ValueFactory vf ) throws IOException
-	{
-		StringWriter sw = new StringWriter();
-		TaggedDataOutput tdo = new XmlTaggedDataOutput( sw, vf );
-		tdo.writeMessage( msg, null );
-		return sw.toString();
-	}
-
-	public void setBuffer( FlexBuffer msgBuf )
-	{
-		// TODO implement setBuffer function
-		
-	}
-
-	public void writeMessage( Message msg, FlexBuffer buf ) throws IOException
-	{
-		// TODO implement writeMessage function
-		
-	}
-
-	private void writeStruct( StructValue sv ) throws IOException
-	{
-		// TODO implement writeStruct function
-		
-	}
-
-	private void writeArray( ArrayValue av, Validator v ) throws IOException
-	{
-		// TODO implement writeArray function
-		
 	}
 }
