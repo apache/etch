@@ -50,6 +50,6 @@ public class IntegerOption extends Option
 	@Override
 	protected Object convertValue( String value )
 	{
-		return new Integer( value );
+		return Integer.valueOf( value );
 	}
 }
