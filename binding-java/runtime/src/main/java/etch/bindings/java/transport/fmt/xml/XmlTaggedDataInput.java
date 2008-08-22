@@ -80,7 +80,7 @@ final public class XmlTaggedDataInput extends XmlTaggedData
 		stack.push( te );
 		elementList.push( te.getChildren() );
 		
-		Integer id = te.getIntAttr( null, STRUCT_TYPE_ATTR );
+		Integer id = te.getIntAttr( null, TYPE_ATTR );
 		Type type = vf.getType( id );
 		return new Message( type, vf );
 	}
@@ -102,7 +102,7 @@ final public class XmlTaggedDataInput extends XmlTaggedData
 		TagElement te = stack.peek();
 		elementList.push( te.getChildren() );
 		
-		Integer id = te.getIntAttr( null, STRUCT_TYPE_ATTR );
+		Integer id = te.getIntAttr( null, TYPE_ATTR );
 		Type type = vf.getType( id );
 		return new StructValue( type, vf );
 	}
