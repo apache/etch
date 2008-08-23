@@ -49,12 +49,12 @@
             <etch-test binding="@{binding}" file="${src}/main/etch/Cuae.etch" />
             <etch-test binding="@{binding}" file="${src}/main/etch/Foo.etch" />
             <etch-test binding="@{binding}" file="${src}/main/etch/Inheritance.etch" />
-            <etch-test binding="@{binding}" what="both,force,impl,main" file="${src}/main/etch/Test1.etch" />
+            <etch-test binding="@{binding}" what="all,force" file="${src}/main/etch/Test1.etch" />
             <etch-test binding="@{binding}" file="${src}/main/etch/Test2.etch" />
             <etch-test binding="@{binding}" file="${src}/main/etch/Test3.etch" />
             <etch-test binding="@{binding}" file="${src}/main/etch/Test4.etch" />
             <etch-test binding="@{binding}" file="${src}/main/etch/Test6.etch" />
-            <etch-test binding="@{binding}" what="both,force,impl,main" file="${src}/main/etch/TestIncludes.etch" />
+            <etch-test binding="@{binding}" what="all,force" file="${src}/main/etch/TestIncludes.etch" />
             <etch-test binding="@{binding}" file="${src}/main/etch/Types.etch" />
         
             <!-- negative tests -->
