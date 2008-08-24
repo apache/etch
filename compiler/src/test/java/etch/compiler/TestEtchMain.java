@@ -35,6 +35,8 @@ public class TestEtchMain
 	
 	private final static String T = "--testing";
 	
+	private final static String BINDING = "null";
+	
 	/** @throws Exception */
 	@Test
 	public void test1() throws Exception
@@ -76,7 +78,7 @@ public class TestEtchMain
 	public void test5() throws Exception
 	{
 		// source file doesn't exist
-		prog.doMain( new String[] { T, "-b", "java", "yyy" } );
+		prog.doMain( new String[] { T, "-b", BINDING, "yyy" } );
 		assertEquals( 3, prog.code );
 	}
 	
@@ -85,7 +87,7 @@ public class TestEtchMain
 	public void test6() throws Exception
 	{
 		// source file doesn't end in .etch
-		prog.doMain( new String[] { T, "-b", "java", findTestTxt() } );
+		prog.doMain( new String[] { T, "-b", BINDING, findTestTxt() } );
 		assertEquals( 3, prog.code );
 	}
 
@@ -94,7 +96,7 @@ public class TestEtchMain
 	public void test7() throws Exception
 	{
 		// compilation should have worked.
-		prog.doMain( new String[] { T, "-b", "java", findTestEtch() } );
+		prog.doMain( new String[] { T, "-b", BINDING, findTestEtch() } );
 		assertEquals( 0, prog.code );
 	}
 
