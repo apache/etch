@@ -117,14 +117,16 @@ public class CmdLineOptions
 
 	/**
 	 * This specifies the file(s) we need to generate (-w option). Valid values
-	 * depend upon the binding, but examples include ALL, BOTH, SERVER, CLIENT,
-	 * IMPL, MAIN, and NONE. HELP might give you some.
+	 * depend upon the binding, but examples include BOTH, SERVER, CLIENT, ALL,
+	 * INTF, IMPL, MAIN, NONE, and FORCE. HELP might give you some. Separate
+	 * values using one or more characters from ",;: " (e.g., "BOTH, INTF",
+	 * which is also the default for many bindings).
 	 */
 	public Set<String> what;
 
 	/**
 	 * The destination directory of the generated mixin files (-m option). If
-	 * not specifed, and if {@link #noMixinArtifacts} allows, mixin artifacts
+	 * not specified, and if {@link #noMixinArtifacts} allows, mixin artifacts
 	 * are generated into {@link #outputDir}.
 	 */
 	public File mixinOutputDir;
@@ -148,18 +150,18 @@ public class CmdLineOptions
 	public boolean quiet;
 
 	/**
-	 * Destination directory of the user editable template files. If not
-	 * specified, same as {@link #outputDir}.
+	 * Destination directory of the user editable template files (-t option).
+	 * If not specified, same as {@link #outputDir}.
 	 */
 	public File templateOutputDir;
 
 	/**
-	 * Ignore the ETCH_INCLUDE_PATH environment variable.
+	 * Ignore the ETCH_INCLUDE_PATH environment variable (-i option).
 	 */
 	public boolean ignoreIncludePath;
 
 	/**
-	 * We're just testing the compiler, don't write any files.
+	 * We're just testing the compiler, don't write any files (--testing option).
 	 */
 	public boolean testing;
 

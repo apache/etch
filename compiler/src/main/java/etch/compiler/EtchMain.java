@@ -132,9 +132,11 @@ public class EtchMain extends Program
             "namespace directory tree should not be flattened",
             Option.SINGLETON );
         
-        cp.defineNullOption( "--testing", "setTesting", "", Option.HIDDEN );
+        cp.defineNullOption( "--testing", "setTesting",
+        	"",
+        	Option.HIDDEN );
 
-        cp.defineFileParameter( "file", "setFile",
+        cp.defineFileParameter( "sourceFile", "setSourceFile",
             "etch source file to compile", true, false, null );
     }
     
@@ -328,6 +330,7 @@ public class EtchMain extends Program
      */
     public void setTesting( CommandParser cp, Option option, String token )
     {
+    	// TODO install a non-printing LogHandler to capture output.
     	clo.testing = true;
     	testingClo = clo;
     }
@@ -344,7 +347,7 @@ public class EtchMain extends Program
      * @param param
      * @param value path of etch file to compile
      */
-    public void setFile( CommandParser cp, Parameter param, File value )
+    public void setSourceFile( CommandParser cp, Parameter param, File value )
     {
     	clo.sourceFile = value;
     }
