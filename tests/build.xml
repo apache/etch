@@ -24,12 +24,12 @@
         <attribute name="home" default="${Etch.HOME}" />
         <attribute name="binding" />
         <attribute name="file" />
-        <attribute name="what" default="both" />
-        <attribute name="output" default="${generated-sources}/main/etch/@{binding}" />
-        <attribute name="templateoutput" default="${src}/main/@{binding}" />
+        <attribute name="what" />
+        <attribute name="outputDir" default="${generated-sources}/main/etch/@{binding}" />
+        <attribute name="templateOutputDir" default="${src}/main/@{binding}" />
         <element name="etchelements" implicit="true" optional="true" />
         <sequential>
-            <etch home="@{home}" binding="@{binding}" output="@{output}" what="@{what}" file="@{file}" >
+            <etch home="@{home}" binding="@{binding}" outputDir="@{output}" what="@{what}" file="@{file}" >
                 <etchelements />
             </etch>
         </sequential>
