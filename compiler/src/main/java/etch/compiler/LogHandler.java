@@ -26,73 +26,197 @@ package etch.compiler;
 public interface LogHandler
 {
 	/**
-	 * Constant to specify an Error Message
+	 * A message which is always printed, but doesn't affect compilation.
+	 * Also usually formatted without level, phase, source, line number, or
+	 * history information.
+	 */
+	public static final int LEVEL_IMPORTANT = 0;
+	
+	/**
+	 * An error level message. Also causes compiler to exit with an error code.
 	 */
 	public static final int LEVEL_ERROR = 1;
+	
 	/**
-	 * Constant to specify an Warning Message
+	 * A warning level message.
 	 */
 	public static final int LEVEL_WARNING = 2;
+	
 	/**
-	 * Constant to specify an Info Message
+	 * An information level message.
 	 */
 	public static final int LEVEL_INFO = 3;
+	
 	/**
-	 * Constant to specify an unformatted message to be printed always.
+	 * Formats and reports a message without a line number.
+	 * @param level
+	 * @param fmt
+	 * @param params
 	 */
-	public static final int LEVEL_MESSAGE = 4;
+	public void report( int level, String fmt, Object ... params );
+	
+	/**
+	 * Formats and reports a message with perhaps a line number.
+	 * @param level
+	 * @param lineNumber
+	 * @param fmt
+	 * @param params
+	 */
+	public void report( int level, Integer lineNumber, String fmt,
+		Object ... params );
 	
 	/**
 	 * This method is used to either store or print messages
 	 * @param level indicates ERROR, WARNING or INFO
-	 * @param token indicates the token at which the error occured
+	 * @param token indicates the token at which the error occurred
 	 * @param msg String message
+	 * @deprecated use {@link #report(int, Integer, String)} instead.
 	 */
-	public void logMessage(int level, Token token, String msg );
+	@Deprecated
+	public void logMessage( int level, Token token, String msg );
 	
 	/**
-	 * This method is used to specify the source of the Message
-	 * @param str  File name where the Message occured
-	 * @param num  Line Number where the Message occured
+	 * Reports a pre-formatted message perhaps with a line number.
+	 * @param level
+	 * @param lineNumber
+	 * @param msg
 	 */
-	
-	public void push(String str, Integer num);
+	public void report( int level, Integer lineNumber, String msg );
 	
 	/**
-	 * This method removes the source that was added by the push method.
+	 * Determines if a message is interesting given its level.
+	 * @param level
+	 * @return true if a message is interesting given its level.
+	 */
+	public boolean isInteresting( int level );
+	
+	/**
+	 * Pushes a new source on the stack.
+	 * @param newSource new source name being read.
+	 * @param lineNumberInOldSource line number in old source which caused the new
+	 * source to be read. This should be null for the top level source.
+	 */
+	public void push( String newSource, Integer lineNumberInOldSource );
+	
+	/**
+	 * Removes the source that was added by the last push method.
 	 * It behaves exactly like the pop method in Stacks
-	 *
+	 * @param oldSource the source name we just finished reading. This was
+	 * previously passed as the argument to the last push.
 	 */
-	
-	public void pop();
+	public void pop( String oldSource );
 	
 	/**
-	 * Indicates whether an error was encountered
-	 * @return flag to indicate whether an error occured
+	 * @return true if an error has been reported.
 	 */
-	
 	public boolean hasError();
 	
 	/**
-	 * Sets the quiet flag.
-	 * @param quiet
+	 * @return count of errors that have been reported.
 	 */
-	public void setQuiet( boolean quiet );
+	public int errorCount();
+	
+	/**
+	 * @return true if a warning has been reported.
+	 */
+	public boolean hasWarning();
+	
+	/**
+	 * @return count of warnings that have been reported.
+	 */
+	public int warningCount();
 
 	/**
-	 * This method gets the isQuiet Variable
-	 * @return whether Compiler is printing info and warning messages
+	 * Gets the level of logging.
+	 * @return the current level of logging. Only messages with level less than
+	 * or equal to this value will be logged.
 	 */
-	public boolean getQuiet();
+	public int getLevel();
+	
+	/**
+	 * Sets the level of logging. Only messages with level less than
+	 * or equal to this value will be logged.
+	 * @param level the level of logging
+	 */
+	public void setLevel( int level );
+	
+	/**
+	 * @return the current phase of processing. The initial value is null.
+	 */
+	public String getPhase();
 	
 	/**
 	 * Sets the current phase of processing.
-	 * @param phase
+	 * @param phase may be null.
 	 */
 	public void setPhase( String phase );
 	
 	/**
-	 * @return the current phase of processing.
+	 * Final condensation of the information of a report.
 	 */
-	public String getPhase();
+	public static class Message
+	{
+		/**
+		 * @param level
+		 * @param phase
+		 * @param source
+		 * @param lineNumber
+		 * @param msg
+		 * @param history
+		 */
+		public Message( int level, String phase, String source,
+			Integer lineNumber, String msg, History[] history )
+		{
+			this.level = level;
+			this.phase = phase;
+			this.source = source;
+			this.lineNumber = lineNumber;
+			this.msg = msg;
+			this.history = history;
+		}
+		
+		/** the level of the report */
+		public final int level;
+		
+		/** the phase of processing when the report was made */
+		public final String phase;
+		
+		/** the current input source */
+		public final String source;
+		
+		/** the line number of the source which caused the report (if any) */
+		public final Integer lineNumber;
+		
+		/** the text of the report */
+		public final String msg;
+		
+		/** the history of sources previous to source / lineNumber above */
+		public final History[] history;
+	}
+
+	/**
+	 * Record of the input streams previous to the last one pushed.
+	 */
+	public static class History
+	{
+		/**
+		 * @param source
+		 * @param lineNumber
+		 */
+		public History( String source, int lineNumber )
+		{
+			this.source = source;
+			this.lineNum = lineNumber;
+		}
+		
+		/**
+		 * The source of the input stream (file, stdin, etc.)
+		 */
+		public final String source;
+		
+		/**
+		 * The line number of the source which caused a new source to be pushed.
+		 */
+		public final int lineNum;
+	}
 }
