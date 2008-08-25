@@ -113,9 +113,9 @@ public class TestKeepAlive
 		KeepAlive filter = newKeepAlive(uri);
 		filter.setSession( session );		
 		filter.sessionNotify( Session.UP );
-		System.out.println("Sleeping for 5 seconds");
+//		System.out.println("Sleeping for 5 seconds");
 		Thread.sleep( 5000 );		 
-		System.out.println("Out of sleep");
+//		System.out.println("Out of sleep");
 		assertSame( What.TRANSPORT_MESSAGE, transport.what );
 		Message msg = transport.msg;
 		assertEquals( "_Etch_KeepAliveReq", msg.type().getName() );
@@ -132,9 +132,9 @@ public class TestKeepAlive
 		KeepAlive filter = newKeepAlive(uri);
 		filter.setSession( session );		
 		filter.sessionNotify( Session.UP );
-		System.out.println("Sleeping for 4 seconds");
+//		System.out.println("Sleeping for 4 seconds");
 		Thread.sleep( 4000 );		 
-		System.out.println("Out of sleep");
+//		System.out.println("Out of sleep");
 		assertSame( What.TRANSPORT_MESSAGE, transport.what );
 		Message msg = transport.msg;
 		assertEquals( "_Etch_KeepAliveReq", msg.type().getName() );

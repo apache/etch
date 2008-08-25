@@ -282,8 +282,8 @@ public class EtchCompiler
      */
     private static void initIncludePath( CmdLineOptions clo ) throws IOException
     {
-    	System.out.println( "initIncludePath: sourceFile = "+clo.sourceFile );
-    	System.out.println( "initIncludePath: includePath = "+clo.includePath );
+//    	System.out.println( "initIncludePath: sourceFile = "+clo.sourceFile );
+//    	System.out.println( "initIncludePath: includePath = "+clo.includePath );
     	
     	// includePath is composed of the source file's directory, then
     	// the paths specifies by -I command line directives, then the
@@ -322,7 +322,7 @@ public class EtchCompiler
 	            }
 	        }
     	}
-    	System.out.println( "initIncludePath: effectiveIncludePath = "+clo.effectiveIncludePath );
+//    	System.out.println( "initIncludePath: effectiveIncludePath = "+clo.effectiveIncludePath );
     }
 
 	private static Module compile( CmdLineOptions clo ) throws Exception
@@ -545,9 +545,9 @@ public class EtchCompiler
 	private static void saveOutput( CmdLineOptions clo ) throws IOException
 	{
 		// TODO implement saveOutput
-		clo.output.report( "output" );
-		clo.templateOutput.report( "templateOutput" );
-		clo.mixinOutput.report( "mixinOutput" );
+//		clo.output.report( "output" );
+//		clo.templateOutput.report( "templateOutput" );
+//		clo.mixinOutput.report( "mixinOutput" );
 		
 		if (clo.testing)
 			return;
@@ -645,9 +645,9 @@ public class EtchCompiler
 		
 		file = file + ".etch";
 		
-		System.out.printf( "searching for mixin '%s' module '%s'\n", file, module );
-		System.out.println( "includePath = "+clo.includePath );
-		System.out.println( "effectiveIncludePath = "+clo.effectiveIncludePath );
+//		System.out.printf( "searching for mixin '%s' module '%s'\n", file, module );
+//		System.out.println( "includePath = "+clo.includePath );
+//		System.out.println( "effectiveIncludePath = "+clo.effectiveIncludePath );
 		
 		List<File> list = new ArrayList<File>();
 		
@@ -665,7 +665,7 @@ public class EtchCompiler
 			return null;
 		
 		File f = list.get( 0 );
-		System.out.println( "mixing in = "+f );
+//		System.out.println( "mixing in = "+f );
 		
 		return parseModule0( clo, n, f );
 	}

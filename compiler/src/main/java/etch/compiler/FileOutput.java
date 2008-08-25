@@ -154,6 +154,6 @@ public class FileOutput implements Output
 			fos.close();
 		}
 		
-		System.out.printf( "wrote file %s, size %d\n", f, value.size() );
+//		System.out.printf( "wrote file %s, size %d\n", f, value.size() );
 	}
 }

@@ -618,7 +618,7 @@ public class TestBinaryTaggedDataInOut
 	public void badtype() throws Exception
 	{
 		Message msg = bytes2msg( new byte[] { 3, 1, 0, -127 } );
-		System.out.println( "msg = "+msg );
+//		System.out.println( "msg = "+msg );
 	}
 	
 	/** @throws Exception */
@@ -626,7 +626,7 @@ public class TestBinaryTaggedDataInOut
 	public void badmsglen1() throws Exception
 	{
 		Message msg = bytes2msg( new byte[] { 3, 1, -1, -127 } );
-		System.out.println( "msg = "+msg );
+//		System.out.println( "msg = "+msg );
 	}
 	
 	/** @throws Exception */
@@ -634,7 +634,7 @@ public class TestBinaryTaggedDataInOut
 	public void badmsglen2() throws Exception
 	{
 		Message msg = bytes2msg( new byte[] { 3, 1, 99, -127 } );
-		System.out.println( "msg = "+msg );
+//		System.out.println( "msg = "+msg );
 	}
 	
 	/** @throws Exception */
@@ -642,7 +642,7 @@ public class TestBinaryTaggedDataInOut
 	public void badfield() throws Exception
 	{
 		Message msg = bytes2msg( new byte[] { 3, 1, 1, 2, 2, -127 }, Level.MISSING_OK );
-		System.out.println( "msg = "+msg );
+//		System.out.println( "msg = "+msg );
 	}
 	
 	private void assertValueToBytes( Object value, byte[] expectedBytes ) throws Exception
@@ -653,7 +653,7 @@ public class TestBinaryTaggedDataInOut
 		
 		Message msg = new Message( t, vf );
 		msg.put( f, value );
-		System.out.println( "msg = "+msg );
+//		System.out.println( "msg = "+msg );
 		
 		BinaryTaggedDataOutput btdo = new BinaryTaggedDataOutput( vf, "none:" );
 		FlexBuffer buf = new FlexBuffer();
@@ -662,7 +662,7 @@ public class TestBinaryTaggedDataInOut
 		
 		buf.setIndex( 0 );
 		byte[] b = buf.getAvailBytes();
-		dump( b );
+//		dump( b );
 		assertArrayEquals( expectedBytes, b );
 	}
 	
