@@ -63,8 +63,9 @@ public class EtchCompiler
     	
     	if (clo.lh == null)
     	{
-	    	clo.lh = new CompilerLogHandler( "Command" );
-	    	clo.lh.setQuiet( clo.quiet );
+	    	clo.lh = new ConsoleLogHandler( "Command" );
+	    	clo.lh.setLevel(
+	    		clo.quiet ? LogHandler.LEVEL_WARNING : LogHandler.LEVEL_INFO );
     	}
     	
     	if (!initBindingClass( clo ))
@@ -74,12 +75,35 @@ public class EtchCompiler
     		return;
     	
     	initOutput( clo );
+        clo.lh.push( clo.sourceFile.getName(), null );
         
-		compile( clo );
-    	
-        clo.lh.logMessage( LogHandler.LEVEL_INFO, null, "Saving Resources...\n");
-        
-        saveOutput( clo );
+        try
+        {
+			compile( clo );
+	    	
+			if (!clo.lh.hasError())
+			{
+		        clo.lh.report( LogHandler.LEVEL_INFO, "Saving Resources..." );
+		        
+		        saveOutput( clo );
+		        
+		        if (!clo.lh.hasError())
+		        	clo.lh.report( LogHandler.LEVEL_INFO, "Saving Resources Done." );
+		        else
+		        	clo.lh.report( LogHandler.LEVEL_INFO, "Saving Resources Failed." );
+			}
+			else
+				clo.lh.report( LogHandler.LEVEL_INFO, "Compile Failed." );
+	    }
+        catch ( Exception e )
+        {
+        	clo.lh.report( LogHandler.LEVEL_ERROR, "caught exception: %s", e );
+        	e.printStackTrace();
+        }
+        finally
+        {
+        	clo.lh.pop( clo.sourceFile.getName() );
+        }
     }
 
 	private static boolean initBindingClass( CmdLineOptions clo )
@@ -91,16 +115,16 @@ public class EtchCompiler
 		
 		if (n == null || n.length() == 0)
 		{
-			clo.lh.logMessage( LogHandler.LEVEL_ERROR, null,
-				"Binding not specified.\n" );
+			clo.lh.report( LogHandler.LEVEL_ERROR,
+				"Binding not specified." );
 			return false;
 		}
 		
 		if (n.equalsIgnoreCase( "help" ))
 		{
 			// TODO find some way to list the bindings?
-			clo.lh.logMessage( LogHandler.LEVEL_ERROR, null,
-				"Binding help not implemented.\n" );
+			clo.lh.report( LogHandler.LEVEL_ERROR,
+				"Binding help not yet implemented." );
 			return false;
 		}
 		
@@ -119,16 +143,16 @@ public class EtchCompiler
 		}
 		catch ( ClassNotFoundException e )
 		{
-			clo.lh.logMessage( LogHandler.LEVEL_ERROR, null, String.format(
-				"Binding '%s' could not be loaded; class '%s' not in classpath.\n",
-				n, cn ) );
+			clo.lh.report( LogHandler.LEVEL_ERROR,
+				"Binding '%s' could not be loaded; class '%s' not in classpath.",
+				n, cn );
 			return false;
 		}
 		catch ( RuntimeException e )
 		{
-			clo.lh.logMessage( LogHandler.LEVEL_ERROR, null, String.format(
-				"Binding '%s' could not be loaded; class '%s' threw exception %s\n",
-				n, cn, e ) );
+			clo.lh.report( LogHandler.LEVEL_ERROR,
+				"Binding '%s' could not be loaded; class '%s' threw exception %s",
+				n, cn, e );
 			e.printStackTrace();
 			return false;
 		}
@@ -143,9 +167,9 @@ public class EtchCompiler
 		}
 		catch ( Exception e )
 		{
-			clo.lh.logMessage( LogHandler.LEVEL_ERROR, null, String.format(
-				"Binding '%s' could not be initialized; caught exception %s.\n",
-				clo.binding, e ) );
+			clo.lh.report( LogHandler.LEVEL_ERROR,
+				"Binding '%s' could not be initialized; caught exception %s.",
+				clo.binding, e );
 			e.printStackTrace();
 			return false;
 		}
@@ -159,15 +183,15 @@ public class EtchCompiler
 		
 		if (!f.isFile())
 		{
-			clo.lh.logMessage( LogHandler.LEVEL_ERROR, null, String.format(
-				"Source file '%s' does not exist or is not a file.\n", f ) );
+			clo.lh.report( LogHandler.LEVEL_ERROR,
+				"Source file '%s' does not exist or is not a file.", f );
 			return false;
 		}
 		
 		if (!f.getName().endsWith( ".etch" ))
 		{
-			clo.lh.logMessage( LogHandler.LEVEL_ERROR, null, String.format(
-				"Source file '%s' must have .etch extension.\n", f ) );
+			clo.lh.report( LogHandler.LEVEL_ERROR,
+				"Source file '%s' must have .etch extension.", f );
 			return false;
 		}
 		
@@ -301,8 +325,8 @@ public class EtchCompiler
     		if (f.isDirectory())
     			clo.effectiveIncludePath.add( f );
     		else
-    			clo.lh.logMessage( LogHandler.LEVEL_WARNING, null,
-            		"Include path element doesn't exist: "+f+"\n" );
+    			clo.lh.report( LogHandler.LEVEL_WARNING,
+            		"Include path element doesn't exist: %s", f );
     	}
     	
     	if (!clo.ignoreIncludePath)
@@ -317,8 +341,8 @@ public class EtchCompiler
 	                if (f.isDirectory())
 	                	clo.effectiveIncludePath.add( f );
 	                else
-	                	clo.lh.logMessage( LogHandler.LEVEL_WARNING, null,
-	                		"Environment include path element doesn't exist: "+f+"\n" );
+	                	clo.lh.report( LogHandler.LEVEL_WARNING,
+	                		"Environment include path element doesn't exist: %s", f );
 	            }
 	        }
     	}
@@ -345,11 +369,11 @@ public class EtchCompiler
     	if (!initBackend( clo ))
     		return null;
     	
-    	clo.lh.logMessage( LogHandler.LEVEL_INFO, null,
-    		clo.sourceFile != null
-    			? String.format( "Compiling %s ...\n", clo.sourceFile )
-    			: "Compiling ...\n" );
-
+    	if (clo.sourceFile != null)
+    		clo.lh.report( LogHandler.LEVEL_INFO, "Compiling %s...", clo.sourceFile );
+    	else
+    		clo.lh.report( LogHandler.LEVEL_INFO, "Compiling..." );
+    	
     	final EtchGrammar parser = new EtchGrammar( clo.backend, is );
         
         final Module m;
@@ -358,21 +382,23 @@ public class EtchCompiler
         try
         {
             m = parser.module( clo );
-            clo.lh.logMessage( LogHandler.LEVEL_INFO, null, "Parsed Ok.\n");
+            clo.lh.report( LogHandler.LEVEL_INFO, "Parsed Ok." );
+            
             m.check();
-            clo.lh.logMessage( LogHandler.LEVEL_INFO, null, "Checked Ok.\n" );
+            clo.lh.report( LogHandler.LEVEL_INFO, "Checked Ok." );
         }
         catch ( ParseException e )
         {
             String fmt = e.getMessage();
-            clo.lh.logMessage( LogHandler.LEVEL_ERROR, e.currentToken, fmt+"\n" );
+            clo.lh.report( LogHandler.LEVEL_ERROR,
+            	e.currentToken != null ? e.currentToken.beginLine : null,
+            		e.getMessage() );
             // TODO better report of a ParseException
             throw new Exception(e.currentToken + " " + fmt);
         }
-        catch ( Exception e)
+        catch ( Exception e )
         {
-            String fmt = e.getMessage();
-            clo.lh.logMessage( LogHandler.LEVEL_ERROR, null, fmt+"\n" );
+            clo.lh.report( LogHandler.LEVEL_ERROR, "caught exception: %s", e );
             // TODO better report of an Exception
             throw e;
         }
@@ -382,7 +408,7 @@ public class EtchCompiler
         try
         {
             // TODO report work lists?
-        	clo.lh.logMessage( LogHandler.LEVEL_INFO, null, "Generating Resources...\n");
+        	clo.lh.report( LogHandler.LEVEL_INFO, "Generating Resources..." );
             
             // TODO integrate includePath with code generation.
             clo.backend.generate( m, clo );
@@ -402,7 +428,7 @@ public class EtchCompiler
 
         // Complete
 
-        clo.lh.logMessage( LogHandler.LEVEL_INFO, null, "Compile Done.\n");
+        clo.lh.report( LogHandler.LEVEL_INFO, "Compile Done." );
         return m;
     }
 
@@ -710,9 +736,8 @@ public class EtchCompiler
 			clo.what.add( Backend.WHAT_NONE );
 		}
 		
-		clo.lh.logMessage( LogHandler.LEVEL_INFO, n.token,
-			"Compiling mixin file: " + n.name + " at line : "
-				+ n.token.beginLine + "\n" );
+		clo.lh.report( LogHandler.LEVEL_INFO, n.token.beginLine,
+			"Compiling mixin file: %s", n.name );
 		clo.lh.push( f.getName(), n.token.beginLine );
 		try
 		{
@@ -720,10 +745,9 @@ public class EtchCompiler
 		}
 		finally
 		{
-			clo.lh.pop();
-			clo.lh.logMessage( LogHandler.LEVEL_INFO, n.token,
-				"Done compiling mixin file: " + n.name + " at line : "
-					+ n.token.beginLine + "\n" );
+			clo.lh.pop( f.getName() );
+			clo.lh.report( LogHandler.LEVEL_INFO, n.token.beginLine,
+				"Done compiling mixin file: %s", n.name );
 		}
 		
 //		try

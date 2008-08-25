@@ -30,7 +30,7 @@ import etch.util.cmd.Program;
  */
 public class EtchMain extends Program
 {
-    /**
+	/**
      * @param args
      * @throws Exception 
      */
@@ -330,8 +330,8 @@ public class EtchMain extends Program
      */
     public void setTesting( CommandParser cp, Option option, String token )
     {
-    	// TODO install a non-printing LogHandler to capture output.
     	clo.testing = true;
+    	clo.lh = new ListLogHandler();
     	testingClo = clo;
     }
     
@@ -358,7 +358,9 @@ public class EtchMain extends Program
         // Instantiate a new compiler instance and run it.
     	ClassLoader cl = EtchCompiler.setupClassLoader( null );
         EtchCompiler etchCompiler = new EtchCompiler( cl );
+        
         etchCompiler.run( clo );
+        
         if (clo.lh.hasError())
         	exit( 3, "EtchMain", "errors during compile", false );
     }

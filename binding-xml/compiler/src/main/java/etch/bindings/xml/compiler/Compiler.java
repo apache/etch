@@ -117,7 +117,7 @@ public class Compiler extends Backend
 				return;
 			
 			if (lh != null)
-				lh.logMessage( level == 2 ? LogHandler.LEVEL_WARNING : LogHandler.LEVEL_ERROR, null, msg );
+				lh.report( level == 2 ? LogHandler.LEVEL_WARNING : LogHandler.LEVEL_ERROR, null, msg );
 			else
 				System.out.printf( "Velocity msg (%d): %s\n", level, msg );
 		}
@@ -128,7 +128,7 @@ public class Compiler extends Backend
 				return;
 			
 			if (lh != null)
-				lh.logMessage( level == 2 ? LogHandler.LEVEL_WARNING : LogHandler.LEVEL_ERROR, null, msg );
+				lh.report( level == 2 ? LogHandler.LEVEL_WARNING : LogHandler.LEVEL_ERROR, null, msg );
 			else
 				System.out.printf( "Velocity msg (%d): %s: %s\n", level, msg, e );
 		}
