@@ -1,0 +1,6 @@
+module foo
+
+service Foo
+{
+	void helloWorld( string msg )
+}

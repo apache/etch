@@ -15,29 +15,22 @@
  * under the License.
  */
 
-module etch.tests
+package etch.compiler;
 
-service Bar
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * LogHandler which accumulates messages in a list.
+ */
+public class ListLogHandler extends AbstractLogHandler
 {
-	mixin Baz
+	/** list of accumulated messages */
+	public List<Message> msgs = new ArrayList<Message>();
 
-	@Extern( java, "etch.bindings.java.util.StrStrHashMap", "",
-		"etch.bindings.java.util.StrStrHashMapSerializer", "" )
-	@Extern( csharp, "StrStrHashMap", "Etch.Util",
-		"StrStrHashMapSerializer", "" )
-	extern BarTable
-	
-	struct BarData( int code, BarTable barTable, BazData bazData )
-
-	/** Method Bar1 **/
-	@Direction( Both )
-	boolean bar1( BarData barData );
-	
-	/** Method Bar2 **/
-	@Direction( Server )
-	boolean bar2( BarData barData );
-	
-	/** Method Bar3 **/
-	@Direction( Client )
-	boolean bar3( BarData barData );
+	@Override
+	protected void log( Message message )
+	{
+		msgs.add( message );
+	}
 }

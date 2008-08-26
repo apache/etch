@@ -154,9 +154,9 @@ public class ReservedWordChecker extends AbstractTreeWalker
 	{
 		String msg = String.format( "Etch: %s '%s' is a reserved word at line %d\n", what, token.image, token.beginLine);
 		if (rewrite)
-			lh.logMessage( LogHandler.LEVEL_WARNING, token,msg  );
+			lh.report( LogHandler.LEVEL_WARNING, token.beginLine, msg );
 		else
-			lh.logMessage( LogHandler.LEVEL_ERROR, token,msg  );
+			lh.report( LogHandler.LEVEL_ERROR, token.beginLine, msg );
 		ok = rewrite;
 	}
 }
