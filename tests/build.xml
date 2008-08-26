@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<project name="etch-tests" basedir="." default="build-all">
+<project name="etch-tests" basedir="." default="help">
     <description>Functional Tests</description>
     <property name="Etch.basedir" location="${basedir}/.." />
     <import file="${Etch.basedir}/build-support/etch.includes.xml" />
+	<target name="help"><echo>Please select a target...</echo></target>
     
     <!-- import etch task -->
     <taskdef name="etch"
@@ -23,12 +24,12 @@
         <attribute name="home" default="${Etch.HOME}" />
         <attribute name="binding" />
         <attribute name="file" />
-        <attribute name="what" default="both" />
-        <attribute name="output" default="${generated-sources}/main/etch/@{binding}" />
-        <attribute name="templateoutput" default="${src}/main/@{binding}" />
+        <attribute name="what" default="both, intf" />
+        <attribute name="outputDir" default="${generated-sources}/main/etch/@{binding}" />
+        <attribute name="templateOutputDir" default="${src}/main/@{binding}" />
         <element name="etchelements" implicit="true" optional="true" />
         <sequential>
-            <etch home="@{home}" binding="@{binding}" output="@{output}" what="@{what}" file="@{file}" >
+            <etch home="@{home}" binding="@{binding}" outputDir="@{outputDir}" what="@{what}" file="@{file}" >
                 <etchelements />
             </etch>
         </sequential>
@@ -48,12 +49,12 @@
             <etch-test binding="@{binding}" file="${src}/main/etch/Cuae.etch" />
             <etch-test binding="@{binding}" file="${src}/main/etch/Foo.etch" />
             <etch-test binding="@{binding}" file="${src}/main/etch/Inheritance.etch" />
-            <etch-test binding="@{binding}" what="both,force,impl,main" file="${src}/main/etch/Test1.etch" />
+            <etch-test binding="@{binding}" what="all,force" file="${src}/main/etch/Test1.etch" />
             <etch-test binding="@{binding}" file="${src}/main/etch/Test2.etch" />
             <etch-test binding="@{binding}" file="${src}/main/etch/Test3.etch" />
             <etch-test binding="@{binding}" file="${src}/main/etch/Test4.etch" />
             <etch-test binding="@{binding}" file="${src}/main/etch/Test6.etch" />
-            <etch-test binding="@{binding}" what="both,force,impl,main" file="${src}/main/etch/TestIncludes.etch" />
+            <etch-test binding="@{binding}" what="all,force" file="${src}/main/etch/TestIncludes.etch" />
             <etch-test binding="@{binding}" file="${src}/main/etch/Types.etch" />
         
             <!-- negative tests -->

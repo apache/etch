@@ -17,7 +17,6 @@
 
 package etch.bindings.java.compiler;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringReader;
@@ -40,6 +39,7 @@ import etch.compiler.Backend;
 import etch.compiler.CmdLineOptions;
 import etch.compiler.EtchGrammarConstants;
 import etch.compiler.LogHandler;
+import etch.compiler.Output;
 import etch.compiler.ParseException;
 import etch.compiler.Token;
 import etch.compiler.Version;
@@ -169,7 +169,7 @@ public class Compiler extends Backend
 				return;
 			
 			if (lh != null)
-				lh.logMessage( level == 2 ? LogHandler.LEVEL_WARNING : LogHandler.LEVEL_ERROR, null, msg );
+				lh.report( level == 2 ? LogHandler.LEVEL_WARNING : LogHandler.LEVEL_ERROR, null, msg );
 			else
 				System.out.printf( "Velocity msg (%d): %s\n", level, msg );
 		}
@@ -180,7 +180,7 @@ public class Compiler extends Backend
 				return;
 			
 			if (lh != null)
-				lh.logMessage( level == 2 ? LogHandler.LEVEL_WARNING : LogHandler.LEVEL_ERROR, null, msg );
+				lh.report( level == 2 ? LogHandler.LEVEL_WARNING : LogHandler.LEVEL_ERROR, null, msg );
 			else
 				System.out.printf( "Velocity msg (%d): %s: %s\n", level, msg, e );
 		}
@@ -225,15 +225,17 @@ public class Compiler extends Backend
 	}
 
 	@Override
-	public void generate( Module module, CmdLineOptions options, LogHandler _lh )
+	public void generate( Module module, CmdLineOptions options )
 		throws Exception
 	{
-		this.lh = _lh;
+		// java always wants to not flatten packages:
+		options.noFlattenPackages = true;
+		
+		lh = options.lh;
 
-		boolean ignoreGlobal = options.ignoreGlobal;
-		boolean ignoreLocal = options.ignoreLocal;
-		String userWords = options.userWordsList;
-		File dir = options.outputDir;
+		boolean ignoreGlobal = options.ignoreGlobalWordsList;
+		boolean ignoreLocal = options.ignoreLocalWordsList;
+		String userWords = options.userWordsList != null ? options.userWordsList.getPath() : null;
 		Set<String> what = options.what;
 
 		// Load the reserved words lists if any have been provided.
@@ -246,55 +248,53 @@ public class Compiler extends Backend
 			mapWords( userWords, words );
 
 		// check for collisions with the reserved word list.
-		ReservedWordChecker checker = new ReservedWordChecker( words, false,_lh );
+		ReservedWordChecker checker = new ReservedWordChecker( words, false, lh );
 		module.treewalk( checker );
 		if (!checker.ok())
 		{
-			_lh.logMessage( LogHandler.LEVEL_ERROR, null, "Encountered errors during java generation.\n" );
+			lh.report( LogHandler.LEVEL_ERROR, null, "Encountered errors during java generation." );
 			return;
 		}
 
 		// ok, we're ready to generate code. make sure the
 		// output directories exist.
 
-		if (dir != null && module.name().name.length() > 0)
+		Output dir = options.output;
+		Output templateDir = options.templateOutput;
+		
+		String m = module.name().name;
+		if (m.length() > 0)
 		{
-			String path = module.name().name.replace( '.', '/' );
-			dir = new File( dir, path );
+			dir = dir.newPackage( m );
+			templateDir = templateDir.newPackage( m );
 		}
-		else
-		{
-			dir = new File( "." );
-		}
-
-		dir.mkdirs();
-
+		
 		// generate code for each service.
 
 		for (Service intf : module)
 		{
+			// TODO flush gIntf
 			gIntf = intf;
-			generate( intf, what, dir );
+			try
+			{
+				generate( intf, what, dir, templateDir );
+			}
+			finally
+			{
+				// TODO flush gIntf
+				gIntf = null;
+			}
 		}
-		gIntf = null;
 	}
 
+	// TODO flush gIntf
+	@Deprecated
 	private Service gIntf;
 
-	private void generate( final Service intf, Set<String> what, File dir )
-		throws Exception
+	private void generate( final Service intf, Set<String> what, Output dir,
+		Output templateDir ) throws Exception
 	{
 		what = populateWhat( what );
-
-		if (what == null)
-		{
-			// lh.logMessage( lh.LEVEL_ERROR, null,
-			// "User has selected invalid option\n" );
-			// return;
-			throw new Exception(
-				"User has selected invalid option. Valid Options are"
-					+ " all,both,server,client,impl,main,helper,none\n" );
-		}
 
 		if (what.isEmpty())
 		{
@@ -304,182 +304,187 @@ public class Compiler extends Backend
 
 		final MessageDirection msgDir = getMessageDirection( what );
 
-		// Generate the value factory file
-		doFile( dir, getVfName( intf ) + fnSuffix, true, true, new Gen()
+		if (what.contains( WHAT_INTF ))
 		{
-			public void run( PrintWriter pw ) throws Exception
-			{
-				generateVf( pw, intf );
-			}
-		}, lh );
+			// Generate the value factory file.
+			
+			generateVf( intf, dir );
+	
+			// Generate the interface, remote, and stub files.
+	
+			generateIntfRemoteStub( intf, dir, msgDir, MessageDirection.BOTH, false );
+	
+			generateIntfRemoteStub( intf, dir, msgDir, MessageDirection.SERVER, true );
+	
+			generateIntfRemoteStub( intf, dir, msgDir, MessageDirection.CLIENT, true );
+	
+			// Generate helper file.
+	
+			generateHelper( intf, dir, msgDir );
+			
+			// Generate base file.
+			
+			generateBase( intf, dir, msgDir );
+	
+			// Generate readme file.
+			
+			generateReadme( intf, dir, msgDir );
+		}
 
-		// Generate the interface, remote, and stub files
+		// Generate main template file.
 
-//		boolean hasBaseClass = intf.hasMessageDirection( MessageDirection.BOTH );
+		if (what.contains( WHAT_MAIN ))
+			generateMain( intf, templateDir, msgDir );
 
-		generate( intf, dir, msgDir, MessageDirection.BOTH, false, true );
+		// Generate impl template file.
 
-		generate( intf, dir, msgDir, MessageDirection.SERVER, true, true );
+		if (what.contains( WHAT_IMPL ))
+			generateImpl( intf, templateDir, msgDir );
+	}
 
-		generate( intf, dir, msgDir, MessageDirection.CLIENT, true, true );
-
-		boolean force = what.contains( WHAT_FORCE );
-//		System.out.println( "force = "+force );
-
-		// Always generate helper file.
-
-		doFile( dir, getHelperName( intf ) + fnSuffix, true, true, new Gen()
-		{
-			public void run( PrintWriter pw ) throws Exception
-			{
-				generateHelper( pw, intf, msgDir );
-			}
-		}, lh );
-
-		// Always generate readme file.
-
-		doFile( dir, "readme-etch-java-files.txt", true, true, new Gen()
+	private void generateReadme( final Service intf, Output dir,
+		final MessageDirection msgDir ) throws Exception
+	{
+		doFile( dir, "readme-etch-java-files.txt", lh, new Gen()
 		{
 			public void run( PrintWriter pw ) throws Exception
 			{
 				generateReadme( pw, intf, msgDir );
 			}
-		}, lh );
-		
-		// Always Generate the base file
-		generateBase( intf, dir, msgDir, true );
-
-		// Generate main file.
-
-		if (what.contains( WHAT_MAIN ))
-			generateMain( intf, dir, msgDir, force );
-
-		// Generate base and impl files.
-
-		if (what.contains( WHAT_IMPL ))
-			generateImpl( intf, dir, msgDir, force );
+		} );
 	}
 
-	private void generateMain( final Service intf, File dir,
-		MessageDirection msgDir, boolean force ) throws Exception
+	private void generateVf( final Service intf, Output dir )
+		throws Exception
+	{
+		doFile( dir, getVfName( intf ) + fnSuffix, lh, new Gen()
+		{
+			public void run( PrintWriter pw ) throws Exception
+			{
+				generateVf( pw, intf );
+			}
+		} );
+	}
+
+	private void generateHelper( final Service intf, Output dir,
+		final MessageDirection msgDir ) throws Exception
+	{
+		doFile( dir, getHelperName( intf ) + fnSuffix, lh, new Gen()
+		{
+			public void run( PrintWriter pw ) throws Exception
+			{
+				generateHelper( pw, intf, msgDir );
+			}
+		} );
+	}
+
+	private void generateMain( final Service intf, Output dir,
+		MessageDirection msgDir ) throws Exception
+	{
+		if (msgDir == MessageDirection.BOTH
+				|| msgDir == MessageDirection.CLIENT)
+			doFile( dir, getMainName( intf, MessageDirection.CLIENT ) + fnSuffix, lh, new Gen()
+			{
+				public void run( PrintWriter pw ) throws Exception
+				{
+					generateMain( pw, intf, MessageDirection.CLIENT, false );
+				}
+			} );
+
+		if (msgDir == MessageDirection.BOTH
+				|| msgDir == MessageDirection.SERVER)
+			doFile( dir, getMainName( intf, MessageDirection.SERVER ) + fnSuffix, lh, new Gen()
+			{
+				public void run( PrintWriter pw ) throws Exception
+				{
+					generateMain( pw, intf, MessageDirection.SERVER, false );
+				}
+			} );
+	}
+
+	private void generateBase( final Service intf, Output dir,
+		MessageDirection msgDir ) throws Exception
 	{
 		if (msgDir == MessageDirection.BOTH || msgDir == MessageDirection.CLIENT)
-			doFile( dir, getMainName( intf, MessageDirection.CLIENT ) + fnSuffix, true, force,
-				new Gen()
+			doFile( dir, getBaseName( intf, MessageDirection.CLIENT ) + fnSuffix, lh, new Gen()
+			{
+				public void run( PrintWriter pw ) throws Exception
 				{
-					public void run( PrintWriter pw ) throws Exception
-					{
-						generateMain (pw, intf, MessageDirection.CLIENT, false );
-					}
-				}, lh
-			);
+					generateBase (pw, intf, MessageDirection.CLIENT, false );
+				}
+			} );
 
 		if (msgDir == MessageDirection.BOTH || msgDir == MessageDirection.SERVER)
-			doFile( dir, getMainName( intf, MessageDirection.SERVER ) + fnSuffix, true, force,
-				new Gen()
+			doFile( dir, getBaseName( intf, MessageDirection.SERVER ) + fnSuffix, lh, new Gen()
+			{
+				public void run( PrintWriter pw ) throws Exception
 				{
-					public void run( PrintWriter pw ) throws Exception
-					{
-						generateMain (pw, intf, MessageDirection.SERVER, false );
-					}
-				}, lh
-			);
+					generateBase (pw, intf, MessageDirection.SERVER, false );
+				}
+			} );
 	}
 
-	private void generateBase( final Service intf, File dir,
-		MessageDirection msgDir, boolean force ) throws Exception
+	private void generateImpl( final Service intf, Output dir,
+		MessageDirection msgDir ) throws Exception
 	{
-		if (msgDir == MessageDirection.BOTH || msgDir == MessageDirection.CLIENT)
-			doFile( dir, getBaseName( intf, MessageDirection.CLIENT ) + fnSuffix, true, force,
-				new Gen()
+		if (msgDir == MessageDirection.BOTH
+				|| msgDir == MessageDirection.CLIENT)
+			doFile( dir, getImplName( intf, MessageDirection.CLIENT ) + fnSuffix, lh, new Gen()
+			{
+				public void run( PrintWriter pw ) throws Exception
 				{
-					public void run( PrintWriter pw ) throws Exception
-					{
-						generateBase (pw, intf, MessageDirection.CLIENT, false );
-					}
-				}, lh
-			);
+					generateImpl( pw, intf, MessageDirection.CLIENT, false );
+				}
+			} );
 
-		if (msgDir == MessageDirection.BOTH || msgDir == MessageDirection.SERVER)
-			doFile( dir, getBaseName( intf, MessageDirection.SERVER ) + fnSuffix, true, force,
-				new Gen()
+		if (msgDir == MessageDirection.BOTH
+				|| msgDir == MessageDirection.SERVER)
+			doFile( dir, getImplName( intf, MessageDirection.SERVER ) + fnSuffix, lh, new Gen()
+			{
+				public void run( PrintWriter pw ) throws Exception
 				{
-					public void run( PrintWriter pw ) throws Exception
-					{
-						generateBase (pw, intf, MessageDirection.SERVER, false );
-					}
-				}, lh
-			);
+					generateImpl( pw, intf, MessageDirection.SERVER, false );
+				}
+			} );
 	}
 
-	private void generateImpl( final Service intf, File dir,
-		MessageDirection msgDir, boolean force ) throws Exception
-	{
-		if (msgDir == MessageDirection.BOTH || msgDir == MessageDirection.CLIENT)
-			doFile( dir, getImplName( intf, MessageDirection.CLIENT ) + fnSuffix, true, force,
-				new Gen()
-				{
-					public void run( PrintWriter pw ) throws Exception
-					{
-						generateImpl (pw, intf, MessageDirection.CLIENT, false );
-					}
-				}, lh
-			);
-
-		if (msgDir == MessageDirection.BOTH || msgDir == MessageDirection.SERVER)
-			doFile( dir, getImplName( intf, MessageDirection.SERVER ) + fnSuffix, true, force,
-				new Gen()
-				{
-					public void run( PrintWriter pw ) throws Exception
-					{
-						generateImpl (pw, intf, MessageDirection.SERVER, false );
-					}
-				}, lh
-			);
-	}
-
-	private void generate( final Service intf, File dir,
+	private void generateIntfRemoteStub( final Service intf, Output dir,
 		final MessageDirection what, final MessageDirection mc,
-		final boolean hasBaseClass, boolean makeFile ) throws Exception
+		final boolean hasBaseClass ) throws Exception
 	{
-
 		// Generate interface file
 
-		doFile( dir, getIntfName( intf, mc ) + fnSuffix, makeFile, true, new Gen()
+		doFile( dir, getIntfName( intf, mc ) + fnSuffix, lh, new Gen()
 		{
 			public void run( PrintWriter pw ) throws Exception
 			{
 				generateIntf( pw, intf, mc, hasBaseClass );
 			}
-		}, lh );
+		} );
 
 		// Generate remote file
 
 		if (mc == MessageDirection.BOTH || what == MessageDirection.BOTH
-			|| mc != what)
-			doFile( dir, getRemoteName( intf, mc ) + fnSuffix, makeFile,
-				true, new Gen()
+				|| mc != what)
+			doFile( dir, getRemoteName( intf, mc ) + fnSuffix, lh, new Gen()
+			{
+				public void run( PrintWriter pw ) throws Exception
 				{
-					public void run( PrintWriter pw ) throws Exception
-					{
-						generateRemote( pw, intf, mc, hasBaseClass );
-					}
-				}, lh
-			);
+					generateRemote( pw, intf, mc, hasBaseClass );
+				}
+			} );
 
 		// Generate stub file
 
 		if (mc == MessageDirection.BOTH || what == MessageDirection.BOTH
-			|| mc == what)
-			doFile( dir, getStubName( intf, mc ) + fnSuffix, makeFile,
-				true, new Gen()
+				|| mc == what)
+			doFile( dir, getStubName( intf, mc ) + fnSuffix, lh, new Gen()
+			{
+				public void run( PrintWriter pw ) throws Exception
 				{
-					public void run( PrintWriter pw ) throws Exception
-					{
-						generateStub( pw, intf, mc, hasBaseClass );
-					}
-				}, lh
-			);
+					generateStub( pw, intf, mc, hasBaseClass );
+				}
+			} );
 	}
 
 	/**
@@ -528,7 +533,10 @@ public class Compiler extends Backend
 	}
 
 	/**
-	 * Generate the call to message implementation of the interface.
+	 * Generate the call to message implementation of the interface. This class
+	 * turns calls on its methods into messages which are sent to the remote
+	 * stub. For two-way calls, it then waits for a response message, returning
+	 * the result therein to the caller.
 	 *
 	 * @param pw
 	 * @param intf
@@ -552,7 +560,10 @@ public class Compiler extends Backend
 	}
 
 	/**
-	 * Generate the message to call implementation.
+	 * Generate the message to call implementation. This class accepts a message
+	 * and turns it back into a call on the user's implementation. For two-way
+	 * messages, the return value from the user's implementation method is turned
+	 * into the appropriate response message and sent.
 	 *
 	 * @param pw
 	 * @param intf
@@ -575,7 +586,8 @@ public class Compiler extends Backend
 	}
 
 	/**
-	 * Generate the transport helper.
+	 * Generate the transport plumbing helper.
+	 *
 	 * @param pw
 	 * @param intf
 	 * @param mc
@@ -615,7 +627,7 @@ public class Compiler extends Backend
 	}
 
 	/**
-	 * Generate the message to call implementation.
+	 * Generate the template main program.
 	 *
 	 * @param pw
 	 * @param intf
@@ -638,7 +650,9 @@ public class Compiler extends Backend
 	}
 
 	/**
-	 * Generates the base class to be used by the impl class
+	 * Generates the base implementation of the interfaces, with each
+	 * method throwing an exception to the tune that it isn't implemented.
+	 * User's impl will extend this base implementation.
 	 * @param pw
 	 * @param intf
 	 * @param mc
@@ -661,7 +675,10 @@ public class Compiler extends Backend
 		}
 
 	/**
-	 * Generate the sample implementation.
+	 * Generate the template user implemention class which extends the base
+	 * implementation generated above. This class will only have the appropriate
+	 * constructor and reference to the appropriate remote, and a comment inviting
+	 * the user to override methods.
 	 * @param pw
 	 * @param intf
 	 * @param mc
@@ -693,6 +710,18 @@ public class Compiler extends Backend
 		return intf.name() + suffix;
 	}
 
+	private String getMainName( Service intf, MessageDirection mc )
+	{
+		if (mc == MessageDirection.SERVER)
+			return "Main" + intf.name() + "Listener";
+		return "Main" + getIntfName( intf, mc );
+	}
+
+	private String getImplName( Service intf, MessageDirection mc )
+	{
+		return "Impl" + getIntfName( intf, mc );
+	}
+
 	private String getRemoteName( Service intf, MessageDirection mc )
 	{
 		return "Remote" + getIntfName( intf, mc );
@@ -707,21 +736,10 @@ public class Compiler extends Backend
 	{
 		return intf.name() + "Helper";
 	}
-
-	private String getMainName( Service intf, MessageDirection mc )
-	{
-		if (mc == MessageDirection.SERVER)
-			return "Main" + intf.name() + "Listener";
-		return "Main" + getIntfName(intf, mc);
-	}
+	
 	private String getBaseName( Service intf, MessageDirection mc )
 	{
 		return "Base" + getIntfName( intf, mc );
-	}
-
-	private String getImplName( Service intf, MessageDirection mc )
-	{
-		return "Impl" + getIntfName( intf, mc );
 	}
 
 	@Override
@@ -1038,8 +1056,6 @@ public class Compiler extends Backend
 
 			Named<?> n = type.getNamed( gIntf );
 
-			// Allow subclassing for builtins if they want it
-
 			if (n.isBuiltin())
 			{
 				Builtin b = (Builtin) n;
@@ -1109,5 +1125,5 @@ public class Compiler extends Backend
 		addBuiltin( service, newName( "Map" ), "java.util.Map<?, ?>", true );
 		addBuiltin( service, newName( "Set" ), "java.util.Set<?>", true );
 		addBuiltin( service, newName( "Datetime" ), "java.util.Date", false );
- 	}
+	}
 }

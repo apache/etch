@@ -61,46 +61,60 @@ public class CommandParser
 	 */
 	public void define( Option option )
 	{
-		if (option.isHidden() && option.getDefaultValues() == null)
-			throw new IllegalArgumentException( "hidden option '"+option+"' has no default value" );
-		
-		if (option.isHidden() && option.isSingleton())
-			throw new IllegalArgumentException( "hidden option '"+option+"' redundantly marked singleton" );
+		// hidden options are just that, hidden, they aren't required. hidden means
+		// help doesn't show them. they can still be specified.
+//		if (option.isHidden() && option.getDefaultValues() == null)
+//			throw new IllegalArgumentException( "hidden option '"+option+"' has no default value" );
+
+		// adding hidden to an option just means it isn't shown in the help. it
+		// you shouldn't have to otherwise edit it. rude it is, however, to hide
+		// a required option with no default value.
+//		if (option.isHidden() && option.isSingleton())
+//			throw new IllegalArgumentException( "hidden option '"+option+"' redundantly marked singleton" );
 		
 		if (option.isRequired() && option.getDefaultValues() != null)
 			throw new IllegalArgumentException( "option '"+option+"' with default value redundantly marked required" );
 		
-		if (!option.isHidden())
+		// we still want to process hidden options, just not show them.
+		if (true /* !option.isHidden() */)
 		{
 			Iterator<String> i = option.getTokens();
 			while (i.hasNext())
 			{
 				String token = i.next();
 				
-				if (!token.startsWith( "-" ))
-					throw new IllegalArgumentException( "option token '"+token+"' does not start with dash" );
-				
 				if (token.startsWith( "--" ))
 				{
-					// long option
+					// long option (e.g., --name)
 
-					if (token.length() <= 2)
+					String name = token.substring( 2 );
+
+					// rule out empty name
+					if (name.length() == 0)
 						throw new IllegalArgumentException( "long option token '"+token+"' has no chars after the dashes" );
 					
-					String name = token.substring( 2 );
-					checkValidChars( name, "long option", token, tokenChars );
+					// rule out three or more dashes
+					if (name.startsWith( "-" ))
+						throw new IllegalArgumentException( "long option token '"+token+"' starts with three or more dashes" );
+					
+					checkValidChars( name, "long option", token, longTokenChars );
 					defineOption( options, name, option );
 					continue;
 				}
 				
-				// short option (by char only, no dash)
+				if (!token.startsWith( "-" ))
+					throw new IllegalArgumentException( "option token '"+token+"' does not start with dash" );
 				
-				if (token.length() != 2)
-					throw new IllegalArgumentException( "short option token '"+token+"' has more than one char after the dash" );
+				// short option (e.g., -c)
+				
+				String c = token.substring( 1 );
 
-				String ch = token.substring( 1 );
-				checkValidChars( ch, "short option", token, shortTokenChars );
-				defineOption( shortOptions, ch, option );
+				// rule out any but single char
+				if (c.length() != 1)
+					throw new IllegalArgumentException( "short option token '"+token+"' must have only one char after the dash" );
+
+				checkValidChars( c, "short option", token, shortTokenChars );
+				defineOption( shortOptions, c, option );
 			}
 		}
 		
@@ -113,7 +127,7 @@ public class CommandParser
 			throw new IllegalArgumentException( descr+" token '"+token+"' has bad chars" );
 	}
 	
-	private final Pattern tokenChars = Pattern.compile( "^[a-z0-9]+(-[a-z0-9]+)*$" );
+	private final Pattern longTokenChars = Pattern.compile( "^[a-z0-9]+(-[a-z0-9]+)*$" );
 	
 	private final Pattern shortTokenChars = Pattern.compile( "^[a-zA-Z0-9]$" );
 	
@@ -178,9 +192,11 @@ public class CommandParser
 			
 			if (token.startsWith( "-" ))
 			{
+				// might be a long option (e.g., --name), a short option
+				// (e.g., -c) or a parameter (-).
 				if (token.startsWith( "--" ))
 				{
-					// handle long option
+					// handle long option (e.g., --name)
 					
 					String[] x = StringUtil.leftSplit( token, '=' );
 					String tok = null;
@@ -222,10 +238,13 @@ public class CommandParser
 					
 					if (!option.deliverValue( tok, values, false ))
 						return false;
+					
+					continue;
 				}
-				else
+				else if (token.length() > 1)
 				{
-					// handle short option
+					// handle short option (e.g., -c)
+					
 					CharIterator i = new CharIterator( token.substring( 1 ) );
 					while (i.hasNext())
 					{
@@ -235,7 +254,7 @@ public class CommandParser
 						if (option == null)
 						{
 							report( String.format(
-								"unexpected command line option (%s)", tok ),
+								"unexpected command line option (-%s)", tok ),
 								token, argsIterator );
 							return false;
 						}
@@ -257,11 +276,10 @@ public class CommandParser
 						
 						if (!option.deliverValue( tok, values, false ))
 							return false;
-						
-						continue;
 					}
+					continue;
 				}
-				continue;
+				// token is -, which is a parameter, so just fall through...
 			}
 			
 			// ok, we're delivering a non-option value.
@@ -501,7 +519,7 @@ public class CommandParser
 					continue;
 				
 				// only show [options] if there are any visible options...
-				System.err.print( " [options] " );
+				System.err.print( " [options]" );
 				hasOptions = true;
 				break;
 			}

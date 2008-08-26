@@ -18,21 +18,15 @@
 package etch.tools.ant;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.StringTokenizer;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DirectoryScanner;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.types.DirSet;
-import org.apache.tools.ant.types.FileSet;
-import org.apache.tools.ant.types.Path;
 
+import etch.compiler.CmdLineOptions;
 import etch.compiler.EtchCompiler;
-import etch.compiler.EtchMain;
 
 /**
  * Ant task for compiling Etch sources files.
@@ -40,297 +34,247 @@ import etch.compiler.EtchMain;
  */
 public class EtchCompileTask extends Task
 {
-    private static String WHO_DELIMITER = ", ";
-    
-    /**
-     * Creates a new ant task for running the Etch compiler.
-     */
-    public EtchCompileTask()
-    {
-        includePath  = new LinkedList<File>();
-        what         = new LinkedList<String>();
-    }
+	/**
+	 * Creates a new ant task for running the Etch compiler.
+	 */
+	public EtchCompileTask()
+	{
+		// nothing to do.
+	}
 
-    /////////
+	private CmdLineOptions clo = new CmdLineOptions();
 
-    /**
-     * Adds a set of directories to scan for includes
-     *
-     * @param dirset
-     */
-    public void addIncludes( DirSet dirset )
-    {
-        DirectoryScanner ds = dirset.getDirectoryScanner( getProject() );
-        for (String dir : ds.getIncludedDirectories())
-        {
-            includePath.add(new File(ds.getBasedir(), dir));
-        }
-    }
-    private List<File> includePath;
+	/////////
 
-    /**
-     * Specifies a source file to compile.
-     *
-     * @param file
-     */
-    public void setFile( File file )
-    {
-    	if (sourceFile != null)
-    		throw new BuildException( "only one file at a time, please" );
-    	System.out.println( "setFile: "+file );
-        sourceFile = file;
-    }
-    
-    private File sourceFile;
+	/**
+	 * The list of paths to search for included or mixed in files (-I option).
+	 *
+	 * @param value
+	 */
+	public void addIncludes( DirSet value )
+	{
+		DirectoryScanner ds = value.getDirectoryScanner( getProject() );
+		for (String dir : ds.getIncludedDirectories())
+			clo.includePath.add( new File( ds.getBasedir(), dir ) );
+	}
 
-    /**
-     * Sets the output directory for compiler generated files.
-     *
-     * @param output
-     */
-    public void setOutput( File output )
-    {
-        outputDirectory = output;
-    }
-    private File outputDirectory = null;
+	/**
+	 * The source file to compile.
+	 *
+	 * @param value
+	 */
+	public void setFile( File value )
+	{
+		if (clo.sourceFile != null)
+			throw new BuildException( "only one source file at a time, please" );
+		clo.sourceFile = value;
+	}
 
-    /**
-     * Sets the binding name
-     *
-     * @param binding
-     */
-    public void setBinding( String binding )
-    {
-        bindingName = binding;
-    }
-    private String bindingName = null;
+	/**
+	 * The destination directory of the generated files (-d option). If not
+	 * specified, the same directory of the source file.
+	 *
+	 * @param value
+	 */
+	public void setOutputDir( File value )
+	{
+		clo.outputDir = value;
+	}
 
-    /**
-     * Sets the set of pieces the compiler should generate
-     *
-     * @param what
-     */
-    public void setWhat( String value )
-    {
-        StringTokenizer st = new StringTokenizer(value, WHO_DELIMITER );
-        while (st.hasMoreElements())
-            what.add(st.nextToken().toUpperCase());            
-    }
-    private List<String> what;
-    
-    /**
-     * Set to ignore the globally reserved words list
-     *
-     * @param ignoreglobal
-     */
-    public void setIgnoreglobal( boolean ignoreglobal )
-    {
-        ignoreGlobal = ignoreglobal;
-    }
-    private boolean ignoreGlobal = false;
-    
-    /**
-     * Set to ignore the locally reserved words list
-     *
-     * @param ignorelocal
-     */
-    public void setIgnorelocal( boolean ignorelocal )
-    {
-        ignoreLocal = ignorelocal;
-    }
-    private boolean ignoreLocal = false;
-    
-    /**
-     * Specify a user-defined reserved words list
-     *
-     * @param wordlist
-     */
-    public void setWordlist(File wordlist)
-    {
-        userWordList = wordlist;
-    }
-    private File userWordList = null;
+	/**
+	 * The binding name. Example values are java, csharp, python, ruby, c, and
+	 * xml (-b option).
+	 *
+	 * @param value
+	 */
+	public void setBinding( String value )
+	{
+		clo.binding = value;
+	}
 
-    /**
-     * Ignore the ETCH_INCLUDE_PATH envvar
-     *
-     * @param ignoreenv
-     */
-    public void setIgnoreenv( boolean ignoreenv )
-    {
-        ignoreEnvironmentIncludePath = ignoreenv;
-    }
-    private boolean ignoreEnvironmentIncludePath = false;
-    
-    /**
-     * Suppress mixin artifacts
-     *
-     * @param suppressmixin
-     */
-    public void setSuppressmixin( boolean suppressmixin )
-    {
-        suppressMixin = suppressmixin;
-    }
-    private boolean suppressMixin = false;
-    
-    /**
-     * Set mixin output directory
-     *
-     * @param mixinoutput
-     */
-    public void setMixinoutput( File mixinoutput )
-    {
-        mixinOutputDirectory = mixinoutput;
-    }
-    private File mixinOutputDirectory = null;
+	/**
+	 * This specifies the file(s) we need to generate (-w option). Valid values
+	 * depend upon the binding, but examples include BOTH, SERVER, CLIENT, ALL,
+	 * INTF, IMPL, MAIN, NONE, and FORCE. HELP might give you some. Separate
+	 * values using one or more characters from ",;: " (e.g., "BOTH, INTF",
+	 * which is also the default for many bindings).
+	 *
+	 * @param value
+	 */
+	public void setWhat( String value )
+	{
+		StringTokenizer st = new StringTokenizer( value,
+			CmdLineOptions.WHAT_DELIMETER );
+		while (st.hasMoreElements())
+			clo.what.add( st.nextToken().toUpperCase() );
+	}
 
-    /**
-     * Set to flatten packages
-     *
-     * @param flatten
-     */
-    public void setNoflatten( boolean noFlatten )
-    {
-        noFlattenPackages = noFlatten;
-    }
-    private boolean noFlattenPackages = false;
-    
-    /**
-     * set to force overwrite of user-modifiable templates
-     *  Impl*Client, Impl*Server, Main*Client, and Main*Listener
-     *
-     * @param overwrite
-     */
-    public void setOverwritetemplate( boolean overwrite )
-    {
-        overwriteTemplate = overwrite;
-    }
-    private boolean overwriteTemplate = false;
-    
-    /**
-     * set to path to output user-modifiable templates
-     *  Impl*Client, Impl*Server, Main*Client, Main*Listener
-     *
-     * @param value
-     */
-    public void setTemplateoutput(File value)
-    {
-        templateOutputDirectory = value;
-    }
-    private File templateOutputDirectory = null;
-    
-    /**
-     * Sets the path of the directory of jar files for the compiler bindings.
-     * @param value
-     */
-    //public void setEtchLib(String value)
-    //{
-//    	System.out.println("etchLib = "+value);
-    //	this.etchLib = value;
-    //}
-    
-    //private String etchLib;
+	/**
+	 * Flag indicates whether to ignore the globally reserved word list (-g
+	 * option).
+	 *
+	 * @param value
+	 */
+	public void setIgnoreGlobalWordsList( boolean value )
+	{
+		clo.ignoreGlobalWordsList = value;
+	}
 
-    /** 
-     * sets etch.home
-     *
-     * @param value
-     */
-    public void setHome(File value)
-    {
-        this.etchHome = value;
-    }
-    private File etchHome;
+	/**
+	 * Flag indicates whether to ignore the locally reserved word list (-l
+	 * option).
+	 *
+	 * @param value
+	 */
+	public void setIgnoreLocalWordsList( boolean value )
+	{
+		clo.ignoreLocalWordsList = value;
+	}
 
-    /** EXECUTION **/
-    
-    @Override
-    /**
-     * execute
-     */
-    public void execute() throws BuildException
-    {
-    	ClassLoader cl;
-    	
-    	try
+	/**
+	 * The path of the user-defined reserved words list (-W option).
+	 *
+	 * @param value
+	 */
+	public void setUserWordsList( File value )
+	{
+		clo.userWordsList = value;
+	}
+
+	/**
+	 * Ignore the ETCH_INCLUDE_PATH environment variable (-i option).
+	 *
+	 * @param value
+	 */
+	public void setIgnoreIncludePath( boolean value )
+	{
+		clo.ignoreIncludePath = value;
+	}
+
+	/**
+	 * Flag indicates that mixin artifacts should not be generated (-n option).
+	 * If false, mixin artifacts are generated into mixinOutputDir.
+	 *
+	 * @param value
+	 */
+	public void setNoMixinArtifacts( boolean value )
+	{
+		clo.noMixinArtifacts = value;
+	}
+
+	/**
+	 * The destination directory of the generated mixin files (-m option). If
+	 * not specified, and if noMixinArtifacts allows, mixin artifacts are
+	 * generated into outputDir.
+	 *
+	 * @param value
+	 */
+	public void setMixinOutputDir( File value )
+	{
+		clo.mixinOutputDir = value;
+	}
+
+	/**
+	 * Flag indicates whether the module name should should be flattened to
+	 * produce a single directory or a directory tree (e.g., for csharp) (-f
+	 * option).
+	 *
+	 * @param value
+	 */
+	public void setNoFlattenPackages( boolean value )
+	{
+		clo.noFlattenPackages = value;
+	}
+
+	/**
+	 * Destination directory of the user editable template files (-t option).
+	 * If not specified, same as outputDir.
+	 *
+	 * @param value
+	 */
+	public void setTemplateOutputDir( File value )
+	{
+		clo.templateOutputDir = value;
+	}
+
+	/**
+	 * Flag indicates that the compiler should not report progress (-q option).
+	 * 
+	 * @param value
+	 */
+	public void setQuiet( boolean value )
+	{
+		clo.quiet = value;
+	}
+
+	/**
+	 * We're just testing the compiler, don't write any files (--testing option).
+	 * 
+	 * @param value 
+	 */
+	public void setTesting( boolean value )
+	{
+		clo.testing = value;
+	}
+
+	/** 
+	 * Sets the location of the etch installation (this is the directory which
+	 * contains bin and lib) (no corresponding command line option).
+	 *
+	 * @param value
+	 */
+	public void setHome( File value )
+	{
+		this.home = value;
+	}
+
+	private File home;
+
+	/** EXECUTION **/
+
+	@Override
+	/**
+	 * execute
+	 */
+	public void execute() throws BuildException
+	{
+		ClassLoader cl;
+
+		try
 		{
-			cl = EtchMain.setupClassLoader(etchHome + File.separator + "lib");
+			cl = EtchCompiler.setupClassLoader( home );
+		}
+		catch ( Exception e )
+		{
+			e.printStackTrace();
+			throw new BuildException(
+				"problem setting up etch compiler class loader", e );
+		}
+
+		EtchCompiler etchCompiler;
+
+		try
+		{
+			// Instantiate a new compiler instance
+			etchCompiler = new EtchCompiler( cl );
 		}
 		catch ( Exception e )
 		{
 			e.printStackTrace();
 			throw new BuildException( "problem setting up etch compiler", e );
 		}
-    	
-        EtchCompiler etchCompiler;
-        
-        try
-        {
-            // Instantiate a new compiler instance
-            etchCompiler = new EtchCompiler(cl);
-            etchCompiler.setQuiet( false );
-        }
-        catch (Exception e)
-        {
-            throw new BuildException(e.getMessage());
-        }
 
-        // VALIDATE
-
-        if (bindingName == null)
-            throw new BuildException ("No binding specified.");
-            
-        try
-        {
-            etchCompiler.setBindingName(bindingName);
-            etchCompiler.setIgnoreEnvironmentIncludePath(ignoreEnvironmentIncludePath);        
-            etchCompiler.setMixinSuppressed(suppressMixin);
-            etchCompiler.setFlattenPackages(!noFlattenPackages);        
-            etchCompiler.setOverwriteTemplate(overwriteTemplate);
-            etchCompiler.setIgnoreLocal(ignoreLocal);
-            etchCompiler.setIgnoreGlobal(ignoreGlobal);
-        
-            for (File f: includePath)
-                etchCompiler.addIncludePath(f);
-            
-            for (String w: what)
-                etchCompiler.addWhat(w);
-
-            if (outputDirectory != null)
-                etchCompiler.setOutputDirectory(outputDirectory);
-        
-            if (userWordList != null)
-                etchCompiler.setUserWordsList(userWordList);
-        
-            if (mixinOutputDirectory != null)
-                etchCompiler.setMixinOutputDirectory(mixinOutputDirectory);
-        
-            if (templateOutputDirectory != null)
-                etchCompiler.setTemplateOutputDirectory(templateOutputDirectory);
-        }
-        catch (Exception e)
-        {
-            throw new BuildException("Invalid parameter passed to the compiler:\n" + e.getMessage());
-        }
-        
-        // EXECUTE 
-        
-        boolean status = true;
-    	System.out.println( "compiling "+sourceFile );
-        try
-        {
-            etchCompiler.validateEtchFile(sourceFile);
-            etchCompiler.compile(sourceFile);
-        }
-        catch ( Exception e )
-        { 
-            String msg = String.format("Error Compiling %s: %s", sourceFile, e.getMessage());
-            // TODO log appropriately
-            System.out.println(msg);
-            e.printStackTrace();
-            status = false;
-        }
-        if (!status)
-            throw new BuildException("One or more .etch files failed to compile.");
-    }
+		try
+		{
+			etchCompiler.run( clo );
+		}
+		catch ( Exception e )
+		{
+			e.printStackTrace();
+			throw new BuildException( "problem running etch compiler", e );
+		}
+		
+		if (clo.lh.hasError())
+			throw new BuildException( "problem running etch compiler" );
+	}
 }

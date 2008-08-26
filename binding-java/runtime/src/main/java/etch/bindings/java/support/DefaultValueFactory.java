@@ -423,7 +423,7 @@ public class DefaultValueFactory implements ValueFactory
 
 	public void unlockDynamicTypes()
 	{
-		// TODO dynamicTypes.unlock();
+		// TODO implement dynamicTypes.unlock();
 		throw new UnsupportedOperationException( "unlockDynamicTypes not implemented" );
 	}
 }

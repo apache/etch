@@ -36,16 +36,17 @@ public class TestCircularQueue
 	@Test
 	public void testgettimes() throws Exception
 	{
+		@SuppressWarnings("unused")
 		double[] times;
 		
 		times = gettimes();
-		System.out.printf( "times: hp %f / tod %f\n", times[0], times[1] );
+//		System.out.printf( "times: hp %f / tod %f\n", times[0], times[1] );
 		
 		times = gettimes();
-		System.out.printf( "times: hp %f / tod %f\n", times[0], times[1] );
+//		System.out.printf( "times: hp %f / tod %f\n", times[0], times[1] );
 		
 		times = gettimes();
-		System.out.printf( "times: hp %f / tod %f\n", times[0], times[1] );
+//		System.out.printf( "times: hp %f / tod %f\n", times[0], times[1] );
 	}
 	
 	private double[] gettimes() throws InterruptedException
@@ -213,7 +214,7 @@ public class TestCircularQueue
 
 		for (int i: new int[] { 10, 20, 30, 50, 80, 130, 210, 340, 550, 890, 1440 } )
 		{
-			System.out.printf( "get delay = %d\n", i );
+//			System.out.printf( "get delay = %d\n", i );
 			long t0 = System.nanoTime();
 			assertNull( queue.get( i ) );
 			double t = (System.nanoTime() - t0) / 1000000.0;

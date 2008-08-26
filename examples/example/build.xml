@@ -93,17 +93,15 @@
         <mkdir dir="${generated-sources}/main/etch/java" />
         <etch home="${etch.home}" 
               file="${src}/main/etch/Example.etch"
-              what="both"
               binding="java"
-              output="${generated-sources}/main/etch/java"
+              outputDir="${generated-sources}/main/etch/java"
               />
 		
         <mkdir dir="${generated-sources}/main/etch/csharp" />
         <etch home="${etch.home}" 
               file="${src}/main/etch/Example.etch"
-              what="both"
               binding="csharp"
-              output="${generated-sources}/main/etch/csharp"
+              outputDir="${generated-sources}/main/etch/csharp"
               />
     </target>
     

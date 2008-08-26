@@ -17,22 +17,15 @@
 
 package etch.compiler.ast;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import etch.compiler.Backend;
-import etch.compiler.CmdLineOptions;
-import etch.compiler.Etch2;
+import etch.compiler.EtchCompiler;
 import etch.compiler.EtchGrammarConstants;
-import etch.compiler.LogHandler;
 import etch.compiler.ParseException;
 import etch.compiler.Token;
 
@@ -85,124 +78,29 @@ public class Service extends Named<Module> implements OptList, Iterable<Named<?>
 	{
 		optsCheck( Mixin.class, nOpts );
 		
-		try {
-		
-
-			getCmdLineOptions().lh.logMessage( LogHandler.LEVEL_INFO, n.token,
-			" Checking Mixin file: " + n.name + " at line : "
-				+ n.token.beginLine + "\n" );
-		String filename = n.name;
-		filename = filename.replace( '.', '/' );
-		filename = filename + ".etch";
-		List<File> list = getCmdLineOptions().includePath;
-		String searchPath = null;
-		File etchFile = null;
-		boolean mixinFileExist = false;
-		
-		
-		if (list != null)
+		try
 		{
-			for (int i = 0; i < list.size(); i++)
-			{
-				File f = list.get( i );
-				if (f != null)
-				{
-					searchPath = f.getAbsolutePath() + "/" + filename;
-					etchFile = new File( searchPath );
-					if (etchFile.exists())
-					{
-						mixinFileExist = true;
-						break;
-					}
-				}
-			}
-			if (mixinFileExist)
-			{
-
-				getCmdLineOptions().lh.logMessage( LogHandler.LEVEL_INFO, n.token,
-					" Found mixin file " + etchFile.getAbsolutePath()
-						+ " in Include Path \n" );
-				// System.out.println(" We found the file " + etchFile.getName()
-				// + "
-				// Now lets try to generate the parsed tree");
-				
-				// Does -d or -dm option exist. If not return
-				if (!getCmdLineOptions().noMixinArtifacts)
-				{
-					if (getCmdLineOptions().outputDir == null
-						&& getCmdLineOptions().mixinOutputDir == null)
-					{
-						getCmdLineOptions().lh
-						.logMessage(
-							LogHandler.LEVEL_ERROR,
-							n.token,
-							"-d or -m option is not specified. Please specify one of these"
-							+ " options. Mixin artifacts will only be generated when atleast one of these options"
-							+ " is present \n" );
-
-						return null;
-					}
-				}
-				
-				InputStream is = null;
-				try
-				{
-					is = new java.io.FileInputStream( etchFile );
-				}
-				catch ( FileNotFoundException e1 )
-				{
-					e1.printStackTrace();
-
-				}
-
-				getCmdLineOptions().lh.logMessage( LogHandler.LEVEL_INFO, null,
-					"Parsing file " + etchFile.getAbsolutePath() + "\n" );
-				getCmdLineOptions().lh.push( etchFile.getName(), new Integer(
-					n.token.beginLine ) );
-				
-				CmdLineOptions cmdLineObject = new CmdLineOptions(getCmdLineOptions());
-				HashSet<String> set = new HashSet<String>();
-				if (getCmdLineOptions().noMixinArtifacts)
-				{
-					cmdLineObject.isMixinPresent = false;
-					set.add(Backend.WHAT_NONE);
-				}
-				else
-				{
-					cmdLineObject.isMixinPresent = true;
-					set = populateWhat(getCmdLineOptions().what);
-				}
-				cmdLineObject.what = set;
-				
-				
-				Module retMod = Etch2.doCompile( cmdLineObject, is,
-					getCmdLineOptions().lh );
-				getCmdLineOptions().lh.pop();
-				Mixin mixin = new Mixin( this, n, nOpts, retMod );
-				nameList.add( n, mixin );
-				return mixin;
-			}
-			getCmdLineOptions().lh.logMessage( LogHandler.LEVEL_ERROR, n.token,
-				" Mixin file does not exist in Include Path. \n" );
+			Module module = EtchCompiler.parseModule( this, n, nOpts );
+			if (module == null)
+				throw new ParseException( String.format(
+					"could not find mixin '%s' at line %d",
+					n.name, n.token.beginLine ) );
+			
+			Mixin mixin = new Mixin( this, n, nOpts, module );
+			nameList.add( n, mixin );
+			return mixin;
 		}
-		else
+		catch ( ParseException e )
 		{
-			getCmdLineOptions().lh.logMessage( LogHandler.LEVEL_ERROR, n.token,
-				" No Include Path defined for Mixin File \n" );
-			
+			throw e;
 		}
+		catch ( Exception e )
+		{
+			throw new ParseException( String.format(
+				"could not find mixin '%s' at line %d: %s",
+				n.name, n.token.beginLine, e ) );
 		}
-		catch (Exception e) {
-			getCmdLineOptions().lh.logMessage( LogHandler.LEVEL_ERROR, n.token,
-			" Unexpected Error occured during parsing mixin \n" );
-			e.printStackTrace();
-			
-		}
-
-		return null;
 	}
-	
-	
 	
 	/**
 	 * Adds a constant declaration.
@@ -660,36 +558,5 @@ public class Service extends Named<Module> implements OptList, Iterable<Named<?>
 			n.treewalk( walker );
 		
 		walker.postService( this );
-	}
-	
-	private HashSet<String> populateWhat(Set<String> set) {
-		HashSet<String> retSet = new HashSet<String>();
-		if (set.contains( Backend.WHAT_ALL ) || set.contains( Backend.WHAT_BOTH )) {
-			retSet.add( Backend.WHAT_BOTH );
-		}
-		if (set.contains( Backend.WHAT_CLIENT)) {
-			retSet.add( Backend.WHAT_CLIENT );
-		}
-		if (set.contains( Backend.WHAT_SERVER)) {
-			retSet.add( Backend.WHAT_SERVER );
-		}
-		if (set.contains( Backend.WHAT_MAIN ) || set.contains( Backend.WHAT_IMPL ) ||
-			set.contains( Backend.WHAT_HELPER )) {
-			if (retSet.isEmpty()) {
-				retSet.add( Backend.WHAT_BOTH );
-			}
-		}
-		if (set.contains( Backend.WHAT_FORCE ) ) {
-			
-				retSet.add( Backend.WHAT_FORCE );
-			
-		}
-		if (set.contains( Backend.WHAT_NONE)) {
-			retSet.clear();
-			retSet.add( Backend.WHAT_NONE );
-		}
-
-		return retSet;
-		
 	}
 }

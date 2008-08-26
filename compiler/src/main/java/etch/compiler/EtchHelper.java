@@ -614,7 +614,7 @@ public class EtchHelper
 		//Get the Gramar Obj
 		EtchGrammar oGramar = (EtchGrammar) this;
 
-		servobj.getCmdLineOptions().lh.push( fileName.toString(), new Integer(fileName.beginLine) );
+		servobj.getCmdLineOptions().lh.push( fileName.toString(), fileName.beginLine );
 
 		//System.out.println("------Start Do Include-------");
 
@@ -622,13 +622,13 @@ public class EtchHelper
 	  	String oStr = fileName.toString().replaceAll("\"", "");
 
 	 // 	System.out.println("Including " + oStr);
-	  	servobj.getCmdLineOptions().lh.logMessage( LogHandler.LEVEL_INFO, null,"Including " + oStr + "\n");
+	  	servobj.getCmdLineOptions().lh.report( LogHandler.LEVEL_INFO, "Including %s", oStr );
 
 	    //Create the input string and read it in
 		InputStream oStream = null;
 
 		// Search the etch path for the file
-		for (File f : servobj.getCmdLineOptions().includePath)
+		for (File f : servobj.getCmdLineOptions().effectiveIncludePath)
 		{
 			try
 			{
@@ -676,7 +676,7 @@ public class EtchHelper
 		//Put the old data back
 		oGramar.ReInit( oOldTM );
 		oGramar.token = token;
-		servobj.getCmdLineOptions().lh.pop();
+		servobj.getCmdLineOptions().lh.pop( fileName.toString() );
 		//System.out.println("------End Do Include---------");
 	}
 }
