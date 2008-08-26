@@ -46,9 +46,9 @@ namespace Etch.Transport.Fmt.Binary
         /////////////////////////////
 
 
-        public Message ReadMessage(FlexBuffer buf)
+        public Message ReadMessage(FlexBuffer buf1)
         {
-            this.buf = buf;
+            buf = buf1;
             
             // lengthBudget is how many array elements total are reasonable to
             // allocate while parsing this message. the largest value comes as each
@@ -70,7 +70,7 @@ namespace Etch.Transport.Fmt.Binary
             }
             finally
             {
-                this.buf = null;
+                buf = null;
                 lengthBudget = 0;
             }
         }
@@ -103,24 +103,30 @@ namespace Etch.Transport.Fmt.Binary
 
             while ( true )
             {
-                Object obj = ReadValue( intValidator, true );
-                if ( obj == NONE )
+                Field key = ReadField( t );
+                if (key == null)
                     break;
 
-                int id = ( int ) obj;
-                Field key = t.GetField( id );
-                if (key == null)
-                    key = new Field(id, id.ToString());
+                //Object obj = ReadValue( intValidator, true );
+                //if ( obj == NONE )
+                //    break;
+
+                //int id = ( int ) obj;
+                //Field key = t.GetField( id );
+                //if (key == null)
+                //    key = new Field(id, id.ToString());
 
                 Validator v = t.GetValidator( key );
-                if (v == null)
+                if (v != null)
                 {
-                    // read the value but ignore it.
-                    ReadValue(Validator_object.Get(0));
+                    sv.Add(key, ReadValue(v));
                 }
                 else
                 {
-                    sv.Add(key, ReadValue(v));
+                    // read the value but ignore it.
+                    Object obj = ReadValue(Validator_object.Get(0));
+                    if (false)
+                        sv.Add( key, obj );
                 }
             }
         }
@@ -144,7 +150,7 @@ namespace Etch.Transport.Fmt.Binary
 
         private Message StartMessage()
         {
-            sbyte version = ( sbyte ) buf.GetByte();
+            sbyte version = buf.GetByte();
 			
 			if (version != VERSION)
 				throw new IOException(
@@ -176,7 +182,7 @@ namespace Etch.Transport.Fmt.Binary
 
         private ArrayValue StartArray()
         {
-            sbyte type = ( sbyte ) buf.GetByte();
+            sbyte type = buf.GetByte();
 
             XType customStructType;
             if(type == TypeCode.CUSTOM || type == TypeCode.STRUCT)
@@ -202,12 +208,56 @@ namespace Etch.Transport.Fmt.Binary
 
         private XType ReadType()
         {
-            int id = ReadIntegerValue();
-            XType t = vf.GetType(id);
-            if (t == null)
-                t = new XType(id, id.ToString());
-            return t;
+            Object obj = ReadValue(intOrStrValidator, false);
+            if (obj is int)
+            {
+                int id = (int)obj;
+                XType type = vf.GetType(id);
+
+                if (type == null)
+                    type = new XType(id, id.ToString());
+
+                return type;
+            }
+
+            String name = (String)obj;
+            XType ntype = vf.GetType(name);
+
+            if (ntype == null)
+                ntype = new XType(name);
+
+            return ntype;
         }
+
+        private Field ReadField( XType type )
+        {
+            Object obj = ReadValue(intOrStrValidator, true);
+
+            if (obj == NONE)
+                return null;
+
+            if (obj is int)
+            {
+                int id = (int)obj;
+                Field field = type.GetField(id);
+
+                if (field == null)
+                    field = new Field(id, id.ToString());
+
+                return field;
+            }
+
+            String name = (String)obj;
+            Field nfield = type.GetField(name);
+
+            if (nfield == null)
+                nfield = new Field(name);
+
+            return nfield;
+        }
+        
+        private readonly Validator intOrStrValidator =
+		    new ComboValidator( Validator_int.Get( 0 ), Validator_string.Get( 0 ) );
 
         private int ReadLength()
         {
@@ -263,7 +313,7 @@ namespace Etch.Transport.Fmt.Binary
 
         private Object ReadValue( Validator v, Boolean noneOk )
         {
-            sbyte type = ( sbyte ) buf.GetByte();
+            sbyte type = buf.GetByte();
 
             switch ( type )
             {
