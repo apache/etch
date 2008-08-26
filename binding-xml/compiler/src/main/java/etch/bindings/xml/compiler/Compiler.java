@@ -193,6 +193,9 @@ public class Compiler extends Backend
 	public void generate( Module module, CmdLineOptions options )
 		throws Exception
 	{
+		// xml always wants to not flatten packages:
+		options.noFlattenPackages = true;
+		
 		this.lh = options.lh;
 		
 		Output dir = options.output;
