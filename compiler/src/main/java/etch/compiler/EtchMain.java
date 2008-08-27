@@ -53,6 +53,7 @@ public class EtchMain extends Program
     	}
         catch ( Throwable e )
         {
+        	e.printStackTrace();
             exit( 3, toString(), e.toString(), true );
             return;
         }

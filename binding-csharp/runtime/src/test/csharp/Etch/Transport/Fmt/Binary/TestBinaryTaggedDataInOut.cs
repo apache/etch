@@ -13,6 +13,7 @@
 // WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 // License for the specific language governing permissions and limitations
 // under the License.
+
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -151,11 +152,11 @@ namespace Etch.Transport.Fmt.Binary
         public void Test_byte() 
 	    {
             // 2 dimensional
-            Test( new sbyte[][] { new sbyte[] { SByte.MinValue, -1, 0, 1, SByte.MaxValue }, new sbyte[] { 23 } },
+            TestX( new sbyte[][] { new sbyte[] { SByte.MinValue, -1, 0, 1, SByte.MaxValue }, new sbyte[] { 23 } },
                 Validator_byte.Get( 2 ) );
 
             // 3 dimensional
-            Test(
+            TestX(
                 new sbyte[][][] 
                 {
                     new sbyte[][] { new sbyte[] { SByte.MinValue, -1, 0, 1, SByte.MaxValue }, new sbyte[] { 23 } },
@@ -169,12 +170,12 @@ namespace Etch.Transport.Fmt.Binary
         public void Test_short() 
 	    {
             // 2 dimensional
-            Test( new short[][] { new short[] { short.MinValue, SByte.MinValue, -1, 0, 1,
+            TestX( new short[][] { new short[] { short.MinValue, SByte.MinValue, -1, 0, 1,
 			    SByte.MaxValue, short.MaxValue }, new short[] { 23 } },
                 Validator_short.Get( 2 ) );
 
             // 3 dimensional
-            Test( 
+            TestX( 
                 new short[][][] 
                 {
                     new short[][] { new short[] { short.MinValue, SByte.MinValue, -1, 0, 1,
@@ -193,12 +194,12 @@ namespace Etch.Transport.Fmt.Binary
 	    {
 
             // 2 Dimensional
-            Test( new int[][] { new int[] { int.MinValue, short.MinValue, SByte.MinValue,
+            TestX( new int[][] { new int[] { int.MinValue, short.MinValue, SByte.MinValue,
 			    -1, 0, 1, sbyte.MaxValue, short.MaxValue, int.MaxValue}, new int[] { 23 } },
                 Validator_int.Get( 2 ) );
 
             // 3 dimensional
-            Test(
+            TestX(
                 new int[][][]
                 {
                     new int[][] { new int[] { int.MinValue, short.MinValue, SByte.MinValue,
@@ -215,13 +216,13 @@ namespace Etch.Transport.Fmt.Binary
         public void Test_long() 
 	    {
             // 2 dimensional
-            Test( new long[][] { new long[] { long.MinValue, int.MinValue, short.MinValue,
+            TestX( new long[][] { new long[] { long.MinValue, int.MinValue, short.MinValue,
 			    SByte.MinValue, -1, 0, 1, sbyte.MaxValue, short.MaxValue,
 			    int.MaxValue, long.MaxValue}, new long[] { 23 } },
                 Validator_long.Get( 2 ) );
 
             // 3 dimensional
-            Test(
+            TestX(
                 new long[][][]
                 {
                     new long[][] { new long[] { long.MinValue, int.MinValue, short.MinValue,
@@ -241,14 +242,14 @@ namespace Etch.Transport.Fmt.Binary
         public void Test_float() 
 	    {
             // 2 dimensional
-            Test( new float[][] { new float[] { -1, 0, 1, float.MinValue, float.Epsilon,
+            TestX( new float[][] { new float[] { -1, 0, 1, float.MinValue, float.Epsilon,
 			    float.MaxValue, float.NaN, float.NegativeInfinity,
 			    float.PositiveInfinity, -0.0f, 1.1f,
 			    3.141592653589793238462643383279f }, new float[] { 23 } },
                 Validator_float.Get( 2 ) );
 
             // 3 dimensional
-            Test(
+            TestX(
                 new float[][][]
                 {
                     new float[][] { new float[] { -1, 0, 1, float.MinValue, float.Epsilon,
@@ -273,14 +274,14 @@ namespace Etch.Transport.Fmt.Binary
         public void Test_double() 
 	    {
             // 2 dimensional
-            Test( new double[][] { new double[]{ -1, 0, 1, double.MinValue, double.Epsilon,
+            TestX( new double[][] { new double[]{ -1, 0, 1, double.MinValue, double.Epsilon,
 			    double.MaxValue, double.NaN, double.NegativeInfinity,
 			    double.PositiveInfinity, -0.0f, 1.1f,
 			    3.141592653589793238462643383279 }, new double[]{ 23 } },
                 Validator_double.Get( 2 ) );
 
             // 3 dimensional
-            Test(
+            TestX(
                 new double[][][]
                 {
                     new double[][] { new double[]{ -1, 0, 1, double.MinValue, double.Epsilon,
@@ -306,11 +307,11 @@ namespace Etch.Transport.Fmt.Binary
 	    {
             
             // 2 dimensional
-            Test( new String[][] { new String[] { "", "a", "ab", "abc" }, new String[] { "23" } },
+            TestX( new String[][] { new String[] { "", "a", "ab", "abc" }, new String[] { "23" } },
                 Validator_string.Get( 2 ) );
 
             // 3 dimensional
-            Test(
+            TestX(
                 new String[][][]
                 {
                     new String[][] { new String[] { "", "a", "ab", "abc" }, new String[] { "23" } },
@@ -334,21 +335,45 @@ namespace Etch.Transport.Fmt.Binary
             Field _mf__messageId = DefaultValueFactory._mf__messageId;
             add.PutValidator( _mf__messageId, Validator_long.Get( 0 ) );
 
-            long msgid = 0x0123456789abcdefL;
+            long msgid = 0x0102030405060708L;
 
             Message msg = new Message( add, vf );
             msg.Add( x, 1 );
             msg.Add( y, 2 );
             msg.Add( _mf__messageId, msgid );
-            /*byte[] buf = */ Msg2bytes( msg );
+            testmsg2bytes(msg, null, new sbyte[] { 3, -122, 39, -23, -73, -100, 3, -122, 21, 10, 44, -77, 1, -122, 99, 6, -76, 104, -121, 1, 2, 3, 4, 5, 6, 7, 8, -122, 21, 10, 44, -76, 2, -127 });
+            testmsg2bytes(msg, false, new sbyte[] { 3, -122, 39, -23, -73, -100, 3, -122, 21, 10, 44, -77, 1, -122, 99, 6, -76, 104, -121, 1, 2, 3, 4, 5, 6, 7, 8, -122, 21, 10, 44, -76, 2, -127 });
+            testmsg2bytes(msg, true, new sbyte[] { 3, -109, 3, 97, 100, 100, 3, -109, 1, 120, 1, -109, 10, 95, 109, 101, 115, 115, 97, 103, 101, 73, 100, -121, 1, 2, 3, 4, 5, 6, 7, 8, -109, 1, 121, 2, -127 });
 
             msg = new Message( add, vf );
             msg.Add( x, 1000000000 );
             msg.Add( y, 2000000000 );
             msg.Add( _mf__messageId, msgid );
+            testmsg2bytes(msg, null, new sbyte[] { 3, -122, 39, -23, -73, -100, 3, -122, 21, 10, 44, -77, -122, 59, -102, -54, 0, -122, 99, 6, -76, 104, -121, 1, 2, 3, 4, 5, 6, 7, 8, -122, 21, 10, 44, -76, -122, 119, 53, -108, 0, -127 });
+            testmsg2bytes(msg, false, new sbyte[] { 3, -122, 39, -23, -73, -100, 3, -122, 21, 10, 44, -77, -122, 59, -102, -54, 0, -122, 99, 6, -76, 104, -121, 1, 2, 3, 4, 5, 6, 7, 8, -122, 21, 10, 44, -76, -122, 119, 53, -108, 0, -127 });
+            testmsg2bytes(msg, true, new sbyte[] { 3, -109, 3, 97, 100, 100, 3, -109, 1, 120, -122, 59, -102, -54, 0, -109, 10, 95, 109, 101, 115, 115, 97, 103, 101, 73, 100, -121, 1, 2, 3, 4, 5, 6, 7, 8, -109, 1, 121, -122, 119, 53, -108, 0, -127 });
+        }
+	
+	    private void testmsg2bytes( Message msg, bool? stringTypeAndField,
+		    sbyte[] sexpected )
+	    {
+            byte[] expected = ToSByteArray(sexpected);
+		    byte[] actual = Msg2bytes( msg, stringTypeAndField );
+		    try
+		    {
+                AssertArrayEquals(expected, actual);
+		    }
+		    catch ( Exception )
+		    {
+			    Dump( expected );
+			    Dump( actual );
+			    throw;
+		    }
+	    }
 
-            /*buf = */Msg2bytes( msg );
-
+        private byte[] ToSByteArray(sbyte[] a)
+        {
+            return (byte[])(Array)a;
         }
 
         [Test]
@@ -397,25 +422,25 @@ namespace Etch.Transport.Fmt.Binary
 		    //_buf = new sbyte[] { 1, -9, -100, -73, -23, 39, -9, 104, -76, 6, 99, -13, -17, -51, -85, -119, 103, 69, 35, 1, -9, -76, 44, 10, 21, -9, 0, -108, 53, 119, -9, -77, 44, 10, 21, -9, 0, -54, -102, 59, -22 };
            // _buf = new sbyte[] { 3, -9, 39, -23, -73, -100, -9, 99, 6, -76, 104, -13, 1, 35, 69, 103, -119, -85, -51, -17, -9, 21, 10, 44, -76, -9, 119, 53, -108, 0, -9, 21, 10, 44, -77, -9, 59, -102, -54, 0, -22 };
             _buf = new sbyte[]
-		{
-			3, // version
-			-122, // INT (type)
-			39, -23, -73, -100, // add
-			3, // length
-			-122, // INT (key)
-			99, 6, -76, 104,
-			-121, // LONG (value)
-			1, 35, 69, 103, -119, -85, -51, -17,
-			-122, // INT (key)
-			21, 10, 44, -76, // y
-			-122, // INT (value)
-			119, 53, -108, 0,
-			-122, // INT (key)
-			21, 10, 44, -77, // x
-			-122, // INT (value)
-			59, -102, -54, 0,
-			-127 // NONE
-		};
+		    {
+			    3, // version
+			    -122, // INT (type)
+			    39, -23, -73, -100, // add
+			    3, // length
+			    -122, // INT (key)
+			    99, 6, -76, 104,
+			    -121, // LONG (value)
+			    1, 35, 69, 103, -119, -85, -51, -17,
+			    -122, // INT (key)
+			    21, 10, 44, -76, // y
+			    -122, // INT (value)
+			    119, 53, -108, 0,
+			    -122, // INT (key)
+			    21, 10, 44, -77, // x
+			    -122, // INT (value)
+			    59, -102, -54, 0,
+			    -127 // NONE
+		    };
 
           buf = new byte[_buf.Length];
             Buffer.BlockCopy(_buf, 0, buf, 0, _buf.Length);
@@ -500,7 +525,6 @@ namespace Etch.Transport.Fmt.Binary
                 TestPerf( "test_sum_perf", i, m, msg, n );
         }
 
-        /** @throws Exception */
         [Test]
 	    public void testValueToBytes()
         {
@@ -630,28 +654,58 @@ namespace Etch.Transport.Fmt.Binary
             
             assertValueToBytes(new DateTime[] { new DateTime(2008, 1, 2, 3, 4, 5, 6, DateTimeKind.Utc), new DateTime(2008, 2, 3, 4, 5, 6, 7, DateTimeKind.Utc) },
                 new sbyte[] { 3, 1, 1, 2, -111, -107, -122, 43, 57, 107, -52, 1, 2, -107, -122, 43, 57, 107, -52, 1, -122, 102, 0, 26, 64, -121, 0, 0, 1, 23, 56, 116, -88, -114, -127, -107, -122, 43, 57, 107, -52, 1, -122, 102, 0, 26, 64, -121, 0, 0, 1, 23, -35, 120, 5, 87, -127, -127, -127 });
-	}
-	
-	private void assertValueToBytes( Object value, sbyte[] expectedBytes ) 
-	{
-        XType t = new XType(1, "a");
-        Field f = new Field(2, "b");
-        t.PutValidator(f, Validator_object.Get(0));
+        }
 
-        Message msg = new Message(t, vf);
-        msg.Add(f, value);
+        [Test]
+        public void badtype()
+        {
+            Message msg = Bytes2msg(new sbyte[] { 3, 1, 0, -127 });
+            Assert.AreEqual(1, msg.GetXType.Id);
+        }
 
-		BinaryTaggedDataOutput btdo = new BinaryTaggedDataOutput( vf, "none:" );
-		FlexBuffer buf = new FlexBuffer();
-        btdo.WriteMessage(msg, buf);
+        [Test]
+        [ExpectedException(typeof(ArgumentException))]
+        public void badmsglen1()
+        {
+            Message msg = Bytes2msg(new sbyte[] { 3, 1, -1, -127 });
+            Console.WriteLine("msg = " + msg);
+        }
 
-		buf.SetIndex( 0 );
-		byte[] b = buf.GetAvailBytes();
-        sbyte[] b1 = new sbyte[b.Length];
-        Buffer.BlockCopy(b,0,b1,0,b.Length);
-        Dump( b );
-		AssertArrayEquals( expectedBytes, b1 );
-	}
+        [Test]
+        [ExpectedException(typeof(ArgumentException))]
+        public void badmsglen2()
+        {
+            Message msg = Bytes2msg(new sbyte[] { 3, 1, 99, -127 });
+            Console.WriteLine("msg = " + msg);
+        }
+
+        [Test]
+        public void badfield()
+        {
+            Message msg = Bytes2msg(new sbyte[] { 3, 1, 1, 2, 2, -127 }, Validator.Level.MISSING_OK);
+            Console.WriteLine("msg = " + msg);
+        }
+    	
+	    private void assertValueToBytes( Object value, sbyte[] expectedBytes ) 
+	    {
+            XType t = new XType(1, "a");
+            Field f = new Field(2, "b");
+            t.PutValidator(f, Validator_object.Get(0));
+
+            Message msg = new Message(t, vf);
+            msg.Add(f, value);
+
+		    BinaryTaggedDataOutput btdo = new BinaryTaggedDataOutput( vf, "none:" );
+		    FlexBuffer buf = new FlexBuffer();
+            btdo.WriteMessage(msg, buf);
+
+		    buf.SetIndex( 0 );
+		    byte[] b = buf.GetAvailBytes();
+            sbyte[] b1 = new sbyte[b.Length];
+            Buffer.BlockCopy(b,0,b1,0,b.Length);
+            Dump( b );
+		    AssertArrayEquals( expectedBytes, b1 );
+	    }
 
         private static void TestPerf( String name, int iter, Messagizer m, Message msg, int n )
         {
@@ -748,20 +802,40 @@ namespace Etch.Transport.Fmt.Binary
         }
         #endregion MyPacketSource
 
-        private byte[] Msg2bytes( Message msg )
+        private byte[] Msg2bytes(Message msg, bool? stringTypeAndField)
         {
             FlexBuffer buf = new FlexBuffer();
-            BinaryTaggedDataOutput btdo = new BinaryTaggedDataOutput(vf, "none:");
-            btdo.WriteMessage( msg,buf );
+
+            URL u = new URL("none:");
+            if (stringTypeAndField != null)
+                u.AddTerm(BinaryTaggedDataOutput.STRING_TYPE_AND_FIELD, stringTypeAndField.ToString());
+
+            BinaryTaggedDataOutput btdo = new BinaryTaggedDataOutput(vf, u.ToString());
+            btdo.WriteMessage( msg, buf );
             buf.SetIndex( 0 );
             return buf.GetAvailBytes();
         }
 
-        private Message Bytes2msg( byte[] buf ) 
-	    {
-            BinaryTaggedDataInput btdi = new BinaryTaggedDataInput(vf, "tcp:");
+        private Message Bytes2msg(byte[] buf, Validator.Level level)
+        {
+            BinaryTaggedDataInput btdi = new BinaryTaggedDataInput(vf, "none:");
             return btdi.ReadMessage(new FlexBuffer(buf));
-	    }
+        }
+
+        private Message Bytes2msg(byte[] buf)
+        {
+            return Bytes2msg(buf, Validator.Level.FULL);
+        }
+
+        private Message Bytes2msg(sbyte[] buf, Validator.Level level)
+        {
+            return Bytes2msg((byte[])(Array)buf, level);
+        }
+
+        private Message Bytes2msg(sbyte[] buf)
+        {
+            return Bytes2msg(buf, Validator.Level.FULL);
+        }
 
         private void TestX( Object x, Validator v )
 	    {
@@ -775,13 +849,14 @@ namespace Etch.Transport.Fmt.Binary
                     TestX( getValue, v.ElementValidator() );
 			    }
 		    }
-		    Object y = Test( x, v );
-		    // y = DefaultValueFactory.ArrayValue2Native( y, x.GetType()/*, cnvrtr*/ );
-		    AreEqual( x, y );
+
+            Test(x, v, null);
+            Test(x, v, false);
+            Test(x, v, true);
 	    }
 
 
-        private Object Test( Object x, Validator v )
+        private void Test(Object x, Validator v, bool? stringTypeAndField)
 	    {
 		    //Console.WriteLine( "-----------------------------------------" );
 
@@ -792,14 +867,16 @@ namespace Etch.Transport.Fmt.Binary
 		    msg.Add( mf_x, x );
 		    //Console.WriteLine( "msg = "+msg );
 
-            byte[] bufx = Msg2bytes( msg );
+            byte[] bufx = Msg2bytes(msg, stringTypeAndField);
+            Dump(bufx);
             Message msg2 = Bytes2msg( bufx );
     		
 		    //Console.WriteLine( "msg2 = "+msg2 );
 		    msg2.CheckType( mt_foo );
 		    Assert.AreEqual( 1, msg2.Count );
-		    msg.ContainsKey( mf_x );
-		    return msg2.Get( mf_x );
+		    Assert.IsTrue(msg.ContainsKey( mf_x ));
+            Object y = msg2.Get(mf_x);
+            AreEqual(x, y);
 	    }
 
         public void Dump(byte[] buf)
@@ -910,8 +987,6 @@ namespace Etch.Transport.Fmt.Binary
         {
 	        private readonly static TypeMap types = new TypeMap();
 
-	      
-
             private readonly static Class2TypeMap class2type = 
                 new Class2TypeMap();
 
@@ -920,10 +995,8 @@ namespace Etch.Transport.Fmt.Binary
                 DefaultValueFactory.Init( types, class2type );
 	        }
 
-	        /**
-	         * Constructs the ValueFactoryFake.
-	         */
-	        public MyValueFactory() : base ("none:",types,class2type)
+	        public MyValueFactory()
+                : base ("none:", types, class2type)
 	        {
 		        // nothing to do.
 	        }
