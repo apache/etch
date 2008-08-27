@@ -35,7 +35,7 @@ namespace Etch.Msg
             /// <summary>
             /// Validation on put or output if validator defined.
             /// </summary>
-            MISSIN_OK,
+            MISSING_OK,
             /// <summary>
             /// Like MISSING_OK, but fail if no validator defined.
             /// </summary>

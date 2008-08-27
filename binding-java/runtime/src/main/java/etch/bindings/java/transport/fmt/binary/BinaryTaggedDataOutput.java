@@ -36,7 +36,7 @@ import etch.util.FlexBuffer;
 import etch.util.URL;
 
 /**
- * Description of TaggedDataOutputStream.
+ * An implementation of TaggedDataOutput which uses a binary encoding.
  */
 final public class BinaryTaggedDataOutput extends BinaryTaggedData
 	implements TaggedDataOutput

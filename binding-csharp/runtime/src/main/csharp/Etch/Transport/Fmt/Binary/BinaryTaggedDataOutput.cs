@@ -24,10 +24,17 @@ using Etch.Util;
 namespace Etch.Transport.Fmt.Binary
 {
     /// <summary>
-    /// Description of TaggedDataOutputStream.
+    /// An implementation of TaggedDataOutput which uses a binary encoding.
     /// </summary>
     public sealed class BinaryTaggedDataOutput : BinaryTaggedData, TaggedDataOutput
     {
+        /// <summary>
+        /// Name of uri parameter which controls whether we write ints or strings
+        /// for types and fields.
+        /// </summary>
+        public const String STRING_TYPE_AND_FIELD =
+		    "BinaryTaggedDataOutput.stringTypeAndField";
+
         /// <summary>
         /// Constructs the BinaryTaggedDataOutput with a null buffer.
         /// </summary>
@@ -37,9 +44,13 @@ namespace Etch.Transport.Fmt.Binary
             : base(vf)
         {
             this.level = vf.GetLevel();
+            URL u = new URL(uri);
+            stringTypeAndField = u.GetBooleanTerm(STRING_TYPE_AND_FIELD, false);
         }
 
         private readonly Validator.Level level;
+
+        private readonly bool stringTypeAndField;
 
         //////////////////////////////
         // TaggedDataOutput methods //
@@ -84,7 +95,7 @@ namespace Etch.Transport.Fmt.Binary
             foreach (KeyValuePair<Field, Object> me in sv)
             {
                 Field f = me.Key;
-                WriteIntValue(f.Id);
+                WriteField(f);
                 WriteValue(t.GetValidator(f), me.Value);
             }
         }
@@ -171,7 +182,18 @@ namespace Etch.Transport.Fmt.Binary
 
         private void WriteType(XType type)
         {
-            WriteIntValue(type.Id);
+            if (stringTypeAndField)
+                WriteStringValue(type.Name);
+            else
+                WriteIntValue(type.Id);
+        }
+
+        private void WriteField(Field field)
+        {
+            if (stringTypeAndField)
+                WriteStringValue(field.Name);
+            else
+                WriteIntValue(field.Id);
         }
 
         /// <summary>
@@ -191,6 +213,13 @@ namespace Etch.Transport.Fmt.Binary
         }
 
         private readonly Validator intValidator = Validator_int.Get(0);
+
+        private void WriteStringValue(String value)
+        {
+            WriteValue(stringValidator, value);
+        }
+
+        private readonly Validator stringValidator = Validator_string.Get(0);
 
         private void WriteNoneValue()
         {
