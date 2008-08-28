@@ -308,7 +308,7 @@ public class $clname extends etch.bindings.java.support.RemoteBase implements $i
 			catch ( Exception e )
 			{
 #foreach($t in $n.thrown().iterator())
-				if (e.getClass() == ${t.getNamed().fqname()}.class)
+				if (e instanceof ${t.getNamed().fqname()})
 					throw ($t.getNamed().fqname()) e;
 #end
 				if (e instanceof RuntimeException) throw (RuntimeException) e;
