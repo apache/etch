@@ -1,0 +1,93 @@
+-------------
+Release 1.0.1
+-------------
+
+r48 | sccomer | 2008-08-28 10:20:18 CDT
+
+merging changes to various build.xml from release 1.0.0 rev 5-6: mono support
+is not fully baked, use -DUSE.mono to test
+----------------------------------------------------------------------------
+r47 | sccomer | 2008-08-28 09:00:13 CDT
+
+fixed problem with java generated remote rejecting exceptions which are
+subclasses of allowed exceptions.
+----------------------------------------------------------------------------
+r46 | sccomer | 2008-08-27 19:31:44 CDT
+
+fix several bugs and add missing functionality to url so that java and csharp
+versions work the same.
+----------------------------------------------------------------------------
+r45 | sccomer | 2008-08-27 12:44:50 CDT
+
+if last chance exception handler in EtchMain catches an exception, it should
+print it.
+
+correct spelling of csharp Validator.Level enum element MISSING_OK.
+
+implement name for types and fields in csharp BinaryTaggedDataOutput.
+
+add named types and fields testing for csharp binary tagged data.
+----------------------------------------------------------------------------
+r44 | sccomer | 2008-08-26 13:29:24 CDT
+
+fix csharp BinaryTaggedDataInput to support names for types and fields.
+----------------------------------------------------------------------------
+r43 | sccomer | 2008-08-26 10:24:49 CDT
+
+merge compiler driver changes (and a few misc updates to unit tests) from
+branch sccomer-compiler-1 (revs 20-42) to trunk.
+----------------------------------------------------------------------------
+r28 | sccomer | 2008-08-22 11:39:29 CDT
+
+support for java BinaryTaggedDataInput and BinaryTaggedDataOutput using names
+instead of hashes of names for types and fields.
+----------------------------------------------------------------------------
+r27 | sccomer | 2008-08-22 11:38:24 CDT
+
+change java testUrl to better name (TestUrl1).
+----------------------------------------------------------------------------
+r26 | sccomer | 2008-08-22 11:37:41 CDT
+
+changed java codes from using Integer constructor to Integer.valueOf.
+----------------------------------------------------------------------------
+r25 | sccomer | 2008-08-22 11:36:51 CDT
+
+added command line control of starting listener also.
+----------------------------------------------------------------------------
+r24 | sccomer | 2008-08-22 11:35:45 CDT
+
+fix up java URL support of non-string terms.
+
+fully support Boolean in java URL.
+
+properly implement in java URL handling of remove( name, value ) when value
+is a singleton.
+----------------------------------------------------------------------------
+r9 | sccomer | 2008-08-01 15:37:49 CDT
+
+corrected csharp project dependences.
+
+corrected port numbers in distmap test.
+----------------------------------------------------------------------------
+r8 | sccomer | 2008-08-01 14:17:27 CDT
+
+integrated remaining examples into csharp build.
+
+bumped version numbers of expected build to 1.0.1.
+----------------------------------------------------------------------------
+r7 | sccomer | 2008-07-31 15:58:29 CDT
+
+added csharp build of most of the examples.
+
+substitute DOTNET_HOME environment variable for gnarley dot net path in various
+build.xml. this allows disabling the csharp build for those that don't want it.
+
+example ant build setup (antsetup.bat), shows which environment variable and
+path manipulations you need for a build. also shows which ones are optional.
+
+corrected port numbers of distmap example.
+----------------------------------------------------------------------------
+
+-------------
+Release 1.0.0
+-------------
