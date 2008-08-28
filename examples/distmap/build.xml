@@ -31,6 +31,8 @@
         <and>
             <not><os family="windows" /></not>
             <available file="${env.MONO_HOME}/bin/mdtool" />
+            <!-- TODO mono support is not fully baked, use -DUSE.mono to test -->
+            <isset property="USE.mono" />
         </and>
     </condition>
     <condition property="BUILD.csharp">
