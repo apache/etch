@@ -14,6 +14,7 @@ The top-level structure of the install image is:
 	README.txt
 	bin
 	lib
+	maven
 
 Please take a moment to review the ChangeLog.txt and LICENSE.txt files.
 
@@ -69,8 +70,19 @@ source code to go with it in etch-java-runtime-1.0.1-src.zip.
 
 The C# (.NET 2.0) Etch.dll should be added to any C# projects.
 
-Finally, there is an ant plugin which you can use with ant 1.7.0 or later to
-invoke the compiler as a task. It is documented on the wiki referenced above.
+There is an ant plugin which you can use with ant 1.7.0 or later to invoke the
+compiler as a task. It is documented on the wiki referenced above.
+
+If you are using maven, then you might want to install the Etch artifacts into
+your local maven repository. There is a Windows bat script to do this in the
+maven directory:
+
+	etch-maven-install.bat
+
+You need to have maven on your path when you run this script. The file
+etch-java-runtime-1.0.1.jar will be installed into your local repository with
+group "etch.etch", artifact id "etch-java-runtime", and version "1.0.1". You
+may then reference Etch from your maven projects.
 
 Examples and unit tests can be had by checking out the source code from the
 subversion repository and performing a complete build:
