@@ -34,11 +34,11 @@ namespace Etch.Transport.Filter
             : base(transport, uri, resources)
         {
 
-            delay = uri.GetIntegerTerm(DELAY, 15).Value;
+            delay = uri.GetIntegerTerm(DELAY, 15);
             if (delay <= 0)
                 throw new ArgumentException("delay <= 0");
 
-            count = uri.GetIntegerTerm(COUNT, 4).Value;
+            count = uri.GetIntegerTerm(COUNT, 4);
             if (count <= 0)
                 throw new ArgumentException("count <= 0");
 
