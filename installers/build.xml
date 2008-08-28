@@ -28,6 +28,7 @@
         <copy file="${Etch.basedir}/LICENSE.txt" todir="${Etch.dist}" />
         <copy file="${Etch.basedir}/ChangeLog.txt" todir="${Etch.dist}" />
         <copy file="${Etch.basedir}/DIST_README.txt" tofile="${Etch.dist}/README.txt" />
+    	<copy file="${proj}/etch-maven-install.bat" todir="${Etch.dist}/maven" />
     </target>
 
     <target name="do-zips" >
