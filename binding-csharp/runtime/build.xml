@@ -19,6 +19,7 @@
         <delete dir="${target}" failonerror="false" quiet="true" />
 
         <mkdir dir="${target}" />
+        <mkdir dir="${rawNUnitResults}" />
         <mkdir dir="${testResultsDirectory}" />
     </target>
 
