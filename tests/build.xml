@@ -95,18 +95,10 @@
             </fileset>
             <fileset dir="${generated-sources}/main/etch/java" >
                 <include name="**/*.java" />
-                <!-- <exclude name="**/*Test1*.java" /> -->
-                <!-- <exclude name="**/*TestXml*.java" /> -->
-                <!-- <exclude name="**/*TestIncludes*.java" /> -->
-                
+                <exclude name="**/*BigIdl*.java" />
             </fileset>
             <testsources dir="${src}/test/java" >
-                <include name="**/FakeTest1.java" />
-                <include name="**/Test*.java" />
-                <!-- <exclude name="**/*Test1*.java" /> -->
-                <!-- <exclude name="**/*Test*Xml*.java" /> -->
-                <!-- <exclude name="**/*Test*Includes*.java" /> -->
-
+                <include name="**/*.java" />
             </testsources>
         </initialize-clover>
     </target>
@@ -118,13 +110,8 @@
             <src path="${generated-sources}/main/etch/java" />
             <src path="${src}/main/java" />
             <src path="${src}/test/java" />
-            <!-- <exclude name="**/*Test1*.java" /> -->
-            <!-- <exclude name="**/*Test*Xml*.java" /> -->
-            <!-- <exclude name="**/*Test*Includes*.java" /> -->
-                      
             <classpath>
                 <pathelement location="${Etch.HOME}/lib/${etch-java-runtime.jar}" />
-                <pathelement location="${Etch.HOME}/lib/${etch-compiler.jar}" />
                 <pathelement location="${Etch.dependency.junit.jar}" />
             </classpath>
         </javac>
@@ -136,9 +123,8 @@
             errorProperty="build.tests.fail" failureProperty="build.tests.fail">
             <classpath>
                 <pathelement location="${classes}" />
-                <pathelement location="${Etch.dependency.junit.jar}" />
                 <pathelement location="${Etch.HOME}/lib/${etch-java-runtime.jar}" />
-                <pathelement location="${Etch.HOME}/lib/${etch-compiler.jar}" />
+                <pathelement location="${Etch.dependency.junit.jar}" />
 
                 <!-- TODO: remove if clover not available -->
                 <pathelement location="${Etch.dependency.clover.jar}"/>
@@ -147,11 +133,8 @@
             <batchtest fork="true" todir="${test-results}">
                 <fileset dir="${src}/test/java">
                     <include name="**/Test*.java" />
-
-                    <!-- <include name="**/FakeTest1.java" /> -->
                     <!-- TODO   debug Test*Xml failures -->
-                    <exclude name="**/*Test*Xml*.java" />
-                    
+                    <exclude name="**/Test*Xml.java" />
                 </fileset>
             </batchtest>
         </junit>
