@@ -14,6 +14,9 @@
     <condition property="etch.home" value="${build.ETCH_HOME}" >
         <not><isset property="etch.home" /></not>
     </condition>
+	
+	<property name="Etch.dependency.junit.jar"
+		location="${env.TOOLS_DIR}/junit/4.3.1/junit-4.3.1.jar"/>
     
     <!-- compute etch.version -->
     <condition property="etch.version" value="1.0.1" >
@@ -78,6 +81,7 @@
     <property name="bin"               location="${target}/bin" />
     <property name="generated-sources" location="${target}/generated-sources" />
     <property name="classes"           location="${target}/classes" />
+    <property name="classes-test"      location="${target}/classes-test" />
     <property name="test-results"      location="${target}/test-results" />
 
     <!-- initialize -->
@@ -86,6 +90,7 @@
         <mkdir dir="${bin}" />
         <mkdir dir="${generated-sources}" />
         <mkdir dir="${classes}" />
+        <mkdir dir="${classes-test}" />
         <mkdir dir="${test-results}" />
     </target>
     
@@ -115,6 +120,17 @@
             <src path="${src}/main/java" />
             <classpath>
                 <pathelement location="${etch.home}/lib/etch-java-runtime-${etch.version}.jar" />
+            </classpath>
+        </javac>
+
+        <mkdir dir="${classes-test}" />
+        <javac target="1.5" destdir="${classes-test}">
+            <src path="${generated-sources}/main/etch/java" />
+            <src path="${src}/main/java" />
+        	<src path="${src}/test/java" />
+            <classpath>
+                <pathelement location="${etch.home}/lib/etch-java-runtime-${etch.version}.jar" />
+            	<pathelement location="${Etch.dependency.junit.jar}" />
             </classpath>
         </javac>
 
@@ -149,6 +165,9 @@
         <msbuild buildfile="${src}/main/csharp/ChatClientProj/ChatClientProj.csproj">
             <property name="Configuration" value="${build.target}" />
         </msbuild>
+        <msbuild buildfile="${src}/test/csharp/ChatTestProj/ChatTestProj.csproj">
+            <property name="Configuration" value="${build.target}" />
+        </msbuild>
         <copy todir="${bin}">
             <fileset dir="${src}/main/csharp/ChatListenerProj/bin/${build.target}">
                 <include name="*" />
@@ -164,7 +183,32 @@
     <target name="build" depends="build-java,build-csharp" />
     
     <!-- run unit tests -->
-    <target name="test" depends="build" >
+	
+	<target name="test-java" depends="build-java">
+        <!-- Run Unit Tests -->
+        <junit printsummary="yes" haltonfailure="no" dir="${classes-test}"
+            errorProperty="build.tests.fail" failureProperty="build.tests.fail">
+            <classpath>
+                <pathelement location="${classes-test}" />
+                <pathelement location="${etch.home}/lib/etch-java-runtime-${etch.version}.jar" />
+                <pathelement location="${Etch.dependency.junit.jar}" />
+            </classpath>
+            <formatter type="xml"/>
+            <batchtest fork="true" todir="${test-results}">
+                <fileset dir="${src}/test/java">
+                    <include name="**/Test*.java" />
+                </fileset>
+            </batchtest>
+        </junit>
+	</target>
+	
+	<target name="test-csharp" depends="build-csharp">
+	</target>
+	
+	<target name="test" depends="build,test-java,test-csharp,done">
+	</target>
+	
+    <target name="done" depends="build" >
         <echo>
 
 Build Complete!
