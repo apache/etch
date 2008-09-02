@@ -27,9 +27,9 @@
     <target name="do-clean">
         <delete dir="${target}" />
         <delete dir="${src}/main/csharp/bin" />
-    <delete dir="${src}/main/csharp/obj" />
-    <delete dir="${src}/test/csharp/bin" />
-    <delete dir="${src}/test/csharp/obj" />
+        <delete dir="${src}/main/csharp/obj" />
+        <delete dir="${src}/test/csharp/bin" />
+        <delete dir="${src}/test/csharp/obj" />
     </target>
 
     <!-- BUILD TARGET -->
@@ -67,6 +67,7 @@
 
         <copy todir="${Etch.dist}/lib" >
             <fileset dir="${src}/main/csharp/bin/${Etch.build.target}">
+                <include name="*.pdb" />
                 <include name="*.dll" />
             </fileset>
         </copy>
