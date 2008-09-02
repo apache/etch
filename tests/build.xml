@@ -113,6 +113,7 @@
             <classpath>
                 <pathelement location="${Etch.HOME}/lib/${etch-java-runtime.jar}" />
                 <pathelement location="${Etch.dependency.junit.jar}" />
+                <pathelement location="${Etch.HOME}/lib/${etch-compiler.jar}" />
             </classpath>
         </javac>
     </target>
@@ -125,7 +126,7 @@
                 <pathelement location="${classes}" />
                 <pathelement location="${Etch.HOME}/lib/${etch-java-runtime.jar}" />
                 <pathelement location="${Etch.dependency.junit.jar}" />
-
+                <pathelement location="${Etch.HOME}/lib/${etch-compiler.jar}" />
                 <!-- TODO: remove if clover not available -->
                 <pathelement location="${Etch.dependency.clover.jar}"/>
             </classpath>
