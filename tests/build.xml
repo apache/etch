@@ -3,7 +3,7 @@
     <description>Functional Tests</description>
     <property name="Etch.basedir" location="${basedir}/.." />
     <import file="${Etch.basedir}/build-support/etch.includes.xml" />
-	<target name="help"><echo>Please select a target...</echo></target>
+    <target name="help"><echo>Please select a target...</echo></target>
     
     <!-- import etch task -->
     <taskdef name="etch"
@@ -17,7 +17,8 @@
     <property name="bin"               location="${target}/bin" />
     <property name="generated-sources" location="${target}/generated-sources/" />
     <property name="classes"           location="${target}/classes" />
-    <property name="test-results"      location="${target}/test-results" />        
+    <property name="test-results"      location="${target}/test-results" />
+    <property name="nunit-results"     location="${target}/nunit-results" />  
 
     <!-- macros -->
     <macrodef name="etch-test">
@@ -44,7 +45,7 @@
             <etch-test binding="@{binding}" file="${src}/main/etch/Async.etch" />
             <etch-test binding="@{binding}" file="${src}/main/etch/Bar.etch" />
             <etch-test binding="@{binding}" file="${src}/main/etch/Baz.etch" />
-            <!-- <etch-test binding="@{binding}" file="${src}/main/etch/BigIdl.etch" /> -->
+            <etch-test binding="@{binding}" file="${src}/main/etch/BigIdl.etch" />
             <etch-test binding="@{binding}" file="${src}/main/etch/Closing.etch" />
             <etch-test binding="@{binding}" file="${src}/main/etch/Cuae.etch" />
             <etch-test binding="@{binding}" file="${src}/main/etch/Foo.etch" />
@@ -71,6 +72,7 @@
         <mkdir dir="${generated-sources}" />
         <mkdir dir="${classes}" />
         <mkdir dir="${test-results}" />
+        <mkdir dir="${nunit-results}" />
     </target>
     
     <!-- build the server -->
@@ -155,12 +157,31 @@
         </junit>
     </target>
     
-    <target name="build-csharp" depends="generate-csharp" >
+    <target name="build-csharp" depends="generate-csharp,build-tests-csharp"
+        if="BUILD.csharp" />
     
+    <target name="build-tests-csharp"
+        depends="build-tests-csharp-dotnet,build-tests-csharp-mono" />
+    
+    <target name="build-tests-csharp-dotnet" if="USE.dotnet" >
+        <msbuild buildfile="${src}/test/csharp/TestsProj/TestsProj.csproj">
+            <property name="Configuration" value="${Etch.build.target}" />
+        </msbuild>
     </target>
     
+    <target name="build-tests-csharp-mono" if="USE.mono" >
+        <echo message="TODO: build w/ mono" />
+    </target>
+
     <target name="test-csharp" depends="build-csharp" >
-    
+        <mkdir dir="${nunit-results}" />
+
+        <nunit xmlout="${nunit-results}/NUnitResults.xml">
+            <testassembly name="${src}/test/csharp/TestsProj/bin/${Etch.build.target}/Tests.dll" />
+        </nunit>
+
+        <xslt style="${Etch.buildSupportDirectory}/NUnitToJUnit.xsl"
+                in="${nunit-results}/NUnitResults.xml" out="${test-results}/TEST-NUnitResults.xml" />
     </target>
     
     <target name="build-xml" depends="generate-xml" >
@@ -176,14 +197,12 @@
 
     <!-- run unit tests -->
     <target name="test" depends="build,test-java,test-csharp,test-xml" />
-
-    <!-- build everything -->
-    <target name="debug" depends="test" />
-    <target name="release" depends="test" />
         
     <!-- clean -->    
     <target name="clean">
         <delete dir="${target}" quiet="true" />
+        <delete dir="${src}/test/csharp/TestsProj/obj" />
+        <delete dir="${src}/test/csharp/TestsProj/bin" />
     </target>
 
 </project>

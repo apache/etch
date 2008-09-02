@@ -88,7 +88,6 @@
     <target name="build-test-csharp" depends="build-test-with-mono,build-test-with-dotnet" />
 
     <target name="do-test" depends="build-test-csharp" if="USE.dotnet" >
-
         <mkdir dir="${rawNUnitResults}" />
 
         <nunit xmlout="${rawNUnitResults}/NUnitResults.xml">
@@ -97,7 +96,6 @@
 
         <xslt style="${Etch.buildSupportDirectory}/NUnitToJUnit.xsl"
                 in="${rawNUnitResults}/NUnitResults.xml" out="${testResultsDirectory}/TEST-NUnitResults.xml" />
-
     </target>
 
     <!-- POSTBUILD TARGET -->
