@@ -97,6 +97,9 @@ public class TestEtchMain
 	{
 		// compilation should have worked.
 		prog.doMain( new String[] { T, "-b", BINDING, findTestEtch() } );
+		if (prog.code != 0)
+			System.out.println( "TestEtchMain.test7 msgs = "+
+				((ListLogHandler) prog.testingClo.lh).msgs );
 		assertEquals( 0, prog.code );
 	}
 
