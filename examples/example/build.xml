@@ -186,6 +186,7 @@ cmd-window-2:
     <target name="init-debug">
         <property name="build.target" value="Debug" />
     </target>
+
     <target name="init-release">
         <property name="build.target" value="Release" />
     </target>
@@ -196,6 +197,11 @@ cmd-window-2:
     <!-- clean -->    
     <target name="clean">
         <delete dir="${target}" quiet="true" />
+        <delete dir="${src}/main/csharp/ExampleClientProj/bin" quiet="true" />
+        <delete dir="${src}/main/csharp/ExampleClientProj/obj" quiet="true" />
+        <delete dir="${src}/main/csharp/ExampleListenerProj/bin" quiet="true" />
+        <delete dir="${src}/main/csharp/ExampleListenerProj/obj" quiet="true" />
+        <delete dir="${src}/test/csharp/ExampleTestProj/bin" quiet="true" />
+        <delete dir="${src}/test/csharp/ExampleTestProj/obj" quiet="true" />
     </target>
-
 </project>
