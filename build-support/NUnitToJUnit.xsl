@@ -5,23 +5,29 @@
     <xsl:template match="test-results/test-suite">
 
         <xsl:variable name="testcases" select="//test-suite[./results/test-case]"/>
+        <!--
         <xsl:variable name="asmClass">
-                <xsl:choose>
-                        <xsl:when test="$testcases"><xsl:value-of select="$testcases[1]/../../@name"/></xsl:when>
-                        <xsl:otherwise><xsl:value-of select="@name"/></xsl:otherwise>
-                </xsl:choose>
+            <xsl:choose>
+                <xsl:when test="$testcases"><xsl:value-of select="$testcases[1]/../../@name"/></xsl:when>
+                <xsl:otherwise><xsl:value-of select="@name"/></xsl:otherwise>
+            </xsl:choose>
         </xsl:variable>
+        -->
         <testsuite name="NUnitTests" time="{@time}" tests="{count($testcases//test-case)}"
             errors="" failures="{count($testcases//test-case/failure)}">
 
             <xsl:for-each select="$testcases">
+
                 <xsl:variable name="suite" select="."/>
                 <xsl:variable name="generalfailure" select="./failure"/>
                 <xsl:for-each select=".//test-case">
-                <xsl:variable name="tempBefore" select="concat(concat(substring-before(./@name, $asmClass), $asmClass),'.')" />
-                <xsl:variable name="tempAfter" select="substring-after(./@name, $tempBefore)" />
-                <testcase classname="{concat($tempBefore, substring-before($tempAfter, '.'))}"
-                	name="{substring-after($tempAfter, '.')}" time="{./@time}">
+                
+                <xsl:variable name="testClass" select="concat(substring-before(./@name, ./../../@name), ./../../@name)" />
+                <xsl:variable name="testName" select="substring-after(./@name, concat($testClass,'.'))" />
+
+                <testcase classname="{$testClass}" name="{$testName}" time="{./@time}" >
+                
+                 
                 <xsl:if test="./failure">
                 <xsl:variable name="failstack" select="count(./failure/stack-trace/*) + count(./failure/stack-trace/text())"/>
                 <failure>
