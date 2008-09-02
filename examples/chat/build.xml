@@ -192,6 +192,7 @@ cmd-window-2 and cmd-window-3 can now chat with each other !!!
     <target name="init-debug">
         <property name="build.target" value="Debug" />
     </target>
+
     <target name="init-release">
         <property name="build.target" value="Release" />
     </target>
@@ -199,9 +200,14 @@ cmd-window-2 and cmd-window-3 can now chat with each other !!!
     <target name="debug" depends="init-debug,test" />
     <target name="release" depends="init-release,test" />
         
-    <!-- clean -->    
+    <!-- clean -->
     <target name="clean">
         <delete dir="${target}" quiet="true" />
+        <delete dir="${src}/main/csharp/ChatClientProj/bin" quiet="true" />
+        <delete dir="${src}/main/csharp/ChatClientProj/obj" quiet="true" />
+        <delete dir="${src}/main/csharp/ChatListenerProj/bin" quiet="true" />
+        <delete dir="${src}/main/csharp/ChatListenerProj/obj" quiet="true" />
+        <delete dir="${src}/test/csharp/ChatTestProj/bin" quiet="true" />
+        <delete dir="${src}/test/csharp/ChatTestProj/obj" quiet="true" />
     </target>
-
 </project>
