@@ -2,6 +2,39 @@
 Release 1.0.1
 -------------
 
+r72 | sccomer | 2008-09-05 15:32:36 CDT
+r71 | sccomer | 2008-09-05 15:31:46 CDT
+r70 | dixson3 | 2008-09-05 08:31:53 CDT
+r69 | sccomer | 2008-09-04 18:03:04 CDT
+r68 | sccomer | 2008-09-04 18:02:24 CDT
+r67 | sccomer | 2008-09-04 09:16:38 CDT
+r66 | sccomer | 2008-09-04 09:14:53 CDT
+r65 | sccomer | 2008-09-02 16:25:03 CDT
+r64 | dixson3 | 2008-09-02 15:44:35 CDT
+r63 | sccomer | 2008-09-02 14:39:23 CDT
+r62 | sccomer | 2008-09-02 14:07:09 CDT
+r61 | sccomer | 2008-09-02 13:42:47 CDT
+r60 | dixson3 | 2008-09-02 11:16:17 CDT
+r59 | sccomer | 2008-09-02 10:41:54 CDT
+
+(various improvements to build scripts.)
+----------------------------------------------------------------------------
+r58 | sccomer | 2008-09-02 10:27:40 CDT
+
+make TestEtchMain.test7 dump msgs upon failure.
+----------------------------------------------------------------------------
+r57 | sccomer | 2008-09-02 07:49:21 CDT
+r56 | sccomer | 2008-09-02 07:35:20 CDT
+r55 | dixson3 | 2008-08-29 21:52:03 CDT
+r54 | dixson3 | 2008-08-29 15:48:01 CDT
+r53 | sccomer | 2008-08-29 10:37:05 CDT
+r52 | sccomer | 2008-08-28 16:05:49 CDT
+r51 | sccomer | 2008-08-28 15:40:26 CDT
+r50 | sccomer | 2008-08-28 14:23:50 CDT
+r49 | sccomer | 2008-08-28 11:04:32 CDT
+
+(various improvements to build scripts.)
+----------------------------------------------------------------------------
 r48 | sccomer | 2008-08-28 10:20:18 CDT
 
 merging changes to various build.xml from release 1.0.0 rev 5-6: mono support
