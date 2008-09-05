@@ -18,7 +18,7 @@
     <property name="generated-sources" location="${target}/generated-sources/" />
     <property name="classes"           location="${target}/classes" />
     <property name="test-results"      location="${target}/test-results" />
-    <property name="nunit-results"     location="${target}/nunit-results" />  
+    <property name="nunit-results"     location="${target}/nunit-results" />
 
     <!-- macros -->
     <macrodef name="etch-test">
