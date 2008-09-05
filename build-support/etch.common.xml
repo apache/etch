@@ -160,7 +160,7 @@
     <property name="Clover.coverage" location="${Clover.path}/code-coverage-results" />
     
     <!-- properties for examples -->
-    <property name="EXAMPLE.etch.home" value="${Etch.HOME}" />
+    <property name="EXAMPLE.etch.home" value="${Etch.dist}" />
     <property name="EXAMPLE.etch.version" value="${Etch.version}" />
     <property name="EXAMPLE.ant.dotnet.jar" value="${Etch.dependency.ant-dotnet-1.0.jar}" />
     
