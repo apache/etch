@@ -32,7 +32,7 @@ public class MainExampleClient implements ExampleHelper.ExampleClientFactory
 	public static void main( String[] args ) throws Exception
 	{
 		// TODO Change to correct URI
-		String uri = "tcp://localhost:4001";
+		String uri = "tcp://localhost:4002";
 		
 		RemoteExampleServer server = ExampleHelper.newServer( uri, null,
 			new MainExampleClient() );

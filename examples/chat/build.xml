@@ -226,7 +226,7 @@
 
 Build Complete!
 
-To run the chat-test example, open three command-windows in this directory.
+To run the chat example, open three command-windows in this directory.
 
 cmd-window-1:
   > cd target/bin
