@@ -14,7 +14,7 @@ rem Define the etch home directory and artifact particulars
 set ETCH_HOME=%~dp0..
 set GROUP=etch.etch
 set ARTIFACT=etch-java-runtime
-set VERSION=1.0.1
+set VERSION=@EtchVersion@
 
 if "%M2_HOME%" == "" goto try_maven_home
 set MVN=%M2_HOME%\bin\mvn.bat
