@@ -229,24 +229,25 @@
 
 Build Complete!
 
-To run the chat example, run these commands in a cmd window:
+To run java chat, open a cmd window and run these commands:
 
-cmd-window:
-  > cd target/bin
-  > start java -cp chat.jar etch.examples.chat.MainChatListener
-  > start java -cp chat.jar etch.examples.chat.MainChatClient
-  > start java -cp chat.jar etch.examples.chat.MainChatClient
+> cd target\bin
+> start java -cp chat.jar etch.examples.chat.MainChatListener
+> start java -cp chat.jar etch.examples.chat.MainChatClient
+> start java -cp chat.jar etch.examples.chat.MainChatClient
 
-cmd-window-2 and cmd-window-3 can now chat with each other !!!
+Two chat clients will be started; there is a help command;
+login as a different user in each with any password; they
+can chat with each other!
 
-you can mix-and-match with the csharp versions ChatListener.exe
-and ChatClient.exe, too:
+To run csharp chat:
 
-cmd-window:
-  > cd target/bin
-  > start ChatListener.exe
-  > start ChatClient.exe
-  > start ChatClient.exe
+> cd target\bin
+> start ChatListener.exe
+> start ChatClient.exe
+> start ChatClient.exe
+
+You can mix and match the various clients and listeners.
 
         </echo>
     </target>
@@ -262,6 +263,7 @@ cmd-window:
 
     <target name="dist-src" >
     	<copy file="dist-build.xml" tofile="${dist-src}/build.xml" overwrite="true" />
+    	<copy file="dist-README.txt" tofile="${dist-src}/README.txt" overwrite="true" />
         
     	<copy todir="${dist-src}/src/main/etch" overwrite="true" >
         	<fileset dir="${src}/main/etch" >
