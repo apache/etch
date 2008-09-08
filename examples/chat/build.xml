@@ -49,9 +49,8 @@
 
     <!-- import etch task -->
     <taskdef
-        name="etch"
         onerror="report"
-        classname="etch.tools.ant.EtchCompileTask"
+        resource="etch/tools/ant/etch.xml"
         classpath="${etch.home}/lib/etch-ant-plugin-${etch.version}.jar" />
 
     <!-- import dotnet task -->
