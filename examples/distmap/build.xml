@@ -35,8 +35,8 @@
     <condition property="USE.mono" >
         <and>
             <not><os family="windows" /></not>
-            <available file="${env.MONO_HOME}/bin/mdtool" />
             <!-- TODO mono support is not fully baked, use -DUSE.mono to test -->
+            <!-- <available file="${env.MONO_HOME}/bin/mdtool" /> -->
             <isset property="USE.mono" />
         </and>
     </condition>
@@ -209,7 +209,7 @@
         </junit>
     </target>
 
-    <target name="test-csharp" depends="build-csharp" >
+    <target name="test-csharp" depends="build-csharp" if="BUILD.csharp" >
          <nunit xmlout="${nunit-results}/NUnitResults.xml">
              <testassembly name="${src}/test/csharp/DistMapTestProj/bin/${build.target}/DistMapTestProj.dll" />
          </nunit>
