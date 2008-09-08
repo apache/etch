@@ -82,6 +82,7 @@
     <property name="main-src-java"     location="${src}/main/java" />
     <property name="test-src-java"     location="${src}/test/java" />
     <property name="target"            location="${basedir}/target" />
+    <property name="dist-src"          location="${target}/dist-src" />
     <property name="generated-sources" location="${target}/generated-sources" />
     <property name="gen-src-java"      location="${generated-sources}/main/etch/java" />
     <property name="gen-src-csharp"    location="${generated-sources}/main/etch/csharp" />
@@ -90,10 +91,12 @@
     <property name="classes-test"      location="${target}/classes-test" />
     <property name="test-results"      location="${target}/test-results" />
     <property name="nunit-results"     location="${target}/nunit-results" />
+	<property name="dist"              location="${basedir}/../../target/Installers/dist" />
 
     <!-- initialize -->
     <target name="init" >
         <mkdir dir="${target}" />
+        <mkdir dir="${dist-src}" />
         <mkdir dir="${generated-sources}" />
         <mkdir dir="${gen-src-java}" />
         <mkdir dir="${gen-src-csharp}" />
@@ -210,7 +213,7 @@
     </target>
 
     <target name="test-csharp" depends="build-csharp" if="BUILD.csharp" >
-         <nunit xmlout="${nunit-results}/NUnitResults.xml">
+         <nunit xmlout="${nunit-results}/NUnitResults.xml" >
              <testassembly name="${src}/test/csharp/ChatTestProj/bin/${build.target}/ChatTestProj.dll" />
          </nunit>
 
@@ -226,21 +229,24 @@
 
 Build Complete!
 
-To run the chat example, open three command-windows in this directory.
+To run the chat example, run these commands in a cmd window:
 
-cmd-window-1:
+cmd-window:
   > cd target/bin
-  > java -cp chat.jar etch.examples.chat.MainChatListener
-
-cmd-window-2:
-  > cd target/bin
-  > java -cp chat.jar etch.examples.chat.MainChatClient
-
-cmd-window-3:
-  > cd target/bin
-  > java -cp chat.jar etch.examples.chat.MainChatClient
+  > start java -cp chat.jar etch.examples.chat.MainChatListener
+  > start java -cp chat.jar etch.examples.chat.MainChatClient
+  > start java -cp chat.jar etch.examples.chat.MainChatClient
 
 cmd-window-2 and cmd-window-3 can now chat with each other !!!
+
+you can mix-and-match with the csharp versions ChatListener.exe
+and ChatClient.exe, too:
+
+cmd-window:
+  > cd target/bin
+  > start ChatListener.exe
+  > start ChatClient.exe
+  > start ChatClient.exe
 
         </echo>
     </target>
@@ -254,8 +260,37 @@ cmd-window-2 and cmd-window-3 can now chat with each other !!!
         <property name="build.target" value="Release" />
     </target>
 
-    <target name="debug" depends="init-debug,test" />
-    <target name="release" depends="init-release,test" />
+    <target name="dist-src" >
+    	<copy file="dist-build.xml" tofile="${dist-src}/build.xml" overwrite="true" />
+        
+    	<copy todir="${dist-src}/src/main/etch" overwrite="true" >
+        	<fileset dir="${src}/main/etch" >
+        		<exclude name="**/.svn/**" />
+        		<include name="**/*.etch" />
+        	</fileset>
+        </copy>
+        
+    	<copy todir="${dist-src}/src/main/java" overwrite="true" >
+        	<fileset dir="${src}/main/java" >
+        		<exclude name="**/.svn/**" />
+        		<include name="**/*.java" />
+        	</fileset>
+        </copy>
+    	
+    	<copy todir="${dist-src}/src/main/csharp" overwrite="true" >
+    		<fileset dir="${src}/main/csharp" >
+    			<exclude name="**/.svn/**" />
+        		<include name="**/*.cs" />
+    		</fileset>
+    	</copy>
+    	
+    	<copy todir="${dist}/examples/chat" overwrite="true" >
+    		<fileset dir="${dist-src}" />
+    	</copy>
+    </target>
+
+    <target name="debug" depends="dist-src,init-debug,test" />
+    <target name="release" depends="dist-src,init-release,test" />
 
     <!-- clean -->
     <target name="clean" >
