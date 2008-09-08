@@ -2,6 +2,33 @@
 Release 1.0.1
 -------------
 
+r80 | sccomer | 2008-09-08 15:33:33 CDT
+
+added antlib resource for etch ant plugin, changed chat example to use it.
+----------------------------------------------------------------------------
+r79 | sccomer | 2008-09-08 13:40:12 CDT
+
+add csharp build to dist chat example.
+----------------------------------------------------------------------------
+r78 | sccomer | 2008-09-08 13:00:36 CDT
+
+custom README.txt for chat dist and make the directions all very similar.
+----------------------------------------------------------------------------
+r77 | sccomer | 2008-09-08 12:34:02 CDT
+
+added chat source to the distribution.
+----------------------------------------------------------------------------
+r76 | dixson3 | 2008-09-08 10:30:32 CDT
+
+Filter 'etch-maven-install.bat' to include the correct version number for etch
+Update csharp-unit-test targets to only run when 'BUILD.csharp' is set
+
+----------------------------------------------------------------------------
+r75 | sccomer | 2008-09-07 10:19:23 CDT
+
+updated ChangeLog.txt to the current state of the release.
+----------------------------------------------------------------------------
+
 r74 | sccomer | 2008-09-07 09:56:18 CDT
 r73 | sccomer | 2008-09-05 16:03:49 CDT
 r72 | sccomer | 2008-09-05 15:32:36 CDT
