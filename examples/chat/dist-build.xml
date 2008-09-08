@@ -22,8 +22,7 @@
     <property name="bin"               location="${target}/bin"/>
 
     <taskdef
-        name="etch"
-        classname="etch.tools.ant.EtchCompileTask"
+    	resource="etch/tools/ant/etch.xml"
         classpath="${etch-ant-plugin.jar}"/>
 
     <target name="build" depends="build-java, build-csharp, done"/>

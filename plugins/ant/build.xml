@@ -10,18 +10,15 @@
     <property name="src"                  location="${proj}/src" />        
     <property name="generatedSrc"         location="${target}/generated-sources" />
     <property name="classesDirectory"     location="${target}/classes" />
-    <property name="resourcesDirectory"   location="${target}/resources" />
     <property name="testResultsDirectory" location="${target}/test-results" />
 
     <!-- MACRO: init-target -->
     <macrodef name="init-target" >
         <sequential>
             <delete dir="${classesDirectory}"   failonerror="false" quiet="true" />
-            <delete dir="${resourcesDirectory}" failonerror="false" quiet="true" />
             <mkdir dir="${classesDirectory}" />
             <mkdir dir="${classesDirectory}/main" />
             <mkdir dir="${classesDirectory}/test" />
-            <mkdir dir="${resourcesDirectory}" />
         </sequential>
     </macrodef>
 
@@ -44,9 +41,7 @@
 
             <!-- compiler plugin resources -->
             <copy todir="${classesDirectory}/main" >
-                <fileset dir="${src}/main">
-                    <include name="resources/**/*" />
-                </fileset>
+                <fileset dir="${src}/main/resources" excludes="**/.svn/**" />
             </copy>
 
             <!-- Compile Tests -->
@@ -65,9 +60,7 @@
 
             <!-- compiler plugin resources -->
             <copy todir="${classesDirectory}/test" >
-                <fileset dir="${src}/test">
-                    <include name="resources/**/*" />
-                </fileset>
+                <fileset dir="${src}/test/resources" excludes="**/.svn/**" />
             </copy>
 
         </sequential>
@@ -90,22 +83,15 @@
                     <attribute name="SVN-Revision" value="${Etch.runtime.revisionNumber}" />
                     <attribute name="Class-Path"   value="${etch-compiler.jar}" />
                 </manifest>
-                <fileset dir="${classesDirectory}/main">
-                    <include name="etch/**" />
-                    <include name="resources/**" />
-                </fileset>
+                <fileset dir="${classesDirectory}/main"/>
             </jar>
 
             <!-- CREATE source archives -->
             
             <!-- package up etch-ant-task src -->
             <zip destfile="@{dist}/lib/${etch-ant-task-src.zip}" >
-                <fileset dir="${src}/main/java" >
-                    <include name="etch/**/*.java" />
-                </fileset>
-                <fileset dir="${src}/main" >
-                    <include name="resources/**/*" />
-                </fileset>
+                <fileset dir="${src}/main/java" excludes="**/.svn/**" />
+                <fileset dir="${src}/main/resources" excludes="**/.svn/**" />
             </zip>
 
         </sequential>
@@ -119,7 +105,6 @@
         <mkdir dir="${target}" />
         <mkdir dir="${generatedSrc}" />
         <mkdir dir="${classesDirectory}" />
-        <mkdir dir="${resourcesDirectory}" />
         <mkdir dir="${testResultsDirectory}" />
     </target>
 

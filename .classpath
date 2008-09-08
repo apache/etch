@@ -8,6 +8,9 @@
 	<classpathentry kind="src" path="compiler/target/generated-sources/main/javacc/java"/>
 	<classpathentry kind="src" path="compiler/src/test/java"/>
 	<classpathentry kind="src" path="compiler/src/test/resources"/>
+	<classpathentry kind="src" path="plugins/ant/src/main/java"/>
+	<classpathentry kind="src" path="plugins/ant/src/main/resources"/>
+	<classpathentry kind="src" path="plugins/ant/src/test/java"/>
 	<classpathentry kind="src" path="binding-java/compiler/src/main/java"/>
 	<classpathentry kind="src" path="binding-java/compiler/src/main/resources"/>
 	<classpathentry kind="src" path="binding-java/runtime/src/main/java"/>
@@ -32,8 +35,6 @@
 	<classpathentry kind="src" path="examples/distmap/src/test/java"/>
 	<classpathentry kind="src" path="examples/example/src/test/java"/>
 	<classpathentry kind="src" path="examples/perf/src/test/java"/>
-	<classpathentry kind="src" path="plugins/ant/src/main/java"/>
-	<classpathentry kind="src" path="plugins/ant/src/test/java"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/ETCH_DEPENDENT_JARS"/>
 	<classpathentry kind="output" path="bin"/>
