@@ -20,6 +20,10 @@
     <property name="gensrc-main-etch-csharp" location="${generated-sources}/main/etch/csharp"/>
     <property name="classes"           location="${target}/classes"/>
     <property name="bin"               location="${target}/bin"/>
+    
+    <condition property="BUILD.csharp" >
+        <os family="windows" />
+    </condition>    
 
     <taskdef
     	resource="etch/tools/ant/etch.xml"
@@ -72,7 +76,7 @@ You can mix and match the various clients and listeners.
         </echo>
     </target>
 
-    <target name="build-csharp" depends="gensrc-csharp">
+    <target name="build-csharp" depends="gensrc-csharp" if="BUILD.csharp" >
         <csc
                 debug="true"
                 warnLevel="1"
