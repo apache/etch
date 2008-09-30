@@ -214,15 +214,20 @@ public class ${vf} : DefaultValueFactory
 					}, 
 					delegate( StructValue sv ) 
 					{
-						// there should only be a single key, so take the first one
+						// there should only be a single key, so take the first
+						// one. if there is no key, means they sent null or the
+						// key they sent was unknown.
 						Field key = null;
 						IEnumerator<Field> myEnum = sv.Keys.GetEnumerator();
 						if (myEnum.MoveNext())
 							key = myEnum.Current;
-				
+						else
+							return null;
+						
 #foreach ($p in $n.iterator())
 						if (key == $p.vname( $helper )) return ${tname}.$p.name();
 #end
+						
 						return null;
 					} 
 				)
