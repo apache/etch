@@ -32,7 +32,7 @@ import etch.bindings.java.support.Validator_string;
 import etch.bindings.java.transport.ArrayValue;
 import etch.bindings.java.transport.TaggedDataOutput;
 import etch.bindings.java.transport.fmt.TypeCode;
-import etch.util.FlexBuffer;
+import etch.util.DataOutput;
 import etch.util.URL;
 
 /**
@@ -70,7 +70,7 @@ final public class BinaryTaggedDataOutput extends BinaryTaggedData
 	// TaggedDataOutput methods //
 	//////////////////////////////
 
-	public void writeMessage( Message msg, FlexBuffer buf ) throws IOException
+	public void writeMessage( Message msg, DataOutput buf ) throws IOException
 	{
 		try
 		{
@@ -85,7 +85,7 @@ final public class BinaryTaggedDataOutput extends BinaryTaggedData
 		}
 	}
 
-	private FlexBuffer buf;
+	private DataOutput buf;
 
 	private void writeStruct( StructValue sv ) throws IOException
 	{

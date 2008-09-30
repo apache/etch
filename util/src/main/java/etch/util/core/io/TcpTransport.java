@@ -25,7 +25,8 @@ import java.net.Socket;
 import java.net.SocketAddress;
 import java.net.SocketException;
 
-import etch.util.FlexBuffer;
+import etch.util.DataInput;
+import etch.util.DataOutput;
 import etch.util.Resources;
 import etch.util.URL;
 import etch.util.core.Who;
@@ -354,7 +355,7 @@ abstract public class TcpTransport extends Connection<SessionData>
 	 * @param buf
 	 * @throws Exception
 	 */
-	protected final void fireData( FlexBuffer buf ) throws Exception
+	protected final void fireData( DataInput buf ) throws Exception
 	{
 		session.sessionData( null, buf );
 	}
@@ -381,9 +382,25 @@ abstract public class TcpTransport extends Connection<SessionData>
 		return checkSocket().getRemoteSocketAddress();
 	}
 
-	public final void transportData( Who recipient, FlexBuffer buf ) throws Exception
+	public final void transportData( Who recipient, DataOutput buf ) throws Exception
 	{
-		send( buf.getBuf(), buf.index(), buf.avail() );
+		try
+		{
+			OutputStream os = checkOutputStream();
+			buf.buffer().write( os );
+			if (autoFlush)
+				os.flush();
+		}
+		catch ( IOException e )
+		{
+			close( true );
+			throw e;
+		}
+		catch ( RuntimeException e )
+		{
+			close( true );
+			throw e;
+		}
 	}
 
 	@Override

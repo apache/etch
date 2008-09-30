@@ -20,7 +20,7 @@ package etch.bindings.java.transport;
 import java.io.IOException;
 
 import etch.bindings.java.msg.Message;
-import etch.util.FlexBuffer;
+import etch.util.DataOutput;
 
 /**
  * A TaggedDataOutput writes type tagged data values to an output buf.
@@ -33,5 +33,5 @@ public interface TaggedDataOutput
 	 * @param buf the buffer to write to.
 	 * @throws IOException
 	 */
-	public void writeMessage( Message msg, FlexBuffer buf ) throws IOException;
+	public void writeMessage( Message msg, DataOutput buf ) throws IOException;
 }

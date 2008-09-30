@@ -31,10 +31,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import etch.bindings.java.support.ServerFactory;
-import etch.examples.distmap.DistributedHashTableHelper;
-import etch.examples.distmap.MainDistributedHashTableClient;
-import etch.examples.distmap.MainDistributedHashTableListener;
-import etch.examples.distmap.RemoteDistributedHashTableServer;
 import etch.examples.distmap.DistributedHashTable.Entry;
 import etch.util.Log;
 import etch.util.core.io.Transport;

@@ -33,7 +33,7 @@ import etch.bindings.java.transport.ArrayValue;
 import etch.bindings.java.transport.TaggedDataInput;
 import etch.bindings.java.transport.fmt.TypeCode;
 import etch.util.Assertion;
-import etch.util.FlexBuffer;
+import etch.util.DataInput;
 
 /**
  * BinaryTaggedDataInput has methods to support reading tagged
@@ -54,15 +54,11 @@ final public class BinaryTaggedDataInput extends BinaryTaggedData
 		// don't have anything to do with uri yet.
 	}
 
-	private FlexBuffer buf;
-	
-	private int lengthBudget;
-
 	/////////////////////////////
 	// TaggedDataInput methods //
 	/////////////////////////////
 	
-	public Message readMessage( FlexBuffer buf ) throws IOException
+	public Message readMessage( DataInput buf ) throws IOException
 	{
 		this.buf = buf;
 		
@@ -90,6 +86,10 @@ final public class BinaryTaggedDataInput extends BinaryTaggedData
 			lengthBudget = 0;
 		}
 	}
+
+	private DataInput buf;
+	
+	private int lengthBudget;
 
 	private StructValue readStruct() throws IOException
 	{

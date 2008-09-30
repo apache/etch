@@ -28,6 +28,10 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
+import etch.util.BigEndianFlexBuffer;
+import etch.util.BigEndianFlexDataInput;
+import etch.util.DataInput;
+import etch.util.DataOutput;
 import etch.util.FlexBuffer;
 import etch.util.core.Who;
 
@@ -67,12 +71,12 @@ public class TestPacketizer
 	{
 		// Create empty packet to send
 		assert p.headerSize() == 8;
-		FlexBuffer buf = new FlexBuffer( new byte[]
+		DataOutput buf = new BigEndianFlexBuffer( new byte[]
 		{
 			// space for header:
 			0, 0, 0, 0, 0, 0, 0, 0
 		    // packet data:
-		} );
+		} ).dataOutput();
 		
 		// this is the result we expect.
 		byte[][] result = new byte[][]
@@ -97,13 +101,13 @@ public class TestPacketizer
 	{
 		// Create 1 byte packet to send
 		assert p.headerSize() == 8;
-		FlexBuffer buf = new FlexBuffer( new byte[]
+		DataOutput buf = new BigEndianFlexBuffer( new byte[]
 		{
 			// space for header:
 		    0, 0, 0, 0, 0, 0, 0, 0,
 		    // packet data:
 		    1
-		} );
+		} ).dataOutput();
 		
 		// this is the result we expect.
 		byte[][] result = new byte[][]
@@ -129,13 +133,13 @@ public class TestPacketizer
 	{
 		// Create 2 byte packet to send
 		assert p.headerSize() == 8;
-		FlexBuffer buf = new FlexBuffer( new byte[]
+		DataOutput buf = new BigEndianFlexBuffer( new byte[]
 		{
 			// space for header:
 		    0, 0, 0, 0, 0, 0, 0, 0,
 		    // packet data:
 		    2, 3
-		} );
+		} ).dataOutput();
 		
 		byte[][] result = new byte[][]
 		{
@@ -160,12 +164,12 @@ public class TestPacketizer
 	{
 		// Create too-small packet to send
 		assert p.headerSize() > 7;
-		FlexBuffer buf = new FlexBuffer( new byte[]
+		DataOutput buf = new BigEndianFlexBuffer( new byte[]
 		{
 			// space for header:
 			0, 0, 0, 0, 0, 0, 0 // too short!
 		    // packet data:
-		} );
+		} ).dataOutput();
 
 		p.transportPacket( who, buf );
 	}
@@ -176,7 +180,7 @@ public class TestPacketizer
 	{
 		// Create too-small packet to send
 		assert p.headerSize() > 0;
-		FlexBuffer buf = new FlexBuffer( new byte[] {} );
+		DataOutput buf = new BigEndianFlexBuffer( new byte[] {} ).dataOutput();
 		p.transportPacket( who, buf );
 	}
 
@@ -189,12 +193,12 @@ public class TestPacketizer
 	public void bad1() throws Exception
 	{
 		// Create data to send
-		FlexBuffer buf = new FlexBuffer( new byte[]
+		DataInput buf = new BigEndianFlexBuffer( new byte[]
 		{
 			// packet header:
 			0, 0, 0, 0, 0, 0, 0, 0 // bad sig
 		    // packet data:
-		} );
+		} ).dataInput();
 
 		p.sessionData( who, buf );
 	}
@@ -204,12 +208,12 @@ public class TestPacketizer
 	public void bad2() throws Exception
 	{
 		// Create data to send
-		FlexBuffer buf = new FlexBuffer( new byte[]
+		DataInput buf = new BigEndianFlexBuffer( new byte[]
 		{
 			// packet header:
 			1, 2, 3, 4, 0, 0, 0, 0 // bad sig
 		    // packet data:
-		} );
+		} ).dataInput();
 
 		p.sessionData( who, buf );
 	}
@@ -219,12 +223,12 @@ public class TestPacketizer
 	public void bad3() throws Exception
 	{
 		// Create data to send
-		FlexBuffer buf = new FlexBuffer( new byte[]
+		DataInput buf = new BigEndianFlexBuffer( new byte[]
 		{
 			// packet header:
 			-34, -83, -66, -17, 0, 1, 0, 0 // size too big
 		    // packet data:
-		} );
+		} ).dataInput();
 
 		p.sessionData( who, buf );
 	}
@@ -234,12 +238,12 @@ public class TestPacketizer
 	public void bad4() throws Exception
 	{
 		// Create data to send
-		FlexBuffer buf = new FlexBuffer( new byte[]
+		DataInput buf = new BigEndianFlexBuffer( new byte[]
 		{
 			// packet header:
 			-34, -83, -66, -17, -1, -1, -1, -1 // negative packet size
 		    // packet data:
-		} );
+		} ).dataInput();
 
 		p.sessionData( who, buf );
 	}
@@ -253,12 +257,12 @@ public class TestPacketizer
 	public void singleSingleData0() throws Exception
 	{
 		// Create data to send
-		FlexBuffer buf = new FlexBuffer( new byte[]
+		DataInput buf = new BigEndianFlexBuffer( new byte[]
 		{
 			// packet header:
 			-34, -83, -66, -17, 0, 0, 0, 0
 		    // packet data:
-		} );
+		} ).dataInput();
 
 		p.sessionData( who, buf );
 		
@@ -272,13 +276,14 @@ public class TestPacketizer
 	public void singleSingleData1() throws Exception
 	{
 		// length = 1
-		FlexBuffer buf = new FlexBuffer( new byte[]
+		DataInput buf = new BigEndianFlexBuffer( new byte[]
 		{
 			// packet header:
 			-34, -83, -66, -17, 0, 0, 0, 1,
 		    // packet data:
 		    1
-		} );
+		} ).dataInput();
+		
 		byte[][] result = new byte[][]
 		{
 			{
@@ -299,13 +304,14 @@ public class TestPacketizer
 	public void singleSingleData2() throws Exception
 	{
 		// length = 2
-		FlexBuffer buf = new FlexBuffer( new byte[]
+		DataInput buf = new BigEndianFlexBuffer( new byte[]
 		{
 			// packet header:
 			-34, -83, -66, -17, 0, 0, 0, 2,
 		    // packet data:
 		    3, 4
-		} );
+		} ).dataInput();
+		
 		byte[][] result = new byte[][]
 		{
 			{
@@ -330,13 +336,13 @@ public class TestPacketizer
 	public void data1() throws Exception
 	{
 		// 2x length = 0
-		FlexBuffer buf = new FlexBuffer( new byte[]
+		DataInput buf = new BigEndianFlexBuffer( new byte[]
 		{
 			// packet header:
 			-34, -83, -66, -17, 0, 0, 0, 0,
 			// packet header:
 			-34, -83, -66, -17, 0, 0, 0, 0
-		} );
+		} ).dataInput();
 
 		p.sessionData( who, buf );
 
@@ -350,7 +356,7 @@ public class TestPacketizer
 	public void data2() throws Exception
 	{
 		// length = 1, length = 0
-		FlexBuffer buf = new FlexBuffer( new byte[]
+		DataInput buf = new BigEndianFlexBuffer( new byte[]
 		{
 			// packet 1 header:
 			-34, -83, -66, -17, 0, 0, 0, 1,
@@ -359,7 +365,7 @@ public class TestPacketizer
 			// packet 2 header:
 		    -34, -83, -66, -17, 0, 0, 0, 0,
 		    // packet 2 data:
-		} );
+		} ).dataInput();
 		
 		byte[][] result = new byte[][]
 		{
@@ -381,7 +387,7 @@ public class TestPacketizer
 	public void data3() throws Exception
 	{
 		// length = 0, length = 1
-		FlexBuffer buf = new FlexBuffer( new byte[]
+		DataInput buf = new BigEndianFlexBuffer( new byte[]
 		{
 			// packet 1 header:
 			-34, -83, -66, -17, 0, 0, 0, 0,
@@ -390,7 +396,7 @@ public class TestPacketizer
 			-34, -83, -66, -17, 0, 0, 0, 1,
 		    // packet 2 data:
 		    2
-		} );
+		} ).dataInput();
 		
 		byte[][] result = new byte[][]
 		{
@@ -412,7 +418,7 @@ public class TestPacketizer
 	public void data4() throws Exception
 	{
 		// 2x length = 1
-		FlexBuffer buf = new FlexBuffer( new byte[]
+		DataInput buf = new BigEndianFlexBuffer( new byte[]
 		{
 			// packet 1 header:
 			-34, -83, -66, -17, 0, 0, 0, 1,
@@ -422,7 +428,7 @@ public class TestPacketizer
 		    -34, -83, -66, -17, 0, 0, 0, 1,
 		    // packet 2 data:
 		    2
-		} );
+		} ).dataInput();
 		
 		byte[][] result = new byte[][]
 		{
@@ -448,7 +454,7 @@ public class TestPacketizer
 	public void doubleSingleData2() throws Exception
 	{
 		// length = 2
-		FlexBuffer buf = new FlexBuffer( new byte[]
+		DataInput buf = new BigEndianFlexBuffer( new byte[]
 		{
 			// packet 1 header:
 			-34, -83, -66, -17, 0, 0, 0, 2,
@@ -458,7 +464,8 @@ public class TestPacketizer
 		    -34, -83, -66, -17, 0, 0, 0, 2,
 		    // packet 2 data:
 		    5, 6
-		} );
+		} ).dataInput();
+		
 		byte[][] result = new byte[][]
 		{
 		    {
@@ -487,11 +494,12 @@ public class TestPacketizer
 	public void doubleSingle_HeaderSplit_Data0() throws Exception
 	{
 		// length = 0
-		FlexBuffer buf = new FlexBuffer( new byte[]
+		FlexBuffer bufx = new BigEndianFlexBuffer( new byte[]
 		{
 			// packet 1 header (partial):
 			-34, -83, -66, -17, 0, 0
 		} );
+		DataInput buf = new BigEndianFlexDataInput( bufx );
 
 		p.sessionData( who, buf );
 
@@ -499,13 +507,14 @@ public class TestPacketizer
 		assertTrue( session.check( null ) );
 		assertNull( session.sender );
 
-		FlexBuffer buf2 = new FlexBuffer( new byte[]
+		FlexBuffer bufx2 = new BigEndianFlexBuffer( new byte[]
 		{
 			// packet 1 header (remainder):
 		    0, 0,
 			// packet 2 header
 		    -34, -83, -66, -17, 0, 0, 0, 0
 		} );
+		DataInput buf2 = new BigEndianFlexDataInput( bufx2 );
 
 		p.sessionData( null, buf2 );
 
@@ -519,11 +528,11 @@ public class TestPacketizer
 	public void doubleSingle_HeaderSplit_Data1() throws Exception
 	{
 		// length = 1
-		FlexBuffer buf = new FlexBuffer( new byte[]
+		DataInput buf = new BigEndianFlexBuffer( new byte[]
 		{
 			// packet 1 header (partial):
 			-34, -83, -66, -17, 0, 0
-		} );
+		} ).dataInput();
 
 		p.sessionData( who, buf );
 
@@ -531,7 +540,7 @@ public class TestPacketizer
 		assertTrue( session.check( null ) );
 		assertNull( session.sender );
 
-		FlexBuffer buf2 = new FlexBuffer( new byte[]
+		DataInput buf2 = new BigEndianFlexBuffer( new byte[]
 		{
 			// packet 1 header (remainder):
 		    0, 1,
@@ -541,7 +550,7 @@ public class TestPacketizer
 		    -34, -83, -66, -17, 0, 0, 0, 1,
 		    // packet 2 data:
 		    2
-		} );
+		} ).dataInput();
 		
 		byte[][] result2 = new byte[][]
 		{
@@ -567,10 +576,10 @@ public class TestPacketizer
 	public void doubleSingle_HeaderSplit_Data2() throws Exception
 	{
 		// length = 2
-		FlexBuffer buf = new FlexBuffer( new byte[]
+		DataInput buf = new BigEndianFlexBuffer( new byte[]
 		{
 			-34, -83, -66, -17, 0, 0
-		} );
+		} ).dataInput();
 
 		p.sessionData( who, buf );
 
@@ -578,10 +587,11 @@ public class TestPacketizer
 		assertTrue( session.check( null ) );
 		assertNull( session.sender );
 
-		FlexBuffer buf2 = new FlexBuffer( new byte[]
+		DataInput buf2 = new BigEndianFlexBuffer( new byte[]
 		{
 		    0, 2, 3, 4, -34, -83, -66, -17, 0, 0, 0, 2, 5, 6
-		} );
+		} ).dataInput();
+		
 		byte[][] result2 = new byte[][]
 		{
 		    {
@@ -608,10 +618,10 @@ public class TestPacketizer
 	public void doubleSingle_BodySplit_Data2() throws Exception
 	{
 		// length = 2
-		FlexBuffer buf = new FlexBuffer( new byte[]
+		DataInput buf = new BigEndianFlexBuffer( new byte[]
 		{
 			-34, -83, -66, -17, 0, 0, 0, 2, 1
-		} );
+		} ).dataInput();
 
 		p.sessionData( who, buf );
 
@@ -619,10 +629,11 @@ public class TestPacketizer
 		assertTrue( session.check( null ) );
 		assertNull( session.sender );
 
-		FlexBuffer buf2 = new FlexBuffer( new byte[]
+		DataInput buf2 = new BigEndianFlexBuffer( new byte[]
 		{
 		    2, -34, -83, -66, -17, 0, 0, 0, 2, 3, 4
-		} );
+		} ).dataInput();
+		
 		byte[][] result2 = new byte[][]
 		{
 		    {
@@ -645,10 +656,10 @@ public class TestPacketizer
 	public void doubleSingle_BodySplit_Data3() throws Exception
 	{
 		// length = 3
-		FlexBuffer buf = new FlexBuffer( new byte[]
+		DataInput buf = new BigEndianFlexBuffer( new byte[]
 		{
 			-34, -83, -66, -17, 0, 0, 0, 3, 5, 6
-		} );
+		} ).dataInput();
 
 		p.sessionData( who, buf );
 
@@ -656,10 +667,11 @@ public class TestPacketizer
 		assertTrue( session.check( null ) );
 		assertNull( session.sender );
 
-		FlexBuffer buf2 = new FlexBuffer( new byte[]
+		DataInput buf2 = new BigEndianFlexBuffer( new byte[]
 		{
 		    7, -34, -83, -66, -17, 0, 0, 0, 3, 8, 9, 10
-		} );
+		} ).dataInput();
+		
 		byte[][] result2 = new byte[][]
 		{
 		    {
@@ -829,12 +841,12 @@ public class TestPacketizer
 			this.event = event;
 		}
 		
-		public void transportData( Who recipient, FlexBuffer buf )
+		public void transportData( Who recipient, DataOutput buf )
 			throws Exception
 		{
 			this.what = What.DATA;
 			this.recipient = recipient;
-			list.add( buf.getAvailBytes() );
+			list.add( buf.buffer().getAvailBytes() );
 		}
 
 		public SessionData getSession()
@@ -936,7 +948,7 @@ public class TestPacketizer
 
 		// PacketHandler methods
 
-		public void sessionPacket( Who sender, FlexBuffer buf )
+		public void sessionPacket( Who sender, DataInput buf )
 		    throws Exception
 		{
 			what = What.PACKET;

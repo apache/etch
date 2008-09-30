@@ -18,17 +18,17 @@
 package etch.examples.example;
 
 
+import junit.framework.Assert;
+
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-
 import etch.bindings.java.support.ServerFactory;
 import etch.util.Log;
 import etch.util.core.io.Transport;
-import junit.framework.Assert;
 
 /**
  * 
