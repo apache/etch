@@ -174,11 +174,19 @@ public final class ${vf} extends DefaultValueFactory
 
 			public final Object importValue( StructValue struct )
 			{
+				// if empty, it likely means that a null value was sent
+				// or an unknown key (from a different rev of the service).
+				if (struct.isEmpty())
+					return null;
+				
 				// there should only be a single key, so take the first one
 				Field key = struct.keySet().iterator().next();
 #foreach ($p in $n.iterator())
 				if (key == $p.vname( $helper )) return ${tname}.$p.name();
 #end
+
+				// a known key was sent, but it did not match any defined
+				// key for this type.
 				return null;
 			}
 		} );
