@@ -29,7 +29,6 @@ import org.junit.Test;
 
 import etch.bindings.java.support.ServerFactory;
 import etch.examples.perf.Perf.Point;
-
 import etch.util.Log;
 import etch.util.core.io.Transport;
 /** */

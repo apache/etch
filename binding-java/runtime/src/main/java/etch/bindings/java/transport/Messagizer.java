@@ -19,7 +19,9 @@ package etch.bindings.java.transport;
 
 import etch.bindings.java.msg.Message;
 import etch.bindings.java.msg.ValueFactory;
-import etch.util.FlexBuffer;
+import etch.util.BigEndianFlexBuffer;
+import etch.util.DataInput;
+import etch.util.DataOutput;
 import etch.util.Resources;
 import etch.util.URL;
 import etch.util.core.Who;
@@ -112,7 +114,7 @@ public final class Messagizer implements SessionPacket, TransportMessage
 		return String.format( "Messagizer/%s", transport );
 	}
 
-    public void sessionPacket( Who sender, FlexBuffer buf ) throws Exception
+    public void sessionPacket( Who sender, DataInput buf ) throws Exception
 	{
 		// messagize the packet.
 		
@@ -138,7 +140,7 @@ public final class Messagizer implements SessionPacket, TransportMessage
 //				Log.report( "Messagizer.packet", "who", this, "send", msg );
 				// assert that msgBuf is reset.
 				// leave space for the packet header
-				msgBuf.skip( transport.headerSize(), true );
+				msgBuf.skip( transport.headerSize() );
 				tdo.writeMessage( msg, msgBuf );
 				msgBuf.setIndex( 0 );
 				transport.transportPacket( recipient, msgBuf );
@@ -150,7 +152,7 @@ public final class Messagizer implements SessionPacket, TransportMessage
 		}
 	}
 	
-	private final FlexBuffer msgBuf = new FlexBuffer();
+	private final DataOutput msgBuf = new BigEndianFlexBuffer().dataOutput();
 	
 	///////////////////////////
 	// SourceHandler methods //

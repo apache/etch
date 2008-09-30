@@ -44,6 +44,10 @@ import etch.bindings.java.support.Validator_short;
 import etch.bindings.java.support.Validator_string;
 import etch.bindings.java.transport.Messagizer;
 import etch.bindings.java.transport.fmt.TypeCode;
+import etch.util.BigEndianFlexBuffer;
+import etch.util.BigEndianFlexDataInput;
+import etch.util.BigEndianFlexDataOutput;
+import etch.util.DataOutput;
 import etch.util.FlexBuffer;
 import etch.util.Log;
 import etch.util.Resources;
@@ -675,9 +679,9 @@ public class TestBinaryTaggedDataInOut
 //		System.out.println( "msg = "+msg );
 		
 		BinaryTaggedDataOutput btdo = new BinaryTaggedDataOutput( vf, "none:" );
-		FlexBuffer buf = new FlexBuffer();
+		FlexBuffer buf = new BigEndianFlexBuffer();
 		
-		btdo.writeMessage( msg, buf );
+		btdo.writeMessage( msg, buf.dataOutput() );
 		
 		buf.setIndex( 0 );
 		byte[] b = buf.getAvailBytes();
@@ -709,7 +713,7 @@ public class TestBinaryTaggedDataInOut
 	        return 0;
         }
 
-		public void transportPacket( Who recipient, FlexBuffer buf ) throws Exception
+		public void transportPacket( Who recipient, DataOutput buf ) throws Exception
         {
 	        // ignore.
 //			System.out.println( buf.avail() );
@@ -746,7 +750,8 @@ public class TestBinaryTaggedDataInOut
 	
 	private byte[] msg2bytes( Message msg, Boolean stringTypeAndField ) throws IOException
 	{
-		FlexBuffer buf = new FlexBuffer();
+		FlexBuffer bufx = new BigEndianFlexBuffer();
+		DataOutput buf = new BigEndianFlexDataOutput( bufx );
 		
 		URL u = new URL( "none:" );
 		if (stringTypeAndField != null)
@@ -755,7 +760,7 @@ public class TestBinaryTaggedDataInOut
 		BinaryTaggedDataOutput btdo = new BinaryTaggedDataOutput( vf, u.toString() );
 		btdo.writeMessage( msg, buf );
 		buf.setIndex( 0 );
-		return buf.getAvailBytes();
+		return bufx.getAvailBytes();
 	}
 	
 	private Message bytes2msg( byte[] buf ) throws Exception
@@ -769,7 +774,7 @@ public class TestBinaryTaggedDataInOut
 		try
 		{
 			BinaryTaggedDataInput btdi = new BinaryTaggedDataInput( vf, "none:" );
-			return btdi.readMessage( new FlexBuffer( buf ) );
+			return btdi.readMessage( new BigEndianFlexDataInput( new BigEndianFlexBuffer( buf ) ) );
 		}
 		finally
 		{

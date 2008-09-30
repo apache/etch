@@ -29,6 +29,7 @@ import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
+import etch.util.BigEndianFlexBuffer;
 import etch.util.FlexBuffer;
 import etch.util.Resources;
 import etch.util.URL;
@@ -165,22 +166,20 @@ public class TlsConnection extends TcpTransport
 			throw new IOException( "socket closed" );
 		
 		// TODO allow setting input buffer size.
-		final FlexBuffer buf = new FlexBuffer( new byte[8192] );
+		final FlexBuffer buf = new BigEndianFlexBuffer( new byte[8192] );
 		
 		try
 		{
 			while (isStarted())
 			{
 //				System.out.println( "reading" );
-				int n = is.read( buf.getBuf() );
+				int n = buf.read( is );
 //				System.out.println( "read "+n );
 				
 				if (n <= 0)
 					break;
 				
-				buf.setLength( n );
-				buf.setIndex( 0 );
-				fireData( buf );
+				fireData( buf.dataInput() );
 			}
 		}
 		catch ( SSLHandshakeException ex )

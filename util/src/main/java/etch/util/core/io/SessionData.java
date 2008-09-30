@@ -17,7 +17,7 @@
 
 package etch.util.core.io;
 
-import etch.util.FlexBuffer;
+import etch.util.DataInput;
 import etch.util.core.Who;
 
 /**
@@ -32,5 +32,5 @@ public interface SessionData extends Session
 	 * @param buf a FlexBuffer positioned at the data.
 	 * @throws Exception
 	 */
-	public void sessionData( Who sender, FlexBuffer buf ) throws Exception;
+	public void sessionData( Who sender, DataInput buf ) throws Exception;
 }

@@ -17,7 +17,7 @@
 
 package etch.util.core.io;
 
-import etch.util.FlexBuffer;
+import etch.util.DataOutput;
 import etch.util.core.Who;
 
 /**
@@ -32,5 +32,5 @@ public interface TransportData extends Transport<SessionData>
 	 * @param buf the FlexBuffer positioned on the data.
 	 * @throws Exception
 	 */
-	public void transportData( Who recipient, FlexBuffer buf ) throws Exception;
+	public void transportData( Who recipient, DataOutput buf ) throws Exception;
 }

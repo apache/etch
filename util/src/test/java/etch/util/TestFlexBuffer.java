@@ -40,7 +40,7 @@ public class TestFlexBuffer
 	@Test
 	public void initial1() throws Exception
 	{
-		FlexBuffer buf = new FlexBuffer();
+		FlexBuffer buf = new BigEndianFlexBuffer();
 		checkBuf( buf, 0, 0, 0 );
 	}
 	
@@ -48,7 +48,7 @@ public class TestFlexBuffer
 	@Test
 	public void initial2() throws Exception
 	{
-		FlexBuffer buf = new FlexBuffer( new byte[5] );
+		FlexBuffer buf = new BigEndianFlexBuffer( new byte[5] );
 		checkBuf( buf, 5, 0, 5 );
 	}
 	
@@ -56,7 +56,7 @@ public class TestFlexBuffer
 	@Test
 	public void initial3() throws Exception
 	{
-		FlexBuffer buf = new FlexBuffer( new byte[5], 2 );
+		FlexBuffer buf = new BigEndianFlexBuffer( new byte[5], 2 );
 		checkBuf( buf, 2, 0, 2 );
 	}
 	
@@ -64,7 +64,7 @@ public class TestFlexBuffer
 	@Test
 	public void initial4() throws Exception
 	{
-		FlexBuffer buf = new FlexBuffer( new byte[5], 1, 3 );
+		FlexBuffer buf = new BigEndianFlexBuffer( new byte[5], 1, 3 );
 		checkBuf( buf, 4, 1, 3 );
 	}
 
@@ -72,8 +72,8 @@ public class TestFlexBuffer
 	@Test
 	public void setLength0() throws Exception
 	{
-		FlexBuffer buf = new FlexBuffer();
-		buf.setLength( 0 );
+		FlexBuffer buf = new BigEndianFlexBuffer();
+		buf.setLength( 0, true );
 		checkBuf( buf, 0, 0, 0 );
 	}
 
@@ -81,8 +81,8 @@ public class TestFlexBuffer
 	@Test
 	public void setLength1() throws Exception
 	{
-		FlexBuffer buf = new FlexBuffer();
-		buf.setLength( 1 );
+		FlexBuffer buf = new BigEndianFlexBuffer();
+		buf.setLength( 1, true );
 		checkBuf( buf, 1, 0, 1 );
 	}
 
@@ -90,8 +90,8 @@ public class TestFlexBuffer
 	@Test
 	public void setLength2() throws Exception
 	{
-		FlexBuffer buf = new FlexBuffer();
-		buf.setLength( 2 );
+		FlexBuffer buf = new BigEndianFlexBuffer();
+		buf.setLength( 2, true );
 		checkBuf( buf, 2, 0, 2 );
 	}
 
@@ -99,9 +99,9 @@ public class TestFlexBuffer
 	@Test
 	public void setLength3() throws Exception
 	{
-		FlexBuffer buf = new FlexBuffer();
-		buf.setLength( 2 );
-		buf.setLength( 0 );
+		FlexBuffer buf = new BigEndianFlexBuffer();
+		buf.setLength( 2, true );
+		buf.setLength( 0, true );
 		checkBuf( buf, 0, 0, 0 );
 	}
 
@@ -109,15 +109,15 @@ public class TestFlexBuffer
 	@Test( expected = IllegalArgumentException.class )
 	public void setLength4() throws Exception
 	{
-		FlexBuffer buf = new FlexBuffer();
-		buf.setLength( -1 );
+		FlexBuffer buf = new BigEndianFlexBuffer();
+		buf.setLength( -1, true );
 	}
 
 	/** @throws Exception */
 	@Test
 	public void setIndex0() throws Exception
 	{
-		FlexBuffer buf = new FlexBuffer();
+		FlexBuffer buf = new BigEndianFlexBuffer();
 		buf.setIndex( 0 );
 		checkBuf( buf, 0, 0, 0 );
 	}
@@ -126,7 +126,7 @@ public class TestFlexBuffer
 	@Test( expected = IllegalArgumentException.class )
 	public void setIndex1() throws Exception
 	{
-		FlexBuffer buf = new FlexBuffer();
+		FlexBuffer buf = new BigEndianFlexBuffer();
 		buf.setIndex( 1 );
 	}
 
@@ -134,7 +134,7 @@ public class TestFlexBuffer
 	@Test( expected = IllegalArgumentException.class )
 	public void setIndex2() throws Exception
 	{
-		FlexBuffer buf = new FlexBuffer();
+		FlexBuffer buf = new BigEndianFlexBuffer();
 		buf.setIndex( -1 );
 	}
 
@@ -142,8 +142,8 @@ public class TestFlexBuffer
 	@Test
 	public void setIndex3() throws Exception
 	{
-		FlexBuffer buf = new FlexBuffer();
-		buf.setLength( 5 );
+		FlexBuffer buf = new BigEndianFlexBuffer();
+		buf.setLength( 5, true );
 		buf.setIndex( 1 );
 		checkBuf( buf, 5, 1, 4 );
 	}
@@ -152,8 +152,8 @@ public class TestFlexBuffer
 	@Test
 	public void setIndex4() throws Exception
 	{
-		FlexBuffer buf = new FlexBuffer();
-		buf.setLength( 5 );
+		FlexBuffer buf = new BigEndianFlexBuffer();
+		buf.setLength( 5, true );
 		buf.setIndex( 4 );
 		checkBuf( buf, 5, 4, 1 );
 	}
@@ -162,8 +162,8 @@ public class TestFlexBuffer
 	@Test
 	public void setIndex5() throws Exception
 	{
-		FlexBuffer buf = new FlexBuffer();
-		buf.setLength( 5 );
+		FlexBuffer buf = new BigEndianFlexBuffer();
+		buf.setLength( 5, true );
 		buf.setIndex( 5 );
 		checkBuf( buf, 5, 5, 0 );
 	}
@@ -172,10 +172,10 @@ public class TestFlexBuffer
 	@Test
 	public void setIndex6() throws Exception
 	{
-		FlexBuffer buf = new FlexBuffer();
-		buf.setLength( 5 );
+		FlexBuffer buf = new BigEndianFlexBuffer();
+		buf.setLength( 5, true );
 		buf.setIndex( 5 );
-		buf.setLength( 0 );
+		buf.setLength( 0, true );
 		checkBuf( buf, 0, 0, 0 );
 	}
 
@@ -183,10 +183,10 @@ public class TestFlexBuffer
 	@Test
 	public void setIndex7() throws Exception
 	{
-		FlexBuffer buf = new FlexBuffer();
-		buf.setLength( 5 );
+		FlexBuffer buf = new BigEndianFlexBuffer();
+		buf.setLength( 5, true );
 		buf.setIndex( 5 );
-		buf.setLength( 2 );
+		buf.setLength( 2, true );
 		checkBuf( buf, 2, 2, 0 );
 	}
 
@@ -194,8 +194,8 @@ public class TestFlexBuffer
 	@Test
 	public void reset() throws Exception
 	{
-		FlexBuffer buf = new FlexBuffer();
-		buf.setLength( 2 );
+		FlexBuffer buf = new BigEndianFlexBuffer();
+		buf.setLength( 2, true );
 		buf.setIndex( 1 );
 		buf.reset();
 		checkBuf( buf, 0, 0, 0 );
@@ -209,7 +209,7 @@ public class TestFlexBuffer
 	@Test
 	public void put1a() throws Exception
 	{
-		FlexBuffer buf = new FlexBuffer();
+		FlexBuffer buf = new BigEndianFlexBuffer();
 		buf.put( 1 );
 		checkBuf( buf, 1, 1, 0 );
 	}
@@ -218,7 +218,7 @@ public class TestFlexBuffer
 	@Test
 	public void put1b() throws Exception
 	{
-		FlexBuffer buf = new FlexBuffer();
+		FlexBuffer buf = new BigEndianFlexBuffer();
 		buf.put( 1 );
 		buf.put( 2 );
 		checkBuf( buf, 2, 2, 0 );
@@ -231,7 +231,7 @@ public class TestFlexBuffer
 	private void testPutBytes( int bufLen )
 		throws Exception
 	{
-		FlexBuffer buf = new FlexBuffer();
+		FlexBuffer buf = new BigEndianFlexBuffer();
 		buf.put( 1 );
 		buf.put( bufLen >= 0 ? new byte[bufLen] : null );
 		checkBuf( buf, bufLen+1, bufLen+1, 0 );
@@ -300,7 +300,7 @@ public class TestFlexBuffer
 	private void testPutBytesOffLen( int bufLen, int offset, int length )
 		throws Exception
 	{
-		FlexBuffer buf = new FlexBuffer();
+		FlexBuffer buf = new BigEndianFlexBuffer();
 		buf.put( 1 );
 		buf.put( bufLen >= 0 ? new byte[bufLen] : null, offset, length );
 		checkBuf( buf, length+1, length+1, 0 );
@@ -494,7 +494,7 @@ public class TestFlexBuffer
 	private void testPutGet( int nPuts, int nGets )
 		throws Exception
 	{
-		FlexBuffer buf = new FlexBuffer();
+		FlexBuffer buf = new BigEndianFlexBuffer();
 		
 		for (int i = 0; i < nPuts; i++)
 			buf.put( i );
@@ -510,7 +510,7 @@ public class TestFlexBuffer
 	private void testPutBytesGet( int nPuts, int nGets )
 		throws Exception
 	{
-		FlexBuffer buf = new FlexBuffer();
+		FlexBuffer buf = new BigEndianFlexBuffer();
 		
 		byte[] buffer = new byte[nPuts];
 		for (int i = 0; i < nPuts; i++)
@@ -528,7 +528,7 @@ public class TestFlexBuffer
 	private void testPutGetBytes( int nPuts, int nGets )
 		throws Exception
 	{
-		FlexBuffer buf = new FlexBuffer();
+		FlexBuffer buf = new BigEndianFlexBuffer();
 		
 		for (int i = 0; i < nPuts; i++)
 			buf.put( i );
@@ -548,7 +548,7 @@ public class TestFlexBuffer
 	private void testPutBytesGetBytes( int nPuts, int nGets )
 		throws Exception
 	{
-		FlexBuffer buf = new FlexBuffer();
+		FlexBuffer buf = new BigEndianFlexBuffer();
 		
 		byte[] buffer = new byte[nPuts];
 		for (int i = 0; i < nPuts; i++)
@@ -879,7 +879,7 @@ public class TestFlexBuffer
 	@Test
 	public void get5a() throws Exception
 	{
-		FlexBuffer buf = new FlexBuffer( new byte[] { 1, 2, 3 } );
+		FlexBuffer buf = new BigEndianFlexBuffer( new byte[] { 1, 2, 3 } );
 		assertEquals( 1, buf.get() );
 		assertEquals( 2, buf.get() );
 		assertEquals( 3, buf.get() );
@@ -890,7 +890,7 @@ public class TestFlexBuffer
 	@Test
 	public void get5b() throws Exception
 	{
-		FlexBuffer buf = new FlexBuffer( new byte[] { 1, 2, 3 }, 2 );
+		FlexBuffer buf = new BigEndianFlexBuffer( new byte[] { 1, 2, 3 }, 2 );
 		assertEquals( 1, buf.get() );
 		assertEquals( 2, buf.get() );
 		checkBuf( buf, 2, 2, 0 );
@@ -900,7 +900,7 @@ public class TestFlexBuffer
 	@Test
 	public void get5c() throws Exception
 	{
-		FlexBuffer buf = new FlexBuffer( new byte[] { 1, 2, 3, 4, 5 }, 1, 2 );
+		FlexBuffer buf = new BigEndianFlexBuffer( new byte[] { 1, 2, 3, 4, 5 }, 1, 2 );
 		assertEquals( 2, buf.get() );
 		assertEquals( 3, buf.get() );
 		checkBuf( buf, 3, 3, 0 );
@@ -910,7 +910,7 @@ public class TestFlexBuffer
 	@Test
 	public void get6() throws Exception
 	{
-		FlexBuffer buf = new FlexBuffer( new byte[] { 5, 6, 7, 8 } );
+		FlexBuffer buf = new BigEndianFlexBuffer( new byte[] { 5, 6, 7, 8 } );
 		byte[] buffer = new byte[] { 11, 12, 13, 14, 15 };
 		buf.get( buffer, 1, 3 );
 		assertEquals( (byte) 11, buffer[0] );
@@ -924,7 +924,7 @@ public class TestFlexBuffer
 	@Test
 	public void compact() throws Exception
 	{
-		FlexBuffer buf = new FlexBuffer( new byte[] { 1, 2, 3, 4, 5 }, 1, 3 );
+		FlexBuffer buf = new BigEndianFlexBuffer( new byte[] { 1, 2, 3, 4, 5 }, 1, 3 );
 		buf.compact();
 		checkBuf( buf, 3, 0, 3 );
 		assertEquals( 2, buf.get() );
@@ -936,20 +936,22 @@ public class TestFlexBuffer
 	@Test
 	public void getByte1() throws Exception
 	{
-		FlexBuffer buf = new FlexBuffer( new byte[] { 127, 1, 0, -1, -128 } );
+		FlexBuffer bufx = new BigEndianFlexBuffer( new byte[] { 127, 1, 0, -1, -128 } );
+		DataInput buf = new BigEndianFlexDataInput( bufx );
 		assertEquals( (byte) 127, buf.getByte() );
 		assertEquals( (byte) 1, buf.getByte() );
 		assertEquals( (byte) 0, buf.getByte() );
 		assertEquals( (byte) -1, buf.getByte() );
 		assertEquals( (byte) -128, buf.getByte() );
-		checkBuf( buf, 5, 5, 0 );
+		checkBuf( bufx, 5, 5, 0 );
 	}
 
 	/** @throws Exception */
 	@Test( expected = EOFException.class )
 	public void getByte2() throws Exception
 	{
-		FlexBuffer buf = new FlexBuffer();
+		FlexBuffer bufx = new BigEndianFlexBuffer();
+		DataInput buf = new BigEndianFlexDataInput( bufx );
 		buf.getByte(); // fails with EOFException
 	}
 
@@ -957,17 +959,19 @@ public class TestFlexBuffer
 	@Test
 	public void getShort1() throws Exception
 	{
-		FlexBuffer buf = new FlexBuffer( new byte[] { 1, 2, -1, -2 } );
+		FlexBuffer bufx = new BigEndianFlexBuffer( new byte[] { 1, 2, -1, -2 } );
+		DataInput buf = new BigEndianFlexDataInput( bufx );
 		assertEquals( (short) 0x0102, buf.getShort() );
 		assertEquals( (short) 0xfffe, buf.getShort() );
-		checkBuf( buf, 4, 4, 0 );
+		checkBuf( bufx, 4, 4, 0 );
 	}
 
 	/** @throws Exception */
 	@Test( expected = EOFException.class )
 	public void getShort2() throws Exception
 	{
-		FlexBuffer buf = new FlexBuffer();
+		FlexBuffer bufx = new BigEndianFlexBuffer();
+		DataInput buf = new BigEndianFlexDataInput( bufx );
 		buf.getShort(); // fails with EOFException
 	}
 
@@ -975,17 +979,19 @@ public class TestFlexBuffer
 	@Test
 	public void getInt1() throws Exception
 	{
-		FlexBuffer buf = new FlexBuffer( new byte[] { 1, 2, 3, 4, -1, -2, -3, -4 } );
+		FlexBuffer bufx = new BigEndianFlexBuffer( new byte[] { 1, 2, 3, 4, -1, -2, -3, -4 } );
+		DataInput buf = new BigEndianFlexDataInput( bufx );
 		assertEquals( 0x01020304, buf.getInt() );
 		assertEquals( 0xfffefdfc, buf.getInt() );
-		checkBuf( buf, 8, 8, 0 );
+		checkBuf( bufx, 8, 8, 0 );
 	}
 
 	/** @throws Exception */
 	@Test( expected = EOFException.class )
 	public void getInt2() throws Exception
 	{
-		FlexBuffer buf = new FlexBuffer();
+		FlexBuffer bufx = new BigEndianFlexBuffer();
+		DataInput buf = new BigEndianFlexDataInput( bufx );
 		buf.getInt(); // fails with EOFException
 	}
 
@@ -993,22 +999,24 @@ public class TestFlexBuffer
 	@Test
 	public void getLong1() throws Exception
 	{
-		FlexBuffer buf = new FlexBuffer( new byte[]
+		FlexBuffer bufx = new BigEndianFlexBuffer( new byte[]
 		{
 			1, 2, 3, 4, 5, 6, 7, 8,
 			-1, -2, -3, -4, -5, -6, -7, -8
 		} );
+		DataInput buf = new BigEndianFlexDataInput( bufx );
 		
 		assertEquals( 0x0102030405060708L, buf.getLong() );
 		assertEquals( 0xfffefdfcfbfaf9f8L, buf.getLong() );
-		checkBuf( buf, 16, 16, 0 );
+		checkBuf( bufx, 16, 16, 0 );
 	}
 
 	/** @throws Exception */
 	@Test( expected = EOFException.class )
 	public void getLong2() throws Exception
 	{
-		FlexBuffer buf = new FlexBuffer();
+		FlexBuffer bufx = new BigEndianFlexBuffer();
+		DataInput buf = new BigEndianFlexDataInput( bufx );
 		buf.getLong(); // fails with EOFException
 	}
 
@@ -1016,7 +1024,7 @@ public class TestFlexBuffer
 	@Test
 	public void getFloat1() throws Exception
 	{
-		FlexBuffer buf = new FlexBuffer( new byte[]
+		FlexBuffer bufx = new BigEndianFlexBuffer( new byte[]
 		{
 			0, 0, 0, 0
 			, 63, -128, 0, 0
@@ -1034,6 +1042,7 @@ public class TestFlexBuffer
 			, -94, 44, -87, 90
 			, -111, -38, -85, 115
 		} );
+		DataInput buf = new BigEndianFlexDataInput( bufx );
 
 		assertEquals( 0.0f, buf.getFloat() );
 		assertEquals( 1.0f, buf.getFloat() );
@@ -1050,14 +1059,15 @@ public class TestFlexBuffer
 		assertEquals( -123e-10f, buf.getFloat() );
 		assertEquals( -234e-20f, buf.getFloat() );
 		assertEquals( -345e-30f, buf.getFloat() );
-		checkBuf( buf, 15*4, 15*4, 0 );
+		checkBuf( bufx, 15*4, 15*4, 0 );
 	}
 
 	/** @throws Exception */
 	@Test( expected = EOFException.class )
 	public void getFloat2() throws Exception
 	{
-		FlexBuffer buf = new FlexBuffer();
+		FlexBuffer bufx = new BigEndianFlexBuffer();
+		DataInput buf = new BigEndianFlexDataInput( bufx );
 		buf.getFloat(); // fails with EOFException
 	}
 
@@ -1065,7 +1075,7 @@ public class TestFlexBuffer
 	@Test
 	public void getDouble1() throws Exception
 	{
-		FlexBuffer buf = new FlexBuffer( new byte[]
+		FlexBuffer bufx = new BigEndianFlexBuffer( new byte[]
 		{
 			0, 0, 0, 0, 0, 0, 0, 0
 			, 63, -16, 0, 0, 0, 0, 0, 0
@@ -1083,6 +1093,7 @@ public class TestFlexBuffer
 			, -85, -87, -105, 64, -36, -23, -48, -66
 			, -106, -16, -127, 73, 111, 91, -75, -29
 		});
+		DataInput buf = new BigEndianFlexDataInput( bufx );
 				
 		assertEquals( 0.0,              buf.getDouble());
 		
@@ -1104,14 +1115,15 @@ public class TestFlexBuffer
 		assertEquals( -234e-100,         buf.getDouble());
 		assertEquals( -345e-200,         buf.getDouble());
 
-		checkBuf( buf, 15*8, 15*8, 0 );
+		checkBuf( bufx, 15*8, 15*8, 0 );
 	}
 
 	/** @throws Exception */
 	@Test( expected = EOFException.class )
 	public void getDouble2() throws Exception
 	{
-		FlexBuffer buf = new FlexBuffer();
+		FlexBuffer bufx = new BigEndianFlexBuffer();
+		DataInput buf = new BigEndianFlexDataInput( bufx );
 		buf.getDouble(); // fails with EOFException
 	}
 
@@ -1119,7 +1131,8 @@ public class TestFlexBuffer
 	@Test
 	public void getFully1() throws Exception
 	{
-		FlexBuffer buf = new FlexBuffer( new byte[] { 1, 2, 3, 4, 5, 6 } );
+		FlexBuffer bufx = new BigEndianFlexBuffer( new byte[] { 1, 2, 3, 4, 5, 6 } );
+		DataInput buf = new BigEndianFlexDataInput( bufx );
 		byte[] b = new byte[3];
 		buf.getFully( b );
 		assertEquals( (byte) 1, b[0] );
@@ -1129,14 +1142,14 @@ public class TestFlexBuffer
 		assertEquals( (byte) 4, b[0] );
 		assertEquals( (byte) 5, b[1] );
 		assertEquals( (byte) 6, b[2] );
-		checkBuf( buf, 6, 6, 0 );
+		checkBuf( bufx, 6, 6, 0 );
 	}
 
 	/** @throws Exception */
 	@Test( expected = EOFException.class )
 	public void getFully2() throws Exception
 	{
-		FlexBuffer buf = new FlexBuffer( new byte[] { 1, 2 } );
+		FlexBuffer buf = new BigEndianFlexBuffer( new byte[] { 1, 2 } );
 		byte[] b = new byte[3];
 		buf.getFully( b ); // fails with EOFException
 	}
@@ -1150,9 +1163,9 @@ public class TestFlexBuffer
 	@Test
 	public void putFlexBuffer1() throws Exception
 	{
-		FlexBuffer buf0 = new FlexBuffer( new byte[] { 1, 2 } );
-		FlexBuffer buf = new FlexBuffer();
-		buf.put( buf0 );
+		FlexBuffer buf0 = new BigEndianFlexBuffer( new byte[] { 1, 2 } );
+		FlexBuffer buf = new BigEndianFlexBuffer();
+		buf.put( buf0.dataInput() );
 		checkBuf( buf, buf0.length(), buf0.length(), 0 );
 	}
 
@@ -1160,12 +1173,12 @@ public class TestFlexBuffer
 	@Test( expected = IOException.class )
 	public void putFlexBuffer2() throws Exception
 	{
-		FlexBuffer buf0 = new FlexBuffer( new byte[] { 1, 2 } );
+		FlexBuffer buf0 = new BigEndianFlexBuffer( new byte[] { 1, 2 } );
 		
 		int max = 4*1024*1024;
-		FlexBuffer buf = new FlexBuffer( new byte[max] );
+		FlexBuffer buf = new BigEndianFlexBuffer( new byte[max] );
 		buf.setIndex(max);
-		buf.put( buf0 );
+		buf.put( buf0.dataInput() );
 	}
 		
 	// ------------------------------------------------------
@@ -1175,23 +1188,23 @@ public class TestFlexBuffer
     // put, put Flexbuffer to a Flexbuffer approaching max length, fails with IOException.
 	
 	/** @throws Exception */
-	@Test( expected = IllegalArgumentException.class )
+	@Test( expected = IOException.class )
 	public void putFlexBuffer3() throws Exception
 	{
-		FlexBuffer buf0 = new FlexBuffer( new byte[] { 1, 2 } );
+		FlexBuffer buf0 = new BigEndianFlexBuffer( new byte[] { 1, 2 } );
 		
-		FlexBuffer buf = new FlexBuffer();
+		FlexBuffer buf = new BigEndianFlexBuffer();
 		buf.setIndex(0);
-		buf.put( buf0, 3);
+		buf.put( buf0.dataInput(), 3);
 	}
 	
 	/** @throws Exception */
 	@Test
 	public void putFlexBuffer4() throws Exception
 	{
-		FlexBuffer buf0 = new FlexBuffer( new byte[] { 1, 2 } );
-		FlexBuffer buf = new FlexBuffer();
-		buf.put( buf0, 1 );
+		FlexBuffer buf0 = new BigEndianFlexBuffer( new byte[] { 1, 2 } );
+		FlexBuffer buf = new BigEndianFlexBuffer();
+		buf.put( buf0.dataInput(), 1 );
 		checkBuf( buf, 1, 1, 0 );
 	}
 
@@ -1199,11 +1212,11 @@ public class TestFlexBuffer
 	@Test( expected = IOException.class )
 	public void putFlexBuffer5() throws Exception
 	{
-		FlexBuffer buf0 = new FlexBuffer( new byte[] { 1, 2 } );
+		FlexBuffer buf0 = new BigEndianFlexBuffer( new byte[] { 1, 2 } );
 		int max = 4*1024*1024;
-		FlexBuffer buf = new FlexBuffer( new byte[max] );
+		FlexBuffer buf = new BigEndianFlexBuffer( new byte[max] );
 		buf.setIndex(max);
-		buf.put( buf0, 1);
+		buf.put( buf0.dataInput(), 1);
 	}
 	
 	// ------------------------------------------------------
@@ -1215,12 +1228,17 @@ public class TestFlexBuffer
 	@Test
 	public void putByte1() throws Exception
 	{
-		FlexBuffer buf = new FlexBuffer();
+		FlexBuffer bufx = new BigEndianFlexBuffer();
+		
+		DataOutput buf = new BigEndianFlexDataOutput( bufx );
 		buf.putByte( (byte) 0x01 );
-		checkBuf( buf, 1, 1, 0 );
-		buf.setIndex(0);
-		assertEquals( (byte) 0x01, buf.getByte() );
-		checkBuf( buf, 1, 1, 0 );
+		checkBuf( bufx, 1, 1, 0 );
+		buf = null;
+		
+		bufx.setIndex(0);
+		DataInput ibuf = new BigEndianFlexDataInput( bufx );
+		assertEquals( (byte) 0x01, ibuf.getByte() );
+		checkBuf( bufx, 1, 1, 0 );
 	}
 	
 	/** @throws Exception */
@@ -1228,7 +1246,8 @@ public class TestFlexBuffer
 	public void putByte2() throws Exception
 	{
 		int max = 4*1024*1024;
-		FlexBuffer buf = new FlexBuffer( new byte[max] );
+		FlexBuffer bufx = new BigEndianFlexBuffer( new byte[max] );
+		DataOutput buf = new BigEndianFlexDataOutput( bufx );
 		buf.setIndex(max);
 		buf.putByte( (byte) 0x01 );
 	}
@@ -1242,7 +1261,8 @@ public class TestFlexBuffer
 	@Test
 	public void putDouble1() throws Exception
 	{
-		FlexBuffer buf = new FlexBuffer();
+		FlexBuffer bufx = new BigEndianFlexBuffer();
+		DataOutput buf = new BigEndianFlexDataOutput( bufx );
 		// some reasonable values
 		buf.putDouble( 0.0 );
 		buf.putDouble( 1.0 );
@@ -1262,27 +1282,30 @@ public class TestFlexBuffer
 		buf.putDouble( -123e-10 );
 		buf.putDouble( -234e-100 );
 		buf.putDouble( -345e-200 );
-		checkBuf( buf, 15*8, 15*8, 0 );
+		checkBuf( bufx, 15*8, 15*8, 0 );
+		buf = null;
 		
 		// verify we can reliably read the data we wrote.
 		
-		buf.setIndex( 0 );
-		assertEquals( 0.0, buf.getDouble() );
-		assertEquals( 1.0, buf.getDouble() );
-		assertEquals( 123e10, buf.getDouble() );
-		assertEquals( 234e100, buf.getDouble() );
-		assertEquals( 345e200, buf.getDouble() );
-		assertEquals( -1.0, buf.getDouble() );
-		assertEquals( -123e10, buf.getDouble() );
-		assertEquals( -234e100, buf.getDouble() );
-		assertEquals( -345e200, buf.getDouble() );
-		assertEquals( 123e-10, buf.getDouble() );
-		assertEquals( 234e-100, buf.getDouble() );
-		assertEquals( 345e-200, buf.getDouble() );
-		assertEquals( -123e-10, buf.getDouble() );
-		assertEquals( -234e-100, buf.getDouble() );
-		assertEquals( -345e-200, buf.getDouble() );
-		checkBuf( buf, 15*8, 15*8, 0 );
+		bufx.setIndex( 0 );
+		DataInput ibuf = new BigEndianFlexDataInput( bufx );
+		assertEquals( 0.0, ibuf.getDouble() );
+		assertEquals( 1.0, ibuf.getDouble() );
+		assertEquals( 123e10, ibuf.getDouble() );
+		assertEquals( 234e100, ibuf.getDouble() );
+		assertEquals( 345e200, ibuf.getDouble() );
+		assertEquals( -1.0, ibuf.getDouble() );
+		assertEquals( -123e10, ibuf.getDouble() );
+		assertEquals( -234e100, ibuf.getDouble() );
+		assertEquals( -345e200, ibuf.getDouble() );
+		assertEquals( 123e-10, ibuf.getDouble() );
+		assertEquals( 234e-100, ibuf.getDouble() );
+		assertEquals( 345e-200, ibuf.getDouble() );
+		assertEquals( -123e-10, ibuf.getDouble() );
+		assertEquals( -234e-100, ibuf.getDouble() );
+		assertEquals( -345e-200, ibuf.getDouble() );
+		checkBuf( bufx, 15*8, 15*8, 0 );
+		ibuf = null;
 		
 		// uncomment this code to get a dump of the actual
 		// bytes for the above data.
@@ -1315,9 +1338,8 @@ public class TestFlexBuffer
 			, -106, -16, -127, 73, 111, 91, -75, -29
 		};
 		
-		buf.setIndex( 0 );
-		byte[] actual = buf.getAvailBytes();
-		
+		bufx.setIndex( 0 );
+		byte[] actual = bufx.getAvailBytes();
 		bytesAssertEquals( expected, actual );
 	}
 	
@@ -1333,7 +1355,8 @@ public class TestFlexBuffer
 	public void putDouble2() throws Exception
 	{
 		int max = 4*1024*1024;
-		FlexBuffer buf = new FlexBuffer( new byte[max] );
+		FlexBuffer bufx = new BigEndianFlexBuffer( new byte[max] );
+		DataOutput buf = new BigEndianFlexDataOutput( bufx );
 		buf.setIndex( max );
 		buf.putDouble( 0.0 );
 	}
@@ -1347,7 +1370,9 @@ public class TestFlexBuffer
 	@Test
 	public void putFloat1() throws Exception
 	{
-		FlexBuffer buf = new FlexBuffer();
+		FlexBuffer bufx = new BigEndianFlexBuffer();
+		DataOutput buf = new BigEndianFlexDataOutput( bufx );
+		
 		// some reasonable values
 		buf.putFloat( 0.0f );
 		buf.putFloat( 1.0f );
@@ -1367,27 +1392,29 @@ public class TestFlexBuffer
 		buf.putFloat( -123e-10f );
 		buf.putFloat( -234e-20f );
 		buf.putFloat( -345e-30f );
-		checkBuf( buf, 15*4, 15*4, 0 );
+		checkBuf( bufx, 15*4, 15*4, 0 );
+		buf = null;
 		
 		// verify we can reliably read the data we wrote.
 		
-		buf.setIndex( 0 );
-		assertEquals( 0.0f, buf.getFloat() );
-		assertEquals( 1.0f, buf.getFloat() );
-		assertEquals( 123e10f, buf.getFloat() );
-		assertEquals( 234e20f, buf.getFloat() );
-		assertEquals( 345e30f, buf.getFloat() );
-		assertEquals( -1.0f, buf.getFloat() );
-		assertEquals( -123e10f, buf.getFloat() );
-		assertEquals( -234e20f, buf.getFloat() );
-		assertEquals( -345e30f, buf.getFloat() );
-		assertEquals( 123e-10f, buf.getFloat() );
-		assertEquals( 234e-20f, buf.getFloat() );
-		assertEquals( 345e-30f, buf.getFloat() );
-		assertEquals( -123e-10f, buf.getFloat() );
-		assertEquals( -234e-20f, buf.getFloat() );
-		assertEquals( -345e-30f, buf.getFloat() );
-		checkBuf( buf, 15*4, 15*4, 0 );
+		bufx.setIndex( 0 );
+		DataInput ibuf = new BigEndianFlexDataInput( bufx );
+		assertEquals( 0.0f, ibuf.getFloat() );
+		assertEquals( 1.0f, ibuf.getFloat() );
+		assertEquals( 123e10f, ibuf.getFloat() );
+		assertEquals( 234e20f, ibuf.getFloat() );
+		assertEquals( 345e30f, ibuf.getFloat() );
+		assertEquals( -1.0f, ibuf.getFloat() );
+		assertEquals( -123e10f, ibuf.getFloat() );
+		assertEquals( -234e20f, ibuf.getFloat() );
+		assertEquals( -345e30f, ibuf.getFloat() );
+		assertEquals( 123e-10f, ibuf.getFloat() );
+		assertEquals( 234e-20f, ibuf.getFloat() );
+		assertEquals( 345e-30f, ibuf.getFloat() );
+		assertEquals( -123e-10f, ibuf.getFloat() );
+		assertEquals( -234e-20f, ibuf.getFloat() );
+		assertEquals( -345e-30f, ibuf.getFloat() );
+		checkBuf( bufx, 15*4, 15*4, 0 );
 		
 		// uncomment this code to get a dump of the actual
 		// bytes for the above data.
@@ -1420,9 +1447,8 @@ public class TestFlexBuffer
 			, -111, -38, -85, 115
 		};
 		
-		buf.setIndex( 0 );
-		byte[] actual = buf.getAvailBytes();
-		
+		bufx.setIndex( 0 );
+		byte[] actual = bufx.getAvailBytes();
 		bytesAssertEquals( expected, actual );
 	}
 	
@@ -1431,7 +1457,8 @@ public class TestFlexBuffer
 	public void putFloat2() throws Exception
 	{
 		int max = 4*1024*1024;
-		FlexBuffer buf = new FlexBuffer( new byte[max] );
+		FlexBuffer bufx = new BigEndianFlexBuffer( new byte[max] );
+		DataOutput buf = new BigEndianFlexDataOutput( bufx );
 		buf.setIndex(max);
 		buf.putFloat( 0.0f );
 	}
@@ -1445,12 +1472,37 @@ public class TestFlexBuffer
 	@Test
 	public void putInt1() throws Exception
 	{
-		FlexBuffer buf = new FlexBuffer();
+		FlexBuffer bufx = new BigEndianFlexBuffer();
+		DataOutput buf = new BigEndianFlexDataOutput( bufx );
+
 		buf.putInt( Integer.MAX_VALUE );
-		checkBuf( buf, 4, 4, 0 );
-		buf.setIndex(0);
-		assertEquals( Integer.MAX_VALUE, buf.getInt() );
-		checkBuf( buf, 4, 4, 0 );
+		buf.putInt( Integer.MIN_VALUE );
+		buf.putInt( 0 );
+		buf.putInt( 1 );
+		buf.putInt( -1 );
+		buf.putInt( 100 );
+		buf.putInt( 1000 );
+		buf.putInt( 1000000 );
+		buf.putInt( 1000000000 );
+		buf.putInt( 1234567890 );
+		buf.putInt( -1234567890 );
+		checkBuf( bufx, 11*4, 11*4, 0 );
+		buf = null;
+		
+		bufx.setIndex(0);
+		DataInput ibuf = new BigEndianFlexDataInput( bufx );
+		assertEquals( Integer.MAX_VALUE, ibuf.getInt() );
+		assertEquals( Integer.MIN_VALUE, ibuf.getInt() );
+		assertEquals( 0, ibuf.getInt() );
+		assertEquals( 1, ibuf.getInt() );
+		assertEquals( -1, ibuf.getInt() );
+		assertEquals( 100, ibuf.getInt() );
+		assertEquals( 1000, ibuf.getInt() );
+		assertEquals( 1000000, ibuf.getInt() );
+		assertEquals( 1000000000, ibuf.getInt() );
+		assertEquals( 1234567890, ibuf.getInt() );
+		assertEquals( -1234567890, ibuf.getInt() );
+		checkBuf( bufx, 11*4, 11*4, 0 );
 	}
 	
 	/** @throws Exception */
@@ -1458,7 +1510,8 @@ public class TestFlexBuffer
 	public void putInt2() throws Exception
 	{
 		int max = 4*1024*1024;
-		FlexBuffer buf = new FlexBuffer( new byte[max] );
+		FlexBuffer bufx = new BigEndianFlexBuffer( new byte[max] );
+		DataOutput buf = new BigEndianFlexDataOutput( bufx );
 		buf.setIndex(max);
 		buf.putInt( Integer.MIN_VALUE );
 	}
@@ -1472,12 +1525,43 @@ public class TestFlexBuffer
 	@Test
 	public void putLong1() throws Exception
 	{
-		FlexBuffer buf = new FlexBuffer();
+		FlexBuffer bufx = new BigEndianFlexBuffer();
+		DataOutput buf = new BigEndianFlexDataOutput( bufx );
+
 		buf.putLong( Long.MAX_VALUE );
-		checkBuf( buf, 8, 8, 0 );
-		buf.setIndex(0);
-		assertEquals( Long.MAX_VALUE, buf.getLong() );
-		checkBuf( buf, 8, 8, 0 );
+		buf.putLong( Long.MIN_VALUE );
+		buf.putLong( 0L );
+		buf.putLong( 1L );
+		buf.putLong( -1L );
+		buf.putLong( 100L );
+		buf.putLong( 1000L );
+		buf.putLong( 1000000L );
+		buf.putLong( 1000000000L );
+		buf.putLong( 1000000000000L );
+		buf.putLong( 1000000000000000L );
+		buf.putLong( 1000000000000000000L );
+		buf.putLong( 1234567890123456789L );
+		buf.putLong( -1234567890123456789L );
+		checkBuf( bufx, 14*8, 14*8, 0 );
+		buf = null;
+		
+		bufx.setIndex(0);
+		DataInput ibuf = new BigEndianFlexDataInput( bufx );
+		assertEquals( Long.MAX_VALUE, ibuf.getLong() );
+		assertEquals( Long.MIN_VALUE, ibuf.getLong() );
+		assertEquals( 0L, ibuf.getLong() );
+		assertEquals( 1L, ibuf.getLong() );
+		assertEquals( -1L, ibuf.getLong() );
+		assertEquals( 100L, ibuf.getLong() );
+		assertEquals( 1000L, ibuf.getLong() );
+		assertEquals( 1000000L, ibuf.getLong() );
+		assertEquals( 1000000000L, ibuf.getLong() );
+		assertEquals( 1000000000000L, ibuf.getLong() );
+		assertEquals( 1000000000000000L, ibuf.getLong() );
+		assertEquals( 1000000000000000000L, ibuf.getLong() );
+		assertEquals( 1234567890123456789L, ibuf.getLong() );
+		assertEquals( -1234567890123456789L, ibuf.getLong() );
+		checkBuf( bufx, 14*8, 14*8, 0 );
 	}
 	
 	/** @throws Exception */
@@ -1485,7 +1569,8 @@ public class TestFlexBuffer
 	public void putLong2() throws Exception
 	{
 		int max = 4*1024*1024;
-		FlexBuffer buf = new FlexBuffer( new byte[max] );
+		FlexBuffer bufx = new BigEndianFlexBuffer( new byte[max] );
+		DataOutput buf = new BigEndianFlexDataOutput( bufx );
 		buf.setIndex(max);
 		buf.putLong( Long.MIN_VALUE );
 	}
@@ -1499,12 +1584,32 @@ public class TestFlexBuffer
 	@Test
 	public void putShort1() throws Exception
 	{
-		FlexBuffer buf = new FlexBuffer();
+		FlexBuffer bufx = new BigEndianFlexBuffer();
+		DataOutput buf = new BigEndianFlexDataOutput( bufx );
+
 		buf.putShort( Short.MAX_VALUE );
-		checkBuf( buf, 2, 2, 0 );
-		buf.setIndex(0);
-		assertEquals( Short.MAX_VALUE, buf.getShort() );
-		checkBuf( buf, 2, 2, 0 );
+		buf.putShort( Short.MIN_VALUE );
+		buf.putShort( (short) 0 );
+		buf.putShort( (short) 1 );
+		buf.putShort( (short) -1 );
+		buf.putShort( (short) 100 );
+		buf.putShort( (short) 1000 );
+		buf.putShort( (short) 12345 );
+		buf.putShort( (short) -12345 );
+		checkBuf( bufx, 9*2, 9*2, 0 );
+		
+		bufx.setIndex(0);
+		DataInput ibuf = new BigEndianFlexDataInput( bufx );
+		assertEquals( Short.MAX_VALUE, ibuf.getShort() );
+		assertEquals( Short.MIN_VALUE, ibuf.getShort() );
+		assertEquals( (short) 0, ibuf.getShort() );
+		assertEquals( (short) 1, ibuf.getShort() );
+		assertEquals( (short) -1, ibuf.getShort() );
+		assertEquals( (short) 100, ibuf.getShort() );
+		assertEquals( (short) 1000, ibuf.getShort() );
+		assertEquals( (short) 12345, ibuf.getShort() );
+		assertEquals( (short) -12345, ibuf.getShort() );
+		checkBuf( bufx, 9*2, 9*2, 0 );
 	}
 	
 	/** @throws Exception */
@@ -1512,9 +1617,10 @@ public class TestFlexBuffer
 	public void putShort2() throws Exception
 	{
 		int max = 4*1024*1024;
-		FlexBuffer buf = new FlexBuffer( new byte[max] );
-		buf.setIndex(max);
-		buf.putShort( (short) 1 );
+		FlexBuffer bufx = new BigEndianFlexBuffer( new byte[max] );
+		DataOutput buf = new BigEndianFlexDataOutput( bufx );
+		buf.setIndex( max );
+		buf.putShort( Short.MIN_VALUE );
 	}
 		
 	// ------------------------------------------------------
@@ -1532,7 +1638,7 @@ public class TestFlexBuffer
 	@Test( expected = IllegalArgumentException.class )
 	public void skip1() throws Exception
 	{
-		FlexBuffer buf = new FlexBuffer();
+		FlexBuffer buf = new BigEndianFlexBuffer();
 		buf.skip(-1, false);
 	}
 	
@@ -1540,7 +1646,7 @@ public class TestFlexBuffer
 	@Test( expected = EOFException.class )
 	public void skip2() throws Exception
 	{
-		FlexBuffer buf = new FlexBuffer( new byte[] { 1, 2 } );
+		FlexBuffer buf = new BigEndianFlexBuffer( new byte[] { 1, 2 } );
 		buf.skip(3, false);
 	}
 	
@@ -1548,7 +1654,7 @@ public class TestFlexBuffer
 	@Test
 	public void skip3() throws Exception
 	{
-		FlexBuffer buf = new FlexBuffer();
+		FlexBuffer buf = new BigEndianFlexBuffer();
 		buf.skip(0, false);
 		checkBuf( buf, 0, 0, 0 );
 	}
@@ -1557,7 +1663,7 @@ public class TestFlexBuffer
 	@Test
 	public void skip4() throws Exception
 	{
-		FlexBuffer buf = new FlexBuffer( new byte[] { 1, 2 } );
+		FlexBuffer buf = new BigEndianFlexBuffer( new byte[] { 1, 2 } );
 		buf.skip(2, false);
 		checkBuf( buf, 2, 2, 0 );
 	}
@@ -1566,7 +1672,7 @@ public class TestFlexBuffer
 	@Test
 	public void skip5() throws Exception
 	{
-		FlexBuffer buf = new FlexBuffer( new byte[] { 1, 2 } );
+		FlexBuffer buf = new BigEndianFlexBuffer( new byte[] { 1, 2 } );
 		buf.skip(1, false);
 		checkBuf( buf, 2, 1, 1 );
 	}
@@ -1575,7 +1681,7 @@ public class TestFlexBuffer
 	@Test
 	public void skip6() throws Exception
 	{
-		FlexBuffer buf = new FlexBuffer( new byte[] { 1, 2 } );
+		FlexBuffer buf = new BigEndianFlexBuffer( new byte[] { 1, 2 } );
 		buf.skip(1, true);
 		checkBuf( buf, 2, 1, 1 );
 	}
@@ -1584,7 +1690,7 @@ public class TestFlexBuffer
 	@Test
 	public void skip7() throws Exception
 	{
-		FlexBuffer buf = new FlexBuffer( new byte[] { 1, 2 } );
+		FlexBuffer buf = new BigEndianFlexBuffer( new byte[] { 1, 2 } );
 		buf.skip(5, true);
 		checkBuf( buf, 5, 5, 0 );
 	}
@@ -1593,7 +1699,7 @@ public class TestFlexBuffer
 	@Test( expected = IOException.class )
 	public void skip8() throws Exception
 	{
-		FlexBuffer buf = new FlexBuffer( new byte[] { 1, 2 } );
+		FlexBuffer buf = new BigEndianFlexBuffer( new byte[] { 1, 2 } );
 		int max = 4*1024*1024;
 		buf.skip(max+1, true);
 	}

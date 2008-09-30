@@ -19,6 +19,10 @@ package etch.util.core.io;
 
 import java.io.IOException;
 
+import etch.util.BigEndianFlexBuffer;
+import etch.util.BigEndianFlexDataInput;
+import etch.util.DataInput;
+import etch.util.DataOutput;
 import etch.util.FlexBuffer;
 import etch.util.Resources;
 import etch.util.URL;
@@ -114,7 +118,7 @@ public final class Packetizer implements SessionData, TransportPacket
 		return String.format( "Packetizer/%s", transport );
 	}
 
-	public void sessionData( Who sender, FlexBuffer buf ) throws Exception
+	public void sessionData( Who sender, DataInput buf ) throws Exception
 	{
 		// there are two options here. one is that we have no buffered data
 		// and the entire packet is contained within the buf. in that case
@@ -145,7 +149,7 @@ public final class Packetizer implements SessionData, TransportPacket
 						savedBuf.put( buf, needFromBuf );
 						savedBuf.setIndex( 0 );
 						
-						pktSize = processHeader( savedBuf, true );
+						pktSize = processHeader( savedDataInput, true );
 					}
 					
 					if (pktSize == 0)
@@ -195,7 +199,7 @@ public final class Packetizer implements SessionData, TransportPacket
 					savedBuf.put( buf, needFromBuf );
 					savedBuf.setIndex( 0 );
 					
-					session.sessionPacket( sender, savedBuf );
+					session.sessionPacket( sender, savedDataInput );
 					
 					savedBuf.reset();
 					wantHeader = true;
@@ -212,7 +216,7 @@ public final class Packetizer implements SessionData, TransportPacket
 		assert buf.avail() == 0;
 	}
 	
-	private int processHeader( FlexBuffer buf, boolean reset ) throws IOException
+	private int processHeader( DataInput buf, boolean reset ) throws IOException
     {
 		int sig = buf.getInt();
 		if (sig != SIG)
@@ -233,13 +237,17 @@ public final class Packetizer implements SessionData, TransportPacket
 	
 	private int bodyLen;
 	
-	private final FlexBuffer savedBuf = new FlexBuffer();
-
-	public void transportPacket( Who recipient, FlexBuffer buf ) throws Exception
+	private final FlexBuffer savedBuf = new BigEndianFlexBuffer();
+	
+	private final DataInput savedDataInput = new BigEndianFlexDataInput( savedBuf );
+	
+	public void transportPacket( Who recipient, DataOutput buf ) throws Exception
 	{
 		// data-ize the packet.
 		
 		// assert index is at the start of the header.
+		// assert length is the end of the packet data.
+		
 		int dataSize = buf.avail();
 		if (dataSize < HEADER_SIZE)
 			throw new IllegalArgumentException( "dataSize < HEADER_SIZE" );
@@ -252,6 +260,7 @@ public final class Packetizer implements SessionData, TransportPacket
 		buf.putInt( SIG );
 		buf.putInt( pktSize );
 		buf.setIndex( index );
+		
 		transport.transportData( recipient, buf );
 	}
 

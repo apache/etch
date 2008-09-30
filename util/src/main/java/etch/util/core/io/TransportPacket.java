@@ -17,7 +17,7 @@
 
 package etch.util.core.io;
 
-import etch.util.FlexBuffer;
+import etch.util.DataOutput;
 import etch.util.core.Who;
 
 /**
@@ -39,5 +39,5 @@ public interface TransportPacket extends Transport<SessionPacket>
 	 * the header.
 	 * @throws Exception
 	 */
-	public void transportPacket( Who recipient, FlexBuffer buf ) throws Exception;
+	public void transportPacket( Who recipient, DataOutput buf ) throws Exception;
 }

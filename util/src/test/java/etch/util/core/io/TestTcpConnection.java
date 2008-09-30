@@ -32,7 +32,8 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import etch.util.FlexBuffer;
+import etch.util.BigEndianFlexBuffer;
+import etch.util.DataInput;
 import etch.util.Log;
 import etch.util.Monitor;
 import etch.util.core.Who;
@@ -636,7 +637,7 @@ public class TestTcpConnection
 		assertNull( dh.xsender );
 		assertNull( dh.xbuf );
 		
-		c.transportData( null, new FlexBuffer( new byte[] { 21, 22, 23 } ) );
+		c.transportData( null, new BigEndianFlexBuffer( new byte[] { 21, 22, 23 } ).dataOutput() );
 		c.flush();
 		
 		InputStream is = t.getInputStream();
@@ -724,7 +725,7 @@ public class TestTcpConnection
 		/** data of the event if DATA */
 		public byte[] xbuf;
 		
-		public void sessionData( Who sender, FlexBuffer buf ) throws Exception
+		public void sessionData( Who sender, DataInput buf ) throws Exception
 		{
 			xsender = sender;
 			xbuf = buf.getAvailBytes();

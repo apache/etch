@@ -33,7 +33,9 @@ import etch.bindings.java.support.Class2TypeMap;
 import etch.bindings.java.support.DefaultValueFactory;
 import etch.bindings.java.support.Validator_int;
 import etch.bindings.java.support.Validator_long;
-import etch.util.FlexBuffer;
+import etch.util.BigEndianFlexBuffer;
+import etch.util.DataInput;
+import etch.util.DataOutput;
 import etch.util.Resources;
 import etch.util.core.Who;
 import etch.util.core.io.SessionPacket;
@@ -102,8 +104,8 @@ public class TestMessagizer
 	@Test
 	public void packet1() throws Exception
 	{
-		FlexBuffer buf = new FlexBuffer( new byte[]
-		{ VERSION, 1, 0, NONE } );
+		DataInput buf = new BigEndianFlexBuffer( new byte[]
+		{ VERSION, 1, 0, NONE } ).dataInput();
 		
 		session.msg_handled = true;
 		
@@ -120,8 +122,8 @@ public class TestMessagizer
 	@Test
 	public void packet2() throws Exception
 	{
-		FlexBuffer buf = new FlexBuffer( new byte[]
-		{ VERSION, 1, 0, NONE } );
+		DataInput buf = new BigEndianFlexBuffer( new byte[]
+		{ VERSION, 1, 0, NONE } ).dataInput();
 		
 		session.msg_handled = false;
 		
@@ -142,8 +144,8 @@ public class TestMessagizer
 	@Test
 	public void packet3() throws Exception
 	{
-		FlexBuffer buf = new FlexBuffer( new byte[]
-		{ VERSION, 2, 0, NONE } );
+		DataInput buf = new BigEndianFlexBuffer( new byte[]
+		{ VERSION, 2, 0, NONE } ).dataInput();
 		
 		session.msg_handled = true;
 		
@@ -161,8 +163,8 @@ public class TestMessagizer
 	@Test
 	public void packet4() throws Exception
 	{
-		FlexBuffer buf = new FlexBuffer( new byte[]
-		{ VERSION, 2, 0, NONE } );
+		DataInput buf = new BigEndianFlexBuffer( new byte[]
+		{ VERSION, 2, 0, NONE } ).dataInput();
 		
 		session.msg_handled = false;
 		
@@ -364,11 +366,11 @@ public class TestMessagizer
 	        return header_size;
         }
 
-		public void transportPacket( Who recipient, FlexBuffer buf ) throws Exception
+		public void transportPacket( Who recipient, DataOutput buf ) throws Exception
         {
 	        what = What.TRANSPORT_PACKET;
 	        this.recipient = recipient;
-	        this.buf = buf.getAvailBytes();
+	        this.buf = buf.buffer().getAvailBytes();
         }
 
 		public Object transportQuery( Object query ) throws Exception

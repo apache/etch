@@ -20,7 +20,7 @@ package etch.bindings.java.transport;
 import java.io.IOException;
 
 import etch.bindings.java.msg.Message;
-import etch.util.FlexBuffer;
+import etch.util.DataInput;
 
 /**
  * A TaggedDataInput reads type tagged values from an input buf.
@@ -33,5 +33,5 @@ public interface TaggedDataInput
 	 * @return a message read from the buf.
 	 * @throws IOException
 	 */
-	public Message readMessage( FlexBuffer buf ) throws IOException;
+	public Message readMessage( DataInput buf ) throws IOException;
 }

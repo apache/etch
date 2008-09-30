@@ -18,7 +18,6 @@
 package etch.bindings.java.transport.fmt.xml;
 
 import java.io.IOException;
-import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Stack;
 
@@ -30,7 +29,7 @@ import etch.bindings.java.msg.ValueFactory;
 import etch.bindings.java.transport.ArrayValue;
 import etch.bindings.java.transport.TaggedDataOutput;
 import etch.bindings.java.transport.fmt.TypeCode;
-import etch.util.FlexBuffer;
+import etch.util.DataOutput;
 import etch.util.core.xml.XmlParser.DefaultTagElement;
 import etch.util.core.xml.XmlParser.TagElement;
 
@@ -228,29 +227,9 @@ final public class XmlTaggedDataOutput extends XmlTaggedData
 		return sb.toString();
 	}
 
-	/**
-	 * @param msg
-	 * @param vf
-	 * @return the xml of the specified message.
-	 * @throws IOException
-	 */
-	public static String getXml( Message msg, ValueFactory vf ) throws IOException
+	public void writeMessage( Message msg, DataOutput buf ) throws IOException
 	{
-		StringWriter sw = new StringWriter();
-		TaggedDataOutput tdo = new XmlTaggedDataOutput( sw, vf );
-		tdo.writeMessage( msg, null );
-		return sw.toString();
-	}
-
-	public void setBuffer( FlexBuffer msgBuf )
-	{
-		// TODO implement setBuffer function
-		
-	}
-
-	public void writeMessage( Message msg, FlexBuffer buf ) throws IOException
-	{
-		// TODO implement writeMessage function
+		// TODO Auto-generated method stub
 		
 	}
 

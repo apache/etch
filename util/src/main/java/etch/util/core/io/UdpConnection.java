@@ -25,6 +25,8 @@ import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.net.SocketException;
 
+import etch.util.BigEndianFlexBuffer;
+import etch.util.DataOutput;
 import etch.util.FlexBuffer;
 import etch.util.Resources;
 import etch.util.URL;
@@ -133,24 +135,23 @@ public class UdpConnection extends Connection<SessionPacket>
 	{
 		final DatagramSocket s = checkSocket();
 		// TODO allow buffer size to be specified.
-		final FlexBuffer buf = new FlexBuffer( new byte[8192] );
+		final FlexBuffer buf = new BigEndianFlexBuffer( new byte[8192] );
 		final DatagramPacket p = new DatagramPacket( new byte[0], 0 );
 		
 		try
 		{
 			while (isStarted())
 			{
-				p.setData( buf.getBuf() );
-				
-				s.receive( p );
-				
-				buf.setIndex( 0 );
-				buf.setLength( p.getLength() );
+				buf.receive( s, p );
+//				p.setData( buf.getBuf() );
+//				s.receive( p );
+//				buf.setIndex( 0 );
+//				buf.setLength( p.getLength() );
 				
 				if (s.isConnected())
-					session.sessionPacket( null, buf );
+					session.sessionPacket( null, buf.dataInput() );
 				else
-					session.sessionPacket( getWho( p.getAddress(), p.getPort() ), buf );
+					session.sessionPacket( getWho( p.getAddress(), p.getPort() ), buf.dataInput() );
 			}
 		}
 		catch ( SocketException e )
@@ -180,13 +181,14 @@ public class UdpConnection extends Connection<SessionPacket>
 	
 	private final DatagramPacket outp = new DatagramPacket( new byte[0], 0 );
 
-	public void transportPacket( Who recipient, FlexBuffer buf ) throws IOException
+	public void transportPacket( Who recipient, DataOutput buf ) throws IOException
 	{
 //		System.out.printf( "packet( %s, buf( %d, %d ))", recipient, buf.index(), buf.avail() );
 		if (socket.isConnected())
 		{
-			outp.setData( buf.getBuf(), buf.index(), buf.avail() );
-			socket.send( outp );
+			((BigEndianFlexBuffer) buf.buffer()).send( socket, outp );
+//			outp.setData( buf.getBuf(), buf.index(), buf.avail() );
+//			socket.send( outp );
 			return;
 		}
 		
@@ -196,11 +198,11 @@ public class UdpConnection extends Connection<SessionPacket>
 		if (recipient != null)
 		{
 			InetWho iw = (InetWho) recipient;
-			outp.setData( buf.getBuf(), buf.index(), buf.avail() );
 			outp.setAddress( iw.getInetAddress() );
 			outp.setPort( iw.getPort() );
-			socket.send( outp );
-			
+			((BigEndianFlexBuffer) buf.buffer()).send( socket, outp );
+//			outp.setData( buf.getBuf(), buf.index(), buf.avail() );
+//			socket.send( outp );
 			return;
 		}
 		

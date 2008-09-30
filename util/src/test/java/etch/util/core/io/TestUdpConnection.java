@@ -28,6 +28,8 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import etch.util.BigEndianFlexBuffer;
+import etch.util.DataInput;
 import etch.util.FlexBuffer;
 import etch.util.core.Who;
 
@@ -75,14 +77,14 @@ public class TestUdpConnection
 	{
 		assertEquals( What.UP, aph.what );
 		assertEquals( What.UP, bph.what );
-		FlexBuffer buf = new FlexBuffer();
+		FlexBuffer buf = new BigEndianFlexBuffer();
 		buf.put( 1 );
 		buf.put( 2 );
 		buf.put( 3 );
 		buf.put( 4 );
 		buf.put( 5 );
 		buf.setIndex( 0 );
-		ac.transportPacket( null, buf );
+		ac.transportPacket( null, buf.dataOutput() );
 		Thread.sleep( 500 );
 		assertEquals( What.PACKET, bph.what );
 		assertNotNull( bph.xsender );
@@ -114,9 +116,9 @@ public class TestUdpConnection
 		/** */
 		public Who xsender;
 		/** */
-		public FlexBuffer xbuf;
+		public DataInput xbuf;
 
-		public void sessionPacket( Who sender, FlexBuffer buf ) throws Exception
+		public void sessionPacket( Who sender, DataInput buf ) throws Exception
 		{
 			assertEquals( What.UP, what );
 			what = What.PACKET;

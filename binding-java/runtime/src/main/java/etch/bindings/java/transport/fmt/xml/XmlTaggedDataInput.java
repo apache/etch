@@ -20,7 +20,6 @@ package etch.bindings.java.transport.fmt.xml;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.Reader;
-import java.io.StringReader;
 import java.util.Iterator;
 import java.util.Stack;
 import java.util.StringTokenizer;
@@ -33,7 +32,7 @@ import etch.bindings.java.msg.Validator;
 import etch.bindings.java.msg.ValueFactory;
 import etch.bindings.java.transport.ArrayValue;
 import etch.bindings.java.transport.TaggedDataInput;
-import etch.util.FlexBuffer;
+import etch.util.DataInput;
 import etch.util.core.xml.XmlParser;
 import etch.util.core.xml.XmlParser.CdataElement;
 import etch.util.core.xml.XmlParser.Element;
@@ -247,32 +246,9 @@ final public class XmlTaggedDataInput extends XmlTaggedData
 		return baos.toByteArray();
 	}
 
-	/**
-	 * @param vf the value factory.
-	 * @param s the message text.
-	 * @return the message read from the string.
-	 * @throws IOException
-	 */
-	public static Message readMessage( ValueFactory vf, String s )
-		throws IOException
+	public Message readMessage( DataInput buf ) throws IOException
 	{
-		return readMessage( vf, new StringReader( s ) );
-	}
-	
-	/**
-	 * @param vf the value factory.
-	 * @param rdr the source of message text.
-	 * @return the message read from the reader.
-	 * @throws IOException
-	 */
-	public static Message readMessage( ValueFactory vf, Reader rdr ) throws IOException
-	{
-		return new XmlTaggedDataInput( vf, rdr ).readMessage( null );
-	}
-	
-	public Message readMessage( FlexBuffer buf ) throws IOException
-	{
-		// TODO implement readMessage function
+		// TODO Auto-generated method stub
 		return null;
 	}
 
