@@ -3,7 +3,6 @@ Etch
 
 This is the source tree for Etch. It is organized as follows:
 
-
    build.xml         - top-level ant build script
    build.dependecies - locations for jars this compile depends on
    etch.properties   - static build properties 
