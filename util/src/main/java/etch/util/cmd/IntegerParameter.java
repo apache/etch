@@ -43,6 +43,6 @@ public class IntegerParameter extends Parameter
 	@Override
 	public Object convertValue( String value )
 	{
-		return new Integer( value );
+		return Integer.valueOf( value );
 	}
 }

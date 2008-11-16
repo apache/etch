@@ -18,12 +18,6 @@
 package etch.compiler;
 
 import java.io.File;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
 import java.util.StringTokenizer;
 
 import etch.util.cmd.CommandParser;
@@ -36,131 +30,32 @@ import etch.util.cmd.Program;
  */
 public class EtchMain extends Program
 {
-    private static String WHO_DELIMETER = ",";
-    
-    /**
+	/**
      * @param args
      * @throws Exception 
      */
     public static void main( String[] args ) throws Exception
     {
-        try
-        {
-            main( new EtchMain(), args );
-        }
-        catch ( Throwable e )
-        {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-            System.exit( 3 );
-            return;
-        }
+    	new EtchMain().doMain( args );
     }
     
     /**
-     * @param etchHome command line specified location for the etch.
-     * @return sets up the class loader based on information from
-     * our environment.
+     * Runs the main program, parsing command line arguments and performing
+     * the action.
+     * @param args
      * @throws Exception
      */
-    public static ClassLoader setupClassLoader( String etchHome )
-        throws Exception
+    public void doMain( String[] args ) throws Exception
     {
-        // get the current class path...
-        
-        Set<String> mainClassPath = new HashSet<String>();
-        
-        ClassLoader cl = EtchMain.class.getClassLoader();
-        if (cl instanceof URLClassLoader)
+    	try
+    	{
+    		main( this, args );
+    	}
+        catch ( Throwable e )
         {
-            for (URL u: ((URLClassLoader) cl).getURLs())
-            {
-                String s = u.toString();
-                if (s.startsWith( "file:/" ) && s.endsWith( ".jar" ))
-                {
-                    s = s.substring( 6 );
-                    File f = new File( s );
-                    if (f.isFile() && f.canRead())
-                    {
-                        s = f.getCanonicalPath();
-                        mainClassPath.add( s );
-//                      System.out.println( "mainClassPath.add: "+s );
-                    }
-                }
-            }
-        }
-        
-        // search etch.home.lib (if specified) for more jar files to add
-        // to a secondary class loader. exclude jar files on the main
-        // class path.
-        
-        String s = etchHome;
-        
-        if (s == null || s.length() == 0)
-            s = System.getProperty( "etch.home.lib" );
-        
-        if (s == null || s.length() == 0)
-        {
-            s = System.getProperty( "etch.home" );
-            if (s != null && s.length() > 0)
-                s = s + File.separator + "lib";
-        }
-
-        if (s == null || s.length() == 0)
-        {
-            s = System.getenv( "ETCH_HOME" );
-            if (s != null && s.length() > 0)
-                s = s + File.separator + "lib";
-        }
-        
-//      System.out.println( "etch.home.lib = "+s );
-        if (s != null && s.length() > 0)
-        {
-            File d = new File( s );
-            if (d.isDirectory() && d.canRead())
-            {
-                MyURLClassLoader ncl = new MyURLClassLoader( new URL[] {}, cl );
-                for (File f: d.listFiles())
-                {
-                    if (!f.isFile())
-                        continue;
-                    if (!f.getName().endsWith( ".jar" ))
-                        continue;
-                    // s = f.getCanonicalPath();
-                    if (!mainClassPath.contains( f.getCanonicalPath() ))
-                    {
-                        ncl.addURL(f.toURL());
-//                      System.out.println( "+++ "+s.getName() );
-
-                    }
-                    else
-                    {
-//                      System.out.println( "--- "+s.getName() );
-                    }
-                }
-                cl = ncl;
-            }
-        }
-        return cl;
-    }
-    
-    private static class MyURLClassLoader extends URLClassLoader
-    {
-        /**
-         * This is just a class loader where we can hang more urls to
-         * search.
-         * @param urls
-         * @param parent
-         */
-        public MyURLClassLoader( URL[] urls, ClassLoader parent )
-        {
-            super( urls, parent );
-        }
-        
-        @Override
-        public void addURL( URL url )
-        {
-            super.addURL( url );
+        	e.printStackTrace();
+            exit( 3, toString(), e.toString(), true );
+            return;
         }
     }
 
@@ -169,9 +64,7 @@ public class EtchMain extends Program
      */
     public EtchMain()
     {
-        sourceFiles = new LinkedList<File>();   
-        what        = new LinkedList<String>();
-        includePath = new LinkedList<File>();
+        // nothing to do.
     }
 
     @Override
@@ -184,57 +77,51 @@ public class EtchMain extends Program
     protected void defineOptionsAndParameters( CommandParser cp )
         throws Exception
     {
-        cp.defineFileOption( "-t|--template-out", "templateDir", "setTemplateDir",
-            "specifies the output directory for Impl* and Main* files",
-            Option.SINGLETON, null, null );
-            
         cp.defineFileOption( "-d|--output-dir", "outputDir", "setOutputDir",
-            "specifies the output directory",
+            "output directory for compiler generated files",
             Option.SINGLETON, null, null );
 
+        cp.defineFileOption( "-m|--mixin-output-dir", "outputDir", "setMixinOutputDir",
+            "output directory for compiler generated files for mixins",
+            Option.SINGLETON, null, null );
+
+        cp.defineFileOption( "-t|--template-output-dir", "outputDir", "setTemplateOutputDir",
+            "output directory for compiler generated user editable template files",
+            Option.SINGLETON, null, null );
+            
         cp.defineStringOption( "-b|--binding", "binding", "setBinding",
             "specifies a target language binding to generate",
             Option.REQUIRED|Option.SINGLETON, null, null );
 
-        cp.defineStringOption( "-w|--what|--who", "what", "setWhat",
-            "specifies what files to generate: all,server,client,impl,main,helper (--who is deprecated)",
-            Option.SINGLETON, "BOTH", null );
+        cp.defineStringOption( "-w|--what", "what", "addWhat",
+            "specifies what files to generate (depends upon binding, try -w help for more info; separate with '"+CmdLineOptions.WHAT_DELIMETER+"')",
+            Option.NONE, null, null );
 
-        cp.defineNullOption( "-g|--ignore-global", "ignoreGlobalWordsList",
+        cp.defineNullOption( "-g|--ignore-global-words-list", "ignoreGlobalWordsList",
             "ignore the global reserved words list",
             Option.SINGLETON );
 
-        cp.defineNullOption( "-l|--ignore-local", "ignoreLocalWordsList",
-            "ignore the local reserved words list",
+        cp.defineNullOption( "-l|--ignore-local-words-list", "ignoreLocalWordsList",
+            "ignore the local (binding-specific) reserved words list",
             Option.SINGLETON );
 
-        cp.defineFileOption( "-W|--word-list", "wordList", "setUserWordsList",
-            "specifies a reserved words list",
+        cp.defineFileOption( "-W|--user-words-list", "wordList", "setUserWordsList",
+            "file name of a user-specified reserved words list",
             Option.SINGLETON, null, null );
 
-        cp.defineStringOption( "-I|--include-path", "includePath", "setIncludePath",
-            "a search directory for included etch files",
+        cp.defineStringOption( "-I|--include-path", "includePath", "addIncludePath",
+            "adds search directories for included or mixed in etch files (separate elements with system path separator '"+File.pathSeparator+"')",
             Option.NONE, null, null );
 
-        /*
-        cp.defineStringOption( "-L|--etch-lib", "etchLib", "setEtchLib",
-            "the fully qualified path of ETCH_HOME/lib",
-            Option.SINGLETON, null, null );
-        */
-
-        cp.defineNullOption( "-i|--ignore-include-path", "ignoreEnvIncludePath",
-            "ignore the include path environment variable",
+        cp.defineNullOption( "-i|--ignore-include-path", "ignoreIncludePath",
+            "ignore the "+CmdLineOptions.ETCH_INCLUDE_PATH+" environment variable",
             Option.SINGLETON );
 
-        cp.defineFileOption( "-m|--dir-mixin", "mixinOutputDir", "setMixinOutputDir",
-            "the output dir for mixin artifacts",
-            Option.SINGLETON, null, null );
-
-        cp.defineNullOption( "-n|--no-mixin-artifacts", "setNoMixinArtifacts",
+        cp.defineNullOption( "-n|--no-mixin-artifacts", "noMixinArtifacts",
             "mixin artifacts should not be generated",
             Option.SINGLETON );
 
-        cp.defineNullOption( "-q|--quiet", "setQuiet",
+        cp.defineNullOption( "-q|--quiet", "quiet",
             "only report problems",
             Option.SINGLETON );
 
@@ -242,130 +129,117 @@ public class EtchMain extends Program
             "show the version and exit",
             Option.SINGLETON );
 
-        cp.defineNullOption( "-f|--no-flatten", "setNoFlattenPackages",
-            "the namespace directory tree should not be flattened",
+        cp.defineNullOption( "-f|--no-flatten-packages", "noFlattenPackages",
+            "namespace directory tree should not be flattened",
             Option.SINGLETON );
+        
+        cp.defineNullOption( "--testing", "setTesting",
+        	"",
+        	Option.HIDDEN );
 
-        cp.defineFileParameter( "file", "setFile",
-            "Etch source to compile", true, true, null );
+        cp.defineFileParameter( "sourceFile", "setSourceFile",
+            "etch source file to compile", true, false, null );
     }
+    
+    private final CmdLineOptions clo = new CmdLineOptions();
 
     /**
-     * Command parser method to set the output directory.
+     * Sets the output directory of compiler generated files.
      * @param cp
      * @param option
      * @param token
      * @param value the output directory
-     * @return true if it worked, false otherwise.
      */
-    public boolean setOutputDir( CommandParser cp, Option option, String token,
+    public void setOutputDir( CommandParser cp, Option option, String token,
         File value )
     {
-        outputDirectory = value;
-        return true;
+        clo.outputDir = value;
     }
-    private File outputDirectory = null;
     
     /**
-     * Command parser method to set the output directory for template files Impl* and Main*.
+     * Sets the output directory for user editable template files.
      * @param cp
      * @param option
      * @param token
      * @param value the template output directory
-     * @return true if it worked, false otherwise.
      */
-    public boolean setTemplateDir( CommandParser cp, Option option, String token,
+    public void setTemplateOutputDir( CommandParser cp, Option option, String token,
         File value )
     {
-        templateOutputDirectory = value;
-        return true;
+    	clo.templateOutputDir = value;
     }
-    private File templateOutputDirectory = null;    
 
     /**
-     * Command parser method to set the binding.
+     * Sets the binding.
      * @param cp
      * @param option
      * @param token
      * @param value the binding
-     * @return true if it worked, false otherwise.
      */
-    public boolean setBinding( CommandParser cp, Option option, String token,
+    public void setBinding( CommandParser cp, Option option, String token,
         String value )
     {
-        bindingName = value;
-        return true;
+    	clo.binding = value;
     }
-    private String bindingName = null;
 
     /**
-     * Command parser method to set for whom/what we are generating code.
+     * Adds to the set of what needs to be generated.
      * @param cp
      * @param option
      * @param token
      * @param value the list of what needs to be generated.
-     * @return true if it worked, false otherwise.
      */
-    public boolean setWhat( CommandParser cp, Option option, String token,
+    public void addWhat( CommandParser cp, Option option, String token,
         String value )
     {
-        StringTokenizer st = new StringTokenizer(value,WHO_DELIMETER);
-
+        StringTokenizer st = new StringTokenizer( value, CmdLineOptions.WHAT_DELIMETER );
         while (st.hasMoreElements()) 
-            what.add(st.nextToken().toUpperCase());
-
-        return true;
+        	clo.what.add(st.nextToken().toUpperCase());
     }
-    private List<String> what;
 
     /**
-     * Command parser method to ignore the globally reserved words list.
+     * Sets the ignore the globally reserved words list flag.
      * @param cp
      * @param option
      * @param token
      */
     public void ignoreGlobalWordsList(CommandParser cp, Option option, String token)
     {
-        ignoreGlobal = true;
+    	clo.ignoreGlobalWordsList = true;
     }
-    private boolean ignoreGlobal = true;
 
     /**
-     * Command parser method to ignore the locally reserved words list.
+     * Sets the ignore the locally reserved words list flag.
      * @param cp
      * @param option
      * @param token
      */
     public void ignoreLocalWordsList(CommandParser cp, Option option, String token)
     {
-        ignoreLocal = true;
+    	clo.ignoreLocalWordsList = true;
     }
-    private boolean ignoreLocal = false;
 
     /**
-     * Command parser method to set the user-defined reserved words list.
+     * Sets the file name of the user-defined reserved words list.
      * @param cp
      * @param option
      * @param token
-     * @param value the reserved words list
-     * @return true if it worked, false otherwise.
+     * @param value the file name of the user-defined reserved words list
      */
-    public boolean setUserWordsList(CommandParser cp, Option option, String token,
+    public void setUserWordsList(CommandParser cp, Option option, String token,
         File value)
     {
-        userWordList = value;
-        return true;
+    	clo.userWordsList = value;
     }
-    private File userWordList = null;
 
     /**
-     * Command parser method to set the include path.
+     * Adds to the include path.
      * @param cp
      * @param option
      * @param token
-     * @param value path to append to the current include path
+     * @param value path list to append to the current include path.
      */
-    public void setIncludePath( CommandParser cp, Option option, String token,
+    public void addIncludePath( CommandParser cp, Option option, String token,
         String value )
     {
         StringTokenizer includeTokens = new StringTokenizer(value,
@@ -374,38 +248,35 @@ public class EtchMain extends Program
         while(includeTokens.hasMoreTokens())
         {
             File temp = new File(includeTokens.nextToken());
-            includePath.add(temp);
+            clo.includePath.add(temp);
         }
     }
-    private List<File> includePath;
 
     /**
-     * Command parser method to ignore the include path from the environment.
+     * Sets the ignore the include path from the environment flag.
      * @param cp
      * @param option
      * @param token
      */
-    public void ignoreEnvIncludePath(CommandParser cp, Option option,
+    public void ignoreIncludePath(CommandParser cp, Option option,
         String token)
     {
-        ignoreEnvironmentIncludePath = true;
+    	clo.ignoreIncludePath = true;
     }
-    private boolean ignoreEnvironmentIncludePath = false;
 
     /**
-     * Command parser method to set the quiet flag.
+     * Sets the quiet flag.
      * @param cp
      * @param option
      * @param token
      */
-    public void setQuiet( CommandParser cp, Option option, String token )
+    public void quiet( CommandParser cp, Option option, String token )
     {
-        quiet = true;
+    	clo.quiet = true;
     }
-    private boolean quiet = false;
 
     /**
-     * Command parser method to show the version and exit.
+     * Shows the version and exits.
      * @param cp
      * @param option
      * @param token
@@ -418,125 +289,80 @@ public class EtchMain extends Program
     }
 
     /**
-     * Command parser method to suppress mixin artifacts.
+     * Sets the suppress mixin artifacts flag.
      * @param cp
      * @param option
      * @param token
      */
-    public void setNoMixinArtifacts( CommandParser cp, Option option, String token )
+    public void noMixinArtifacts( CommandParser cp, Option option, String token )
     {
-        mixinSuppressed = true;
+    	clo.noMixinArtifacts = true;
     }
-    private boolean mixinSuppressed = false;
 
     /**
-     * Command parser method to set the output directory for mixins.
+     * Sets the output directory for mixins.
      * @param cp
      * @param option
      * @param token
      * @param value the output directory for mixin
-     * @return true if it worked, false otherwise.
      */
-    public boolean setMixinOutputDir( CommandParser cp, Option option, String token,
+    public void setMixinOutputDir( CommandParser cp, Option option, String token,
         File value )
     {
-        mixinOutputDirectory = value;
-        return true;
+    	clo.mixinOutputDir = value;
     }
-    
-    private File mixinOutputDirectory = null;
 
     /**
+     * Sets the no flatten packages flag.
      * @param cp
      * @param option
      * @param token
      */
-    public void setNoFlattenPackages( CommandParser cp, Option option, String token)
+    public void noFlattenPackages( CommandParser cp, Option option, String token )
     {
-        noFlattenPackages = true;
+    	clo.noFlattenPackages = true;
     }
     
-    private boolean noFlattenPackages;
+    /**
+     * Sets the hidden testing flag.
+     * @param cp
+     * @param option
+     * @param token
+     */
+    public void setTesting( CommandParser cp, Option option, String token )
+    {
+    	clo.testing = true;
+    	clo.lh = new ListLogHandler();
+    	testingClo = clo;
+    }
+    
+    /**
+     * If --testing is on the command line, the CmdLineOptions is saved
+     * here for reference by unit testing programs.
+     */
+    public CmdLineOptions testingClo;
 
     /**
-     * Command parser method to set the etch file to compile.
-     * @param cp
+     * Sets the etch source file to compile.
+     * @param cp the command parser
      * @param param
      * @param value path of etch file to compile
-     * @return true if file added to list, false otherwise.
      */
-    public boolean setFile( CommandParser cp, Parameter param, File value )
+    public void setSourceFile( CommandParser cp, Parameter param, File value )
     {
-        sourceFiles.add(value);
-        return true;
+    	clo.sourceFile = value;
     }
-    private List<File> sourceFiles;
 
     @Override
     protected void run() throws Exception
     {
-        if (bindingName == null)
-            throw new Exception ("No binding specified.");
+        // Instantiate a new compiler instance and run it.
+    	ClassLoader cl = EtchCompiler.setupClassLoader( null );
+        EtchCompiler etchCompiler = new EtchCompiler( cl );
         
-        // Instantiate a new compiler instance
-        EtchCompiler etchCompiler = new EtchCompiler( setupClassLoader( null ) );
-        etchCompiler.setQuiet( quiet );
-
-        // VALIDATE
-
-        try
-        {
-            etchCompiler.setBindingName(bindingName);
-            etchCompiler.setIgnoreEnvironmentIncludePath(ignoreEnvironmentIncludePath);        
-            etchCompiler.setMixinSuppressed(mixinSuppressed);
-            etchCompiler.setFlattenPackages(!noFlattenPackages);        
-            etchCompiler.setOverwriteTemplate(false);
-            etchCompiler.setIgnoreLocal(ignoreLocal);
-            etchCompiler.setIgnoreGlobal(ignoreGlobal);
+        etchCompiler.run( clo );
         
-            for (File f: includePath)
-                etchCompiler.addIncludePath(f);
-            
-            for (String w: what)
-                etchCompiler.addWhat(w);
-
-            if (outputDirectory != null)
-                etchCompiler.setOutputDirectory(outputDirectory);
-        
-            if (userWordList != null)
-                etchCompiler.setUserWordsList(userWordList);
-        
-            if (mixinOutputDirectory != null)
-                etchCompiler.setMixinOutputDirectory(mixinOutputDirectory);
-        
-            if (templateOutputDirectory != null)
-                etchCompiler.setTemplateOutputDirectory(templateOutputDirectory);
-        }
-        catch (Exception e)
-        {
-            throw new Exception("Invalid parameter passed to the compiler:\n" + e.getMessage());
-        }
-        
-        // EXECUTE 
-        
-        boolean status = true;
-        for (File name: sourceFiles)
-        {
-            try
-            {
-                etchCompiler.validateEtchFile(name);
-                etchCompiler.compile(name);
-            }
-            catch ( Exception e )
-            {
-                System.out.println(String.format("Error Compiling %s: %s", name.getName(), e.getMessage()));
-                e.printStackTrace();
-                status = false;
-            }
-        }
-        if (!status)
-        {
-            throw new Exception("One or more .etch files failed to compile.");
-        }
+        if (clo.lh.hasError())
+        	exit( 3, "EtchMain", "errors during compile", false );
     }
 }

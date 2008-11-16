@@ -19,6 +19,7 @@
         <delete dir="${target}" failonerror="false" quiet="true" />
 
         <mkdir dir="${target}" />
+        <mkdir dir="${rawNUnitResults}" />
         <mkdir dir="${testResultsDirectory}" />
     </target>
 
@@ -26,9 +27,9 @@
     <target name="do-clean">
         <delete dir="${target}" />
         <delete dir="${src}/main/csharp/bin" />
-    <delete dir="${src}/main/csharp/obj" />
-    <delete dir="${src}/test/csharp/bin" />
-    <delete dir="${src}/test/csharp/obj" />
+        <delete dir="${src}/main/csharp/obj" />
+        <delete dir="${src}/test/csharp/bin" />
+        <delete dir="${src}/test/csharp/obj" />
     </target>
 
     <!-- BUILD TARGET -->
@@ -66,6 +67,7 @@
 
         <copy todir="${Etch.dist}/lib" >
             <fileset dir="${src}/main/csharp/bin/${Etch.build.target}">
+                <include name="*.pdb" />
                 <include name="*.dll" />
             </fileset>
         </copy>
@@ -86,7 +88,6 @@
     <target name="build-test-csharp" depends="build-test-with-mono,build-test-with-dotnet" />
 
     <target name="do-test" depends="build-test-csharp" if="USE.dotnet" >
-
         <mkdir dir="${rawNUnitResults}" />
 
         <nunit xmlout="${rawNUnitResults}/NUnitResults.xml">
@@ -95,7 +96,6 @@
 
         <xslt style="${Etch.buildSupportDirectory}/NUnitToJUnit.xsl"
                 in="${rawNUnitResults}/NUnitResults.xml" out="${testResultsDirectory}/TEST-NUnitResults.xml" />
-
     </target>
 
     <!-- POSTBUILD TARGET -->

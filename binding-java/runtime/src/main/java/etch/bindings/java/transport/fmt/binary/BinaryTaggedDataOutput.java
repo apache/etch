@@ -28,19 +28,28 @@ import etch.bindings.java.msg.Validator;
 import etch.bindings.java.msg.ValueFactory;
 import etch.bindings.java.msg.Validator.Level;
 import etch.bindings.java.support.Validator_int;
+import etch.bindings.java.support.Validator_string;
 import etch.bindings.java.transport.ArrayValue;
 import etch.bindings.java.transport.TaggedDataOutput;
 import etch.bindings.java.transport.fmt.TypeCode;
 import etch.util.FlexBuffer;
+import etch.util.URL;
 
 /**
- * Description of TaggedDataOutputStream.
+ * An implementation of TaggedDataOutput which uses a binary encoding.
  */
 final public class BinaryTaggedDataOutput extends BinaryTaggedData
 	implements TaggedDataOutput
 {
 	/**
-	 * Constructs the BinaryTaggedDataOutput with a null buffer.
+	 * Name of uri parameter which controls whether we write ints or strings
+	 * for types and fields.
+	 */
+	public static final String STRING_TYPE_AND_FIELD =
+		"BinaryTaggedDataOutput.stringTypeAndField";
+
+	/**
+	 * Constructs the BinaryTaggedDataOutput.
 	 * 
 	 * @param vf the value factory for the service.
 	 * @param uri the uri used to construct the transport stack.
@@ -48,11 +57,14 @@ final public class BinaryTaggedDataOutput extends BinaryTaggedData
 	public BinaryTaggedDataOutput( ValueFactory vf, String uri )
 	{
 		super( vf );
-		this.level = vf.getLevel();
-		// don't have anything to do with uri yet.
+		level = vf.getLevel();
+		URL u = new URL( uri );
+		stringTypeAndField = u.getBooleanTerm( STRING_TYPE_AND_FIELD, false );
 	}
 
 	private final Level level;
+	
+	private final boolean stringTypeAndField;
 
 	//////////////////////////////
 	// TaggedDataOutput methods //
@@ -95,11 +107,11 @@ final public class BinaryTaggedDataOutput extends BinaryTaggedData
 		for (Map.Entry<Field, Object> me: sv)
 		{
 			Field f = me.getKey();
-			writeIntValue( f.getId() );
+			writeField( f );
 			writeValue( t.getValidator( f ), me.getValue() );
 		}
 	}
-	
+
 	private void writeValues( ArrayValue av, Validator v )
 		throws IOException
 	{
@@ -160,15 +172,33 @@ final public class BinaryTaggedDataOutput extends BinaryTaggedData
 	
 	private void writeType( Type type ) throws IOException
 	{
-		writeIntValue( type.getId() );
+		if (stringTypeAndField)
+			writeStringValue( type.getName() );
+		else
+			writeIntValue( type.getId() );
 	}
 	
-	private void writeIntValue( int value ) throws IOException
+	private void writeField( Field field ) throws IOException
+	{
+		if (stringTypeAndField)
+			writeStringValue( field.getName() );
+		else
+			writeIntValue( field.getId() );
+	}
+
+	private void writeIntValue( Integer value ) throws IOException
 	{
 		writeValue( intValidator, value );
 	}
 	
 	private final Validator intValidator = Validator_int.get( 0 );
+	
+	private void writeStringValue( String value ) throws IOException
+	{
+		writeValue( stringValidator, value );
+	}
+	
+	private final Validator stringValidator = Validator_string.get( 0 );
 	
 	private void writeNoneValue() throws IOException
 	{

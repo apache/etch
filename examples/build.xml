@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <project name="etch-examples" basedir="." default="help">
     <description>Etch Examples</description>
+	<target name="help"><echo>Please select a target...</echo></target>
     <property name="Etch.basedir" location="${basedir}/.." />
     <import file="${Etch.basedir}/build-support/etch.common.xml" />
 
@@ -55,10 +56,10 @@
 
     <target name="component-all" >
         <mkdir dir="${basedir}/target" />
-        <build_example dir="perf" logdir="${basedir}/target/logs" />
-        <build_example dir="distmap" logdir="${basedir}/target/logs" />
         <build_example dir="chat" logdir="${basedir}/target/logs" />
+        <build_example dir="distmap" logdir="${basedir}/target/logs" />
         <build_example dir="example" logdir="${basedir}/target/logs" />
+        <build_example dir="perf" logdir="${basedir}/target/logs" />
     </target>
 
 </project>

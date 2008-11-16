@@ -90,7 +90,7 @@
     <property name="tool.vs-2k5-task" value="${Etch.runtime.workspace}/scripts/vs-2k5-task.bat" />
 
     <!-- NSIS installer support -->
-    <property name="tool.makensis"    value="${env.NSIS_HOME}\makensis.exe" />
+    <property name="tool.makensis"    value="${build.nsis.home}\makensis.exe" />
     <condition property="NSIS.enabled">
         <and>
             <os family="windows" />
@@ -110,13 +110,15 @@
     <condition property="USE.dotnet">
         <and>
             <os family="windows" />
-            <available file="${env.DOTNET_HOME}/msbuild.exe" />
+            <available file="${build.dotnet.home}/msbuild.exe" />
         </and>
     </condition>
     <condition property="USE.mono">
         <and>
             <not><os family="windows" /></not>
-            <available file="${env.MONO_HOME}/bin/mdtool" />
+            <!-- TODO mono support is not fully baked, use -DUSE.mono to test -->
+            <!-- <available file="${build.mono.home}/bin/mdtool" /> -->
+            <isset property="USE.mono" />
         </and>
     </condition>
     <condition property="BUILD.csharp">
@@ -125,18 +127,18 @@
             <isset property="USE.mono" />
         </or>
     </condition>
-    <property name="tool.mdtool" value="${env.MONO_HOME}/bin/mdtool" />
+    <property name="tool.mdtool" value="${build.mono.home}/bin/mdtool" />
 
     <!-- clover support -->
     <!-- TODO: make this toggle-able -->
     <property name="With.clover" value="true" />
     <condition property="Clover.enabled" >
         <and>
-            <available file="${env.CLOVER_HOME}/lib/clover.jar" />
+            <available file="${build.clover.home}/lib/clover.jar" />
             <isset property="With.clover" />
         </and>
     </condition>
-    <property name="Etch.dependency.clover.jar" value="${env.CLOVER_HOME}/lib/clover.jar" />
+    <property name="Etch.dependency.clover.jar" value="${build.clover.home}/lib/clover.jar" />
     <taskdef resource="cloverlib.xml" classpath="${Etch.dependency.clover.jar}" />
     <!-- If Clover is enabled, use the clover version of the Etch build, this
          allows code-coverage metrics to be collected throughout the build process -->
@@ -158,7 +160,7 @@
     <property name="Clover.coverage" location="${Clover.path}/code-coverage-results" />
     
     <!-- properties for examples -->
-    <property name="EXAMPLE.etch.home" value="${Etch.HOME}" />
+    <property name="EXAMPLE.etch.home" value="${Etch.dist}" />
     <property name="EXAMPLE.etch.version" value="${Etch.version}" />
     <property name="EXAMPLE.ant.dotnet.jar" value="${Etch.dependency.ant-dotnet-1.0.jar}" />
     
@@ -222,9 +224,10 @@
     <!-- token filter macro -->
     <macrodef name="update-tokens" >
         <attribute name="filename" />
+        <attribute name="template" default="@{filename}.tmpl" />
         <sequential>
             <!-- Generate version info -->
-            <copy tofile="@{filename}" file="@{filename}.tmpl" overwrite="true">
+            <copy tofile="@{filename}" file="@{template}" overwrite="true">
                 <filterset refid="Etch.buildTokens" />
             </copy>
         </sequential>

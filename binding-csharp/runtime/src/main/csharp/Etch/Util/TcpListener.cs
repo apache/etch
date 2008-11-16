@@ -62,7 +62,7 @@ namespace Etch.Util
 
 
         public TcpListener(URL uri, Resources resources)
-            : this((int)uri.GetIntegerTerm(BACKLOG, 0), TranslateHost(uri.Host), uri.Port, 0)
+            : this((int)uri.GetIntegerTerm(BACKLOG, 0), TranslateHost(uri.Host), uri.Port != null ? uri.Port.Value : 0, 0)
         {
             // nothing else.
         }

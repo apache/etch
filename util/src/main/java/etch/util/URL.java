@@ -17,11 +17,11 @@
 
 package etch.util;
 
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Models a url of the form scheme://user:password@host:port/uri;parms?terms#fragment
@@ -50,7 +50,7 @@ public class URL
 		this.host = other.host;
 		this.port = other.port;
 		this.uri = other.uri;
-		this.params = copyParams( other.params );
+		this.params = copyList( other.params );
 		this.terms = copyTerms( other.terms );
 		this.fragment = other.fragment;
 	}
@@ -235,7 +235,7 @@ public class URL
 	
 	private String uri;
 	
-	private Set<String> params;
+	private List<String> params;
 	
 	private Map<String, Object> terms;
 	
@@ -318,7 +318,7 @@ public class URL
 	 */
 	public void setPassword( String password )
 	{
-		checkNotBlank( "password", password );
+		//checkNotBlank( "password", password );
 		this.password = password;
 	}
 
@@ -419,7 +419,7 @@ public class URL
 	 * 
 	 * @param prefix the prefix of the param to fetch (e.g., "transport=").
 	 * 
-	 * @return the param which starts with the specified prefix.
+	 * @return the first param which starts with the specified prefix.
 	 */
 	public String getParam( String prefix )
 	{
@@ -428,13 +428,10 @@ public class URL
 		if (params == null)
 			return null;
 		
-		Iterator<String> i = getParams();
-		while (i.hasNext())
-		{
-			String s = i.next();
-			if (s.startsWith( prefix ))
-				return s;
-		}
+		for (String p: params)
+			if (p.startsWith( prefix ))
+				return p;
+		
 		return null;
 	}
 	
@@ -443,17 +440,17 @@ public class URL
 	 * of the form "transport=tcp". But they can be anything you like, really.
 	 * The iterator might be empty.
 	 */
-	public Iterator<String> getParams()
+	public String[] getParams()
 	{
 		if (params == null)
-			return new EmptyIterator<String>();
+			return new String[] {};
 		
-		return params.iterator();
+		return params.toArray( new String[] {} );
 	}
 	
 	/**
-	 * Adds a param to the set of params for this url. Only the set of unique
-	 * params is maintained. Duplicate param values are suppressed.
+	 * Adds a param to the list of params for this url. Only the unique
+	 * params are maintained. Duplicate param values are suppressed.
 	 * 
 	 * @param param a param (e.g., "transport=tcp" or "01831864574898475").
 	 */
@@ -480,23 +477,15 @@ public class URL
 		if (params == null)
 			return null;
 		
-		Iterator<String> i = getParams();
-		while (i.hasNext())
+		for (String p: getParams())
 		{
-			String s = i.next();
-			if (s.startsWith( prefix ))
+			if (p.startsWith( prefix ))
 			{
-				i.remove();
-				return s;
+				params.remove( p );
+				return p;
 			}
 		}
 		return null;
-	}
-	
-	private void checkNotNull( Object v, String msg )
-	{
-		if (v == null)
-			throw new NullPointerException( msg );
 	}
 
 	/**
@@ -511,7 +500,7 @@ public class URL
 	private void ensureParams()
 	{
 		if (params == null)
-			params = new HashSet<String>();
+			params = new ArrayList<String>();
 	}
 
 	/////////////////
@@ -524,7 +513,7 @@ public class URL
 	 */
 	public boolean hasTerms()
 	{
-		return terms != null && terms.size() > 0;
+		return terms != null && !terms.isEmpty();
 	}
 	
 	/**
@@ -535,6 +524,8 @@ public class URL
 	 */
 	public boolean hasTerm( String name )
 	{
+		checkName( name );
+		
 		if (terms == null)
 			return false;
 		
@@ -546,17 +537,23 @@ public class URL
 	 * @param value
 	 * @return true if there is a query term with the specified value.
 	 */
+	@SuppressWarnings("unchecked")
 	public boolean hasTerm( String name, String value )
 	{
+		checkName( name );
+		
 		if (terms == null)
 			return false;
+		
+		if (value == null)
+			return hasTerm( name );
 		
 		Object obj = terms.get( name );
 		if (obj == null)
 			return false;
 		
-		if (obj instanceof Set)
-			return ((Set<?>) obj).contains( value );
+		if (obj instanceof List)
+			return ((List<String>) obj).contains( value );
 		
 		return obj.equals( value );
 	}
@@ -568,7 +565,7 @@ public class URL
 	 */
 	public boolean hasTerm( String name, Integer value )
 	{
-		return hasTerm( name, value.toString() );
+		return hasTerm( name, toString( value ) );
 	}
 
 	/**
@@ -578,7 +575,7 @@ public class URL
 	 */
 	public boolean hasTerm( String name, Double value )
 	{
-		return hasTerm( name, value.toString() );
+		return hasTerm( name, toString( value ) );
 	}
 
 	/**
@@ -586,27 +583,20 @@ public class URL
 	 * @param value
 	 * @return true if there is a query term with the specified value.
 	 */
-	public boolean hasTerm( String name, int value )
+	public boolean hasTerm( String name, Boolean value )
 	{
-		return hasTerm( name, valueToString( value ) );
-	}
-
-	/**
-	 * @param name
-	 * @param value
-	 * @return true if there is a query term with the specified value.
-	 */
-	public boolean hasTerm( String name, double value )
-	{
-		return hasTerm( name, valueToString( value ) );
+		return hasTerm( name, toString( value ) );
 	}
 	
 	/**
 	 * @param name
 	 * @return true if the query term specified by name has multiple values.
 	 */
+	@SuppressWarnings("unchecked")
 	public boolean hasMultipleValues( String name )
 	{
+		checkName( name );
+		
 		if (terms == null)
 			return false;
 		
@@ -614,8 +604,8 @@ public class URL
 		if (obj == null)
 			return false;
 		
-		if (obj instanceof Set)
-			return ((Set<?>) obj).size() > 1;
+		if (obj instanceof List)
+			return ((List<String>) obj).size() > 1;
 		
 		return false;
 	}
@@ -634,9 +624,11 @@ public class URL
 	 * @see #getIntegerTerm(String)
 	 * @see #getDoubleTerm(String)
 	 */
-	@SuppressWarnings(value={"unchecked"})
+	@SuppressWarnings("unchecked")
 	public String getTerm( String name )
 	{
+		checkName( name );
+		
 		if (terms == null)
 			return null;
 		
@@ -644,13 +636,20 @@ public class URL
 		if (obj == null)
 			return null;
 		
-		if (obj instanceof Set)
+		if (obj instanceof List)
 		{
-			Iterator<String> i = ((Set<String>) obj).iterator();
-			String s = i.next();
+			Iterator<String> i = ((List<String>) obj).iterator();
+			
+			if (!i.hasNext())
+				return null;
+			
+			String v = i.next();
+			
 			if (i.hasNext())
-				throw new UnsupportedOperationException( "term has multiple values" );
-			return s;
+				throw new UnsupportedOperationException( String.format(
+					"term '%s' has multiple values", name ) );
+			
+			return v;
 		}
 		
 		return (String) obj;
@@ -668,6 +667,64 @@ public class URL
 			return defaultValue;
 		return value;
 	}
+	
+	/**
+	 * Gets the Integer value of the specified query term.
+	 * @param name
+	 * @return the Integer value, or null if not found.
+	 * @see #getTerm(String)
+	 */
+	public Integer getIntegerTerm( String name )
+	{
+		String s = getTerm( name );
+		if (s == null)
+			return null;
+		return Integer.valueOf( s );
+	}
+
+	/**
+	 * Gets the integer value of the specified query term.
+	 * @param name
+	 * @param defaultValue the value to return if the term is not found.
+	 * @return the integer value, or defaultValue if not found.
+	 * @see #getTerm(String)
+	 */
+	public int getIntegerTerm( String name, int defaultValue )
+	{
+		Integer value = getIntegerTerm( name );
+		if (value == null)
+			return defaultValue;
+		return value;
+	}
+	
+	/**
+	 * Gets the Double value of the specified query term.
+	 * @param name
+	 * @return the Double value, or null if not found.
+	 * @see #getTerm(String)
+	 */
+	public Double getDoubleTerm( String name )
+	{
+		String s = getTerm( name );
+		if (s == null)
+			return null;
+		return Double.valueOf( s );
+	}
+
+	/**
+	 * Gets the double value of the specified query term.
+	 * @param name
+	 * @param defaultValue the value to return if the term is not found.
+	 * @return the double value, or defaultValue if not found.
+	 * @see #getTerm(String)
+	 */
+	public double getDoubleTerm( String name, double defaultValue )
+	{
+		Double value = getDoubleTerm( name );
+		if (value == null)
+			return defaultValue;
+		return value;
+	}
 
 	/**
 	 * Gets the boolean value of the specified query term.
@@ -680,7 +737,7 @@ public class URL
 		String s = getTerm( name );
 		if (s == null)
 			return null;
-		return new Boolean( s );
+		return Boolean.valueOf( s );
 	}
 
 	/**
@@ -692,53 +749,10 @@ public class URL
 	 */
 	public boolean getBooleanTerm( String name, boolean defaultValue )
 	{
-		String s = getTerm( name );
-		if (s == null)
+		Boolean value = getBooleanTerm( name );
+		if (value == null)
 			return defaultValue;
-		return Boolean.valueOf( s );
-	}
-	
-	/**
-	 * Gets the integer value of the specified query term.
-	 * @param name
-	 * @return the integer value, or null if not found.
-	 * @see #getTerm(String)
-	 */
-	public Integer getIntegerTerm( String name )
-	{
-		String s = getTerm( name );
-		if (s == null)
-			return null;
-		return new Integer( s );
-	}
-
-	/**
-	 * Gets the integer value of the specified query term.
-	 * @param name
-	 * @param defaultValue the value to return if the term is not found.
-	 * @return the integer value, or defaultValue if not found.
-	 * @see #getTerm(String)
-	 */
-	public int getIntegerTerm( String name, int defaultValue )
-	{
-		Integer i = getIntegerTerm( name );
-		if (i == null)
-			return defaultValue;
-		return i;
-	}
-	
-	/**
-	 * Gets the double value of the specified query term.
-	 * @param name
-	 * @return the double value, or null if not found.
-	 * @see #getTerm(String)
-	 */
-	public Double getDoubleTerm( String name )
-	{
-		String s = getTerm( name );
-		if (s == null)
-			return null;
-		return new Double( s );
+		return value;
 	}
 	
 	/**
@@ -746,43 +760,50 @@ public class URL
 	 * @param name
 	 * @return an iterator over the string values of the query term. May be empty.
 	 */
-	@SuppressWarnings(value={"unchecked"})
-	public Iterator<String> getTerms( String name )
+	@SuppressWarnings("unchecked")
+	public String[] getTerms( String name )
 	{
+		checkName( name );
+		
 		if (terms == null)
-			return new EmptyIterator<String>();
+			return new String[] {};
 		
 		Object obj = terms.get( name );
 		if (obj == null)
-			return new EmptyIterator<String>();
+			return new String[] {};
 		
-		if (obj instanceof Set)
-			return ((Set<String>) obj).iterator();
+		if (obj instanceof List)
+			return ((List<String>) obj).toArray( new String[] {} );
 		
-		return new SingleIterator<String>( (String) obj );
+		return new String[] { (String) obj };
 	}
 	
 	/**
 	 * Gets the names of the query terms.
 	 * @return an iterator over the string names.
 	 */
-	public Iterator<String> getTermNames()
+	public String[] getTermNames()
 	{
 		if (terms == null)
-			return new EmptyIterator<String>();
+			return new String[] {};
 		
-		return terms.keySet().iterator();
+		return terms.keySet().toArray( new String[] {} );
 	}
 	
 	/**
-	 * Adds the specified query term to the set of query terms. Duplicate
+	 * Adds the specified query term to the list of query terms. Duplicate
 	 * name/value pairs are suppressed.
 	 * @param name
 	 * @param value
 	 */
-	@SuppressWarnings(value={"unchecked"})
+	@SuppressWarnings("unchecked")
 	public void addTerm( String name, String value )
 	{
+		checkName( name );
+		
+		if (value == null)
+			return;
+		
 		ensureTerms();
 		
 		Object obj = terms.get( name );
@@ -792,60 +813,55 @@ public class URL
 			return;
 		}
 		
-		if (obj instanceof Set)
+		if (obj instanceof List)
 		{
-			((Set<String>) obj).add( value );
+			List<String> values = (List<String>) obj;
+			if (!values.contains( value ))
+				values.add( value );
 			return;
 		}
 		
-		Set<String> values = new HashSet<String>();
-		values.add( (String) obj );
-		values.add( value );
+		// obj is not a list but we need one, so replace obj in terms with a
+		// list, then add value to the list.
+		
+		List<String> values = new ArrayList<String>();
 		terms.put( name, values );
+		values.add( (String) obj );
+
+		values.add( value );
 	}
 
 	/**
-	 * Adds the specified query term to the set of query terms. Duplicate
+	 * Adds the specified query term to the list of query terms. Duplicate
 	 * name/value pairs are suppressed.
 	 * @param name
 	 * @param value
 	 */
 	public void addTerm( String name, Integer value )
 	{
-		addTerm( name, value.toString() );
+		addTerm( name, toString( value ) );
 	}
 
 	/**
-	 * Adds the specified query term to the set of query terms. Duplicate
+	 * Adds the specified query term to the list of query terms. Duplicate
 	 * name/value pairs are suppressed.
 	 * @param name
 	 * @param value
 	 */
 	public void addTerm( String name, Double value )
 	{
-		addTerm( name, value.toString() );
+		addTerm( name, toString( value ) );
 	}
 
 	/**
-	 * Adds the specified query term to the set of query terms. Duplicate
+	 * Adds the specified query term to the list of query terms. Duplicate
 	 * name/value pairs are suppressed.
 	 * @param name
 	 * @param value
 	 */
-	public void addTerm( String name, int value )
+	public void addTerm( String name, Boolean value )
 	{
-		addTerm( name, valueToString( value ) );
-	}
-
-	/**
-	 * Adds the specified query term to the set of query terms. Duplicate
-	 * name/value pairs are suppressed.
-	 * @param name
-	 * @param value
-	 */
-	public void addTerm( String name, double value )
-	{
-		addTerm( name, valueToString( value ) );
+		addTerm( name, toString( value ) );
 	}
 	
 	/**
@@ -855,6 +871,8 @@ public class URL
 	 */
 	public boolean removeTerm( String name )
 	{
+		checkName( name );
+		
 		if (terms == null)
 			return false;
 		
@@ -862,32 +880,75 @@ public class URL
 	}
 	
 	/**
-	 * Removes the specified name/value pair from the set of query terms.
+	 * Removes the specified name/value pair from the list of query terms.
 	 * @param name
 	 * @param value
 	 * @return true if the name/value pair was found and removed.
 	 */
-	@SuppressWarnings(value={"unchecked"})
+	@SuppressWarnings("unchecked")
 	public boolean removeTerm( String name, String value )
 	{
+		checkName( name );
+		
 		if (terms == null)
 			return false;
+		
+		if (value == null)
+			return removeTerm( name );
 		
 		Object obj = terms.get( name );
 		if (obj == null)
 			return false;
 		
-		if (obj instanceof Set)
+		if (obj instanceof List)
 		{
-			Set<String> x = (Set<String>) obj;
-			boolean ok = x.remove( value );
-			if (x.size() == 1)
-				terms.put( name, x.iterator().next() );
+			List<String> values = (List<String>) obj;
+			boolean ok = values.remove( value );
+			if (values.isEmpty())
+				terms.remove( name );
 			return ok;
 		}
 		
-		terms.remove( name );
-		return true;
+		if (obj.equals( value ))
+		{
+			terms.remove( name );
+			return true;
+		}
+		
+		return false;
+	}
+
+	/**
+	 * Removes the specified name/value pair from the list of query terms.
+	 * @param name
+	 * @param value
+	 * @return true if the name/value pair was found and removed.
+	 */
+	public boolean removeTerm( String name, Integer value )
+	{
+		return removeTerm( name, toString( value ) );
+	}
+
+	/**
+	 * Removes the specified name/value pair from the list of query terms.
+	 * @param name
+	 * @param value
+	 * @return true if the name/value pair was found and removed.
+	 */
+	public boolean removeTerm( String name, Double value )
+	{
+		return removeTerm( name, toString( value ) );
+	}
+
+	/**
+	 * Removes the specified name/value pair from the list of query terms.
+	 * @param name
+	 * @param value
+	 * @return true if the name/value pair was found and removed.
+	 */
+	public boolean removeTerm( String name, Boolean value )
+	{
+		return removeTerm( name, toString( value ) );
 	}
 	
 	/**
@@ -996,12 +1057,12 @@ public class URL
 		return code;
 	}
 	
-	private int hc( Map<?, ?> m )
+	private int hc( Map<String, Object> m )
 	{
 		return m != null ? m.hashCode() : 793;
 	}
 
-	private int hc( Set<?> s )
+	private int hc( List<String> s )
 	{
 		return s != null ? s.hashCode() : 161;
 	}
@@ -1022,10 +1083,10 @@ public class URL
 		if (obj == this)
 			return true;
 		
-		if (obj.getClass() != URL.class)
+		if (obj == null)
 			return false;
 		
-		if (obj == null)
+		if (obj.getClass() != URL.class)
 			return false;
 		
 		URL other = (URL) obj;
@@ -1042,16 +1103,16 @@ public class URL
 		if (!StringUtil.equals( host, other.host ))
 			return false;
 		
-		if (!equals( port, other.port ))
+		if (!eq( port, other.port ))
 			return false;
 		
 		if (!StringUtil.equals( uri, other.uri ))
 			return false;
 		
-		if (!compareParams( params, other.params ))
+		if (!eq( params, other.params ))
 			return false;
 		
-		if (!compareTerms( terms, other.terms ))
+		if (!eq( terms, other.terms ))
 			return false;
 		
 		if (!StringUtil.equals( fragment, other.fragment ))
@@ -1060,71 +1121,31 @@ public class URL
 		return true;
 	}
 	
-	private boolean equals( Integer a, Integer b )
+	private boolean eq( Object a, Object b )
 	{
 		return a == b || (a != null && b != null && a.equals( b ));
 	}
 
-	private boolean compareParams( Set<?> a, Set<?> b )
-	{
-		if (a == b)
-			return true;
-		
-		int na = a != null ? a.size() : 0;
-		int nb = b != null ? b.size() : 0;
-		
-		if (na == 0 || nb == 0)
-		{
-			// one or the other is empty
-			return na == 0 && nb == 0; // true only if both are empty
-		}
-		
-		return a.equals( b );
-	}
-
-	private boolean compareTerms( Map<?, ?> a, Map<?, ?> b )
-	{
-		if (a == b)
-			return true;
-		
-		int na = a != null ? a.size() : 0;
-		int nb = b != null ? b.size() : 0;
-		
-		if (na == 0 || nb == 0)
-		{
-			// one or the other is empty
-			return na == 0 && nb == 0; // true only if both are empty
-		}
-		
-		return a.equals( b );
-	}
-
 	private void paramsToString( StringBuffer sb )
 	{
-		Iterator<String> i = getParams();
-		while (i.hasNext())
+		for (String p: getParams())
 		{
-			String param = i.next();
 			sb.append( ';' );
-			escape( sb, param );
+			escape( sb, p );
 		}
 	}
 
 	private void termsToString( StringBuffer sb )
 	{
 		char sep = '?';
-		Iterator<String> i = getTermNames();
-		while (i.hasNext())
+		for (String n: getTermNames())
 		{
-			String name = i.next();
-			Iterator<String> j = getTerms( name );
-			while (j.hasNext())
+			for (String v: getTerms( n ))
 			{
-				String value = j.next();
 				sb.append( sep );
-				escape( sb, name );
+				escape( sb, n );
 				sb.append( '=' );
-				escape( sb, value );
+				escape( sb, v );
 				sep = '&';
 			}
 		}
@@ -1202,7 +1223,7 @@ public class URL
 		return true;
 	}
 
-	private String unescape( String s )
+	private static String unescape( String s )
 	{
 		StringBuffer sb = new StringBuffer();
 		CharIterator i = new CharIterator( s );
@@ -1226,6 +1247,23 @@ public class URL
 		}
 		return sb.toString();
 	}
+	
+	private static void checkName( String name )
+	{
+		if (name == null || name.length() == 0)
+			throw new IllegalArgumentException( "name null or empty" );
+	}
+
+	private static String toString( Object value )
+	{
+		return value != null ? value.toString() : null;
+	}
+	
+	private static void checkNotNull( Object v, String msg )
+	{
+		if (v == null)
+			throw new NullPointerException( msg );
+	}
 
 	private static void checkNotBlank( String name, String value )
 	{
@@ -1233,7 +1271,7 @@ public class URL
 			throw new IllegalArgumentException( name+" is blank" );
 	}
 
-	private void checkNotInteger( String name, String value )
+	private static void checkNotInteger( String name, String value )
 	{
 		checkNotBlank( name, value );
 		try
@@ -1245,40 +1283,32 @@ public class URL
 			throw new IllegalArgumentException( name+" is not integer" );
 		}
 	}
-	
-	private static String valueToString( int value )
-	{
-		return Integer.toString( value );
-	}
-	
-	private static String valueToString( double value )
-	{
-		return Double.toString( value );
-	}
 
-	private static Set<String> copyParams( Set<String> params )
+	private static List<String> copyList( List<String> params )
 	{
+		// just goes one level deep.
+		
 		if (params == null)
 			return null;
 		
-		return new HashSet<String>( params );
+		return new ArrayList<String>( params );
 	}
 	
-	@SuppressWarnings(value={"unchecked"})
+	@SuppressWarnings("unchecked")
 	private static Map<String, Object> copyTerms( Map<String, Object> terms )
 	{
 		if (terms == null)
 			return null;
 		
-		Map<String, Object> map = new HashMap<String, Object>( terms );
-		Iterator<Map.Entry<String, Object>> i = map.entrySet().iterator();
-		while (i.hasNext())
+		Map<String, Object> nterms = new HashMap<String, Object>();
+		for (Map.Entry<String, Object> me: terms.entrySet())
 		{
-			Map.Entry<String, Object> me = i.next();
-			Object obj = me.getValue();
-			if (obj instanceof Set)
-				me.setValue( new HashSet<String>( (Set<String>) obj ) );
+			String name = me.getKey();
+			Object value = me.getValue();
+			if (value instanceof List)
+				value = copyList( (List<String>) value );
+			nterms.put( name, value );
 		}
-		return map;
+		return nterms;
 	}
 }

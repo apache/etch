@@ -23,8 +23,8 @@ service Bar
 
 	@Extern( java, "etch.bindings.java.util.StrStrHashMap", "",
 		"etch.bindings.java.util.StrStrHashMapSerializer", "" )
-		@Extern(csharp, "StrStrHashMap", "Etch.Util",
-		"StrStrHashMapSerializer", "")
+	@Extern( csharp, "StrStrHashMap", "Etch.Util",
+		"StrStrHashMapSerializer", "" )
 	extern BarTable
 	
 	struct BarData( int code, BarTable barTable, BazData bazData )

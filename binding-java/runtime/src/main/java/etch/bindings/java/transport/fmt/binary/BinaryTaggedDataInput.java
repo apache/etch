@@ -19,6 +19,7 @@ package etch.bindings.java.transport.fmt.binary;
 
 import java.io.IOException;
 
+import etch.bindings.java.msg.ComboValidator;
 import etch.bindings.java.msg.Field;
 import etch.bindings.java.msg.Message;
 import etch.bindings.java.msg.StructValue;
@@ -27,9 +28,11 @@ import etch.bindings.java.msg.Validator;
 import etch.bindings.java.msg.ValueFactory;
 import etch.bindings.java.support.Validator_int;
 import etch.bindings.java.support.Validator_object;
+import etch.bindings.java.support.Validator_string;
 import etch.bindings.java.transport.ArrayValue;
 import etch.bindings.java.transport.TaggedDataInput;
 import etch.bindings.java.transport.fmt.TypeCode;
+import etch.util.Assertion;
 import etch.util.FlexBuffer;
 
 /**
@@ -110,27 +113,21 @@ final public class BinaryTaggedDataInput extends BinaryTaggedData
 		Type t = sv.type();
 		while (true)
 		{
-			Object obj = readValue( intValidator, true );
-			if (obj == NONE)
+			Field key = readField( t );
+			if (key == null)
 				break;
 			
-			Integer id = (Integer) obj;
-			Field key = t.getField( id );
-			
-			if (key == null)
-			{
-				key = new Field( id, id.toString() );
-			}
-			
 			Validator v = t.getValidator( key );
-			if (v == null)
+			if (v != null)
 			{
-				// read the value but ignore it.
-				readValue( Validator_object.get( 0 ) );
+				sv.put( key, readValue( v ) );
 			}
 			else
 			{
-				sv.put( key, readValue( v ) );
+				// read the value but ignore it.
+				Object obj = readValue( Validator_object.get( 0 ) );
+				if (false)
+					sv.put( key, obj );
 			}
 		}
 	}
@@ -216,12 +213,59 @@ final public class BinaryTaggedDataInput extends BinaryTaggedData
 	
 	private Type readType() throws IOException
 	{
-		Integer id = readIntegerValue();
-		Type t = vf.getType( id );
-		if (t == null)
-			t = new Type( id, id.toString() );
-		return t;
+		Object obj = readValue( intOrStrValidator, false );
+		
+		if (obj instanceof Integer)
+		{
+			Integer id = (Integer) obj;
+			Type type = vf.getType( id );
+			
+			if (type == null)
+				type = new Type( id, id.toString() );
+			
+			return type;
+		}
+		
+		Assertion.check( obj instanceof String, "obj instanceof String" );
+		String name = (String) obj;
+		Type type = vf.getType( name );
+		
+		if (type == null)
+			type = new Type( name );
+		
+		return type;
 	}
+
+	private Field readField( Type type ) throws IOException
+	{
+		Object obj = readValue( intOrStrValidator, true );
+		
+		if (obj == NONE)
+			return null;
+		
+		if (obj instanceof Integer)
+		{
+			Integer id = (Integer) obj;
+			Field field = type.getField( id );
+			
+			if (field == null)
+				field = new Field( id, id.toString() );
+			
+			return field;
+		}
+		
+		Assertion.check( obj instanceof String, "obj instanceof String" );
+		String name = (String) obj;
+		Field field = type.getField( name );
+		
+		if (field == null)
+			field = new Field( name );
+		
+		return field;
+	}
+	
+	private final Validator intOrStrValidator =
+		new ComboValidator( Validator_int.get( 0 ), Validator_string.get( 0 ) );
 	
 	private int readLength() throws IOException
 	{

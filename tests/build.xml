@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<project name="etch-tests" basedir="." default="build-all">
+<project name="etch-tests" basedir="." default="help">
     <description>Functional Tests</description>
     <property name="Etch.basedir" location="${basedir}/.." />
     <import file="${Etch.basedir}/build-support/etch.includes.xml" />
+    <target name="help"><echo>Please select a target...</echo></target>
     
     <!-- import etch task -->
     <taskdef name="etch"
@@ -16,19 +17,20 @@
     <property name="bin"               location="${target}/bin" />
     <property name="generated-sources" location="${target}/generated-sources/" />
     <property name="classes"           location="${target}/classes" />
-    <property name="test-results"      location="${target}/test-results" />        
+    <property name="test-results"      location="${target}/test-results" />
+    <property name="nunit-results"     location="${target}/nunit-results" />
 
     <!-- macros -->
     <macrodef name="etch-test">
         <attribute name="home" default="${Etch.HOME}" />
         <attribute name="binding" />
         <attribute name="file" />
-        <attribute name="what" default="both" />
-        <attribute name="output" default="${generated-sources}/main/etch/@{binding}" />
-        <attribute name="templateoutput" default="${src}/main/@{binding}" />
+        <attribute name="what" default="both, intf" />
+        <attribute name="outputDir" default="${generated-sources}/main/etch/@{binding}" />
+        <attribute name="templateOutputDir" default="${src}/main/@{binding}" />
         <element name="etchelements" implicit="true" optional="true" />
         <sequential>
-            <etch home="@{home}" binding="@{binding}" output="@{output}" what="@{what}" file="@{file}" >
+            <etch home="@{home}" binding="@{binding}" outputDir="@{outputDir}" what="@{what}" file="@{file}" >
                 <etchelements />
             </etch>
         </sequential>
@@ -43,17 +45,17 @@
             <etch-test binding="@{binding}" file="${src}/main/etch/Async.etch" />
             <etch-test binding="@{binding}" file="${src}/main/etch/Bar.etch" />
             <etch-test binding="@{binding}" file="${src}/main/etch/Baz.etch" />
-            <!-- <etch-test binding="@{binding}" file="${src}/main/etch/BigIdl.etch" /> -->
+            <etch-test binding="@{binding}" file="${src}/main/etch/BigIdl.etch" />
             <etch-test binding="@{binding}" file="${src}/main/etch/Closing.etch" />
             <etch-test binding="@{binding}" file="${src}/main/etch/Cuae.etch" />
             <etch-test binding="@{binding}" file="${src}/main/etch/Foo.etch" />
             <etch-test binding="@{binding}" file="${src}/main/etch/Inheritance.etch" />
-            <etch-test binding="@{binding}" what="both,force,impl,main" file="${src}/main/etch/Test1.etch" />
+            <etch-test binding="@{binding}" what="all,force" file="${src}/main/etch/Test1.etch" />
             <etch-test binding="@{binding}" file="${src}/main/etch/Test2.etch" />
             <etch-test binding="@{binding}" file="${src}/main/etch/Test3.etch" />
             <etch-test binding="@{binding}" file="${src}/main/etch/Test4.etch" />
             <etch-test binding="@{binding}" file="${src}/main/etch/Test6.etch" />
-            <etch-test binding="@{binding}" what="both,force,impl,main" file="${src}/main/etch/TestIncludes.etch" />
+            <etch-test binding="@{binding}" what="all,force" file="${src}/main/etch/TestIncludes.etch" />
             <etch-test binding="@{binding}" file="${src}/main/etch/Types.etch" />
         
             <!-- negative tests -->
@@ -70,6 +72,7 @@
         <mkdir dir="${generated-sources}" />
         <mkdir dir="${classes}" />
         <mkdir dir="${test-results}" />
+        <mkdir dir="${nunit-results}" />
     </target>
     
     <!-- build the server -->
@@ -92,18 +95,10 @@
             </fileset>
             <fileset dir="${generated-sources}/main/etch/java" >
                 <include name="**/*.java" />
-                <!-- <exclude name="**/*Test1*.java" /> -->
-                <!-- <exclude name="**/*TestXml*.java" /> -->
-                <!-- <exclude name="**/*TestIncludes*.java" /> -->
-                
+                <exclude name="**/*BigIdl*.java" />
             </fileset>
             <testsources dir="${src}/test/java" >
-                <include name="**/FakeTest1.java" />
-                <include name="**/Test*.java" />
-                <!-- <exclude name="**/*Test1*.java" /> -->
-                <!-- <exclude name="**/*Test*Xml*.java" /> -->
-                <!-- <exclude name="**/*Test*Includes*.java" /> -->
-
+                <include name="**/*.java" />
             </testsources>
         </initialize-clover>
     </target>
@@ -115,14 +110,10 @@
             <src path="${generated-sources}/main/etch/java" />
             <src path="${src}/main/java" />
             <src path="${src}/test/java" />
-            <!-- <exclude name="**/*Test1*.java" /> -->
-            <!-- <exclude name="**/*Test*Xml*.java" /> -->
-            <!-- <exclude name="**/*Test*Includes*.java" /> -->
-                      
             <classpath>
                 <pathelement location="${Etch.HOME}/lib/${etch-java-runtime.jar}" />
-                <pathelement location="${Etch.HOME}/lib/${etch-compiler.jar}" />
                 <pathelement location="${Etch.dependency.junit.jar}" />
+                <pathelement location="${Etch.HOME}/lib/${etch-compiler.jar}" />
             </classpath>
         </javac>
     </target>
@@ -133,10 +124,9 @@
             errorProperty="build.tests.fail" failureProperty="build.tests.fail">
             <classpath>
                 <pathelement location="${classes}" />
-                <pathelement location="${Etch.dependency.junit.jar}" />
                 <pathelement location="${Etch.HOME}/lib/${etch-java-runtime.jar}" />
+                <pathelement location="${Etch.dependency.junit.jar}" />
                 <pathelement location="${Etch.HOME}/lib/${etch-compiler.jar}" />
-
                 <!-- TODO: remove if clover not available -->
                 <pathelement location="${Etch.dependency.clover.jar}"/>
             </classpath>
@@ -144,22 +134,38 @@
             <batchtest fork="true" todir="${test-results}">
                 <fileset dir="${src}/test/java">
                     <include name="**/Test*.java" />
-
-                    <!-- <include name="**/FakeTest1.java" /> -->
                     <!-- TODO   debug Test*Xml failures -->
-                    <exclude name="**/*Test*Xml*.java" />
-                    
+                    <exclude name="**/Test*Xml.java" />
                 </fileset>
             </batchtest>
         </junit>
     </target>
     
-    <target name="build-csharp" depends="generate-csharp" >
+    <target name="build-csharp" depends="generate-csharp,build-tests-csharp"
+        if="BUILD.csharp" />
     
+    <target name="build-tests-csharp"
+        depends="build-tests-csharp-dotnet,build-tests-csharp-mono" />
+    
+    <target name="build-tests-csharp-dotnet" if="USE.dotnet" >
+        <msbuild buildfile="${src}/test/csharp/TestsProj/TestsProj.csproj">
+            <property name="Configuration" value="${Etch.build.target}" />
+        </msbuild>
     </target>
     
-    <target name="test-csharp" depends="build-csharp" >
-    
+    <target name="build-tests-csharp-mono" if="USE.mono" >
+        <echo message="TODO: build w/ mono" />
+    </target>
+
+    <target name="test-csharp" depends="build-csharp" if="BUILD.csharp" >
+        <mkdir dir="${nunit-results}" />
+
+        <nunit xmlout="${nunit-results}/NUnitResults.xml">
+            <testassembly name="${src}/test/csharp/TestsProj/bin/${Etch.build.target}/Tests.dll" />
+        </nunit>
+
+        <xslt style="${Etch.buildSupportDirectory}/NUnitToJUnit.xsl"
+                in="${nunit-results}/NUnitResults.xml" out="${test-results}/TEST-NUnitResults.xml" />
     </target>
     
     <target name="build-xml" depends="generate-xml" >
@@ -175,14 +181,12 @@
 
     <!-- run unit tests -->
     <target name="test" depends="build,test-java,test-csharp,test-xml" />
-
-    <!-- build everything -->
-    <target name="debug" depends="test" />
-    <target name="release" depends="test" />
         
     <!-- clean -->    
     <target name="clean">
         <delete dir="${target}" quiet="true" />
+        <delete dir="${src}/test/csharp/TestsProj/obj" />
+        <delete dir="${src}/test/csharp/TestsProj/bin" />
     </target>
 
 </project>

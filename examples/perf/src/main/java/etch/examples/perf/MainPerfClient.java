@@ -47,13 +47,15 @@ public class MainPerfClient implements PerfClientFactory, PerfServerFactory
 		Log.report( "MainPerfClient" );
 		
 		final String uri = "tcp://localhost:4004";
-		final boolean startListener = false;
+		
+		final boolean startListener = args.length == 1
+			&& args[0].equals( "startListener" );
 		
 		Transport<ServerFactory> listener;
 		
 		if (startListener)
 		{
-			listener= PerfHelper.newListener( uri, null, new MainPerfClient() );
+			listener = PerfHelper.newListener( uri, null, new MainPerfClient() );
 			listener.transportControl( Transport.START_AND_WAIT_UP, 4000 );
 		}
 		else

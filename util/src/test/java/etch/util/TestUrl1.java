@@ -24,7 +24,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -34,7 +33,7 @@ import org.junit.Test;
  * @author jacapps
  *
  */
-public class testURL
+public class TestUrl1
 {
 	String nullScheme = null;
 	String nullUser = null;
@@ -79,10 +78,7 @@ public class testURL
 			int numParams, String password, Integer port,
 			String scheme, boolean hasTerms, String uri, String user)
 	{
-
-		int count = 0;
-
-		/** Verify all fields in url against expected values. */
+		// Verify all fields in url against expected values.
 		assertEquals(scheme, url.getScheme());
 		assertEquals(user, url.getUser());
 		assertEquals(password, url.getPassword());
@@ -91,17 +87,8 @@ public class testURL
 		assertEquals(uri, url.getUri());
 		assertEquals(fragment, url.getFragment());
 
-		/**
-		 * Verify that the number of params matches the expected value
-		 */
-		Iterator<String> i = url.getParams();
-
-		while(i.hasNext())
-		{
-			i.next();
-			count++;
-		}
-
+		// Verify that the number of params matches the expected value
+		int count = url.getParams().length;
 		assertEquals(count, numParams);
 
 		/**
@@ -543,14 +530,28 @@ public class testURL
 		/** Term does not exists and default value is false */
 		assertFalse(url.getBooleanTerm("term5",false));
 
-		/** Term blank */
-		assertFalse(url.getBooleanTerm("",false));
-
-		/** Term null */
-		assertFalse(url.getBooleanTerm(null,false));
-
 		/** Term invalid */
 		assertFalse(url.getBooleanTerm("&&?#",false));
+	}
+	
+	/** @throws Exception */
+	@Test(expected = IllegalArgumentException.class )
+	public void testGetBooleanTerm4() throws Exception
+	{
+		URL url = new URL("tcp://admin:metreos@localhost:10000/defUri;param1;param2?term1=true&term2=false&term3=other#defFragment");
+
+		/** Term null */
+		url.getBooleanTerm(null);
+	}
+	
+	/** @throws Exception */
+	@Test(expected = IllegalArgumentException.class )
+	public void testGetBooleanTerm5() throws Exception
+	{
+		URL url = new URL("tcp://admin:metreos@localhost:10000/defUri;param1;param2?term1=true&term2=false&term3=other#defFragment");
+
+		/** Term blank */
+		url.getBooleanTerm("");
 	}
 
 	/**
@@ -566,11 +567,26 @@ public class testURL
 		/** Term exists and is double */
 		assertEquals(1.7976931348623157e308d, url.getDoubleTerm("term1"));
 
-		/** Term is null */
-		assertEquals(null, url.getDoubleTerm(null));
-
 		/** Term does not exist */
 		assertEquals(null, url.getDoubleTerm("DNE"));
+	}
+	
+	/** @throws Exception */
+	@Test(expected = IllegalArgumentException.class )
+	public void testGetDoubleTerm2() throws Exception
+	{
+		URL url = new URL("tcp://admin:metreos@localhost:10000/defUri;param1;param2?term1=1.7976931348623157e308d&term2=1d#defFragment");
+
+		url.getDoubleTerm(null);
+	}
+	
+	/** @throws Exception */
+	@Test(expected = IllegalArgumentException.class )
+	public void testGetDoubleTerm3() throws Exception
+	{
+		URL url = new URL("tcp://admin:metreos@localhost:10000/defUri;param1;param2?term1=1.7976931348623157e308d&term2=1d#defFragment");
+
+		url.getDoubleTerm("");
 	}
 
 	/**
@@ -623,11 +639,26 @@ public class testURL
 		/** Term exists and is integer */
 		assertEquals(1, url.getIntegerTerm("term1"));
 
-		/** Term is null */
-		assertEquals(null, url.getIntegerTerm(null));
-
 		/** Term does not exist */
 		assertEquals(null, url.getIntegerTerm("DNE"));
+	}
+	
+	/** @throws Exception */
+	@Test(expected = IllegalArgumentException.class)
+	public void testGetIntegerTerm5() throws Exception
+	{
+		URL url = new URL("tcp://admin:metreos@localhost:10000/defUri;param1;param2?term1=1&term2=10#defFragment");
+
+		url.getIntegerTerm(null);
+	}
+	
+	/** @throws Exception */
+	@Test(expected = IllegalArgumentException.class)
+	public void testGetIntegerTerm6() throws Exception
+	{
+		URL url = new URL("tcp://admin:metreos@localhost:10000/defUri;param1;param2?term1=1&term2=10#defFragment");
+
+		url.getIntegerTerm("");
 	}
 
 	/**
@@ -645,12 +676,6 @@ public class testURL
 
 		/** Term does not exist and default value is integer */
 		assertEquals(1000,url.getIntegerTerm("term4",1000));
-
-		/** Term blank */
-		assertEquals(1000,url.getIntegerTerm("",1000));
-
-		/** Term null */
-		assertEquals(1000,url.getIntegerTerm(null,1000));
 
 		/** Term invalid */
 		assertEquals(1000,url.getIntegerTerm("&&?#",1000));
@@ -696,9 +721,7 @@ public class testURL
 	public void testGetParams1() throws Exception
 	{
 		URL url = new URL("tcp://localhost:10000");
-
-		Iterator<String> i = url.getParams();
-		assertFalse(i.hasNext());
+		assertEquals( 0, url.getParams().length );
 
 	}
 
@@ -710,47 +733,17 @@ public class testURL
 	@Test
 	public void testGetParams2() throws Exception
 	{
-		int count = 0;
-
 		URL url = new URL("tcp://localhost:10000/defUri;param1=value1;param2=value2;param3");
-
-		/** Params exist */
-		Iterator<String> i = url.getParams();
-
-		while (i.hasNext())
-		{
-			i.next();
-			count++;
-		}
-
-		assertEquals(3,count);
-		count = 0;
+		assertEquals( 3, url.getParams().length );
 
 		url.removeParam("param1=");
-		i = url.getParams();
-
-		while(i.hasNext())
-		{
-			i.next();
-			count++;
-		}
-
-		assertEquals(2,count);
-		count = 0;
+		assertEquals( 2, url.getParams().length );
 
 		url.removeParam("param2=");
-		i = url.getParams();
-
-		while(i.hasNext())
-		{
-			i.next();
-			count++;
-		}
-
-		assertEquals(1,count);
+		assertEquals( 1, url.getParams().length );
 
 		url.removeParam("param3");
-		assertFalse(url.hasParams());
+		assertEquals( 0, url.getParams().length );
 	}
 
 	/**
@@ -874,8 +867,7 @@ public class testURL
 	public void testGetTermNames1() throws Exception
 	{
 		URL url = new URL();
-		Iterator<String> i = url.getTermNames();
-		assertFalse(i.hasNext());
+		assertEquals( 0, url.getTermNames().length );
 	}
 
 	/**
@@ -888,12 +880,8 @@ public class testURL
 	{
 		URL url = new URL("tcp://admin:metreos@localhost:10000/defUri;param1;param2?term1=value1&term2=value2#defFragment");
 
-		Iterator<String> i = url.getTermNames();
-
-		while(i.hasNext())
+		for( String s: url.getTermNames())
 		{
-			String s = i.next();
-
 			assertTrue(s.equals("term1") || s.equals("term2"));
 		}
 	}
@@ -907,8 +895,7 @@ public class testURL
 	public void testGetTerms1() throws Exception
 	{
 		URL url = new URL();
-		Iterator<String> i = url.getTerms("term1");
-		assertFalse(i.hasNext());
+		assertEquals( 0, url.getTerms("term1").length );
 	}
 
 	/**
@@ -921,14 +908,8 @@ public class testURL
 	{
 		URL url = new URL("tcp://admin:metreos@localhost:10000/defUri;param1;param2?term1=value1&term2=value2#defFragment");
 
-		Iterator<String> i = url.getTerms("term1");
-
-		while(i.hasNext())
-		{
-			String s = i.next();
-
-			assertTrue(s.equals("value1"));
-		}
+		assertEquals( 1, url.getTerms("term1").length );
+		assertEquals( "value1", url.getTerms("term1")[0] );
 	}
 
 	/**
@@ -1578,7 +1559,7 @@ public class testURL
 	 *
 	 * @throws Exception
 	 */
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testSetPassword4() throws Exception
 	{
 		URL url = new URL("tcp://admin:metreos@localhost:10000");

@@ -96,5 +96,23 @@ namespace Etch.Util
                 return c - 'a' + 10;
             throw new ArgumentException( "bad hex char "+c );
         }
+
+        public static bool Eq(string a, string b)
+        {
+            if (ReferenceEquals(a, b))
+                return true;
+            if (a == null || b == null)
+                return false;
+            return a.Equals(b);
+        }
+
+        public static bool EqIgnoreCase(string a, string b)
+        {
+            if (ReferenceEquals(a, b))
+                return true;
+            if (a == null || b == null)
+                return false;
+            return a.Equals(b, StringComparison.CurrentCultureIgnoreCase);
+        }
     }
 }

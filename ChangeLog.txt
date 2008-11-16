@@ -1,0 +1,156 @@
+-------------
+Release 1.0.1
+-------------
+
+r80 | sccomer | 2008-09-08 15:33:33 CDT
+
+added antlib resource for etch ant plugin, changed chat example to use it.
+----------------------------------------------------------------------------
+r79 | sccomer | 2008-09-08 13:40:12 CDT
+
+add csharp build to dist chat example.
+----------------------------------------------------------------------------
+r78 | sccomer | 2008-09-08 13:00:36 CDT
+
+custom README.txt for chat dist and make the directions all very similar.
+----------------------------------------------------------------------------
+r77 | sccomer | 2008-09-08 12:34:02 CDT
+
+added chat source to the distribution.
+----------------------------------------------------------------------------
+r76 | dixson3 | 2008-09-08 10:30:32 CDT
+
+Filter 'etch-maven-install.bat' to include the correct version number for etch
+Update csharp-unit-test targets to only run when 'BUILD.csharp' is set
+
+----------------------------------------------------------------------------
+r75 | sccomer | 2008-09-07 10:19:23 CDT
+
+updated ChangeLog.txt to the current state of the release.
+----------------------------------------------------------------------------
+
+r74 | sccomer | 2008-09-07 09:56:18 CDT
+r73 | sccomer | 2008-09-05 16:03:49 CDT
+r72 | sccomer | 2008-09-05 15:32:36 CDT
+r71 | sccomer | 2008-09-05 15:31:46 CDT
+r70 | dixson3 | 2008-09-05 08:31:53 CDT
+r69 | sccomer | 2008-09-04 18:03:04 CDT
+r68 | sccomer | 2008-09-04 18:02:24 CDT
+r67 | sccomer | 2008-09-04 09:16:38 CDT
+r66 | sccomer | 2008-09-04 09:14:53 CDT
+r65 | sccomer | 2008-09-02 16:25:03 CDT
+r64 | dixson3 | 2008-09-02 15:44:35 CDT
+r63 | sccomer | 2008-09-02 14:39:23 CDT
+r62 | sccomer | 2008-09-02 14:07:09 CDT
+r61 | sccomer | 2008-09-02 13:42:47 CDT
+r60 | dixson3 | 2008-09-02 11:16:17 CDT
+r59 | sccomer | 2008-09-02 10:41:54 CDT
+
+(various improvements to build scripts.)
+----------------------------------------------------------------------------
+r58 | sccomer | 2008-09-02 10:27:40 CDT
+
+make TestEtchMain.test7 dump msgs upon failure.
+----------------------------------------------------------------------------
+r57 | sccomer | 2008-09-02 07:49:21 CDT
+r56 | sccomer | 2008-09-02 07:35:20 CDT
+r55 | dixson3 | 2008-08-29 21:52:03 CDT
+r54 | dixson3 | 2008-08-29 15:48:01 CDT
+r53 | sccomer | 2008-08-29 10:37:05 CDT
+r52 | sccomer | 2008-08-28 16:05:49 CDT
+r51 | sccomer | 2008-08-28 15:40:26 CDT
+r50 | sccomer | 2008-08-28 14:23:50 CDT
+r49 | sccomer | 2008-08-28 11:04:32 CDT
+
+(various improvements to build scripts.)
+----------------------------------------------------------------------------
+r48 | sccomer | 2008-08-28 10:20:18 CDT
+
+merging changes to various build.xml from release 1.0.0 rev 5-6: mono support
+is not fully baked, use -DUSE.mono to test
+----------------------------------------------------------------------------
+r47 | sccomer | 2008-08-28 09:00:13 CDT
+
+fixed problem with java generated remote rejecting exceptions which are
+subclasses of allowed exceptions.
+----------------------------------------------------------------------------
+r46 | sccomer | 2008-08-27 19:31:44 CDT
+
+fix several bugs and add missing functionality to url so that java and csharp
+versions work the same.
+----------------------------------------------------------------------------
+r45 | sccomer | 2008-08-27 12:44:50 CDT
+
+if last chance exception handler in EtchMain catches an exception, it should
+print it.
+
+correct spelling of csharp Validator.Level enum element MISSING_OK.
+
+implement name for types and fields in csharp BinaryTaggedDataOutput.
+
+add named types and fields testing for csharp binary tagged data.
+----------------------------------------------------------------------------
+r44 | sccomer | 2008-08-26 13:29:24 CDT
+
+fix csharp BinaryTaggedDataInput to support names for types and fields.
+----------------------------------------------------------------------------
+r43 | sccomer | 2008-08-26 10:24:49 CDT
+
+merge compiler driver changes (and a few misc updates to unit tests) from
+branch sccomer-compiler-1 (revs 20-42) to trunk.
+----------------------------------------------------------------------------
+r28 | sccomer | 2008-08-22 11:39:29 CDT
+
+support for java BinaryTaggedDataInput and BinaryTaggedDataOutput using names
+instead of hashes of names for types and fields.
+----------------------------------------------------------------------------
+r27 | sccomer | 2008-08-22 11:38:24 CDT
+
+change java testUrl to better name (TestUrl1).
+----------------------------------------------------------------------------
+r26 | sccomer | 2008-08-22 11:37:41 CDT
+
+changed java codes from using Integer constructor to Integer.valueOf.
+----------------------------------------------------------------------------
+r25 | sccomer | 2008-08-22 11:36:51 CDT
+
+added command line control of starting listener also.
+----------------------------------------------------------------------------
+r24 | sccomer | 2008-08-22 11:35:45 CDT
+
+fix up java URL support of non-string terms.
+
+fully support Boolean in java URL.
+
+properly implement in java URL handling of remove( name, value ) when value
+is a singleton.
+----------------------------------------------------------------------------
+r9 | sccomer | 2008-08-01 15:37:49 CDT
+
+corrected csharp project dependences.
+
+corrected port numbers in distmap test.
+----------------------------------------------------------------------------
+r8 | sccomer | 2008-08-01 14:17:27 CDT
+
+integrated remaining examples into csharp build.
+
+bumped version numbers of expected build to 1.0.1.
+----------------------------------------------------------------------------
+r7 | sccomer | 2008-07-31 15:58:29 CDT
+
+added csharp build of most of the examples.
+
+substitute DOTNET_HOME environment variable for gnarley dot net path in various
+build.xml. this allows disabling the csharp build for those that don't want it.
+
+example ant build setup (antsetup.bat), shows which environment variable and
+path manipulations you need for a build. also shows which ones are optional.
+
+corrected port numbers of distmap example.
+----------------------------------------------------------------------------
+Gaurav was Here
+
+-------------
+Release 1.0.0
+-------------

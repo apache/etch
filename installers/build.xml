@@ -24,9 +24,12 @@
 
     <!-- BUILD TARGET -->
 
-    <target name="do-license">
-        <copy todir="${Etch.dist}" >
-            <fileset dir="${Etch.basedir}" includes="LICENSE.txt" />
+    <target name="do-txts">
+        <copy file="${Etch.basedir}/LICENSE.txt" todir="${Etch.dist}" />
+        <copy file="${Etch.basedir}/ChangeLog.txt" todir="${Etch.dist}" />
+        <copy file="${Etch.basedir}/DIST_README.txt" tofile="${Etch.dist}/README.txt" />
+        <copy file="${proj}/etch-maven-install.bat" todir="${Etch.dist}/maven" >
+            <filterset refid="Etch.buildTokens" />
         </copy>
     </target>
 
@@ -56,7 +59,7 @@
         <makensis destfile="${target}/${packageName}-setup.exe" root="${Etch.basedir}" dir="installers" script="etch-full-installer" />        
     </target>
 
-    <target name="do-build" depends="do-license,do-nsis,do-zips" />
+    <target name="do-build" depends="do-txts,do-nsis,do-zips" />
 
     <!-- TEST TARGET -->
     <target name="do-test">

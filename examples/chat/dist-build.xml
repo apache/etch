@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project name="etch-chat-example" basedir="." default="build">
+    <description>Chat Example</description>
+
+    <property name="etch.home" location="${basedir}/../.."/>
+    <property name="etch.version" value="1.0.1"/>
+    <property name="etch-java-runtime-name" value="etch-java-runtime-${etch.version}.jar"/>
+
+    <property name="etch-ant-plugin.jar"   location="${etch.home}/lib/etch-ant-plugin-${etch.version}.jar"/>
+    <property name="etch-java-runtime.jar" location="${etch.home}/lib/${etch-java-runtime-name}"/>
+    <property name="etch.dll"              location="${etch.home}/lib/Etch.dll"/>
+
+    <property name="src"               location="${basedir}/src"/>
+    <property name="src-main-etch"     location="${src}/main/etch"/>
+    <property name="src-main-java"     location="${src}/main/java"/>
+    <property name="src-main-csharp"   location="${src}/main/csharp"/>
+    <property name="target"            location="${basedir}/target"/>
+    <property name="generated-sources" location="${target}/generated-sources"/>
+    <property name="gensrc-main-etch-java" location="${generated-sources}/main/etch/java"/>
+    <property name="gensrc-main-etch-csharp" location="${generated-sources}/main/etch/csharp"/>
+    <property name="classes"           location="${target}/classes"/>
+    <property name="bin"               location="${target}/bin"/>
+    
+    <condition property="BUILD.csharp" >
+        <os family="windows" />
+    </condition>    
+
+    <taskdef
+    	resource="etch/tools/ant/etch.xml"
+        classpath="${etch-ant-plugin.jar}"/>
+
+    <target name="build" depends="build-java, build-csharp, done"/>
+
+    <target name="build-java" depends="gensrc-java">
+        <javac destdir="${classes}" source="1.5" debug="true">
+            <classpath>
+                <pathelement location="${etch-java-runtime.jar}"/>
+            </classpath>
+            <src path="${src-main-java}"/>
+            <src path="${gensrc-main-etch-java}"/>
+        </javac>
+
+        <jar jarfile="${bin}/chat.jar">
+            <manifest>
+                <attribute name="Class-Path" value="${etch-java-runtime-name}"/>
+            </manifest>
+            <fileset dir="${classes}"/>
+        </jar>
+
+        <copy todir="${bin}" file="${etch-java-runtime.jar}"/>
+    </target>
+
+    <target name="done">
+        <echo>
+
+To run java chat, open a cmd window and run these commands:
+
+> cd target\bin
+> start java -cp chat.jar etch.examples.chat.MainChatListener
+> start java -cp chat.jar etch.examples.chat.MainChatClient
+> start java -cp chat.jar etch.examples.chat.MainChatClient
+
+Two chat clients will be started; there is a help command;
+login as a different user in each with any password; they
+can chat with each other!
+
+To run csharp chat, open a cmd window and run these commands:
+
+> cd target\bin
+> start ChatListener.exe
+> start ChatClient.exe
+> start ChatClient.exe
+
+You can mix and match the various clients and listeners.
+
+        </echo>
+    </target>
+
+    <target name="build-csharp" depends="gensrc-csharp" if="BUILD.csharp" >
+        <csc
+                debug="true"
+                warnLevel="1"
+                unsafe="false"
+                targetType="exe"
+                incremental="false"
+                mainClass = "etch.examples.chat.MainChatClient"
+                destFile="${bin}/ChatClient.exe">
+            <src dir="${src-main-csharp}/ChatClientProj" includes="**/*.cs"/>
+            <src dir="${src-main-csharp}/etch.examples.chat" includes="**/*.cs"/>
+            <src dir="${gensrc-main-etch-csharp}" includes="**/*.cs"/>
+            <reference file="${etch.dll}"/>
+        </csc>
+
+        <csc
+                debug="true"
+                warnLevel="1"
+                unsafe="false"
+                targetType="exe"
+                incremental="false"
+                mainClass = "etch.examples.chat.MainChatListener"
+                destFile="${bin}/ChatListener.exe">
+            <src dir="${src-main-csharp}/ChatListenerProj" includes="**/*.cs"/>
+            <src dir="${src-main-csharp}/etch.examples.chat" includes="**/*.cs"/>
+            <src dir="${gensrc-main-etch-csharp}" includes="**/*.cs"/>
+            <reference file="${etch.dll}"/>
+        </csc>
+
+        <copy todir="${bin}" file="${etch.dll}"/>
+    </target>
+
+    <target name="gensrc" depends="gensrc-java, gensrc-csharp"/>
+
+    <target name="gensrc-java" depends="init">
+        <etch
+            home="${etch.home}"
+            binding="java"
+            quiet="true"
+            outputDir="${gensrc-main-etch-java}"
+            file="${src-main-etch}/Chat.etch"/>
+    </target>
+
+    <target name="gensrc-csharp" depends="init">
+        <etch
+            home="${etch.home}"
+            binding="csharp"
+            quiet="true"
+            outputDir="${gensrc-main-etch-csharp}"
+            file="${src-main-etch}/Chat.etch"/>
+    </target>
+
+    <target name="init">
+        <mkdir dir="${target}"/>
+        <mkdir dir="${generated-sources}"/>
+        <mkdir dir="${gensrc-main-etch-java}"/>
+        <mkdir dir="${gensrc-main-etch-csharp}"/>
+        <mkdir dir="${classes}"/>
+        <mkdir dir="${bin}"/>
+    </target>
+
+    <target name="clean">
+        <delete dir="${target}"/>
+    </target>
+</project>

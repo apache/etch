@@ -186,20 +186,8 @@ namespace Etch.Util
             string testUrl = "tcp://user:password@127.0.0.1:4001/myUri";
             URL url = new URL( testUrl );
             Assert.IsFalse( url.HasParams() );
-            Assert.IsNull( url.GetParam( "PARAM1=" ) );
-
-            // get empty iterator
-            IEnumerator<String> it = url.GetParams();
-            Assert.IsFalse( it.MoveNext() );
-            try
-            {
-                String s = it.Current;
-                Assert.Fail();
-            }
-            catch ( Exception )
-            {
-                Assert.IsTrue( true );
-            }
+            Assert.AreEqual(0, url.GetParams().Length);
+            Assert.IsNull(url.GetParam("PARAM1="));
 
             testUrl = "tcp://user:password@127.0.0.1:4001/cuae;PARAM1=1;PARAM2=2";
             url = new URL( testUrl );
@@ -208,37 +196,39 @@ namespace Etch.Util
             Assert.AreEqual( "PARAM2=2", url.GetParam( "PARAM2" ) );
             
             // get iterator over params
-            it = url.GetParams();
-            Assert.IsTrue( it.MoveNext() );
-            Assert.AreEqual( "PARAM1=1", it.Current );
-            Assert.IsTrue( it.MoveNext() );
-            Assert.AreEqual( "PARAM2=2", it.Current );
-            Assert.IsFalse( it.MoveNext() );
+            string[] p = url.GetParams();
+            Assert.AreEqual(2, p.Length);
+            Assert.IsTrue(Find("PARAM1=1", p));
+            Assert.IsTrue(Find("PARAM2=2", p));
 
             // add a new param
             url.AddParam( "0123456789" );
             Assert.AreEqual( "0123456789", url.GetParam( "0123" ) );
-            it = url.GetParams();
-            Assert.IsTrue( it.MoveNext() );
-            Assert.IsTrue( it.MoveNext() );
-            Assert.IsTrue( it.MoveNext() );
-            Assert.AreEqual( "0123456789", it.Current );
-            Assert.IsFalse( it.MoveNext() );
-            //Assert.AreEqual( "tcp://user:password@127.0.0.1:4001/cuae;PARAM1=1;PARAM2=2;0123456789", url.ToString() );
+            p = url.GetParams();
+            Assert.AreEqual(3, p.Length);
+            Assert.IsTrue(Find("PARAM1=1", p));
+            Assert.IsTrue(Find("PARAM2=2", p));
+            Assert.IsTrue(Find("0123456789", p));
 
             // remove a param
             Assert.AreEqual( "PARAM1=1", url.RemoveParam( "PARAM1" ) );
-            Assert.IsNull( url.GetParam( "PARAM1=" ) );
-            it = url.GetParams();
-            Assert.IsTrue( it.MoveNext() );
-            Assert.IsTrue( it.MoveNext() );
-            Assert.AreEqual( "0123456789", it.Current );
-            Assert.IsFalse( it.MoveNext() );
-            //Assert.AreEqual( "tcp://user:password@127.0.0.1:4001/cuae;PARAM2=2;0123456789", url.ToString() );
+            Assert.IsNull(url.GetParam("PARAM1="));
+            p = url.GetParams();
+            Assert.AreEqual(2, p.Length);
+            Assert.IsTrue(Find("PARAM2=2", p));
+            Assert.IsTrue(Find("0123456789", p));
 
             // clear all params
             url.ClearParams();
             Assert.IsFalse( url.HasParams() );
+        }
+
+        private bool Find(string s, string[] a)
+        {
+            foreach (string x in a)
+                if (x.Equals(s))
+                    return true;
+            return false;
         }
 
         [Test]
@@ -250,18 +240,35 @@ namespace Etch.Util
 
             testUrl = "tcp://user:password@127.0.0.1:4001/cuae?term1=500";
             url = new URL( testUrl );
+
             Assert.IsTrue( url.HasTerms() );
             Assert.IsTrue( url.HasTerm( "term1" ) );
             Assert.IsTrue( url.HasTerm( "term1", "500" ) );
-            Assert.IsTrue( url.HasTerm( "term1", 500 ) );
-            Assert.IsFalse( url.HasTerm( "term1", "1000" ) );
-            Assert.IsFalse( url.HasMultipleValues( "term1" ) );
-            Assert.AreEqual( "500", url.GetTerm( "term1" ) );
-            Assert.AreEqual( 500, url.GetIntegerTerm( "term1" ) );
+            Assert.IsTrue(url.HasTerm("term1", 500));
+            Assert.IsFalse(url.HasTerm("term1", "1000"));
+            Assert.IsFalse(url.HasTerm("term1", 1000));
+            Assert.IsFalse(url.HasMultipleValues("term1"));
+            Assert.AreEqual("500", url.GetTerm("term1"));
+            Assert.AreEqual(500, url.GetIntegerTerm("term1"));
+            Assert.AreEqual("500", url.GetTerm("term1", "x"));
+            Assert.AreEqual(500, url.GetIntegerTerm("term1", 2));
+
+            Assert.IsFalse(url.HasTerm("term2"));
+            Assert.IsFalse(url.HasTerm("term2", "500"));
+            Assert.IsFalse(url.HasTerm("term2", 500));
+            Assert.IsNull(url.GetTerm("term2"));
+            Assert.IsNull(url.GetIntegerTerm("term2"));
+            Assert.AreEqual("x", url.GetTerm("term2", "x"));
+            Assert.AreEqual(2, url.GetIntegerTerm("term2", 2));
 
             // multiple values of the same term
-            url.AddTerm( "term1", 500.500 );
-            Assert.IsTrue( url.HasMultipleValues( "term1" ) );
+            url.AddTerm( "term1", 500.5 );
+            Assert.IsTrue(url.HasMultipleValues("term1"));
+            Assert.IsTrue(url.HasTerm("term1"));
+            Assert.IsTrue(url.HasTerm("term1", "500"));
+            Assert.IsTrue(url.HasTerm("term1", 500));
+            Assert.IsTrue(url.HasTerm("term1", "500.5"));
+            Assert.IsTrue(url.HasTerm("term1", 500.5));
             try
             {
                 url.GetTerm( "term1" );
@@ -269,14 +276,12 @@ namespace Etch.Util
             }
             catch ( Exception )
             {
-                Assert.IsTrue( true );
+                // ignore exception
             }
-            IEnumerator<String> it = url.GetTerms( "term1" );
-            Assert.IsTrue( it.MoveNext() );
-            Assert.AreEqual( "500", it.Current );
-            Assert.IsTrue( it.MoveNext() );
-            Assert.AreEqual( "500.5", it.Current );
-            Assert.IsFalse( it.MoveNext() );
+            string[] t = url.GetTerms( "term1" );
+            Assert.AreEqual(2, t.Length);
+            Assert.AreEqual( "500", t[0] );
+            Assert.AreEqual( "500.5", t[1] );
 
             // add another term => multiple terms
             url.AddTerm( "term2", "value" );
@@ -285,21 +290,19 @@ namespace Etch.Util
             Assert.IsTrue( url.HasTerm( "term2", "value" ) );
             Assert.AreEqual( "value", url.GetTerm( "term2" ) );
 
-            it = url.GetTermNames();
-            Assert.IsTrue( it.MoveNext() );
-            Assert.AreEqual( "term1", it.Current );
-            Assert.IsTrue( it.MoveNext() );
-            Assert.AreEqual( "term2", it.Current );
-            Assert.IsFalse( it.MoveNext() );
+            t = url.GetTermNames();
+            Assert.AreEqual(2, t.Length);
+            Assert.AreEqual( "term1", t[0] );
+            Assert.AreEqual( "term2", t[1] );
 
             // Console.WriteLine( url.ToString() );
             // remove term
             Assert.IsFalse( url.RemoveTerm( "term3" ) );
             Assert.IsTrue( url.RemoveTerm( "term2" ) );
             Assert.IsFalse( url.HasTerm( "term2" ) );
-            it = url.GetTermNames();
-            Assert.IsTrue( it.MoveNext() );
-            Assert.IsFalse( it.MoveNext() );
+            t = url.GetTermNames();
+            Assert.AreEqual(1, t.Length);
+            Assert.AreEqual("term1", t[0]);
 
             // remove one value from a list of values for a term
             Assert.IsTrue( url.RemoveTerm( "term1", "500.5" ) );
@@ -309,6 +312,7 @@ namespace Etch.Util
             // clear terms
             url.ClearTerms();
             Assert.IsFalse( url.HasTerms() );
+            Assert.AreEqual(0, url.GetTermNames().Length);
             Assert.AreEqual( "tcp://user:password@127.0.0.1:4001/cuae", url.ToString() );
         }
 

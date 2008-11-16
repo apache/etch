@@ -3,7 +3,6 @@ Etch
 
 This is the source tree for Etch. It is organized as follows:
 
-
    build.xml         - top-level ant build script
    build.dependecies - locations for jars this compile depends on
    etch.properties   - static build properties 
@@ -29,12 +28,17 @@ This is the source tree for Etch. It is organized as follows:
 Etch bindings
 -------------
 
-Each binding is factored into its own structure into the build tree. The intend is to provide an easy pattern for potential binding authors to emulate. Essentially each binding has two components:
+Each binding is factored into its own structure into the build tree. The intent
+is to provide an easy pattern for potential binding authors to emulate.
+Essentially each binding has two components:
 
    - compiler/
    - runtime/
    
-The 'compiler' is always implemented in Java and in coded to implement a backend interface for the target of choice
+The 'compiler' is always implemented in Java and is coded to implement a
+backend interface for the target of choice.
 
-The 'runtime' is coded in the target language. The most useful language bindings implement identical functionality as the Java and C# bindings. Non-languages bindings (like binding-xml) may not have a runtime component at all.
-
+The 'runtime' is coded in the target language. The most useful language
+bindings implement identical functionality as the Java and C# bindings.
+Non-languages bindings (like binding-xml) may not have a runtime component
+at all.

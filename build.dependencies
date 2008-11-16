@@ -1,4 +1,28 @@
+##
+## Core Dependencies .. these must be set
+##
+
 javacc.home=${env.TOOLS_DIR}/javacc/4.0
 junit.lib=${env.TOOLS_DIR}/junit/4.3.1
 velocity.lib=${env.TOOLS_DIR}/velocity/1.5
+
+##
+## Optional Dependencies
+##
+
+## NSIS
+nsis.home=${env.NSIS_HOME}
+
+## Clover
+clover.home=${env.CLOVER_HOME}
+
+## Csharp support
 ant-dotnet.lib=${env.TOOLS_DIR}/apache-ant-dotnet/1.0
+nunit.home=${env.NUNIT_HOME}
+
+# Set to the .NET 2.0 framework install
+dotnet.home=${env.windir}/Microsoft.NET/Framework/v2.0.50727
+
+# MONO support still a bit flakey
+mono.home=${env.MONO_HOME}
+

@@ -8,6 +8,9 @@
 	<classpathentry kind="src" path="compiler/target/generated-sources/main/javacc/java"/>
 	<classpathentry kind="src" path="compiler/src/test/java"/>
 	<classpathentry kind="src" path="compiler/src/test/resources"/>
+	<classpathentry kind="src" path="plugins/ant/src/main/java"/>
+	<classpathentry kind="src" path="plugins/ant/src/main/resources"/>
+	<classpathentry kind="src" path="plugins/ant/src/test/java"/>
 	<classpathentry kind="src" path="binding-java/compiler/src/main/java"/>
 	<classpathentry kind="src" path="binding-java/compiler/src/main/resources"/>
 	<classpathentry kind="src" path="binding-java/runtime/src/main/java"/>

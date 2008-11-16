@@ -17,12 +17,9 @@
 
 package etch.compiler;
 
-import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -44,6 +41,7 @@ import etch.compiler.ast.ParamList;
 import etch.compiler.ast.Service;
 import etch.compiler.ast.TypeRef;
 import etch.compiler.opt.Extern;
+import etch.util.Assertion;
 
 /**
  * Generic interface to language (or language/runtime) bindings.
@@ -53,61 +51,68 @@ abstract public class Backend
 	private final static String tmplPath1 = "etch/compiler/";
 	private final static String tmplPath2 = "resources/etch/compiler/";
 	
+	//////////////////////////
+	// WHAT DIRECTION GROUP //
+	//////////////////////////
+	
 	/**
-	 * Constant for Command Line option BOTH
+	 * Constant for option --what: generate both client and server files.
 	 */
 	public static final String WHAT_BOTH = "BOTH";
+	
 	/**
-	 * Constant for Command Line option ALL
-	 */
-	public static final String WHAT_ALL = "ALL";
-	/**
-	 * Constant for Command Line option CLIENT
+	 * Constant for option --what: generate client files.
 	 */
 	public static final String WHAT_CLIENT = "CLIENT";
+	
 	/**
-	 * Constant for Command Line option SERVER
+	 * Constant for option --what: generate generate server files.
 	 */
 	public static final String WHAT_SERVER = "SERVER";
+
+	//////////////////////
+	// WHAT FILES GROUP //
+	//////////////////////
+	
 	/**
-	 * Constant for Command Line option IMPL
+	 * Constant for option --what: generate all files.
 	 */
-	public static final String WHAT_IMPL = "IMPL";
+	public static final String WHAT_ALL = "ALL";
+	
 	/**
-	 * Constant for Command Line option MAIN
-	 */
-	public static final String WHAT_MAIN = "MAIN";
-	/**
-	 * Constant for Command Line option HELPER
-	 */
-	public static final String WHAT_HELPER = "HELPER";
-	/**
-	 * Constant for Command Line option FORCE
-	 */
-	public static final String WHAT_FORCE = "FORCE";
-	/**
-	 * Constant for Command Line option NONE
+	 * Constant for option --what: generate no files.
 	 */
 	public static final String WHAT_NONE = "NONE";
-	/**
-	 * Constant for Java Binding
-	 */
-	public static final String BINDING_JAVA = "java";
-	/**
-	 * Constant for CSharp Binding
-	 */
-	public static final String BINDING_CSHARP = "csharp";
-	/**
-	 * Constant for Ruby Binding
-	 */
-	public static final String BINDING_RUBY = "ruby";
-	/**
-	 * Constant for XML Binding
-	 */
-	public static final String BINDING_XML = "xml";
 	
+	/**
+	 * Constant for option --what: generate intf files.
+	 */
+	public static final String WHAT_INTF = "INTF";
 	
+	/**
+	 * Constant for option --what: generate main file.
+	 */
+	public static final String WHAT_MAIN = "MAIN";
+	
+	/**
+	 * Constant for option --what: generate impl files.
+	 */
+	public static final String WHAT_IMPL = "IMPL";
 
+	/////////////////////
+	// WHAT MISC GROUP //
+	/////////////////////
+	
+	/**
+	 * Constant for option --what: overwrite template files.
+	 */
+	public static final String WHAT_FORCE = "FORCE";
+	
+	/**
+	 * Constant for option --what: give help on what.
+	 */
+	public static final String WHAT_HELP = "HELP";
+	
 	/**
 	 * Constructs the Backend.
 	 * @throws Exception
@@ -134,12 +139,10 @@ abstract public class Backend
 	 * Generates code for this binding of the idl.
 	 * @param module the module that we are generating code for.
 	 * @param options the options used to configure the compiler.
-	 * @param lh the log handler to use.
 	 * @throws Exception
 	 */
-	abstract public void generate( Module module, CmdLineOptions options,
-		LogHandler lh)
-	throws Exception;
+	abstract public void generate( Module module, CmdLineOptions options )
+		throws Exception;
 
 	/**
 	 * Runs the generator for a particular file with the specified
@@ -227,40 +230,20 @@ abstract public class Backend
 	 * Creates (or deletes) the specified file.
 	 * @param dir
 	 * @param fn
-	 * @param makeFile
-	 * @param force
 	 * @param gen
 	 * @throws Exception
 	 */
-	protected void doFile( File dir, String fn, boolean makeFile, boolean force, Gen gen, LogHandler lh )
+	protected void doFile( Output dir, String fn, LogHandler lh, Gen gen )
 		throws Exception
 	{
-		File f = new File( dir, fn );
-
-		if (makeFile)
+		PrintWriter pw = new PrintWriter( dir.newOutputStream( fn ) );
+		try
 		{
-			if (!f.isFile())
-				f.createNewFile();
-			else if (!force)
-			{
-			//	System.err.printf( "file %s not generated because already exists; use -w force to overwrite\n", fn );
-				lh.logMessage( LogHandler.LEVEL_WARNING, null, String.format( "file %s not generated because already exists; use -w force to overwrite\n", fn) );
-				return;
-			}
-
-			PrintWriter pw = new PrintWriter( new BufferedOutputStream( new FileOutputStream( f ) ) );
-			try
-			{
-				gen.run( pw );
-			}
-			finally
-			{
-				pw.close();
-			}
+			gen.run( pw );
 		}
-		else if (f.isFile())
+		finally
 		{
-			f.delete();
+			pw.close();
 		}
 	}
 
@@ -342,77 +325,144 @@ abstract public class Backend
 	 * @param what
 	 * @return the appropriate direction give --what command line options.
 	 */
-	protected MessageDirection getMessageDirection(Set<String> what) {
-
-		if ( what.contains( WHAT_BOTH )  ) {
+	protected MessageDirection getMessageDirection(Set<String> what)
+	{
+		if ( what.contains( WHAT_BOTH )  )
 			return MessageDirection.BOTH;
-		}
-		if ( what.contains( WHAT_SERVER ) ) {
+		
+		if ( what.contains( WHAT_SERVER ) )
 			return MessageDirection.SERVER;
-		}
-		if ( what.contains( WHAT_CLIENT ) ) {
+		
+		if ( what.contains( WHAT_CLIENT ) )
 			return MessageDirection.CLIENT;
-		}
 
-		return null; // default value
+		throw new IllegalArgumentException( "what not correctly specified" );
 	}
 	
 	/**
 	 * @param what
-	 * @return what modified to account for all, both, and none options.
+	 * @return what modified to account for interaction of options.
 	 */
-	protected Set<String> populateWhat(Set<String> what) {
-
-		if(!checkOption(what))
+	protected Set<String> populateWhat( Set<String> what ) throws Exception
+	{
+		checkOption( what );
+		
+		if (what.contains( WHAT_HELP ))
+			throw new Exception(
+				"specify what as one or more of "+whatHelp() );
+		
+		// direction group
+		
+		if (!what.contains( WHAT_CLIENT )
+			&& !what.contains( WHAT_SERVER )
+			&& !what.contains( WHAT_BOTH ) )
 		{
-			return null;
+			// default to BOTH if none of the direction group is present.
+			what.add( WHAT_BOTH );
+			what.add( WHAT_CLIENT );
+			what.add( WHAT_SERVER );
+		}
+		else if (what.contains( WHAT_BOTH ))
+		{
+			// BOTH implies CLIENT and SERVER
+			what.add( WHAT_CLIENT );
+			what.add( WHAT_SERVER );
+		}
+		else if (what.contains( WHAT_CLIENT ) && what.contains( WHAT_SERVER ))
+		{
+			// CLIENT and SERVER together implies BOTH
+			what.add( WHAT_BOTH );
+		}
+		
+		// there are three reasonable outcomes of the above logic:
+		// CLIENT
+		// SERVER
+		// BOTH, CLIENT, SERVER
+		Assertion.check(
+			   (what.contains( WHAT_CLIENT ) && !what.contains( WHAT_SERVER ) && !what.contains( WHAT_BOTH ))
+			|| (!what.contains( WHAT_CLIENT ) && what.contains( WHAT_SERVER ) && !what.contains( WHAT_BOTH ))
+			|| (what.contains( WHAT_CLIENT ) && what.contains( WHAT_SERVER ) && what.contains( WHAT_BOTH ))
+			, "what files is {CLIENT}, {SERVER}, OR {CLIENT,SERVER,BOTH}" );
+		
+		// files group
+		
+		if (!what.contains( WHAT_ALL )
+			&& !what.contains( WHAT_NONE )
+			&& !what.contains( WHAT_INTF )
+			&& !what.contains( WHAT_MAIN )
+			&& !what.contains( WHAT_IMPL ))
+		{
+			// default to INTF if none of the file group is present.
+			what.add( WHAT_INTF );
 		}
 		
 		if (what.contains( WHAT_ALL ))
 		{
-//			what.add( WHAT_BOTH );
-			what.add( WHAT_IMPL );
+			what.add( WHAT_INTF );
 			what.add( WHAT_MAIN );
-			what.add( WHAT_HELPER );
+			what.add( WHAT_IMPL );
+			what.remove( WHAT_ALL );
+	        what.remove( WHAT_NONE );
 		}
 		
-		if (! what.contains( WHAT_CLIENT ) && !what.contains( WHAT_SERVER ) && !what.contains( WHAT_BOTH ) ) {
-			what.add( WHAT_BOTH );
-		}
-		
-		if (what.contains( WHAT_BOTH ))
-		{
-			what.add( WHAT_CLIENT );
-			what.add( WHAT_SERVER );
-		}
-
 		if (what.contains( WHAT_NONE ))
 		{
-	        what.clear();
+	        what.remove( WHAT_INTF );
+	        what.remove( WHAT_MAIN );
+	        what.remove( WHAT_IMPL );
+	        what.remove( WHAT_NONE );
 		}
-		
-//		if (what.isEmpty())
-//		{
-//			return what;
-//		}
 		
 		return what;
 	}
 
-	private boolean checkOption( Set<String> what )
+	private void checkOption( Set<String> what ) throws Exception
 	{
 		Set<String> w = new HashSet<String>( what );
-		w.remove( WHAT_BOTH );
+		
+		// what direction group
 		w.remove( WHAT_CLIENT );
 		w.remove( WHAT_SERVER );
+		w.remove( WHAT_BOTH );
+		
+		// what files group
 		w.remove( WHAT_ALL );
 		w.remove( WHAT_NONE );
-		w.remove( WHAT_IMPL );
+		w.remove( WHAT_INTF );
 		w.remove( WHAT_MAIN );
-		w.remove( WHAT_HELPER );
+		w.remove( WHAT_IMPL );
+		
 		w.remove( WHAT_FORCE );
-
-		return w.isEmpty();
+		w.remove( WHAT_HELP );
+		
+		if (!w.isEmpty())
+			throw new Exception(
+				"bad what option value(s): "+w
+				+"; specify what as one or more of "
+				+ whatHelp() );
+	}
+	
+	private String whatHelp()
+	{
+		return WHAT_CLIENT
+			+", "
+			+WHAT_SERVER
+			+", "
+			+WHAT_BOTH
+			+", "
+			+WHAT_ALL
+			+", "
+			+WHAT_NONE
+			+", "
+			+WHAT_INTF
+			+", "
+			+WHAT_MAIN
+			+", "
+			+WHAT_IMPL
+			+", "
+			+WHAT_FORCE
+			+", "
+			+WHAT_HELP;
 	}
 
 

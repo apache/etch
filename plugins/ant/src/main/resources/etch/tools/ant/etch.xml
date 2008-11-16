@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<antlib>
+	<taskdef name="etch" classname="etch.tools.ant.EtchCompileTask"/>
+</antlib>

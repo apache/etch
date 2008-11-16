@@ -1,39 +1,46 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<project name="etch-perf-example" basedir="." default="help">
+<project name="etch-perf-example" basedir="." default="help" >
     <description>Perf Example</description>
-    <target name="help"><echo>Please select a target...</echo></target>
-	
+    <target name="help" ><echo>Please select a target...</echo></target>
+
     <!-- TODO better computation of etch.home, etch.version -->
     <property environment="env" />
-    
+
     <!-- compute ETCH_HOME -->
     <property name="build.ETCH_HOME" location="${basedir}/../../target/Installers/dist" />
-    <condition property="etch.home" value="${env.ETCH_HOME}">
+    <condition property="etch.home" value="${env.ETCH_HOME}" >
         <isset property="${env.ETCH_HOME}" />
     </condition>
     <condition property="etch.home" value="${build.ETCH_HOME}" >
         <not><isset property="etch.home" /></not>
     </condition>
-    
+
+    <property name="Etch.dependency.junit.jar"
+        location="${env.TOOLS_DIR}/junit/4.3.1/junit-4.3.1.jar" />
+
+    <property name="Etch.buildSupportDirectory" location="../../build-support" />
+
     <!-- compute etch.version -->
     <condition property="etch.version" value="1.0.1" >
         <not><isset property="etch.version" /></not>
     </condition>
 
     <!-- Csharp Support -->
-    <condition property="USE.dotnet">
+    <condition property="USE.dotnet" >
         <and>
             <os family="windows" />
-            <available file="${env.DOTNET_HOME}/msbuild.exe" />
+            <available file="${env.windir}/Microsoft.NET/Framework/v2.0.50727/msbuild.exe" />
         </and>
     </condition>
-    <condition property="USE.mono">
+    <condition property="USE.mono" >
         <and>
             <not><os family="windows" /></not>
-            <available file="${env.MONO_HOME}/bin/mdtool" />
+            <!-- TODO mono support is not fully baked, use -DUSE.mono to test -->
+            <!-- <available file="${env.MONO_HOME}/bin/mdtool" /> -->
+            <isset property="USE.mono" />
         </and>
     </condition>
-    <condition property="BUILD.csharp">
+    <condition property="BUILD.csharp" >
         <or>
             <isset property="USE.dotnet" />
             <isset property="USE.mono" />
@@ -46,18 +53,18 @@
         onerror="report"
         classname="etch.tools.ant.EtchCompileTask"
         classpath="${etch.home}/lib/etch-ant-plugin-${etch.version}.jar" />
-    
+
     <!-- import dotnet task -->
     <condition property="ant.dotnet.jar" value="ant-dotnet-1.0.jar" >
         <not><isset property="ant.dotnet.jar" /></not>
     </condition>
-    
-    <taskdef 
+
+    <taskdef
         onerror="report"
         resource="org/apache/ant/dotnet/antlib.xml"
         classpath="${ant.dotnet.jar}" />
 
-    <macrodef name="mdtool">
+    <macrodef name="mdtool" >
         <attribute name="dir"         default="." />
         <attribute name="failonerror" default="false" />
         <attribute name="project"     default="project.csproj" />
@@ -69,110 +76,161 @@
             </exec>
         </sequential>
     </macrodef>
-    
+
     <!-- set properties -->
-    <property name="target"            location="${basedir}/target" />
     <property name="src"               location="${basedir}/src" />
-    <property name="bin"               location="${target}/bin" />
+    <property name="main-src-java"     location="${src}/main/java" />
+    <property name="test-src-java"     location="${src}/test/java" />
+    <property name="target"            location="${basedir}/target" />
     <property name="generated-sources" location="${target}/generated-sources" />
+    <property name="gen-src-java"      location="${generated-sources}/main/etch/java" />
+    <property name="gen-src-csharp"    location="${generated-sources}/main/etch/csharp" />
+    <property name="bin"               location="${target}/bin" />
     <property name="classes"           location="${target}/classes" />
+    <property name="classes-test"      location="${target}/classes-test" />
     <property name="test-results"      location="${target}/test-results" />
+    <property name="nunit-results"     location="${target}/nunit-results" />
 
     <!-- initialize -->
     <target name="init" >
         <mkdir dir="${target}" />
-        <mkdir dir="${bin}" />
         <mkdir dir="${generated-sources}" />
+        <mkdir dir="${gen-src-java}" />
+        <mkdir dir="${gen-src-csharp}" />
+        <mkdir dir="${bin}" />
         <mkdir dir="${classes}" />
+        <mkdir dir="${classes-test}" />
         <mkdir dir="${test-results}" />
+        <mkdir dir="${nunit-results}" />
     </target>
-    
+
     <!-- build the server -->
     <target name="generate-sources" depends="init" >
-		<!-- generate sources -->
-        <mkdir dir="${generated-sources}/main/etch/java" />
-        <etch home="${etch.home}" 
+        <!-- generate sources -->
+
+        <etch home="${etch.home}"
               file="${src}/main/etch/Perf.etch"
-              what="both"
               binding="java"
-              output="${generated-sources}/main/etch/java"
-              />
-		
-        <mkdir dir="${generated-sources}/main/etch/csharp" />
-        <etch home="${etch.home}" 
+              outputDir="${gen-src-java}" />
+
+        <etch home="${etch.home}"
               file="${src}/main/etch/Perf.etch"
-              what="both"
               binding="csharp"
-              output="${generated-sources}/main/etch/csharp"
-              />
+              outputDir="${gen-src-csharp}" />
     </target>
-    
+
+    <property name="etch-java-runtime-name"
+        value="etch-java-runtime-${etch.version}.jar" />
+
+    <property name="Etch.dependency.java.runtime"
+        location="${etch.home}/lib/${etch-java-runtime-name}" />
+
     <target name="build-java" depends="generate-sources" >
         <!-- compile sources -->
-        <mkdir dir="${classes}" />
-        <javac target="1.5" destdir="${classes}">
-            <src path="${generated-sources}/main/etch/java" />
-            <src path="${src}/main/java" />
+
+        <javac target="1.5" destdir="${classes}" >
+            <src path="${gen-src-java}" />
+            <src path="${main-src-java}" />
             <classpath>
-                <pathelement location="${etch.home}/lib/etch-java-runtime-${etch.version}.jar" />
+                <pathelement location="${Etch.dependency.java.runtime}" />
+            </classpath>
+        </javac>
+
+        <javac target="1.5" destdir="${classes-test}" >
+            <src path="${gen-src-java}" />
+            <src path="${main-src-java}" />
+            <src path="${test-src-java}" />
+            <classpath>
+                <pathelement location="${Etch.dependency.java.runtime}" />
+                <pathelement location="${Etch.dependency.junit.jar}" />
             </classpath>
         </javac>
 
         <!-- Create Jar -->
         <jar jarfile="${bin}/perf.jar" >
             <manifest>
-                <attribute name="Class-Path" value="etch-java-runtime-${etch.version}.jar" />
+                <attribute name="Class-Path" value="${etch-java-runtime-name}" />
             </manifest>
-            <fileset dir="${classes}">
+            <fileset dir="${classes}" >
                 <include name="**/*" />
             </fileset>
         </jar>
 
         <!-- copy in dependencies -->
-        <copy todir="${bin}">
-            <fileset dir="${etch.home}/lib">
-                <include name="etch-java-runtime-${etch.version}.jar" />
-            </fileset>
-        </copy>
+        <copy todir="${bin}" file="${Etch.dependency.java.runtime}" />
     </target>
 
     <target name="build-csharp-with-mono" depends="generate-sources" if="USE.mono" >
         <mdtool dir="${src}/main/csharp/PerfClientProj" project="PerfClientProj.csproj" />
         <mdtool dir="${src}/main/csharp/PerfListenerProj" project="PerfListenerProj.csproj" />
     </target>
-    
+
     <target name="build-csharp-with-dotnet" depends="generate-sources" if="USE.dotnet" >
-        <msbuild buildfile="${src}/main/csharp/PerfListenerProj/PerfListenerProj.csproj">
+        <msbuild buildfile="${src}/main/csharp/PerfListenerProj/PerfListenerProj.csproj" >
             <property name="Configuration" value="${build.target}" />
         </msbuild>
-        <msbuild buildfile="${src}/main/csharp/PerfClientProj/PerfClientProj.csproj">
+        <msbuild buildfile="${src}/main/csharp/PerfClientProj/PerfClientProj.csproj" >
             <property name="Configuration" value="${build.target}" />
         </msbuild>
-        <copy todir="${bin}">
-            <fileset dir="${src}/main/csharp/PerfListenerProj/bin/${build.target}">
+        <msbuild buildfile="${src}/test/csharp/PerfTestProj/PerfTestProj.csproj" >
+            <property name="Configuration" value="${build.target}" />
+        </msbuild>
+        <copy todir="${bin}" >
+            <fileset dir="${src}/main/csharp/PerfListenerProj/bin/${build.target}" >
                 <include name="*" />
             </fileset>
-            <fileset dir="${src}/main/csharp/PerfClientProj/bin/${build.target}">
+            <fileset dir="${src}/main/csharp/PerfClientProj/bin/${build.target}" >
                 <include name="*" />
             </fileset>
         </copy>
     </target>
-    
+
     <target name="build-csharp" depends="build-csharp-with-mono,build-csharp-with-dotnet" />
-    
+
     <target name="build" depends="build-java,build-csharp" />
-    
+
     <!-- run unit tests -->
-    <target name="test" depends="build" >
+
+    <target name="test-java" depends="build-java" >
+        <!-- Run Unit Tests -->
+        <junit printsummary="yes" haltonfailure="no" dir="${classes-test}"
+            errorProperty="build.tests.fail" failureProperty="build.tests.fail" >
+            <classpath>
+                <pathelement location="${classes-test}" />
+                <pathelement location="${Etch.dependency.java.runtime}" />
+                <pathelement location="${Etch.dependency.junit.jar}" />
+            </classpath>
+            <formatter type="xml" />
+            <batchtest fork="true" todir="${test-results}" >
+                <fileset dir="${test-src-java}" >
+                    <include name="**/Test*.java" />
+                </fileset>
+            </batchtest>
+        </junit>
+    </target>
+
+    <target name="test-csharp" depends="build-csharp" if="BUILD.csharp" >
+         <nunit xmlout="${nunit-results}/NUnitResults.xml">
+             <testassembly name="${src}/test/csharp/PerfTestProj/bin/${build.target}/PerfTestProj.dll" />
+         </nunit>
+
+         <xslt style="${Etch.buildSupportDirectory}/NUnitToJUnit.xsl"
+                 in="${nunit-results}/NUnitResults.xml" out="${test-results}/TEST-NUnitResults.xml" />
+   </target>
+
+    <target name="test" depends="build,test-java,test-csharp,done" >
+    </target>
+
+    <target name="done" depends="build" >
         <echo>
 
 Build Complete!
 
-To run the perf-test example, open two command-windows in this directory.
+To run the perf example, open two command-windows in this directory.
 
 cmd-window-1:
   > cd target/bin
-  > java -cp perf.jar etch.examples.perf.MainPerfListener 
+  > java -cp perf.jar etch.examples.perf.MainPerfListener
 
 cmd-window-2:
   > cd target/bin
@@ -182,19 +240,25 @@ cmd-window-2:
     </target>
 
     <!-- build everything -->
-    <target name="init-debug">
+    <target name="init-debug" >
         <property name="build.target" value="Debug" />
     </target>
-    <target name="init-release">
+
+    <target name="init-release" >
         <property name="build.target" value="Release" />
     </target>
-    
+
     <target name="debug" depends="init-debug,test" />
     <target name="release" depends="init-release,test" />
-        
-    <!-- clean -->    
-    <target name="clean">
-        <delete dir="${target}" quiet="true" />
-    </target>
 
+    <!-- clean -->
+    <target name="clean" >
+        <delete dir="${target}" quiet="true" />
+        <delete dir="${src}/main/csharp/PerfClientProj/bin" quiet="true" />
+        <delete dir="${src}/main/csharp/PerfClientProj/obj" quiet="true" />
+        <delete dir="${src}/main/csharp/PerfListenerProj/bin" quiet="true" />
+        <delete dir="${src}/main/csharp/PerfListenerProj/obj" quiet="true" />
+        <delete dir="${src}/test/csharp/PerfTestProj/bin" quiet="true" />
+        <delete dir="${src}/test/csharp/PerfTestProj/obj" quiet="true" />
+    </target>
 </project>
