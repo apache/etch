@@ -25,7 +25,6 @@ import etch.bindings.java.support.Validator_int;
 import etch.bindings.java.transport.TransportMessage;
 import etch.util.AlarmListener;
 import etch.util.AlarmManager;
-import etch.util.Log;
 import etch.util.Resources;
 import etch.util.Timer;
 import etch.util.URL;
@@ -166,6 +165,7 @@ public class KeepAlive extends AbstractMessageFilter implements AlarmListener
 	protected boolean sessionUp()
 	{
 //		Log.report( "KeepAliveSessionUp", "server", server );
+		up = true;
 		AlarmManager.staticAdd( this, null, delay*1000 );
 		tickle();
 		return true;
@@ -175,9 +175,12 @@ public class KeepAlive extends AbstractMessageFilter implements AlarmListener
 	protected boolean sessionDown()
 	{
 //		Log.report( "KeepAliveSessionDown", "server", server );
+		up = false;
 		AlarmManager.staticRemove( this );
 		return true;
 	}
+	
+	private boolean up;
 	
 	private void handleRequest( Message msg )
 	{
@@ -188,7 +191,7 @@ public class KeepAlive extends AbstractMessageFilter implements AlarmListener
 			return;
 		}
 		
-		Log.report( "GotKeepAliveReq", "msg", msg );
+//		Log.report( "GotKeepAliveReq", "msg", msg );
 		
 		Number d = (Number) msg.get( mf_delay );
 		if (d != null && d.intValue() > 0)
@@ -219,7 +222,7 @@ public class KeepAlive extends AbstractMessageFilter implements AlarmListener
 			return;
 		}
 		
-		Log.report( "GotKeepAliveResp", "msg", msg );
+//		Log.report( "GotKeepAliveResp", "msg", msg );
 		
 		tickle();
 	}
@@ -265,7 +268,7 @@ public class KeepAlive extends AbstractMessageFilter implements AlarmListener
 		msg.put( mf_count, count );
 		try
 		{
-			Log.report( "SendKeepAliveReq", "msg", msg );
+//			Log.report( "SendKeepAliveReq", "msg", msg );
 			transport.transportMessage( null, msg );
 		}
 		catch ( Exception e )
@@ -287,7 +290,7 @@ public class KeepAlive extends AbstractMessageFilter implements AlarmListener
 		Message rmsg = msg.reply();
 		try
 		{
-			Log.report( "SendKeepAliveResp", "rmsg", rmsg );
+//			Log.report( "SendKeepAliveResp", "rmsg", rmsg );
 			transport.transportMessage( null, rmsg );
 		}
 		catch ( Exception e )
@@ -307,6 +310,9 @@ public class KeepAlive extends AbstractMessageFilter implements AlarmListener
 	public int wakeup( AlarmManager manager, Object state, long due )
 	{
 //		Log.report( "KeepAliveWakeup", "server", server );
+		
+		if (!up)
+			return 0;
 		
 		if (!server)
 			sendKeepAliveReq();
@@ -331,6 +337,4 @@ public class KeepAlive extends AbstractMessageFilter implements AlarmListener
 	{
 		return count;
 	}
-
-	
 }
