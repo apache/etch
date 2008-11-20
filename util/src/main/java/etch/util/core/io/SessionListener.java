@@ -17,17 +17,16 @@
 
 package etch.util.core.io;
 
-import java.net.Socket;
-
 /**
  * Interface used to deliver sockets to the session from the listener.
+ * @param <T> the type of the connection for the session.
  */
-public interface SessionListener extends Session
+public interface SessionListener<T> extends Session
 {
 	/**
 	 * Delivers a socket to the session from the listener.
-	 * @param socket
+	 * @param connection
 	 * @throws Exception
 	 */
-	public void sessionAccepted( Socket socket ) throws Exception;
+	public void sessionAccepted( T connection ) throws Exception;
 }

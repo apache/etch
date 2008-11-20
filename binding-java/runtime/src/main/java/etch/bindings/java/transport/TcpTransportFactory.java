@@ -95,7 +95,6 @@ public class TcpTransportFactory extends TransportFactory
 		return d;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Transport<ServerFactory> newListener( final String uri,
 		final Resources resources, final ServerFactory factory )
@@ -103,7 +102,7 @@ public class TcpTransportFactory extends TransportFactory
 	{
 		URL u = new URL( uri );
 		
-		Transport<SessionListener> l;
+		Transport<SessionListener<Socket>> l;
 
 		if (isSecure)
 			l = new TlsListener( u, resources );
@@ -115,14 +114,14 @@ public class TcpTransportFactory extends TransportFactory
 		return b;
 	}
 	
-	private class MySessionListener implements Transport<ServerFactory>, SessionListener
+	private class MySessionListener implements Transport<ServerFactory>, SessionListener<Socket>
 	{
 		/**
 		 * @param transport
 		 * @param uri
 		 * @param resources
 		 */
-		public MySessionListener( Transport<SessionListener> transport, String uri, Resources resources )
+		public MySessionListener( Transport<SessionListener<Socket>> transport, String uri, Resources resources )
 		{
 			this.transport = transport;
 			this.uri = uri;
@@ -131,7 +130,7 @@ public class TcpTransportFactory extends TransportFactory
 			transport.setSession( this );
 		}
 		
-		private final Transport<SessionListener> transport;
+		private final Transport<SessionListener<Socket>> transport;
 		
 		private final String uri;
 		

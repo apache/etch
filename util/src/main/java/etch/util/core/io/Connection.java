@@ -31,7 +31,6 @@ import etch.util.TodoManager;
  * Implementation of runner which handles a network connection.
  * @param <H> the event handler type.
  */
-@SuppressWarnings("unchecked")
 abstract public class Connection<H extends Session>
 	extends Runner implements Transport<H>, RunnerHandler
 {
