@@ -35,7 +35,7 @@ import etch.util.TimeoutException;
 /**
  * Tests Listener.
  */
-public class TestListener
+public class TestTcpListener
 {
 	private final static int TIMEOUT = 4000;
 
