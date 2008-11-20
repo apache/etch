@@ -329,7 +329,7 @@ public class TestListener
 	/**
 	 * ListenerHandler for testing.
 	 */
-	public static class MyListenerHandler implements SessionListener
+	public static class MyListenerHandler implements SessionListener<Socket>
 	{
 		/** the event seen */
 		public Monitor<What> what = new Monitor<What>( null );
@@ -372,7 +372,7 @@ public class TestListener
 	/**
 	 * ListenerHandler for testing.
 	 */
-	public static class MyOtherListenerHandler implements SessionListener
+	public static class MyOtherListenerHandler implements SessionListener<Socket>
 	{
 		/** count of accepted connections. */
 		public int accepted;

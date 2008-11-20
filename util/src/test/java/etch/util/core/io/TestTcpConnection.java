@@ -679,7 +679,7 @@ public class TestTcpConnection
 	/**
 	 * ListenerHandler for testing.
 	 */
-	static class MyListener implements SessionListener
+	static class MyListener implements SessionListener<Socket>
 	{
 		/** monitor to report accepted socket */
 		public Monitor<Socket> accepted = new Monitor<Socket>( "accepted" );

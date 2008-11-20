@@ -31,8 +31,8 @@ import etch.util.URL;
 /**
  * Implementation of a connection which handles a socket listener.
  */
-public class TcpListener extends Connection<SessionListener>
-	implements Transport<SessionListener>
+public class TcpListener extends Connection<SessionListener<Socket>>
+	implements Transport<SessionListener<Socket>>
 {
 	/**
 	 * Query term for URI to specify backlog value to ServerSocket. The value

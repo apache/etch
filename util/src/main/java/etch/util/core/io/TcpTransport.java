@@ -37,55 +37,6 @@ abstract public class TcpTransport extends Connection<SessionData>
 	implements TransportData
 {
 	/**
-	 * Term on the uri which specifies the auto flush flag. The term string is
-	 * "TcpTransport.autoFlush". The value is "true" or "false". The default
-	 * is "false".
-	 */
-	public final static String AUTO_FLUSH = "TcpTransport.autoFlush";
-
-	/**
-	 * Term on the uri which specifies the buffer size in bytes. The term
-	 * string is "TcpTransport.bufferSize". The value is an integer between
-	 * 0 and 65536. The default is 0.
-	 */
-	public final static String BUFFER_SIZE = "TcpTransport.bufferSize";
-
-	/**
-	 * Term on the uri which specifies the keep alive flag. The term string is
-	 * "TcpTransport.keepAlive". The value is "true" or "false". The default is
-	 * "false".
-	 */
-	public final static String KEEP_ALIVE = "TcpTransport.keepAlive";
-
-	/**
-	 * Term on the uri which specifies the linger time in seconds. The term
-	 * string is "TcpTransport.lingerTime". The value is an integer between 0
-	 * and 240. The default is 30.
-	 */
-	public final static String LINGER_TIME = "TcpTransport.lingerTime";
-
-	/**
-	 * Term on the uri which specifies the no delay flag. The term string is
-	 * "TcpTransport.noDelay". The value is "true" or "false". The default is
-	 * "true".
-	 */
-	public final static String NO_DELAY = "TcpTransport.noDelay";
-	
-	/**
-	 * Term on the uri which specifies the reconnect delay in milliseconds. The
-	 * term string is "TcpTransport.reconnectDelay". The value is an integer >=
-	 * 0. The default is 0.
-	 */
-	public final static String RECONNECT_DELAY = "TcpTransport.reconnectDelay";
-
-	/**
-	 * Term on the uri which specifies the traffic class. The term string is
-	 * "TcpTransport.trafficClass". The value is an integer between 0 and 255.
-	 * The default is 0.
-	 */
-	public final static String TRAFFIC_CLASS = "TcpTransport.trafficClass";
-
-	/**
 	 * Constructs the TcpTransport. Pulls common parameters off the uri.
 	 *
 	 * @param uri
@@ -93,89 +44,10 @@ abstract public class TcpTransport extends Connection<SessionData>
 	 */
 	protected TcpTransport( URL uri, Resources resources )
 	{
-		setDefaultAutoFlush( uri.getBooleanTerm( AUTO_FLUSH, false ) );
-		setDefaultBufferSize( uri.getIntegerTerm( BUFFER_SIZE, 0 ) );
-		setDefaultKeepAlive( uri.getBooleanTerm( KEEP_ALIVE, false ) );
-		setDefaultLingerTime( uri.getIntegerTerm( LINGER_TIME, 30 ) );
-		setDefaultNoDelay( uri.getBooleanTerm( NO_DELAY, true ) );
-		setDefaultReconnectDelay( uri.getIntegerTerm( RECONNECT_DELAY, 0 ) );
-		setDefaultTrafficClass( uri.getIntegerTerm( TRAFFIC_CLASS, 0 ) );
-	}
-
-	private void setDefaultAutoFlush( boolean autoFlush )
-	{
-		this.autoFlush = autoFlush;
+		options = new TcpOptions( uri, resources );
 	}
 	
-	/** The auto flush setting for this connection. If true, each call to send
-	 * must automatically call flush. */
-	protected boolean autoFlush;
-	
-	private void setDefaultBufferSize( int bufferSize )
-	{
-		if (bufferSize < 0 || bufferSize > 65536)
-			throw new IllegalArgumentException(
-				"bufferSize < 0 || bufferSize > 65536" );
-		this.bufferSize = bufferSize;
-	}
-	
-	/** The output buffer size to use for this connection. Bytes, 0 means
-	 * unbuffered output. If using buffered output, you'll want to disable
-	 * auto flush and call flush manually only when needed. */
-	protected int bufferSize;
-	
-	private void setDefaultKeepAlive( boolean keepAlive )
-	{
-		this.keepAlive = keepAlive;
-	}
-
-	/** The tcp keep alive setting for this connection. */
-	protected boolean keepAlive;
-	
-	private void setDefaultLingerTime( int lingerTime )
-	{
-		if (lingerTime < -1 || lingerTime > 240)
-			throw new IllegalArgumentException(
-				"lingerTime < -1 || lingerTime > 240" );
-		this.lingerTime = lingerTime;
-	}
-
-	/** The tcp linger time setting for this connection. Time in seconds, -1
-	 * means disable. */
-	protected int lingerTime;
-	
-	private void setDefaultNoDelay( boolean noDelay )
-	{
-		this.noDelay = noDelay;
-	}
-
-	/** The tcp no delay setting for this connection. True disables nagle's
-	 * algorithm and causes all sends to be made asap. */
-	protected boolean noDelay;
-	
-	private void setDefaultReconnectDelay( int reconnectDelay )
-	{
-		if (reconnectDelay < 0)
-			throw new IllegalArgumentException(
-				"reconnectDelay < 0" );
-		this.reconnectDelay = reconnectDelay;
-	}
-	
-	/** The reconnect delay for this connection. Time in milliseconds, 0 means
-	 * do not reconnect. */
-	protected int reconnectDelay;
-	
-	private void setDefaultTrafficClass( int trafficClass )
-	{
-		if (trafficClass < 0 || trafficClass > 255)
-			throw new IllegalArgumentException(
-				"trafficClass < 0 || trafficClass > 255" );
-		this.trafficClass = trafficClass;
-	}
-
-	/** The traffic class for this connection. 0-255, 0 means normal handling.
-	 * Also called type of service or dscp. */
-	protected int trafficClass;
+	private final TcpOptions options;
 	
 	@Override
 	protected final void stop0() throws Exception
@@ -267,9 +139,9 @@ abstract public class TcpTransport extends Connection<SessionData>
 	 * @throws Exception if there is a problem transmitting the data. Such a
 	 * problem causes the current connection to be reset.
 	 * @see #flush()
-	 * @see #AUTO_FLUSH
-	 * @see #BUFFER_SIZE
-	 * @see #NO_DELAY
+	 * @see TcpOptions#AUTO_FLUSH
+	 * @see TcpOptions#BUFFER_SIZE
+	 * @see TcpOptions#NO_DELAY
 	 */
 	public final void send( byte[] buf ) throws Exception
 	{
@@ -289,9 +161,9 @@ abstract public class TcpTransport extends Connection<SessionData>
 	 * @throws Exception if there is a problem transmitting the data. Such a
 	 * problem causes the current connection to be reset.
 	 * @see #flush()
-	 * @see #AUTO_FLUSH
-	 * @see #BUFFER_SIZE
-	 * @see #NO_DELAY
+	 * @see TcpOptions#AUTO_FLUSH
+	 * @see TcpOptions#BUFFER_SIZE
+	 * @see TcpOptions#NO_DELAY
 	 */
 	public final void send( byte[] buf, int off, int len )
 		throws Exception
@@ -300,7 +172,7 @@ abstract public class TcpTransport extends Connection<SessionData>
 		{
 			OutputStream os = checkOutputStream();
 			os.write( buf, off, len );
-			if (autoFlush)
+			if (options.autoFlush)
 				os.flush();
 		}
 		catch ( IOException e )
@@ -391,16 +263,16 @@ abstract public class TcpTransport extends Connection<SessionData>
 	{
 		Socket s = checkSocket();
 		
-		s.setKeepAlive( keepAlive );
-		s.setSoLinger( lingerTime >= 0, lingerTime >= 0 ? lingerTime : 0 );
-		s.setTcpNoDelay( noDelay );
-		s.setTrafficClass( trafficClass );
+		s.setKeepAlive( options.keepAlive );
+		s.setSoLinger( options.lingerTime >= 0, options.lingerTime >= 0 ? options.lingerTime : 0 );
+		s.setTcpNoDelay( options.noDelay );
+		s.setTrafficClass( options.trafficClass );
 		
 		inputStream = s.getInputStream();
 		
 		outputStream = s.getOutputStream();
-		if (bufferSize > 0)
-			outputStream = new BufferedOutputStream( outputStream, bufferSize );
+		if (options.bufferSize > 0)
+			outputStream = new BufferedOutputStream( outputStream, options.bufferSize );
 	}
 
 	/**
@@ -458,7 +330,7 @@ abstract public class TcpTransport extends Connection<SessionData>
 			return false;
 		
 		// if a reconnect but no retries allowed, then bail.
-		if (reconnect && reconnectDelay == 0)
+		if (reconnect && options.reconnectDelay == 0)
 			return false;
 		
 		// ok, we don't have an existing socket, and this is either the first
@@ -475,10 +347,10 @@ abstract public class TcpTransport extends Connection<SessionData>
 			
 			if (reconnect || !first)
 			{
-				if (reconnectDelay == 0)
+				if (options.reconnectDelay == 0)
 					return false;
 				
-				wait( reconnectDelay );
+				wait( options.reconnectDelay );
 				
 				if (!isStarted())
 					break;

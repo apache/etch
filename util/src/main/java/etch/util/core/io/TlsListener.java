@@ -21,6 +21,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.BindException;
 import java.net.InetAddress;
+import java.net.Socket;
 import java.net.SocketAddress;
 import java.net.SocketException;
 import java.security.KeyStore;
@@ -37,8 +38,8 @@ import etch.util.URL;
 /**
  * Implementation of a connection which handles a secure socket listener.
  */
-public class TlsListener extends Connection<SessionListener>
-	implements Transport<SessionListener>
+public class TlsListener extends Connection<SessionListener<Socket>>
+	implements Transport<SessionListener<Socket>>
 {
 	/**
 	 * Query term for URI to specify backlog value to ServerSocket. The value
