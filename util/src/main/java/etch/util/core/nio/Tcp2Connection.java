@@ -63,8 +63,9 @@ public class Tcp2Connection implements TransportData, StreamHandlerFactory, Alar
 	{
 		selector = (SuperSelector) resources.get( "selector" );
 		bufferPool = (ByteBufferPool) resources.get( "bufferPool" );
-		connection = (SocketChannel) resources.remove( "connection" );
 		options = new TcpOptions( uri, resources );
+
+		connection = (SocketChannel) resources.remove( "connection" );
 
 		if (connection == null)
 		{
@@ -93,13 +94,13 @@ public class Tcp2Connection implements TransportData, StreamHandlerFactory, Alar
 	
 	private final ByteBufferPool bufferPool;
 
+	private final TcpOptions options;
+
 	private SocketChannel connection;
 
-	private TcpOptions options;
+	private final String host;
 
-	private String host;
-
-	private int port;
+	private final int port;
 
 	@Override
 	public String toString()
@@ -268,19 +269,24 @@ public class Tcp2Connection implements TransportData, StreamHandlerFactory, Alar
 
 	private MyStreamHandler setHandler( MyStreamHandler newHandler )
 	{
-		if (newHandler == handler)
-			return null;
-		
-		if (newHandler != null && handler != null)
-			throw new IllegalStateException(
-				"newHandler != null && handler != null && newHandler != handler" );
-		
-		MyStreamHandler oldHandler = handler;
-		handler = newHandler;
-		return oldHandler;
+		synchronized (handlerSync)
+		{
+			if (newHandler == handler)
+				return null;
+			
+			if (newHandler != null && handler != null)
+				throw new IllegalStateException(
+					"newHandler != null && handler != null && newHandler != handler" );
+			
+			MyStreamHandler oldHandler = handler;
+			handler = newHandler;
+			return oldHandler;
+		}
 	}
 
-	MyStreamHandler handler;
+	private MyStreamHandler handler;
+	
+	private final Object handlerSync = new Object();
 
 	void stop() throws IOException
 	{
@@ -547,7 +553,7 @@ public class Tcp2Connection implements TransportData, StreamHandlerFactory, Alar
 
 	boolean isStarted()
 	{
-		return handler != null;
+		return started;
 	}
 
 	void close()
