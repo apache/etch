@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.SocketAddress;
+import java.net.SocketException;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 
@@ -199,36 +200,83 @@ public class Tcp2Listener implements Transport<SessionListener<SocketChannel>>,
 
 	void start() throws Exception
 	{
-		synchronized (sync)
+		synchronized (startedSync)
 		{
-			if (handler != null)
-				throw new IllegalStateException( "handler != null" );
+			if (started)
+				throw new IllegalStateException( "started" );
 			
-			handler = selector.newAcceptHandler(
-				new InetSocketAddress( host, port ), backlog, this );
+			started = true;
+			restart();
 		}
 	}
 	
-	private AcceptHandler handler;
+	private void restart() throws Exception
+	{
+		// fireUp will save the handler.
+		try
+		{
+			selector.newAcceptHandler(
+				new InetSocketAddress( host, port ), backlog, this );
+		}
+		catch ( Error e )
+		{
+			// This is a hack work around for jdk_1.5.0_15, which has no
+			// translation for the error message and turns it into an
+			// Error.
+			
+			String msg = e.getMessage();
+			if (msg == null || !msg.equals( "Untranslated exception" ))
+				throw e;
+			
+			Throwable x = e.getCause();
+			if (x == null || !(x instanceof SocketException))
+				throw e;
+			
+			throw (SocketException) x;
+		}
+	}
+
+	private boolean started;
 	
-	private final Object sync = new Object();
+	private final Object startedSync = new Object();
+	
+	private MyAcceptHandler handler;
+	
+	private final Object handlerSync = new Object();
 
 	void stop() throws IOException
 	{
-		synchronized (sync)
+		started = false;
+		
+		MyAcceptHandler h = setHandler( null );
+		if (h != null)
 		{
-			AcceptHandler h = handler;
-			if (h != null)
-			{
-				handler = null;
-				h.cancel();
-			}
+			h.cancel();
 		}
 	}
 
-	private void fireUp()
+	private MyAcceptHandler setHandler( MyAcceptHandler newHandler )
 	{
+		synchronized (handlerSync)
+		{
+			if (newHandler == handler)
+				return null;
+			
+			if (newHandler != null && handler != null)
+				throw new IllegalStateException(
+					"newHandler != null && handler != null && newHandler != handler" );
+			
+			MyAcceptHandler oldHandler = handler;
+			handler = newHandler;
+			return oldHandler;
+		}
+	}
+
+	private void fireUp( MyAcceptHandler h )
+	{
+		setHandler( h );
 		status.set( Session.UP );
+		
 		TodoManager.addTodo( new Todo()
 		{
 			public void doit( TodoManager m ) throws Exception
@@ -245,7 +293,9 @@ public class Tcp2Listener implements Transport<SessionListener<SocketChannel>>,
 
 	private void fireDown()
 	{
+		setHandler( null );
 		status.set( Session.DOWN );
+		
 		TodoManager.addTodo( new Todo()
 		{
 			public void doit( TodoManager m ) throws Exception
@@ -325,7 +375,7 @@ public class Tcp2Listener implements Transport<SessionListener<SocketChannel>>,
 		protected void registered()
 		{
 			super.registered();
-			fireUp();
+			fireUp( this );
 		}
 		
 		@Override
@@ -344,7 +394,7 @@ public class Tcp2Listener implements Transport<SessionListener<SocketChannel>>,
 
 	boolean isStarted()
 	{
-		return handler != null;
+		return started;
 	}
 
 	/**

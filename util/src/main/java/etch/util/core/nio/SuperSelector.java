@@ -25,6 +25,7 @@ import java.nio.channels.SocketChannel;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.TreeMap;
 
 import etch.util.Assertion;
@@ -145,20 +146,21 @@ public class SuperSelector
 	{
 		synchronized (_keys)
 		{
-			Map.Entry<Key, Key> me = _keys.firstEntry();
-			if (me != null)
+			try
 			{
-				Key k = me.getKey();
+				Key k = _keys.firstKey();
 				keysRemove( k );
 				k.setAvail( k.avail()-1 );
 				keysAdd( k );
 				return k.selector;
 			}
-			
-			Selector s = new Selector( _id++, this );
-			// constructor calls us back at #add(Selector, int)
-			s.start();
-			return s;
+			catch ( NoSuchElementException e )
+			{
+				Selector s = new Selector( _id++, this );
+				// constructor calls us back at #add(Selector, int)
+				s.start();
+				return s;
+			}
 		}
 	}
 	
