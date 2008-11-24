@@ -235,11 +235,14 @@ public class Tcp2Connection implements TransportData, StreamHandlerFactory, Alar
 
 	void start() throws Exception
 	{
-		if (started)
-			throw new IllegalStateException( "started" );
-		
-		started = true;
-		restart();
+		synchronized (startedSync)
+		{
+			if (started)
+				throw new IllegalStateException( "started" );
+			
+			started = true;
+			restart();
+		}
 	}
 	
 	private void restart() throws Exception
@@ -266,6 +269,8 @@ public class Tcp2Connection implements TransportData, StreamHandlerFactory, Alar
 	}
 
 	private boolean started;
+	
+	private final Object startedSync = new Object();
 
 	private MyStreamHandler setHandler( MyStreamHandler newHandler )
 	{
