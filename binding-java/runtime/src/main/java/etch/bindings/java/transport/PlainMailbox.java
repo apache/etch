@@ -182,6 +182,9 @@ public class PlainMailbox implements Mailbox, AlarmListener
 		if (oldNotify == null)
 			throw new NullPointerException( "notify == null" );
 		
+		if (this.notify == null)
+			return;
+		
 		synchronized (queue)
 		{
 			if (oldNotify != this.notify)

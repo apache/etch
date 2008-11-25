@@ -232,12 +232,15 @@ namespace Etch.Transport
         public void UnregisterNotify(Notify notify)
         {
             if (notify == null)
-                throw new NullReferenceException("notify == null");
+                throw new ArgumentNullException("notify == null");
 
             lock (queue)
             {
                 if (notify != this.notify)
-                    throw new NullReferenceException("notify != this.notify");
+                    throw new ArgumentException("notify != this.notify");
+
+                if (this.notify == null)
+                    return;
 
                 if (alarmSet)
                 {
