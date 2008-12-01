@@ -180,7 +180,11 @@ public class AlarmManager extends AbstractStartable implements Runnable
 	{
 		clearAlarms();
 		clearQueue();
-		notifyAll();
+		
+		synchronized (this)
+		{
+			notifyAll();
+		}
 		
 		for (int i = 0; i < nWorkers; i++)
 		{

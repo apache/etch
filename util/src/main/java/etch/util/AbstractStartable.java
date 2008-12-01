@@ -22,28 +22,34 @@ package etch.util;
  */
 abstract public class AbstractStartable implements Startable
 {
-	final public synchronized void start() throws Exception
+	final public void start() throws Exception
 	{
-		if (isStarted())
-			throw new IllegalStateException( "is already started" );
+		synchronized (this)
+		{
+			if (isStarted())
+				throw new IllegalStateException( "is already started" );
+
+			started = true;
+		}
 		
 		try
 		{
-			started = true;
 			start0();
 		}
 		catch ( Exception e )
 		{
-			setStopped();
-			stop0();
+			stop();
 			throw e;
 		}
 	}
 
-	final public synchronized void stop() throws Exception
+	final public void stop() throws Exception
 	{
-		checkIsStarted();
-		setStopped();
+		synchronized (this)
+		{
+			checkIsStarted();
+			setStopped();
+		}
 		stop0();
 	}
 	
