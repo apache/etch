@@ -28,7 +28,8 @@ namespace Etch.Support
     public class StubBase : SessionMessage
     {
         /// <summary>Constructs the StubBase.</summary>
-        /// <param name="obj">obj</param>
+        /// <param name="src">the message source</param>
+        /// <param name="obj">the target of decoded messages</param>
         /// <param name="queued">thread pool used to run AsyncReceiverMode.QUEUED methods.</param>
         /// <param name="free">thread pool used to run AsyncReceiverMode.FREE methods.</param>
         public StubBase(DeliveryService src, object obj, Pool queued, Pool free)
@@ -41,21 +42,24 @@ namespace Etch.Support
         }
 
         /// <summary>
-        /// The object used to implement stub
+        /// The message source.
         /// </summary>
-        private readonly object _obj;
-
-        /// <summary>
-        /// The thread pool used to run AsyncReceiverMode.QUEUED methods.
-        /// </summary>
-        public readonly Pool _queued;
-
-        /// <summary>
-        /// The thread pool used to run AsyncReceiverMode.FREE methods.
-        /// </summary>
-        public readonly Pool _free;
-
         protected readonly DeliveryService _src;
+
+        /// <summary>
+        /// The target of decoded messages.
+        /// </summary>
+        protected readonly object _obj;
+
+        /// <summary>
+        /// Thread pool used to run AsyncReceiverMode.QUEUED methods.
+        /// </summary>
+        protected readonly Pool _queued;
+
+        /// <summary>
+        /// Thread pool used to run AsyncReceiverMode.FREE methods.
+        /// </summary>
+        protected readonly Pool _free;
 
         
 
@@ -76,8 +80,15 @@ namespace Etch.Support
 
         public void SessionNotify(Object eventObj)
         {
-            if (_obj is ObjSession)
-                ((ObjSession)_obj)._SessionNotify(eventObj);
+            SessionNotify(_obj, eventObj);
+        }
+
+        public static void SessionNotify( object obj, object eventObj )
+        {
+            if (obj is ObjSession)
+                ((ObjSession)obj)._SessionNotify(eventObj);
+            else if (eventObj is Exception)
+                Console.WriteLine(eventObj);
         }
 
         /// <summary>
@@ -96,41 +107,49 @@ namespace Etch.Support
         {
             XType type = msg.GetXType;
 
-            //StubHelper<StubBase<Object>> helper = ( StubHelper<StubBase<Object>> ) type.GetStubHelper();
-            //if ( helper == null )
-            //    return false;
-            StubHelperRun helper = (StubHelperRun)type.GetStubHelper();
-            /*      StubHelper stubHelper = (StubHelper)type.GetStubHelper();
-                  StubHelperRun helper = (StubHelperRun) stubHelper.GetDelegate(); */
+            StubHelperRun helper = (StubHelperRun) type.GetStubHelper();
             if (helper == null)
                 return false;
-            if (type.GetAsyncMode() == AsyncMode.QUEUED)
-                _queued.Run(delegate() { helper(_src, _obj, sender, msg); }, delegate(Exception e)
-                {
-                    try { SessionNotify(e); }
-                    catch (Exception e1)
+
+            switch (type.GetAsyncMode())
+            {
+                case AsyncMode.QUEUED:
+                    try
                     {
-                        Console.WriteLine(e1);
+                        _queued.Run(
+                            delegate { helper(_src, _obj, sender, msg); },
+                            delegate(Exception e) { SessionNotify(_obj, e); });
                     }
-                });
-            else if (type.GetAsyncMode() == AsyncMode.FREE)
-                _free.Run(delegate()
-                              {
-                                  helper(_src, _obj, sender, msg);
-                              },
-                              delegate(Exception e)
-                              {
-                                  try
-                                  {
-                                      SessionNotify(e);
-                                  }
-                                  catch (Exception e1)
-                                  {
-                                      Console.WriteLine(e1);
-                                  }
-                              });
-            else
-                helper(_src, _obj, sender, msg);
+                    catch (Exception e)
+                    {
+                        SessionNotify(_obj, e);
+                    }
+                    break;
+                case AsyncMode.FREE:
+                    try
+                    {
+                        _free.Run(
+                            delegate { helper(_src, _obj, sender, msg); },
+                            delegate(Exception e) { SessionNotify(_obj, e); });
+                    }
+                    catch (Exception e)
+                    {
+                        SessionNotify(_obj, e);
+                    }
+                    break;
+                case AsyncMode.NONE:
+                    try
+                    {
+                        helper(_src, _obj, sender, msg);
+                    }
+                    catch (Exception e)
+                    {
+                        SessionNotify(_obj, e);
+                    }
+                    break;
+                default:
+                    throw new ArgumentException("unknown async mode "+type.GetAsyncMode());
+            }
 
             return true;
         }

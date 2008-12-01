@@ -77,28 +77,47 @@ public class StubBase<T> implements SessionMessage
 	public final boolean sessionMessage( Who sender, Message msg ) throws Exception
 	{
 		Type type = msg.type();
+		
 		StubHelper<T> helper = (StubHelper<T>) type.getStubHelper();
 		if (helper == null)
 			return false;
-		if (type.getAsyncMode() == AsyncMode.QUEUED)
+		
+		switch (type.getAsyncMode())
 		{
-			_queued.run( new StubPoolRunnable( sender, msg, helper ) );
+			case QUEUED:
+				try
+				{
+					_queued.run( new StubPoolRunnable( sender, msg, helper ) );
+				}
+				catch ( Exception e )
+				{
+					sessionNotify( _obj, e );
+				}
+				break;
+			case FREE:
+				try
+				{
+					_free.run( new StubPoolRunnable( sender, msg, helper ) );
+				}
+				catch ( Exception e )
+				{
+					sessionNotify( _obj, e );
+				}
+				break;
+			case NONE:
+				try
+				{
+					helper.run( _svc, _obj, sender, msg );
+				}
+				catch ( Exception e )
+				{
+					sessionNotify( _obj, e );
+				}
+				break;
+            default:
+                throw new IllegalArgumentException("unknown async mode "+type.getAsyncMode());
 		}
-		else if (type.getAsyncMode() == AsyncMode.FREE)
-		{
-			_free.run( new StubPoolRunnable( sender, msg, helper ) );
-		}
-		else
-		{
-			try
-			{
-				helper.run( _svc, _obj, sender, msg );
-			}
-			catch ( Exception e )
-			{
-				sessionNotify( _obj, e );
-			}
-		}
+		
 		return true;
 	}
 
@@ -175,7 +194,6 @@ public class StubBase<T> implements SessionMessage
 			}
 		}
 
-		@SuppressWarnings("unchecked")
 		public void run() throws Exception
 		{
 			helper.run( _svc, _obj, sender, msg );
