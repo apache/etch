@@ -18,7 +18,7 @@
 package etch.util.core.io;
 
 /**
- * Interface used to deliver sockets to the session from the listener.
+ * Interface used to deliver new connections to the session from the listener.
  * @param <T> the type of the connection for the session.
  */
 public interface SessionListener<T> extends Session
