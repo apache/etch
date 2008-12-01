@@ -27,37 +27,34 @@ using NUnit.Framework;
 namespace Etch.Transport
 {
     [TestFixture]
-    public class TestPlainMailbox : MailboxManager, Notify
+    public class TestPlainMailbox : MailboxManager
     {
-
         [SetUp]
         public void Init()
         {
-            mailboxStatus1 = false;
-             mailbox = null;
-
-             state = null;
-
-            closed = false;
             unregistered = false;
 
-       //     AlarmManager.SetAlarmManager(null);
+            //     AlarmManager.SetAlarmManager(null);
 
             redelivered = new List<Element>();
 
             vf = new MyValueFactory();
-	
-            mt_foo = new XType( "foo" );
-	
-            foo_msg = new Message( mt_foo, vf );
+
+            mt_foo = new XType("foo");
+
+            foo_msg = new Message(mt_foo, vf);
 
             fred_who = new WhoAmI();
-	
-            mt_bar = new XType( "bar" );
-	
-            bar_msg = new Message( mt_bar, vf );
-	
-            alice_who = new WhoAmI(); 
+
+            mt_bar = new XType("bar");
+
+            bar_msg = new Message(mt_bar, vf);
+
+            alice_who = new WhoAmI();
+
+            notify = new MyNotify();
+
+            notify1x = new MyNotify();
         }
         
         [Test]
@@ -350,15 +347,15 @@ namespace Etch.Transport
         public void notify1()
         {
             PlainMailbox mb = new PlainMailbox(this, 1L);
-            checkMailboxStatus(false, null, null, false);
+            notify.checkMailboxStatus(false, null, null, false);
 
             Object state = new Object();
 
-            mb.RegisterNotify(this, state, 0);
-            checkMailboxStatus(false, null, null, false);
+            mb.RegisterNotify(notify, state, 0);
+            notify.checkMailboxStatus(false, null, null, false);
 
             checkCloseDelivery(mb, true);
-            checkMailboxStatus(true, mb, state, true);
+            notify.checkMailboxStatus(true, mb, state, true);
         }
 
 
@@ -366,15 +363,15 @@ namespace Etch.Transport
         public void notify2()
         {
             PlainMailbox mb = new PlainMailbox(this, 1L);
-            checkMailboxStatus(false, null, null, false);
+            notify.checkMailboxStatus(false, null, null, false);
 
             Object state = new Object();
 
-            mb.RegisterNotify(this, state, 1000);
-            checkMailboxStatus(false, null, null, false);
+            mb.RegisterNotify(notify, state, 1000);
+            notify.checkMailboxStatus(false, null, null, false);
 
             Thread.Sleep(2000);
-            checkMailboxStatus(true, mb, state, true);
+            notify.checkMailboxStatus(true, mb, state, true);
         }
 
 
@@ -382,15 +379,15 @@ namespace Etch.Transport
         public void notify3()
         {
             PlainMailbox mb = new PlainMailbox(this, 1L);
-            checkMailboxStatus(false, null, null, false);
+            notify.checkMailboxStatus(false, null, null, false);
 
             Object state = new Object();
 
-            mb.RegisterNotify(this, state, 0);
-            checkMailboxStatus(false, null, null, false);
+            mb.RegisterNotify(notify, state, 0);
+            notify.checkMailboxStatus(false, null, null, false);
 
-            Thread.Sleep(20);
-            checkMailboxStatus(false, null, null, false);
+            Thread.Sleep(2000);
+            notify.checkMailboxStatus(false, null, null, false);
         }
 
 
@@ -398,15 +395,115 @@ namespace Etch.Transport
         public void notify4()
         {
             PlainMailbox mb = new PlainMailbox(this, 1L);
-            checkMailboxStatus(false, null, null, false);
+            notify.checkMailboxStatus(false, null, null, false);
 
             Object state = new Object();
 
-            mb.RegisterNotify(this, state, 0);
-            checkMailboxStatus(false, null, null, false);
+            mb.RegisterNotify(notify, state, 0);
+            notify.checkMailboxStatus(false, null, null, false);
 
             mb.Message(alice_who, foo_msg);
-            checkMailboxStatus(true, mb, state, false);
+            notify.checkMailboxStatus(true, mb, state, false);
+        }
+
+        [Test]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void reg1()
+        {
+            // notify == null
+            PlainMailbox mb = new PlainMailbox(this, 1L);
+            mb.RegisterNotify(null, null, 0);
+        }
+
+        [Test]
+        [ExpectedException(typeof(ArgumentException))]
+        public void reg2()
+        {
+            // maxDelay < 0
+            PlainMailbox mb = new PlainMailbox(this, 1L);
+            mb.RegisterNotify(notify, null, -1);
+        }
+
+        [Test]
+        public void reg3()
+        {
+            PlainMailbox mb = new PlainMailbox(this, 1L);
+            mb.RegisterNotify(notify, null, 0);
+        }
+
+        [Test]
+        [ExpectedException(typeof(Exception))]
+        public void reg4()
+        {
+            // this.notify != null
+            PlainMailbox mb = new PlainMailbox(this, 1L);
+            mb.RegisterNotify(notify, null, 0);
+            mb.RegisterNotify(notify, null, 0);
+        }
+
+        [Test]
+        [ExpectedException(typeof(Exception))]
+        public void reg5()
+        {
+            // this.notify != null
+            PlainMailbox mb = new PlainMailbox(this, 1L);
+            mb.RegisterNotify(notify, null, 0);
+            mb.RegisterNotify(notify1x, null, 0);
+        }
+
+        [Test]
+        public void unreg1()
+        {
+            PlainMailbox mb = new PlainMailbox(this, 1L);
+            mb.UnregisterNotify(notify);
+        }
+
+        [Test]
+        public void unreg2()
+        {
+            PlainMailbox mb = new PlainMailbox(this, 1L);
+            mb.RegisterNotify(notify, null, 0);
+            mb.UnregisterNotify(notify);
+        }
+
+        [Test]
+        public void unreg3()
+        {
+            PlainMailbox mb = new PlainMailbox(this, 1L);
+            mb.RegisterNotify(notify, null, 0);
+            mb.UnregisterNotify(notify);
+            mb.UnregisterNotify(notify);
+            mb.UnregisterNotify(notify1x);
+        }
+
+        [Test]
+        public void unreg4()
+        {
+            PlainMailbox mb = new PlainMailbox(this, 1L);
+            mb.RegisterNotify(notify, null, 0);
+            mb.UnregisterNotify(notify);
+            mb.RegisterNotify(notify, null, 0);
+            mb.UnregisterNotify(notify);
+            mb.RegisterNotify(notify1x, null, 0);
+            mb.UnregisterNotify(notify1x);
+        }
+
+        [Test]
+        [ExpectedException(typeof(ArgumentException))]
+        public void unreg5()
+        {
+            // notify != this.notify
+            PlainMailbox mb = new PlainMailbox(this, 1L);
+            mb.RegisterNotify(notify, null, 0);
+            mb.UnregisterNotify(notify1x);
+        }
+
+        [Test]
+        public void unreg6()
+        {
+            PlainMailbox mb = new PlainMailbox(this, 1L);
+            mb.RegisterNotify(notify, null, 30);
+            mb.UnregisterNotify(notify);
         }
 
         ///////////////////
@@ -426,6 +523,10 @@ namespace Etch.Transport
         private Message bar_msg;
 
         private Who alice_who;
+
+        private MyNotify notify;
+
+        private MyNotify notify1x;
 
         private void testConstruct(long messageId)
         {
@@ -509,35 +610,6 @@ namespace Etch.Transport
         }
 
         private bool unregistered;
-
-        ////////////////////
-        // Notify methods //
-        ////////////////////
-
-        public void mailboxStatus(Mailbox mb, Object state, bool closed)
-        {
-            mailboxStatus1 = true;
-            this.mailbox = mb;
-            this.state = state;
-            this.closed = closed;
-        }
-
-        private bool mailboxStatus1;
-
-        private Mailbox mailbox;
-
-        private Object state;
-
-        private bool closed;
-
-        private void checkMailboxStatus(bool mailboxStatus, Mailbox mailbox,
-            Object state, bool closed)
-        {
-            Assert.AreEqual(mailboxStatus, this.mailboxStatus1);
-            Assert.AreSame(mailbox, this.mailbox);
-            Assert.AreSame(state, this.state);
-            Assert.AreEqual(closed, this.closed);
-        }
 
         ////////////////////
         // MyValueFactory //
@@ -658,9 +730,38 @@ namespace Etch.Transport
                 throw new Exception("The method or operation is not implemented.");
             }
         }
+
         public class WhoAmI : Who
         {
             
+        }
+
+        public class MyNotify : Notify
+        {
+            public void mailboxStatus(Mailbox mb, Object state, bool closed)
+            {
+                mailboxStatus1 = true;
+                this.mailbox = mb;
+                this.state = state;
+                this.closed = closed;
+            }
+
+            private bool mailboxStatus1;
+
+            private Mailbox mailbox;
+
+            private Object state;
+
+            private bool closed;
+
+            public void checkMailboxStatus(bool mailboxStatus, Mailbox mailbox,
+                Object state, bool closed)
+            {
+                Assert.AreEqual(mailboxStatus, this.mailboxStatus1);
+                Assert.AreSame(mailbox, this.mailbox);
+                Assert.AreSame(state, this.state);
+                Assert.AreEqual(closed, this.closed);
+            }
         }
 
         #region MailboxManager Members
