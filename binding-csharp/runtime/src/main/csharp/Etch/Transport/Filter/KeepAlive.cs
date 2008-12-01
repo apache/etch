@@ -118,6 +118,7 @@ namespace Etch.Transport.Filter
         protected override bool SessionUp()
         {
             //		Log.report( "KeepAliveSessionUp", "server", server );
+            up = true;
             AlarmManager.staticAdd(this, null, delay * 1000);
             tickle();
             return true;
@@ -126,9 +127,12 @@ namespace Etch.Transport.Filter
         protected override bool SessionDown()
         {
             //		Log.report( "KeepAliveSessionDown", "server", server );
+            up = false;
             AlarmManager.staticRemove(this);
             return true;
         }
+
+        private bool up;
 
         private void handleRequest(Message msg)
         {
@@ -202,16 +206,7 @@ namespace Etch.Transport.Filter
                 }
                 catch (Exception e)
                 {
-                    try
-                    {
-                        session.SessionNotify(e);
-                    }
-                    catch (Exception e1)
-                    {
-                        // what else can you do?
-                        //e1.PrintStackTrace();
-                        Console.WriteLine(e1.StackTrace);
-                    }
+                    reportError(e);
                 }
             }
         }
@@ -228,15 +223,7 @@ namespace Etch.Transport.Filter
             }
             catch (Exception e)
             {
-                try
-                {
-                    session.SessionNotify(e);
-                }
-                catch (Exception e1)
-                {
-                    // what else can you do?
-                    Console.WriteLine(e1.StackTrace);
-                }
+                reportError(e);
             }
         }
 
@@ -250,15 +237,7 @@ namespace Etch.Transport.Filter
             }
             catch (Exception e)
             {
-                try
-                {
-                    session.SessionNotify(e);
-                }
-                catch (Exception e1)
-                {
-                    // what else can you do?
-                    Console.WriteLine(e1.StackTrace);
-                }
+                reportError(e);
             }
         }
 
@@ -266,17 +245,61 @@ namespace Etch.Transport.Filter
         {
             //		Log.report( "KeepAliveWakeup", "server", server );
 
+            if (!up)
+                return 0;
+
             if (!server)
-                sendKeepAliveReq();
+            {
+                TodoManager.AddTodo(new MyTodo(sendKeepAliveReq, reportError));
+            }
 
             checkTickle();
 
             return delay * 1000;
         }
 
+        private void reportError(Exception e)
+        {
+            try
+            {
+                session.SessionNotify(e);
+            }
+            catch (Exception e1)
+            {
+                Console.WriteLine(e1);
+            }
+        }
+
         public override string ToString()
         {
             return "KeepAlive/" + transport;
+        }
+    }
+
+    public class MyTodo : Todo
+    {
+        public delegate void doit();
+
+        public delegate void report(Exception e);
+
+        public MyTodo(doit d, report r)
+        {
+            this.d = d;
+            this.r = r;
+        }
+
+        private readonly doit d;
+
+        private readonly report r;
+
+        public void Doit(TodoManager mgr)
+        {
+            d();
+        }
+
+        public void Exception(TodoManager mgr, Exception e)
+        {
+            r(e);
         }
     }
 }
