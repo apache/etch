@@ -27,6 +27,10 @@ import etch.bindings.java.support.Pool.PoolRunnable;
  */
 public class TestFreePool
 {
+	private final static int Q1 = 30; // 1 quanta of dependable clock tick
+	private final static int Q2 = 60; // 2 quanta of dependable clock tick
+	private final static int Q3 = 90; // 3 quanta of dependable clock tick
+	
 	/** @throws Exception */
 	@Test
 	public void close1() throws Exception
@@ -77,10 +81,13 @@ public class TestFreePool
 		MyPoolRunnable r = new MyPoolRunnable( 0, false );
 		assertFalse( r.done );
 		assertNull( r.ex );
+		
 		p.run( r );
-		Thread.sleep( 30 );
+		
+		Thread.sleep( Q1 );
 		assertTrue( r.done );
 		assertNull( r.ex );
+		
 		p.join();
 	}
 
@@ -90,12 +97,14 @@ public class TestFreePool
 	{
 		FreePool p = new FreePool( 2 );
 		
-		MyPoolRunnable r = new MyPoolRunnable( 30, false );
+		MyPoolRunnable r = new MyPoolRunnable( Q1, false );
 		assertFalse( r.done );
 		assertNull( r.ex );
+		
 		p.run( r );
 		assertFalse( r.done );
 		assertNull( r.ex );
+		
 		p.join();
 		assertTrue( r.done );
 		assertNull( r.ex );
@@ -113,7 +122,7 @@ public class TestFreePool
 		
 		p.run( r );
 		
-		Thread.sleep( 30 );
+		Thread.sleep( Q1 );
 		assertTrue( r.done );
 		assertNull( r.ex );
 	}
@@ -131,7 +140,7 @@ public class TestFreePool
 			
 			p.run( r );
 			
-			Thread.sleep( 30 );
+			Thread.sleep( Q1 );
 			assertTrue( r.done );
 			assertNull( r.ex );
 		}
@@ -149,7 +158,7 @@ public class TestFreePool
 		
 		p.run( r );
 		
-		Thread.sleep( 30 );
+		Thread.sleep( Q1 );
 		assertFalse( r.done );
 		assertNotNull( r.ex );
 	}
@@ -160,17 +169,17 @@ public class TestFreePool
 	{
 		FreePool p = new FreePool( 2 );
 		
-		MyPoolRunnable r = new MyPoolRunnable( 30, false );
+		MyPoolRunnable r = new MyPoolRunnable( Q2, false );
 		assertFalse( r.done );
 		assertNull( r.ex );
 		
 		p.run( r );
 		
-		Thread.sleep( 15 );
+		Thread.sleep( Q1 );
 		assertFalse( r.done );
 		assertNull( r.ex );
 		
-		Thread.sleep( 45 );
+		Thread.sleep( Q3 );
 		assertTrue( r.done );
 		assertNull( r.ex );
 	}
@@ -181,25 +190,25 @@ public class TestFreePool
 	{
 		FreePool p = new FreePool( 2 );
 		
-		MyPoolRunnable r1 = new MyPoolRunnable( 30, false );
+		MyPoolRunnable r1 = new MyPoolRunnable( Q2, false );
 		assertFalse( r1.done );
 		assertNull( r1.ex );
 		
-		MyPoolRunnable r2 = new MyPoolRunnable( 30, false );
+		MyPoolRunnable r2 = new MyPoolRunnable( Q2, false );
 		assertFalse( r2.done );
 		assertNull( r2.ex );
 
 		p.run( r1 );
 		p.run( r2 );
 		
-		Thread.sleep( 15 );
+		Thread.sleep( Q1 );
 		assertFalse( r1.done );
 		assertNull( r1.ex );
 		
 		assertFalse( r2.done );
 		assertNull( r2.ex );
 		
-		Thread.sleep( 45 );
+		Thread.sleep( Q3 );
 		assertTrue( r1.done );
 		assertNull( r1.ex );
 		
@@ -214,15 +223,15 @@ public class TestFreePool
 		// free pool thread count exceeded
 		FreePool p = new FreePool( 2 );
 		
-		MyPoolRunnable r1 = new MyPoolRunnable( 30, false );
+		MyPoolRunnable r1 = new MyPoolRunnable( Q2, false );
 		assertFalse( r1.done );
 		assertNull( r1.ex );
 		
-		MyPoolRunnable r2 = new MyPoolRunnable( 30, false );
+		MyPoolRunnable r2 = new MyPoolRunnable( Q2, false );
 		assertFalse( r2.done );
 		assertNull( r2.ex );
 		
-		MyPoolRunnable r3 = new MyPoolRunnable( 30, false );
+		MyPoolRunnable r3 = new MyPoolRunnable( Q2, false );
 		assertFalse( r3.done );
 		assertNull( r3.ex );
 
@@ -237,15 +246,15 @@ public class TestFreePool
 	{
 		FreePool p = new FreePool( 2 );
 		
-		MyPoolRunnable r1 = new MyPoolRunnable( 30, false );
+		MyPoolRunnable r1 = new MyPoolRunnable( Q2, false );
 		assertFalse( r1.done );
 		assertNull( r1.ex );
 		
-		MyPoolRunnable r2 = new MyPoolRunnable( 30, false );
+		MyPoolRunnable r2 = new MyPoolRunnable( Q2, false );
 		assertFalse( r2.done );
 		assertNull( r2.ex );
 		
-		MyPoolRunnable r3 = new MyPoolRunnable( 30, false );
+		MyPoolRunnable r3 = new MyPoolRunnable( Q2, false );
 		assertFalse( r3.done );
 		assertNull( r3.ex );
 
@@ -253,7 +262,7 @@ public class TestFreePool
 		p.run( r2 );
 		try { p.run( r3 ); } catch ( IllegalStateException e ) {}
 		
-		Thread.sleep( 15 );
+		Thread.sleep( Q1 );
 		assertFalse( r1.done );
 		assertNull( r1.ex );
 		
@@ -263,7 +272,7 @@ public class TestFreePool
 		assertFalse( r3.done );
 		assertNull( r3.ex );
 		
-		Thread.sleep( 45 );
+		Thread.sleep( Q3 );
 		assertTrue( r1.done );
 		assertNull( r1.ex );
 		
