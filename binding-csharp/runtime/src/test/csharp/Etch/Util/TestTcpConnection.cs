@@ -27,9 +27,9 @@ namespace Etch.Transport
     public class TestTcpConnection
     {
         public static MyListener lh = new MyListener();
-        public static Connection<SessionListener> l;
+        public static Connection<SessionListener<Socket>> l;
         public TcpConnection c;
-        private static int TIMEOUT = 4000;
+        private const int TIMEOUT = 4000;
         private static int port;
 
         [TestFixtureSetUp]
@@ -724,7 +724,7 @@ namespace Etch.Transport
 
         #region Filler classes
 
-        public class MyListener : SessionListener
+        public class MyListener : SessionListener<Socket>
         {
             public Monitor<Socket> accepted = new Monitor<Socket>( "accepted" );
 

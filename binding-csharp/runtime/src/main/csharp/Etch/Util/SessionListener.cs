@@ -13,13 +13,15 @@
 // WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 // License for the specific language governing permissions and limitations
 // under the License.
- 
-using System.Net.Sockets;
 
 namespace Etch.Util
 {
-    public interface SessionListener : Session
+    /// <summary>
+    /// Interface used to deliver new connections to the session from the listener.
+    /// </summary>
+    /// <typeparam name="T">the type of the connection for the session.</typeparam>
+    public interface SessionListener<T> : Session
     {
-        void SessionAccepted(Socket socket);
+        void SessionAccepted(T socket);
     }
 }
