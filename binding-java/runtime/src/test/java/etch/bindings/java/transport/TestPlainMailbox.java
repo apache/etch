@@ -41,8 +41,9 @@ import etch.util.core.Who;
 public class TestPlainMailbox
 {
 	private final MyMailboxManager mmgr = new MyMailboxManager();
-	
+
 	private final MyNotify notify = new MyNotify();
+	private final MyNotify notify1 = new MyNotify();
 	
 	/** @throws Exception */
 	@Test
@@ -396,6 +397,112 @@ public class TestPlainMailbox
 		mb.message( alice_who, foo_msg );
 		notify.checkMailboxStatus( true, mb, state, false );
 	}
+	
+	/** @throws Exception */
+	@Test( expected = NullPointerException.class )
+	public void reg1() throws Exception
+	{
+		// notify == null
+		PlainMailbox mb = new PlainMailbox( mmgr, 1L );
+		mb.registerNotify( null, null, 0 );
+	}
+	
+	/** @throws Exception */
+	@Test( expected = IllegalArgumentException.class )
+	public void reg2() throws Exception
+	{
+		// maxDelay < 0
+		PlainMailbox mb = new PlainMailbox( mmgr, 1L );
+		mb.registerNotify( notify, null, -1 );
+	}
+	
+	/** @throws Exception */
+	@Test
+	public void reg3() throws Exception
+	{
+		PlainMailbox mb = new PlainMailbox( mmgr, 1L );
+		mb.registerNotify( notify, null, 0 );
+	}
+	
+	/** @throws Exception */
+	@Test( expected = IllegalStateException.class )
+	public void reg4() throws Exception
+	{
+		// this.notify != null
+		PlainMailbox mb = new PlainMailbox( mmgr, 1L );
+		mb.registerNotify( notify, null, 0 );
+		mb.registerNotify( notify, null, 0 );
+	}
+	
+	/** @throws Exception */
+	@Test( expected = IllegalStateException.class )
+	public void reg5() throws Exception
+	{
+		// this.notify != null
+		PlainMailbox mb = new PlainMailbox( mmgr, 1L );
+		mb.registerNotify( notify, null, 0 );
+		mb.registerNotify( notify1, null, 0 );
+	}
+	
+	/** @throws Exception */
+	@Test
+	public void unreg1() throws Exception
+	{
+		PlainMailbox mb = new PlainMailbox( mmgr, 1L );
+		mb.unregisterNotify( notify );
+	}
+	
+	/** @throws Exception */
+	@Test
+	public void unreg2() throws Exception
+	{
+		PlainMailbox mb = new PlainMailbox( mmgr, 1L );
+		mb.registerNotify( notify, null, 0 );
+		mb.unregisterNotify( notify );
+	}
+	
+	/** @throws Exception */
+	@Test
+	public void unreg3() throws Exception
+	{
+		PlainMailbox mb = new PlainMailbox( mmgr, 1L );
+		mb.registerNotify( notify, null, 0 );
+		mb.unregisterNotify( notify );
+		mb.unregisterNotify( notify );
+		mb.unregisterNotify( notify1 );
+	}
+	
+	/** @throws Exception */
+	@Test
+	public void unreg4() throws Exception
+	{
+		PlainMailbox mb = new PlainMailbox( mmgr, 1L );
+		mb.registerNotify( notify, null, 0 );
+		mb.unregisterNotify( notify );
+		mb.registerNotify( notify, null, 0 );
+		mb.unregisterNotify( notify );
+		mb.registerNotify( notify1, null, 0 );
+		mb.unregisterNotify( notify1 );
+	}
+	
+	/** @throws Exception */
+	@Test( expected = IllegalStateException.class )
+	public void unreg5() throws Exception
+	{
+		// notify != this.notify
+		PlainMailbox mb = new PlainMailbox( mmgr, 1L );
+		mb.registerNotify( notify, null, 0 );
+		mb.unregisterNotify( notify1 );
+	}
+	
+	/** @throws Exception */
+	@Test
+	public void unreg6() throws Exception
+	{
+		PlainMailbox mb = new PlainMailbox( mmgr, 1L );
+		mb.registerNotify( notify, null, 30 );
+		mb.unregisterNotify( notify );
+	}
 
 	///////////////////
 	// HELPFUL STUFF //
@@ -485,7 +592,6 @@ public class TestPlainMailbox
 	}
 	
 	/** */
-	@SuppressWarnings("hiding")
 	static class MyNotify implements Notify
 	{
 		public void mailboxStatus( Mailbox mb, Object state, boolean closed )
