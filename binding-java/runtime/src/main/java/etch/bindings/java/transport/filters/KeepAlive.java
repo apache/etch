@@ -27,6 +27,8 @@ import etch.util.AlarmListener;
 import etch.util.AlarmManager;
 import etch.util.Resources;
 import etch.util.Timer;
+import etch.util.Todo;
+import etch.util.TodoManager;
 import etch.util.URL;
 import etch.util.core.Who;
 import etch.util.core.io.Transport;
@@ -248,16 +250,21 @@ public class KeepAlive extends AbstractMessageFilter implements AlarmListener
 			}
 			catch ( Exception e )
 			{
-				try
-				{
-					session.sessionNotify( e );
-				}
-				catch ( Exception e1 )
-				{
-					// what else can you do?
-					e1.printStackTrace();
-				}
+				reportError( e );
 			}
+		}
+	}
+	
+	private void reportError( Exception e )
+	{
+		try
+		{
+			session.sessionNotify( e );
+		}
+		catch ( Exception e1 )
+		{
+			// what else can you do?
+			e1.printStackTrace();
 		}
 	}
 	
@@ -273,15 +280,7 @@ public class KeepAlive extends AbstractMessageFilter implements AlarmListener
 		}
 		catch ( Exception e )
 		{
-			try
-			{
-				session.sessionNotify( e );
-			}
-			catch ( Exception e1 )
-			{
-				// what else can you do?
-				e1.printStackTrace();
-			}
+			reportError( e );
 		}
 	}
 	
@@ -295,15 +294,7 @@ public class KeepAlive extends AbstractMessageFilter implements AlarmListener
 		}
 		catch ( Exception e )
 		{
-			try
-			{
-				session.sessionNotify( e );
-			}
-			catch ( Exception e1 )
-			{
-				// what else can you do?
-				e1.printStackTrace();
-			}
+			reportError( e );
 		}
 	}
 
@@ -315,7 +306,21 @@ public class KeepAlive extends AbstractMessageFilter implements AlarmListener
 			return 0;
 		
 		if (!server)
-			sendKeepAliveReq();
+		{
+			// use a Todo so as to not unnecessarily block AlarmManager.
+			TodoManager.addTodo( new Todo()
+			{
+				public void doit( TodoManager mgr ) throws Exception
+				{
+					sendKeepAliveReq();
+				}
+
+				public void exception( TodoManager mgr, Exception e )
+				{
+					reportError( e );
+				}
+			} );
+		}
 		
 		checkTickle();
 		
