@@ -15,6 +15,7 @@
 // under the License.
 
 using System;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Threading;
 
@@ -33,7 +34,6 @@ namespace Etch.Support
         public FreePool( int maxSize )
         {
             this.maxSize = maxSize;
-            myThreads = new Thread[ maxSize ];
         }
 
         /// <summary>
@@ -43,14 +43,9 @@ namespace Etch.Support
             : this( 50 )
         { }
 
-        private int maxSize;
-        private int currentThreads = 0;
-        Thread[] myThreads;
-        
-        void Run()
-        {
-            //donothing
-        }
+        private readonly int maxSize;
+
+        private readonly Dictionary<Thread, Thread> group = new Dictionary<Thread, Thread>();
 
         private Boolean open = true;
 
@@ -73,10 +68,19 @@ namespace Etch.Support
         public void Join()
         {
             Close();
-            for ( int i = 0; i < currentThreads; i++ )
+            while (true)
             {
-                if ( myThreads[ i ].IsAlive )
-                    myThreads[ i ].Join();
+                Thread x;
+                lock (group)
+                {
+                    Dictionary<Thread, Thread>.Enumerator e = group.GetEnumerator();
+                    if (!e.MoveNext())
+                        break;
+                    
+                    x = e.Current.Key;
+                    group.Remove(x);
+                }
+                x.Join();
             }
         }
 
@@ -86,13 +90,7 @@ namespace Etch.Support
         /// <returns>the number of active threads</returns>
         public int ActiveCount()
         {
-            int count = 0;
-            for ( int i = 0; i < currentThreads; i++ )
-            {
-                if ( myThreads[ i ].IsAlive )
-                    count++;
-            }
-            return count;
+            return group.Count;
         }
 
         #region Pool Members
@@ -100,24 +98,35 @@ namespace Etch.Support
         [MethodImpl( MethodImplOptions.Synchronized )]
         public void Run( RunDelegate d1, ExceptionDelegate d2 )
         {
-            if ( !open || ActiveCount() >= maxSize )
-                throw new Exception( "free pool thread count exceeded or pool closed" );
+            if (!open || ActiveCount() >= maxSize)
+                throw new Exception("free pool thread count exceeded or pool closed");
 
-            myThreads[ currentThreads ] = new Thread(
-                new ThreadStart( delegate()
-                                {
-                                    try
-                                    {
-                                        d1();
-                                    }
-                                    catch ( Exception e )
-                                    {
-                                        d2( e );
-                                    }
-                                } ) );
+            Thread t = new Thread(
+                delegate()
+                {
+                    try
+                    {
+                        d1();
+                    }
+                    catch (Exception e)
+                    {
+                        d2(e);
+                    }
+                    finally
+                    {
+                        lock (group)
+                        {
+                            group.Remove(Thread.CurrentThread);
+                        }
+                    }
+                });
 
-            myThreads[ currentThreads ].Start();
-            currentThreads++;
+            lock (group)
+            {
+                group.Add(t, t);
+            }
+
+            t.Start();
         }
 
         #endregion
