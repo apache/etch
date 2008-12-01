@@ -23,6 +23,10 @@ namespace Etch.Support
     [TestFixture]
     public class TestFreePool
     {
+        private const int Q1 = 30; // 1 quanta of reliable clock tick
+        private const int Q2 = 60; // 2 quanta of reliable clock tick
+        private const int Q3 = 90; // 3 quanta of reliable clock tick
+
         [Test]
         public void close1()
         {
@@ -71,7 +75,7 @@ namespace Etch.Support
             Assert.IsFalse(r.done);
             Assert.IsNull(r.ex);
             p.Run(r.run, r.exception);
-            Thread.Sleep(30);
+            Thread.Sleep(Q2);
             Assert.IsTrue(r.done);
             Assert.IsNull(r.ex);
             p.Join();
@@ -82,7 +86,7 @@ namespace Etch.Support
         {
             FreePool p = new FreePool(2);
 
-            MyPoolRunnable r = new MyPoolRunnable(30, false);
+            MyPoolRunnable r = new MyPoolRunnable(Q1, false);
             Assert.IsFalse(r.done);
             Assert.IsNull(r.ex);
             p.Run(r.run, r.exception);
@@ -104,7 +108,7 @@ namespace Etch.Support
 
             p.Run(r.run, r.exception);
 
-            Thread.Sleep(30);
+            Thread.Sleep(Q1);
             Assert.IsTrue(r.done);
             Assert.IsNull(r.ex);
         }
@@ -121,7 +125,7 @@ namespace Etch.Support
 
                 p.Run(r.run, r.exception);
 
-                Thread.Sleep(30);
+                Thread.Sleep(Q1);
                 Assert.IsTrue(r.done);
                 Assert.IsNull(r.ex);
             }
@@ -138,7 +142,7 @@ namespace Etch.Support
 
             p.Run(r.run, r.exception);
 
-            Thread.Sleep(30);
+            Thread.Sleep(Q1);
             Assert.IsFalse(r.done);
             Assert.IsNotNull(r.ex);
         }
@@ -148,17 +152,17 @@ namespace Etch.Support
         {
             FreePool p = new FreePool(2);
 
-            MyPoolRunnable r = new MyPoolRunnable(30, false);
+            MyPoolRunnable r = new MyPoolRunnable(Q2, false);
             Assert.IsFalse(r.done);
             Assert.IsNull(r.ex);
 
             p.Run(r.run, r.exception);
 
-            Thread.Sleep(15);
+            Thread.Sleep(Q1);
             Assert.IsFalse(r.done);
             Assert.IsNull(r.ex);
 
-            Thread.Sleep(45);
+            Thread.Sleep(Q3);
             Assert.IsTrue(r.done);
             Assert.IsNull(r.ex);
         }
@@ -168,25 +172,25 @@ namespace Etch.Support
         {
             FreePool p = new FreePool(2);
 
-            MyPoolRunnable r1 = new MyPoolRunnable(30, false);
+            MyPoolRunnable r1 = new MyPoolRunnable(Q2, false);
             Assert.IsFalse(r1.done);
             Assert.IsNull(r1.ex);
 
-            MyPoolRunnable r2 = new MyPoolRunnable(30, false);
+            MyPoolRunnable r2 = new MyPoolRunnable(Q2, false);
             Assert.IsFalse(r2.done);
             Assert.IsNull(r2.ex);
 
             p.Run(r1.run, r1.exception);
             p.Run(r2.run, r2.exception);
 
-            Thread.Sleep(15);
+            Thread.Sleep(Q1);
             Assert.IsFalse(r1.done);
             Assert.IsNull(r1.ex);
 
             Assert.IsFalse(r2.done);
             Assert.IsNull(r2.ex);
 
-            Thread.Sleep(45);
+            Thread.Sleep(Q3);
             Assert.IsTrue(r1.done);
             Assert.IsNull(r1.ex);
 
@@ -201,15 +205,15 @@ namespace Etch.Support
             // free pool thread count exceeded
             FreePool p = new FreePool(2);
 
-            MyPoolRunnable r1 = new MyPoolRunnable(30, false);
+            MyPoolRunnable r1 = new MyPoolRunnable(Q2, false);
             Assert.IsFalse(r1.done);
             Assert.IsNull(r1.ex);
 
-            MyPoolRunnable r2 = new MyPoolRunnable(30, false);
+            MyPoolRunnable r2 = new MyPoolRunnable(Q2, false);
             Assert.IsFalse(r2.done);
             Assert.IsNull(r2.ex);
 
-            MyPoolRunnable r3 = new MyPoolRunnable(30, false);
+            MyPoolRunnable r3 = new MyPoolRunnable(Q2, false);
             Assert.IsFalse(r3.done);
             Assert.IsNull(r3.ex);
 
@@ -223,15 +227,15 @@ namespace Etch.Support
         {
             FreePool p = new FreePool(2);
 
-            MyPoolRunnable r1 = new MyPoolRunnable(30, false);
+            MyPoolRunnable r1 = new MyPoolRunnable(Q2, false);
             Assert.IsFalse(r1.done);
             Assert.IsNull(r1.ex);
 
-            MyPoolRunnable r2 = new MyPoolRunnable(30, false);
+            MyPoolRunnable r2 = new MyPoolRunnable(Q2, false);
             Assert.IsFalse(r2.done);
             Assert.IsNull(r2.ex);
 
-            MyPoolRunnable r3 = new MyPoolRunnable(30, false);
+            MyPoolRunnable r3 = new MyPoolRunnable(Q2, false);
             Assert.IsFalse(r3.done);
             Assert.IsNull(r3.ex);
 
@@ -239,7 +243,7 @@ namespace Etch.Support
             p.Run(r2.run, r2.exception);
             try { p.Run(r3.run, r3.exception); } catch (Exception) { }
 
-            Thread.Sleep(15);
+            Thread.Sleep(Q1);
             Assert.IsFalse(r1.done);
             Assert.IsNull(r1.ex);
 
@@ -249,7 +253,7 @@ namespace Etch.Support
             Assert.IsFalse(r3.done);
             Assert.IsNull(r3.ex);
 
-            Thread.Sleep(45);
+            Thread.Sleep(Q3);
             Assert.IsTrue(r1.done);
             Assert.IsNull(r1.ex);
 
