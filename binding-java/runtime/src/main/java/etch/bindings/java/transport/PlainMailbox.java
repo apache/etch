@@ -149,7 +149,7 @@ public class PlainMailbox implements Mailbox, AlarmListener
 	public void registerNotify( Notify newNotify, Object newState, int maxDelay )
 	{
 		if (newNotify == null)
-			throw new NullPointerException( "notify == null" );
+			throw new NullPointerException( "newNotify == null" );
 		
 		if (maxDelay < 0)
 			throw new IllegalArgumentException( "maxDelay < 0" );
@@ -180,7 +180,7 @@ public class PlainMailbox implements Mailbox, AlarmListener
 	public void unregisterNotify( Notify oldNotify )
 	{
 		if (oldNotify == null)
-			throw new NullPointerException( "notify == null" );
+			throw new NullPointerException( "oldNotify == null" );
 		
 		if (this.notify == null)
 			return;
@@ -188,7 +188,7 @@ public class PlainMailbox implements Mailbox, AlarmListener
 		synchronized (queue)
 		{
 			if (oldNotify != this.notify)
-				throw new IllegalStateException( "notify != this.notify" );
+				throw new IllegalStateException( "oldNotify != this.notify" );
 			
 			if (alarmSet)
 			{
