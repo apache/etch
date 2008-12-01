@@ -17,8 +17,10 @@
 
 package etch.bindings.java.support;
 
-import org.junit.Ignore;
 import org.junit.Test;
+import static org.junit.Assert.*;
+
+import etch.bindings.java.support.Pool.PoolRunnable;
 
 /**
  * Test of FreePool
@@ -27,9 +29,279 @@ public class TestFreePool
 {
 	/** @throws Exception */
 	@Test
-	@Ignore
-	public void nothing() throws Exception
+	public void close1() throws Exception
 	{
-		// TODO write some unit tests for FreePool.
+		FreePool p = new FreePool( 2 );
+		p.close();
+	}
+
+	/** @throws Exception */
+	@Test( expected = IllegalStateException.class )
+	public void close2() throws Exception
+	{
+		// free pool thread count exceeded or pool closed
+		FreePool p = new FreePool( 2 );
+		p.close();
+		
+		MyPoolRunnable r = new MyPoolRunnable( 0, false );
+		p.run( r );
+	}
+	
+	/** @throws Exception */
+	@Test
+	public void close3() throws Exception
+	{
+		FreePool p = new FreePool( 2 );
+		p.close();
+		p.close();
+	}
+
+	/** @throws Exception */
+	@Test( expected = IllegalStateException.class )
+	public void join1() throws Exception
+	{
+		// free pool thread count exceeded or pool closed
+		FreePool p = new FreePool( 2 );
+		p.join();
+		
+		MyPoolRunnable r = new MyPoolRunnable( 0, false );
+		p.run( r );
+	}
+
+	/** @throws Exception */
+	@Test
+	public void join2() throws Exception
+	{
+		FreePool p = new FreePool( 2 );
+		
+		MyPoolRunnable r = new MyPoolRunnable( 0, false );
+		assertFalse( r.done );
+		assertNull( r.ex );
+		p.run( r );
+		Thread.sleep( 30 );
+		assertTrue( r.done );
+		assertNull( r.ex );
+		p.join();
+	}
+
+	/** @throws Exception */
+	@Test
+	public void join3() throws Exception
+	{
+		FreePool p = new FreePool( 2 );
+		
+		MyPoolRunnable r = new MyPoolRunnable( 30, false );
+		assertFalse( r.done );
+		assertNull( r.ex );
+		p.run( r );
+		assertFalse( r.done );
+		assertNull( r.ex );
+		p.join();
+		assertTrue( r.done );
+		assertNull( r.ex );
+	}
+	
+	/** @throws Exception */
+	@Test
+	public void run1() throws Exception
+	{
+		FreePool p = new FreePool( 2 );
+		
+		MyPoolRunnable r = new MyPoolRunnable( 0, false );
+		assertFalse( r.done );
+		assertNull( r.ex );
+		
+		p.run( r );
+		
+		Thread.sleep( 30 );
+		assertTrue( r.done );
+		assertNull( r.ex );
+	}
+	
+	/** @throws Exception */
+	@Test
+	public void run2() throws Exception
+	{
+		FreePool p = new FreePool( 2 );
+		for (int i = 0; i < 100; i++)
+		{
+			MyPoolRunnable r = new MyPoolRunnable( 0, false );
+			assertFalse( r.done );
+			assertNull( r.ex );
+			
+			p.run( r );
+			
+			Thread.sleep( 30 );
+			assertTrue( r.done );
+			assertNull( r.ex );
+		}
+	}
+	
+	/** @throws Exception */
+	@Test
+	public void run3() throws Exception
+	{
+		FreePool p = new FreePool( 2 );
+		
+		MyPoolRunnable r = new MyPoolRunnable( 0, true );
+		assertFalse( r.done );
+		assertNull( r.ex );
+		
+		p.run( r );
+		
+		Thread.sleep( 30 );
+		assertFalse( r.done );
+		assertNotNull( r.ex );
+	}
+	
+	/** @throws Exception */
+	@Test
+	public void run4() throws Exception
+	{
+		FreePool p = new FreePool( 2 );
+		
+		MyPoolRunnable r = new MyPoolRunnable( 30, false );
+		assertFalse( r.done );
+		assertNull( r.ex );
+		
+		p.run( r );
+		
+		Thread.sleep( 15 );
+		assertFalse( r.done );
+		assertNull( r.ex );
+		
+		Thread.sleep( 45 );
+		assertTrue( r.done );
+		assertNull( r.ex );
+	}
+	
+	/** @throws Exception */
+	@Test
+	public void run5() throws Exception
+	{
+		FreePool p = new FreePool( 2 );
+		
+		MyPoolRunnable r1 = new MyPoolRunnable( 30, false );
+		assertFalse( r1.done );
+		assertNull( r1.ex );
+		
+		MyPoolRunnable r2 = new MyPoolRunnable( 30, false );
+		assertFalse( r2.done );
+		assertNull( r2.ex );
+
+		p.run( r1 );
+		p.run( r2 );
+		
+		Thread.sleep( 15 );
+		assertFalse( r1.done );
+		assertNull( r1.ex );
+		
+		assertFalse( r2.done );
+		assertNull( r2.ex );
+		
+		Thread.sleep( 45 );
+		assertTrue( r1.done );
+		assertNull( r1.ex );
+		
+		assertTrue( r2.done );
+		assertNull( r2.ex );
+	}
+	
+	/** @throws Exception */
+	@Test( expected = IllegalStateException.class )
+	public void run6() throws Exception
+	{
+		// free pool thread count exceeded
+		FreePool p = new FreePool( 2 );
+		
+		MyPoolRunnable r1 = new MyPoolRunnable( 30, false );
+		assertFalse( r1.done );
+		assertNull( r1.ex );
+		
+		MyPoolRunnable r2 = new MyPoolRunnable( 30, false );
+		assertFalse( r2.done );
+		assertNull( r2.ex );
+		
+		MyPoolRunnable r3 = new MyPoolRunnable( 30, false );
+		assertFalse( r3.done );
+		assertNull( r3.ex );
+
+		p.run( r1 );
+		p.run( r2 );
+		p.run( r3 );
+	}
+	
+	/** @throws Exception */
+	@Test
+	public void run7() throws Exception
+	{
+		FreePool p = new FreePool( 2 );
+		
+		MyPoolRunnable r1 = new MyPoolRunnable( 30, false );
+		assertFalse( r1.done );
+		assertNull( r1.ex );
+		
+		MyPoolRunnable r2 = new MyPoolRunnable( 30, false );
+		assertFalse( r2.done );
+		assertNull( r2.ex );
+		
+		MyPoolRunnable r3 = new MyPoolRunnable( 30, false );
+		assertFalse( r3.done );
+		assertNull( r3.ex );
+
+		p.run( r1 );
+		p.run( r2 );
+		try { p.run( r3 ); } catch ( IllegalStateException e ) {}
+		
+		Thread.sleep( 15 );
+		assertFalse( r1.done );
+		assertNull( r1.ex );
+		
+		assertFalse( r2.done );
+		assertNull( r2.ex );
+		
+		assertFalse( r3.done );
+		assertNull( r3.ex );
+		
+		Thread.sleep( 45 );
+		assertTrue( r1.done );
+		assertNull( r1.ex );
+		
+		assertTrue( r2.done );
+		assertNull( r2.ex );
+		
+		assertFalse( r3.done );
+		assertNull( r3.ex );
+	}
+	
+	private final class MyPoolRunnable implements PoolRunnable
+	{
+		public MyPoolRunnable( int delay, boolean excp )
+		{
+			this.delay = delay;
+			this.excp = excp;
+		}
+		
+		private final int delay;
+		
+		private final boolean excp;
+		
+		public boolean done;
+		
+		public Exception ex;
+
+		public void run() throws Exception
+		{
+			if (delay > 0)
+				Thread.sleep( delay );
+			if (excp)
+				throw new RuntimeException();
+			done = true;
+		}
+		
+		public void exception( Exception e )
+		{
+			ex = e;
+		}
 	}
 }
