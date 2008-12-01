@@ -198,10 +198,10 @@ namespace Etch.Transport
             return 0;
         }
 
-        public void RegisterNotify(Notify notify, Object state, int maxDelay)
+        public void RegisterNotify(Notify newNotify, Object state, int maxDelay)
         {
-            if (notify == null)
-                throw new NullReferenceException("notify == null");
+            if (newNotify == null)
+                throw new ArgumentNullException("newNotify == null");
 
             if (maxDelay < 0)
                 throw new ArgumentException("maxDelay < 0");
@@ -213,7 +213,7 @@ namespace Etch.Transport
                 if (this.notify != null)
                     throw new Exception("this.notify != null");
 
-                this.notify = notify;
+                this.notify = newNotify;
                 this.state = state;
 
                 if (maxDelay > 0)
@@ -229,18 +229,18 @@ namespace Etch.Transport
                 fireNotify();
         }
 
-        public void UnregisterNotify(Notify notify)
+        public void UnregisterNotify(Notify oldNotify)
         {
-            if (notify == null)
-                throw new ArgumentNullException("notify == null");
+            if (oldNotify == null)
+                throw new ArgumentNullException("oldNotify == null");
+
+            if (this.notify == null)
+                return;
 
             lock (queue)
             {
-                if (notify != this.notify)
-                    throw new ArgumentException("notify != this.notify");
-
-                if (this.notify == null)
-                    return;
+                if (oldNotify != this.notify)
+                    throw new ArgumentException("oldNotify != this.notify");
 
                 if (alarmSet)
                 {

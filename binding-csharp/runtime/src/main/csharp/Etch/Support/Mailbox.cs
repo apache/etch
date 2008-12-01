@@ -54,7 +54,7 @@ namespace Etch.Support
 
        ///<summary>Registers a Notify interface implementation to receive a callback
 	   ///when a mailbox's status is changed.</summary>
-	   ///<param> notify a Notify interface implementation to report the
+	   ///<param> newNotify a Notify interface implementation to report the
 	   ///delivery status to. </param>
 	   ///<param> state a state value to pass thru to the Notify interface
 	   /// implementation. </param>
@@ -62,14 +62,14 @@ namespace Etch.Support
 	   ///wait for delivery of a message to the mailbox. 0 means wait
 	   ///forever. The mailbox is closed upon timeout.<param>
     	
-	   void RegisterNotify( Notify notify, Object state, int maxDelay );
+	   void RegisterNotify( Notify newNotify, Object state, int maxDelay );
 	
 	
 	   /// <summary>Unregisters a Notify interface implementation from receiving a callback
 	   /// when a mailbox's status is changed. Cancels any timeout. </summary>
-	   ///<param> notify a Notify interface implementation which was previously
+       ///<param> oldNotify a Notify interface implementation which was previously
 	   ///registered. </param>    	
-	   void UnregisterNotify( Notify notify );
+	   void UnregisterNotify( Notify oldNotify );
 
 
         bool Message(Who sender, Message msg);
