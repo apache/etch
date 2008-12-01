@@ -47,7 +47,7 @@ namespace Etch.Transport
 
             Object socket = resources.Get(SOCKET);
 
-            TransportData c = null;
+            TransportData c;
 
             if (isSecure)
                 c = new TlsConnection((Socket)socket, u, resources);
@@ -73,15 +73,15 @@ namespace Etch.Transport
         protected override Transport<ServerFactory> NewListener( string uri, Resources resources,
             ServerFactory factory )
         {
-            Transport<SessionListener> l = new Etch.Util.TcpListener(uri, resources);
+            Transport<SessionListener<Socket>> l = new Etch.Util.TcpListener(uri, resources);
             MySessionListener b = new MySessionListener(this, l, uri, resources);
             b.SetSession(factory);
             return b;
         }
 
-        public class MySessionListener : Transport<ServerFactory>, SessionListener
+        public class MySessionListener : Transport<ServerFactory>, SessionListener<Socket>
         {
-            public MySessionListener(TcpTransportFactory ttf, Transport<SessionListener> transport,
+            public MySessionListener(TcpTransportFactory ttf, Transport<SessionListener<Socket>> transport,
                 String uri, Resources resources )
             {
                 this.ttf = ttf;
@@ -93,7 +93,7 @@ namespace Etch.Transport
             }
 
             private readonly TcpTransportFactory ttf;
-            private readonly Transport<SessionListener> transport;
+            private readonly Transport<SessionListener<Socket>> transport;
             private readonly string uri;
             private readonly Resources resources;
 

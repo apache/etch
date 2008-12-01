@@ -25,7 +25,7 @@ namespace Etch.Util
     /// <summary>
     /// Implementation of a connection which handles a socket listener.
     /// </summary>
-    public class TcpListener : Connection<SessionListener>, Transport<SessionListener>
+    public class TcpListener : Connection<SessionListener<Socket>>
     {
         /// <summary>
         /// Constructs the TcpListener.
@@ -235,7 +235,7 @@ namespace Etch.Util
             {
                 if (e.Message != null && e.Message.Contains("interrupted"))
                     return;
-                throw e;
+                throw;
             }
         }
 
