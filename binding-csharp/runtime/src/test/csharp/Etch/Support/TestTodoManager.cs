@@ -39,7 +39,7 @@ namespace Etch.Support
         }
 
         [Test]
-        [ExpectedException(typeof(ThreadInterruptedException))]
+        [ExpectedException(typeof(Exception))]
         public void TestManagerNotStarted()
         {
             TodoManager mgr = new TodoManager( 50, 10, 1, 5, 5000, 1 );
@@ -47,7 +47,7 @@ namespace Etch.Support
         }
 
         [Test]
-        [ExpectedException( typeof( ThreadInterruptedException ) )]
+        [ExpectedException( typeof( Exception ) )]
         public void TestShutDown()
         {
             TodoManager mgr = TodoManager.GetTodoManager();

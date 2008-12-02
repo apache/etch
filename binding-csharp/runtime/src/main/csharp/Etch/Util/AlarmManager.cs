@@ -178,7 +178,7 @@ namespace Etch.Util
         public void Add(AlarmListener listener, Object state, int delay)
         {
             if (listener == null)
-                throw new NullReferenceException("listener == null");
+                throw new ArgumentNullException("listener == null");
 
             if (delay <= 0)
                 throw new ArgumentException("delay <= 0");
