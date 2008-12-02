@@ -73,6 +73,7 @@
     <Compile Include="Etch\Transport\TestMessagizer.cs" />
     <Compile Include="Etch\Transport\TestPlainMailbox.cs" />
     <Compile Include="Etch\Transport\TestPlainMailboxManager.cs" />
+    <Compile Include="Etch\Util\TestAlarmManager.cs" />
     <Compile Include="Etch\Util\TestCharIterator.cs" />
     <Compile Include="Etch\Util\TestCircularQueue.cs" />
     <Compile Include="Etch\Util\TestDateSerializer.cs" />

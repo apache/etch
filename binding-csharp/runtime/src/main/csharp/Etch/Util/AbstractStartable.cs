@@ -28,7 +28,7 @@ namespace Etch.Util
         public void Start()
         {
             if (IsStarted())
-                throw new Exception("Is already started");
+                throw new Exception("is already started");
 
             try
             {
@@ -79,7 +79,7 @@ namespace Etch.Util
         public void CheckIsStarted()
         {
             if (!IsStarted())
-                throw new System.Threading.ThreadInterruptedException("is not started");
+                throw new Exception("is not started");
         }
 
         /// <summary>
