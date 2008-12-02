@@ -251,7 +251,6 @@ public class AlarmManager extends AbstractStartable implements Runnable
 		
 		alarm.setDue( due );
 		enqueue( alarm );
-		
 		notifyWorker( "update" );
 	}
 	
@@ -268,9 +267,10 @@ public class AlarmManager extends AbstractStartable implements Runnable
 		
 		Alarm alarm = removeAlarm( listener );
 		if (alarm != null)
+		{
 			dequeue( alarm );
-		
-		notifyWorker( "remove" );
+			notifyWorker( "remove" );
+		}
 	}
 	
 	private synchronized void remove( Alarm alarm )
@@ -291,7 +291,7 @@ public class AlarmManager extends AbstractStartable implements Runnable
 		catch ( Exception e )
 		{
 			remove( alarm );
-//			Log.report( "wakeup", "who", alarm.listener, Log.EXCP, e );
+			report( e );
 		}
 	}
 	
@@ -308,7 +308,6 @@ public class AlarmManager extends AbstractStartable implements Runnable
 			{
 				while (true)
 				{
-//					Log.report( "AlarmManager.getNextDueAlarm", "who", this, "isStarted", isStarted() );
 					if (!isStarted())
 						return null;
 					
@@ -318,7 +317,6 @@ public class AlarmManager extends AbstractStartable implements Runnable
 					{
 						try
 						{
-//							Log.report( "AlarmManager.wait", "who", this );
 							wait( Long.MAX_VALUE );
 							continue;
 						}
@@ -360,31 +358,29 @@ public class AlarmManager extends AbstractStartable implements Runnable
 	
 	private void notifyWorker( String reason )
 	{
-//		Log.report( "notify", "who", this, "reason", reason, "where", new Throwable() );
 		// the set of alarms has changed.
 		notify();
 	}
 	
 	public void run()
 	{
-//		Log.report( "AlarmManager.start", "who", this );
 		try
 		{
 			Alarm alarm;
 			while ((alarm = getNextDueAlarm()) != null)
 			{
-//				Log.report( "AlarmManager.wakeup", "who", this, "what", alarm );
 				wakeup( alarm );
 			}
 		}
 		catch ( RuntimeException e )
 		{
-//			Log.report( "AlarmManager.wakeup", "who", this, Log.EXCP, e );
+			report( e );
 		}
-		finally
-		{
-//			Log.report( "AlarmManager.done", "who", this );
-		}
+	}
+	
+	private void report( Exception e )
+	{
+		e.printStackTrace();
 	}
 
 	////////////////////////
