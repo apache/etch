@@ -33,9 +33,6 @@ namespace Etch.Util
 
         private readonly Object s2 = new Object();
 
-        //private readonly MyAlarmListener listener = new MyAlarmListener(0);
-
-
         [Test]
         public void start1()
         {
@@ -44,7 +41,6 @@ namespace Etch.Util
             am.Start();
             Assert.IsTrue(am.IsStarted());
         }
-
 
         [Test]
         [ExpectedException(typeof(Exception))]
@@ -58,7 +54,6 @@ namespace Etch.Util
             am.Start();
         }
 
-
         [Test]
         [ExpectedException(typeof(Exception))]
         public void stop1()
@@ -68,7 +63,6 @@ namespace Etch.Util
             Assert.IsFalse(am.IsStarted());
             am.Stop();
         }
-
 
         [Test]
         public void stop2()
@@ -80,7 +74,6 @@ namespace Etch.Util
             am.Stop();
             Assert.IsFalse(am.IsStarted());
         }
-
 
         [Test]
         public void static1()
@@ -105,7 +98,6 @@ namespace Etch.Util
             AlarmManager.shutdown();
         }
 
-
         [Test]
         public void listener1()
         {
@@ -129,7 +121,6 @@ namespace Etch.Util
             Assert.AreEqual(1, listener1.delay);
         }
 
-
         [Test]
         [ExpectedException(typeof(Exception))]
         public void add1()
@@ -142,7 +133,6 @@ namespace Etch.Util
             am.Add(listener, null, Q1);
         }
 
-
         [Test]
         [ExpectedException(typeof(ArgumentNullException))]
         public void add2()
@@ -153,7 +143,6 @@ namespace Etch.Util
 
             am.Add(null, null, Q1);
         }
-
 
         [Test]
         [ExpectedException(typeof(ArgumentException))]
@@ -167,7 +156,6 @@ namespace Etch.Util
 
             am.Add(listener, null, -1);
         }
-
 
         [Test]
         public void add4()
@@ -188,13 +176,6 @@ namespace Etch.Util
             Assert.IsNull(listener.state);
         }
 
-        private static readonly long t0 = HPTimer.Now();
-
-        //public static void Log(string msg)
-        //{
-        //    Console.WriteLine("{0} happened at {1}", msg, (HPTimer.Now()-t0)/1000000.0);
-        //}
-
         [Test]
         public void add5()
         {
@@ -211,7 +192,6 @@ namespace Etch.Util
             Assert.IsTrue(listener.wake.Get());
             Assert.AreSame(s1, listener.state);
         }
-
 
         [Test]
         public void add6()
@@ -234,7 +214,6 @@ namespace Etch.Util
             Assert.AreSame(s2, listener.state);
         }
 
-
         [Test]
         public void add7()
         {
@@ -253,7 +232,6 @@ namespace Etch.Util
             Assert.AreSame(s1, listener.state);
         }
 
-
         [Test]
         [ExpectedException(typeof(Exception))]
         public void remove1()
@@ -266,7 +244,6 @@ namespace Etch.Util
             am.Remove(listener);
         }
 
-
         [Test]
         public void remove2()
         {
@@ -277,7 +254,6 @@ namespace Etch.Util
 
             am.Remove(listener);
         }
-
 
         [Test]
         public void remove3()
@@ -299,7 +275,6 @@ namespace Etch.Util
             Assert.IsFalse(listener.wake.Get());
             Assert.IsNull(listener.state);
         }
-
 
         [Test]
         public void repeat1()
@@ -335,10 +310,10 @@ namespace Etch.Util
             Console.WriteLine("due4 = {0}", listener.due);
             long d4 = listener.due - t0;
 
-            long m1 = d1 / d1;
-            long m2 = d2 / d1;
-            long m3 = d3 / d1;
-            long m4 = d4 / d1;
+            long m1 = (long) Math.Round(d1 / (double)d1);
+            long m2 = (long) Math.Round(d2 / (double)d1);
+            long m3 = (long) Math.Round(d3 / (double)d1);
+            long m4 = (long) Math.Round(d4 / (double)d1);
 
             Console.WriteLine("times {0} {1} {2} {3} {4}", t0, d1, d2, d3, d4);
 
@@ -347,7 +322,6 @@ namespace Etch.Util
             Assert.AreEqual(3, m3);
             Assert.AreEqual(4, m4);
         }
-
 
         [Test]
         public void repeat2()
@@ -383,10 +357,10 @@ namespace Etch.Util
             Console.WriteLine("due4 = {0}", listener.due);
             long d4 = listener.due - t0;
 
-            long m1 = d1 / d1;
-            long m2 = d2 / d1;
-            long m3 = d3 / d1;
-            long m4 = d4 / d1;
+            long m1 = (long) Math.Round(d1 / (double)d1);
+            long m2 = (long) Math.Round(d2 / (double)d1);
+            long m3 = (long) Math.Round(d3 / (double)d1);
+            long m4 = (long) Math.Round(d4 / (double)d1);
 
             Console.WriteLine("times {0} {1} {2} {3} {4}", t0, d1, d2, d3, d4);
 
@@ -395,7 +369,6 @@ namespace Etch.Util
             Assert.AreEqual(3, m3);
             Assert.AreEqual(4, m4);
         }
-
 
         [Test]
         [ExpectedException(typeof(ThreadInterruptedException))]
@@ -446,7 +419,6 @@ namespace Etch.Util
 
         public int Wakeup(AlarmManager manager, object state, long due)
         {
-            //TestAlarmManager.Log("Wakeup");
             this.state = state;
             this.due = due;
             wake.Set(true);
