@@ -24,31 +24,33 @@ namespace Etch.Util
     /// </summary>
     abstract public class AbstractStartable : Startable
     {
-        [MethodImpl(MethodImplOptions.Synchronized)]
         public void Start()
         {
-            if (IsStarted())
-                throw new Exception("is already started");
+            lock (this)
+            {
+                if (IsStarted())
+                    throw new Exception("is already started");
+                SetStarted();
+            }
 
             try
             {
-                started = true;
                 Start0();
             }
             catch (Exception e)
             {
-                SetStopped();
-                Stop0();
-                throw e;
+                Stop();
+                throw;
             }
         }
 
-        [MethodImpl(MethodImplOptions.Synchronized)]
         public void Stop()
         {
-            CheckIsStarted();
-
-            started = false;
+            lock (this)
+            {
+                CheckIsStarted();
+                SetStopped();
+            }
 
             Stop0();
         }
