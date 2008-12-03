@@ -140,7 +140,7 @@ namespace Etch.Util
             worker = new Thread[nWorkers];
             for (int i = 0; i < nWorkers; i++)
             {
-                worker[i] = new Thread(new ThreadStart(run));
+                worker[i] = new Thread(run);
                 worker[i].IsBackground = true;
                 worker[i].Start();
             }
@@ -151,7 +151,11 @@ namespace Etch.Util
         {
             ClearAlarms();
             ClearQueue();
-            System.Threading.Monitor.PulseAll(this);
+
+            lock (this)
+            {
+                Monitor.PulseAll(this);
+            }
 
             for (int i = 0; i < nWorkers; i++)
             {
@@ -178,7 +182,7 @@ namespace Etch.Util
         public void Add(AlarmListener listener, Object state, int delay)
         {
             if (listener == null)
-                throw new ArgumentNullException("listener == null");
+                throw new ArgumentNullException("listener");
 
             if (delay <= 0)
                 throw new ArgumentException("delay <= 0");
@@ -215,7 +219,6 @@ namespace Etch.Util
 
             alarm.setDue(due);
             Enqueue(alarm);
-
             NotifyWorker("update");
         }
 
@@ -231,9 +234,10 @@ namespace Etch.Util
 
             Alarm alarm = RemoveAlarm(listener);
             if (alarm != null)
+            {
                 Dequeue(alarm);
-
-            NotifyWorker("remove");
+                NotifyWorker("remove");
+            }
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
@@ -252,10 +256,10 @@ namespace Etch.Util
                 else
                     Remove(alarm);
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 Remove(alarm);
-                //			Log.report( "wakeup", "who", alarm.listener, Log.EXCP, e );
+                Report(e);
             }
         }
 
@@ -284,7 +288,7 @@ namespace Etch.Util
                             {
                                 //Console.WriteLine(" Waiting in getNextDueAlarm ");
 
-                                System.Threading.Monitor.Wait(this, Int32.MaxValue);
+                                Monitor.Wait(this, Int32.MaxValue);
 
                                 //Console.WriteLine(" Done Waiting in getNextDueAlarm ");
 
@@ -306,7 +310,7 @@ namespace Etch.Util
                                 if (delay > 0)
                                 {
                                     int d = (int)delay;
-                                    System.Threading.Monitor.Wait(this, d);
+                                    Monitor.Wait(this, d);
                                 }
                                 continue;
                             }
@@ -335,7 +339,7 @@ namespace Etch.Util
         {
             //		Log.report( "notify", "who", this, "reason", reason, "where", new Throwable() );
             // the set of alarms has changed.
-            System.Threading.Monitor.Pulse(this);
+            Monitor.Pulse(this);
         }
 
         public void run()
@@ -350,9 +354,13 @@ namespace Etch.Util
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                Report(e);
             }
+        }
 
+        private void Report(Exception e)
+        {
+            Console.WriteLine(e);
         }
 
         private Alarm GetAlarm(AlarmListener listener)
@@ -475,8 +483,6 @@ namespace Etch.Util
             {
                 if (obj == this)
                     return true;
-
-
 
                 if (obj == null)
                     return false;

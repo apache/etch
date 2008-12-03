@@ -83,7 +83,10 @@ namespace Etch.Util
      
         protected override void Stop0()
         {
-            System.Threading.Monitor.PulseAll( this );
+            lock (this)
+            {
+                Monitor.PulseAll(this);
+            }
         }
 
         /// <summary>
@@ -98,7 +101,7 @@ namespace Etch.Util
             CheckIsStarted();
 
             int n = AddEntry( todo );
-            System.Threading.Monitor.Pulse( this );
+            Monitor.Pulse( this );
 
             ConsiderStartingAWorker( n ) ;
 
@@ -160,7 +163,7 @@ namespace Etch.Util
         private void StartAWorker()
         {
             workers.Adjust( 1 );
-            Thread t = new Thread( new ThreadStart( Run ) );
+            Thread t = new Thread(Run);
             t.Start();
         }
 
@@ -265,7 +268,7 @@ namespace Etch.Util
                         return null;
                     }
 
-                    System.Threading.Monitor.Wait( this, workerLinger );
+                    Monitor.Wait( this, workerLinger );
 
                     // we lingered. we might have been woken because
                     // we're stopping, or a todo might have been
