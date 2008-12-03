@@ -410,7 +410,7 @@ public class TestAlarmManager
 			wake.set( true );
 			
 			if (excp)
-				throw new RuntimeException( "" );
+				throw new RuntimeException();
 			
 			return delay;
 		}
