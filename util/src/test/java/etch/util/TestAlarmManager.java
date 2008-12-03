@@ -300,10 +300,10 @@ public class TestAlarmManager
 		System.out.printf( "due4 = %d\n", listener.due );
 		long d4 = listener.due - t0;
 		
-		long m1 = d1/d1;
-		long m2 = d2/d1;
-		long m3 = d3/d1;
-		long m4 = d4/d1;
+		long m1 = Math.round( d1/(double) d1 );
+		long m2 = Math.round( d2/(double) d1 );
+		long m3 = Math.round( d3/(double) d1 );
+		long m4 = Math.round( d4/(double) d1 );
 		
 		System.out.printf( "times %d %d %d %d %d\n", t0, d1, d2, d3, d4 );
 		
@@ -346,10 +346,10 @@ public class TestAlarmManager
 		System.out.printf( "due4 = %d\n", listener.due );
 		long d4 = listener.due - t0;
 		
-		long m1 = d1/d1;
-		long m2 = d2/d1;
-		long m3 = d3/d1;
-		long m4 = d4/d1;
+		long m1 = Math.round( d1/(double) d1 );
+		long m2 = Math.round( d2/(double) d1 );
+		long m3 = Math.round( d3/(double) d1 );
+		long m4 = Math.round( d4/(double) d1 );
 		
 		System.out.printf( "times %d %d %d %d %d\n", t0, d1, d2, d3, d4 );
 		
