@@ -31,6 +31,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Etch\Msg\AsyncMode.cs" />
@@ -148,6 +150,7 @@
     <Compile Include="Etch\Util\StrStrHashMapSerializer.cs" />
     <Compile Include="Etch\Util\TcpConnection.cs" />
     <Compile Include="Etch\Util\TcpListener.cs" />
+    <Compile Include="Etch\Util\TcpOptions.cs" />
     <Compile Include="Etch\Util\TcpTransport.cs" />
     <Compile Include="Etch\Util\Timer.cs" />
     <Compile Include="Etch\Util\TlsConnection.cs" />

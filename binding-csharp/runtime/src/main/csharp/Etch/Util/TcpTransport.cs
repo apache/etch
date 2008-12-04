@@ -28,158 +28,16 @@ namespace Etch.Util
     abstract public class TcpTransport : Connection<SessionData>, TransportData
     {
         /// <summary>
-        /// Term on the uri which specifies the auto flush flag. The term string is
-        /// "TcpTransport.autoFlush". The value is "true" or "false". The default
-        /// is "false".
-        /// </summary>
-        public const String AUTO_FLUSH = "TcpTransport.autoFlush";
-
-        /// <summary>
-        /// Term on the uri which specifies the buffer size in bytes. The term
-        /// string is "TcpTransport.bufferSize". The value is an integer between
-	    /// 0 and 65536. The default is 0.
-        /// </summary>
-        public const String BUFFER_SIZE = "TcpTransport.bufferSize";
-
-        /// <summary>
-        /// Term on the uri which specifies the keep alive flag. The term string is
-	    /// "TcpTransport.keepAlive". The value is "true" or "false". The default is
-	    /// "false".
-        /// </summary>
-        public const String KEEP_ALIVE = "TcpTransport.keepAlive";
-
-        /// <summary>
-        /// Term on the uri which specifies the linger time in seconds. The term
-	    /// string is "TcpTransport.lingerTime". The value is an integer between -1
-	    /// and 240. The default is 30. -1 means disable.
-        /// </summary>
-        public const String LINGER_TIME = "TcpTransport.lingerTime";
-
-        /// <summary>
-        /// Term on the uri which specifies the no delay flag. The term string is
-	    /// "TcpTransport.noDelay". The value is "true" or "false". The default is
-	    /// "true".
-        /// </summary>
-        public const String NO_DELAY = "TcpTransport.noDelay";
-
-        /// <summary>
-        /// Term on the uri which specifies the reconnect delay in milliseconds. The
-	    /// term string is "TcpTransport.reconnectDelay". The value is an integer >=
-	    /// 0. The default is 0.
-        /// </summary>
-        public const String RECONNECT_DELAY = "TcpTransport.reconnectDelay";
-
-        /// <summary>
-        /// Term on the uri which specifies the traffic class. The term string is
-	    /// "TcpTransport.trafficClass". The value is an integer between 0 and 255.
-	    /// The default is 0.
-        /// </summary>
-        public const String TRAFFIC_CLASS = "TcpTransport.trafficClass";
-
-        /// <summary>
         /// Constructs the TcpTransport. Pulls common parameters off the uri.
         /// </summary>
         /// <param name="uri"></param>
         /// <param name="resources"></param>
         protected TcpTransport(URL uri, Resources resources)
         {
-            SetDefaultAutoFlush(uri.GetBooleanTerm(AUTO_FLUSH, false));
-            SetDefaultBufferSize((int) uri.GetIntegerTerm(BUFFER_SIZE, 0));
-            SetDefaultKeepAlive(uri.GetBooleanTerm(KEEP_ALIVE, false));
-            SetDefaultLingerTime((int) uri.GetIntegerTerm(LINGER_TIME, 30));
-            SetDefaultNoDelay(uri.GetBooleanTerm(NO_DELAY, true));
-            SetDefaultReconnectDelay((int) uri.GetIntegerTerm(RECONNECT_DELAY, 0));
-            SetDefaultTrafficClass((int) uri.GetIntegerTerm(TRAFFIC_CLASS, 0));
+            options = new TcpOptions(uri, resources);
         }
 
-        private void SetDefaultAutoFlush(bool autoFlush)
-        {
-            this.autoFlush = autoFlush;
-        }
-
-        /// <summary>
-        /// The auto flush setting for this connection. If true, each call to send
-        /// must automatically call flush.
-        /// </summary>
-        protected bool autoFlush;
-
-        private void SetDefaultBufferSize(int bufferSize)
-        {
-            if (bufferSize < 0 || bufferSize > 65536)
-                throw new ArgumentException(
-                    "bufferSize < 0 || bufferSize > 65536");
-            this.bufferSize = bufferSize;
-        }
-
-        /// <summary>
-        /// The output buffer size to use for this connection. Bytes, 0 means
-        /// unbuffered output. If using buffered output, you'll want to disable
-        /// auto flush and call flush manually only when needed.
-        /// </summary>
-        protected int bufferSize;
-
-        private void SetDefaultKeepAlive(bool keepAlive)
-        {
-            this.keepAlive = keepAlive;
-        }
-
-        /// <summary>
-        /// The tcp keep alive setting for this connection.
-        /// </summary>
-        protected bool keepAlive;
-
-        private void SetDefaultLingerTime(int lingerTime)
-        {
-            if (lingerTime < -1 || lingerTime > 240)
-                throw new ArgumentException(
-                    "lingerTime < -1 || lingerTime > 240");
-            this.lingerTime = lingerTime;
-        }
-
-        /// <summary>
-        /// The tcp linger time setting for this connection. Time in seconds, -1
-        /// means disable.
-        /// </summary>
-        protected int lingerTime;
-
-        private void SetDefaultNoDelay(bool noDelay)
-        {
-            this.noDelay = noDelay;
-        }
-
-        /// <summary>
-        /// The tcp no delay setting for this connection. True disables nagle's
-        /// algorithm and causes all sends to be made asap.
-        /// </summary>
-        protected bool noDelay;
-
-        private void SetDefaultReconnectDelay(int reconnectDelay)
-        {
-            if (reconnectDelay < 0)
-                throw new ArgumentException(
-                    "reconnectDelay < 0");
-            this.reconnectDelay = reconnectDelay;
-        }
-
-        /// <summary>
-        /// The reconnect delay for this connection. Time in milliseconds, 0 means
-        /// do not reconnect.
-        /// </summary>
-        protected int reconnectDelay;
-
-        private void SetDefaultTrafficClass(int trafficClass)
-        {
-            if (trafficClass < 0 || trafficClass > 255)
-                throw new ArgumentException(
-                    "trafficClass < 0 || trafficClass > 255");
-            this.trafficClass = trafficClass;
-        }
-
-        /// <summary>
-        /// The traffic class for this connection. 0-255, 0 means normal handling.
-        /// Also called type of service or dscp.
-        /// </summary>
-        protected int trafficClass;
+        private readonly TcpOptions options;
 
         protected override void Stop0()
         {
@@ -187,7 +45,7 @@ namespace Etch.Util
             {
                 Close(false);
             }
-            catch (Exception)
+            catch
             {
                 // ignore
             }
@@ -232,7 +90,7 @@ namespace Etch.Util
                         s.Close();
                     }
                 }
-                catch (Exception)
+                catch
                 {
                     // ignore.
                 }
@@ -254,7 +112,7 @@ namespace Etch.Util
         ///     data. Such a problem causes the current connection to be
         ///     reset.
         /// <seealso cref="Flush()"/>
-        /// <seealso cref="SetDefaultAutoFlush(bool)"/>
+        /// <seealso cref="TcpOptions.autoFlush"/>
         public void Send(byte[] buf)
         {
             Send(buf, 0, buf.Length);
@@ -273,15 +131,15 @@ namespace Etch.Util
             {
                 Stream s = checkStream();
                 s.Write(buf, off, len);
-                if (autoFlush)
+                if (options.autoFlush)
                 {
                     s.Flush();
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 Close(true);
-                throw e;
+                throw;
             }
         }
 
@@ -291,10 +149,10 @@ namespace Etch.Util
             {
                 checkStream().Flush();
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 Close(true);
-                throw e;
+                throw;
             }
         }
 
@@ -332,9 +190,9 @@ namespace Etch.Util
         {
             Socket s = CheckSocket();
 
-            s.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.KeepAlive, keepAlive);
-            s.LingerState = new LingerOption(lingerTime >= 0, lingerTime >= 0 ? lingerTime : 0);
-            s.NoDelay = noDelay;
+            s.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.KeepAlive, options.keepAlive);
+            s.LingerState = new LingerOption(options.lingerTime >= 0, options.lingerTime >= 0 ? options.lingerTime : 0);
+            s.NoDelay = options.noDelay;
             //s.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.TypeOfService, trafficClass);
 
             stream = new NetworkStream(socket);
@@ -377,7 +235,7 @@ namespace Etch.Util
                 return false;
 
             // if a reconnect but no retries allowed, then bail.
-            if (reconnect && reconnectDelay == 0)
+            if (reconnect && options.reconnectDelay == 0)
                 return false;
 
             // ok, we don't have an existing socket, and this is either the first
@@ -394,10 +252,10 @@ namespace Etch.Util
 
                 if (reconnect || !first)
                 {
-                    if (reconnectDelay == 0)
+                    if (options.reconnectDelay == 0)
                         return false;
 
-                    System.Threading.Monitor.Wait(this, reconnectDelay);
+                    System.Threading.Monitor.Wait(this, options.reconnectDelay);
 
                     if (!IsStarted())
                         break;
@@ -445,7 +303,7 @@ namespace Etch.Util
             catch (Exception e)
             {
                 if (e.Message == null)
-                    throw e;
+                    throw;
                 if (e.Message.Contains("connection was aborted"))
                     return;
                 if (e.Message.Contains("blocking operation"))
@@ -454,7 +312,7 @@ namespace Etch.Util
                     return;
                 if (e.Message.Contains("read operation failed"))
                     return;
-                throw e;
+                throw;
             }
         }
     }
