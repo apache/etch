@@ -36,16 +36,16 @@ namespace Etch.Util
         {
             if (socket == null)
             {
-                String host = uri.Host;
-                if (host == null)
-                    throw new ArgumentNullException("host == null");
+                if (uri.Host == null)
+                    throw new ArgumentNullException("host");
+                host = uri.Host;
 
-                int? port = uri.Port;
-                if (port == null)
-                    throw new ArgumentNullException("port == null");
+                if (uri.Port == null)
+                    throw new ArgumentNullException("port");
+                port = (int)uri.Port;
 
                 if (port <= 0 || port >= 65536)
-                    throw new ArgumentOutOfRangeException("port <= 0 || port >= 65536");
+                    throw new ArgumentException("port <= 0 || port >= 65536");
 
                 this.socket = null;
                 this.host = host;
@@ -54,8 +54,8 @@ namespace Etch.Util
             else
             {
                 this.socket = socket;
-                this.host = null;
-                this.port = 0;
+                host = null;
+                port = 0;
             }
         }
 
