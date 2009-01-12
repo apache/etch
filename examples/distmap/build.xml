@@ -82,6 +82,7 @@
     <property name="main-src-java"     location="${src}/main/java" />
     <property name="test-src-java"     location="${src}/test/java" />
     <property name="target"            location="${basedir}/target" />
+    <property name="dist-src"          location="${target}/dist-src" />
     <property name="generated-sources" location="${target}/generated-sources" />
     <property name="gen-src-java"      location="${generated-sources}/main/etch/java" />
     <property name="gen-src-csharp"    location="${generated-sources}/main/etch/csharp" />
@@ -90,10 +91,12 @@
     <property name="classes-test"      location="${target}/classes-test" />
     <property name="test-results"      location="${target}/test-results" />
     <property name="nunit-results"     location="${target}/nunit-results" />
+    <property name="dist"              location="${basedir}/../../target/Installers/dist" />
 
     <!-- initialize -->
     <target name="init" >
         <mkdir dir="${target}" />
+        <mkdir dir="${dist-src}" />
         <mkdir dir="${generated-sources}" />
         <mkdir dir="${gen-src-java}" />
         <mkdir dir="${gen-src-csharp}" />
@@ -226,15 +229,20 @@
 
 Build Complete!
 
-To run the distmap example, open two command-windows in this directory.
+To run java distributed map, open a cmd window and run these
+commands:
 
-cmd-window-1:
-  > cd target/bin
-  > java -cp distmap.jar etch.examples.distmap.MainDistributedHashTableListener
+> cd target\bin
+> start java -cp distmap.jar etch.examples.distmap.MainDistributedHashTableListener
+> start java -cp distmap.jar etch.examples.distmap.MainDistributedHashTableClient
 
-cmd-window-2:
-  > cd target/bin
-  > java -cp distmap.jar etch.examples.distmap.MainDistributedHashTableClient
+To run csharp distributed map:
+
+> cd target\bin
+> start DistMapListener.exe
+> start DistMapClient.exe
+
+You can mix and match the various clients and listeners.
 
         </echo>
     </target>
@@ -248,8 +256,38 @@ cmd-window-2:
         <property name="build.target" value="Release" />
     </target>
 
-    <target name="debug" depends="init-debug,test" />
-    <target name="release" depends="init-release,test" />
+     <target name="dist-src" >
+        <copy file="dist-build.xml" tofile="${dist-src}/build.xml" overwrite="true" />
+        <copy file="dist-README.txt" tofile="${dist-src}/README.txt" overwrite="true" />
+        
+        <copy todir="${dist-src}/src/main/etch" overwrite="true" >
+            <fileset dir="${src}/main/etch" >
+                <exclude name="**/.svn/**" />
+                <include name="**/*.etch" />
+            </fileset>
+        </copy>
+        
+        <copy todir="${dist-src}/src/main/java" overwrite="true" >
+            <fileset dir="${src}/main/java" >
+                <exclude name="**/.svn/**" />
+                <include name="**/*.java" />
+            </fileset>
+        </copy>
+        
+        <copy todir="${dist-src}/src/main/csharp" overwrite="true" >
+            <fileset dir="${src}/main/csharp" >
+                <exclude name="**/.svn/**" />
+                <include name="**/*.cs" />
+            </fileset>
+        </copy>
+        
+        <copy todir="${dist}/examples/distmap" overwrite="true" >
+            <fileset dir="${dist-src}" />
+        </copy>
+    </target>
+    
+    <target name="debug" depends="dist-src,init-debug,test" />
+    <target name="release" depends="dist-src,init-release,test" />
 
     <!-- clean -->
     <target name="clean" >
