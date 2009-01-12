@@ -82,6 +82,7 @@
     <property name="main-src-java"     location="${src}/main/java" />
     <property name="test-src-java"     location="${src}/test/java" />
     <property name="target"            location="${basedir}/target" />
+    <property name="dist-src"          location="${target}/dist-src" />
     <property name="generated-sources" location="${target}/generated-sources" />
     <property name="gen-src-java"      location="${generated-sources}/main/etch/java" />
     <property name="gen-src-csharp"    location="${generated-sources}/main/etch/csharp" />
@@ -90,10 +91,12 @@
     <property name="classes-test"      location="${target}/classes-test" />
     <property name="test-results"      location="${target}/test-results" />
     <property name="nunit-results"     location="${target}/nunit-results" />
+    <property name="dist"              location="${basedir}/../../target/Installers/dist" />
 
     <!-- initialize -->
     <target name="init" >
         <mkdir dir="${target}" />
+        <mkdir dir="${dist-src}" />
         <mkdir dir="${generated-sources}" />
         <mkdir dir="${gen-src-java}" />
         <mkdir dir="${gen-src-csharp}" />
@@ -226,17 +229,22 @@
 
 Build Complete!
 
-To run the example example, open two command-windows in this directory.
+To run java example example, open a cmd window and run these
+commands:
 
-cmd-window-1:
-  > cd target/bin
-  > java -cp example.jar etch.examples.example.MainExampleListener
+> cd target\bin
+> start java -cp example.jar etch.examples.example.MainExmapleListener
+> start java -cp example.jar etch.examples.example.MainExampleClient
 
-cmd-window-2:
-  > cd target/bin
-  > java -cp example.jar etch.examples.example.MainExampleClient
+To run csharp example:
+
+> cd target\bin
+> start exampleListener.exe
+> start exampleClient.exe
 
 Now modify the example to implement the service however you like.
+
+You can mix and match the various clients and listeners.
 
         </echo>
     </target>
@@ -249,9 +257,39 @@ Now modify the example to implement the service however you like.
     <target name="init-release" >
         <property name="build.target" value="Release" />
     </target>
+    
+    <target name="dist-src" >
+        <copy file="dist-build.xml" tofile="${dist-src}/build.xml" overwrite="true" />
+        <copy file="dist-README.txt" tofile="${dist-src}/README.txt" overwrite="true" />
+        
+        <copy todir="${dist-src}/src/main/etch" overwrite="true" >
+            <fileset dir="${src}/main/etch" >
+                <exclude name="**/.svn/**" />
+                <include name="**/*.etch" />
+            </fileset>
+        </copy>
+        
+        <copy todir="${dist-src}/src/main/java" overwrite="true" >
+            <fileset dir="${src}/main/java" >
+                <exclude name="**/.svn/**" />
+                <include name="**/*.java" />
+            </fileset>
+        </copy>
+        
+        <copy todir="${dist-src}/src/main/csharp" overwrite="true" >
+            <fileset dir="${src}/main/csharp" >
+                <exclude name="**/.svn/**" />
+                <include name="**/*.cs" />
+            </fileset>
+        </copy>
+        
+        <copy todir="${dist}/examples/example" overwrite="true" >
+            <fileset dir="${dist-src}" />
+        </copy>
+    </target>
 
-    <target name="debug" depends="init-debug,test" />
-    <target name="release" depends="init-release,test" />
+    <target name="debug" depends="dist-src,init-debug,test" />
+    <target name="release" depends="dist-src,init-release,test" />
 
     <!-- clean -->
     <target name="clean" >
