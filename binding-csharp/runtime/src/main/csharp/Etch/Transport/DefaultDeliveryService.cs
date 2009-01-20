@@ -192,7 +192,7 @@ namespace Etch.Transport
             }
             finally
             {
-                mb.CloseDelivery();
+                mb.CloseRead();
             }
         }
 
