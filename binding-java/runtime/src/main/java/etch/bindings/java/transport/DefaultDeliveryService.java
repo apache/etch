@@ -211,7 +211,7 @@ public class DefaultDeliveryService implements DeliveryService
 		}
 		finally
 		{
-			mb.closeDelivery();
+			mb.closeRead();
 		}
 	}
 }
