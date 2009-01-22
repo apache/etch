@@ -1,4 +1,4 @@
-Welcome to the 1.0.1 release of Etch.
+Welcome to the 1.0.2 release of Etch.
 
 The jumping off point for Etch information and help is here:
 
@@ -18,16 +18,16 @@ The top-level structure of the install image is:
 
 Please take a moment to review the ChangeLog.txt and LICENSE.txt files.
 
-The Windows installer (etch-1.0.1-setup.exe) has created a user environment
+The Windows installer (etch-1.0.2-setup.exe) has created a user environment
 variable (ETCH_HOME) which points to the Etch installation directory. If you
-installed Etch using either etch-1.0.1.tar.gz or etch-1.0.1.zip, you will want
+installed Etch using either etch-1.0.2.tar.gz or etch-1.0.2.zip, you will want
 to create this environment variable yourself:
 
 windows:
-	set ETCH_HOME=C:\Program Files\Etch\etch-1.0.1
+	set ETCH_HOME=C:\Program Files\Etch\etch-1.0.2
 
 unix:
-	export ETCH_HOME=/usr/local/etch/etch-1.0.1
+	export ETCH_HOME=/usr/local/etch/etch-1.0.2
 
 The bin directory has also been put on your path by the Windows installer. If
 you are using the archives, you will need to do this yourself:
@@ -58,15 +58,15 @@ unix:
 The lib directory contains the various jar files, zipped sources, and a C# dll:
 
 	Etch.dll
-	etch-ant-plugin-1.0.1-src.zip
-	etch-ant-plugin-1.0.1.jar
-	etch-java-runtime-1.0.1-src.zip
-	etch-java-runtime-1.0.1.jar
+	etch-ant-plugin-1.0.2-src.zip
+	etch-ant-plugin-1.0.2.jar
+	etch-java-runtime-1.0.2-src.zip
+	etch-java-runtime-1.0.2.jar
 	...
 
 The main items of interest are the java binding runtime, which you need to
-put on the classpath of your projects: etch-java-runtime-1.0.1.jar. There is
-source code to go with it in etch-java-runtime-1.0.1-src.zip.
+put on the classpath of your projects: etch-java-runtime-1.0.2.jar. There is
+source code to go with it in etch-java-runtime-1.0.2-src.zip.
 
 The C# (.NET 2.0) Etch.dll should be added to any C# projects.
 
@@ -80,11 +80,11 @@ maven directory:
 	etch-maven-install.bat
 
 You need to have maven on your path when you run this script. The file
-etch-java-runtime-1.0.1.jar will be installed into your local repository with
-group "etch.etch", artifact id "etch-java-runtime", and version "1.0.1". You
+etch-java-runtime-1.0.2.jar will be installed into your local repository with
+group "etch.etch", artifact id "etch-java-runtime", and version "1.0.2". You
 may then reference Etch from your maven projects.
 
 Examples and unit tests can be had by checking out the source code from the
 subversion repository and performing a complete build:
 
-	https://etchproj.svn.sourceforge.net/svnroot/etchproj/etch/releases/release-1.0.1
+	https://etchproj.svn.sourceforge.net/svnroot/etchproj/etch/releases/release-1.0.2
