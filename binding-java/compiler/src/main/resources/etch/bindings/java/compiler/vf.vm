@@ -96,7 +96,7 @@ public final class ${vf} extends DefaultValueFactory
 	{
 #foreach ( $n in $intf.iterator() )
 #if ($n.isMessage())
-		${n.vname( $helper )}.setDirection( Direction.$n.getMessageDirection() );
+		${n.vname( $helper )}.setDirection( Direction.$n.msgDir() );
 #if (!$n.isHidden())
 #if ($n.isQueuedAsyncReceiver())
 		${n.vname( $helper )}.setAsyncMode( AsyncMode.QUEUED );

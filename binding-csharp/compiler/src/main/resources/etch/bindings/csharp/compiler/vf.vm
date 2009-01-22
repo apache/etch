@@ -68,7 +68,7 @@ public class ${vf} : DefaultValueFactory
 	{
 #foreach ( $n in $intf.iterator() )
 #if ($n.isMessage())
-		${n.vname( $helper )}.SetDirection( Direction.$n.getMessageDirection() );
+		${n.vname( $helper )}.SetDirection( Direction.$n.msgDir() );
 #if (!$n.isHidden())
 #if ($n.isQueuedAsyncReceiver())
 		${n.vname( $helper )}.SetAsyncMode( AsyncMode.QUEUED );
