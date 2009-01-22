@@ -8,7 +8,7 @@ rem -- java builds --
 
 set TOOLS_DIR=C:\wks\tools
 set ANT_HOME=%TOOLS_DIR%\apache-ant\1.7.0
-set JAVA_HOME=C:\Program Files\Java\jdk1.6.0_06
+ren set JAVA_HOME=C:\Program Files\Java\jdk1.6.0_06
 rem optional
 rem set CLOVER_HOME=%TOOLS_DIR%\clover-ant\2.3.2
 rem /optional
