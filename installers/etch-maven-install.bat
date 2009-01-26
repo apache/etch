@@ -13,7 +13,7 @@ rem Define the etch home directory and artifact particulars
 
 set ETCH_HOME=%~dp0..
 set GROUP=etch.etch
-set ARTIFACT=etch-java-runtime
+set ARTIFACTS=etch-ant-plugin, etch-compiler, etch-csharp-compiler, etch-java-compiler, etch-java-runtime, etch-xml-compiler
 set VERSION=@EtchVersion@
 
 if "%M2_HOME%" == "" goto try_maven_home
@@ -31,4 +31,5 @@ goto run_mvn
 set MVN=mvn.bat
 
 :run_mvn
-"%MVN%" install:install-file "-Dfile=%ETCH_HOME%\lib\etch-java-runtime-%VERSION%.jar" -DgroupId=%GROUP% -DartifactId=%ARTIFACT% -Dversion=%VERSION% -Dpackaging=jar
+FOR %%A IN (%ARTIFACTS%) DO CALL "%MVN%" install:install-file "-Dfile=%ETCH_HOME%\lib\%%A-%VERSION%.jar" -DgroupId=%GROUP% -DartifactId=%%A -Dversion=%VERSION% -Dpackaging=jar
+FOR %%A IN (%ARTIFACTS%) DO CALL "%MVN%" install:install-file "-Dfile=%ETCH_HOME%\lib\%%A-%VERSION%-src.zip" -DgroupId=%GROUP% -DartifactId=%%A -Dversion=%VERSION% -Dpackaging=jar -Dclassifier=sources
