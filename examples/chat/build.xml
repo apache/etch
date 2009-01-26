@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <project name="etch-chat-example" basedir="." default="help" >
     <description>Chat Example</description>
-    <target name="help" ><echo>Please select a target...</echo></target>
+    <property name="Etch.basedir" location="${basedir}/../.." />
+    <import file="${Etch.basedir}/build-support/etch.includes.xml" />
 
     <!-- TODO better computation of etch.home, etch.version -->
     <property environment="env" />
@@ -16,7 +17,7 @@
     </condition>
 
     <property name="Etch.dependency.junit.jar"
-        location="${env.TOOLS_DIR}/junit/4.3.1/junit-4.3.1.jar" />
+        location="${default.junit.lib}/junit-4.3.1.jar" />
 
     <property name="Etch.buildSupportDirectory" location="../../build-support" />
 
@@ -90,7 +91,7 @@
     <property name="classes-test"      location="${target}/classes-test" />
     <property name="test-results"      location="${target}/test-results" />
     <property name="nunit-results"     location="${target}/nunit-results" />
-	<property name="dist"              location="${basedir}/../../target/Installers/dist" />
+    <property name="dist"              location="${basedir}/../../target/Installers/dist" />
 
     <!-- initialize -->
     <target name="init" >
@@ -261,33 +262,33 @@ You can mix and match the various clients and listeners.
     </target>
 
     <target name="dist-src" >
-    	<copy file="dist-build.xml" tofile="${dist-src}/build.xml" overwrite="true" />
-    	<copy file="dist-README.txt" tofile="${dist-src}/README.txt" overwrite="true" />
+        <copy file="dist-build.xml" tofile="${dist-src}/build.xml" overwrite="true" />
+        <copy file="dist-README.txt" tofile="${dist-src}/README.txt" overwrite="true" />
         
-    	<copy todir="${dist-src}/src/main/etch" overwrite="true" >
-        	<fileset dir="${src}/main/etch" >
-        		<exclude name="**/.svn/**" />
-        		<include name="**/*.etch" />
-        	</fileset>
+        <copy todir="${dist-src}/src/main/etch" overwrite="true" >
+            <fileset dir="${src}/main/etch" >
+                <exclude name="**/.svn/**" />
+                <include name="**/*.etch" />
+            </fileset>
         </copy>
         
-    	<copy todir="${dist-src}/src/main/java" overwrite="true" >
-        	<fileset dir="${src}/main/java" >
-        		<exclude name="**/.svn/**" />
-        		<include name="**/*.java" />
-        	</fileset>
+        <copy todir="${dist-src}/src/main/java" overwrite="true" >
+            <fileset dir="${src}/main/java" >
+                <exclude name="**/.svn/**" />
+                <include name="**/*.java" />
+            </fileset>
         </copy>
-    	
-    	<copy todir="${dist-src}/src/main/csharp" overwrite="true" >
-    		<fileset dir="${src}/main/csharp" >
-    			<exclude name="**/.svn/**" />
-        		<include name="**/*.cs" />
-    		</fileset>
-    	</copy>
-    	
-    	<copy todir="${dist}/examples/chat" overwrite="true" >
-    		<fileset dir="${dist-src}" />
-    	</copy>
+        
+        <copy todir="${dist-src}/src/main/csharp" overwrite="true" >
+            <fileset dir="${src}/main/csharp" >
+                <exclude name="**/.svn/**" />
+                <include name="**/*.cs" />
+            </fileset>
+        </copy>
+        
+        <copy todir="${dist}/examples/chat" overwrite="true" >
+            <fileset dir="${dist-src}" />
+        </copy>
     </target>
 
     <target name="debug" depends="dist-src,init-debug,test" />
