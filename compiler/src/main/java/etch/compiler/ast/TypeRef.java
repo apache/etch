@@ -28,15 +28,27 @@ public class TypeRef
 {
 	/**
 	 * Constructs the TypeRef.
+	 * @param intf 
 	 *
 	 * @param type
 	 */
-	public TypeRef( Token type )
+	public TypeRef( Service intf, Token type )
 	{
+		this.intf = intf;
 		this.type = type;
 	}
 	
+	private final Service intf;
+	
 	private final Token type;
+	
+	/**
+	 * @return the parent object of this reference.
+	 */
+	public Service intf()
+	{
+		return intf;
+	}
 	
 	/**
 	 * @return the token of the type.

@@ -47,6 +47,8 @@ public class EtchGrammar extends EtchHelper
 	}
 	
 	private Backend binding;
+	
+	private Service gintf;
 }
 
 PARSER_END(EtchGrammar)
@@ -156,9 +158,12 @@ void service( Module m ) :
 		i = m.addService( n, opts );
 		serviceComment( i, getComment() );
 		binding.addDefaults( i );
+		Service ointf = gintf;
+		gintf = i;
 	}
 	<LBRACE> stmts( i ) <RBRACE>
 	{
+		gintf = ointf;
 		doEndService( i );	
 	}
 }
@@ -406,7 +411,7 @@ TypeRef ctype() :
 	|	t = <DOUBLE>
 	|	t = <STRING>
 	)
-	{ return new TypeRef( t ); }
+	{ return new TypeRef( gintf, t ); }
 }
 
 TypeRef ptype() :
@@ -414,8 +419,8 @@ TypeRef ptype() :
 {
 	(
 		tr = ctype()
-	|   t = <OBJECT> { tr = new TypeRef( t ); }
-	|	t = ref() { tr = new TypeRef( t ); }
+	|   t = <OBJECT> { tr = new TypeRef( gintf, t ); }
+	|	t = ref() { tr = new TypeRef( gintf, t ); }
 	)
 	{ return tr; }
 }
@@ -425,7 +430,7 @@ TypeRef rtype() :
 {
 	(
 		( tr = ptype() d = dim() { tr.setDim( d ); } )
-	|	t = <VOID> { tr = new TypeRef( t ); }
+	|	t = <VOID> { tr = new TypeRef( gintf, t ); }
 	)
 	{ return tr; }
 }
