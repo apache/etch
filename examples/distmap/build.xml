@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <project name="etch-distmap-example" basedir="." default="help" >
     <description>Distributed Map Example</description>
-    <target name="help" ><echo>Please select a target...</echo></target>
+    <property name="Etch.basedir" location="${basedir}/../.." />
+    <import file="${Etch.basedir}/build-support/etch.includes.xml" />
 
     <!-- TODO better computation of etch.home, etch.version -->
     <property environment="env" />
