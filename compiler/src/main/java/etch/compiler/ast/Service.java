@@ -250,7 +250,7 @@ public class Service extends Named<Module> implements OptList, Iterable<Named<?>
 		Token rmType = new Token();
 		rmType.kind = EtchGrammarConstants.VOID;
 		rmType.image = "void";
-		TypeRef rmTypeRef = new TypeRef( rmType );
+		TypeRef rmTypeRef = new TypeRef( this, rmType );
 		
 		nameList.check( rmName );
 		Message rm = new Message( this, rmName, new HashMap<String, Opt>(),

@@ -269,23 +269,9 @@ public class Compiler extends Backend
 
 		for (Service intf : module)
 		{
-			// TODO flush gIntf
-			gIntf = intf;
-			try
-			{
-				generate( intf, what, dir, templateDir );
-			}
-			finally
-			{
-				// TODO flush gIntf
-				gIntf = null;
-			}
+			generate( intf, what, dir, templateDir );
 		}
 	}
-
-	// TODO flush gIntf
-	@Deprecated
-	private Service gIntf;
 
 	private void generate( final Service intf, Set<String> what, Output dir,
 		Output templateDir ) throws Exception
@@ -856,7 +842,11 @@ public class Compiler extends Backend
 			{
 				// we have to use a fully qualified name here.
 				// find the actual type...
-				Named<?> n = gIntf.get( t.image );
+				Named<?> n = type.intf().get( t.image );
+				if (n == null)
+					throw new IllegalArgumentException( String.format(
+						"undefined or ambiguous name at line %d: %s",
+						t.beginLine, t.image ) );
 				return n.efqname( this );
 			}
 		}
@@ -896,7 +886,11 @@ public class Compiler extends Backend
 			{
 				// we have to use a fully qualified name here.
 				// find the actual type...
-				Named<?> n = gIntf.get( t.image );
+				Named<?> n = type.intf().get( t.image );
+				if (n == null)
+					throw new IllegalArgumentException( String.format(
+						"undefined or ambiguous name at line %d: %s",
+						t.beginLine, t.image ) );
 				if (n.isEnumx())
 					return (n.efqname( this ) + "?");
 				return n.efqname( this );
@@ -1074,7 +1068,7 @@ public class Compiler extends Backend
 				return "Validator_" + type.type() + ".Get( " + type.dim()
 					+ " )";
 
-			Named<?> n = type.getNamed( gIntf );
+			Named<?> n = type.getNamed( type.intf() );
 
 			if (n.isBuiltin())
 			{

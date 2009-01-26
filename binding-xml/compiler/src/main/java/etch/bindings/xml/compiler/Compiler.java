@@ -210,23 +210,9 @@ public class Compiler extends Backend
 
 		for (Service intf : module)
 		{
-			// TODO flush gIntf
-			gIntf = intf;
-			try
-			{
-				generate( intf, dir );
-			}
-			finally
-			{
-				// TODO flush gIntf
-				gIntf = null;
-			}
+			generate( intf, dir );
 		}
 	}
-
-	// TODO flush gIntf
-	@Deprecated
-	private Service gIntf;
 
 	private void generate( final Service intf, Output dir )
 		throws Exception
@@ -337,7 +323,11 @@ public class Compiler extends Backend
 			{
 				// we have to use a fully qualified name here.
 				// find the actual type...
-				Named<?> n = gIntf.get( t.image );
+				Named<?> n = type.intf().get( t.image );
+				if (n == null)
+					throw new IllegalArgumentException( String.format(
+						"undefined or ambiguous name at line %d: %s",
+						t.beginLine, t.image ) );
 				String s = n.efqname( this );
 				
 				if ( ( s == null ) && ( n instanceof Extern ) )
@@ -382,7 +372,7 @@ public class Compiler extends Backend
 
 		// patch here. more generic approach needed.
 		// currently, only taking care of Map, Set, List & Datetime
-		case 34:
+		case EtchGrammarConstants.ID:
 			if ( t.toString().equals("Map") || t.toString().equals("List") ||
 					t.toString().equals("Set") || t.toString().equals("Datetime") )
 				return true;
@@ -414,7 +404,11 @@ public class Compiler extends Backend
 			{
 				// we have to use a fully qualified name here.
 				// find the actual type...
-				Named<?> n = gIntf.get( t.image );
+				Named<?> n = type.intf().get( t.image );
+				if (n == null)
+					throw new IllegalArgumentException( String.format(
+						"undefined or ambiguous name at line %d: %s",
+						t.beginLine, t.image ) );
 				
 				
 				if ( n.isExtern() )
@@ -552,7 +546,7 @@ public class Compiler extends Backend
 			if (type.isBuiltin())
 				return "Validator_"+type.type()+".get( "+type.dim()+" )";
 
-			return "Validator_custom.getCustom( "+type.getNamed( gIntf ).efqname( this )+".class, "+type.dim()+" )";
+			return "Validator_custom.getCustom( "+type.getNamed( type.intf() ).efqname( this )+".class, "+type.dim()+" )";
 		}
 
 		if (named instanceof Thrown)
