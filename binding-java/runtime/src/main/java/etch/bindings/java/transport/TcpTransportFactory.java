@@ -147,6 +147,12 @@ public class TcpTransportFactory extends TransportFactory
 		}
 		
 		private ServerFactory session;
+		
+		@Override
+		public String toString()
+		{
+			return "TcpTransportFactory.MySessionListener/"+transport;
+		}
 
 		public Object transportQuery( Object query ) throws Exception
 		{
