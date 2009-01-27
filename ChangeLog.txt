@@ -1,4 +1,209 @@
 -------------
+Release 1.0.2
+-------------
+
+r738160 | sccomer | 2009-01-27 11:30:43 CST
+
+fix for ETCH-31: MySessionListener in TcpTransportFactory does not override
+toString() method to show something useful about the transport stack
+----------------------------------------------------------------------------
+r737984 | dixson | 2009-01-26 21:14:36 CST
+
+update SVN and homepage to apache.org URLs
+----------------------------------------------------------------------------
+r737770 | sccomer | 2009-01-26 11:59:24 CST
+
+fix for ETCH-29: Installing all Maven artifacts along with their sources.
+----------------------------------------------------------------------------
+r737767 | sccomer | 2009-01-26 11:55:12 CST
+
+fix for ETCH-27: mixins cause trouble when two or more mixed in files define a
+type with the same name.
+----------------------------------------------------------------------------
+r737764 | sccomer | 2009-01-26 11:43:19 CST
+
+fix for ETCH-28: Examples do not build due to outdated ant files.
+----------------------------------------------------------------------------
+r736737 | sccomer | 2009-01-22 12:32:13 CST
+
+fix for ETCH-24: The message direction is always "server" for the result_method
+messages in the java-binding valuefactory (also csharp)
+----------------------------------------------------------------------------
+r736725 | sccomer | 2009-01-22 11:43:19 CST
+
+comment out conflicting assignment of JAVA_HOME
+----------------------------------------------------------------------------
+r736724 | sccomer | 2009-01-22 11:42:41 CST
+
+bump the version number to 1.0.2.
+----------------------------------------------------------------------------
+r736169 | sccomer | 2009-01-20 17:25:34 CST
+
+fix for ETCH-25: DefaultDeliveryService ends call with mb.CloseDelivery() and it
+should end it with mb.CloseRead()
+----------------------------------------------------------------------------
+r733843 | rebarraz | 2009-01-12 11:11:12 CST
+
+fix for ETCH-13: added examples to distribution
+----------------------------------------------------------------------------
+r724340 | sccomer | 2008-12-08 07:32:04 CST
+
+factor perf tests into individual static functions called from main.
+
+pull configuration options to the top.
+----------------------------------------------------------------------------
+r723340 | sccomer | 2008-12-04 08:49:24 CST
+
+csharp fix for ETCH-19: Break out common tcp transport options so that they may
+be shared among various transports.
+----------------------------------------------------------------------------
+r723112 | sccomer | 2008-12-03 16:49:22 CST
+
+do the right math related to relative timing tests.
+----------------------------------------------------------------------------
+r723034 | sccomer | 2008-12-03 13:42:19 CST
+
+csharp fix for ETCH-11: AlarmManager deadlocks during shutdown(). break lock on
+AbstractStartable start() and stop() methods. Add back necessary synchronization
+for Monitor.PulseAll() in Stop0(). Port java version of unit test.
+----------------------------------------------------------------------------
+r723032 | sccomer | 2008-12-03 13:39:56 CST
+
+drop blank string for thrown exception in unit test for AlarmManager.
+----------------------------------------------------------------------------
+r722646 | sccomer | 2008-12-02 16:38:21 CST
+
+change the exception thrown by AbstractStartable for already started and is not
+started to Exception from ThreadInterruptedException.
+
+change NullReferenceException thrown by AlarmManager when listener is null to
+ArgumentNullException.
+
+shell of unit test for AlarmManager.
+----------------------------------------------------------------------------
+r722629 | sccomer | 2008-12-02 16:04:52 CST
+
+expanded unit test for AlarmManager.
+
+mostly cosmetic edits for AlarmManager, except tightened up code which notifies
+worker thread when an alarm is removed (if no alarm is removed, then notify is
+not needed).
+----------------------------------------------------------------------------
+r722262 | sccomer | 2008-12-01 16:15:09 CST
+
+java fix for ETCH-11: AlarmManager deadlocks during shutdown().
+
+AlarmManager.shutdown() just calls AbstractStartable.stop() on the static
+instance.
+the bug was actually in AbstractStartable.stop().
+created unit test for AlarmManager which covers this case.
+----------------------------------------------------------------------------
+r722250 | sccomer | 2008-12-01 15:50:56 CST
+
+csharp fix for ETCH-17: SessionListener needs to be more independent.
+----------------------------------------------------------------------------
+r722248 | sccomer | 2008-12-01 15:48:53 CST
+
+improved the comment.
+----------------------------------------------------------------------------
+r722242 | sccomer | 2008-12-01 15:31:41 CST
+
+fix ETCH-6: if free pool exceeds maximum number of threads the exception thrown
+will kill the connection.
+
+also rearrange code in StubBase sessionMessage to enable optimization of NONE
+case.
+----------------------------------------------------------------------------
+r722240 | sccomer | 2008-12-01 15:29:21 CST
+
+fix issue with clock tick quanta in free pool tests.
+----------------------------------------------------------------------------
+r722208 | sccomer | 2008-12-01 14:00:37 CST
+
+implemented unit tests for FreePool in both csharp and java bindings.
+----------------------------------------------------------------------------
+r722205 | sccomer | 2008-12-01 13:58:44 CST
+
+fix for ETCH-23: FreePool has synchronization issues with quick back to back
+calls to Run.
+----------------------------------------------------------------------------
+r722116 | sccomer | 2008-12-01 10:33:04 CST
+
+csharp fix for ETCH-18: KeepAlive throws exception while trying to shutdown
+connection.
+
+fixed both csharp and java versions to use Todo during wakeup to send request
+so as to not block AlarmManager if there is a problem with the connection.
+----------------------------------------------------------------------------
+r722098 | sccomer | 2008-12-01 09:35:14 CST
+
+fix the fix for ETCH-8: canceling mailbox notification registration throws
+exception if not registered.
+
+unit tests for fix for ETCH-8.
+
+----------------------------------------------------------------------------
+r722085 | sccomer | 2008-12-01 08:42:58 CST
+
+java unit test for fix for ETCH-8.
+----------------------------------------------------------------------------
+r720572 | sccomer | 2008-11-25 13:43:44 CST
+
+fix for ETCH-8: canceling mailbox notification registration throws exception if
+not registered.
+----------------------------------------------------------------------------
+r720115 | sccomer | 2008-11-23 22:56:45 CST
+
+changes for selector code to be compatible with jdk 1.5.0_16.
+
+regularize the start/stop handling between Tcp2Listener and Tcp2Connection.
+----------------------------------------------------------------------------
+r719644 | sccomer | 2008-11-21 11:17:48 CST
+
+fixed the test for whether a Tcp2Connection is started.
+
+finalized some instance variables, and made handler private.
+
+synchronized setHandler.
+----------------------------------------------------------------------------
+r719414 | sccomer | 2008-11-20 16:50:55 CST
+
+checkpoint on selectors and transport which uses them.
+----------------------------------------------------------------------------
+r719413 | sccomer | 2008-11-20 16:43:43 CST
+
+correct the name of this test of TcpListener.
+----------------------------------------------------------------------------
+r719286 | sccomer | 2008-11-20 11:02:42 CST
+
+fix for etch-17: SessionListener needs to be more independent.
+fix for etch-19: Break out common tcp transport options so that they may be
+shared among various transports.
+----------------------------------------------------------------------------
+r719279 | sccomer | 2008-11-20 10:47:12 CST
+
+fix for etch-18: KeepAlive throws exception while trying to shutdown connection.
+----------------------------------------------------------------------------
+r713417 | gsandhir | 2008-11-12 10:13:38 CST
+
+Test to see if commit goes through
+----------------------------------------------------------------------------
+r713257 | niclas | 2008-11-11 21:55:20 CST
+
+Checking my own access.
+----------------------------------------------------------------------------
+r712814 | sccomer | 2008-09-30 10:13:12 CDT
+
+fix bug whereby a null enum value would not deserialize correctly. this also
+caused problems when additional elements were added to a service enum and then
+a mix of old and new implementations of the service used together.
+----------------------------------------------------------------------------
+r712813 | dixson3 | 2008-09-10 10:00:41 CDT
+
+skip csharp build on non-windows
+----------------------------------------------------------------------------
+
+-------------
 Release 1.0.1
 -------------
 
