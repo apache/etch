@@ -2,10 +2,7 @@ Welcome to the 1.0.2 release of Etch.
 
 The jumping off point for Etch information and help is here:
 
-http://developer.cisco.com/web/cuae/etch
-
-(Please ignore the tantalizing navigation box on the right and instead
-scroll down to view various topics...)
+http://cwiki.apache.org/ETCH
 
 The top-level structure of the install image is:
 
@@ -87,4 +84,4 @@ may then reference Etch from your maven projects.
 Examples and unit tests can be had by checking out the source code from the
 subversion repository and performing a complete build:
 
-	https://etchproj.svn.sourceforge.net/svnroot/etchproj/etch/releases/release-1.0.2
+ https://svn.apache.org/repos/asf/incubator/etch
