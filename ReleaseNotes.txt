@@ -1,0 +1,68 @@
+Welcome to Apache Etch 1.0.2. Etch is now incubating at apache.org. You can find
+us here:
+
+Project info:
+
+	http://incubator.apache.org/projects/etch.html
+
+Documentation info:
+
+	http://cwiki.apache.org/ETCH/
+
+Issues:
+
+	https://issues.apache.org/jira/browse/ETCH
+
+SVN:
+
+	http://svn.apache.org/repos/asf/incubator/etch/
+
+Mailing lists:
+
+	mailto:etch-dev@incubator.apache.org (etch developers)
+	mailto:etch-users@incubator.apache.org (etch users)
+
+Subscribing to the mailing lists:
+
+	mailto:etch-dev-subscribe@incubator.apache.org (etch developers)
+	mailto:etch-users-subscribe@incubator.apache.org (etch users)
+
+This release of Etch is the first from our new home at Apache. It is a bug fix
+release only. While some new functionality has been committed to the tree, it
+is not yet functional enough to claim that you should use it.
+
+Here are the issues resolved in this release:
+
+Key			Res		Summary
+ETCH-6		Fixed	If free pool exceeds maximum number of threads the exception
+					thrown will kill the connection.
+ETCH-8		Fixed 	Canceling mailbox notification registration throws exception
+					if not registered.
+ETCH-11 	Fixed 	AlarmManager deadlocks during shutdown().
+ETCH-13 	Fixed 	Copy the rest of the example sources into the distribution.
+ETCH-17 	Fixed 	SessionListener needs to be more independent.
+ETCH-18 	Fixed 	KeepAlive throws exception while trying to shutdown
+					connection.
+ETCH-19 	Fixed 	Break out common tcp transport options so that they may be
+					shared among various transports.
+ETCH-23 	Fixed 	FreePool has synchronization issues with quick back to back
+					calls to Run.
+ETCH-24 	Fixed 	The message direction is always "server" for the
+					result_method messages in the java-binding valuefactory.
+ETCH-25 	Fixed 	DefaultDeliveryService ends call with mb.CloseDelivery() and
+					it should end it with mb.CloseRead().
+ETCH-27 	Fixed 	Mixins cause trouble when two or more mixed in files define
+					a type with the same name.
+ETCH-28 	Fixed 	Examples do not build due to outdated ant files.
+ETCH-29 	Fixed 	Installing all Maven artifacts along with their sources.
+ETCH-31 	Fixed 	MySessionListener in TcpTransportFactory does not override
+					toString() method to show something useful about the
+					transport stack.
+
+Here are the outstanding issues in this release:
+
+Key 		Summary
+ETCH-12 	An exception return value from a message is indistinguishable from a
+			thrown exception.
+ETCH-26 	Some unexpected exceptions are thrown if .Net Framework Language
+			Pack is installed.
