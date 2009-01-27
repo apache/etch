@@ -97,6 +97,11 @@ namespace Etch.Transport
             private readonly string uri;
             private readonly Resources resources;
 
+            public override string ToString()
+            {
+                return "TcpTransportFactory.MySessionListener" + transport;
+            }
+
             public void SessionAccepted(Socket socket)
             {
                 Resources r = new Resources(resources);
