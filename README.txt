@@ -1,44 +1,87 @@
-Etch
-----
+Welcome to the 1.0.2 release of Etch.
 
-This is the source tree for Etch. It is organized as follows:
+The jumping off point for Etch information and help is here:
 
-   build.xml         - top-level ant build script
-   build.dependecies - locations for jars this compile depends on
-   etch.properties   - static build properties 
-   
-   compiler/      - core compiler
-   build-support/ - common ant scripts shared by all modules
-   plugins/       - extensions that embed the compiler, e.g. ant, maven, etc.
-   scripts/       - common scripts for eclipse
-   util/          - shared java classes
-   tests/         - functional tests
-   examples/      - Etch application examples
-      chat/       - simple IM application
-      distmap/    - example implementation of a distributed map in etch
-      perf/       - etch client/server performance test
-      example/    - minimal example
-   installers/    - project for NSIS installer and tar.gz, .zip archives
-       
-   binding-xml    - xml binding
-   binding-java   - java-language binding
-   binding-csharp - C#-language binding
-   
+http://cwiki.apache.org/ETCH
 
-Etch bindings
--------------
+The top-level structure of the install image is:
 
-Each binding is factored into its own structure into the build tree. The intent
-is to provide an easy pattern for potential binding authors to emulate.
-Essentially each binding has two components:
+	ChangeLog.txt
+	LICENSE.txt
+	README.txt
+	bin
+	lib
+	maven
 
-   - compiler/
-   - runtime/
-   
-The 'compiler' is always implemented in Java and is coded to implement a
-backend interface for the target of choice.
+Please take a moment to review the ChangeLog.txt and LICENSE.txt files.
 
-The 'runtime' is coded in the target language. The most useful language
-bindings implement identical functionality as the Java and C# bindings.
-Non-languages bindings (like binding-xml) may not have a runtime component
-at all.
+The Windows installer (etch-1.0.2-setup.exe) has created a user environment
+variable (ETCH_HOME) which points to the Etch installation directory. If you
+installed Etch using either etch-1.0.2.tar.gz or etch-1.0.2.zip, you will want
+to create this environment variable yourself:
+
+windows:
+	set ETCH_HOME=C:\Program Files\Etch\etch-1.0.2
+
+unix:
+	export ETCH_HOME=/usr/local/etch/etch-1.0.2
+
+The bin directory has also been put on your path by the Windows installer. If
+you are using the archives, you will need to do this yourself:
+
+windows:
+	PATH %PATH%;%ETCH_HOME%\bin
+
+unix:
+	PATH="$PATH:$ETCH_HOME/bin"
+
+The bin directory contains a Windows bat script and a unix shell script.
+
+You will also need to have a java sdk installed (later versions of 1.5 or
+any version of 1.6). A JAVA_HOME environment variable should point to the
+installation directory of the java sdk.
+
+In the end, at a command line or shell, you should be able to run the etch
+compiler and see some basic output:
+
+windows:
+	C:\>etch
+	etch: option '-b binding' must be specified on the command line
+
+unix:
+	bash-3.2$ etch
+	etch: option '-b binding' must be specified on the command line
+
+The lib directory contains the various jar files, zipped sources, and a C# dll:
+
+	Etch.dll
+	etch-ant-plugin-1.0.2-src.zip
+	etch-ant-plugin-1.0.2.jar
+	etch-java-runtime-1.0.2-src.zip
+	etch-java-runtime-1.0.2.jar
+	...
+
+The main items of interest are the java binding runtime, which you need to
+put on the classpath of your projects: etch-java-runtime-1.0.2.jar. There is
+source code to go with it in etch-java-runtime-1.0.2-src.zip.
+
+The C# (.NET 2.0) Etch.dll should be added to any C# projects.
+
+There is an ant plugin which you can use with ant 1.7.0 or later to invoke the
+compiler as a task. It is documented on the wiki referenced above.
+
+If you are using maven, then you might want to install the Etch artifacts into
+your local maven repository. There is a Windows bat script to do this in the
+maven directory:
+
+	etch-maven-install.bat
+
+You need to have maven on your path when you run this script. The file
+etch-java-runtime-1.0.2.jar will be installed into your local repository with
+group "etch.etch", artifact id "etch-java-runtime", and version "1.0.2". You
+may then reference Etch from your maven projects.
+
+Examples and unit tests can be had by checking out the source code from the
+subversion repository and performing a complete build:
+
+ https://svn.apache.org/repos/asf/incubator/etch
