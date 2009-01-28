@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Etch")]
-[assembly: AssemblyDescription("Etch C# Runtime DLL")]
+[assembly: AssemblyDescription("Apache Etch C# Runtime DLL")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Cisco Systems")]
-[assembly: AssemblyProduct("Etch")]
-[assembly: AssemblyCopyright("Copyright © Cisco Systems 2008")]
+[assembly: AssemblyCompany("Apache Foundation")]
+[assembly: AssemblyProduct("Apache Etch (incubating)")]
+[assembly: AssemblyCopyright("Copyright © Apache Foundation 2009")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -31,5 +31,5 @@ using System.Runtime.InteropServices;
 //
 // You can specify all the values or you can default the Revision and Build Numbers 
 // by using the '*' as shown below:
-[assembly: AssemblyVersion("1.0.0")]
-[assembly: AssemblyFileVersion("1.0.0")]
+[assembly: AssemblyVersion("1.1.0")]
+[assembly: AssemblyFileVersion("apache-etch-1.1.0-incubating")]

@@ -79,10 +79,15 @@
                 <manifest>
                     <attribute name="Copyright"    value="${Etch.copyrightNotice}" />
                     <attribute name="Version"      value="${Etch.version}" />
+                    <attribute name="LongVersion"  value="${Etch.longversion}" />
                     <attribute name="Build-Tag"    value="${Etch.buildTag}" />
                     <attribute name="SVN-Revision" value="${Etch.runtime.revisionNumber}" />
                     <attribute name="Class-Path"   value="${etch-compiler.jar}" />
                 </manifest>
+                <metainf dir="${Etch.basedir}">
+                    <include name="NOTICE.txt" />
+                    <include name="LICENSE.txt" />
+                </metainf>
                 <fileset dir="${classesDirectory}/main"/>
             </jar>
 

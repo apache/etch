@@ -2,7 +2,7 @@
 # optional stuff may be omitted by prefixing every
 # line between the brackets with rem.
 
-# look for additional information in build.dependencies.
+# For information on building see BUILD.txt
 
 rem -- java builds --
 
