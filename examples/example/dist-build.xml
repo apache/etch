@@ -3,7 +3,7 @@
     <description>Example Example</description>
 
     <property name="etch.home" location="${basedir}/../.."/>
-    <property name="etch.version" value="1.0.1"/>
+    <property name="etch.version" value="@EtchVersion@"/>
     <property name="etch-java-runtime-name" value="etch-java-runtime-${etch.version}.jar"/>
 
     <property name="etch-ant-plugin.jar"   location="${etch.home}/lib/etch-ant-plugin-${etch.version}.jar"/>
