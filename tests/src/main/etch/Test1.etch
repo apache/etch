@@ -145,8 +145,8 @@ service Test1
 	struct S4 ( /** value */ string tipe, /** value */ object[] x )
 	
 	/** blah */
-	@Extern(java, "StrIntHashMap", "etch.bindings.java.util.StrIntHashMap",
-		"StrIntHashMapSerializer", "etch.bindings.java.util.StrIntHashMapSerializer")
+	@Extern(java, "StrIntHashMap", "org.apache.etch.bindings.java.util.StrIntHashMap",
+		"StrIntHashMapSerializer", "org.apache.etch.bindings.java.util.StrIntHashMapSerializer")
 	@Extern(csharp, "StrIntHashMap", "Etch.Util",
 		"StrIntHashMapSerializer", "Etch.Util")
 	extern Blob

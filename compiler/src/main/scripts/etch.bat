@@ -20,4 +20,4 @@ if not exist "%CLOVER_HOME%\lib\clover.jar" goto skip_clover
 set ETCH_CP=%ETCH_CP%;%CLOVER_HOME%\lib\clover.jar
 :skip_clover
 
-java -cp "%ETCH_CP%" etch.compiler.EtchMain %*
+java -cp "%ETCH_CP%" org.apache.etch.compiler.EtchMain %*

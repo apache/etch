@@ -17,8 +17,8 @@
 
 package etch.tests;
 
-import etch.util.Log;
-import etch.util.core.io.TcpTransport;
+import org.apache.etch.util.Log;
+import org.apache.etch.util.core.io.TcpTransport;
 
 /**
  * Call to message translator for ClosingServer.

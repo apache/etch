@@ -25,19 +25,20 @@ import static org.junit.Assert.fail;
 
 import java.lang.reflect.Array;
 
-import etch.bindings.java.msg.Field;
-import etch.bindings.java.msg.Message;
-import etch.bindings.java.msg.Type;
-import etch.bindings.java.support.DeliveryService;
-import etch.bindings.java.support.Mailbox;
-import etch.bindings.java.transport.SessionMessage;
+import org.apache.etch.bindings.java.msg.Field;
+import org.apache.etch.bindings.java.msg.Message;
+import org.apache.etch.bindings.java.msg.Type;
+import org.apache.etch.bindings.java.support.DeliveryService;
+import org.apache.etch.bindings.java.support.Mailbox;
+import org.apache.etch.bindings.java.transport.SessionMessage;
+import org.apache.etch.util.core.Who;
+
 import etch.tests.Test1.E1;
 import etch.tests.Test1.Excp1;
 import etch.tests.Test1.Excp3;
 import etch.tests.Test1.Excp4;
 import etch.tests.Test1.S1;
 import etch.tests.Test1.S2;
-import etch.util.core.Who;
 
 /** Test of RemoteTest1 */
 public class TestRemoteTest1DotJava

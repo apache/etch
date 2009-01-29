@@ -17,11 +17,12 @@
 
 package etch.tests;
 
-import etch.bindings.java.support.DeliveryService;
-import etch.bindings.java.support.Pool;
-import etch.bindings.java.support.ServerFactory;
-import etch.bindings.java.transport.SessionMessage;
-import etch.util.core.io.Transport;
+import org.apache.etch.bindings.java.support.DeliveryService;
+import org.apache.etch.bindings.java.support.Pool;
+import org.apache.etch.bindings.java.support.ServerFactory;
+import org.apache.etch.bindings.java.transport.SessionMessage;
+import org.apache.etch.util.core.io.Transport;
+
 
 /**
  * Main program for CuaeServer. This program makes a listener to accept

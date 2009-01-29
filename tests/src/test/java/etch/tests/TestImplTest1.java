@@ -17,10 +17,10 @@
 
 package etch.tests;
 
+import org.apache.etch.bindings.java.util.StrIntHashMap;
 import org.junit.Before;
 import org.junit.Test;
 
-import etch.bindings.java.util.StrIntHashMap;
 import etch.tests.Test1.E1;
 import etch.tests.Test1.S1;
 import etch.tests.Test1.S2;

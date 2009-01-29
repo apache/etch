@@ -23,11 +23,11 @@ import static org.junit.Assert.assertSame;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.etch.bindings.java.msg.Type;
+import org.apache.etch.bindings.java.msg.ValueFactory;
+import org.apache.etch.bindings.java.support.DefaultValueFactory;
 import org.junit.Test;
 
-import etch.bindings.java.msg.Type;
-import etch.bindings.java.msg.ValueFactory;
-import etch.bindings.java.support.DefaultValueFactory;
 import etch.tests.Bar.BarData;
 import etch.tests.Baz.BazData;
 import etch.tests.Foo.FooData;

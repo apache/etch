@@ -17,17 +17,18 @@
 
 package etch.tests;
 
-import etch.bindings.java.msg.Message;
-import etch.bindings.java.msg.StructValue;
-import etch.bindings.java.support.DeliveryService;
-import etch.bindings.java.support.Mailbox;
-import etch.bindings.java.support.ObjSession;
-import etch.bindings.java.support.Pool;
-import etch.bindings.java.support.StubBase;
-import etch.bindings.java.support.StubHelper;
-import etch.util.Todo;
-import etch.util.TodoManager;
-import etch.util.core.Who;
+import org.apache.etch.bindings.java.msg.Message;
+import org.apache.etch.bindings.java.msg.StructValue;
+import org.apache.etch.bindings.java.support.DeliveryService;
+import org.apache.etch.bindings.java.support.Mailbox;
+import org.apache.etch.bindings.java.support.ObjSession;
+import org.apache.etch.bindings.java.support.Pool;
+import org.apache.etch.bindings.java.support.StubBase;
+import org.apache.etch.bindings.java.support.StubHelper;
+import org.apache.etch.util.Todo;
+import org.apache.etch.util.TodoManager;
+import org.apache.etch.util.core.Who;
+
 
 /**
  * Hand-built CuaeServerStub which dispatches to our raw impl.

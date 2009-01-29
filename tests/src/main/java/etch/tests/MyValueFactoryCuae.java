@@ -17,14 +17,14 @@
 
 package etch.tests;
 
-import etch.bindings.java.msg.Field;
-import etch.bindings.java.msg.ImportExportHelper;
-import etch.bindings.java.msg.StructValue;
-import etch.bindings.java.msg.Type;
-import etch.bindings.java.msg.TypeMap;
-import etch.bindings.java.msg.ValueFactory;
-import etch.bindings.java.support.Class2TypeMap;
-import etch.bindings.java.support.DefaultValueFactory;
+import org.apache.etch.bindings.java.msg.Field;
+import org.apache.etch.bindings.java.msg.ImportExportHelper;
+import org.apache.etch.bindings.java.msg.StructValue;
+import org.apache.etch.bindings.java.msg.Type;
+import org.apache.etch.bindings.java.msg.TypeMap;
+import org.apache.etch.bindings.java.msg.ValueFactory;
+import org.apache.etch.bindings.java.support.Class2TypeMap;
+import org.apache.etch.bindings.java.support.DefaultValueFactory;
 
 /**
  * ValueFactory for Cuae.
@@ -186,66 +186,66 @@ public final class MyValueFactoryCuae extends DefaultValueFactory
 	{
 
 		// params for Request
-		_mt_etch_examples_cuae_Cuae_Request.putValidator( _mf_code, etch.bindings.java.support.Validator_int.get( 0 ) );
+		_mt_etch_examples_cuae_Cuae_Request.putValidator( _mf_code, org.apache.etch.bindings.java.support.Validator_int.get( 0 ) );
 
 		// params for ReqWithMessage
-		_mt_etch_examples_cuae_Cuae_ReqWithMessage.putValidator( _mf_code, etch.bindings.java.support.Validator_int.get( 0 ) );
-		_mt_etch_examples_cuae_Cuae_ReqWithMessage.putValidator( _mf_msg, etch.bindings.java.support.Validator_string.get( 0 ) );
+		_mt_etch_examples_cuae_Cuae_ReqWithMessage.putValidator( _mf_code, org.apache.etch.bindings.java.support.Validator_int.get( 0 ) );
+		_mt_etch_examples_cuae_Cuae_ReqWithMessage.putValidator( _mf_msg, org.apache.etch.bindings.java.support.Validator_string.get( 0 ) );
 
 		// params for Response
-		_mt_etch_examples_cuae_Cuae_Response.putValidator( _mf_msg, etch.bindings.java.support.Validator_string.get( 0 ) );
+		_mt_etch_examples_cuae_Cuae_Response.putValidator( _mf_msg, org.apache.etch.bindings.java.support.Validator_string.get( 0 ) );
 
 		// params for RespWithCode
-		_mt_etch_examples_cuae_Cuae_RespWithCode.putValidator( _mf_msg, etch.bindings.java.support.Validator_string.get( 0 ) );
-		_mt_etch_examples_cuae_Cuae_RespWithCode.putValidator( _mf_code, etch.bindings.java.support.Validator_int.get( 0 ) );
+		_mt_etch_examples_cuae_Cuae_RespWithCode.putValidator( _mf_msg, org.apache.etch.bindings.java.support.Validator_string.get( 0 ) );
+		_mt_etch_examples_cuae_Cuae_RespWithCode.putValidator( _mf_code, org.apache.etch.bindings.java.support.Validator_int.get( 0 ) );
 
 		// params for doit1
-		_mt_etch_examples_cuae_CuaeServer_doit1.putValidator( _mf_req, etch.bindings.java.support.Validator_StructValue.get( _mt_etch_examples_cuae_Cuae_Request, 0 ) );
-		_mt_etch_examples_cuae_CuaeServer_doit1.putValidator( _mf__messageId, etch.bindings.java.support.Validator_long.get( 0 ) );
+		_mt_etch_examples_cuae_CuaeServer_doit1.putValidator( _mf_req, org.apache.etch.bindings.java.support.Validator_StructValue.get( _mt_etch_examples_cuae_Cuae_Request, 0 ) );
+		_mt_etch_examples_cuae_CuaeServer_doit1.putValidator( _mf__messageId, org.apache.etch.bindings.java.support.Validator_long.get( 0 ) );
 
 		// params for _result_doit1
-		_mt_etch_examples_cuae_CuaeClient__result_doit1.putValidator( _mf_result, etch.bindings.java.support.Validator_StructValue.get( _mt_etch_examples_cuae_Cuae_Response, 0 ) );
-		_mt_etch_examples_cuae_CuaeClient__result_doit1.putValidator( _mf__messageId, etch.bindings.java.support.Validator_long.get( 0 ) );
-		_mt_etch_examples_cuae_CuaeClient__result_doit1.putValidator( _mf_result, etch.bindings.java.support.Validator_RuntimeException.get() ); // thrown RuntimeException
-		_mt_etch_examples_cuae_CuaeClient__result_doit1.putValidator( _mf__inReplyTo, etch.bindings.java.support.Validator_long.get( 0 ) );
+		_mt_etch_examples_cuae_CuaeClient__result_doit1.putValidator( _mf_result, org.apache.etch.bindings.java.support.Validator_StructValue.get( _mt_etch_examples_cuae_Cuae_Response, 0 ) );
+		_mt_etch_examples_cuae_CuaeClient__result_doit1.putValidator( _mf__messageId, org.apache.etch.bindings.java.support.Validator_long.get( 0 ) );
+		_mt_etch_examples_cuae_CuaeClient__result_doit1.putValidator( _mf_result, org.apache.etch.bindings.java.support.Validator_RuntimeException.get() ); // thrown RuntimeException
+		_mt_etch_examples_cuae_CuaeClient__result_doit1.putValidator( _mf__inReplyTo, org.apache.etch.bindings.java.support.Validator_long.get( 0 ) );
 
 		// params for doit2
-		_mt_etch_examples_cuae_CuaeClient_doit2.putValidator( _mf_req, etch.bindings.java.support.Validator_StructValue.get( _mt_etch_examples_cuae_Cuae_Request, 0 ) );
-		_mt_etch_examples_cuae_CuaeClient_doit2.putValidator( _mf__messageId, etch.bindings.java.support.Validator_long.get( 0 ) );
+		_mt_etch_examples_cuae_CuaeClient_doit2.putValidator( _mf_req, org.apache.etch.bindings.java.support.Validator_StructValue.get( _mt_etch_examples_cuae_Cuae_Request, 0 ) );
+		_mt_etch_examples_cuae_CuaeClient_doit2.putValidator( _mf__messageId, org.apache.etch.bindings.java.support.Validator_long.get( 0 ) );
 
 		// params for _result_doit2
-		_mt_etch_examples_cuae_CuaeServer__result_doit2.putValidator( _mf_result, etch.bindings.java.support.Validator_StructValue.get( _mt_etch_examples_cuae_Cuae_Response, 0 ) );
-		_mt_etch_examples_cuae_CuaeServer__result_doit2.putValidator( _mf__messageId, etch.bindings.java.support.Validator_long.get( 0 ) );
-		_mt_etch_examples_cuae_CuaeServer__result_doit2.putValidator( _mf_result, etch.bindings.java.support.Validator_RuntimeException.get() ); // thrown RuntimeException
-		_mt_etch_examples_cuae_CuaeServer__result_doit2.putValidator( _mf__inReplyTo, etch.bindings.java.support.Validator_long.get( 0 ) );
+		_mt_etch_examples_cuae_CuaeServer__result_doit2.putValidator( _mf_result, org.apache.etch.bindings.java.support.Validator_StructValue.get( _mt_etch_examples_cuae_Cuae_Response, 0 ) );
+		_mt_etch_examples_cuae_CuaeServer__result_doit2.putValidator( _mf__messageId, org.apache.etch.bindings.java.support.Validator_long.get( 0 ) );
+		_mt_etch_examples_cuae_CuaeServer__result_doit2.putValidator( _mf_result, org.apache.etch.bindings.java.support.Validator_RuntimeException.get() ); // thrown RuntimeException
+		_mt_etch_examples_cuae_CuaeServer__result_doit2.putValidator( _mf__inReplyTo, org.apache.etch.bindings.java.support.Validator_long.get( 0 ) );
 
 		// params for doit3
-		_mt_etch_examples_cuae_Cuae_doit3.putValidator( _mf_req, etch.bindings.java.support.Validator_StructValue.get( _mt_etch_examples_cuae_Cuae_Request, 1 ) );
-		_mt_etch_examples_cuae_Cuae_doit3.putValidator( _mf__messageId, etch.bindings.java.support.Validator_long.get( 0 ) );
+		_mt_etch_examples_cuae_Cuae_doit3.putValidator( _mf_req, org.apache.etch.bindings.java.support.Validator_StructValue.get( _mt_etch_examples_cuae_Cuae_Request, 1 ) );
+		_mt_etch_examples_cuae_Cuae_doit3.putValidator( _mf__messageId, org.apache.etch.bindings.java.support.Validator_long.get( 0 ) );
 
 		// params for _result_doit3
-		_mt_etch_examples_cuae_Cuae__result_doit3.putValidator( _mf_result, etch.bindings.java.support.Validator_StructValue.get( _mt_etch_examples_cuae_Cuae_Response, 1 ) );
-		_mt_etch_examples_cuae_Cuae__result_doit3.putValidator( _mf__messageId, etch.bindings.java.support.Validator_long.get( 0 ) );
-		_mt_etch_examples_cuae_Cuae__result_doit3.putValidator( _mf_result, etch.bindings.java.support.Validator_RuntimeException.get() ); // thrown RuntimeException
-		_mt_etch_examples_cuae_Cuae__result_doit3.putValidator( _mf__inReplyTo, etch.bindings.java.support.Validator_long.get( 0 ) );
+		_mt_etch_examples_cuae_Cuae__result_doit3.putValidator( _mf_result, org.apache.etch.bindings.java.support.Validator_StructValue.get( _mt_etch_examples_cuae_Cuae_Response, 1 ) );
+		_mt_etch_examples_cuae_Cuae__result_doit3.putValidator( _mf__messageId, org.apache.etch.bindings.java.support.Validator_long.get( 0 ) );
+		_mt_etch_examples_cuae_Cuae__result_doit3.putValidator( _mf_result, org.apache.etch.bindings.java.support.Validator_RuntimeException.get() ); // thrown RuntimeException
+		_mt_etch_examples_cuae_Cuae__result_doit3.putValidator( _mf__inReplyTo, org.apache.etch.bindings.java.support.Validator_long.get( 0 ) );
 
 		// params for doit4
-		_mt_etch_examples_cuae_Cuae_doit4.putValidator( _mf__messageId, etch.bindings.java.support.Validator_long.get( 0 ) );
+		_mt_etch_examples_cuae_Cuae_doit4.putValidator( _mf__messageId, org.apache.etch.bindings.java.support.Validator_long.get( 0 ) );
 
 		// params for _result_doit4
-		_mt_etch_examples_cuae_Cuae__result_doit4.putValidator( _mf_result, etch.bindings.java.support.Validator_void.get( 0 ) );
-		_mt_etch_examples_cuae_Cuae__result_doit4.putValidator( _mf__messageId, etch.bindings.java.support.Validator_long.get( 0 ) );
-		_mt_etch_examples_cuae_Cuae__result_doit4.putValidator( _mf_result, etch.bindings.java.support.Validator_RuntimeException.get() ); // thrown RuntimeException
-		_mt_etch_examples_cuae_Cuae__result_doit4.putValidator( _mf__inReplyTo, etch.bindings.java.support.Validator_long.get( 0 ) );
+		_mt_etch_examples_cuae_Cuae__result_doit4.putValidator( _mf_result, org.apache.etch.bindings.java.support.Validator_void.get( 0 ) );
+		_mt_etch_examples_cuae_Cuae__result_doit4.putValidator( _mf__messageId, org.apache.etch.bindings.java.support.Validator_long.get( 0 ) );
+		_mt_etch_examples_cuae_Cuae__result_doit4.putValidator( _mf_result, org.apache.etch.bindings.java.support.Validator_RuntimeException.get() ); // thrown RuntimeException
+		_mt_etch_examples_cuae_Cuae__result_doit4.putValidator( _mf__inReplyTo, org.apache.etch.bindings.java.support.Validator_long.get( 0 ) );
 
 		// params for test1
-		_mt_etch_examples_cuae_CuaeServer_test1.putValidator( _mf__messageId, etch.bindings.java.support.Validator_long.get( 0 ) );
+		_mt_etch_examples_cuae_CuaeServer_test1.putValidator( _mf__messageId, org.apache.etch.bindings.java.support.Validator_long.get( 0 ) );
 
 		// params for test2
-		_mt_etch_examples_cuae_CuaeClient_test2.putValidator( _mf__messageId, etch.bindings.java.support.Validator_long.get( 0 ) );
+		_mt_etch_examples_cuae_CuaeClient_test2.putValidator( _mf__messageId, org.apache.etch.bindings.java.support.Validator_long.get( 0 ) );
 
 		// params for test3
-		_mt_etch_examples_cuae_Cuae_test3.putValidator( _mf__messageId, etch.bindings.java.support.Validator_long.get( 0 ) );
+		_mt_etch_examples_cuae_Cuae_test3.putValidator( _mf__messageId, org.apache.etch.bindings.java.support.Validator_long.get( 0 ) );
 	}
 	
 	static

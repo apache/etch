@@ -24,20 +24,20 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.etch.bindings.java.support.ServerFactory;
+import org.apache.etch.util.Log;
+import org.apache.etch.util.core.io.Transport;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import etch.bindings.java.support.ServerFactory;
 import etch.examples.distmap.DistributedHashTableHelper;
 import etch.examples.distmap.MainDistributedHashTableClient;
 import etch.examples.distmap.MainDistributedHashTableListener;
 import etch.examples.distmap.RemoteDistributedHashTableServer;
 import etch.examples.distmap.DistributedHashTable.Entry;
-import etch.util.Log;
-import etch.util.core.io.Transport;
 
 /**
  * Tests the RemoteDistributedHashTableServer interface. Start the

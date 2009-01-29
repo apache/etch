@@ -17,7 +17,7 @@
 
 package etch.tests;
 
-import etch.util.Log;
+import org.apache.etch.util.Log;
 
 /**
  * Call to message translator for ClosingClient.

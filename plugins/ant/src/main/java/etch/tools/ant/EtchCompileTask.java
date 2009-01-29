@@ -20,13 +20,13 @@ package etch.tools.ant;
 import java.io.File;
 import java.util.StringTokenizer;
 
+import org.apache.etch.compiler.CmdLineOptions;
+import org.apache.etch.compiler.EtchCompiler;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DirectoryScanner;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.types.DirSet;
 
-import etch.compiler.CmdLineOptions;
-import etch.compiler.EtchCompiler;
 
 /**
  * Ant task for compiling Etch sources files.

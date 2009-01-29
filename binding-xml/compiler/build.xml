@@ -84,7 +84,7 @@
                     <attribute name="SVN-Revision" value="${Etch.runtime.revisionNumber}" />
                 </manifest>
                 <fileset dir="${classesDirectory}/main">
-                    <include name="etch/bindings/**" />
+                    <include name="org/apache/etch/bindings/**" />
                     <!-- <include name="resources/**" /> -->
                 </fileset>
             </jar>
@@ -94,7 +94,7 @@
             <!-- package up etch-xml-compiler src -->
             <zip destfile="@{dist}/lib/${etch-xml-compiler-src.zip}" >
                 <fileset dir="${src}/main/java" >
-                    <include name="etch/bindings/**/*.java" />
+                    <include name="org/apache/etch/bindings/**/*.java" />
                 </fileset>
                 <fileset dir="${src}/main/resources" >
                     <include name="**/*" />
@@ -125,7 +125,7 @@
     
     <target name="generate-sources" >
         <!-- Generate version info -->
-        <update-tokens filename="${src}/main/java/etch/bindings/xml/compiler/CompilerVersion.java" />  
+        <update-tokens filename="${src}/main/java/org/apache/etch/bindings/xml/compiler/CompilerVersion.java" />  
     </target>
 
     <target name="compile-for-dist" >

@@ -22,8 +22,9 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import etch.util.Log;
-import etch.util.core.io.Session;
+import org.apache.etch.util.Log;
+import org.apache.etch.util.core.io.Session;
+
 
 /**
  * Your custom implementation of BaseChatServer. Add methods here to provide

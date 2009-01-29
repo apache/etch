@@ -17,14 +17,14 @@
 
 package etch.tests;
 
+import org.apache.etch.bindings.java.support.ServerFactory;
+import org.apache.etch.bindings.java.support.TransportFactory;
+import org.apache.etch.bindings.java.transport.TcpTransportFactory;
+import org.apache.etch.util.core.io.Transport;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import etch.bindings.java.support.ServerFactory;
-import etch.bindings.java.support.TransportFactory;
-import etch.bindings.java.transport.TcpTransportFactory;
-import etch.util.core.io.Transport;
 
 /** Test of Test1Helper */
 public class TestTest1Helper

@@ -17,8 +17,9 @@
 
 package etch.tests;
 
-import etch.bindings.java.support.ServerFactory;
-import etch.util.core.io.Transport;
+import org.apache.etch.bindings.java.support.ServerFactory;
+import org.apache.etch.util.core.io.Transport;
+
 
 /**
  * Main program for TypesServer. This program makes a listener to accept

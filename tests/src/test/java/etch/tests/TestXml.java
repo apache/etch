@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.apache.etch.compiler.EtchGrammarConstants;
 import org.junit.After;
 import org.junit.Before;
 import org.w3c.dom.Document;
@@ -35,7 +36,6 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import etch.compiler.EtchGrammarConstants;
 
 /** */
 public class TestXml {
@@ -188,7 +188,7 @@ public class TestXml {
 		Node externNode = list.item(nodeCount++);
 		
 		checkExternProperties(externNode, "Blob", "1658093806", "etch.tests.Test1.Blob");
-		checkExternMapProperties(externNode, "java", "StrIntHashMap", "etch.bindings.java.util.StrIntHashMap", "StrIntHashMapSerializer",  "etch.bindings.java.util.StrIntHashMapSerializer");
+		checkExternMapProperties(externNode, "java", "StrIntHashMap", "org.apache.etch.bindings.java.util.StrIntHashMap", "StrIntHashMapSerializer",  "org.apache.etch.bindings.java.util.StrIntHashMapSerializer");
 		checkExternMapProperties(externNode, "csharp", "StrIntHashMap", "Etch.Util", "StrIntHashMapSerializer",  "Etch.Util");
 	}
 		

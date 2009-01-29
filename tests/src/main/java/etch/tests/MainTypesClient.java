@@ -26,7 +26,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-import etch.util.Assertion;
+import org.apache.etch.util.Assertion;
+
 
 /**
  * Main program for TypesClient. This program makes a connection to the

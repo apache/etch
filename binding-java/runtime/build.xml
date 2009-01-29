@@ -76,7 +76,7 @@
                     <!-- <attribute name="Class-Path"   value="${etch-util.jar}" /> -->
                 </manifest>
                 <fileset dir="${classesDirectory}/main">
-                    <include name="etch/bindings/**" />
+                    <include name="org/apache/etch/bindings/**" />
                 </fileset>
             </jar>
 
@@ -92,7 +92,7 @@
             <!-- package up etch-java-runtime src -->
             <zip destfile="@{dist}/lib/${etch-java-runtime-src.zip}" >
                 <fileset dir="${src}/main/java" >
-                    <include name="etch/bindings/**/*.java" />
+                    <include name="org/apache/etch/bindings/**/*.java" />
                 </fileset>
             </zip>
             

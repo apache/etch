@@ -17,15 +17,16 @@
 
 package etch.tests;
 
-import etch.bindings.java.msg.ValueFactory;
-import etch.bindings.java.support.DefaultServerFactory;
-import etch.bindings.java.support.DeliveryService;
-import etch.bindings.java.support.Pool;
-import etch.bindings.java.support.ServerFactory;
-import etch.bindings.java.support.TransportFactory;
-import etch.bindings.java.transport.SessionMessage;
-import etch.util.Resources;
-import etch.util.core.io.Transport;
+import org.apache.etch.bindings.java.msg.ValueFactory;
+import org.apache.etch.bindings.java.support.DefaultServerFactory;
+import org.apache.etch.bindings.java.support.DeliveryService;
+import org.apache.etch.bindings.java.support.Pool;
+import org.apache.etch.bindings.java.support.ServerFactory;
+import org.apache.etch.bindings.java.support.TransportFactory;
+import org.apache.etch.bindings.java.transport.SessionMessage;
+import org.apache.etch.util.Resources;
+import org.apache.etch.util.core.io.Transport;
+
 
 /**
  * Transport helper for Cuae. All methods are static.
