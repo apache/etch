@@ -29,9 +29,6 @@ import java.net.Socket;
 
 import org.apache.etch.util.Monitor;
 import org.apache.etch.util.TimeoutException;
-import org.apache.etch.util.core.io.Session;
-import org.apache.etch.util.core.io.SessionListener;
-import org.apache.etch.util.core.io.TcpListener;
 import org.junit.Test;
 
 

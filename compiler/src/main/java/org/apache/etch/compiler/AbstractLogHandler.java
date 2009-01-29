@@ -19,7 +19,6 @@ package org.apache.etch.compiler;
 
 import java.util.Stack;
 
-import org.apache.etch.compiler.Token;
 import org.apache.etch.util.Assertion;
 
 

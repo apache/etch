@@ -17,7 +17,6 @@
 
 package org.apache.etch.compiler;
 
-import org.apache.etch.compiler.Token;
 
 /**
  * This Interface is used for Logging messages. It helps provide a consistent

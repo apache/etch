@@ -19,11 +19,6 @@ package org.apache.etch.tests;
 
 import static org.junit.Assert.assertEquals;
 
-import org.apache.etch.tests.AsyncClient;
-import org.apache.etch.tests.AsyncHelper;
-import org.apache.etch.tests.ImplAsyncClient;
-import org.apache.etch.tests.MainAsyncListener;
-import org.apache.etch.tests.RemoteAsyncServer;
 import org.apache.etch.util.Log;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;

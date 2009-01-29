@@ -27,10 +27,6 @@ import java.util.List;
 
 import org.apache.etch.util.FlexBuffer;
 import org.apache.etch.util.core.Who;
-import org.apache.etch.util.core.io.Packetizer;
-import org.apache.etch.util.core.io.SessionData;
-import org.apache.etch.util.core.io.SessionPacket;
-import org.apache.etch.util.core.io.TransportData;
 import org.junit.Before;
 import org.junit.Test;
 

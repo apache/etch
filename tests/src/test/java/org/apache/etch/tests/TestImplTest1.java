@@ -18,10 +18,6 @@
 package org.apache.etch.tests;
 
 import org.apache.etch.bindings.java.util.StrIntHashMap;
-import org.apache.etch.tests.ImplTest1Client;
-import org.apache.etch.tests.ImplTest1Server;
-import org.apache.etch.tests.RemoteTest1Client;
-import org.apache.etch.tests.RemoteTest1Server;
 import org.apache.etch.tests.Test1.E1;
 import org.apache.etch.tests.Test1.S1;
 import org.apache.etch.tests.Test1.S2;

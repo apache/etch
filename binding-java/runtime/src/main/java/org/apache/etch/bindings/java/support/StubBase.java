@@ -17,7 +17,6 @@
 
 package org.apache.etch.bindings.java.support;
 
-import org.apache.etch.bindings.java.msg.AsyncMode;
 import org.apache.etch.bindings.java.msg.Message;
 import org.apache.etch.bindings.java.msg.Type;
 import org.apache.etch.bindings.java.support.Pool.PoolRunnable;

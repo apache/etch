@@ -18,9 +18,6 @@
 package org.apache.etch.tests;
 
 import org.apache.etch.bindings.java.support.ServerFactory;
-import org.apache.etch.tests.RemoteTypesClient;
-import org.apache.etch.tests.TypesHelper;
-import org.apache.etch.tests.TypesServer;
 import org.apache.etch.util.core.io.Transport;
 
 

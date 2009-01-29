@@ -19,8 +19,6 @@ package org.apache.etch.bindings.java.msg;
 
 import static org.junit.Assert.assertEquals;
 
-import org.apache.etch.bindings.java.msg.Type;
-import org.apache.etch.bindings.java.msg.TypeMap;
 import org.junit.Test;
 
 /**

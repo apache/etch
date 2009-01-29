@@ -17,10 +17,6 @@
 
 package org.apache.etch.tests;
 
-import org.apache.etch.tests.Cuae;
-import org.apache.etch.tests.CuaeClient;
-import org.apache.etch.tests.CuaeHelper;
-import org.apache.etch.tests.RemoteCuaeServer;
 
 /**
  * Main program for CuaeClient. This program makes a connection to the

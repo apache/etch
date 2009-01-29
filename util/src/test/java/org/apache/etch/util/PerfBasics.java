@@ -20,8 +20,6 @@ package org.apache.etch.util;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.etch.util.PerfTest;
-
 /**
  * Basic perf tests.
  */

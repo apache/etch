@@ -26,7 +26,6 @@ import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
-import org.apache.etch.util.core.nio.ByteBufferPool;
 import org.apache.etch.util.core.nio.ByteBufferPool.Notify;
 import org.junit.Test;
 

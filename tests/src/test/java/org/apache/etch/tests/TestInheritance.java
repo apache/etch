@@ -19,11 +19,6 @@ package org.apache.etch.tests;
 
 import static org.junit.Assert.assertEquals;
 
-import org.apache.etch.tests.ImplInheritanceClient;
-import org.apache.etch.tests.InheritanceClient;
-import org.apache.etch.tests.InheritanceHelper;
-import org.apache.etch.tests.MainInheritanceListener;
-import org.apache.etch.tests.RemoteInheritanceServer;
 import org.apache.etch.tests.Inheritance.E1;
 import org.apache.etch.tests.Inheritance.E2;
 import org.apache.etch.tests.Inheritance.E3;

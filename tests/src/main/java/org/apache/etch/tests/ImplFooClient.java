@@ -17,10 +17,6 @@
 
 package org.apache.etch.tests;
 
-import org.apache.etch.tests.Foo;
-import org.apache.etch.tests.FooClient;
-import org.apache.etch.tests.FooServer;
-import org.apache.etch.tests.RemoteFooServer;
 
 /**
  * Implementation of methods for FooClient.

@@ -21,7 +21,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 
 import org.apache.etch.bindings.java.msg.Validator;
-import org.apache.etch.bindings.java.support.TypeValidator;
 import org.junit.Test;
 
 

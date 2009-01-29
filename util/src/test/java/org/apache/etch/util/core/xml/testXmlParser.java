@@ -25,8 +25,6 @@ import java.util.Map;
 import java.util.Vector;
 
 import org.apache.etch.util.Timer;
-import org.apache.etch.util.core.xml.ParseException;
-import org.apache.etch.util.core.xml.XmlParser;
 
 
 

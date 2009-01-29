@@ -27,7 +27,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.etch.util.URL;
 import org.junit.Test;
 
 /**

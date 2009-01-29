@@ -22,9 +22,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.etch.tests.BaseTypesServer;
-import org.apache.etch.tests.RemoteTypesClient;
-
 
 /**
  * Your custom implementation of BaseTypesServer. Add methods here to provide

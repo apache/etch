@@ -23,7 +23,6 @@ import static org.junit.Assert.assertNull;
 import java.util.Date;
 
 import org.apache.etch.bindings.java.msg.Type;
-import org.apache.etch.bindings.java.transport.ArrayValue;
 import org.junit.Test;
 
 

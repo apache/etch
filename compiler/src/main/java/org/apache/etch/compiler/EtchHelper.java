@@ -29,12 +29,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import org.apache.etch.compiler.EtchGrammar;
-import org.apache.etch.compiler.EtchGrammarConstants;
-import org.apache.etch.compiler.EtchGrammarTokenManager;
-import org.apache.etch.compiler.ParseException;
-import org.apache.etch.compiler.SimpleCharStream;
-import org.apache.etch.compiler.Token;
 import org.apache.etch.compiler.ast.Constant;
 import org.apache.etch.compiler.ast.Enumx;
 import org.apache.etch.compiler.ast.Except;

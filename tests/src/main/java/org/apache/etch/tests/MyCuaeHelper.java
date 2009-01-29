@@ -24,7 +24,6 @@ import org.apache.etch.bindings.java.support.Pool;
 import org.apache.etch.bindings.java.support.ServerFactory;
 import org.apache.etch.bindings.java.support.TransportFactory;
 import org.apache.etch.bindings.java.transport.SessionMessage;
-import org.apache.etch.tests.CuaeHelper;
 import org.apache.etch.util.Resources;
 import org.apache.etch.util.core.io.Transport;
 

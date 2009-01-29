@@ -20,9 +20,6 @@ package org.apache.etch.tests;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import org.apache.etch.tests.BaseTest1Server;
-import org.apache.etch.tests.ImplTest1Server;
-import org.apache.etch.tests.MainTest1Listener;
 import org.junit.Test;
 
 /**

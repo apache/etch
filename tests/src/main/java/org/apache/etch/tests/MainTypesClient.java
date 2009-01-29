@@ -26,9 +26,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-import org.apache.etch.tests.RemoteTypesServer;
-import org.apache.etch.tests.TypesClient;
-import org.apache.etch.tests.TypesHelper;
 import org.apache.etch.util.Assertion;
 
 

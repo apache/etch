@@ -30,10 +30,6 @@ import org.apache.etch.bindings.java.msg.Message;
 import org.apache.etch.bindings.java.msg.StructValue;
 import org.apache.etch.bindings.java.msg.Type;
 import org.apache.etch.bindings.java.msg.TypeMap;
-import org.apache.etch.bindings.java.support.Class2TypeMap;
-import org.apache.etch.bindings.java.support.DefaultValueFactory;
-import org.apache.etch.bindings.java.support.Validator_long;
-import org.apache.etch.bindings.java.support._Etch_RuntimeException;
 import org.junit.Test;
 
 

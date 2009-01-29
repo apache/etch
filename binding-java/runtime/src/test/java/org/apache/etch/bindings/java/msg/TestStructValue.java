@@ -27,10 +27,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.apache.etch.bindings.java.msg.Field;
-import org.apache.etch.bindings.java.msg.StructValue;
-import org.apache.etch.bindings.java.msg.Type;
-import org.apache.etch.bindings.java.msg.ValueFactory;
 import org.apache.etch.bindings.java.support.DummyValueFactory;
 import org.apache.etch.bindings.java.support.Validator_boolean;
 import org.apache.etch.bindings.java.support.Validator_int;

@@ -23,9 +23,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import org.apache.etch.util.CircularQueue;
-import org.apache.etch.util.TimeoutException;
-import org.apache.etch.util.Timer;
 import org.junit.Test;
 
 /** Test of CircularQueue */

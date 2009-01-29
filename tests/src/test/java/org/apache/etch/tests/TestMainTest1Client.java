@@ -22,10 +22,6 @@ import static org.junit.Assert.assertTrue;
 import java.util.concurrent.Semaphore;
 
 import org.apache.etch.bindings.java.util.StrIntHashMap;
-import org.apache.etch.tests.BaseTest1Client;
-import org.apache.etch.tests.ImplTest1Client;
-import org.apache.etch.tests.MainTest1Client;
-import org.apache.etch.tests.MainTest1Listener;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

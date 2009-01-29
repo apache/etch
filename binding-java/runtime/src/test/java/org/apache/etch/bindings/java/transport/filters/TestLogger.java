@@ -28,7 +28,6 @@ import org.apache.etch.bindings.java.support.Class2TypeMap;
 import org.apache.etch.bindings.java.support.DefaultValueFactory;
 import org.apache.etch.bindings.java.transport.SessionMessage;
 import org.apache.etch.bindings.java.transport.TransportMessage;
-import org.apache.etch.bindings.java.transport.filters.Logger;
 import org.apache.etch.util.Log;
 import org.apache.etch.util.Resources;
 import org.apache.etch.util.URL;

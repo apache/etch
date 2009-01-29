@@ -17,10 +17,6 @@
 
 package org.apache.etch.tests;
 
-import org.apache.etch.tests.ImplTestIncludesClient;
-import org.apache.etch.tests.ImplTestIncludesServer;
-import org.apache.etch.tests.RemoteTestIncludesClient;
-import org.apache.etch.tests.RemoteTestIncludesServer;
 import org.junit.Before;
 import org.junit.Test;
 

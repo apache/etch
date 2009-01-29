@@ -20,9 +20,6 @@ package org.apache.etch.tests;
 import java.net.InetSocketAddress;
 
 import org.apache.etch.bindings.java.support.ServerFactory;
-import org.apache.etch.tests.InheritanceHelper;
-import org.apache.etch.tests.InheritanceServer;
-import org.apache.etch.tests.RemoteInheritanceClient;
 import org.apache.etch.util.URL;
 import org.apache.etch.util.core.io.TcpListener;
 import org.apache.etch.util.core.io.Transport;
