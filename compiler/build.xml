@@ -102,7 +102,7 @@
                     <attribute name="Main-Class"   value="etch.compiler.EtchMain" />
                 </manifest>
                 <fileset dir="${classesDirectory}/main">
-                    <include name="etch/compiler/**" />
+                    <include name="org/apache/etch/compiler/**" />
                     <!-- <include name="resources/**" /> -->
                 </fileset>
             </jar>
@@ -119,7 +119,7 @@
             <!-- package up etch-compiler source -->
             <zip destfile="@{support}/lib/${etch-compiler-src.zip}" >
                 <fileset dir="${src}/main/java" >
-                    <include name="etch/compiler/**/*.java" />
+                    <include name="org/apache/etch/compiler/**/*.java" />
                 </fileset>
                 <fileset dir="${src}/main/resources" >
                     <include name="**/*.kwd" />
@@ -191,14 +191,14 @@
 
     <target name="generate-sources" >
         <!-- Generate version info -->
-        <update-tokens filename="${src}/main/java/etch/compiler/Version.java" />
+        <update-tokens filename="${src}/main/java/org/apache/etch/compiler/Version.java" />
 
         <!-- Generate Parser -->
-        <mkdir dir="${generatedSrc}/main/javacc/java/etch/compiler" />
+        <mkdir dir="${generatedSrc}/main/javacc/java/org/apache/etch/compiler" />
         <javacc
             target="${src}/main/javacc/EtchGrammar.jj"
             javacchome="${Etch.dependency.javacc.home}"
-            outputdirectory="${generatedSrc}/main/javacc/java/etch/compiler"
+            outputdirectory="${generatedSrc}/main/javacc/java/org/apache/etch/compiler"
         />
     </target>
 
@@ -265,7 +265,7 @@
             <formatter type="xml"/>
             <batchtest fork="true" todir="${testResultsDirectory}">
                 <fileset dir="${src}/test/java">
-                    <include name="etch/compiler/**/Test*.java" />
+                    <include name="org/apache/etch/compiler/**/Test*.java" />
                     <!-- TODO: Move TestEtch to Java binding -->
                     <exclude name="**/TestEtch.java" />
                 </fileset>

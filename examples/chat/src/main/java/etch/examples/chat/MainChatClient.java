@@ -28,11 +28,12 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.StringTokenizer;
 
-import etch.bindings.java.support.ObjSession;
-import etch.bindings.java.support._Etch_AuthException;
-import etch.util.Log;
-import etch.util.core.io.Session;
-import etch.util.core.io.Transport;
+import org.apache.etch.bindings.java.support.ObjSession;
+import org.apache.etch.bindings.java.support._Etch_AuthException;
+import org.apache.etch.util.Log;
+import org.apache.etch.util.core.io.Session;
+import org.apache.etch.util.core.io.Transport;
+
 
 /**
  * Simple command line chat client.

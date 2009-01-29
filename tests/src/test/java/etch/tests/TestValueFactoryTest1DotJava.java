@@ -25,9 +25,10 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Set;
 
-import etch.bindings.java.msg.Field;
-import etch.bindings.java.msg.StructValue;
-import etch.bindings.java.msg.Type;
+import org.apache.etch.bindings.java.msg.Field;
+import org.apache.etch.bindings.java.msg.StructValue;
+import org.apache.etch.bindings.java.msg.Type;
+
 import etch.tests.Test1.E1;
 import etch.tests.Test1.Excp1;
 import etch.tests.Test1.Excp2;

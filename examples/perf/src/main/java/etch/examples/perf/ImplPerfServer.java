@@ -19,7 +19,8 @@ package etch.examples.perf;
 
 import java.util.Date;
 
-import etch.util.core.io.Session;
+import org.apache.etch.util.core.io.Session;
+
 
 /**
  * Your custom implementation of BasePerfServer. Add methods here to provide

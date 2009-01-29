@@ -19,10 +19,11 @@ package etch.tests;
 
 import java.net.InetSocketAddress;
 
-import etch.bindings.java.support.ServerFactory;
-import etch.util.URL;
-import etch.util.core.io.TcpListener;
-import etch.util.core.io.Transport;
+import org.apache.etch.bindings.java.support.ServerFactory;
+import org.apache.etch.util.URL;
+import org.apache.etch.util.core.io.TcpListener;
+import org.apache.etch.util.core.io.Transport;
+
 
 /**
  * Main program for InheritanceServer. This program makes a listener to accept

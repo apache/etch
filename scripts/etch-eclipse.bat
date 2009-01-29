@@ -17,4 +17,4 @@ goto :eof
 
 :run_etch
 echo etch %*
-java -cp "%~dp0..\bin;%ETCH_DEPENDENT_JARS%" etch.compiler.EtchMain %*
+java -cp "%~dp0..\bin;%ETCH_DEPENDENT_JARS%" org.apache.etch.compiler.EtchMain %*

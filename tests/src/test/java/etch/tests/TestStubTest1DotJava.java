@@ -21,14 +21,16 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import etch.bindings.java.msg.Message;
-import etch.bindings.java.msg.Type;
-import etch.bindings.java.support.DeliveryService;
-import etch.bindings.java.support.Mailbox;
-import etch.bindings.java.support.Pool;
-import etch.bindings.java.support._Etch_AuthException;
-import etch.bindings.java.transport.SessionMessage;
-import etch.util.core.Who;
+
+import org.apache.etch.bindings.java.msg.Message;
+import org.apache.etch.bindings.java.msg.Type;
+import org.apache.etch.bindings.java.support.DeliveryService;
+import org.apache.etch.bindings.java.support.Mailbox;
+import org.apache.etch.bindings.java.support.Pool;
+import org.apache.etch.bindings.java.support._Etch_AuthException;
+import org.apache.etch.bindings.java.transport.SessionMessage;
+import org.apache.etch.util.core.Who;
+
 
 /** Test of StubTest1 */
 public class TestStubTest1DotJava 

@@ -19,15 +19,15 @@ package etch.examples.chat;
 
 // import static org.junit.Assert.*; 
 
+import org.apache.etch.bindings.java.support.ServerFactory;
+import org.apache.etch.util.Log;
+import org.apache.etch.util.core.io.Transport;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import etch.bindings.java.support.ServerFactory;
 import etch.examples.chat.Chat.Failure;
-import etch.util.Log;
-import etch.util.core.io.Transport;
 
 /**
  * Tests RemoteChatServer.

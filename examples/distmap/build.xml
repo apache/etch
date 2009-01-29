@@ -22,7 +22,7 @@
     <property name="Etch.buildSupportDirectory" location="../../build-support" />
 
     <!-- compute etch.version -->
-    <condition property="etch.version" value="1.0.1" >
+    <condition property="etch.version" value="1.1.0" >
         <not><isset property="etch.version" /></not>
     </condition>
 

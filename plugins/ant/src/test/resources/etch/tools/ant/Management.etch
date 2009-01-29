@@ -615,8 +615,8 @@ service Management
 		"cisco.uc.cuae.mgmt.util.StrTableSerializer", "" )
 	extern StrTable
 	
-	@Extern( java, "etch.bindings.java.util.StrStrHashMap", "",
-		"etch.bindings.java.util.StrStrHashMapSerializer", "" )
+	@Extern( java, "org.apache.etch.bindings.java.util.StrStrHashMap", "",
+		"org.apache.etch.bindings.java.util.StrStrHashMapSerializer", "" )
 	extern StrStrMap
 	
 	/**

@@ -17,8 +17,9 @@
 
 package etch.examples.distmap;
 
+import org.apache.etch.util.Log;
+
 import etch.examples.distmap.DistributedHashTable.Entry;
-import etch.util.Log;
 
 /**
  * Main program for DistributedHashTableClient. This program makes a connection to the

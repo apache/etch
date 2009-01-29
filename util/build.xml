@@ -72,7 +72,7 @@
                     <attribute name="SVN-Revision" value="${Etch.runtime.revisionNumber}" />
                 </manifest>
                 <fileset dir="${classesDirectory}/main">
-                    <include name="etch/util/**" />
+                    <include name="org/apache/etch/util/**" />
                 </fileset>
             </jar>
 
@@ -93,7 +93,7 @@
             <!-- package up etch-util src -->
             <zip destfile="@{dist}/lib/${etch-util-src.zip}" >
                 <fileset dir="${src}/main/java" >
-                    <include name="etch/util/**/*.java" />
+                    <include name="org/apache/etch/util/**/*.java" />
                     <exclude name="**/test/**" />
                 </fileset>
             </zip>

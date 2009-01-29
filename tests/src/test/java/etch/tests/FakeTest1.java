@@ -17,7 +17,7 @@
 
 package etch.tests;
 
-import etch.bindings.java.util.StrIntHashMap;
+import org.apache.etch.bindings.java.util.StrIntHashMap;
 
 /**
  * Silly implementation of Test used for testing.

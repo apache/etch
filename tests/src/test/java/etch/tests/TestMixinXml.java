@@ -137,15 +137,15 @@ public class TestMixinXml
 		Node externNode = list.item(nodeCount++);
 		
 		checkExternProperties(externNode, "FooTable", "1071837490", "etch.tests.Foo.FooTable");
-		checkExternMapProperties(externNode, "java", "etch.bindings.java.util.StrStrHashMap", "", "etch.bindings.java.util.StrStrHashMapSerializer",  "");
+		checkExternMapProperties(externNode, "java", "org.apache.etch.bindings.java.util.StrStrHashMap", "", "org.apache.etch.bindings.java.util.StrStrHashMapSerializer",  "");
 		
 		externNode = list.item( nodeCount++ );
 		checkExternProperties(externNode, "BazTable", "-1088676472", "etch.tests.Baz.BazTable");
-		checkExternMapProperties(externNode, "java", "etch.bindings.java.util.StrStrHashMap", "", "etch.bindings.java.util.StrStrHashMapSerializer",  "");
+		checkExternMapProperties(externNode, "java", "org.apache.etch.bindings.java.util.StrStrHashMap", "", "org.apache.etch.bindings.java.util.StrStrHashMapSerializer",  "");
 		
 		externNode = list.item( nodeCount++ );
 		checkExternProperties(externNode, "BarTable", "-2096954984", "etch.tests.Bar.BarTable");
-		checkExternMapProperties(externNode, "java", "etch.bindings.java.util.StrStrHashMap", "", "etch.bindings.java.util.StrStrHashMapSerializer",  "");
+		checkExternMapProperties(externNode, "java", "org.apache.etch.bindings.java.util.StrStrHashMap", "", "org.apache.etch.bindings.java.util.StrStrHashMapSerializer",  "");
 	}
 		
 	/** @throws Exception */

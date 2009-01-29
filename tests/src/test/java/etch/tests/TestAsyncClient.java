@@ -19,11 +19,11 @@ package etch.tests;
 
 import static org.junit.Assert.assertEquals;
 
+import org.apache.etch.util.Log;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import etch.util.Log;
 
 /**
  * Main implementation for AsyncClient.

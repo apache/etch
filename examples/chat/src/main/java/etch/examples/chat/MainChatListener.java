@@ -21,9 +21,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import etch.bindings.java.support.ServerFactory;
-import etch.util.Log;
-import etch.util.core.io.Transport;
+import org.apache.etch.bindings.java.support.ServerFactory;
+import org.apache.etch.util.Log;
+import org.apache.etch.util.core.io.Transport;
+
 
 /**
  * Main program for ChatServer. This program makes a listener to accept

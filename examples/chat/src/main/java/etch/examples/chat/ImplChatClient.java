@@ -20,7 +20,8 @@ package etch.examples.chat;
 import java.util.HashSet;
 import java.util.Set;
 
-import etch.util.core.io.Session;
+import org.apache.etch.util.core.io.Session;
+
 
 /**
  * Your custom implementation of BaseChatClient. Add methods here to provide

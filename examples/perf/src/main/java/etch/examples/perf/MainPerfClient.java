@@ -20,15 +20,16 @@ package etch.examples.perf;
 
 import java.util.Date;
 
-import etch.bindings.java.support.Mailbox;
-import etch.bindings.java.support.ServerFactory;
+import org.apache.etch.bindings.java.support.Mailbox;
+import org.apache.etch.bindings.java.support.ServerFactory;
+import org.apache.etch.util.Assertion;
+import org.apache.etch.util.Log;
+import org.apache.etch.util.PerfTest;
+import org.apache.etch.util.core.io.Transport;
+
 import etch.examples.perf.Perf.Point;
 import etch.examples.perf.PerfHelper.PerfClientFactory;
 import etch.examples.perf.PerfHelper.PerfServerFactory;
-import etch.util.Assertion;
-import etch.util.Log;
-import etch.util.PerfTest;
-import etch.util.core.io.Transport;
 
 /**
  * Main program for PerfClient. This program makes a connection to the listener

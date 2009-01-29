@@ -32,4 +32,4 @@ if [ -f "${CLOVER_HOME}/lib/clover.jar" ]; then
 fi
 
 # Invoke Etch
-exec "$JAVA_CMD" -cp "${ETCH_CP}" "-Detch.home=${ETCH_HOME}" etch.compiler.EtchMain ${1+"$@"}
+exec "$JAVA_CMD" -cp "${ETCH_CP}" "-Detch.home=${ETCH_HOME}" org.apache.etch.compiler.EtchMain ${1+"$@"}

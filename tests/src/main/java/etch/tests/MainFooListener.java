@@ -17,9 +17,10 @@
 
 package etch.tests;
 
-import etch.bindings.java.support.ServerFactory;
+import org.apache.etch.bindings.java.support.ServerFactory;
+import org.apache.etch.util.core.io.Transport;
+
 import etch.tests.FooHelper.FooServerFactory;
-import etch.util.core.io.Transport;
 
 /**
  * Main implementation for FooListener.

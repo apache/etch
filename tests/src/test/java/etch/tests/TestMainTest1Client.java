@@ -21,11 +21,11 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.concurrent.Semaphore;
 
+import org.apache.etch.bindings.java.util.StrIntHashMap;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import etch.bindings.java.util.StrIntHashMap;
 
 /**
  * @author rebarraz

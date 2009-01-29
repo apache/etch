@@ -8,12 +8,12 @@ options
 	JAVA_UNICODE_ESCAPE = false;
 	STATIC = false;
 	JDK_VERSION = "1.5";
-	OUTPUT_DIRECTORY = "../../../target/generated-sources/main/javacc/java/etch/compiler";
+	OUTPUT_DIRECTORY = "../../../target/generated-sources/main/javacc/java/org/apache/etch/compiler";
 }
 
 PARSER_BEGIN(EtchGrammar)
 
-package etch.compiler;
+package org.apache.etch.compiler;
 
 import java.io.InputStream;
 
@@ -22,20 +22,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import etch.compiler.ast.Constant;
-import etch.compiler.ast.Enumx;
-import etch.compiler.ast.Except;
-import etch.compiler.ast.Service;
-import etch.compiler.ast.Item;
-import etch.compiler.ast.Message;
-import etch.compiler.ast.Module;
-import etch.compiler.ast.Name;
-import etch.compiler.ast.Opt;
-import etch.compiler.ast.ParamList;
-import etch.compiler.ast.Parameter;
-import etch.compiler.ast.Struct;
-import etch.compiler.ast.Thrown;
-import etch.compiler.ast.TypeRef;
+import org.apache.etch.compiler.ast.Constant;
+import org.apache.etch.compiler.ast.Enumx;
+import org.apache.etch.compiler.ast.Except;
+import org.apache.etch.compiler.ast.Service;
+import org.apache.etch.compiler.ast.Item;
+import org.apache.etch.compiler.ast.Message;
+import org.apache.etch.compiler.ast.Module;
+import org.apache.etch.compiler.ast.Name;
+import org.apache.etch.compiler.ast.Opt;
+import org.apache.etch.compiler.ast.ParamList;
+import org.apache.etch.compiler.ast.Parameter;
+import org.apache.etch.compiler.ast.Struct;
+import org.apache.etch.compiler.ast.Thrown;
+import org.apache.etch.compiler.ast.TypeRef;
 
 /** The JavaCC grammar file for the etch compiler. */
 public class EtchGrammar extends EtchHelper

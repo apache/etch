@@ -21,8 +21,8 @@ service Bar
 {
 	mixin etch.examples.mixin.baz.Baz
 
-	@Extern( java, "etch.bindings.java.util.StrStrHashMap", "",
-		"etch.bindings.java.util.StrStrHashMapSerializer", "" )
+	@Extern( java, "org.apache.etch.bindings.java.util.StrStrHashMap", "",
+		"org.apache.etch.bindings.java.util.StrStrHashMapSerializer", "" )
 		@Extern(csharp, "StrStrHashMap", "Etch.Util",
 		"StrStrHashMapSerializer", "")
 	extern BarTable

@@ -17,7 +17,8 @@
 
 package etch.tests;
 
-import etch.bindings.java.util.StrStrHashMap;
+import org.apache.etch.bindings.java.util.StrStrHashMap;
+
 import etch.tests.Bar.BarData;
 import etch.tests.Baz.BazData;
 import etch.tests.Foo.FooData;
