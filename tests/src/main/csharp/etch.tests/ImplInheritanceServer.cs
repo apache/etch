@@ -15,7 +15,8 @@
 // under the License.
 
 using System;
-using etch.tests.types.Inheritance;
+using org.apache.etch.tests;
+using org.apache.etch.tests.types.Inheritance;
 using etch.tests;
 
 /**

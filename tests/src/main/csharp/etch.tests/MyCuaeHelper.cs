@@ -22,6 +22,7 @@ using etch.tests;
 using Etch.Transport;
 using Etch.Msg;
 using Etch.Util;
+using org.apache.etch.tests;
 
 namespace etch.tests
 {

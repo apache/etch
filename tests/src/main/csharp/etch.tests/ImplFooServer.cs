@@ -14,9 +14,10 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
-using etch.tests.types.Bar;
-using etch.tests.types.Baz;
-using etch.tests.types.Foo;
+using org.apache.etch.tests;
+using org.apache.etch.tests.types.Bar;
+using org.apache.etch.tests.types.Baz;
+using org.apache.etch.tests.types.Foo;
 
 
 using System;

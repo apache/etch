@@ -15,7 +15,7 @@
  * under the License.
  */
 
-module etch.compiler.test
+module org.apache.etch.compiler.test
 
 service Constants
 {

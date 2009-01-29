@@ -17,8 +17,8 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using etch.tests;
-using etch.tests.types.Test1;
+using org.apache.etch.tests;
+using org.apache.etch.tests.types.Test1;
 using Etch.Util;
 
 using Etch.Transport;

@@ -22,8 +22,8 @@ using NUnit.Framework;
 using Etch.Msg;
 using Etch.Support;
 using Etch.Transport;
-
-using etch.tests.types.Test1;
+using org.apache.etch.tests;
+using org.apache.etch.tests.types.Test1;
 
 
 namespace etch.tests
@@ -45,7 +45,7 @@ namespace etch.tests
 	    {
 		    // type //
     		
-		    checkType( ValueFactoryTest1._mt_etch_tests_Test1_E1,
+		    checkType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1_E1,
                        
 		            ValueFactoryTest1._mf_A,
 		   ValueFactoryTest1._mf_B,
@@ -56,15 +56,15 @@ namespace etch.tests
 	    public void test_E1_export()
 	    {
             testEnumExport( E1.A,
-			    ValueFactoryTest1._mt_etch_tests_Test1_E1,
+			    ValueFactoryTest1._mt_org_apache_etch_tests_Test1_E1,
 			    ValueFactoryTest1._mf_A );
 
             testEnumExport( E1.B,
-			    ValueFactoryTest1._mt_etch_tests_Test1_E1,
+			    ValueFactoryTest1._mt_org_apache_etch_tests_Test1_E1,
 			    ValueFactoryTest1._mf_B );
 
             testEnumExport( E1.C,
-			    ValueFactoryTest1._mt_etch_tests_Test1_E1,
+			    ValueFactoryTest1._mt_org_apache_etch_tests_Test1_E1,
 			    ValueFactoryTest1._mf_C );
 	    }
     	
@@ -72,15 +72,15 @@ namespace etch.tests
 	    public void test_E1_import()
 	    {
             testEnumImport( E1.A,
-			    ValueFactoryTest1._mt_etch_tests_Test1_E1,
+			    ValueFactoryTest1._mt_org_apache_etch_tests_Test1_E1,
 			    ValueFactoryTest1._mf_A );
 
             testEnumImport( E1.B,
-			    ValueFactoryTest1._mt_etch_tests_Test1_E1,
+			    ValueFactoryTest1._mt_org_apache_etch_tests_Test1_E1,
 			    ValueFactoryTest1._mf_B );
 
             testEnumImport( E1.C,
-			    ValueFactoryTest1._mt_etch_tests_Test1_E1,
+			    ValueFactoryTest1._mt_org_apache_etch_tests_Test1_E1,
 			    ValueFactoryTest1._mf_C );
 	    }
 
@@ -89,7 +89,7 @@ namespace etch.tests
 	    {
 		    // type //
 
-		    checkType( ValueFactoryTest1._mt_etch_tests_Test1_S1, 
+		    checkType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1_S1, 
     		
 		    // fields //
     		
@@ -102,7 +102,7 @@ namespace etch.tests
 	    public void test_S1_export()
 	    {
             StructValue sv = vf.ExportCustomValue( new S1( 19, 23, 29 ) );
-		    sv.CheckType( ValueFactoryTest1._mt_etch_tests_Test1_S1 );
+		    sv.CheckType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1_S1 );
 		    Assert.AreEqual( 3, sv.Count );
 		    Assert.AreEqual( 19, sv.Get( ValueFactoryTest1._mf_x ) );
 		    Assert.AreEqual( 23, sv.Get( ValueFactoryTest1._mf_y ) );
@@ -112,7 +112,7 @@ namespace etch.tests
 	    [Test]
 	    public void test_S1_import()
 	    {
-            StructValue sv = new StructValue(ValueFactoryTest1._mt_etch_tests_Test1_S1, vf);
+            StructValue sv = new StructValue(ValueFactoryTest1._mt_org_apache_etch_tests_Test1_S1, vf);
 		    sv.Add( ValueFactoryTest1._mf_x, 101 );
 		    sv.Add( ValueFactoryTest1._mf_y, 103 );
 		    sv.Add( ValueFactoryTest1._mf_z, 107 );
@@ -127,7 +127,7 @@ namespace etch.tests
 	    {
 		    // type //
 
-		    checkType( ValueFactoryTest1._mt_etch_tests_Test1_S2,
+		    checkType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1_S2,
    
 		    ValueFactoryTest1._mf_a,
 		    ValueFactoryTest1._mf_b,
@@ -142,7 +142,7 @@ namespace etch.tests
             E1 c = E1.A;
 
             StructValue sv = vf.ExportCustomValue( new S2( a, b, c ) );
-		    sv.CheckType( ValueFactoryTest1._mt_etch_tests_Test1_S2 );
+		    sv.CheckType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1_S2 );
 		    Assert.AreEqual( 3, sv.Count );
     		
 		    Assert.AreEqual( a, sv.Get( ValueFactoryTest1._mf_a ) );
@@ -153,7 +153,7 @@ namespace etch.tests
 	    [Test]
 	    public void test_S2_import()
 	    {
-            StructValue sv = new StructValue(ValueFactoryTest1._mt_etch_tests_Test1_S2, vf);
+            StructValue sv = new StructValue(ValueFactoryTest1._mt_org_apache_etch_tests_Test1_S2, vf);
 
             sv.Add( ValueFactoryTest1._mf_a, new S1( 21, 22, 23 ) );
             sv.Add( ValueFactoryTest1._mf_b, new S1( 31, 32, 33 ) );
@@ -174,7 +174,7 @@ namespace etch.tests
 	    {
 		    // type //
 
-		    checkType( ValueFactoryTest1._mt_etch_tests_Test1_S3,
+		    checkType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1_S3,
     		
 		    // fields //
 	//	    ValueFactoryTest1._mf_type1,
@@ -213,7 +213,7 @@ namespace etch.tests
 	    {
 		    // type //
 
-		    checkType( ValueFactoryTest1._mt_etch_tests_Test1_S4,
+		    checkType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1_S4,
     		
 		    // fields //
 		     ValueFactoryTest1._mf_tipe,
@@ -269,12 +269,12 @@ namespace etch.tests
 	    {
 		    // type //
     		
-		    checkType( ValueFactoryTest1._mt_etch_tests_Test1_Excp1, ValueFactoryTest1._mf_msg, ValueFactoryTest1._mf_code ); 
-		    checkType( ValueFactoryTest1._mt_etch_tests_Test1_Excp2 );
-		    checkType( ValueFactoryTest1._mt_etch_tests_Test1_Excp3 );
-            checkType( ValueFactoryTest1._mt_etch_tests_Test1_Excp4 );
-            checkType( ValueFactoryTest1._mt_etch_tests_Test1_Excp5, ValueFactoryTest1._mf_msg,ValueFactoryTest1._mf_code, ValueFactoryTest1._mf_x );
-            checkType(ValueFactoryTest1._mt_etch_tests_Test1_Excp6, ValueFactoryTest1._mf_msg, ValueFactoryTest1._mf_code, ValueFactoryTest1._mf_x);
+		    checkType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1_Excp1, ValueFactoryTest1._mf_msg, ValueFactoryTest1._mf_code ); 
+		    checkType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1_Excp2 );
+		    checkType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1_Excp3 );
+            checkType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1_Excp4 );
+            checkType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1_Excp5, ValueFactoryTest1._mf_msg,ValueFactoryTest1._mf_code, ValueFactoryTest1._mf_x );
+            checkType(ValueFactoryTest1._mt_org_apache_etch_tests_Test1_Excp6, ValueFactoryTest1._mf_msg, ValueFactoryTest1._mf_code, ValueFactoryTest1._mf_x);
     		
 		    // fields //
     		
@@ -299,21 +299,21 @@ namespace etch.tests
             int code = 500;
 
 		    StructValue sv = vf.ExportCustomValue( new Excp1( "abc", 23 ) );
-		    sv.CheckType( ValueFactoryTest1._mt_etch_tests_Test1_Excp1 );
+		    sv.CheckType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1_Excp1 );
 		    Assert.AreEqual( 2, sv.Count );
 		    Assert.AreEqual( "abc", sv.Get( ValueFactoryTest1._mf_msg ) );
 		    Assert.AreEqual( 23, sv.Get( ValueFactoryTest1._mf_code ) );
 
             sv = vf.ExportCustomValue( new Excp2() );
-		    sv.CheckType( ValueFactoryTest1._mt_etch_tests_Test1_Excp2 );
+		    sv.CheckType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1_Excp2 );
 		    Assert.AreEqual( 0, sv.Count );
 
             sv = vf.ExportCustomValue( new Excp3() );
-		    sv.CheckType( ValueFactoryTest1._mt_etch_tests_Test1_Excp3 );
+		    sv.CheckType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1_Excp3 );
 		    Assert.AreEqual( 0, sv.Count );
 
             sv = vf.ExportCustomValue( new Excp4() );
-		    sv.CheckType( ValueFactoryTest1._mt_etch_tests_Test1_Excp4 );
+		    sv.CheckType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1_Excp4 );
 		    Assert.AreEqual( 0, sv.Count );
 
             // Import exception with object as param
@@ -353,7 +353,7 @@ namespace etch.tests
             String msg = "Exception";
             int code = 500;
 
-            StructValue sv = new StructValue(ValueFactoryTest1._mt_etch_tests_Test1_Excp1, vf);
+            StructValue sv = new StructValue(ValueFactoryTest1._mt_org_apache_etch_tests_Test1_Excp1, vf);
 		    sv.Add( ValueFactoryTest1._mf_msg, "def" );
 		    sv.Add( ValueFactoryTest1._mf_code, 29 );
             Excp1 e1 = ( Excp1 ) vf.ImportCustomValue( sv );
@@ -361,17 +361,17 @@ namespace etch.tests
 		    Assert.AreEqual( 29, e1.code );
 		    e1 = null;
 
-            sv = new StructValue(ValueFactoryTest1._mt_etch_tests_Test1_Excp2, vf);
+            sv = new StructValue(ValueFactoryTest1._mt_org_apache_etch_tests_Test1_Excp2, vf);
             Excp2 e2 = ( Excp2 ) vf.ImportCustomValue( sv );
 		    Assert.IsNotNull( e2 );
 		    e2 = null;
 
-            sv = new StructValue(ValueFactoryTest1._mt_etch_tests_Test1_Excp3, vf);
+            sv = new StructValue(ValueFactoryTest1._mt_org_apache_etch_tests_Test1_Excp3, vf);
             Excp3 e3 = ( Excp3 ) vf.ImportCustomValue( sv );
 		    Assert.IsNotNull( e3 );
 		    e3 = null;
 
-            sv = new StructValue(ValueFactoryTest1._mt_etch_tests_Test1_Excp4, vf);
+            sv = new StructValue(ValueFactoryTest1._mt_org_apache_etch_tests_Test1_Excp4, vf);
             Excp4 e4 = ( Excp4 ) vf.ImportCustomValue( sv );
 		    Assert.IsNotNull( e4 );
 		    e4 = null;
@@ -400,9 +400,9 @@ namespace etch.tests
 	    [Test]
 	    public void test_method_nothing()
 	    {
-            checkType(ValueFactoryTest1._mt_etch_tests_Test1_nothing, ValueFactoryTest1._mf__messageId);
+            checkType(ValueFactoryTest1._mt_org_apache_etch_tests_Test1_nothing, ValueFactoryTest1._mf__messageId);
     		
-		    checkType( ValueFactoryTest1._mt_etch_tests_Test1__result_nothing, 
+		    checkType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1__result_nothing, 
                 ValueFactoryTest1._mf__messageId,
 			ValueFactoryTest1._mf__inReplyTo,
 			ValueFactoryTest1._mf_result );
@@ -412,11 +412,11 @@ namespace etch.tests
 	    [Test]
 	    public void test_method_incr()
 	    {
-            checkType(ValueFactoryTest1._mt_etch_tests_Test1_incr, ValueFactoryTest1._mf__messageId,
+            checkType(ValueFactoryTest1._mt_org_apache_etch_tests_Test1_incr, ValueFactoryTest1._mf__messageId,
         ValueFactoryTest1._mf_x);
 
 
-            checkType(ValueFactoryTest1._mt_etch_tests_Test1__result_incr, ValueFactoryTest1._mf__messageId,
+            checkType(ValueFactoryTest1._mt_org_apache_etch_tests_Test1__result_incr, ValueFactoryTest1._mf__messageId,
             ValueFactoryTest1._mf__inReplyTo,
         ValueFactoryTest1._mf_result);
 		    
@@ -425,11 +425,11 @@ namespace etch.tests
 	    [Test]
 	    public void test_method_sub()
 	    {
-		    checkType( ValueFactoryTest1._mt_etch_tests_Test1_sub, ValueFactoryTest1._mf__messageId,
+		    checkType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1_sub, ValueFactoryTest1._mf__messageId,
 		ValueFactoryTest1._mf_x, ValueFactoryTest1._mf_y );
 
 
-            checkType(ValueFactoryTest1._mt_etch_tests_Test1__result_sub, ValueFactoryTest1._mf__messageId,
+            checkType(ValueFactoryTest1._mt_org_apache_etch_tests_Test1__result_sub, ValueFactoryTest1._mf__messageId,
             ValueFactoryTest1._mf__inReplyTo, ValueFactoryTest1._mf_result);
 		
 	    }
@@ -437,11 +437,11 @@ namespace etch.tests
 	    [Test]
 	    public void test_method_sum()
 	    {
-            checkType(ValueFactoryTest1._mt_etch_tests_Test1_sum, ValueFactoryTest1._mf__messageId,
+            checkType(ValueFactoryTest1._mt_org_apache_etch_tests_Test1_sum, ValueFactoryTest1._mf__messageId,
         ValueFactoryTest1._mf_x);
 
 
-            checkType(ValueFactoryTest1._mt_etch_tests_Test1__result_sum, ValueFactoryTest1._mf__messageId,
+            checkType(ValueFactoryTest1._mt_org_apache_etch_tests_Test1__result_sum, ValueFactoryTest1._mf__messageId,
             ValueFactoryTest1._mf__inReplyTo,
         ValueFactoryTest1._mf_result);
 		 
@@ -450,12 +450,12 @@ namespace etch.tests
 	    [Test]
 	    public void test_method_trans()
 	    {
-            checkType(ValueFactoryTest1._mt_etch_tests_Test1_trans, ValueFactoryTest1._mf__messageId,
+            checkType(ValueFactoryTest1._mt_org_apache_etch_tests_Test1_trans, ValueFactoryTest1._mf__messageId,
         ValueFactoryTest1._mf_e,
         ValueFactoryTest1._mf_x);
 
 
-            checkType(ValueFactoryTest1._mt_etch_tests_Test1__result_trans, ValueFactoryTest1._mf__messageId,
+            checkType(ValueFactoryTest1._mt_org_apache_etch_tests_Test1__result_trans, ValueFactoryTest1._mf__messageId,
             ValueFactoryTest1._mf__inReplyTo,
         ValueFactoryTest1._mf_result);
 		
@@ -464,12 +464,12 @@ namespace etch.tests
 	    [Test]
 	    public void test_method_dist()
 	    {
-		    checkType( ValueFactoryTest1._mt_etch_tests_Test1_dist,
+		    checkType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1_dist,
                 ValueFactoryTest1._mf__messageId,
 		    ValueFactoryTest1._mf_a,
 		    ValueFactoryTest1._mf_b );
 
-            checkType(ValueFactoryTest1._mt_etch_tests_Test1__result_dist, ValueFactoryTest1._mf__messageId,
+            checkType(ValueFactoryTest1._mt_org_apache_etch_tests_Test1__result_dist, ValueFactoryTest1._mf__messageId,
             ValueFactoryTest1._mf__inReplyTo,
         ValueFactoryTest1._mf_result);
 		
@@ -478,10 +478,10 @@ namespace etch.tests
 	    [Test]
 	    public void test_method_fill()
 	    {
-            checkType(ValueFactoryTest1._mt_etch_tests_Test1_fill, ValueFactoryTest1._mf__messageId,
+            checkType(ValueFactoryTest1._mt_org_apache_etch_tests_Test1_fill, ValueFactoryTest1._mf__messageId,
 		    ValueFactoryTest1._mf_n, ValueFactoryTest1._mf_x );
 
-            checkType(ValueFactoryTest1._mt_etch_tests_Test1__result_fill, ValueFactoryTest1._mf__messageId,
+            checkType(ValueFactoryTest1._mt_org_apache_etch_tests_Test1__result_fill, ValueFactoryTest1._mf__messageId,
             ValueFactoryTest1._mf__inReplyTo,
         ValueFactoryTest1._mf_result);
 		   
@@ -490,10 +490,10 @@ namespace etch.tests
         [Test]
 	    public void test_method_fillObject()
 	    {
-            checkType(ValueFactoryTest1._mt_etch_tests_Test1_fillObject, ValueFactoryTest1._mf__messageId,
+            checkType(ValueFactoryTest1._mt_org_apache_etch_tests_Test1_fillObject, ValueFactoryTest1._mf__messageId,
 		    ValueFactoryTest1._mf_n, ValueFactoryTest1._mf_o );
 
-            checkType(ValueFactoryTest1._mt_etch_tests_Test1__result_fillObject, ValueFactoryTest1._mf__messageId,
+            checkType(ValueFactoryTest1._mt_org_apache_etch_tests_Test1__result_fillObject, ValueFactoryTest1._mf__messageId,
             ValueFactoryTest1._mf__inReplyTo,
         ValueFactoryTest1._mf_result);
 		   
@@ -503,11 +503,11 @@ namespace etch.tests
 	    [Test]
 	    public void test_method_blow()
 	    {
-		    checkType( ValueFactoryTest1._mt_etch_tests_Test1_blow , ValueFactoryTest1._mf__messageId,
+		    checkType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1_blow , ValueFactoryTest1._mf__messageId,
 		    ValueFactoryTest1._mf_msg,
 		    ValueFactoryTest1._mf_code );
     		
-		    checkType( ValueFactoryTest1._mt_etch_tests_Test1__result_blow, ValueFactoryTest1._mf__messageId,
+		    checkType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1__result_blow, ValueFactoryTest1._mf__messageId,
 			ValueFactoryTest1._mf__inReplyTo,
 		ValueFactoryTest1._mf_result );
 		  
@@ -516,9 +516,9 @@ namespace etch.tests
 	    [Test]
 	    public void test_method_beets()
 	    {
-		    checkType( ValueFactoryTest1._mt_etch_tests_Test1_beets, ValueFactoryTest1._mf__messageId,
+		    checkType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1_beets, ValueFactoryTest1._mf__messageId,
 		ValueFactoryTest1._mf_e );   		
-		    checkType( ValueFactoryTest1._mt_etch_tests_Test1__result_beets, ValueFactoryTest1._mf__messageId,
+		    checkType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1__result_beets, ValueFactoryTest1._mf__messageId,
 			ValueFactoryTest1._mf__inReplyTo,
 		ValueFactoryTest1._mf_result );
 		    
@@ -527,13 +527,13 @@ namespace etch.tests
         [Test]
 	    public void test_method_throwExcp5()
 	    {
-		    checkType( ValueFactoryTest1._mt_etch_tests_Test1_throwExcp5,
+		    checkType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1_throwExcp5,
                 ValueFactoryTest1._mf__messageId,
                 ValueFactoryTest1._mf_msg,
                  ValueFactoryTest1._mf_code,
                  ValueFactoryTest1._mf_value);
 		
-            checkType( ValueFactoryTest1._mt_etch_tests_Test1__result_throwExcp5,
+            checkType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1__result_throwExcp5,
                 ValueFactoryTest1._mf__messageId,
             ValueFactoryTest1._mf__inReplyTo,
         ValueFactoryTest1._mf_result);
@@ -544,14 +544,14 @@ namespace etch.tests
 	    [Test]
 	    public void test_method_throwExcp6()
 	    {
-            checkType( ValueFactoryTest1._mt_etch_tests_Test1_throwExcp5,
+            checkType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1_throwExcp5,
                 ValueFactoryTest1._mf__messageId,
         ValueFactoryTest1._mf_msg,
         ValueFactoryTest1._mf_code,
         ValueFactoryTest1._mf_value);
 
 		    
-            checkType( ValueFactoryTest1._mt_etch_tests_Test1__result_throwExcp6,
+            checkType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1__result_throwExcp6,
                 ValueFactoryTest1._mf__messageId,
             ValueFactoryTest1._mf__inReplyTo,
         ValueFactoryTest1._mf_result);
@@ -561,13 +561,13 @@ namespace etch.tests
 	    [Test]
 	    public void test_method_p_boolean()
 	    {
-		    checkType( ValueFactoryTest1._mt_etch_tests_Test1_p_boolean,
+		    checkType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1_p_boolean,
                 ValueFactoryTest1._mf__messageId,
         ValueFactoryTest1._mf_a);
 
 		  
     		
-		    checkType( ValueFactoryTest1._mt_etch_tests_Test1__result_p_boolean,
+		    checkType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1__result_p_boolean,
                 ValueFactoryTest1._mf__messageId,
             ValueFactoryTest1._mf__inReplyTo,
         ValueFactoryTest1._mf_result);
@@ -577,11 +577,11 @@ namespace etch.tests
 	    [Test]
 	    public void test_method_p_boolean_array()
 	    {
-		    checkType( ValueFactoryTest1._mt_etch_tests_Test1_p_boolean_array,
+		    checkType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1_p_boolean_array,
                 ValueFactoryTest1._mf__messageId,
         ValueFactoryTest1._mf_a);
 	
-		    checkType( ValueFactoryTest1._mt_etch_tests_Test1__result_p_boolean_array,
+		    checkType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1__result_p_boolean_array,
                 ValueFactoryTest1._mf__messageId,
             ValueFactoryTest1._mf__inReplyTo,
         ValueFactoryTest1._mf_result);
@@ -591,11 +591,11 @@ namespace etch.tests
 	    [Test]
 	    public void test_method_p_byte()
 	    {
-		    checkType( ValueFactoryTest1._mt_etch_tests_Test1_p_byte,
+		    checkType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1_p_byte,
                 ValueFactoryTest1._mf__messageId,
         ValueFactoryTest1._mf_a);
 	
-		    checkType( ValueFactoryTest1._mt_etch_tests_Test1__result_p_byte,
+		    checkType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1__result_p_byte,
                 ValueFactoryTest1._mf__messageId,
             ValueFactoryTest1._mf__inReplyTo,
         ValueFactoryTest1._mf_result);
@@ -606,11 +606,11 @@ namespace etch.tests
 	    [Test]
 	    public void test_method_p_byte_array()
 	    {
-		    checkType( ValueFactoryTest1._mt_etch_tests_Test1_p_byte_array,
+		    checkType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1_p_byte_array,
                 ValueFactoryTest1._mf__messageId,
         ValueFactoryTest1._mf_a);
 
-		    checkType( ValueFactoryTest1._mt_etch_tests_Test1__result_p_byte_array,
+		    checkType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1__result_p_byte_array,
                 ValueFactoryTest1._mf__messageId,
             ValueFactoryTest1._mf__inReplyTo,
         ValueFactoryTest1._mf_result);
@@ -621,12 +621,12 @@ namespace etch.tests
 	    [Test]
 	    public void test_method_p_short()
 	    {
-		    checkType( ValueFactoryTest1._mt_etch_tests_Test1_p_short,
+		    checkType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1_p_short,
                 ValueFactoryTest1._mf__messageId,
         ValueFactoryTest1._mf_a);
 		    
     		
-		    checkType( ValueFactoryTest1._mt_etch_tests_Test1__result_p_short,
+		    checkType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1__result_p_short,
                 ValueFactoryTest1._mf__messageId,
             ValueFactoryTest1._mf__inReplyTo,
         ValueFactoryTest1._mf_result);
@@ -636,11 +636,11 @@ namespace etch.tests
 	    [Test]
 	    public void test_method_p_short_array()
 	    {
-		    checkType( ValueFactoryTest1._mt_etch_tests_Test1_p_short_array,
+		    checkType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1_p_short_array,
                ValueFactoryTest1._mf__messageId,
         ValueFactoryTest1._mf_a);
 	
-		    checkType( ValueFactoryTest1._mt_etch_tests_Test1__result_p_short_array,
+		    checkType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1__result_p_short_array,
             ValueFactoryTest1._mf__messageId,
 			ValueFactoryTest1._mf__inReplyTo,
 		ValueFactoryTest1._mf_result );
@@ -652,12 +652,12 @@ namespace etch.tests
 	    [Test]
 	    public void test_method_p_int()
 	    {
-		    checkType( ValueFactoryTest1._mt_etch_tests_Test1_p_int,
+		    checkType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1_p_int,
                 ValueFactoryTest1._mf__messageId,
 		ValueFactoryTest1._mf_a );
 		
     		
-		    checkType( ValueFactoryTest1._mt_etch_tests_Test1__result_p_int,
+		    checkType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1__result_p_int,
                 ValueFactoryTest1._mf__messageId,
             ValueFactoryTest1._mf__inReplyTo,
         ValueFactoryTest1._mf_result);
@@ -668,12 +668,12 @@ namespace etch.tests
 	    [Test]
 	    public void test_method_p_int_array()
 	    {
-		    checkType( ValueFactoryTest1._mt_etch_tests_Test1_p_int_array ,
+		    checkType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1_p_int_array ,
                 ValueFactoryTest1._mf__messageId,
 		ValueFactoryTest1._mf_a );
 
     		
-		    checkType( ValueFactoryTest1._mt_etch_tests_Test1__result_p_int_array,
+		    checkType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1__result_p_int_array,
                 ValueFactoryTest1._mf__messageId,
             ValueFactoryTest1._mf__inReplyTo,
         ValueFactoryTest1._mf_result);
@@ -682,11 +682,11 @@ namespace etch.tests
 	    [Test]
 	    public void test_method_p_long()
 	    {
-		    checkType( ValueFactoryTest1._mt_etch_tests_Test1_p_long,
+		    checkType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1_p_long,
                 ValueFactoryTest1._mf__messageId,
 		ValueFactoryTest1._mf_a );
     		
-		    checkType( ValueFactoryTest1._mt_etch_tests_Test1__result_p_long,
+		    checkType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1__result_p_long,
                 ValueFactoryTest1._mf__messageId,
             ValueFactoryTest1._mf__inReplyTo,
         ValueFactoryTest1._mf_result);
@@ -698,12 +698,12 @@ namespace etch.tests
 	    [Test]
 	    public void test_method_p_long_array()
 	    {
-	        checkType(ValueFactoryTest1._mt_etch_tests_Test1_p_long_array,
+	        checkType(ValueFactoryTest1._mt_org_apache_etch_tests_Test1_p_long_array,
 	                  ValueFactoryTest1._mf__messageId,
 	                  ValueFactoryTest1._mf_a);
 
 
-	        checkType(ValueFactoryTest1._mt_etch_tests_Test1__result_p_long_array,
+	        checkType(ValueFactoryTest1._mt_org_apache_etch_tests_Test1__result_p_long_array,
 	                  ValueFactoryTest1._mf__messageId,
 	                  ValueFactoryTest1._mf__inReplyTo,
 	                  ValueFactoryTest1._mf_result);
@@ -712,12 +712,12 @@ namespace etch.tests
         [Test]
 	    public void test_method_p_float()
 	    {
-		    checkType( ValueFactoryTest1._mt_etch_tests_Test1_p_float,
+		    checkType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1_p_float,
                 ValueFactoryTest1._mf__messageId,
 		ValueFactoryTest1._mf_a );
 		   
     		
-		    checkType( ValueFactoryTest1._mt_etch_tests_Test1__result_p_float,
+		    checkType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1__result_p_float,
                 ValueFactoryTest1._mf__messageId,
 			ValueFactoryTest1._mf__inReplyTo,
 		ValueFactoryTest1._mf_result );
@@ -727,12 +727,12 @@ namespace etch.tests
 	    [Test]
 	    public void test_method_p_float_array()
 	    {
-		    checkType( ValueFactoryTest1._mt_etch_tests_Test1_p_float_array,
+		    checkType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1_p_float_array,
                 ValueFactoryTest1._mf__messageId,
 		ValueFactoryTest1._mf_a );
 
     		
-		    checkType( ValueFactoryTest1._mt_etch_tests_Test1__result_p_float_array,
+		    checkType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1__result_p_float_array,
                 ValueFactoryTest1._mf__messageId,
 			ValueFactoryTest1._mf__inReplyTo,
 		ValueFactoryTest1._mf_result );
@@ -743,12 +743,12 @@ namespace etch.tests
 	    [Test]
 	    public void test_method_p_double()
 	    {
-		    checkType( ValueFactoryTest1._mt_etch_tests_Test1_p_double,
+		    checkType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1_p_double,
                 ValueFactoryTest1._mf__messageId,
 		ValueFactoryTest1._mf_a );
 
     		
-		    checkType( ValueFactoryTest1._mt_etch_tests_Test1__result_p_double,
+		    checkType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1__result_p_double,
                 ValueFactoryTest1._mf__messageId,
 			ValueFactoryTest1._mf__inReplyTo,
 		ValueFactoryTest1._mf_result );
@@ -759,12 +759,12 @@ namespace etch.tests
 	    [Test]
 	    public void test_method_p_double_array()
 	    {
-	        checkType(ValueFactoryTest1._mt_etch_tests_Test1_p_double_array,
+	        checkType(ValueFactoryTest1._mt_org_apache_etch_tests_Test1_p_double_array,
 	                  ValueFactoryTest1._mf__messageId,
 	                  ValueFactoryTest1._mf_a);
 		   
     		
-		    checkType( ValueFactoryTest1._mt_etch_tests_Test1__result_p_double_array,
+		    checkType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1__result_p_double_array,
                 ValueFactoryTest1._mf__messageId,
 			ValueFactoryTest1._mf__inReplyTo,
 		ValueFactoryTest1._mf_result );
@@ -775,13 +775,13 @@ namespace etch.tests
 	    [Test]
 	    public void test_method_p_string()
 	    {
-		    checkType( ValueFactoryTest1._mt_etch_tests_Test1_p_string,
+		    checkType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1_p_string,
                 ValueFactoryTest1._mf__messageId,
 		ValueFactoryTest1._mf_a );
 
 		   
     		
-		    checkType( ValueFactoryTest1._mt_etch_tests_Test1__result_p_string,
+		    checkType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1__result_p_string,
                 ValueFactoryTest1._mf__messageId,
 			ValueFactoryTest1._mf__inReplyTo,
 		ValueFactoryTest1._mf_result );
@@ -792,12 +792,12 @@ namespace etch.tests
         [Test]
         public void test_method_p_string_array()
         {
-            checkType(ValueFactoryTest1._mt_etch_tests_Test1_p_string_array,
+            checkType(ValueFactoryTest1._mt_org_apache_etch_tests_Test1_p_string_array,
                       ValueFactoryTest1._mf__messageId,
                       ValueFactoryTest1._mf_a);
 
 
-            checkType(ValueFactoryTest1._mt_etch_tests_Test1__result_p_string_array,
+            checkType(ValueFactoryTest1._mt_org_apache_etch_tests_Test1__result_p_string_array,
                       ValueFactoryTest1._mf__messageId,
                       ValueFactoryTest1._mf__inReplyTo,
                       ValueFactoryTest1._mf_result);
@@ -806,12 +806,12 @@ namespace etch.tests
         [Test]
 	    public void test_method_p_E1()
 	    {
-		    checkType( ValueFactoryTest1._mt_etch_tests_Test1_p_E1,
+		    checkType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1_p_E1,
                 ValueFactoryTest1._mf__messageId,
 		ValueFactoryTest1._mf_a );
 
 		    
-		    checkType( ValueFactoryTest1._mt_etch_tests_Test1__result_p_E1,
+		    checkType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1__result_p_E1,
                 ValueFactoryTest1._mf__messageId,
 			ValueFactoryTest1._mf__inReplyTo,
 		ValueFactoryTest1._mf_result );
@@ -822,13 +822,13 @@ namespace etch.tests
 	    [Test]
 	    public void test_method_p_E1_array()
 	    {
-		    checkType( ValueFactoryTest1._mt_etch_tests_Test1_p_E1_array,
+		    checkType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1_p_E1_array,
                 ValueFactoryTest1._mf__messageId,
 		ValueFactoryTest1._mf_a );
 
 
     		
-		    checkType( ValueFactoryTest1._mt_etch_tests_Test1__result_p_E1_array,
+		    checkType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1__result_p_E1_array,
                 ValueFactoryTest1._mf__messageId,
 			ValueFactoryTest1._mf__inReplyTo,
 		ValueFactoryTest1._mf_result );
@@ -838,12 +838,12 @@ namespace etch.tests
 	    [Test]
 	    public void test_method_p_S1()
 	    {
-		    checkType( ValueFactoryTest1._mt_etch_tests_Test1_p_S1,
+		    checkType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1_p_S1,
                 ValueFactoryTest1._mf__messageId,
 		ValueFactoryTest1._mf_a );
 		
     		
-		    checkType( ValueFactoryTest1._mt_etch_tests_Test1__result_p_S1,
+		    checkType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1__result_p_S1,
                 ValueFactoryTest1._mf__messageId,
 			ValueFactoryTest1._mf__inReplyTo,
 		ValueFactoryTest1._mf_result );
@@ -853,11 +853,11 @@ namespace etch.tests
 	    [Test]
 	    public void test_method_p_S1_array()
 	    {
-		    checkType( ValueFactoryTest1._mt_etch_tests_Test1_p_S1_array,
+		    checkType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1_p_S1_array,
                 ValueFactoryTest1._mf__messageId,
 		ValueFactoryTest1._mf_a );
 
-		    checkType( ValueFactoryTest1._mt_etch_tests_Test1__result_p_S1_array,
+		    checkType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1__result_p_S1_array,
                 ValueFactoryTest1._mf__messageId,
 			ValueFactoryTest1._mf__inReplyTo,
 		ValueFactoryTest1._mf_result );
@@ -867,11 +867,11 @@ namespace etch.tests
 	    [Test]
 	    public void test_method_p_S2()
 	    {
-		    checkType( ValueFactoryTest1._mt_etch_tests_Test1_p_S2,
+		    checkType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1_p_S2,
                 ValueFactoryTest1._mf__messageId,
 		ValueFactoryTest1._mf_a );
     		
-		    checkType( ValueFactoryTest1._mt_etch_tests_Test1__result_p_S2,
+		    checkType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1__result_p_S2,
                 ValueFactoryTest1._mf__messageId,
 			ValueFactoryTest1._mf__inReplyTo,
 		ValueFactoryTest1._mf_result );
@@ -881,11 +881,11 @@ namespace etch.tests
 	    [Test]
 	    public void test_method_p_S2_array()
 	    {
-		    checkType( ValueFactoryTest1._mt_etch_tests_Test1_p_S2_array,
+		    checkType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1_p_S2_array,
                 ValueFactoryTest1._mf__messageId,
 		ValueFactoryTest1._mf_a );
     		
-		    checkType( ValueFactoryTest1._mt_etch_tests_Test1__result_p_S2_array,
+		    checkType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1__result_p_S2_array,
                 ValueFactoryTest1._mf__messageId,
 			ValueFactoryTest1._mf__inReplyTo,
 		ValueFactoryTest1._mf_result );
@@ -895,11 +895,11 @@ namespace etch.tests
 	    [Test]
 	    public void test_method_p_Blob()
 	    {
-		    checkType( ValueFactoryTest1._mt_etch_tests_Test1_p_Blob,
+		    checkType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1_p_Blob,
                 ValueFactoryTest1._mf__messageId,
 		ValueFactoryTest1._mf_a );
     		
-		    checkType( ValueFactoryTest1._mt_etch_tests_Test1__result_p_Blob,
+		    checkType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1__result_p_Blob,
                 ValueFactoryTest1._mf__messageId,
 			ValueFactoryTest1._mf__inReplyTo,
 		ValueFactoryTest1._mf_result );
@@ -909,12 +909,12 @@ namespace etch.tests
 	    [Test]
 	    public void test_method_p_Blob_array()
 	    {
-		    checkType( ValueFactoryTest1._mt_etch_tests_Test1_p_Blob_array,
+		    checkType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1_p_Blob_array,
                 ValueFactoryTest1._mf__messageId,
 		ValueFactoryTest1._mf_a );
 
     		
-		    checkType( ValueFactoryTest1._mt_etch_tests_Test1__result_p_Blob_array,
+		    checkType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1__result_p_Blob_array,
                 ValueFactoryTest1._mf__messageId,
 			ValueFactoryTest1._mf__inReplyTo,
 		ValueFactoryTest1._mf_result );
@@ -924,12 +924,12 @@ namespace etch.tests
         [Test]
 	    public void test_method_p_object()
 	    {
-		    checkType( ValueFactoryTest1._mt_etch_tests_Test1_p_object,
+		    checkType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1_p_object,
                 ValueFactoryTest1._mf__messageId,
 		ValueFactoryTest1._mf_a );
 		   
     		
-		    checkType( ValueFactoryTest1._mt_etch_tests_Test1__result_p_object,
+		    checkType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1__result_p_object,
                 ValueFactoryTest1._mf__messageId,
 			ValueFactoryTest1._mf__inReplyTo,
 		ValueFactoryTest1._mf_result );
@@ -939,12 +939,12 @@ namespace etch.tests
 	    [Test]
 	    public void test_method_p_object_array()
 	    {
-		    checkType( ValueFactoryTest1._mt_etch_tests_Test1_p_object_array,
+		    checkType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1_p_object_array,
                 ValueFactoryTest1._mf__messageId,
 		ValueFactoryTest1._mf_a );
 		   
     		
-		    checkType( ValueFactoryTest1._mt_etch_tests_Test1__result_p_object_array,
+		    checkType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1__result_p_object_array,
                 ValueFactoryTest1._mf__messageId,
 			ValueFactoryTest1._mf__inReplyTo,
 		ValueFactoryTest1._mf_result );
@@ -954,12 +954,12 @@ namespace etch.tests
 	    [Test]
 	    public void test_method_p_object_struct()
 	    {
-		    checkType( ValueFactoryTest1._mt_etch_tests_Test1_p_object_struct,
+		    checkType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1_p_object_struct,
                 ValueFactoryTest1._mf__messageId,
 		ValueFactoryTest1._mf_a );
 		   
     		
-		    checkType( ValueFactoryTest1._mt_etch_tests_Test1__result_p_object_struct,
+		    checkType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1__result_p_object_struct,
                 ValueFactoryTest1._mf__messageId,
 			ValueFactoryTest1._mf__inReplyTo,
 		ValueFactoryTest1._mf_result );
@@ -969,12 +969,12 @@ namespace etch.tests
 	    [Test]
 	    public void test_method_p_object_struct_array()
 	    {
-		    checkType( ValueFactoryTest1._mt_etch_tests_Test1_p_object_struct_array,
+		    checkType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1_p_object_struct_array,
                 ValueFactoryTest1._mf__messageId,
 		ValueFactoryTest1._mf_a );
 		    
     		
-		    checkType( ValueFactoryTest1._mt_etch_tests_Test1__result_p_object_struct_array,
+		    checkType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1__result_p_object_struct_array,
                 ValueFactoryTest1._mf__messageId,
 			ValueFactoryTest1._mf__inReplyTo,
 		ValueFactoryTest1._mf_result );
@@ -1032,7 +1032,7 @@ namespace etch.tests
         private void testS3Export( String s, Object value )
         {
             StructValue sv = vf.ExportCustomValue( new S3( s, value ) );
-            sv.CheckType( ValueFactoryTest1._mt_etch_tests_Test1_S3 );
+            sv.CheckType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1_S3 );
             Assert.AreEqual( 2, sv.Count );
             Assert.AreEqual( s, sv[ ValueFactoryTest1._mf_tipe ] );
             Assert.AreEqual( value, sv[ ValueFactoryTest1._mf_x ] );
@@ -1040,7 +1040,7 @@ namespace etch.tests
 
         private void testS3Import( String s, Object value )
         {
-            StructValue sv = new StructValue(ValueFactoryTest1._mt_etch_tests_Test1_S3, vf);
+            StructValue sv = new StructValue(ValueFactoryTest1._mt_org_apache_etch_tests_Test1_S3, vf);
             sv.Add(ValueFactoryTest1._mf_tipe, s);
             sv.Add( ValueFactoryTest1._mf_x, value );
             S3 myS3 = ( S3 ) vf.ImportCustomValue( sv );
@@ -1051,7 +1051,7 @@ namespace etch.tests
         private void testS4Export( String s, Object[] value )
         {
             StructValue sv = vf.ExportCustomValue( new S4( s, value ) );
-            sv.CheckType( ValueFactoryTest1._mt_etch_tests_Test1_S4 );
+            sv.CheckType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1_S4 );
             Assert.AreEqual( 2, sv.Count );
             Assert.AreEqual(s, sv[ValueFactoryTest1._mf_tipe]);
             Assert.AreEqual( value, sv[ ValueFactoryTest1._mf_x ] );
@@ -1059,7 +1059,7 @@ namespace etch.tests
 
         private void testS4Import( String s, Object[] value )
         {
-            StructValue sv = new StructValue(ValueFactoryTest1._mt_etch_tests_Test1_S4, vf);
+            StructValue sv = new StructValue(ValueFactoryTest1._mt_org_apache_etch_tests_Test1_S4, vf);
             sv.Add(ValueFactoryTest1._mf_tipe, s);
             sv.Add( ValueFactoryTest1._mf_x, value );
             S4 myS4 = ( S4 ) vf.ImportCustomValue( sv );
@@ -1070,7 +1070,7 @@ namespace etch.tests
         private void testExcp5Export( String msg, int code, Object value )
         {
             StructValue sv = vf.ExportCustomValue( new Excp5( msg, code, value ) );
-            sv.CheckType( ValueFactoryTest1._mt_etch_tests_Test1_Excp5 );
+            sv.CheckType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1_Excp5 );
             Assert.AreEqual( 3, sv.Count );
             Assert.AreEqual( msg, sv[ValueFactoryTest1._mf_msg] );
             Assert.AreEqual( code, sv[ ValueFactoryTest1._mf_code] );
@@ -1079,7 +1079,7 @@ namespace etch.tests
 
         private void testExcp5Import( String msg, int code, Object value )
         {
-            StructValue sv = new StructValue(ValueFactoryTest1._mt_etch_tests_Test1_Excp5, vf);
+            StructValue sv = new StructValue(ValueFactoryTest1._mt_org_apache_etch_tests_Test1_Excp5, vf);
             sv.Add( ValueFactoryTest1._mf_msg, msg );
             sv.Add( ValueFactoryTest1._mf_code, code );
             sv.Add( ValueFactoryTest1._mf_x, value );
@@ -1092,7 +1092,7 @@ namespace etch.tests
         private void testExcp6Export( String msg, int code, Object[] value )
         {
             StructValue sv = vf.ExportCustomValue( new Excp6( msg, code, value ) );
-            sv.CheckType( ValueFactoryTest1._mt_etch_tests_Test1_Excp6 );
+            sv.CheckType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1_Excp6 );
             Assert.AreEqual( 3, sv.Count );
             Assert.AreEqual( msg, sv[ ValueFactoryTest1._mf_msg ] );
             Assert.AreEqual( code, sv[ ValueFactoryTest1._mf_code]  );
@@ -1101,7 +1101,7 @@ namespace etch.tests
 
         private void testExcp6Import( String msg, int code, Object[] value )
         {
-            StructValue sv = new StructValue(ValueFactoryTest1._mt_etch_tests_Test1_Excp6, vf);
+            StructValue sv = new StructValue(ValueFactoryTest1._mt_org_apache_etch_tests_Test1_Excp6, vf);
             sv.Add( ValueFactoryTest1._mf_msg, msg );
             sv.Add( ValueFactoryTest1._mf_code, code );
             sv.Add( ValueFactoryTest1._mf_x, value );

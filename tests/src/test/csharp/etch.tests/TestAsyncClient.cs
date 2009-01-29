@@ -22,6 +22,7 @@ using Etch.Util;
 using NUnit.Framework;
 using Etch.Transport;
 using Etch.Support;
+using org.apache.etch.tests;
 
 namespace etch.tests
 {

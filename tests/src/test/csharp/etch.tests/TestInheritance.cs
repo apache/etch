@@ -20,7 +20,8 @@ using System.Text;
 
 using Etch.Support;
 using etch.tests;
-using etch.tests.types.Inheritance;
+using org.apache.etch.tests;
+using org.apache.etch.tests.types.Inheritance;
 using Etch.Transport;
 using NUnit.Framework;
 

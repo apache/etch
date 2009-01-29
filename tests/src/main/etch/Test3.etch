@@ -15,7 +15,7 @@
  * under the License.
  */
 
-module etch.tests
+module org.apache.etch.tests
 
 /** test case for defined types conflicting with standard types. */
 service Test3

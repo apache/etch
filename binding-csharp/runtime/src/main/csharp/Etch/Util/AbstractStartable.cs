@@ -37,7 +37,7 @@ namespace Etch.Util
             {
                 Start0();
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 Stop();
                 throw;

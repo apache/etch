@@ -15,10 +15,10 @@
 // under the License.
 
 using Etch.Support;
-using etch.tests;
-using etch.tests.types.Bar;
-using etch.tests.types.Baz;
-using etch.tests.types.Foo;
+using org.apache.etch.tests;
+using org.apache.etch.tests.types.Bar;
+using org.apache.etch.tests.types.Baz;
+using org.apache.etch.tests.types.Foo;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -224,14 +224,14 @@ namespace etch.tests
         etypes.Add(vf.Get_mt__Etch_Datetime());
         etypes.Add(vf.get_mt__Etch_AuthException());
         etypes.Add(vf.get_mt__exception());
-		etypes.Add( ValueFactoryBaz._mt_etch_tests_Baz_BazTable );
-		etypes.Add( ValueFactoryBaz._mt_etch_tests_Baz_BazData );
-		etypes.Add( ValueFactoryBaz._mt_etch_tests_Baz_baz1);
-		etypes.Add( ValueFactoryBaz._mt_etch_tests_Baz__result_baz1 );
-		etypes.Add( ValueFactoryBaz._mt_etch_tests_Baz_baz2 );
-		etypes.Add( ValueFactoryBaz._mt_etch_tests_Baz__result_baz2 );
-		etypes.Add( ValueFactoryBaz._mt_etch_tests_Baz_baz3 );
-		etypes.Add( ValueFactoryBaz._mt_etch_tests_Baz__result_baz3 );
+		etypes.Add( ValueFactoryBaz._mt_org_apache_etch_tests_Baz_BazTable );
+		etypes.Add( ValueFactoryBaz._mt_org_apache_etch_tests_Baz_BazData );
+		etypes.Add( ValueFactoryBaz._mt_org_apache_etch_tests_Baz_baz1);
+		etypes.Add( ValueFactoryBaz._mt_org_apache_etch_tests_Baz__result_baz1 );
+		etypes.Add( ValueFactoryBaz._mt_org_apache_etch_tests_Baz_baz2 );
+		etypes.Add( ValueFactoryBaz._mt_org_apache_etch_tests_Baz__result_baz2 );
+		etypes.Add( ValueFactoryBaz._mt_org_apache_etch_tests_Baz_baz3 );
+		etypes.Add( ValueFactoryBaz._mt_org_apache_etch_tests_Baz__result_baz3 );
         
        
        
@@ -267,25 +267,25 @@ namespace etch.tests
         etypes.Add(vf.get_mt__Etch_AuthException());
         etypes.Add(vf.get_mt__exception());
         
-        etypes.Add(ValueFactoryBar._mt_etch_tests_Bar_BarTable);
-        etypes.Add(ValueFactoryBar._mt_etch_tests_Bar_BarData);
-        etypes.Add(ValueFactoryBar._mt_etch_tests_Bar_bar1);
-        etypes.Add(ValueFactoryBar._mt_etch_tests_Bar__result_bar1);
-        etypes.Add(ValueFactoryBar._mt_etch_tests_Bar_bar2);
-        etypes.Add(ValueFactoryBar._mt_etch_tests_Bar__result_bar2);
-        etypes.Add(ValueFactoryBar._mt_etch_tests_Bar_bar3);
-        etypes.Add(ValueFactoryBar._mt_etch_tests_Bar__result_bar3);
+        etypes.Add(ValueFactoryBar._mt_org_apache_etch_tests_Bar_BarTable);
+        etypes.Add(ValueFactoryBar._mt_org_apache_etch_tests_Bar_BarData);
+        etypes.Add(ValueFactoryBar._mt_org_apache_etch_tests_Bar_bar1);
+        etypes.Add(ValueFactoryBar._mt_org_apache_etch_tests_Bar__result_bar1);
+        etypes.Add(ValueFactoryBar._mt_org_apache_etch_tests_Bar_bar2);
+        etypes.Add(ValueFactoryBar._mt_org_apache_etch_tests_Bar__result_bar2);
+        etypes.Add(ValueFactoryBar._mt_org_apache_etch_tests_Bar_bar3);
+        etypes.Add(ValueFactoryBar._mt_org_apache_etch_tests_Bar__result_bar3);
 
         
        
-        etypes.Add(ValueFactoryBaz._mt_etch_tests_Baz_BazTable);
-        etypes.Add(ValueFactoryBaz._mt_etch_tests_Baz_BazData);
-        etypes.Add(ValueFactoryBaz._mt_etch_tests_Baz_baz1);
-        etypes.Add(ValueFactoryBaz._mt_etch_tests_Baz__result_baz1);
-        etypes.Add(ValueFactoryBaz._mt_etch_tests_Baz_baz2);
-        etypes.Add(ValueFactoryBaz._mt_etch_tests_Baz__result_baz2);
-        etypes.Add(ValueFactoryBaz._mt_etch_tests_Baz_baz3);
-        etypes.Add(ValueFactoryBaz._mt_etch_tests_Baz__result_baz3);
+        etypes.Add(ValueFactoryBaz._mt_org_apache_etch_tests_Baz_BazTable);
+        etypes.Add(ValueFactoryBaz._mt_org_apache_etch_tests_Baz_BazData);
+        etypes.Add(ValueFactoryBaz._mt_org_apache_etch_tests_Baz_baz1);
+        etypes.Add(ValueFactoryBaz._mt_org_apache_etch_tests_Baz__result_baz1);
+        etypes.Add(ValueFactoryBaz._mt_org_apache_etch_tests_Baz_baz2);
+        etypes.Add(ValueFactoryBaz._mt_org_apache_etch_tests_Baz__result_baz2);
+        etypes.Add(ValueFactoryBaz._mt_org_apache_etch_tests_Baz_baz3);
+        etypes.Add(ValueFactoryBaz._mt_org_apache_etch_tests_Baz__result_baz3);
 		
 		Assert.AreEqual( etypes, atypes );
 		foreach (XType type in etypes )
@@ -308,39 +308,39 @@ namespace etch.tests
         etypes.Add(vf.get_mt__Etch_AuthException());
         etypes.Add(vf.get_mt__exception());
             
-        etypes.Add(ValueFactoryFoo._mt_etch_tests_Foo_FooTable);
-        etypes.Add(ValueFactoryFoo._mt_etch_tests_Foo_FooData);
-        etypes.Add(ValueFactoryFoo._mt_etch_tests_Foo_foo1);
-        etypes.Add(ValueFactoryFoo._mt_etch_tests_Foo__result_foo1);
-        etypes.Add(ValueFactoryFoo._mt_etch_tests_Foo_foo2);
-        etypes.Add(ValueFactoryFoo._mt_etch_tests_Foo__result_foo2);
-        etypes.Add(ValueFactoryFoo._mt_etch_tests_Foo_foo3);
-        etypes.Add(ValueFactoryFoo._mt_etch_tests_Foo__result_foo3);
+        etypes.Add(ValueFactoryFoo._mt_org_apache_etch_tests_Foo_FooTable);
+        etypes.Add(ValueFactoryFoo._mt_org_apache_etch_tests_Foo_FooData);
+        etypes.Add(ValueFactoryFoo._mt_org_apache_etch_tests_Foo_foo1);
+        etypes.Add(ValueFactoryFoo._mt_org_apache_etch_tests_Foo__result_foo1);
+        etypes.Add(ValueFactoryFoo._mt_org_apache_etch_tests_Foo_foo2);
+        etypes.Add(ValueFactoryFoo._mt_org_apache_etch_tests_Foo__result_foo2);
+        etypes.Add(ValueFactoryFoo._mt_org_apache_etch_tests_Foo_foo3);
+        etypes.Add(ValueFactoryFoo._mt_org_apache_etch_tests_Foo__result_foo3);
 
 
       
        
        
-        etypes.Add(ValueFactoryBar._mt_etch_tests_Bar_BarTable);
-        etypes.Add(ValueFactoryBar._mt_etch_tests_Bar_BarData);
-        etypes.Add(ValueFactoryBar._mt_etch_tests_Bar_bar1);
-        etypes.Add(ValueFactoryBar._mt_etch_tests_Bar__result_bar1);
-        etypes.Add(ValueFactoryBar._mt_etch_tests_Bar_bar2);
-        etypes.Add(ValueFactoryBar._mt_etch_tests_Bar__result_bar2);
-        etypes.Add(ValueFactoryBar._mt_etch_tests_Bar_bar3);
-        etypes.Add(ValueFactoryBar._mt_etch_tests_Bar__result_bar3);
+        etypes.Add(ValueFactoryBar._mt_org_apache_etch_tests_Bar_BarTable);
+        etypes.Add(ValueFactoryBar._mt_org_apache_etch_tests_Bar_BarData);
+        etypes.Add(ValueFactoryBar._mt_org_apache_etch_tests_Bar_bar1);
+        etypes.Add(ValueFactoryBar._mt_org_apache_etch_tests_Bar__result_bar1);
+        etypes.Add(ValueFactoryBar._mt_org_apache_etch_tests_Bar_bar2);
+        etypes.Add(ValueFactoryBar._mt_org_apache_etch_tests_Bar__result_bar2);
+        etypes.Add(ValueFactoryBar._mt_org_apache_etch_tests_Bar_bar3);
+        etypes.Add(ValueFactoryBar._mt_org_apache_etch_tests_Bar__result_bar3);
 
 
        
        
-        etypes.Add(ValueFactoryBaz._mt_etch_tests_Baz_BazTable);
-        etypes.Add(ValueFactoryBaz._mt_etch_tests_Baz_BazData);
-        etypes.Add(ValueFactoryBaz._mt_etch_tests_Baz_baz1);
-        etypes.Add(ValueFactoryBaz._mt_etch_tests_Baz__result_baz1);
-        etypes.Add(ValueFactoryBaz._mt_etch_tests_Baz_baz2);
-        etypes.Add(ValueFactoryBaz._mt_etch_tests_Baz__result_baz2);
-        etypes.Add(ValueFactoryBaz._mt_etch_tests_Baz_baz3);
-        etypes.Add(ValueFactoryBaz._mt_etch_tests_Baz__result_baz3);
+        etypes.Add(ValueFactoryBaz._mt_org_apache_etch_tests_Baz_BazTable);
+        etypes.Add(ValueFactoryBaz._mt_org_apache_etch_tests_Baz_BazData);
+        etypes.Add(ValueFactoryBaz._mt_org_apache_etch_tests_Baz_baz1);
+        etypes.Add(ValueFactoryBaz._mt_org_apache_etch_tests_Baz__result_baz1);
+        etypes.Add(ValueFactoryBaz._mt_org_apache_etch_tests_Baz_baz2);
+        etypes.Add(ValueFactoryBaz._mt_org_apache_etch_tests_Baz__result_baz2);
+        etypes.Add(ValueFactoryBaz._mt_org_apache_etch_tests_Baz_baz3);
+        etypes.Add(ValueFactoryBaz._mt_org_apache_etch_tests_Baz__result_baz3);
 		
 	 
 		

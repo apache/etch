@@ -23,7 +23,8 @@ using Etch.Util;
 using Etch.Msg;
 using Etch.Support;
 using Etch.Transport;
-using etch.tests.types.Cuae;
+using org.apache.etch.tests.types.Cuae;
+using org.apache.etch.tests;
 
 namespace etch.tests
 {
