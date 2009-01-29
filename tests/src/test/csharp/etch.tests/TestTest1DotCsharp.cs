@@ -17,7 +17,8 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using etch.tests.types.Test1;
+using org.apache.etch.tests;
+using org.apache.etch.tests.types.Test1;
 using NUnit.Framework;
 using Etch.Msg;
 using Etch.Support;

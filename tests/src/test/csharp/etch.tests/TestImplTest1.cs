@@ -19,8 +19,8 @@ using System;
 using etch.tests;
 using NUnit.Framework;
 using Etch.Util;
-
-using etch.tests.types.Test1;
+using org.apache.etch.tests;
+using org.apache.etch.tests.types.Test1;
 
 namespace etch.tests
 {

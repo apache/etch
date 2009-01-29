@@ -22,11 +22,12 @@ using Etch.Msg;
 using Etch.Support;
 using Etch.Transport;
 using Etch.Util;
-using etch.tests.types.Test1;
+using org.apache.etch.tests;
+using org.apache.etch.tests.types.Test1;
 
 namespace etch.tests
 {
-    class FakeTest1 : etch.tests.Test1
+    class FakeTest1 : Test1
     {
         public int? beets( E1? e ) 
 	    {

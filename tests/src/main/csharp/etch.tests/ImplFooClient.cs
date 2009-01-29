@@ -19,6 +19,7 @@ using Etch.Util;
 using System;
 
 using etch.tests;
+using org.apache.etch.tests;
 
 
 /**

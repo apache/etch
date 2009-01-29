@@ -17,7 +17,7 @@
 
 // Test various uses of reserved words.
 
-module etch.tests.res1
+module org.apache.etch.tests.res1
 
 service res2
 {

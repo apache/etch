@@ -16,7 +16,8 @@
 
 using System;
 using etch.tests;
-using etch.tests.types.Cuae;
+using org.apache.etch.tests.types.Cuae;
+using org.apache.etch.tests;
 
 /**
  * Call to message translator for CuaeClient.

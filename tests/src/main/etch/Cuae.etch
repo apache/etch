@@ -15,7 +15,7 @@
  * under the License.
  */
 
-module etch.tests
+module org.apache.etch.tests
 
 /** Examples of cuae-like server stub. */
 @Timeout( 497 )

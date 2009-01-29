@@ -20,10 +20,10 @@ using System.Collections.Generic;
 using System.Text;
 
 
-using etch.tests.types.Baz;
-using etch.tests.types.Bar;
-using etch.tests.types.Foo;
-using etch.tests;
+using org.apache.etch.tests.types.Baz;
+using org.apache.etch.tests.types.Bar;
+using org.apache.etch.tests.types.Foo;
+using org.apache.etch.tests;
 using Etch.Util;
 using Etch.Msg;
 using Etch.Support;

@@ -15,7 +15,7 @@
  * under the License.
  */
 
-module etch.tests
+module org.apache.etch.tests
 
 /**
  * Test case for problem where there is a missing declaration for

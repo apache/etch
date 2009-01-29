@@ -48,8 +48,8 @@ namespace Etch.Util
                     throw new ArgumentException("port <= 0 || port >= 65536");
 
                 this.socket = null;
-                this.host = host;
-                this.port = (int)port;
+                //this.host = host;
+                //this.port = (int)port;
             }
             else
             {

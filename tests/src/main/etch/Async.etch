@@ -15,7 +15,7 @@
  * under the License.
  */
 
-module etch.tests
+module org.apache.etch.tests
 
 @Timeout( 500 )
 service Async

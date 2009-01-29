@@ -16,6 +16,7 @@
 
 using System;
 using Etch.Support;
+using org.apache.etch.tests;
 
 /**
  * Call to message translator for ClosingClient.

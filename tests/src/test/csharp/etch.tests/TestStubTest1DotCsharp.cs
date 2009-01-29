@@ -17,7 +17,8 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using etch.tests.types.Test1;
+using org.apache.etch.tests;
+using org.apache.etch.tests.types.Test1;
 using Etch.Util;
 using NUnit.Framework;
 using Etch.Msg;
@@ -54,24 +55,24 @@ namespace etch.tests
         [Test]
 	    public void method_nothing() 
 	    {
-		    Message msg = new Message( ValueFactoryTest1._mt_etch_tests_Test1_nothing, vf );
+		    Message msg = new Message( ValueFactoryTest1._mt_org_apache_etch_tests_Test1_nothing, vf );
             // msg.Add( ValueFactoryTest1._mf_x, 3 );
 		    stub.SessionMessage( null, msg );
 		    // check the result.
             xreplyMon.WaitUntilNotEq( null );
-		    src.xreply.CheckType( ValueFactoryTest1._mt_etch_tests_Test1__result_nothing );
+		    src.xreply.CheckType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1__result_nothing );
 		    Assert.AreEqual( 0, src.xreply.Count );
 	    }
 
 	    [Test]
 	    public void method_incr1() 
 	    {
-		    Message msg = new Message( ValueFactoryTest1._mt_etch_tests_Test1_incr, vf );
+		    Message msg = new Message( ValueFactoryTest1._mt_org_apache_etch_tests_Test1_incr, vf );
 		    msg.Add( ValueFactoryTest1._mf_x, 3 );
 		    stub.SessionMessage( null, msg );
 		    // check the result.
             xreplyMon.WaitUntilNotEq( null );
-		    src.xreply.CheckType( ValueFactoryTest1._mt_etch_tests_Test1__result_incr );
+		    src.xreply.CheckType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1__result_incr );
             Assert.AreEqual(1, src.xreply.Count);
 		    Assert.AreEqual( 4, src.xreply.Get( ValueFactoryTest1._mf_result ) );
 	    }
@@ -80,12 +81,12 @@ namespace etch.tests
 	    [Test]
 	    public void method_sub() 
 	    {
-		    Message msg = new Message( ValueFactoryTest1._mt_etch_tests_Test1_sub, vf );
+		    Message msg = new Message( ValueFactoryTest1._mt_org_apache_etch_tests_Test1_sub, vf );
 		    msg.Add( ValueFactoryTest1._mf_x, 7 );
 		    msg.Add( ValueFactoryTest1._mf_y, 3 );
 		    stub.SessionMessage( null, msg );
 		    // check the result.
-		    src.xreply.CheckType( ValueFactoryTest1._mt_etch_tests_Test1__result_sub );
+		    src.xreply.CheckType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1__result_sub );
             Assert.AreEqual(1, src.xreply.Count);
 		    Assert.AreEqual( 4, src.xreply.Get( ValueFactoryTest1._mf_result ) );
 	    }
@@ -93,11 +94,11 @@ namespace etch.tests
 	    [Test]
 	    public void method_sum() 
 	    {
-		    Message msg = new Message( ValueFactoryTest1._mt_etch_tests_Test1_sum, vf );
+		    Message msg = new Message( ValueFactoryTest1._mt_org_apache_etch_tests_Test1_sum, vf );
             msg.Add( ValueFactoryTest1._mf_x, new int[] { 1, 2, 3, 7, 11 } );
 		    stub.SessionMessage( null, msg );
 		    // check the result.
-		    src.xreply.CheckType( ValueFactoryTest1._mt_etch_tests_Test1__result_sum );
+		    src.xreply.CheckType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1__result_sum );
             Assert.AreEqual(1, src.xreply.Count);
 		    Assert.AreEqual( 24, src.xreply.Get( ValueFactoryTest1._mf_result ) );
 	    }
@@ -105,12 +106,12 @@ namespace etch.tests
 	    [Test]
 	    public void method_trans1() 
 	    {
-		    Message msg = new Message( ValueFactoryTest1._mt_etch_tests_Test1_trans, vf );
+		    Message msg = new Message( ValueFactoryTest1._mt_org_apache_etch_tests_Test1_trans, vf );
 		    msg.Add( ValueFactoryTest1._mf_e, E1.A );
 		    msg.Add( ValueFactoryTest1._mf_x, 5 );
 		    stub.SessionMessage( null, msg );
 		    // check the result.
-		    src.xreply.CheckType( ValueFactoryTest1._mt_etch_tests_Test1__result_trans );
+		    src.xreply.CheckType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1__result_trans );
             Assert.AreEqual(1, src.xreply.Count);
 		    Assert.AreEqual( 2, src.xreply.Get( ValueFactoryTest1._mf_result ) );
 	    }
@@ -118,12 +119,12 @@ namespace etch.tests
 	    [Test]
 	    public void method_trans2() 
 	    {
-		    Message msg = new Message( ValueFactoryTest1._mt_etch_tests_Test1_trans, vf );
+		    Message msg = new Message( ValueFactoryTest1._mt_org_apache_etch_tests_Test1_trans, vf );
 		    msg.Add( ValueFactoryTest1._mf_e, E1.B );
 		    msg.Add( ValueFactoryTest1._mf_x, 5 );
 		    stub.SessionMessage( null, msg );
 		    // check the result.
-		    src.xreply.CheckType( ValueFactoryTest1._mt_etch_tests_Test1__result_trans );
+		    src.xreply.CheckType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1__result_trans );
             Assert.AreEqual(1, src.xreply.Count);
 		    Assert.AreEqual( 10, src.xreply.Get( ValueFactoryTest1._mf_result ) );
 	    }
@@ -131,12 +132,12 @@ namespace etch.tests
 	    [Test]
 	    public void method_trans3() 
 	    {
-		    Message msg = new Message( ValueFactoryTest1._mt_etch_tests_Test1_trans, vf );
+		    Message msg = new Message( ValueFactoryTest1._mt_org_apache_etch_tests_Test1_trans, vf );
 		    msg.Add( ValueFactoryTest1._mf_e, E1.C );
 		    msg.Add( ValueFactoryTest1._mf_x, 5 );
 		    stub.SessionMessage( null, msg );
 		    // check the result.
-		    src.xreply.CheckType( ValueFactoryTest1._mt_etch_tests_Test1__result_trans );
+		    src.xreply.CheckType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1__result_trans );
             Assert.AreEqual(1, src.xreply.Count);
 		    Assert.AreEqual( 12, src.xreply.Get( ValueFactoryTest1._mf_result ) );
 	    }
@@ -144,12 +145,12 @@ namespace etch.tests
 	    [Test]
 	    public void method_dist1() 
 	    {
-		    Message msg = new Message( ValueFactoryTest1._mt_etch_tests_Test1_dist, vf );
+		    Message msg = new Message( ValueFactoryTest1._mt_org_apache_etch_tests_Test1_dist, vf );
 		    msg.Add( ValueFactoryTest1._mf_a, new S1( 1, 1, 1 ) );
 		    msg.Add( ValueFactoryTest1._mf_b, new S1( 0, 0, 0 ) );
 		    stub.SessionMessage( null, msg );
 		    // check the result.
-		    src.xreply.CheckType( ValueFactoryTest1._mt_etch_tests_Test1__result_dist );
+		    src.xreply.CheckType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1__result_dist );
 		    Assert.AreEqual( 1, src.xreply.Count );
 		    Assert.AreEqual( Math.Sqrt( 3 ), src.xreply.Get( ValueFactoryTest1._mf_result ) );
 	    }
@@ -157,12 +158,12 @@ namespace etch.tests
 	    [Test]
 	    public void method_dist2() 
 	    {
-		    Message msg = new Message( ValueFactoryTest1._mt_etch_tests_Test1_dist, vf );
+		    Message msg = new Message( ValueFactoryTest1._mt_org_apache_etch_tests_Test1_dist, vf );
 		    msg.Add( ValueFactoryTest1._mf_a, new S1( 1, 2, 3 ) );
 		    msg.Add( ValueFactoryTest1._mf_b, new S1( 6, 5, 4 ) );
 		    stub.SessionMessage( null, msg );
 		    // check the result.
-		    src.xreply.CheckType( ValueFactoryTest1._mt_etch_tests_Test1__result_dist );
+		    src.xreply.CheckType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1__result_dist );
 		    Assert.AreEqual( 1, src.xreply.Count );
 		    Assert.AreEqual( Math.Sqrt( 35 ), src.xreply.Get( ValueFactoryTest1._mf_result ) );
 	    }
@@ -170,12 +171,12 @@ namespace etch.tests
 	    [Test]
 	    public void method_fill() 
 	    {
-		    Message msg = new Message( ValueFactoryTest1._mt_etch_tests_Test1_fill, vf );
+		    Message msg = new Message( ValueFactoryTest1._mt_org_apache_etch_tests_Test1_fill, vf );
 		    msg.Add( ValueFactoryTest1._mf_n, 4 );
 		    msg.Add( ValueFactoryTest1._mf_x, 3 );
 		    stub.SessionMessage( null, msg );
 		    // check the result.
-		    src.xreply.CheckType( ValueFactoryTest1._mt_etch_tests_Test1__result_fill );
+		    src.xreply.CheckType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1__result_fill );
             Assert.AreEqual(1, src.xreply.Count);
 		    int[] x = (int[]) src.xreply.Get( ValueFactoryTest1._mf_result );
             Assert.IsNotNull( x );
@@ -187,12 +188,12 @@ namespace etch.tests
 	    [Test]
 	    public void method_blow() 
 	    {
-		    Message msg = new Message( ValueFactoryTest1._mt_etch_tests_Test1_blow, vf );
+		    Message msg = new Message( ValueFactoryTest1._mt_org_apache_etch_tests_Test1_blow, vf );
 		    msg.Add( ValueFactoryTest1._mf_msg, "foo" );
 		    msg.Add( ValueFactoryTest1._mf_code, 23 );
 		    stub.SessionMessage( null, msg );
 		    // check the result.
-		    src.xreply.CheckType( ValueFactoryTest1._mt_etch_tests_Test1__result_blow );
+		    src.xreply.CheckType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1__result_blow );
             Assert.AreEqual(1, src.xreply.Count);
 		    Excp1 e = (Excp1) src.xreply.Get( ValueFactoryTest1._mf_result );
 		    Assert.IsNotNull( e );
@@ -203,11 +204,11 @@ namespace etch.tests
 	    [Test]
 	    public void method_beets1() 
 	    {
-		    Message msg = new Message( ValueFactoryTest1._mt_etch_tests_Test1_beets, vf );
+		    Message msg = new Message( ValueFactoryTest1._mt_org_apache_etch_tests_Test1_beets, vf );
 		    msg.Add( ValueFactoryTest1._mf_e, E1.A );
 		    stub.SessionMessage( null, msg );
 		    // check the result.
-		    src.xreply.CheckType( ValueFactoryTest1._mt_etch_tests_Test1__result_beets );
+		    src.xreply.CheckType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1__result_beets );
 		    Assert.AreEqual( 1, src.xreply.Count );
 		    Object o = src.xreply.Get( ValueFactoryTest1._mf_result );
 		    Assert.AreEqual( 5, o );
@@ -216,11 +217,11 @@ namespace etch.tests
 	    [Test]
 	    public void method_beets2() 
 	    {
-		    Message msg = new Message( ValueFactoryTest1._mt_etch_tests_Test1_beets, vf );
+		    Message msg = new Message( ValueFactoryTest1._mt_org_apache_etch_tests_Test1_beets, vf );
 		    msg.Add( ValueFactoryTest1._mf_e, E1.B );
 		    stub.SessionMessage( null, msg );
 		    // check the result.
-		    src.xreply.CheckType( ValueFactoryTest1._mt_etch_tests_Test1__result_beets );
+		    src.xreply.CheckType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1__result_beets );
 		    Assert.AreEqual( 1, src.xreply.Count );
 		    Object o = src.xreply.Get( ValueFactoryTest1._mf_result );
 		    Assert.AreEqual( typeof(Excp3), o.GetType() );
@@ -229,11 +230,11 @@ namespace etch.tests
 	    [Test]
 	    public void method_beets3() 
 	    {
-		    Message msg = new Message( ValueFactoryTest1._mt_etch_tests_Test1_beets, vf );
+		    Message msg = new Message( ValueFactoryTest1._mt_org_apache_etch_tests_Test1_beets, vf );
 		    msg.Add( ValueFactoryTest1._mf_e, E1.C );
 		    stub.SessionMessage( null, msg );
 		    // check the result.
-		    src.xreply.CheckType( ValueFactoryTest1._mt_etch_tests_Test1__result_beets );
+		    src.xreply.CheckType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1__result_beets );
 		    Assert.AreEqual( 1, src.xreply.Count );
 		    Object o = src.xreply.Get( ValueFactoryTest1._mf_result );
 		    Assert.AreEqual( typeof(Excp4), o.GetType() );
@@ -242,11 +243,11 @@ namespace etch.tests
 	    //[Test]
 	    //public void method_beets4() 
 	    //{
-		//    Message msg = new Message( ValueFactoryTest1._mt_etch_tests_Test1_beets, vf );
+		//    Message msg = new Message( ValueFactoryTest1._mt_org_apache_etch_tests_Test1_beets, vf );
 		//    msg.Add( ValueFactoryTest1._mf_e, null );
 		//    stub.Message( null, msg );
 		   // check the result.
-		//    src.xreply.CheckType( ValueFactoryTest1._mt_etch_tests_Test1__result_beets );
+		//    src.xreply.CheckType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1__result_beets );
 		//    Assert.AreEqual( 0, src.xreply.Count );
 		//    Object o = src.xreply.Get( ValueFactoryTest1._mf_result );
 		//    Assert.IsNull( o );
@@ -255,10 +256,10 @@ namespace etch.tests
 	    [Test]
 	    public void method_isTrue() 
 	    {
-		    Message msg = new Message( ValueFactoryTest1._mt_etch_tests_Test1_isTrue, vf );
+		    Message msg = new Message( ValueFactoryTest1._mt_org_apache_etch_tests_Test1_isTrue, vf );
 		    stub.SessionMessage( null, msg );
 		    // check the result.
-		    src.xreply.CheckType( ValueFactoryTest1._mt_etch_tests_Test1__result_isTrue );
+		    src.xreply.CheckType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1__result_isTrue );
             Assert.AreEqual(1, src.xreply.Count);
 		    Object o = src.xreply.Get( ValueFactoryTest1._mf_result );
 		    Assert.AreEqual( true, o );
@@ -267,10 +268,10 @@ namespace etch.tests
 	    [Test]
 	    public void method_isFalse() 
 	    {
-		    Message msg = new Message( ValueFactoryTest1._mt_etch_tests_Test1_isFalse, vf );
+		    Message msg = new Message( ValueFactoryTest1._mt_org_apache_etch_tests_Test1_isFalse, vf );
 		    stub.SessionMessage( null, msg );
 		    // check the result.
-		    src.xreply.CheckType( ValueFactoryTest1._mt_etch_tests_Test1__result_isFalse );
+		    src.xreply.CheckType( ValueFactoryTest1._mt_org_apache_etch_tests_Test1__result_isFalse );
             Assert.AreEqual(1, src.xreply.Count);
 		    Object o = src.xreply.Get( ValueFactoryTest1._mf_result );
 		    Assert.AreEqual( false, o );
@@ -279,10 +280,10 @@ namespace etch.tests
 	    [Test]
 	    public void method_alwaysWorks() 
 	    {
-		    Message msg = new Message( ValueFactoryTest1._mt_etch_tests_Test1_alwaysWorks, vf );
+		    Message msg = new Message( ValueFactoryTest1._mt_org_apache_etch_tests_Test1_alwaysWorks, vf );
 		    stub.SessionMessage( null, msg );
 		    // check the result.
-            src.xreply.CheckType(ValueFactoryTest1._mt_etch_tests_Test1__result_alwaysWorks);
+            src.xreply.CheckType(ValueFactoryTest1._mt_org_apache_etch_tests_Test1__result_alwaysWorks);
             Assert.AreEqual(1, src.xreply.Count);
             Object o = src.xreply.Get(ValueFactoryTest1._mf_result);
 		    Assert.AreEqual( 23, o );
@@ -291,10 +292,10 @@ namespace etch.tests
 	    [Test]
 	    public void method_alwaysFails() 
 	    {
-		    Message msg = new Message( ValueFactoryTest1._mt_etch_tests_Test1_alwaysFails, vf );
+		    Message msg = new Message( ValueFactoryTest1._mt_org_apache_etch_tests_Test1_alwaysFails, vf );
 		    stub.SessionMessage( null, msg );
 		    // check the result.
-            src.xreply.CheckType(ValueFactoryTest1._mt_etch_tests_Test1__result_alwaysFails);
+            src.xreply.CheckType(ValueFactoryTest1._mt_org_apache_etch_tests_Test1__result_alwaysFails);
             Assert.AreEqual(1, src.xreply.Count);
             Object o = src.xreply.Get(ValueFactoryTest1._mf_result);
 		    Assert.IsTrue( o is _Etch_AuthException );
