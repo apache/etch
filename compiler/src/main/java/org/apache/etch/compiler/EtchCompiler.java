@@ -31,8 +31,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 
-import org.apache.etch.compiler.EtchGrammar;
-import org.apache.etch.compiler.ParseException;
 import org.apache.etch.compiler.ast.Module;
 import org.apache.etch.compiler.ast.Name;
 import org.apache.etch.compiler.ast.Opt;

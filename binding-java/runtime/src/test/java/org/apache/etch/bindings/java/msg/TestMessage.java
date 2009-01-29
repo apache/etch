@@ -21,9 +21,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 
-import org.apache.etch.bindings.java.msg.Field;
-import org.apache.etch.bindings.java.msg.Message;
-import org.apache.etch.bindings.java.msg.Type;
 import org.apache.etch.bindings.java.support.DummyValueFactory;
 import org.apache.etch.bindings.java.support.Validator_int;
 import org.apache.etch.bindings.java.support.Validator_long;

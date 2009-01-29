@@ -29,9 +29,6 @@ import org.apache.etch.bindings.java.support.Mailbox;
 import org.apache.etch.bindings.java.support.Pool;
 import org.apache.etch.bindings.java.support._Etch_AuthException;
 import org.apache.etch.bindings.java.transport.SessionMessage;
-import org.apache.etch.tests.StubTest1;
-import org.apache.etch.tests.Test1;
-import org.apache.etch.tests.ValueFactoryTest1;
 import org.apache.etch.util.core.Who;
 
 

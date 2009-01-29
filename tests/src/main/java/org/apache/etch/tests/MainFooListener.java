@@ -18,9 +18,6 @@
 package org.apache.etch.tests;
 
 import org.apache.etch.bindings.java.support.ServerFactory;
-import org.apache.etch.tests.FooHelper;
-import org.apache.etch.tests.FooServer;
-import org.apache.etch.tests.RemoteFooClient;
 import org.apache.etch.tests.FooHelper.FooServerFactory;
 import org.apache.etch.util.core.io.Transport;
 

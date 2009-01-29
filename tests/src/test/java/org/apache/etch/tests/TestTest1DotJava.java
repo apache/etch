@@ -25,8 +25,6 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import org.apache.etch.tests.Test1;
-
 /** Test of Test1 */
 public class TestTest1DotJava
 {

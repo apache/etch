@@ -28,8 +28,6 @@ import java.util.Set;
 import org.apache.etch.bindings.java.msg.Field;
 import org.apache.etch.bindings.java.msg.StructValue;
 import org.apache.etch.bindings.java.msg.Type;
-import org.apache.etch.tests.Test1;
-import org.apache.etch.tests.ValueFactoryTest1;
 import org.apache.etch.tests.Test1.E1;
 import org.apache.etch.tests.Test1.Excp1;
 import org.apache.etch.tests.Test1.Excp2;

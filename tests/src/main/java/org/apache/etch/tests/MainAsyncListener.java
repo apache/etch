@@ -18,9 +18,6 @@
 package org.apache.etch.tests;
 
 import org.apache.etch.bindings.java.support.ServerFactory;
-import org.apache.etch.tests.AsyncHelper;
-import org.apache.etch.tests.AsyncServer;
-import org.apache.etch.tests.RemoteAsyncClient;
 import org.apache.etch.util.Log;
 import org.apache.etch.util.core.io.Transport;
 

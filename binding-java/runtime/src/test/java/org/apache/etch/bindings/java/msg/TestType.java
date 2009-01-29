@@ -21,10 +21,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 
-import org.apache.etch.bindings.java.msg.ComboValidator;
-import org.apache.etch.bindings.java.msg.Field;
-import org.apache.etch.bindings.java.msg.Type;
-import org.apache.etch.bindings.java.msg.Validator;
 import org.apache.etch.bindings.java.support.Validator_int;
 import org.apache.etch.util.Hash;
 import org.junit.Test;

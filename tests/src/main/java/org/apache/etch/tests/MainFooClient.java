@@ -18,9 +18,6 @@
 package org.apache.etch.tests;
 
 import org.apache.etch.bindings.java.util.StrStrHashMap;
-import org.apache.etch.tests.FooClient;
-import org.apache.etch.tests.FooHelper;
-import org.apache.etch.tests.RemoteFooServer;
 import org.apache.etch.tests.Bar.BarData;
 import org.apache.etch.tests.Baz.BazData;
 import org.apache.etch.tests.Foo.FooData;

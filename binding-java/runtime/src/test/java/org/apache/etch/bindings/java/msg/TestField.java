@@ -19,7 +19,6 @@ package org.apache.etch.bindings.java.msg;
 
 import static org.junit.Assert.assertEquals;
 
-import org.apache.etch.bindings.java.msg.Field;
 import org.apache.etch.util.Hash;
 import org.junit.Test;
 

@@ -22,7 +22,6 @@ import static org.junit.Assert.assertEquals;
 import java.io.EOFException;
 import java.io.IOException;
 
-import org.apache.etch.util.FlexBuffer;
 import org.junit.Test;
 
 /**

@@ -17,8 +17,6 @@
 
 package org.apache.etch.tests;
 
-import org.apache.etch.tests.BaseInheritanceClient;
-import org.apache.etch.tests.RemoteInheritanceServer;
 
 /**
  * Your custom implementation of BaseInheritanceClient. Add methods here to provide

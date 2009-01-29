@@ -25,9 +25,6 @@ import static org.junit.Assert.assertTrue;
 
 import org.apache.etch.util.FlexBuffer;
 import org.apache.etch.util.core.Who;
-import org.apache.etch.util.core.io.Session;
-import org.apache.etch.util.core.io.SessionPacket;
-import org.apache.etch.util.core.io.UdpConnection;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;

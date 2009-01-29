@@ -23,8 +23,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Date;
 
-import org.apache.etch.bindings.java.msg.ComboValidator;
-import org.apache.etch.bindings.java.msg.Validator;
 import org.apache.etch.bindings.java.support.Validator_boolean;
 import org.apache.etch.bindings.java.support.Validator_int;
 import org.junit.Test;

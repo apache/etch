@@ -22,7 +22,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import org.apache.etch.bindings.java.msg.Validator;
-import org.apache.etch.bindings.java.support.Validator_void;
 import org.junit.Test;
 
 

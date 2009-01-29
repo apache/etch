@@ -25,9 +25,6 @@ import static org.junit.Assert.assertTrue;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.etch.util.cmd.CommandParser;
-import org.apache.etch.util.cmd.Option;
-import org.apache.etch.util.cmd.Parameter;
 import org.junit.Test;
 
 /**

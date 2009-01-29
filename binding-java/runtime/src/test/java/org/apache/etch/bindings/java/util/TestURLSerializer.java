@@ -25,7 +25,6 @@ import org.apache.etch.bindings.java.msg.Type;
 import org.apache.etch.bindings.java.msg.ValueFactory;
 import org.apache.etch.bindings.java.support.Class2TypeMap;
 import org.apache.etch.bindings.java.support.DummyValueFactory;
-import org.apache.etch.bindings.java.util.URLSerializer;
 import org.apache.etch.util.URL;
 import org.junit.Test;
 

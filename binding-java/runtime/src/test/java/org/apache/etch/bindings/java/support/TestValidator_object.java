@@ -29,9 +29,6 @@ import org.apache.etch.bindings.java.msg.StructValue;
 import org.apache.etch.bindings.java.msg.Type;
 import org.apache.etch.bindings.java.msg.Validator;
 import org.apache.etch.bindings.java.msg.ValueFactory;
-import org.apache.etch.bindings.java.support.DummyValueFactory;
-import org.apache.etch.bindings.java.support.TypeValidator;
-import org.apache.etch.bindings.java.support.Validator_object;
 import org.junit.Test;
 
 

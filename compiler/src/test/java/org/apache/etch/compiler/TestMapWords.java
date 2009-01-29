@@ -25,10 +25,6 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.etch.compiler.Backend;
-import org.apache.etch.compiler.CmdLineOptions;
-import org.apache.etch.compiler.ParseException;
-import org.apache.etch.compiler.Token;
 import org.apache.etch.compiler.ast.Message;
 import org.apache.etch.compiler.ast.Module;
 import org.apache.etch.compiler.ast.Named;

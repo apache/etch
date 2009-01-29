@@ -17,8 +17,6 @@
 
 package org.apache.etch.tests;
 
-import org.apache.etch.tests.BaseAsyncServer;
-import org.apache.etch.tests.RemoteAsyncClient;
 
 /**
  * Your custom implementation of BaseAsyncServer. Add methods here to provide

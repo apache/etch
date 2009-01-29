@@ -35,8 +35,6 @@ import org.apache.etch.util.Monitor;
 import org.apache.etch.util.Resources;
 import org.apache.etch.util.core.io.Session;
 import org.apache.etch.util.core.io.SessionListener;
-import org.apache.etch.util.core.nio.SuperSelector;
-import org.apache.etch.util.core.nio.Tcp2Listener;
 import org.junit.Test;
 
 

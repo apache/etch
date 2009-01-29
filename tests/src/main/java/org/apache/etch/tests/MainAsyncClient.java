@@ -17,9 +17,6 @@
 
 package org.apache.etch.tests;
 
-import org.apache.etch.tests.AsyncClient;
-import org.apache.etch.tests.AsyncHelper;
-import org.apache.etch.tests.RemoteAsyncServer;
 
 /**
  * Main program for AsyncClient. This program makes a connection to the

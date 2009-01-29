@@ -19,8 +19,6 @@ package org.apache.etch.compiler;
 
 import java.io.IOException;
 
-import org.apache.etch.compiler.ParseException;
-import org.apache.etch.compiler.Token;
 import org.apache.etch.compiler.ast.Message;
 import org.apache.etch.compiler.ast.Module;
 import org.apache.etch.compiler.ast.Named;

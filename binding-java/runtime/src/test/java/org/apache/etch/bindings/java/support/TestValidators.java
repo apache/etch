@@ -21,15 +21,6 @@ import java.lang.reflect.Array;
 import java.util.Date;
 
 import org.apache.etch.bindings.java.msg.Validator;
-import org.apache.etch.bindings.java.support.Validator_boolean;
-import org.apache.etch.bindings.java.support.Validator_byte;
-import org.apache.etch.bindings.java.support.Validator_custom;
-import org.apache.etch.bindings.java.support.Validator_double;
-import org.apache.etch.bindings.java.support.Validator_float;
-import org.apache.etch.bindings.java.support.Validator_int;
-import org.apache.etch.bindings.java.support.Validator_long;
-import org.apache.etch.bindings.java.support.Validator_short;
-import org.apache.etch.bindings.java.support.Validator_string;
 import org.junit.Assert;
 import org.junit.Test;
 

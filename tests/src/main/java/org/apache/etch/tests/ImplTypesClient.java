@@ -17,8 +17,6 @@
 
 package org.apache.etch.tests;
 
-import org.apache.etch.tests.BaseTypesClient;
-import org.apache.etch.tests.RemoteTypesServer;
 
 /**
  * Your custom implementation of BaseTypesClient. Add methods here to provide

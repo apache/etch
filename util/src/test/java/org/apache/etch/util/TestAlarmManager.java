@@ -18,12 +18,14 @@
 
 package org.apache.etch.util;
 
-import org.apache.etch.util.AlarmListener;
-import org.apache.etch.util.AlarmManager;
-import org.apache.etch.util.Monitor;
-import org.apache.etch.util.TimeoutException;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /** Test of AlarmManager */
 public class TestAlarmManager

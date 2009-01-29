@@ -17,9 +17,6 @@
 
 package org.apache.etch.tests;
 
-import org.apache.etch.tests.InheritanceClient;
-import org.apache.etch.tests.InheritanceHelper;
-import org.apache.etch.tests.RemoteInheritanceServer;
 
 /**
  * Main program for InheritanceClient. This program makes a connection to the

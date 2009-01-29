@@ -17,10 +17,13 @@
 
 package org.apache.etch.bindings.java.support;
 
-import org.apache.etch.bindings.java.support.FreePool;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import org.apache.etch.bindings.java.support.Pool.PoolRunnable;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 
 /**

@@ -26,8 +26,6 @@ import static org.junit.Assert.assertSame;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.etch.bindings.java.msg.IdName;
-import org.apache.etch.bindings.java.msg.IdNameMap;
 import org.junit.Before;
 import org.junit.Test;
 

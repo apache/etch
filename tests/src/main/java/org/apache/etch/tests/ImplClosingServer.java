@@ -17,8 +17,6 @@
 
 package org.apache.etch.tests;
 
-import org.apache.etch.tests.BaseClosingServer;
-import org.apache.etch.tests.RemoteClosingClient;
 import org.apache.etch.util.Log;
 import org.apache.etch.util.core.io.TcpTransport;
 

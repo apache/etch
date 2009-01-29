@@ -27,7 +27,6 @@ import java.util.List;
 
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.types.DirSet;
-import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 

@@ -18,7 +18,6 @@
 package org.apache.etch.tests;
 
 import org.apache.etch.bindings.java.util.StrIntHashMap;
-import org.apache.etch.tests.Test1;
 
 /**
  * Silly implementation of Test used for testing.

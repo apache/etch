@@ -17,8 +17,6 @@
 
 package org.apache.etch.tests;
 
-import org.apache.etch.tests.BaseCuaeClient;
-import org.apache.etch.tests.RemoteCuaeServer;
 
 /**
  * Your custom implementation of BaseCuaeClient. Add methods here to provide
