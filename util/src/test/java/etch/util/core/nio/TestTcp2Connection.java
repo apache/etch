@@ -342,6 +342,7 @@ public class TestTcp2Connection
 	@Test
 	public void start5() throws Exception
 	{
+		Log.report( "--- start5 ------------------------------" );
 		SocketChannel s = newSocketChannel( "127.0.0.1", port );
 		SocketChannel t = lh.accepted.waitUntilNotEqAndSet( null, TIMEOUT, null );
 		
@@ -368,6 +369,7 @@ public class TestTcp2Connection
 		assertNull( dh.xsender );
 		assertNull( dh.xbuf );
 		
+		//s.close(); // c.close( true ); takes care of this
 		t.close();
 	}
 
@@ -375,6 +377,8 @@ public class TestTcp2Connection
 	@Test
 	public void start6() throws Exception
 	{
+		Log.report( "--- start6 ------------------------------" );
+		
 		MyDataHandler dh = new MyDataHandler();
 		
 		Tcp2Connection c = new Tcp2Connection( "tcp://127.0.0.1:"+port, r );
@@ -383,7 +387,6 @@ public class TestTcp2Connection
 		assertFalse( c.isStarted() );
 		c.start();
 		assertTrue( c.isStarted() );
-		
 		SocketChannel t = lh.accepted.waitUntilNotEqAndSet( null, TIMEOUT, null );
 		
 		assertWhat( What.UP, dh.what );
@@ -783,6 +786,8 @@ public class TestTcp2Connection
 		{
 			if (event instanceof Exception)
 				Log.report( "listener.notify", "event", event );
+			
+			System.out.println( "ListenerHandler, TestTcp2Connection " + event );
 		}
 	}
 	
