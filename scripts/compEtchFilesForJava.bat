@@ -5,9 +5,8 @@
 @set n=-n
 
 @set walf=-w all,force
- 
+
 @set testsdir=tests\src\main\etch
-@rem set xmlcompilertestdir=src/etch/bindings/xml/compiler/test
 @set examplesdir=examples
 
 @set x=%CD%\
@@ -32,7 +31,7 @@
 @call %x%scripts\etch-eclipse.bat %q% %b% %n% %d% %i%        Types.etch
 
 @popd
-@cd %examplesdir%
+@pushd %examplesdir%
 
 @pushd chat\src\main\etch
 @call %x%scripts\etch-eclipse.bat %q% %b% %n% %d% %i%        Chat.etch
@@ -51,8 +50,3 @@
 @popd
 
 @popd
-
-@rem set b=-b xml
-
-@rem call bin\etch %q% %b% %d% %i% %xmlcompilertestdir%/Test.etch
-@rem call bin\etch %q% %b% %d% %i% %xmlcompilertestdir%/mixin/Foo.etch
