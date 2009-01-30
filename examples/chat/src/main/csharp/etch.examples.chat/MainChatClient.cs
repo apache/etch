@@ -21,18 +21,13 @@ using System.Globalization;
 using Etch.Support;
 using Etch.Util;
 
-namespace etch.examples.chat
+namespace org.apache.etch.examples.chat
 {
     public class MainChatClient : ChatClient, ObjSession
     {
         private readonly List<String> _whoIsOnline = new List<string>();
         private readonly DateTimeFormatInfo myDTFI = new CultureInfo("en-US", false).DateTimeFormat;
 
-
-        public MainChatClient()
-        {
-   
-        }
 
         public static void Main( String[] args )
         {
@@ -158,7 +153,7 @@ namespace etch.examples.chat
                 server.login( name, pwd );
                 Console.WriteLine( "login successful" );
             }
-            catch ( types.Chat.Failure e )
+            catch ( org.apache.etch.examples.chat.types.Chat.Failure e )
             {
                 Console.WriteLine( "failed : " + e.GetMessage() );
             }
@@ -187,7 +182,7 @@ namespace etch.examples.chat
                 String msg = st[ 0 ];
                 server.send( who, msg );
             }
-            catch ( types.Chat.Failure e )
+            catch ( org.apache.etch.examples.chat.types.Chat.Failure e )
             {
                 Console.WriteLine( "failed : " + e.GetMessage() );
             }

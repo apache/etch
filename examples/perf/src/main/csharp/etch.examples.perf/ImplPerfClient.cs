@@ -15,7 +15,7 @@
  * under the License.
  */
 
-namespace etch.examples.perf
+namespace org.apache.etch.examples.perf
 {
 	///<summary>Implementation for ImplPerfClient</summary>
 	public class ImplPerfClient : BasePerfClient

@@ -15,13 +15,12 @@
 // under the License.
 
 using System;
-using NUnit.Framework;
-
 using Etch.Support;
 using Etch.Util;
-using etch.examples.chat.types.Chat;
+using NUnit.Framework;
+using org.apache.etch.examples.chat.types.Chat;
 
-namespace etch.examples.chat
+namespace org.apache.etch.examples.chat
 {
     [TestFixture]
     public class TestRemoteChatServer

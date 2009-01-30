@@ -15,15 +15,10 @@
  * under the License.
  */
 
-using System;
-
-
-
-using etch.examples.example.types.Example;
 
 ///<summary>Your custom implementation of BaseExampleClient. Add methods here to provide
 ///implementation of messages from the server. </summary>
-namespace etch.examples.example
+namespace org.apache.etch.examples.example
 {
 	///<summary>Implementation for ImplExampleClient</summary>
 	public class ImplExampleClient : BaseExampleClient

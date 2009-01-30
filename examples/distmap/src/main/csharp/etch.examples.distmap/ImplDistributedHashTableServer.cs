@@ -17,12 +17,11 @@
 
 using System;
 using System.Collections.Generic;
-
-using etch.examples.distmap.types.DistributedHashTable;
+using org.apache.etch.examples.distmap.types.DistributedHashTable;
 
 ///<summary>Your custom implementation of BaseDistributedHashTableServer. Add methods here to provide
 ///implementation of messages from the client. </summary>
-namespace etch.examples.distmap
+namespace org.apache.etch.examples.distmap
 {
     ///<summary>Implementation for ImplDistributedHashTableServer</summary>
     public class ImplDistributedHashTableServer : BaseDistributedHashTableServer

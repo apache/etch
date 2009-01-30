@@ -28,12 +28,12 @@
 	<classpathentry kind="src" path="examples/chat/src/test/java"/>
 	<classpathentry kind="src" path="examples/distmap/src/main/java"/>
 	<classpathentry kind="src" path="examples/distmap/target/generated-sources/main/etch/java"/>
+	<classpathentry kind="src" path="examples/distmap/src/test/java"/>
 	<classpathentry kind="src" path="examples/example/src/main/java"/>
 	<classpathentry kind="src" path="examples/example/target/generated-sources/main/etch/java"/>
+	<classpathentry kind="src" path="examples/example/src/test/java"/>
 	<classpathentry kind="src" path="examples/perf/src/main/java"/>
 	<classpathentry kind="src" path="examples/perf/target/generated-sources/main/etch/java"/>
-	<classpathentry kind="src" path="examples/distmap/src/test/java"/>
-	<classpathentry kind="src" path="examples/example/src/test/java"/>
 	<classpathentry kind="src" path="examples/perf/src/test/java"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/ETCH_DEPENDENT_JARS"/>

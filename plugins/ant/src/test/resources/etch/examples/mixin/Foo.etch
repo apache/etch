@@ -15,7 +15,7 @@
  * under the License.
  */
 
-module etch.examples.mixin
+module org.apache.etch.examples.mixin
 
 service Foo
 {

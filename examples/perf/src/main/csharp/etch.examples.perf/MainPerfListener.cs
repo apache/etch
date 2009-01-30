@@ -19,7 +19,7 @@ using System;
 using Etch.Support;
 using Etch.Util;
 
-namespace etch.examples.perf
+namespace org.apache.etch.examples.perf
 {
 	///<summary>Main implementation for PerfListener.</summary>
 	public class MainPerfListener : PerfHelper.PerfServerFactory

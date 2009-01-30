@@ -15,7 +15,7 @@
  * under the License.
  */
 
-module etch.examples.mixin.baz
+module org.apache.etch.examples.mixin.baz
 
 service Baz
 {

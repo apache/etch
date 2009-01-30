@@ -16,12 +16,11 @@
  */
 
 using System;
-
-using etch.examples.perf.types.Perf;
 using Etch.Support;
 using Etch.Util;
+using org.apache.etch.examples.perf.types.Perf;
 
-namespace etch.examples.perf
+namespace org.apache.etch.examples.perf
 {
     ///<summary>Main implementation for PerfClient.</summary>
     public class MainPerfClient : PerfHelper.PerfClientFactory, PerfHelper.PerfServerFactory
