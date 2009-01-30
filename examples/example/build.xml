@@ -17,7 +17,7 @@
     </condition>
 
     <property name="Etch.dependency.junit.jar"
-        location="${env.TOOLS_DIR}/junit/4.3.1/junit-4.3.1.jar" />
+        location="${default.junit.lib}/junit-4.3.1.jar" />
 
     <property name="Etch.buildSupportDirectory" location="../../build-support" />
 
@@ -50,9 +50,8 @@
 
     <!-- import etch task -->
     <taskdef
-        name="etch"
         onerror="report"
-        classname="etch.tools.ant.EtchCompileTask"
+        resource="org/apache/etch/tools/ant/etch.xml"
         classpath="${etch.home}/lib/etch-ant-plugin-${etch.version}.jar" />
 
     <!-- import dotnet task -->
@@ -230,7 +229,7 @@
 
 Build Complete!
 
-To run java example example, open a cmd window and run these
+To run java example, open a cmd window and run these
 commands:
 
 > cd target\bin
@@ -258,7 +257,7 @@ You can mix and match the various clients and listeners.
     <target name="init-release" >
         <property name="build.target" value="Release" />
     </target>
-    
+
     <target name="dist-src" >
         <copy file="dist-build.xml" tofile="${dist-src}/build.xml" overwrite="true" />
         <copy file="dist-README.txt" tofile="${dist-src}/README.txt" overwrite="true" />

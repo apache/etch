@@ -6,9 +6,9 @@
     <target name="help"><echo>Please select a target...</echo></target>
     
     <!-- import etch task -->
-    <taskdef name="etch"
+    <taskdef
         onerror="report"
-        classname="etch.tools.ant.EtchCompileTask"
+        resource="org/apache/etch/tools/ant/etch.xml"
         classpath="${Etch.HOME}/lib/${etch-ant-task.jar}" />
 
     <!-- set properties -->

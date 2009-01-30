@@ -51,7 +51,7 @@
     <!-- import etch task -->
     <taskdef
         onerror="report"
-        resource="etch/tools/ant/etch.xml"
+        resource="org/apache/etch/tools/ant/etch.xml"
         classpath="${etch.home}/lib/etch-ant-plugin-${etch.version}.jar" />
 
     <!-- import dotnet task -->
@@ -213,7 +213,7 @@
     </target>
 
     <target name="test-csharp" depends="build-csharp" if="BUILD.csharp" >
-         <nunit xmlout="${nunit-results}/NUnitResults.xml" >
+         <nunit xmlout="${nunit-results}/NUnitResults.xml">
              <testassembly name="${src}/test/csharp/ChatTestProj/bin/${build.target}/ChatTestProj.dll" />
          </nunit>
 

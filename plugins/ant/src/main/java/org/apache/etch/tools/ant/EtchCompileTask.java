@@ -15,7 +15,7 @@
  * under the License.
  */
 
-package etch.tools.ant;
+package org.apache.etch.tools.ant;
 
 import java.io.File;
 import java.util.StringTokenizer;
