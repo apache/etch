@@ -366,6 +366,8 @@ public class TestTcpListener
 				what.set( What.DOWN );
 				return;
 			}
+			
+			System.out.println("MyListenerHandler " + event);
 		}
 	}
 

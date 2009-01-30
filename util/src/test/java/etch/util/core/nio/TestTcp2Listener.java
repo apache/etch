@@ -25,6 +25,7 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
+import java.net.Inet6Address;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketException;
@@ -151,7 +152,10 @@ public class TestTcp2Listener
 		assertNull( lh.xsocket );
 
 		InetSocketAddress a = (InetSocketAddress) l.localAddress();
-		assertEquals( "0.0.0.0", a.getAddress().getHostAddress().toString() );
+		if ( a.getAddress() instanceof Inet6Address )
+			assertEquals( "0:0:0:0:0:0:0:0", a.getAddress().getHostAddress().toString() );
+		else
+			assertEquals( "0.0.0.0", a.getAddress().getHostAddress().toString() );
 		assertTrue( a.getPort() > 0 && a.getPort() < 65536 );
 
 		l.stop();
@@ -198,7 +202,7 @@ public class TestTcp2Listener
 	public void start3() throws Exception
 	{
 		MyListenerHandler lh = new MyListenerHandler();
-		Tcp2Listener l = new Tcp2Listener( "tcp://0.0.0.0:4009", r );
+		Tcp2Listener l = new Tcp2Listener( "tcp://0.0.0.0:4998", r );
 		l.setSession( lh );
 
 		assertWhat( null, lh.what );
@@ -212,8 +216,11 @@ public class TestTcp2Listener
 		assertNull( lh.xsocket );
 
 		InetSocketAddress a = (InetSocketAddress) l.localAddress();
-		assertEquals( "0.0.0.0", a.getAddress().getHostAddress().toString() );
-		assertEquals( 4009, a.getPort() );
+		if ( a.getAddress() instanceof Inet6Address )
+			assertEquals( "0:0:0:0:0:0:0:0", a.getAddress().getHostAddress().toString() );
+		else
+			assertEquals( "0.0.0.0", a.getAddress().getHostAddress().toString() );
+		assertEquals( 4998, a.getPort() );
 
 		l.stop();
 		l.waitDown( TIMEOUT );
@@ -229,7 +236,7 @@ public class TestTcp2Listener
 	public void start4() throws Exception
 	{
 		MyListenerHandler lh = new MyListenerHandler();
-		Tcp2Listener l = new Tcp2Listener( "tcp://127.0.0.1:4006", r );
+		Tcp2Listener l = new Tcp2Listener( "tcp://127.0.0.1:4996", r );
 		l.setSession( lh );
 
 		assertWhat( null, lh.what );
@@ -245,7 +252,7 @@ public class TestTcp2Listener
 
 		InetSocketAddress a = (InetSocketAddress) l.localAddress();
 		assertEquals( "127.0.0.1", a.getAddress().getHostAddress().toString() );
-		assertEquals( 4006, a.getPort() );
+		assertEquals( 4996, a.getPort() );
 
 		l.stop();
 		l.waitDown( TIMEOUT );
@@ -262,7 +269,7 @@ public class TestTcp2Listener
 	{
 		// bad address
 		MyListenerHandler lh = new MyListenerHandler();
-		Tcp2Listener l = new Tcp2Listener( "tcp://1.2.3.4.5:4007", r );
+		Tcp2Listener l = new Tcp2Listener( "tcp://1.2.3.4.5:4997", r );
 		l.setSession( lh );
 
 		assertWhat( null, lh.what );
@@ -276,13 +283,13 @@ public class TestTcp2Listener
 	public void accept1() throws Exception
 	{
 		MyListenerHandler lh = new MyListenerHandler();
-		Tcp2Listener l = new Tcp2Listener( "tcp://0.0.0.0:4008", r );
+		Tcp2Listener l = new Tcp2Listener( "tcp://0.0.0.0:4995", r );
 		l.setSession( lh );
 
 		l.start();
 		l.waitUp( TIMEOUT );
 
-		Socket s = new Socket( "127.0.0.1", 4008 );
+		Socket s = new Socket( "127.0.0.1", 4995 );
 		assertWhat( What.ACCEPTED, lh.what );
 		assertNotNull( lh.xsocket );
 
