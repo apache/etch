@@ -15,10 +15,10 @@
 // under the License.
 
 using System;
-using Etch.Msg;
-using Etch.Util;
+using Org.Apache.Etch.Bindings.Csharp.Msg;
+using Org.Apache.Etch.Bindings.Csharp.Util;
 
-namespace Etch.Support
+namespace Org.Apache.Etch.Bindings.Csharp.Support
 {
     public class RemoteBase
     {

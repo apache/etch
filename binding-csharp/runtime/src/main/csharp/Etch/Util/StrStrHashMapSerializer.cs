@@ -16,10 +16,10 @@
 
 using System;
 using System.Collections.Generic;
-using Etch.Msg;
-using Etch.Support;
+using Org.Apache.Etch.Bindings.Csharp.Msg;
+using Org.Apache.Etch.Bindings.Csharp.Support;
 
-namespace Etch.Util
+namespace Org.Apache.Etch.Bindings.Csharp.Util
 {
     /// <summary>
     /// An etch serializer for StrStrHashMap.

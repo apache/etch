@@ -16,7 +16,7 @@
 
 using System.Collections.Generic;
 
-namespace Etch.Util
+namespace Org.Apache.Etch.Bindings.Csharp.Util
 {
     public class ArrayIterator<T> : IEnumerator<T> 
     {

@@ -17,7 +17,7 @@
 using System;
 using System.Diagnostics;
 
-namespace Etch.Util
+namespace Org.Apache.Etch.Bindings.Csharp.Util
 {
     /// <summary>
     /// Packetizes a stream data source. Reads a packet header,

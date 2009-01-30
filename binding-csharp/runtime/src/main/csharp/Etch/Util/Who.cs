@@ -14,7 +14,7 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
-namespace Etch.Util
+namespace Org.Apache.Etch.Bindings.Csharp.Util
 {   
     /// <summary>Abstraction of sender used by the various sources of data, packets, or messages.</summary>
     public interface Who

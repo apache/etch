@@ -15,10 +15,10 @@
 // under the License.
 
 using System;
-using Etch.Msg;
-using Etch.Support;
+using Org.Apache.Etch.Bindings.Csharp.Msg;
+using Org.Apache.Etch.Bindings.Csharp.Support;
 
-namespace Etch.Util
+namespace Org.Apache.Etch.Bindings.Csharp.Util
 { 
     /// <summary>
     /// Serialize a DateTime into our network standard format, which

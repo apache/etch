@@ -17,7 +17,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Etch.Msg
+namespace Org.Apache.Etch.Bindings.Csharp.Msg
 {
 
     /// <summary>Map by id and name of IdNames (or subclasses thereof).</summary>

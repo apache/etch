@@ -17,7 +17,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Etch.Util
+namespace Org.Apache.Etch.Bindings.Csharp.Util
 {
     /// <summary>
     /// An iterator over a single object

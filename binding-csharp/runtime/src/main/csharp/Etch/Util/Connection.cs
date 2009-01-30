@@ -18,7 +18,7 @@ using System;
 using System.Net;
 using System.Net.Sockets;
 
-namespace Etch.Util
+namespace Org.Apache.Etch.Bindings.Csharp.Util
 {
     /// <summary>
     /// Implementation of runner which handles a network connection.

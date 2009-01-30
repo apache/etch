@@ -14,14 +14,14 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
-using Etch.Msg;
-using Etch.Util;
+using Org.Apache.Etch.Bindings.Csharp.Msg;
+using Org.Apache.Etch.Bindings.Csharp.Util;
 
-namespace Etch.Transport.Filter
+namespace Org.Apache.Etch.Bindings.Csharp.Transport.Filter
 {
     abstract public class AbstractMessageFilter : TransportMessage, SessionMessage
     {
-        public AbstractMessageFilter(TransportMessage transport, URL uri, Resources resources)
+        protected AbstractMessageFilter(TransportMessage transport, URL uri, Resources resources)
         {
             this.transport = transport;
             transport.SetSession(this);

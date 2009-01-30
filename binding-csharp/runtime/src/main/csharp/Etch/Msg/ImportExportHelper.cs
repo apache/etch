@@ -16,7 +16,7 @@
 
 using System;
 
-namespace Etch.Msg
+namespace Org.Apache.Etch.Bindings.Csharp.Msg
 {
     /// <summary>
     /// class used to implement ValueFactory based import / export code

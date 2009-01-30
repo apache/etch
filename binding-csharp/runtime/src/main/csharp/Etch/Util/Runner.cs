@@ -17,7 +17,7 @@
 using System;
 using System.Threading;
 
-namespace Etch.Util
+namespace Org.Apache.Etch.Bindings.Csharp.Util
 {
     /// <summary>
     /// Implementation of startable which creates a thread and runs.

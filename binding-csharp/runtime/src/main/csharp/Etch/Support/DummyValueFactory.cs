@@ -17,9 +17,9 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Etch.Msg;
+using Org.Apache.Etch.Bindings.Csharp.Msg;
 
-namespace Etch.Support
+namespace Org.Apache.Etch.Bindings.Csharp.Support
 {
     public class DummyValueFactory : ValueFactory
     {

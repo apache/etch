@@ -18,7 +18,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Etch.Msg
+namespace Org.Apache.Etch.Bindings.Csharp.Msg
 { 
     /// <summary>Interface which defines the value factory which helps
     ///  the idl compiler serialize and deserialize messages, convert values, etc.</summary>

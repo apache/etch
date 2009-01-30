@@ -18,7 +18,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 
-namespace Etch.Util
+namespace Org.Apache.Etch.Bindings.Csharp.Util
 {
     /// <summary>
     /// A FlexBuffer wraps a byte array and manages the active region of

@@ -16,7 +16,7 @@
 
 using System;
 using System.Collections;
-using Etch.Msg;
+using Org.Apache.Etch.Bindings.Csharp.Msg;
 
 /// <summary>An array of values, where each value is of arbitrary type
 /// chosen from the basic java types boolean, byte, short, int,
@@ -26,7 +26,7 @@ using Etch.Msg;
 /// 
 /// ArrayValue is not protected against concurrent access. </summary>
 
-namespace Etch.Transport
+namespace Org.Apache.Etch.Bindings.Csharp.Transport
 {
 
     public class ArrayValue : IEnumerable

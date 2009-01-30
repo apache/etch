@@ -14,7 +14,7 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
-namespace Etch.Msg
+namespace Org.Apache.Etch.Bindings.Csharp.Msg
 {
 
    /// <summary>Field is an IdName which denotes a field of a struct or message (i.e., a key for a value).</summary>

@@ -16,7 +16,7 @@
 
 using System;
 
-namespace Etch.Util
+namespace Org.Apache.Etch.Bindings.Csharp.Util
 {
     public class Integer : IComparable, IComparable<Integer>, IEquatable<Integer>, IConvertible
     {

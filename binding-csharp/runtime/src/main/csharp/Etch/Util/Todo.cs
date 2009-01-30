@@ -16,7 +16,7 @@
 
 using System;
 
-namespace Etch.Util
+namespace Org.Apache.Etch.Bindings.Csharp.Util
 {
     /// <summary>
     /// A TODO is used to perform a lightweight action

@@ -16,9 +16,9 @@
 
 using System;
 using System.Collections.Generic;
-using Etch.Msg;
+using Org.Apache.Etch.Bindings.Csharp.Msg;
 
-namespace Etch.Transport
+namespace Org.Apache.Etch.Bindings.Csharp.Transport
 {
     public abstract class FormatFactory
     {
@@ -92,7 +92,7 @@ namespace Etch.Transport
 
         static FormatFactory()
         {
-            Put(BINARY, "Etch.Transport.Fmt.Binary.BinaryTaggedDataFormatFactory");
+            Put(BINARY, "Org.Apache.Etch.Bindings.Csharp.Transport.Fmt.Binary.BinaryTaggedDataFormatFactory");
         }
     }
 }

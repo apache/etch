@@ -15,9 +15,9 @@
 // under the License.
 
 using System;
-using Etch.Util;
+using Org.Apache.Etch.Bindings.Csharp.Util;
 
-namespace Etch.Support
+namespace Org.Apache.Etch.Bindings.Csharp.Support
 {
     /// <summary>
     /// A queued implementation of pool

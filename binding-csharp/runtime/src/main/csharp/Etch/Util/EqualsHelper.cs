@@ -16,7 +16,7 @@
 
 using System;
 
-namespace Etch.Util
+namespace Org.Apache.Etch.Bindings.Csharp.Util
 {
         /// <param name="a"></param>
         /// <param name="b"></param>

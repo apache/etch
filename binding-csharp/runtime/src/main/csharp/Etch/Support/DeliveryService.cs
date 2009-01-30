@@ -15,13 +15,13 @@
 // under the License.
 
 using System;
-using Etch.Msg;
-using Etch.Transport;
+using Org.Apache.Etch.Bindings.Csharp.Msg;
+using Org.Apache.Etch.Bindings.Csharp.Transport;
 
-namespace Etch.Support{
+namespace Org.Apache.Etch.Bindings.Csharp.Support{
 
     ///<summary>Adapter between remote and message source.</summary>
-    public interface DeliveryService : Etch.Transport.TransportMessage,SessionMessage
+    public interface DeliveryService : TransportMessage,SessionMessage
     {
 	
         
