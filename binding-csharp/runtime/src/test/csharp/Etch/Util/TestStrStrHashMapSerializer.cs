@@ -15,9 +15,9 @@
 // under the License.
 
 using System;
-using NUnit.Framework;
-using Etch.Support;
 using Etch.Msg;
+using Etch.Support;
+using NUnit.Framework;
 
 namespace Etch.Util
 {

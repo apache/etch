@@ -15,9 +15,9 @@
 // under the License.
 
 using System;
+using System.Threading;
 using Etch.Util;
 using NUnit.Framework;
-using System.Threading;
 
 namespace Etch.Support
 {

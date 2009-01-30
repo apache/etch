@@ -15,9 +15,8 @@
 // under the License.
 
 using System;
-using Etch.Msg;
-using NUnit.Framework;
 using System.Collections.Generic;
+using NUnit.Framework;
 
 namespace Etch.Msg
 {

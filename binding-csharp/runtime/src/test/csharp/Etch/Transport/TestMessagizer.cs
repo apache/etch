@@ -15,10 +15,10 @@
 // under the License.
 
 using System;
+using Etch.Msg;
+using Etch.Support;
 using Etch.Util;
 using NUnit.Framework;
-using Etch.Support;
-using Etch.Msg;
 
 namespace Etch.Transport
 {

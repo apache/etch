@@ -14,9 +14,9 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
+using System;
 using Etch.Support;
 using NUnit.Framework;
-using System;
 
 namespace Etch.Msg
 {

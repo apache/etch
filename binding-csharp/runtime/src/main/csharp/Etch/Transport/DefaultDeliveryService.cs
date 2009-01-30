@@ -15,9 +15,9 @@
 // under the License.
 
 using System;
-using Etch.Util;
-using Etch.Support;
 using Etch.Msg;
+using Etch.Support;
+using Etch.Util;
 
 namespace Etch.Transport
 {

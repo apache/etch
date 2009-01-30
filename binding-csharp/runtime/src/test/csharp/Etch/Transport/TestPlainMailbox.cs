@@ -19,7 +19,6 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using Etch.Msg;
-using Etch.Transport;
 using Etch.Support;
 using Etch.Util;
 using NUnit.Framework;

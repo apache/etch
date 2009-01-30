@@ -15,7 +15,6 @@
 // under the License.
 
 using System;
-using System.Collections.Generic;
 using NUnit.Framework;
 
 // s is scheme:[//[user[:password]@]host[:port]/]uri[;params][?terms][#fragment]
