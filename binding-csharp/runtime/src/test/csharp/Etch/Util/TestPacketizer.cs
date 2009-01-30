@@ -19,7 +19,6 @@ using System.Collections.Generic;
 using Etch.Util;
 using NUnit.Framework;
 
-
 namespace Etch.Transport
 {
     [TestFixture]

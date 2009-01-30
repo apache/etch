@@ -15,11 +15,11 @@
 // under the License.
 
 using System;
-using NUnit.Framework;
+using System.Net;
 using System.Net.Sockets;
 using System.Threading;
-using System.Net;
 using Etch.Util;
+using NUnit.Framework;
 
 namespace Etch.Transport
 {       

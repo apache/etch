@@ -16,10 +16,9 @@
 
 using System;
 using System.Collections.Generic;
-using NUnit.Framework;
-using Etch.Msg;
 using System.Text;
-using Etch.Support;
+using Etch.Msg;
+using NUnit.Framework;
 
 namespace Etch.Support
 {

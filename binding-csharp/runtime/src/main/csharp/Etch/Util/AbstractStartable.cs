@@ -15,7 +15,6 @@
 // under the License.
 
 using System;
-using System.Runtime.CompilerServices;
 
 namespace Etch.Util
 {

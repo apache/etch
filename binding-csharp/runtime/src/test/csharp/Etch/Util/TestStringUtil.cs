@@ -16,7 +16,6 @@
 
 using System;
 using NUnit.Framework;
-using Etch.Util;
 
 namespace Etch.Util
 {

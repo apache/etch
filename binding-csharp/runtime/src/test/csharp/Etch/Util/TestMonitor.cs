@@ -16,7 +16,6 @@
 
 using System;
 using System.Threading;
-using Etch.Util;
 using Etch4.Util.Test;
 using NUnit.Framework;
 

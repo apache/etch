@@ -14,10 +14,9 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
-using NUnit.Framework;
 using System;
-using Etch.Transport;
 using Etch.Msg;
+using NUnit.Framework;
 
 namespace Etch.Transport
 {

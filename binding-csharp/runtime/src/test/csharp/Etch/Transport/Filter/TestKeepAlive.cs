@@ -16,12 +16,10 @@
 
 using System;
 using System.Threading;
-using NUnit.Framework;
-
 using Etch.Msg;
-using Etch.Transport.Filter;
-using Etch.Util;
 using Etch.Support;
+using Etch.Util;
+using NUnit.Framework;
 
 namespace Etch.Transport.Filter
 {

@@ -16,11 +16,9 @@
 
 using System;
 using Etch.Msg;
-using Etch.Transport.Filter;
+using Etch.Support;
 using Etch.Util;
 using NUnit.Framework;
-using Etch.Support;
-
 
 namespace Etch.Transport.Filter
 {
