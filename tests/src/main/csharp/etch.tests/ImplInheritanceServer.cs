@@ -17,7 +17,6 @@
 using System;
 using org.apache.etch.tests;
 using org.apache.etch.tests.types.Inheritance;
-using etch.tests;
 
 /**
  * Call to message translator for InheritanceServer.

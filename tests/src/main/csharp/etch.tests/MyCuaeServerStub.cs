@@ -15,13 +15,9 @@
 // under the License.
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-using Etch.Support;
 using Etch.Msg;
-using Etch.Transport;
+using Etch.Support;
 using Etch.Util;
-
 
 namespace etch.tests
 {
