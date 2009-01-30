@@ -18,7 +18,7 @@ using System;
 using System.Collections.Generic;
 using NUnit.Framework;
 
-namespace Etch.Msg
+namespace Org.Apache.Etch.Bindings.Csharp.Msg
 {
 
     public class MyIdNameMap<T> : IdNameMap<IdName>

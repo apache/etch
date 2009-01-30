@@ -16,7 +16,7 @@
 
 using System;
 using System.Collections.Generic;
-using Etch.Msg;
+using Org.Apache.Etch.Bindings.Csharp.Msg;
 using NUnit.Framework;
 using org.apache.etch.tests;
 using org.apache.etch.tests.types.Test1;

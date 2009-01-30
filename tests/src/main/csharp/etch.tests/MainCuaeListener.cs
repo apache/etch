@@ -15,9 +15,9 @@
 // under the License.
 
 using System;
-using Etch.Support;
-using Etch.Transport;
-using Etch.Util;
+using Org.Apache.Etch.Bindings.Csharp.Support;
+using Org.Apache.Etch.Bindings.Csharp.Transport;
+using Org.Apache.Etch.Bindings.Csharp.Util;
 
 namespace etch.tests
 {

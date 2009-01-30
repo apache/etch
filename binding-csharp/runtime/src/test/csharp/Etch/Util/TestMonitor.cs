@@ -19,7 +19,7 @@ using System.Threading;
 using Etch4.Util.Test;
 using NUnit.Framework;
 
-namespace Etch.Util
+namespace Org.Apache.Etch.Bindings.Csharp.Util
 {
     [TestFixture]
     public class TestMonitor

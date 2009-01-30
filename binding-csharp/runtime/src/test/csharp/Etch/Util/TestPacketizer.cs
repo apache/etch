@@ -16,10 +16,10 @@
 
 using System;
 using System.Collections.Generic;
-using Etch.Util;
+using Org.Apache.Etch.Bindings.Csharp.Util;
 using NUnit.Framework;
 
-namespace Etch.Transport
+namespace Org.Apache.Etch.Bindings.Csharp.Transport
 {
     [TestFixture]
     public class TestPacketizer

@@ -15,12 +15,12 @@
 // under the License.
 
 using System;
-using Etch.Msg;
-using Etch.Support;
-using Etch.Util;
+using Org.Apache.Etch.Bindings.Csharp.Msg;
+using Org.Apache.Etch.Bindings.Csharp.Support;
+using Org.Apache.Etch.Bindings.Csharp.Util;
 using NUnit.Framework;
 
-namespace Etch.Transport.Fmt.Binary
+namespace Org.Apache.Etch.Bindings.Csharp.Transport.Fmt.Binary
 {
     /// <summary>
     /// Test binary input and output.

@@ -17,10 +17,10 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Etch.Msg;
+using Org.Apache.Etch.Bindings.Csharp.Msg;
 using NUnit.Framework;
 
-namespace Etch.Support
+namespace Org.Apache.Etch.Bindings.Csharp.Support
 {
     [TestFixture]
     public class TestDefaultValueFactory : List<Object>

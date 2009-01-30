@@ -16,7 +16,7 @@
 
 using NUnit.Framework;
 
-namespace Etch.Msg
+namespace Org.Apache.Etch.Bindings.Csharp.Msg
 {
     [TestFixture]
     public class TestFieldMap

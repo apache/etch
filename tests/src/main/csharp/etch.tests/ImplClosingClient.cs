@@ -15,7 +15,7 @@
 // under the License.
 
 using System;
-using Etch.Support;
+using Org.Apache.Etch.Bindings.Csharp.Support;
 using org.apache.etch.tests;
 
 /**

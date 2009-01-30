@@ -14,10 +14,10 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
-using Etch.Msg;
-using Etch.Support;
-using Etch.Transport;
-using Etch.Util;
+using Org.Apache.Etch.Bindings.Csharp.Msg;
+using Org.Apache.Etch.Bindings.Csharp.Support;
+using Org.Apache.Etch.Bindings.Csharp.Transport;
+using Org.Apache.Etch.Bindings.Csharp.Util;
 using org.apache.etch.tests;
 
 namespace etch.tests

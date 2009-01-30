@@ -23,7 +23,7 @@ service Bar
 
 	@Extern( java, "org.apache.etch.bindings.java.util.StrStrHashMap", "",
 		"org.apache.etch.bindings.java.util.StrStrHashMapSerializer", "" )
-	@Extern( csharp, "StrStrHashMap", "Etch.Util",
+	@Extern( csharp, "StrStrHashMap", "Org.Apache.Etch.Bindings.Csharp.Util",
 		"StrStrHashMapSerializer", "" )
 	extern BarTable
 	

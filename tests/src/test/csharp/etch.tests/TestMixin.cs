@@ -15,8 +15,8 @@
 // under the License.
 
 using System.Collections.Generic;
-using Etch.Msg;
-using Etch.Support;
+using Org.Apache.Etch.Bindings.Csharp.Msg;
+using Org.Apache.Etch.Bindings.Csharp.Support;
 using NUnit.Framework;
 using org.apache.etch.tests;
 using org.apache.etch.tests.types.Bar;

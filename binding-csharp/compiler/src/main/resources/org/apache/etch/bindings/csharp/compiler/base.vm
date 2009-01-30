@@ -38,7 +38,7 @@ using $n.getImport( $helper );
 #end
 #end
 #end
-using Etch.Support;
+using Org.Apache.Etch.Bindings.Csharp.Support;
 
 /// <summary>
 /// Base Implementation of $intfname, with default method implementations

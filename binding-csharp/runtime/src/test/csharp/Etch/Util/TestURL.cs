@@ -19,7 +19,7 @@ using NUnit.Framework;
 
 // s is scheme:[//[user[:password]@]host[:port]/]uri[;params][?terms][#fragment]
 
-namespace Etch.Util
+namespace Org.Apache.Etch.Bindings.Csharp.Util
 {
     [TestFixture]
     public class TestURL

@@ -10,7 +10,7 @@ exit /b 1
 goto :eof
 
 :test_etch_exist
-if exist "%~dp0..\bin\etch" goto run_etch
+if exist "%~dp0..\bin\org\apache\etch" goto run_etch
 echo Cannot find etch classes.
 exit /b 1
 goto :eof

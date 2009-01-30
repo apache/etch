@@ -147,8 +147,8 @@ service Test1
 	/** blah */
 	@Extern(java, "StrIntHashMap", "org.apache.etch.bindings.java.util.StrIntHashMap",
 		"StrIntHashMapSerializer", "org.apache.etch.bindings.java.util.StrIntHashMapSerializer")
-	@Extern(csharp, "StrIntHashMap", "Etch.Util",
-		"StrIntHashMapSerializer", "Etch.Util")
+	@Extern(csharp, "StrIntHashMap", "Org.Apache.Etch.Bindings.Csharp.Util",
+		"StrIntHashMapSerializer", "Org.Apache.Etch.Bindings.Csharp.Util")
 	extern Blob
 	
 	/** blah */

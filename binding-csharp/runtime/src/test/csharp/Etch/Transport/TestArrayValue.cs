@@ -15,10 +15,10 @@
 // under the License.
 
 using System;
-using Etch.Msg;
+using Org.Apache.Etch.Bindings.Csharp.Msg;
 using NUnit.Framework;
 
-namespace Etch.Transport
+namespace Org.Apache.Etch.Bindings.Csharp.Transport
 {
 
     [TestFixture]

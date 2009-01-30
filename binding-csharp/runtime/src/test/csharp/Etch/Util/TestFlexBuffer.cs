@@ -18,7 +18,7 @@ using System;
 using System.IO;
 using NUnit.Framework;
 
-namespace Etch.Util
+namespace Org.Apache.Etch.Bindings.Csharp.Util
 {
     [TestFixture]
     public class TestFlexBuffer

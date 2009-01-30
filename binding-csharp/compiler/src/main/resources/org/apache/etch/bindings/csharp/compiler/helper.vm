@@ -17,9 +17,9 @@
 // This file is automatically created and should not be edited!
 #set($i = $intf.name())
 
-using Etch.Msg;
-using Etch.Support;
-using Etch.Util;
+using Org.Apache.Etch.Bindings.Csharp.Msg;
+using Org.Apache.Etch.Bindings.Csharp.Support;
+using Org.Apache.Etch.Bindings.Csharp.Util;
 
 /// <summary>
 /// Transport helper for ${i}.
