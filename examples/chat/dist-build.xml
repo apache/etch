@@ -26,7 +26,7 @@
     </condition>    
 
     <taskdef
-    	resource="etch/tools/ant/etch.xml"
+    	resource="org/apache/etch/tools/ant/etch.xml"
         classpath="${etch-ant-plugin.jar}"/>
 
     <target name="build" depends="build-java, build-csharp, done"/>
