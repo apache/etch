@@ -15,12 +15,11 @@
 // under the License.
 
 using System;
-
 using Etch.Support;
 using Etch.Util;
 using NUnit.Framework;
 
-namespace etch.examples.example
+namespace org.apache.etch.examples.example
 {
 
     /// <summary>

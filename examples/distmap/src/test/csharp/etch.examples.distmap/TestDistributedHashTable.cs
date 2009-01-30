@@ -15,12 +15,12 @@
 // under the License.
 
 using System;
-using etch.examples.distmap.types.DistributedHashTable;
 using Etch.Support;
 using Etch.Util;
 using NUnit.Framework;
+using org.apache.etch.examples.distmap.types.DistributedHashTable;
 
-namespace etch.examples.distmap
+namespace org.apache.etch.examples.distmap
 {
 
     /// <summary>

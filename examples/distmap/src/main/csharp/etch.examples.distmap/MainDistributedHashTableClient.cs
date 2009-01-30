@@ -16,10 +16,9 @@
  */
 
 using System;
-using etch.examples.distmap.types.DistributedHashTable;
+using org.apache.etch.examples.distmap.types.DistributedHashTable;
 
-
-namespace etch.examples.distmap
+namespace org.apache.etch.examples.distmap
 {
     ///<summary>Main implementation for DistributedHashTableClient.</summary>
     public class MainDistributedHashTableClient : DistributedHashTableHelper.DistributedHashTableClientFactory

@@ -17,7 +17,7 @@
 
 using System;
 
-namespace etch.examples.perf
+namespace org.apache.etch.examples.perf
 {
     public class ImplPerfServer : BasePerfServer
     {

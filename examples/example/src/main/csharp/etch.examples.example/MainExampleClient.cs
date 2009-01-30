@@ -17,9 +17,7 @@
 
 using System;
 
-using etch.examples.example.types.Example;
-
-namespace etch.examples.example
+namespace org.apache.etch.examples.example
 {
 	///<summary>Main implementation for ExampleClient.</summary>
 	public class MainExampleClient : ExampleHelper.ExampleClientFactory

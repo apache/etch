@@ -15,7 +15,7 @@
  * under the License.
  */
 
-module etch.examples.chat
+module org.apache.etch.examples.chat
 
 /**
  * The Chat example program implements a simple service

@@ -16,13 +16,10 @@
  */
 
 using System;
-
 using Etch.Support;
 using Etch.Util;
 
-using etch.examples.example.types.Example;
-
-namespace etch.examples.example
+namespace org.apache.etch.examples.example
 {
 	///<summary>Main implementation for ExampleListener.</summary>
 	public class MainExampleListener : ExampleHelper.ExampleServerFactory

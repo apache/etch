@@ -15,7 +15,7 @@
  * under the License.
  */
 
-module etch.examples.perf
+module org.apache.etch.examples.perf
 
 /** A service to test performance */
 service Perf

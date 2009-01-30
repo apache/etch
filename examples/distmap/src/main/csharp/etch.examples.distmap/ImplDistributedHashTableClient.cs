@@ -15,15 +15,10 @@
  * under the License.
  */
 
-using System;
-
-
-
-using etch.examples.distmap.types.DistributedHashTable;
 
 ///<summary>Your custom implementation of BaseDistributedHashTableClient. Add methods here to provide
 ///implementation of messages from the server. </summary>
-namespace etch.examples.distmap
+namespace org.apache.etch.examples.distmap
 {
 	///<summary>Implementation for ImplDistributedHashTableClient</summary>
 	public class ImplDistributedHashTableClient : BaseDistributedHashTableClient

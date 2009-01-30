@@ -15,7 +15,7 @@
  * under the License.
  */
 
-module etch.examples.distmap
+module org.apache.etch.examples.distmap
 
 /**
  * The DistributedHashTable example program implements a simple service

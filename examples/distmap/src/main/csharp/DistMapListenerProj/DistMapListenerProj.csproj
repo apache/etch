@@ -37,47 +37,44 @@
   </Target>
   -->
   <ItemGroup>
-    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.examples.distmap\BaseDistributedHashTableClient.cs">
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\org.apache.etch.examples.distmap\BaseDistributedHashTableClient.cs">
       <Link>BaseDistributedHashTableClient.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.examples.distmap\BaseDistributedHashTableServer.cs">
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\org.apache.etch.examples.distmap\BaseDistributedHashTableServer.cs">
       <Link>BaseDistributedHashTableServer.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.examples.distmap\DistributedHashTable.cs">
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\org.apache.etch.examples.distmap\DistributedHashTable.cs">
       <Link>DistributedHashTable.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.examples.distmap\DistributedHashTableClient.cs">
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\org.apache.etch.examples.distmap\DistributedHashTableClient.cs">
       <Link>DistributedHashTableClient.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.examples.distmap\DistributedHashTableHelper.cs">
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\org.apache.etch.examples.distmap\DistributedHashTableHelper.cs">
       <Link>DistributedHashTableHelper.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.examples.distmap\DistributedHashTableServer.cs">
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\org.apache.etch.examples.distmap\DistributedHashTableServer.cs">
       <Link>DistributedHashTableServer.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.examples.distmap\RemoteDistributedHashTable.cs">
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\org.apache.etch.examples.distmap\RemoteDistributedHashTable.cs">
       <Link>RemoteDistributedHashTable.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.examples.distmap\RemoteDistributedHashTableClient.cs">
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\org.apache.etch.examples.distmap\RemoteDistributedHashTableClient.cs">
       <Link>RemoteDistributedHashTableClient.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.examples.distmap\RemoteDistributedHashTableServer.cs">
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\org.apache.etch.examples.distmap\RemoteDistributedHashTableServer.cs">
       <Link>RemoteDistributedHashTableServer.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.examples.distmap\StubDistributedHashTable.cs">
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\org.apache.etch.examples.distmap\StubDistributedHashTable.cs">
       <Link>StubDistributedHashTable.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.examples.distmap\StubDistributedHashTableClient.cs">
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\org.apache.etch.examples.distmap\StubDistributedHashTableClient.cs">
       <Link>StubDistributedHashTableClient.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.examples.distmap\StubDistributedHashTableServer.cs">
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\org.apache.etch.examples.distmap\StubDistributedHashTableServer.cs">
       <Link>StubDistributedHashTableServer.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.examples.distmap\ValueFactoryDistributedHashTable.cs">
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\org.apache.etch.examples.distmap\ValueFactoryDistributedHashTable.cs">
       <Link>ValueFactoryDistributedHashTable.cs</Link>
-    </Compile>
-    <Compile Include="..\etch.examples.distmap\ImplDistributedHashTableClient.cs">
-      <Link>ImplDistributedHashTableClient.cs</Link>
     </Compile>
     <Compile Include="..\etch.examples.distmap\ImplDistributedHashTableServer.cs">
       <Link>ImplDistributedHashTableServer.cs</Link>

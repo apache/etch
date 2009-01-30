@@ -17,11 +17,10 @@
 
 using System;
 using System.Collections.Generic;
-
 using System.Runtime.CompilerServices;
 using Etch.Util;
 
-namespace etch.examples.chat
+namespace org.apache.etch.examples.chat
 {
     public class ImplChatServer : BaseChatServer
     {
@@ -48,7 +47,7 @@ namespace etch.examples.chat
         public override void login( string name, string pwd )
         {
             if ( (bool) isLoggedIn() )
-                throw new types.Chat.Failure( "Already logged in" );
+                throw new org.apache.etch.examples.chat.types.Chat.Failure( "Already logged in" );
 
             if ( name == null )
                 throw new types.Chat.Failure("Name is null");

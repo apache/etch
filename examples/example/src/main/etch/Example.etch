@@ -15,7 +15,7 @@
  * under the License.
  */
 
-module etch.examples.example
+module org.apache.etch.examples.example
 
 /**
  * Service version of hello world.

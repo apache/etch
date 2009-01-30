@@ -31,43 +31,43 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.examples.perf\BasePerfClient.cs">
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\org.apache.etch.examples.perf\BasePerfClient.cs">
       <Link>BasePerfClient.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.examples.perf\BasePerfServer.cs">
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\org.apache.etch.examples.perf\BasePerfServer.cs">
       <Link>BasePerfServer.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.examples.perf\Perf.cs">
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\org.apache.etch.examples.perf\Perf.cs">
       <Link>Perf.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.examples.perf\PerfClient.cs">
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\org.apache.etch.examples.perf\PerfClient.cs">
       <Link>PerfClient.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.examples.perf\PerfHelper.cs">
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\org.apache.etch.examples.perf\PerfHelper.cs">
       <Link>PerfHelper.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.examples.perf\PerfServer.cs">
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\org.apache.etch.examples.perf\PerfServer.cs">
       <Link>PerfServer.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.examples.perf\RemotePerf.cs">
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\org.apache.etch.examples.perf\RemotePerf.cs">
       <Link>RemotePerf.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.examples.perf\RemotePerfClient.cs">
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\org.apache.etch.examples.perf\RemotePerfClient.cs">
       <Link>RemotePerfClient.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.examples.perf\RemotePerfServer.cs">
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\org.apache.etch.examples.perf\RemotePerfServer.cs">
       <Link>RemotePerfServer.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.examples.perf\StubPerf.cs">
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\org.apache.etch.examples.perf\StubPerf.cs">
       <Link>StubPerf.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.examples.perf\StubPerfClient.cs">
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\org.apache.etch.examples.perf\StubPerfClient.cs">
       <Link>StubPerfClient.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.examples.perf\StubPerfServer.cs">
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\org.apache.etch.examples.perf\StubPerfServer.cs">
       <Link>StubPerfServer.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.examples.perf\ValueFactoryPerf.cs">
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\org.apache.etch.examples.perf\ValueFactoryPerf.cs">
       <Link>ValueFactoryPerf.cs</Link>
     </Compile>
     <Compile Include="..\etch.examples.perf\ImplPerfServer.cs">

@@ -17,11 +17,10 @@
 
 using System;
 using System.Collections.Generic;
-
 using Etch.Support;
 using Etch.Util;
 
-namespace etch.examples.distmap
+namespace org.apache.etch.examples.distmap
 {
 	///<summary>Main implementation for DistributedHashTableListener.</summary>
 	public class MainDistributedHashTableListener : DistributedHashTableHelper.DistributedHashTableServerFactory

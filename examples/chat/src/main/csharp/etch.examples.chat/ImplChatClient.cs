@@ -17,14 +17,9 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-
-using Etch.Msg;
-using Etch.Support;
-using Etch.Transport;
 using Etch.Util;
 
-namespace etch.examples.chat
+namespace org.apache.etch.examples.chat
 {
     public class ImplChatClient : BaseChatClient
     {
