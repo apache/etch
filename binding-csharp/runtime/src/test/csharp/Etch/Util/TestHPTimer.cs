@@ -17,7 +17,7 @@
 using System.Threading;
 using NUnit.Framework;
 
-namespace Etch.Util
+namespace Org.Apache.Etch.Bindings.Csharp.Util
 {
     [TestFixture]
     public class TestHPTimer

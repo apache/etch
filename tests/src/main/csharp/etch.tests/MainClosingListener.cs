@@ -15,9 +15,9 @@
 // under the License.
 
 using System;
-using Etch.Support;
+using Org.Apache.Etch.Bindings.Csharp.Support;
 using etch.tests;
-using Etch.Util;
+using Org.Apache.Etch.Bindings.Csharp.Util;
 using org.apache.etch.tests;
 
 namespace etch.bindings.csharp.examples.closing

@@ -16,10 +16,10 @@
 
 using System;
 using System.Collections.Generic;
-using Etch.Support;
+using Org.Apache.Etch.Bindings.Csharp.Support;
 using NUnit.Framework;
 
-namespace Etch.Msg
+namespace Org.Apache.Etch.Bindings.Csharp.Msg
 {
     [TestFixture]
     public class TestStructValue

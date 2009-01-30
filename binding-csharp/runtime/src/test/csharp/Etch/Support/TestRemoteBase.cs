@@ -15,14 +15,14 @@
 // under the License.
 
 using System;
-using Etch.Msg;
-using Etch.Transport;
-using Etch.Util;
+using Org.Apache.Etch.Bindings.Csharp.Msg;
+using Org.Apache.Etch.Bindings.Csharp.Transport;
+using Org.Apache.Etch.Bindings.Csharp.Util;
 using NUnit.Framework;
 
 //using Etch.Support;
 
-namespace Etch.Support
+namespace Org.Apache.Etch.Bindings.Csharp.Support
 {
 
     [TestFixture]
@@ -141,7 +141,7 @@ namespace Etch.Support
                 Assert.IsNull( what );
                 what = What.BEGINCALL;
                 this.xmsg = msg;
-                this.xmb = new Etch.Transport.PlainMailbox(this, 0L);
+                this.xmb = new PlainMailbox(this, 0L);
                 return this.xmb;
             }
 

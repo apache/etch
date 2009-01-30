@@ -15,10 +15,10 @@
 // under the License.
 
 using System;
-using Etch.Msg;
-using Etch.Support;
-using Etch.Transport;
-using Etch.Util;
+using Org.Apache.Etch.Bindings.Csharp.Msg;
+using Org.Apache.Etch.Bindings.Csharp.Support;
+using Org.Apache.Etch.Bindings.Csharp.Transport;
+using Org.Apache.Etch.Bindings.Csharp.Util;
 using NUnit.Framework;
 using org.apache.etch.tests;
 using org.apache.etch.tests.types.Test1;

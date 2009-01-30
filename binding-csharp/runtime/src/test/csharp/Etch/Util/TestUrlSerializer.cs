@@ -15,11 +15,11 @@
 // under the License.
 
 using System;
-using Etch.Msg;
-using Etch.Support;
+using Org.Apache.Etch.Bindings.Csharp.Msg;
+using Org.Apache.Etch.Bindings.Csharp.Support;
 using NUnit.Framework;
 
-namespace Etch.Util
+namespace Org.Apache.Etch.Bindings.Csharp.Util
 {
     [TestFixture]
     public class TestUrlSerializer

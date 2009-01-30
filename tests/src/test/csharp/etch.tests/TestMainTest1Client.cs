@@ -16,7 +16,7 @@
 
 using System;
 using System.Threading;
-using Etch.Util;
+using Org.Apache.Etch.Bindings.Csharp.Util;
 using NUnit.Framework;
 using org.apache.etch.tests;
 using org.apache.etch.tests.types.Test1;

@@ -38,7 +38,7 @@ namespace $intf.parent().name()
 #if ($hasBaseClass)
 	public class $clname : Remote$i, $intfname
 #else
-	public class $clname : Etch.Support.RemoteBase, $intfname
+	public class $clname : Org.Apache.Etch.Bindings.Csharp.Support.RemoteBase, $intfname
 #end
 	{
 #if ($hasBaseClass)
@@ -62,7 +62,8 @@ namespace $intf.parent().name()
 		/// <summary>Constructs the $clname.</summary>
 		/// <param name="svc"></param>
 		/// <param name="vf"></param>
-		public $clname( Etch.Support.DeliveryService svc, Etch.Msg.ValueFactory vf )
+		public $clname( Org.Apache.Etch.Bindings.Csharp.Support.DeliveryService svc,
+				Org.Apache.Etch.Bindings.Csharp.Msg.ValueFactory vf )
 			: base( svc, vf )
 		{
 			_async = new _Async(this);
@@ -143,7 +144,7 @@ namespace $intf.parent().name()
 #end
 		)
 		{
-			Etch.Msg.Message _msg = _NewMessage( $vfname.$n.vname( $helper ) );
+			Org.Apache.Etch.Bindings.Csharp.Msg.Message _msg = _NewMessage( $vfname.$n.vname( $helper ) );
 #foreach( $p in $n.iterator() )
 			_msg.Add( $vfname.$p.vname( $helper ), $p.name() );
 #end
@@ -335,7 +336,7 @@ namespace $intf.parent().name()
 #end
 #end
 			///<returns>mailbox to use to retrieve the result using _end_${n.name()}.</returns>			
-			public Etch.Support.Mailbox _begin_${n.name()}(
+			public Org.Apache.Etch.Bindings.Csharp.Support.Mailbox _begin_${n.name()}(
 #set( $sep = "" )
 #foreach( $p in $n.iterator() )
 				$sep$helper.getTypeName( $p.type() ) $p.name()
@@ -343,7 +344,7 @@ namespace $intf.parent().name()
 #end
 			)
 			{
-				Etch.Msg.Message _msg = _parent._NewMessage( $vfname.$n.vname( $helper ) );
+				Org.Apache.Etch.Bindings.Csharp.Msg.Message _msg = _parent._NewMessage( $vfname.$n.vname( $helper ) );
 #foreach( $p in $n.iterator() )
 				_msg.Add( $vfname.$p.vname( $helper ), $p.name() );
 #end
@@ -352,7 +353,7 @@ namespace $intf.parent().name()
 	 
 			/// <summary>Waits for the call to end and returns the result.</summary>
 			/// <param name="_mb">mailbox returned by _begin_${n.name()}.</param>
-			public $helper.getTypeName( $n.type() ) _end_${n.name()}( Etch.Support.Mailbox _mb )
+			public $helper.getTypeName( $n.type() ) _end_${n.name()}( Org.Apache.Etch.Bindings.Csharp.Support.Mailbox _mb )
 			{
 #if ($n.hasReturn())
 				return
@@ -412,7 +413,7 @@ namespace $intf.parent().name()
 #end
 #end
 
-			public Etch.Support.Mailbox _begin_${n.name()}(
+			public Org.Apache.Etch.Bindings.Csharp.Support.Mailbox _begin_${n.name()}(
 #set( $sep = "" )
 #foreach( $p in $n.iterator() )
 				$sep$helper.getTypeName( $p.type() ) $p.name()
@@ -431,7 +432,7 @@ namespace $intf.parent().name()
 			
 			///<summary>Ends a call to ${n.name()}</summary>
 			///<param name = mb> mailbox returned by _begin_${n.name()}. </param>
-			public $helper.getTypeName( $n.type() ) _end_${n.name()}( Etch.Support.Mailbox _mb )
+			public $helper.getTypeName( $n.type() ) _end_${n.name()}( Org.Apache.Etch.Bindings.Csharp.Support.Mailbox _mb )
 			{
 #if($n.hasReturn())
 				return

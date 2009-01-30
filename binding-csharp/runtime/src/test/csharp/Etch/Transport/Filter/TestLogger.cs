@@ -15,12 +15,12 @@
 // under the License.
 
 using System;
-using Etch.Msg;
-using Etch.Support;
-using Etch.Util;
+using Org.Apache.Etch.Bindings.Csharp.Msg;
+using Org.Apache.Etch.Bindings.Csharp.Support;
+using Org.Apache.Etch.Bindings.Csharp.Util;
 using NUnit.Framework;
 
-namespace Etch.Transport.Filter
+namespace Org.Apache.Etch.Bindings.Csharp.Transport.Filter
 {
     [TestFixture]
     public class TestLogger
@@ -152,7 +152,7 @@ namespace Etch.Transport.Filter
 
             #region TransportMessage Members
 
-            public void TransportMessage(Who recipient, Etch.Msg.Message msg)
+            public void TransportMessage(Who recipient, Org.Apache.Etch.Bindings.Csharp.Msg.Message msg)
             {
                 this.what = What.TRANSPORT_MESSAGE;
                 this.recipient = recipient;
@@ -215,7 +215,7 @@ namespace Etch.Transport.Filter
 
             #region SessionMessage Members
 
-            public bool SessionMessage(Who sender, Etch.Msg.Message msg)
+            public bool SessionMessage(Who sender, Org.Apache.Etch.Bindings.Csharp.Msg.Message msg)
             {
                 this.what = What.SESSION_MESSAGE;
                 this.sender = sender;

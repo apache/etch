@@ -15,12 +15,12 @@
 // under the License.
 
 using System;
-using Etch.Msg;
-using Etch.Transport;
-using Etch.Util;
+using Org.Apache.Etch.Bindings.Csharp.Msg;
+using Org.Apache.Etch.Bindings.Csharp.Transport;
+using Org.Apache.Etch.Bindings.Csharp.Util;
 using NUnit.Framework;
 
-namespace Etch.Support
+namespace Org.Apache.Etch.Bindings.Csharp.Support
 {
     [TestFixture]
     public class TestStubBase

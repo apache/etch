@@ -18,10 +18,11 @@ using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
-using Etch.Util;
+using Org.Apache.Etch.Bindings.Csharp.Util;
 using NUnit.Framework;
+using TcpListener=Org.Apache.Etch.Bindings.Csharp.Util.TcpListener;
 
-namespace Etch.Transport
+namespace Org.Apache.Etch.Bindings.Csharp.Transport
 {       
     [TestFixture]
     public class TestTcpConnection
@@ -38,7 +39,7 @@ namespace Etch.Transport
             Console.WriteLine();
             Console.Write( "TestTCPConnection" );
 
-            l = new Etch.Util.TcpListener( "tcp:", null );
+            l = new TcpListener( "tcp:", null );
             l.SetSession(lh);
             l.Start();
             l.WaitUp( TIMEOUT );

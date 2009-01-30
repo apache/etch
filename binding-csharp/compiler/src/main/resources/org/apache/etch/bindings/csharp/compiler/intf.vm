@@ -17,10 +17,6 @@
 // This file is automatically created and should not be edited!
 
 using System;
-
-namespace $intf.parent().name()
-{
-
 #foreach( $n in $intf.iterator() )
 #if ($n.isExtern())
 #if ($n.hasImport( $helper ))
@@ -28,6 +24,9 @@ namespace $intf.parent().name()
 #end
 #end
 #end
+
+namespace $intf.parent().name()
+{
 #if( $intf.hasDescr() )
 	///<summary>
 #foreach( $s in $intf.descr() )

@@ -18,7 +18,7 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using Etch.Util;
+using Org.Apache.Etch.Bindings.Csharp.Util;
 
 namespace org.apache.etch.examples.chat
 {

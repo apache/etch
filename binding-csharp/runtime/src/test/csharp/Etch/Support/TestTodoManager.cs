@@ -16,10 +16,10 @@
 
 using System;
 using System.Threading;
-using Etch.Util;
+using Org.Apache.Etch.Bindings.Csharp.Util;
 using NUnit.Framework;
 
-namespace Etch.Support
+namespace Org.Apache.Etch.Bindings.Csharp.Support
 {
     [TestFixture]
     public class TestTodoManager
