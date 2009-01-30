@@ -16,7 +16,7 @@
  
 using System;
 
-namespace Etch.Support
+namespace Org.Apache.Etch.Bindings.Csharp.Support
 {
     /// <summary>
     /// Out-of-band query, control, and notification interface for sessions.

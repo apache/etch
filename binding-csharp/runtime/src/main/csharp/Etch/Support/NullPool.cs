@@ -17,7 +17,7 @@
 using System;
 using System.Threading;
 
-namespace Etch.Support
+namespace Org.Apache.Etch.Bindings.Csharp.Support
 {
     /// <summary>
     /// A pool which runs runnable directly

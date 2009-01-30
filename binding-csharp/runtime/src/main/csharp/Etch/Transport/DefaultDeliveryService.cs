@@ -15,11 +15,11 @@
 // under the License.
 
 using System;
-using Etch.Msg;
-using Etch.Support;
-using Etch.Util;
+using Org.Apache.Etch.Bindings.Csharp.Msg;
+using Org.Apache.Etch.Bindings.Csharp.Support;
+using Org.Apache.Etch.Bindings.Csharp.Util;
 
-namespace Etch.Transport
+namespace Org.Apache.Etch.Bindings.Csharp.Transport
 {
     public class DefaultDeliveryService : DeliveryService
     {

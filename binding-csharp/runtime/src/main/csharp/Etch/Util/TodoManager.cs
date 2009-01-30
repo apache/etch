@@ -18,7 +18,7 @@ using System;
 using System.Runtime.CompilerServices;
 using System.Threading;
 
-namespace Etch.Util
+namespace Org.Apache.Etch.Bindings.Csharp.Util
 {
     /// <summary>
     /// A standalone version of a processor for todo items

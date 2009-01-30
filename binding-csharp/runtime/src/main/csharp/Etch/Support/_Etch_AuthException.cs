@@ -16,7 +16,7 @@
 
 using System;
 
-namespace Etch.Support
+namespace Org.Apache.Etch.Bindings.Csharp.Support
 {
     public class _Etch_AuthException : _Etch_RuntimeException
     {

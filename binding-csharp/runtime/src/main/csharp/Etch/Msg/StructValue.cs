@@ -18,7 +18,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Etch.Msg
+namespace Org.Apache.Etch.Bindings.Csharp.Msg
 {
 
     ///A typed map of key/value pairs, where the type is a Type, each key is a Field, 
@@ -61,7 +61,7 @@ namespace Etch.Msg
 
         private readonly Dictionary<Field, Object> fields;
 
-        private readonly Etch.Msg.Validator.Level level;
+        private readonly Validator.Level level;
 
         /// <summary>
         /// The struct type, or message action or event.
@@ -77,7 +77,7 @@ namespace Etch.Msg
         /// <summary>
         /// The validation level.
         /// </summary>
-        public Etch.Msg.Validator.Level Level
+        public Validator.Level Level
         {
             get
             {

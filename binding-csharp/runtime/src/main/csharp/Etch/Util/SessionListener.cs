@@ -14,7 +14,7 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
-namespace Etch.Util
+namespace Org.Apache.Etch.Bindings.Csharp.Util
 {
     /// <summary>
     /// Interface used to deliver new connections to the session from the listener.

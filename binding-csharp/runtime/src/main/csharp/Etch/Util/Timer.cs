@@ -16,7 +16,7 @@
 
 using System;
 
-namespace Etch.Util
+namespace Org.Apache.Etch.Bindings.Csharp.Util
 {
     /// <summary>
     /// Timer enables making high precision interval tests. In the usual

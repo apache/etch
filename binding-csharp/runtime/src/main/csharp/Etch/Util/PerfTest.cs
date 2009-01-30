@@ -17,7 +17,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Etch.Util
+namespace Org.Apache.Etch.Bindings.Csharp.Util
 {
     /// <summary>
     /// Framework for running performance tests.
@@ -100,9 +100,9 @@ namespace Etch.Util
 
         private double RunOne( long n )
         {
-            long t0 = Etch.Util.HPTimer.Now();
+            long t0 = HPTimer.Now();
             _r( n );
-            return Etch.Util.HPTimer.SecondsSince(t0);
+            return HPTimer.SecondsSince(t0);
         }
 
         /// <summary>

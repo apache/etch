@@ -14,10 +14,10 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
-using Etch.Msg;
-using Etch.Util;
+using Org.Apache.Etch.Bindings.Csharp.Msg;
+using Org.Apache.Etch.Bindings.Csharp.Util;
 
-namespace Etch.Transport
+namespace Org.Apache.Etch.Bindings.Csharp.Transport
 {
     public interface SessionMessage : Session
     {

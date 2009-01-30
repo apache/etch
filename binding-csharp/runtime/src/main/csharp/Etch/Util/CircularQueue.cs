@@ -18,7 +18,7 @@ using System;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
-namespace Etch.Util
+namespace Org.Apache.Etch.Bindings.Csharp.Util
 {
 
     /// <summary>

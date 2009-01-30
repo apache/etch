@@ -17,10 +17,10 @@
 using System;
 using System.Globalization;
 using System.IO;
-using Etch.Msg;
-using Etch.Util;
+using Org.Apache.Etch.Bindings.Csharp.Msg;
+using Org.Apache.Etch.Bindings.Csharp.Util;
 
-namespace Etch.Transport.Filter
+namespace Org.Apache.Etch.Bindings.Csharp.Transport.Filter
 {
     public class Logger : AbstractMessageFilter
     {

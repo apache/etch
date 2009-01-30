@@ -14,7 +14,7 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
-namespace Etch.Transport.Fmt.Binary
+namespace Org.Apache.Etch.Bindings.Csharp.Transport.Fmt.Binary
  
 {
     public class BinaryTaggedDataFormatFactory : FormatFactory
@@ -22,14 +22,14 @@ namespace Etch.Transport.Fmt.Binary
         
         public BinaryTaggedDataFormatFactory() {}
         
-        public override TaggedDataInput NewTaggedDataInput( Etch.Msg.ValueFactory vf, string uri )
+        public override TaggedDataInput NewTaggedDataInput( Org.Apache.Etch.Bindings.Csharp.Msg.ValueFactory vf, string uri )
         {
-            return new Etch.Transport.Fmt.Binary.BinaryTaggedDataInput( vf, uri );
+            return new BinaryTaggedDataInput( vf, uri );
         }
 
-        public override TaggedDataOutput NewTaggedDataOutput( Etch.Msg.ValueFactory vf, string uri )
+        public override TaggedDataOutput NewTaggedDataOutput( Org.Apache.Etch.Bindings.Csharp.Msg.ValueFactory vf, string uri )
         {
-            return new Etch.Transport.Fmt.Binary.BinaryTaggedDataOutput( vf, uri );
+            return new BinaryTaggedDataOutput( vf, uri );
         }
     }
 }

@@ -16,7 +16,7 @@
 
 using System;
 
-namespace Etch.Msg
+namespace Org.Apache.Etch.Bindings.Csharp.Msg
 {
     /// <summary>An IdName is a base class for Field or Type. It is used
     /// to bind together a type or field name with the associated id. The id

@@ -15,10 +15,10 @@
 // under the License.
 
 using System;
-using Etch.Msg;
-using Etch.Util;
+using Org.Apache.Etch.Bindings.Csharp.Msg;
+using Org.Apache.Etch.Bindings.Csharp.Util;
 
-namespace Etch.Support
+namespace Org.Apache.Etch.Bindings.Csharp.Support
 {
     /// <summary>An interface used to deliver responses to a message. Support for the mechanism is somewhat 
     /// dependent upon properties of the transport and message format.</summary>

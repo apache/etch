@@ -16,7 +16,7 @@
 
 using System.Collections.Generic;
 
-namespace Etch.Util
+namespace Org.Apache.Etch.Bindings.Csharp.Util
 {
     /// <summary>
     /// A hashmap which is from string to integer

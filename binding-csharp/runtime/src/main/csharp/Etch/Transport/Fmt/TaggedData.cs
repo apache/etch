@@ -15,10 +15,10 @@
 // under the License.
 
 using System;
-using Etch.Msg;
-using Etch.Support;
+using Org.Apache.Etch.Bindings.Csharp.Msg;
+using Org.Apache.Etch.Bindings.Csharp.Support;
 
-namespace Etch.Transport.Fmt
+namespace Org.Apache.Etch.Bindings.Csharp.Transport.Fmt
 {
     /// <summary>
     /// Common interface for various types of tagged data input and output.

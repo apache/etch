@@ -17,7 +17,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Etch.Util
+namespace Org.Apache.Etch.Bindings.Csharp.Util
 {
     public class EmptyIterator<E> : IEnumerator<E>
     {

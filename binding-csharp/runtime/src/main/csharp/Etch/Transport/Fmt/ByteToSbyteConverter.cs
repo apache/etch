@@ -14,7 +14,7 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
-namespace Etch.Transport.Fmt
+namespace Org.Apache.Etch.Bindings.Csharp.Transport.Fmt
 {
     /// <summary>
     /// Class that provides methods for : 

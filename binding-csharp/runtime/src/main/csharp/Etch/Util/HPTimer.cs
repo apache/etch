@@ -18,7 +18,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace Etch.Util
+namespace Org.Apache.Etch.Bindings.Csharp.Util
 {
 	public abstract class HPTimer
 	{

@@ -18,10 +18,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
-using Etch.Msg;
-using Etch.Util;
+using Org.Apache.Etch.Bindings.Csharp.Msg;
+using Org.Apache.Etch.Bindings.Csharp.Util;
 
-namespace Etch.Support
+namespace Org.Apache.Etch.Bindings.Csharp.Support
 {
 
     /// <summary>Default implementation of ValueFactory which provides some dynamic type and field support, as well 

@@ -16,11 +16,12 @@
 
 using System;
 using System.Net.Sockets;
-using Etch.Msg;
-using Etch.Support;
-using Etch.Util;
+using Org.Apache.Etch.Bindings.Csharp.Msg;
+using Org.Apache.Etch.Bindings.Csharp.Support;
+using Org.Apache.Etch.Bindings.Csharp.Util;
+using TcpListener=Org.Apache.Etch.Bindings.Csharp.Util.TcpListener;
 
-namespace Etch.Transport
+namespace Org.Apache.Etch.Bindings.Csharp.Transport
 {
     /// <summary>
     /// TransportFactory for tcp connections and listeners.
@@ -73,7 +74,7 @@ namespace Etch.Transport
         protected override Transport<ServerFactory> NewListener( string uri, Resources resources,
             ServerFactory factory )
         {
-            Transport<SessionListener<Socket>> l = new Etch.Util.TcpListener(uri, resources);
+            Transport<SessionListener<Socket>> l = new TcpListener(uri, resources);
             MySessionListener b = new MySessionListener(this, l, uri, resources);
             b.SetSession(factory);
             return b;

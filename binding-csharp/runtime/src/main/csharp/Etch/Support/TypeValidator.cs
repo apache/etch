@@ -15,9 +15,9 @@
 // under the License.
 
 using System;
-using Etch.Msg;
+using Org.Apache.Etch.Bindings.Csharp.Msg;
 
-namespace Etch.Support
+namespace Org.Apache.Etch.Bindings.Csharp.Support
 {
     /// <summary>
     /// Base class of validators which validate based on exact type.

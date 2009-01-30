@@ -16,7 +16,7 @@
 
 using System.Runtime.CompilerServices;
 
-namespace Etch.Util
+namespace Org.Apache.Etch.Bindings.Csharp.Util
 {
     /// <summary>
     ///  A safe integer counter

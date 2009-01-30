@@ -14,7 +14,7 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
-namespace Etch.Msg
+namespace Org.Apache.Etch.Bindings.Csharp.Msg
 {
     ///<summary> A message is modeled as a command and some argments. The command is an arbitrary
     /// integer value, and the arguments are key / value pairs, where the key is an arbitrary integer 

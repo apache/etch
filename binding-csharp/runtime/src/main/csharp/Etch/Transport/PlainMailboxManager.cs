@@ -16,11 +16,11 @@
 
 using System;
 using System.Collections.Generic;
-using Etch.Msg;
-using Etch.Support;
-using Etch.Util;
+using Org.Apache.Etch.Bindings.Csharp.Msg;
+using Org.Apache.Etch.Bindings.Csharp.Support;
+using Org.Apache.Etch.Bindings.Csharp.Util;
 
-namespace Etch.Transport
+namespace Org.Apache.Etch.Bindings.Csharp.Transport
 {
     /// <summary>
     /// MailboxManager is a MessageHandler which accepts packets for

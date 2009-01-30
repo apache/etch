@@ -15,9 +15,9 @@
 // under the License.
 
 using System;
-using Etch.Msg;
+using Org.Apache.Etch.Bindings.Csharp.Msg;
 
-namespace Etch.Transport.Fmt.Binary
+namespace Org.Apache.Etch.Bindings.Csharp.Transport.Fmt.Binary
 {
     /// <summary>
     /// A validator for the special end of list marker,
