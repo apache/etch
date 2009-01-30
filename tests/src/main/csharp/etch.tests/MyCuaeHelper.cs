@@ -14,13 +14,9 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-using Etch.Support;
-using etch.tests;
-using Etch.Transport;
 using Etch.Msg;
+using Etch.Support;
+using Etch.Transport;
 using Etch.Util;
 using org.apache.etch.tests;
 

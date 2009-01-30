@@ -15,15 +15,9 @@
 // under the License.
 
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Text;
-using System.Runtime.CompilerServices;
+using Etch.Support;
 using etch.tests;
 using Etch.Util;
-using Etch.Msg;
-using Etch.Support;
-using Etch.Transport;
 using org.apache.etch.tests;
 
 namespace etch.bindings.csharp.examples.closing

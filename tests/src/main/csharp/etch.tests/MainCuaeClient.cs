@@ -15,16 +15,9 @@
 // under the License.
 
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Text;
-using etch.tests;
 using Etch.Util;
-using Etch.Msg;
-using Etch.Support;
-using Etch.Transport;
-using org.apache.etch.tests.types.Cuae;
 using org.apache.etch.tests;
+using org.apache.etch.tests.types.Cuae;
 
 namespace etch.tests
 {

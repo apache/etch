@@ -16,7 +16,6 @@
 
 using System;
 using Etch.Support;
-using Etch.Transport;
 using Etch.Util;
 using org.apache.etch.tests;
 

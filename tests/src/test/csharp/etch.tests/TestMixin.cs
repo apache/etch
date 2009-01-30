@@ -14,17 +14,14 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
+using System.Collections.Generic;
+using Etch.Msg;
 using Etch.Support;
+using NUnit.Framework;
 using org.apache.etch.tests;
 using org.apache.etch.tests.types.Bar;
 using org.apache.etch.tests.types.Baz;
 using org.apache.etch.tests.types.Foo;
-using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using Etch.Msg;
-
 
 namespace etch.tests
 {

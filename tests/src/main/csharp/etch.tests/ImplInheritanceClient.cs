@@ -14,10 +14,7 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
-using System;
-using etch.tests;
 using org.apache.etch.tests;
-
 
 /**
  * Call to message translator for InheritanceClient.

@@ -15,9 +15,8 @@
 // under the License.
 
 using System;
-
-using org.apache.etch.tests;
 using NUnit.Framework;
+using org.apache.etch.tests;
 
 namespace etch.tests
 {

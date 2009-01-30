@@ -14,14 +14,13 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
+
+using System;
 using org.apache.etch.tests;
 using org.apache.etch.tests.types.Bar;
 using org.apache.etch.tests.types.Baz;
 using org.apache.etch.tests.types.Foo;
 
-
-using System;
-using etch.tests;
 /**
  * Call to message translator for FooServer.
  */

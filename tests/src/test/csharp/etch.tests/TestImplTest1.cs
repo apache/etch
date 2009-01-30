@@ -15,10 +15,8 @@
 // under the License.
 
 using System;
-
-using etch.tests;
-using NUnit.Framework;
 using Etch.Util;
+using NUnit.Framework;
 using org.apache.etch.tests;
 using org.apache.etch.tests.types.Test1;
 

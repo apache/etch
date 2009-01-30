@@ -15,16 +15,11 @@
 // under the License.
 
 using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Threading;
+using Etch.Util;
+using NUnit.Framework;
 using org.apache.etch.tests;
 using org.apache.etch.tests.types.Test1;
-using Etch.Util;
-
-using Etch.Transport;
-using NUnit.Framework;
-using System.Threading;
-
 
 namespace etch.tests
 {
