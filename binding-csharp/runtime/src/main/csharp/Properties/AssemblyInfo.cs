@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Etch")]
-[assembly: AssemblyDescription("Etch C# Runtime DLL")]
+[assembly: AssemblyDescription("Etch C# Binding Runtime DLL")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Cisco Systems")]
 [assembly: AssemblyProduct("Etch")]
