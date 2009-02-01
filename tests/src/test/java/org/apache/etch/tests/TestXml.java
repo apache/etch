@@ -189,7 +189,7 @@ public class TestXml {
 		
 		checkExternProperties(externNode, "Blob", "-1308039838", "org.apache.etch.tests.Test1.Blob");
 		checkExternMapProperties(externNode, "java", "StrIntHashMap", "org.apache.etch.bindings.java.util.StrIntHashMap", "StrIntHashMapSerializer",  "org.apache.etch.bindings.java.util.StrIntHashMapSerializer");
-		checkExternMapProperties(externNode, "csharp", "StrIntHashMap", "Etch.Util", "StrIntHashMapSerializer",  "Etch.Util");
+		checkExternMapProperties(externNode, "csharp", "StrIntHashMap", "Org.Apache.Etch.Bindings.Csharp.Util", "StrIntHashMapSerializer",  "Org.Apache.Etch.Bindings.Csharp.Util");
 	}
 		
 	/** @throws Exception */
