@@ -112,12 +112,12 @@ public class Struct extends ParamList<Service>
 			if (n == null)
 				throw new ParseException( String.format(
 					"struct %s extends %s not defined at line %d",
-					this.name(), xtnds.name(), xtnds.token.beginLine ) );
+					name(), xtnds.name(), xtnds.token.beginLine ) );
 			
 			if (!(n instanceof Struct))
 				throw new ParseException( String.format(
 					"struct %s extends %s not a struct at line %d",
-					this.name(), xtnds.name(), xtnds.token.beginLine ) );
+					name(), xtnds.name(), xtnds.token.beginLine ) );
 			
 			Struct s = this;
 			while (s != null && s.hasExtends())
@@ -126,7 +126,7 @@ public class Struct extends ParamList<Service>
 				if (s == this)
 					throw new ParseException( String.format(
 						"struct %s extends %s creates loop at line %d",
-						this.name(), xtnds.name(), xtnds.token.beginLine ) );
+						name(), xtnds.name(), xtnds.token.beginLine ) );
 			}
 			
 			s = getExtends();
@@ -136,7 +136,7 @@ public class Struct extends ParamList<Service>
 				if (x != null)
 					throw new ParseException( String.format(
 						"struct %s extends %s hides parameter %s from %s at line %d",
-						this.name(), xtnds.name(), x.name(), x.parent().name(),
+						name(), xtnds.name(), x.name(), x.parent().name(),
 						xtnds.token.beginLine ) );
 			}
 		}
@@ -174,7 +174,7 @@ public class Struct extends ParamList<Service>
 	public boolean hasAnyParameters()
 	{
 		return hasParameters() ||
-			(hasExtends() && getExtends().hasAnyParameters());
+			hasExtends() && getExtends().hasAnyParameters();
 	}
 
 	@Override

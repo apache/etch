@@ -17,8 +17,6 @@
 
 package org.apache.etch.examples.distmap;
 
-import org.apache.etch.examples.distmap.BaseDistributedHashTableClient;
-import org.apache.etch.examples.distmap.RemoteDistributedHashTableServer;
 
 /**
  * Your custom implementation of BaseDistributedHashTableClient. Add methods here to provide

@@ -79,7 +79,7 @@ public class Validator_custom extends TypeValidator
 		@Override
 		public int hashCode()
 		{
-			return clss.hashCode() ^ (dims * 9131) ^ (subclassOk ? 21357 : 8547);
+			return clss.hashCode() ^ dims * 9131 ^ (subclassOk ? 21357 : 8547);
 		}
 		
 		@Override

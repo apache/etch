@@ -810,7 +810,7 @@ public class TestPacketizer
 		
 		public Object transportQuery( Object query ) throws Exception
 		{
-			this.what = What.TRANSPORT_QUERY;
+			what = What.TRANSPORT_QUERY;
 			this.query = query;
 			return query_result;
 		}
@@ -818,21 +818,21 @@ public class TestPacketizer
 		public void transportControl( Object control, Object value )
 			throws Exception
 		{
-			this.what = What.TRANSPORT_CONTROL;
+			what = What.TRANSPORT_CONTROL;
 			this.control = control;
 			this.value = value;
 		}
 
 		public void transportNotify( Object event ) throws Exception
 		{
-			this.what = What.TRANSPORT_NOTIFY;
+			what = What.TRANSPORT_NOTIFY;
 			this.event = event;
 		}
 		
 		public void transportData( Who recipient, FlexBuffer buf )
 			throws Exception
 		{
-			this.what = What.DATA;
+			what = What.DATA;
 			this.recipient = recipient;
 			list.add( buf.getAvailBytes() );
 		}

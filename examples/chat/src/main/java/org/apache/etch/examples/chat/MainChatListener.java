@@ -22,9 +22,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.etch.bindings.java.support.ServerFactory;
-import org.apache.etch.examples.chat.ChatHelper;
-import org.apache.etch.examples.chat.ChatServer;
-import org.apache.etch.examples.chat.RemoteChatClient;
 import org.apache.etch.util.Log;
 import org.apache.etch.util.core.io.Transport;
 

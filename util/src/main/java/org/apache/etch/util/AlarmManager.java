@@ -491,7 +491,7 @@ public class AlarmManager extends AbstractStartable implements Runnable
 		@Override
 		public int hashCode()
 		{
-			return (int) ((due ^ (due >>> 32)) ^ (seq ^ (seq >>> 32)));
+			return (int) (due ^ due >>> 32 ^ seq ^ seq >>> 32);
 		}
 
 		@Override

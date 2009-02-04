@@ -39,14 +39,14 @@ abstract public class OptParamBase
 		Constraint constraint ) throws Exception
 	{
 		this.cp = cp;
-		this.names = new String[] { name };
+		names = new String[] { name };
 		this.method = findMethod( cp.program, method, params );
 		this.description = description;
 		this.isRequired = isRequired;
 		if (constraint != null)
-			this.constraints = new Constraint[] { constraint };
+			constraints = new Constraint[] { constraint };
 		else
-			this.constraints = null;
+			constraints = null;
 	}
 	
 	/**

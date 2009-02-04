@@ -38,6 +38,7 @@ public class ImplClosingServer extends BaseClosingServer
 	
 	private final RemoteClosingClient client;
 
+	@Override
 	public void close()
 	{
 		try
@@ -52,6 +53,7 @@ public class ImplClosingServer extends BaseClosingServer
 		}
 	}
 
+	@Override
 	public void _sessionNotify( Object event ) throws Exception
 	{
 		Log.report( "ImplClosingServer._sessionNotify", "event", event );

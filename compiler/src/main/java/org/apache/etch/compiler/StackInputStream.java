@@ -37,7 +37,7 @@ public class StackInputStream extends InputStream
 	 */
 	public StackInputStream(InputStream in1)
 	{
-		this.mainStream = in1;
+		mainStream = in1;
 		currentStream = mainStream;
 	}
 
@@ -46,7 +46,7 @@ public class StackInputStream extends InputStream
 	 */
 	public void setStreamTwo(InputStream in2)
 	{
-		this.includeStream = in2;
+		includeStream = in2;
 	}
 
 	/**

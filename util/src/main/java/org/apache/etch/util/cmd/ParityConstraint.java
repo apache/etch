@@ -37,7 +37,7 @@ public class ParityConstraint implements Constraint
 	public void checkValue( Object value ) throws Exception
 	{
 		int v = ((Integer) value).intValue();
-		boolean valueIsOdd = ((v & 1) != 0);
+		boolean valueIsOdd = (v & 1) != 0;
 		if (valueIsOdd != wantsOdd)
 			throw new Exception( wantsOdd ? "is not odd" : "is not even" );
 	}

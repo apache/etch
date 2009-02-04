@@ -22,8 +22,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.etch.examples.chat.BaseChatServer;
-import org.apache.etch.examples.chat.RemoteChatClient;
 import org.apache.etch.util.Log;
 import org.apache.etch.util.core.io.Session;
 
@@ -59,6 +57,7 @@ public class ImplChatServer extends BaseChatServer
 	
 //	private final static String INVALID_NAME_PWD_MSG = "User name/password is not valid";
 
+	@Override
 	public synchronized void login( String name, String pwd ) throws Failure
 	{
 		if (isLoggedIn())
@@ -119,6 +118,7 @@ public class ImplChatServer extends BaseChatServer
 		Log.report( "login", "who", name );
 	}
 
+	@Override
 	public synchronized void logout()
 	{
 		if (user != null)
@@ -149,6 +149,7 @@ public class ImplChatServer extends BaseChatServer
 		}
 	}
 
+	@Override
 	public Boolean isLoggedIn()
 	{
 		return user != null;
@@ -168,6 +169,7 @@ public class ImplChatServer extends BaseChatServer
 	// Send //
 	//////////
 
+	@Override
 	public void send( String who, String msg ) throws Failure
 	{
 		String me = user;
@@ -207,6 +209,7 @@ public class ImplChatServer extends BaseChatServer
 	// Session query, control, and notify //
 	////////////////////////////////////////
 
+	@Override
 	public void _sessionNotify( Object event ) throws Exception
 	{
 		if (event == Session.UP)

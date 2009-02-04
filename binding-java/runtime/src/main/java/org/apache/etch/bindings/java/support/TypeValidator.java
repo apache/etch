@@ -54,7 +54,7 @@ abstract public class TypeValidator implements Validator
 		String descr, boolean subclassOk )
 	{
 		checkDims( nDims );
-		this.expectedClass = mkExpectedClass( scalarClass, arrayClass, nDims );
+		expectedClass = mkExpectedClass( scalarClass, arrayClass, nDims );
 		this.nDims = nDims;
 		this.descr = descr;
 		this.subclassOk = subclassOk;

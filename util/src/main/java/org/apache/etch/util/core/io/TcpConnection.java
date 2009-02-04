@@ -68,14 +68,14 @@ public class TcpConnection extends TcpTransport
 				throw new IllegalArgumentException( "port <= 0 || port > 65535" );
 			
 			this.socket = null;
-			this.host = h;
-			this.port = p;
+			host = h;
+			port = p;
 		}
 		else
 		{
 			this.socket = socket;
-			this.host = null;
-			this.port = 0;
+			host = null;
+			port = 0;
 		}
 	}
 

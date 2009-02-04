@@ -47,7 +47,7 @@ public class Message extends ParamList<Service>
 	{
 		super( intf, name, nOpts );
 
-		this.md = getMessageDirection();
+		md = getMessageDirection();
 		this.type = type;
 	}
 

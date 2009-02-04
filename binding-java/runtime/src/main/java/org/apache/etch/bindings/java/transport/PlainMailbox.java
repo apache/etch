@@ -159,11 +159,11 @@ public class PlainMailbox implements Mailbox, AlarmListener
 		
 		synchronized (queue)
 		{
-			if (this.notify != null)
+			if (notify != null)
 				throw new IllegalStateException( "this.notify != null" );
 			
-			this.notify = newNotify;
-			this.state = newState;
+			notify = newNotify;
+			state = newState;
 			
 			if (maxDelay > 0)
 			{
@@ -183,12 +183,12 @@ public class PlainMailbox implements Mailbox, AlarmListener
 		if (oldNotify == null)
 			throw new NullPointerException( "oldNotify == null" );
 		
-		if (this.notify == null)
+		if (notify == null)
 			return;
 		
 		synchronized (queue)
 		{
-			if (oldNotify != this.notify)
+			if (oldNotify != notify)
 				throw new IllegalStateException( "oldNotify != this.notify" );
 			
 			if (alarmSet)
@@ -197,8 +197,8 @@ public class PlainMailbox implements Mailbox, AlarmListener
 				AlarmManager.staticRemove( this );
 			}
 			
-			this.notify = null;
-			this.state = null;
+			notify = null;
+			state = null;
 		}
 	}
 	

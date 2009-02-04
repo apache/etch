@@ -53,13 +53,13 @@ abstract public class Option extends OptParamBase
 		if (!setTokens( tokens ))
 			throw new IllegalArgumentException( "no tokens for option" );
 		
-		this.isArray = params.length > 3 && params[3].isArray();
+		isArray = params.length > 3 && params[3].isArray();
 		this.flags = flags;
 		
 		if (defaultValue != null)
-			this.defaultValues = new Object[] { defaultValue };
+			defaultValues = new Object[] { defaultValue };
 		else
-			this.defaultValues = null;
+			defaultValues = null;
 		
 		if (constraint != null && defaultValue != null)
 			constraint.checkValue( defaultValue );
@@ -90,7 +90,7 @@ abstract public class Option extends OptParamBase
 		if (defaultValues != null && defaultValues.length != names.length)
 			throw new IllegalArgumentException( "defaultValue.length != name.length" );
 		
-		this.isArray = params.length > 3 && params[3].isArray();
+		isArray = params.length > 3 && params[3].isArray();
 		this.flags = flags;
 		this.defaultValues = defaultValues;
 		

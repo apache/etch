@@ -892,7 +892,7 @@ public class Compiler extends Backend
 						"undefined or ambiguous name at line %d: %s",
 						t.beginLine, t.image ) );
 				if (n.isEnumx())
-					return (n.efqname( this ) + "?");
+					return n.efqname( this ) + "?";
 				return n.efqname( this );
 			}
 		}

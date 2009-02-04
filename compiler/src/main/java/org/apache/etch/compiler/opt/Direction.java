@@ -57,7 +57,7 @@ public class Direction extends Opt
 		
 		try
 		{
-			this.md = MessageDirection.valueOf( arg.image.toUpperCase() );
+			md = MessageDirection.valueOf( arg.image.toUpperCase() );
 		}
 		catch ( IllegalArgumentException e )
 		{

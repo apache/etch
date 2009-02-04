@@ -51,6 +51,7 @@ public class StreamHandler extends AbstractHandler<SocketChannel>
 		return wantsConnect;
 	}
 	
+	@Override
 	protected final void doConnect() throws IOException
 	{
 		wantsConnect = !channel().finishConnect();

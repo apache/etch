@@ -66,7 +66,7 @@ public class AsyncReceiver extends Opt
 					arg.beginLine );
 				m = AsyncReceiverMode.QUEUED;
 			}
-			this.mode = m;
+			mode = m;
 		}
 		catch ( IllegalArgumentException e )
 		{

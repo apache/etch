@@ -207,7 +207,7 @@ public interface LogHandler
 		public History( String source, int lineNumber )
 		{
 			this.source = source;
-			this.lineNum = lineNumber;
+			lineNum = lineNumber;
 		}
 		
 		/**

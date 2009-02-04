@@ -157,7 +157,7 @@ public class TodoManager extends AbstractStartable implements Runnable
 	    // start a new worker if there are none or if the queue
 	    // length per worker has exceeded the threshold.
 	    
-	    if (n == 0 || ((qlen + n - 1) / n) > threshold)
+	    if (n == 0 || (qlen + n - 1) / n > threshold)
 	    	startAWorker();
 	    
     }

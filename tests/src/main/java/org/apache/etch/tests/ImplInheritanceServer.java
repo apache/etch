@@ -38,41 +38,49 @@ public class ImplInheritanceServer extends BaseInheritanceServer
 	@SuppressWarnings("unused")
 	private final RemoteInheritanceClient client;
 
+	@Override
 	public Object f1( Object v )
 	{
 		return v;
 	}
 
+	@Override
 	public S1 f2( S1 v )
 	{
 		return v;
 	}
 
+	@Override
 	public S2 f3( S2 v )
 	{
 		return v;
 	}
 
+	@Override
 	public S3 f4( S3 v )
 	{
 		return v;
 	}
 
+	@Override
 	public Object[] f5( Object[] v )
 	{
 		return v;
 	}
 
+	@Override
 	public S1[] f6( S1[] v )
 	{
 		return v;
 	}
 
+	@Override
 	public S2[] f7( S2[] v )
 	{
 		return v;
 	}
 
+	@Override
 	public S3[] f8( S3[] v )
 	{
 		return v;

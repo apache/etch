@@ -113,12 +113,12 @@ public class Except extends ParamList<Service>
 			if (n == null)
 				throw new ParseException( String.format(
 					"exception %s extends %s not defined at line %d",
-					this.name(), xtnds.name(), xtnds.token.beginLine ) );
+					name(), xtnds.name(), xtnds.token.beginLine ) );
 			
 			if (!(n instanceof Except))
 				throw new ParseException( String.format(
 					"exception %s extends %s not an exception at line %d",
-					this.name(), xtnds.name(), xtnds.token.beginLine ) );
+					name(), xtnds.name(), xtnds.token.beginLine ) );
 			
 			Except s = this;
 			while (s != null && s.hasExtends())
@@ -127,7 +127,7 @@ public class Except extends ParamList<Service>
 				if (s == this)
 					throw new ParseException( String.format(
 						"exception %s extends %s creates loop at line %d",
-						this.name(), xtnds.name(), xtnds.token.beginLine ) );
+						name(), xtnds.name(), xtnds.token.beginLine ) );
 			}
 			
 			s = getExtends();
@@ -137,7 +137,7 @@ public class Except extends ParamList<Service>
 				if (x != null)
 					throw new ParseException( String.format(
 						"exception %s extends %s hides parameter %s from %s at line %d",
-						this.name(), xtnds.name(), x.name(), x.parent().name(),
+						name(), xtnds.name(), x.name(), x.parent().name(),
 						xtnds.token.beginLine ) );
 			}
 		}
@@ -175,7 +175,7 @@ public class Except extends ParamList<Service>
 	public boolean hasAnyParameters()
 	{
 		return hasParameters() ||
-			(hasExtends() && getExtends().hasAnyParameters());
+			hasExtends() && getExtends().hasAnyParameters();
 	}
 
 	@Override

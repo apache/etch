@@ -93,8 +93,8 @@ public class TestMainTest1Client
 	@Test
 	public void classInheritance()
 	{
-		assertTrue( this.myMainTestClient instanceof ImplTest1Client );
-		assertTrue( this.myMainTestClient instanceof BaseTest1Client );
+		assertTrue( myMainTestClient instanceof ImplTest1Client );
+		assertTrue( myMainTestClient instanceof BaseTest1Client );
 	}
 	
 	/**
@@ -103,7 +103,7 @@ public class TestMainTest1Client
 	(expected = UnsupportedOperationException.class)
 	public void nothingMethod()
 	{
-		this.myMainTestClient.nothing();
+		myMainTestClient.nothing();
 	}
 
 	/**
@@ -112,7 +112,7 @@ public class TestMainTest1Client
 	(expected = UnsupportedOperationException.class)
 	public void incrMethod()
 	{
-		this.myInt = this.myMainTestClient.incr(this.myInt);
+		myInt = myMainTestClient.incr(myInt);
 	}
 
 	/**
@@ -121,7 +121,7 @@ public class TestMainTest1Client
 	(expected = UnsupportedOperationException.class)
 	public void addMethod()
 	{
-		this.myInt = this.myMainTestClient.add(this.myInt, this.myInt);
+		myInt = myMainTestClient.add(myInt, myInt);
 	}
 
 	/**
@@ -130,7 +130,7 @@ public class TestMainTest1Client
 	(expected = UnsupportedOperationException.class)
 	public void subMethod()
 	{
-		this.myInt = this.myMainTestClient.sub(this.myInt, this.myInt);
+		myInt = myMainTestClient.sub(myInt, myInt);
 	}
 
 	/**
@@ -139,7 +139,7 @@ public class TestMainTest1Client
 	(expected = UnsupportedOperationException.class)
 	public void sumMethod()
 	{
-		this.myInt = this.myMainTestClient.sum(this.myInts);
+		myInt = myMainTestClient.sum(myInts);
 	}
 
 	/**
@@ -148,7 +148,7 @@ public class TestMainTest1Client
 	(expected = UnsupportedOperationException.class)
 	public void transMethod()
 	{
-		this.myInt = this.myMainTestClient.trans(this.myE1, this.myInt);
+		myInt = myMainTestClient.trans(myE1, myInt);
 	}
 
 	/**
@@ -157,7 +157,7 @@ public class TestMainTest1Client
 	(expected = UnsupportedOperationException.class)
 	public void distMethod()
 	{
-		this.myDouble = this.myMainTestClient.dist(this.myS1, this.myS1);
+		myDouble = myMainTestClient.dist(myS1, myS1);
 	}
 
 	/**
@@ -166,7 +166,7 @@ public class TestMainTest1Client
 	(expected = UnsupportedOperationException.class)
 	public void fillMethod()
 	{
-		this.myInts = this.myMainTestClient.fill(this.myInt, this.myInt);
+		myInts = myMainTestClient.fill(myInt, myInt);
 	}
 
 	/**
@@ -175,7 +175,7 @@ public class TestMainTest1Client
 	(expected = UnsupportedOperationException.class)
 	public void fillObjectMethod()
 	{
-		this.myObjs = this.myMainTestClient.fillObject(this.myInt, this.myObj);
+		myObjs = myMainTestClient.fillObject(myInt, myObj);
 	}
 
 	/**
@@ -186,7 +186,7 @@ public class TestMainTest1Client
 	public void blowMethod()
 		throws Exception
 	{
-		this.myMainTestClient.blow(this.myString, this.myInt);
+		myMainTestClient.blow(myString, myInt);
 	}
 
 	/**
@@ -197,7 +197,7 @@ public class TestMainTest1Client
 	public void beetsMethod()
 		throws Exception
 	{
-		this.myInt = this.myMainTestClient.beets(this.myE1);
+		myInt = myMainTestClient.beets(myE1);
 	}
 
 	/**
@@ -208,7 +208,7 @@ public class TestMainTest1Client
 	public void throwExcp5Method()
 		throws Exception
 	{
-		this.myMainTestClient.throwExcp5(this.myString, this.myInt, this.myObj);
+		myMainTestClient.throwExcp5(myString, myInt, myObj);
 	}
 
 	/**
@@ -219,7 +219,7 @@ public class TestMainTest1Client
 	public void throwExcp6Method()
 		throws Exception
 	{
-		this.myMainTestClient.throwExcp6(this.myString, this.myInt, this.myObjs);
+		myMainTestClient.throwExcp6(myString, myInt, myObjs);
 	}
 
 	/**
@@ -228,7 +228,7 @@ public class TestMainTest1Client
 	(expected = UnsupportedOperationException.class)
 	public void p_booleanMethod()
 	{
-		this.myBool = this.myMainTestClient.p_boolean(this.myBool);
+		myBool = myMainTestClient.p_boolean(myBool);
 	}
 
 	/**
@@ -237,7 +237,7 @@ public class TestMainTest1Client
 	(expected = UnsupportedOperationException.class)
 	public void p_boolean_arrayMethod()
 	{
-		this.myBools = this.myMainTestClient.p_boolean_array(this.myBools);
+		myBools = myMainTestClient.p_boolean_array(myBools);
 	}
 
 	/**
@@ -246,7 +246,7 @@ public class TestMainTest1Client
 	(expected = UnsupportedOperationException.class)
 	public void p_byteMethod()
 	{
-		this.myByte = this.myMainTestClient.p_byte(this.myByte);
+		myByte = myMainTestClient.p_byte(myByte);
 	}
 
 	/**
@@ -255,7 +255,7 @@ public class TestMainTest1Client
 	(expected = UnsupportedOperationException.class)
 	public void p_byte_arrayMethod()
 	{
-		this.myBytes = this.myMainTestClient.p_byte_array(this.myBytes);
+		myBytes = myMainTestClient.p_byte_array(myBytes);
 	}
 
 	/**
@@ -264,7 +264,7 @@ public class TestMainTest1Client
 	(expected = UnsupportedOperationException.class)
 	public void p_shortMethod()
 	{
-		this.myShort = this.myMainTestClient.p_short(this.myShort);
+		myShort = myMainTestClient.p_short(myShort);
 	}
 
 	/**
@@ -273,7 +273,7 @@ public class TestMainTest1Client
 	(expected = UnsupportedOperationException.class)
 	public void p_short_arrayMethod()
 	{
-		this.myShorts = this.myMainTestClient.p_short_array(this.myShorts);
+		myShorts = myMainTestClient.p_short_array(myShorts);
 	}
 
 	/**
@@ -282,7 +282,7 @@ public class TestMainTest1Client
 	(expected = UnsupportedOperationException.class)
 	public void p_intMethod()
 	{
-		this.myInt = this.myMainTestClient.p_int(this.myInt);
+		myInt = myMainTestClient.p_int(myInt);
 	}
 
 	/**
@@ -291,7 +291,7 @@ public class TestMainTest1Client
 	(expected = UnsupportedOperationException.class)
 	public void p_int_arrayMethod()
 	{
-		this.myInts = this.myMainTestClient.p_int_array(this.myInts);
+		myInts = myMainTestClient.p_int_array(myInts);
 	}
 
 	/**
@@ -300,7 +300,7 @@ public class TestMainTest1Client
 	(expected = UnsupportedOperationException.class)
 	public void p_longMethod()
 	{
-		this.myLong = this.myMainTestClient.p_long(this.myLong);
+		myLong = myMainTestClient.p_long(myLong);
 	}
 
 	/**
@@ -309,7 +309,7 @@ public class TestMainTest1Client
 	(expected = UnsupportedOperationException.class)
 	public void p_long_arrayMethod()
 	{
-		this.myLongs = this.myMainTestClient.p_long_array(this.myLongs);
+		myLongs = myMainTestClient.p_long_array(myLongs);
 	}
 
 	/**
@@ -318,7 +318,7 @@ public class TestMainTest1Client
 	(expected = UnsupportedOperationException.class)
 	public void p_floatMethod()
 	{
-		this.myFloat = this.myMainTestClient.p_float(this.myFloat);
+		myFloat = myMainTestClient.p_float(myFloat);
 	}
 
 	/**
@@ -327,7 +327,7 @@ public class TestMainTest1Client
 	(expected = UnsupportedOperationException.class)
 	public void p_float_arrayMethod()
 	{
-		this.myFloats = this.myMainTestClient.p_float_array(this.myFloats);
+		myFloats = myMainTestClient.p_float_array(myFloats);
 	}
 
 	/**
@@ -336,7 +336,7 @@ public class TestMainTest1Client
 	(expected = UnsupportedOperationException.class)
 	public void p_doubleMethod()
 	{
-		this.myDouble = this.myMainTestClient.p_double(this.myDouble);
+		myDouble = myMainTestClient.p_double(myDouble);
 	}
 
 	/**
@@ -345,7 +345,7 @@ public class TestMainTest1Client
 	(expected = UnsupportedOperationException.class)
 	public void p_double_arrayMethod()
 	{
-		this.myDoubles = this.myMainTestClient.p_double_array(this.myDoubles);
+		myDoubles = myMainTestClient.p_double_array(myDoubles);
 	}
 
 	/**
@@ -354,7 +354,7 @@ public class TestMainTest1Client
 	(expected = UnsupportedOperationException.class)
 	public void p_stringMethod()
 	{
-		this.myString = this.myMainTestClient.p_string(this.myString);
+		myString = myMainTestClient.p_string(myString);
 	}
 
 	/**
@@ -363,7 +363,7 @@ public class TestMainTest1Client
 	(expected = UnsupportedOperationException.class)
 	public void p_string_arrayMethod()
 	{
-		this.myStrings = this.myMainTestClient.p_string_array(this.myStrings);
+		myStrings = myMainTestClient.p_string_array(myStrings);
 	}
 
 	/**
@@ -372,7 +372,7 @@ public class TestMainTest1Client
 	(expected = UnsupportedOperationException.class)
 	public void p_E1Method()
 	{
-		this.myE1 = this.myMainTestClient.p_E1(this.myE1);
+		myE1 = myMainTestClient.p_E1(myE1);
 	}
 
 	/**
@@ -381,7 +381,7 @@ public class TestMainTest1Client
 	(expected = UnsupportedOperationException.class)
 	public void p_E1_arrayMethod()
 	{
-		this.myE1s = this.myMainTestClient.p_E1_array(this.myE1s);
+		myE1s = myMainTestClient.p_E1_array(myE1s);
 	}
 
 	/**
@@ -390,7 +390,7 @@ public class TestMainTest1Client
 	(expected = UnsupportedOperationException.class)
 	public void p_S1Method()
 	{
-		 this.myS1 = this.myMainTestClient.p_S1(this.myS1);
+		 myS1 = myMainTestClient.p_S1(myS1);
 	}
 
 	/**
@@ -399,7 +399,7 @@ public class TestMainTest1Client
 	(expected = UnsupportedOperationException.class)
 	public void p_S1_arrayMethod()
 	{
-		 this.myS1s = this.myMainTestClient.p_S1_array(this.myS1s);
+		 myS1s = myMainTestClient.p_S1_array(myS1s);
 
 	}
 
@@ -409,7 +409,7 @@ public class TestMainTest1Client
 	(expected = UnsupportedOperationException.class)
 	public void p_S2Method()
 	{
-		this.myS2 = this.myMainTestClient.p_S2(this.myS2);
+		myS2 = myMainTestClient.p_S2(myS2);
 	}
 
 	/**
@@ -418,7 +418,7 @@ public class TestMainTest1Client
 	(expected = UnsupportedOperationException.class)
 	public void p_S2_arrayMethod()
 	{
-		this.myS2s = this.myMainTestClient.p_S2_array(this.myS2s);
+		myS2s = myMainTestClient.p_S2_array(myS2s);
 	}
 
 	/**
@@ -427,7 +427,7 @@ public class TestMainTest1Client
 	(expected = UnsupportedOperationException.class)
 	public void p_BlobMethod()
 	{
-		this.myMap = this.myMainTestClient.p_Blob(this.myMap);
+		myMap = myMainTestClient.p_Blob(myMap);
 	}
 
 	/**
@@ -436,7 +436,7 @@ public class TestMainTest1Client
 	(expected = UnsupportedOperationException.class)
 	public void p_Blob_ArrayMethod()
 	{
-		this.myMaps = this.myMainTestClient.p_Blob_array(this.myMaps);
+		myMaps = myMainTestClient.p_Blob_array(myMaps);
 	}
 
 	/**
@@ -445,7 +445,7 @@ public class TestMainTest1Client
 	(expected = UnsupportedOperationException.class)
 	public void p_objectMethod()
 	{
-		this.myObj = this.myMainTestClient.p_object(this.myObj);
+		myObj = myMainTestClient.p_object(myObj);
 	}
 
 	/**
@@ -454,7 +454,7 @@ public class TestMainTest1Client
 	(expected = UnsupportedOperationException.class)
 	public void p_object_arrayMethod()
 	{
-		this.myMainTestClient.p_object_array(null);
+		myMainTestClient.p_object_array(null);
 	}
 
 	/**
@@ -463,7 +463,7 @@ public class TestMainTest1Client
 	(expected = UnsupportedOperationException.class)
 	public void p_object_structMethod()
 	{
-		this.myS3 = this.myMainTestClient.p_object_struct(this.myS3);
+		myS3 = myMainTestClient.p_object_struct(myS3);
 	}
 
 	/**
@@ -472,7 +472,7 @@ public class TestMainTest1Client
 	(expected = UnsupportedOperationException.class)
 	public void p_object_struct_arrayMethod()
 	{
-		this.myS4 = this.myMainTestClient.p_object_struct_array(this.myS4);
+		myS4 = myMainTestClient.p_object_struct_array(myS4);
 	}
 
 	/**
@@ -481,7 +481,7 @@ public class TestMainTest1Client
 	(expected = UnsupportedOperationException.class)
 	public void alwaysWordsMethod()
 	{
-		this.myInt = this.myMainTestClient.alwaysWorks();
+		myInt = myMainTestClient.alwaysWorks();
 	}
 
 	/**
@@ -490,7 +490,7 @@ public class TestMainTest1Client
 	(expected = UnsupportedOperationException.class)
 	public void isTrueMethod()
 	{
-		this.myBool = this.myMainTestClient.isTrue();
+		myBool = myMainTestClient.isTrue();
 	}
 
 	/**
@@ -499,7 +499,7 @@ public class TestMainTest1Client
 	(expected = UnsupportedOperationException.class)
 	public void alwaysFailsMethod()
 	{
-		this.myMainTestClient.alwaysFails();
+		myMainTestClient.alwaysFails();
 	}
 
 	/**
@@ -508,7 +508,7 @@ public class TestMainTest1Client
 	(expected = UnsupportedOperationException.class)
 	public void isFalseMethod()
 	{
-		this.myBool = this.myMainTestClient.isFalse();
+		myBool = myMainTestClient.isFalse();
 	}
 
 	/**
@@ -517,7 +517,7 @@ public class TestMainTest1Client
 	(expected = UnsupportedOperationException.class)
 	public void m1Method()
 	{
-		this.myMainTestClient.m1();
+		myMainTestClient.m1();
 	}
 
 	/**
@@ -526,7 +526,7 @@ public class TestMainTest1Client
 	(expected = UnsupportedOperationException.class)
 	public void can_m1Method()
 	{
-		this.myBool = this.myMainTestClient.can_m1();
+		myBool = myMainTestClient.can_m1();
 	}
 
 	/**
@@ -535,7 +535,7 @@ public class TestMainTest1Client
 	(expected = UnsupportedOperationException.class)
 	public void m2Method()
 	{
-		this.myMainTestClient.m2();
+		myMainTestClient.m2();
 	}
 
 	/**
@@ -544,7 +544,7 @@ public class TestMainTest1Client
 	(expected = UnsupportedOperationException.class)
 	public void can_m2Method()
 	{
-		this.myBool = this.myMainTestClient.can_m2(null);
+		myBool = myMainTestClient.can_m2(null);
 	}
 
 	/**
@@ -553,7 +553,7 @@ public class TestMainTest1Client
 	(expected = UnsupportedOperationException.class)
 	public void m3Method()
 	{
-		this.myMainTestClient.m3();
+		myMainTestClient.m3();
 	}
 
 	/**
@@ -562,7 +562,7 @@ public class TestMainTest1Client
 	(expected = UnsupportedOperationException.class)
 	public void can_m3Method()
 	{
-		this.myBool = this.myMainTestClient.can_m3(null);
+		myBool = myMainTestClient.can_m3(null);
 	}
 
 	/**
@@ -571,7 +571,7 @@ public class TestMainTest1Client
 	(expected = UnsupportedOperationException.class)
 	public void m4Method()
 	{
-		this.myMainTestClient.m4();
+		myMainTestClient.m4();
 	}
 
 	/**
@@ -580,7 +580,7 @@ public class TestMainTest1Client
 	(expected = UnsupportedOperationException.class)
 	public void can_m4Method()
 	{
-		this.myBool = this.myMainTestClient.can_m4(this.myBool);
+		myBool = myMainTestClient.can_m4(myBool);
 	}
 
 	/**
@@ -589,7 +589,7 @@ public class TestMainTest1Client
 	(expected = UnsupportedOperationException.class)
 	public void m5Method()
 	{
-		this.myMainTestClient.m5();
+		myMainTestClient.m5();
 	}
 
 	/**
@@ -598,7 +598,7 @@ public class TestMainTest1Client
 	(expected = UnsupportedOperationException.class)
 	public void can_m5Method()
 	{
-		this.myBool = this.myMainTestClient.can_m5(this.myByte);
+		myBool = myMainTestClient.can_m5(myByte);
 	}
 
 	/**
@@ -607,7 +607,7 @@ public class TestMainTest1Client
 	(expected = UnsupportedOperationException.class)
 	public void m7Method()
 	{
-		this.myMainTestClient.m7();
+		myMainTestClient.m7();
 	}
 
 	/**
@@ -616,7 +616,7 @@ public class TestMainTest1Client
 	(expected = UnsupportedOperationException.class)
 	public void can_m7Method()
 	{
-		this.myBool = this.myMainTestClient.can_m7(this.myInt);
+		myBool = myMainTestClient.can_m7(myInt);
 	}
 
 	/**
@@ -625,7 +625,7 @@ public class TestMainTest1Client
 	(expected = UnsupportedOperationException.class)
 	public void m8Method()
 	{
-		this.myMainTestClient.m8();
+		myMainTestClient.m8();
 	}
 
 	/**
@@ -634,7 +634,7 @@ public class TestMainTest1Client
 	(expected = UnsupportedOperationException.class)
 	public void can_m8Method()
 	{
-		this.myBool = this.myMainTestClient.can_m8(this.myLong);
+		myBool = myMainTestClient.can_m8(myLong);
 	}
 
 	/**
@@ -643,7 +643,7 @@ public class TestMainTest1Client
 	(expected = UnsupportedOperationException.class)
 	public void m9Method()
 	{
-		this.myMainTestClient.m9();
+		myMainTestClient.m9();
 	}
 
 	/**
@@ -652,7 +652,7 @@ public class TestMainTest1Client
 	(expected = UnsupportedOperationException.class)
 	public void can_m9Method()
 	{
-		this.myBool = this.myMainTestClient.can_m9(this.myFloat);
+		myBool = myMainTestClient.can_m9(myFloat);
 	}
 
 	/**
@@ -661,7 +661,7 @@ public class TestMainTest1Client
 	(expected = UnsupportedOperationException.class)
 	public void m10Method()
 	{
-		this.myMainTestClient.m10();
+		myMainTestClient.m10();
 	}
 
 	/**
@@ -670,7 +670,7 @@ public class TestMainTest1Client
 	(expected = UnsupportedOperationException.class)
 	public void can_m10Method()
 	{
-		this.myBool = this.myMainTestClient.can_m10(this.myDouble);
+		myBool = myMainTestClient.can_m10(myDouble);
 	}
 
 	/**
@@ -679,7 +679,7 @@ public class TestMainTest1Client
 	(expected = UnsupportedOperationException.class)
 	public void m11Method()
 	{
-		this.myMainTestClient.m11();
+		myMainTestClient.m11();
 	}
 
 	/**
@@ -688,7 +688,7 @@ public class TestMainTest1Client
 	(expected = UnsupportedOperationException.class)
 	public void can_m11Method()
 	{
-		this.myBool = this.myMainTestClient.can_m11(this.myString);
+		myBool = myMainTestClient.can_m11(myString);
 	}
 
 	/**
@@ -697,7 +697,7 @@ public class TestMainTest1Client
 	(expected = UnsupportedOperationException.class)
 	public void m12Method()
 	{
-		this.myMainTestClient.m12();
+		myMainTestClient.m12();
 	}
 
 	/**
@@ -706,7 +706,7 @@ public class TestMainTest1Client
 	(expected = UnsupportedOperationException.class)
 	public void can_m12Method()
 	{
-		this.myBool = this.myMainTestClient.can_m12(this.myInt);
+		myBool = myMainTestClient.can_m12(myInt);
 	}
 
 	/**
@@ -715,7 +715,7 @@ public class TestMainTest1Client
 	(expected = UnsupportedOperationException.class)
 	public void m13Method()
 	{
-		this.myMainTestClient.m13(this.myInt);
+		myMainTestClient.m13(myInt);
 	}
 
 	/**
@@ -724,7 +724,7 @@ public class TestMainTest1Client
 	(expected = UnsupportedOperationException.class)
 	public void can_m13Method()
 	{
-		this.myBool = this.myMainTestClient.can_m13(this.myInt);
+		myBool = myMainTestClient.can_m13(myInt);
 	}
 
 	/**
@@ -733,7 +733,7 @@ public class TestMainTest1Client
 	(expected = UnsupportedOperationException.class)
 	public void m14Method()
 	{
-		this.myMainTestClient.m14(this.myS1);
+		myMainTestClient.m14(myS1);
 	}
 
 	/**
@@ -742,7 +742,7 @@ public class TestMainTest1Client
 	(expected = UnsupportedOperationException.class)
 	public void can_m14Method()
 	{
-		this.myBool = this.myMainTestClient.can_m14(this.myInt);
+		myBool = myMainTestClient.can_m14(myInt);
 	}
 
 	/**
@@ -751,7 +751,7 @@ public class TestMainTest1Client
 	(expected = UnsupportedOperationException.class)
 	public void m15Method()
 	{
-		this.myMainTestClient.m15();
+		myMainTestClient.m15();
 	}
 
 	/**
@@ -760,7 +760,7 @@ public class TestMainTest1Client
 	(expected = UnsupportedOperationException.class)
 	public void can_m15Method()
 	{
-		this.myBool = this.myMainTestClient.can_m15(this.myE1);
+		myBool = myMainTestClient.can_m15(myE1);
 	}
 
 	/**
@@ -899,8 +899,8 @@ public class TestMainTest1Client
 		 */
 		public Lock()
 		{
-			this.myCount = 0;
-			this.mySemaphore = new Semaphore(1);
+			myCount = 0;
+			mySemaphore = new Semaphore(1);
 		}
 
 		/**
@@ -909,7 +909,7 @@ public class TestMainTest1Client
 		 */
 		public void getLock(final int c)
 		{
-			while(c > this.myCount)
+			while(c > myCount)
 			{
 				try
 				{
@@ -923,7 +923,7 @@ public class TestMainTest1Client
 
 			try
 			{
-				this.mySemaphore.acquire();
+				mySemaphore.acquire();
 			}
 			catch(final Exception e)
 			{
@@ -937,10 +937,10 @@ public class TestMainTest1Client
 		 */
 		public synchronized void releaseLock(final int c)
 		{
-			if ((c == this.myCount) && (this.mySemaphore.availablePermits() == 0))
+			if (c == myCount && mySemaphore.availablePermits() == 0)
 			{
-				this.mySemaphore.release();
-				++this.myCount;
+				mySemaphore.release();
+				++myCount;
 			}
 		}
 	}
@@ -966,8 +966,8 @@ public class TestMainTest1Client
 		 */
 		public ThreadClient(final Lock l)
 		{
-			this.ourLock = l;
-			this.myHasErrors = false;
+			ourLock = l;
+			myHasErrors = false;
 		}
 
 		/**
@@ -979,7 +979,7 @@ public class TestMainTest1Client
 			// 0. Wait for the listener to start his engine.
 
 			// 1. Start the client.  Let it start, connect, and die gracefully.
-			this.ourLock.getLock(1);
+			ourLock.getLock(1);
 			try
 			{
 				MainTest1Client.main( new String[] {} );
@@ -989,9 +989,9 @@ public class TestMainTest1Client
 				// SHOULDN'T HAPPEN!
 				TestMainTest1Client.printException(e);
 
-				this.myHasErrors = true;
+				myHasErrors = true;
 			}
-			this.ourLock.releaseLock(1);
+			ourLock.releaseLock(1);
 
 			// 2. The listener dies.
 		}
@@ -1002,7 +1002,7 @@ public class TestMainTest1Client
 		 */
 		public boolean hasErrors()
 		{
-			return this.myHasErrors;
+			return myHasErrors;
 		}
 	}
 
@@ -1021,7 +1021,7 @@ public class TestMainTest1Client
 		 */
 		public SimpleThreadListener()
 		{
-			this.myHasErrors = false;
+			myHasErrors = false;
 		}
 
 		/**
@@ -1039,7 +1039,7 @@ public class TestMainTest1Client
 				// SHOULDN'T HAPPEN!
 				TestMainTest1Client.printException(e);
 
-				this.myHasErrors = true;
+				myHasErrors = true;
 			}
 		}
 
@@ -1049,7 +1049,7 @@ public class TestMainTest1Client
 		 */
 		public boolean hasErrors()
 		{
-			return this.myHasErrors;
+			return myHasErrors;
 		}
 	}
 
@@ -1074,8 +1074,8 @@ public class TestMainTest1Client
 		 */
 		public ThreadListener(final Lock l)
 		{
-			this.ourLock = l;
-			this.myHasErrors = false;
+			ourLock = l;
+			myHasErrors = false;
 		}
 
 		/**
@@ -1087,26 +1087,26 @@ public class TestMainTest1Client
 		public void run()
 		{
 			// 0. Start the Listener.
-			this.ourLock.getLock(0);
+			ourLock.getLock(0);
 			final SimpleThreadListener listener = new SimpleThreadListener();
 			listener.start();
-			this.ourLock.releaseLock(0);
+			ourLock.releaseLock(0);
 
 			// 1. Meanwhile, back on the ranch... A new Client is born. And
 			// killed.  Long live the client!
 
 			// 2. Harshly stop the listener and ignore its whining.
-			this.ourLock.getLock(2);
+			ourLock.getLock(2);
 			try
 			{
-				this.myHasErrors = listener.hasErrors();
+				myHasErrors = listener.hasErrors();
 				listener.wait(1);
 			}
 			catch(final Exception e)
 			{
 				// Do nothing. We beat the listener into submission.
 			}
-			this.ourLock.releaseLock(2);
+			ourLock.releaseLock(2);
 		}
 
 		/**
@@ -1115,7 +1115,7 @@ public class TestMainTest1Client
 		 */
 		public boolean hasErrors()
 		{
-			return this.myHasErrors;
+			return myHasErrors;
 		}
 	}
 }

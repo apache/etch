@@ -117,7 +117,7 @@ final public class CircularStringBuf implements StringBuf
 		Assertion.check( n == 0, "n == 0" );
 		Assertion.check( seg1len > 0, "seg1len > 0" );
 		Assertion.check( seg2len >= 0, "seg2len >= 0" );
-		Assertion.check( (seg1len + seg2len) < maxLen, "(seg1len + seg2len) < maxLen" );
+		Assertion.check( seg1len + seg2len < maxLen, "(seg1len + seg2len) < maxLen" );
 		
 		// handle segment 1:
 		

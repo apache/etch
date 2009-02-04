@@ -44,15 +44,15 @@ public class URL
 	 */
 	public URL( URL other )
 	{
-		this.scheme = other.scheme;
-		this.user = other.user;
-		this.password = other.password;
-		this.host = other.host;
-		this.port = other.port;
-		this.uri = other.uri;
-		this.params = copyList( other.params );
-		this.terms = copyTerms( other.terms );
-		this.fragment = other.fragment;
+		scheme = other.scheme;
+		user = other.user;
+		password = other.password;
+		host = other.host;
+		port = other.port;
+		uri = other.uri;
+		params = copyList( other.params );
+		terms = copyTerms( other.terms );
+		fragment = other.fragment;
 	}
 
 	/**
@@ -1123,7 +1123,7 @@ public class URL
 	
 	private boolean eq( Object a, Object b )
 	{
-		return a == b || (a != null && b != null && a.equals( b ));
+		return a == b || a != null && b != null && a.equals( b );
 	}
 
 	private void paramsToString( StringBuffer sb )
@@ -1183,7 +1183,7 @@ public class URL
 			if (isEscaped( c ))
 			{
 				sb.append( '%' );
-				sb.append( StringUtil.toHex( (c >>> 4) & 15 ) );
+				sb.append( StringUtil.toHex( c >>> 4 & 15 ) );
 				sb.append( StringUtil.toHex( c & 15 ) );
 			}
 			else if (c == ' ')
@@ -1234,7 +1234,7 @@ public class URL
 			{
 				char c1 = i.next();
 				char c2 = i.next();
-				sb.append( (char) ((StringUtil.fromHex( c1 ) << 4) | StringUtil.fromHex( c2 )) );
+				sb.append( (char) (StringUtil.fromHex( c1 ) << 4 | StringUtil.fromHex( c2 )) );
 			}
 			else if (c == '+')
 			{
