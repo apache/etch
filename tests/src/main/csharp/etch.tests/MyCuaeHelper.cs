@@ -45,11 +45,15 @@ namespace etch.tests
                 _implFactory = implFactory;
             }
 
-            public override void NewServer(DeliveryService d, ValueFactory vf)
+            public override DeliveryService NewServer(TransportMessage m, ValueFactory vf)
             {
+                URL u = new URL(_uri);
+                MailboxManager x = new PlainMailboxManager(m, u, _resources);
+                DeliveryService d = new DefaultDeliveryService(x, u, _resources);
                 Pool qp = (Pool)_resources[QUEUED_POOL];
                 Pool fp = (Pool)_resources[FREE_POOL];
                 _implFactory.NewMyCuaeServer(d, qp, fp, (MyValueFactoryCuae)vf);
+                return d;
             }
 
             public override ValueFactory NewValueFactory()

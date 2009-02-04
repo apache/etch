@@ -42,7 +42,7 @@ namespace Org.Apache.Etch.Bindings.Csharp.Transport
         
         private const String SOCKET = "TcpTransportFactory.socket";
 
-        protected override DeliveryService NewTransport( string uri, Resources resources )
+        protected override TransportMessage NewTransport(string uri, Resources resources)
         {
             URL u = new URL(uri);
 
@@ -61,14 +61,14 @@ namespace Org.Apache.Etch.Bindings.Csharp.Transport
 
             m = AddFilters(m, u, resources);
 
-            MailboxManager r = new PlainMailboxManager(m, u, resources);
+            //MailboxManager r = new PlainMailboxManager(m, u, resources);
 
-            DeliveryService d = new DefaultDeliveryService(r, u, resources);
+            //DeliveryService d = new DefaultDeliveryService(r, u, resources);
 
             ValueFactory vf = (ValueFactory) resources.Get(TransportConsts.VALUE_FACTORY);
             vf.LockDynamicTypes();
 
-            return d;
+            return m;
         }
 
         protected override Transport<ServerFactory> NewListener( string uri, Resources resources,
@@ -100,7 +100,7 @@ namespace Org.Apache.Etch.Bindings.Csharp.Transport
 
             public override string ToString()
             {
-                return "TcpTransportFactory.MySessionListener" + transport;
+                return "TcpTransportFactory.MySessionListener/" + transport;
             }
 
             public void SessionAccepted(Socket socket)
@@ -111,9 +111,9 @@ namespace Org.Apache.Etch.Bindings.Csharp.Transport
                 ValueFactory vf = session.NewValueFactory();
                 r.Add(TransportConsts.VALUE_FACTORY, vf);
 
-                DeliveryService d = ttf.NewTransport(uri, r);
+                TransportMessage m = ttf.NewTransport(uri, r);
 
-                session.NewServer(d, vf);
+                DeliveryService d = session.NewServer(m, vf);
 
                 d.TransportControl(TransportConsts.START, null);
             }

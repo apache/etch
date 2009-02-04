@@ -15,6 +15,7 @@
 // under the License.
 
 using Org.Apache.Etch.Bindings.Csharp.Msg;
+using Org.Apache.Etch.Bindings.Csharp.Transport;
 using Org.Apache.Etch.Bindings.Csharp.Util;
 
 namespace Org.Apache.Etch.Bindings.Csharp.Support
@@ -28,9 +29,10 @@ namespace Org.Apache.Etch.Bindings.Csharp.Support
         /// <summary>
         /// Constructs a new server session.
         /// </summary>
-        /// <param name="d"> the delivery service to be used with the new session</param>
+        /// <param name="m"> the TransportMessage to be used with the new session</param>
         /// <param name="vf">the value factory to be used with the new session</param>
-        void NewServer( DeliveryService d, ValueFactory vf );
+        /// <returns>the constructed DeliveryService</returns>
+        DeliveryService NewServer(TransportMessage m, ValueFactory vf);
 
         /// <summary>
         /// Constructs a new instance of value factory for this session.

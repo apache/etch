@@ -29,7 +29,12 @@ import org.apache.etch.bindings.java.support.DefaultServerFactory;
 import org.apache.etch.util.core.io.Transport;
 import org.apache.etch.bindings.java.support.TransportFactory;
 import org.apache.etch.bindings.java.support.TransportHelper;
+import org.apache.etch.bindings.java.transport.DefaultDeliveryService;
+import org.apache.etch.bindings.java.transport.MailboxManager;
+import org.apache.etch.bindings.java.transport.PlainMailboxManager;
+import org.apache.etch.bindings.java.transport.TransportMessage;
 import org.apache.etch.util.Resources;
+import org.apache.etch.util.URL;
 
 /**
  * Transport helper for ${i}. All methods are static.
@@ -62,17 +67,21 @@ abstract public class ${i}Helper extends TransportHelper
 		throws Exception
 	{
 		final Resources res = initResources( resources );
-
+		final URL u = new URL( uri );
+		
 		return TransportFactory.getListener( uri, res,
 			new DefaultServerFactory( implFactory )
 			{
-				public void newServer( DeliveryService d, ValueFactory vf ) throws Exception
+				public DeliveryService newServer( TransportMessage m, ValueFactory vf ) throws Exception
 				{
+					MailboxManager x = new PlainMailboxManager( m, u, res );
+					DeliveryService d = new DefaultDeliveryService( x, u, res );
 					Remote${i}Client client = new Remote${i}Client( d, vf );
 					${i}Server server = implFactory.new${i}Server( client );
 					Pool qp = (Pool) res.get( QUEUED_POOL );
 					Pool fp = (Pool) res.get( FREE_POOL );
 					new Stub${i}Server( d, server, qp, fp );
+					return d;
 				}
 	
 				public ValueFactory newValueFactory()
@@ -129,10 +138,15 @@ abstract public class ${i}Helper extends TransportHelper
 		throws Exception
 	{
 		final Resources res = initResources( resources );
+		
 		final ValueFactory${i} vf = new ValueFactory${i}( uri );
 		res.put( Transport.VALUE_FACTORY, vf );
-
-		DeliveryService d = TransportFactory.getTransport( uri, res );
+		
+		URL u = new URL( uri );
+		
+		TransportMessage m = TransportFactory.getTransport( uri, res );
+		MailboxManager r = new PlainMailboxManager( m, u, resources );
+		DeliveryService d = new DefaultDeliveryService( r, u, resources );
 		Remote${i}Server server = new Remote${i}Server( d, vf );
 		${i}Client client = implFactory.new${i}Client( server );
 		Pool qp = (Pool) res.get( QUEUED_POOL );

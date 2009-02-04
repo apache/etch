@@ -19,6 +19,7 @@
 
 using Org.Apache.Etch.Bindings.Csharp.Msg;
 using Org.Apache.Etch.Bindings.Csharp.Support;
+using Org.Apache.Etch.Bindings.Csharp.Transport;
 using Org.Apache.Etch.Bindings.Csharp.Util;
 
 /// <summary>
@@ -64,13 +65,17 @@ namespace $intf.parent().name()
 				_implFactory = implFactory;
 			}
 		
-			public override void NewServer( DeliveryService d, ValueFactory vf )
+			public override DeliveryService NewServer(TransportMessage m, ValueFactory vf)
 			{
-				Remote${i}Client client = new Remote${i}Client( d, vf );
-				${i}Server server = _implFactory.New${i}Server( client );
-				Pool qp = (Pool) _resources[ QUEUED_POOL ];
-				Pool fp = (Pool) _resources[ FREE_POOL ];
-				new Stub${i}Server( d, server, qp, fp );
+                URL u = new URL(_uri);
+                MailboxManager r = new PlainMailboxManager(m, u, _resources);
+                DeliveryService d = new DefaultDeliveryService(r, u, _resources);
+				Remote${i}Client client = new Remote${i}Client(d, vf);
+				${i}Server server = _implFactory.New${i}Server(client);
+				Pool qp = (Pool)_resources[QUEUED_POOL];
+				Pool fp = (Pool)_resources[FREE_POOL];
+				new Stub${i}Server(d, server, qp, fp);
+				return d;
 			}
 
             public override ValueFactory NewValueFactory()
@@ -111,16 +116,22 @@ namespace $intf.parent().name()
 		public static Remote${i}Server NewServer( string uri,
 			Resources resources, ${i}ClientFactory implFactory )
 		{
-			resources = InitResources( resources );
+			resources = InitResources(resources);
+			
 			ValueFactory${i} vf= new ValueFactory${i}(uri);
 			resources.Add( TransportConsts.VALUE_FACTORY, vf );
-			DeliveryService d = TransportFactory.GetTransport( uri, resources );
-			Remote${i}Server server = new Remote${i}Server( d, vf );
-			${i}Client client = implFactory.New${i}Client( server );			
-			 new Stub${i}Client( d,
+			
+			URL u = new URL(uri);
+
+            TransportMessage m = TransportFactory.GetTransport(uri, resources);
+            MailboxManager r = new PlainMailboxManager(m, u, resources);
+            DeliveryService d = new DefaultDeliveryService(r, u, resources);
+			Remote${i}Server server = new Remote${i}Server(d, vf);
+			${i}Client client = implFactory.New${i}Client(server);			
+			new Stub${i}Client(d,
 					client,
-					(Pool) resources[ QUEUED_POOL ],
-					(Pool) resources[ FREE_POOL ] );
+					(Pool) resources[QUEUED_POOL],
+					(Pool) resources[FREE_POOL]);
 	
 			return server;
 		}

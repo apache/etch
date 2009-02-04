@@ -29,24 +29,24 @@ namespace Org.Apache.Etch.Bindings.Csharp.Support
 	public abstract class TransportFactory
 	{
         /// <summary>
-        /// Constructs a new Transport stack topped by a DeliveryService
+        /// Constructs a new Transport stack topped by a TransportMessage
         /// which is used by the remote service implementations to send
-        /// messages and make calls.
+        /// messages.
         /// </summary>
         /// <param name="uri">transport configuration parameters.</param>
         /// <param name="resources">additional resources needed by the stack.</param>
-        /// <returns>the DeliveryService topping the transport stack.</returns>
-        protected abstract DeliveryService NewTransport( string uri, Resources resources );
+        /// <returns>the TransportMessage topping the transport stack.</returns>
+        protected abstract TransportMessage NewTransport(string uri, Resources resources);
 
         /// <summary>
-        /// Constructs a new Transport stack topped by a DeliveryService
+        /// Constructs a new Transport stack topped by a TransportMessage
         /// which is used by the remote service implementations to send
-        /// messages and make calls.
+        /// messages.
         /// </summary>
         /// <param name="uri">transport configuration parameters.</param>
         /// <param name="resources">additional resources needed by the stack.</param>
-        /// <returns>the DeliveryService topping the transport stack.</returns>
-        public static DeliveryService GetTransport( string uri,Resources resources ) 
+        /// <returns>the TransportMessage topping the transport stack.</returns>
+        public static TransportMessage GetTransport(string uri, Resources resources) 
 	    {
 		    URL u = new URL( uri );
 		    TransportFactory f = GetTransportFactory( u.Scheme );
