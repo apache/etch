@@ -31,7 +31,7 @@
 @call %x%scripts\etch-eclipse.bat %q% %b% %n% %d% %i%        Types.etch
 
 @popd
-@cd %examplesdir%
+@pushd %examplesdir%
 
 @pushd chat\src\main\etch
 @call %x%scripts\etch-eclipse.bat %q% %b% %n% %d% %i%        Chat.etch
