@@ -226,9 +226,9 @@ namespace Org.Apache.Etch.Bindings.Csharp.Support
             Define("tcp", new TcpTransportFactory(false));
             Define("tls", new TcpTransportFactory(true));
 
-            DefineFilter("KeepAlive", "Etch.Transport.Filter.KeepAlive");
-            DefineFilter("PwAuth", "Etch.Transport.Filter.PwAuth");
-            DefineFilter("Logger", "Etch.Transport.Filter.Logger");
+            DefineFilter("KeepAlive", "Org.Apache.Etch.Bindings.Csharp.Transport.Filter.KeepAlive");
+            DefineFilter("PwAuth", "Org.Apache.Etch.Bindings.Csharp.Transport.Filter.PwAuth");
+            DefineFilter("Logger", "Org.Apache.Etch.Bindings.Csharp.Transport.Filter.Logger");
         }
 	}
 }
