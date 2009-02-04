@@ -37,7 +37,7 @@ namespace Org.Apache.Etch.Bindings.Csharp.Transport
 
         public override String ToString()
         {
-            return String.Format("Unwanted message from %s: %s", sender, msg);
+            return String.Format("Unwanted message from {0}: {1}", sender, msg);
         }
     }
 }
