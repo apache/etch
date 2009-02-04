@@ -237,9 +237,9 @@ abstract public class TransportFactory
 	
 	static
 	{
-		defineFilter( "KeepAlive", "etch.bindings.java.transport.filters.KeepAlive" );
-		defineFilter( "PwAuth", "etch.bindings.java.transport.filters.PwAuth" );
-		defineFilter( "Logger", "etch.bindings.java.transport.filters.Logger" );
+		defineFilter( "KeepAlive", "org.apache.etch.bindings.java.transport.filters.KeepAlive" );
+		defineFilter( "PwAuth", "org.apache.etch.bindings.java.transport.filters.PwAuth" );
+		defineFilter( "Logger", "org.apache.etch.bindings.java.transport.filters.Logger" );
 	}
 	
 	/**
