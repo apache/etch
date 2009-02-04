@@ -61,7 +61,7 @@ public class Authorize extends Opt
 			method = new Token();
 			method.kind = EtchGrammarConstants.TRUE;
 			method.beginLine = name.token.beginLine;
-			this.argList = new ArrayList<AuthArg>();
+			argList = new ArrayList<AuthArg>();
 			return;
 		}
 		
@@ -83,7 +83,7 @@ public class Authorize extends Opt
 				method, method.beginLine ) );
 		}
 
-		this.argList = argsToArgList( args );
+		argList = argsToArgList( args );
 	}
 	
 	private final Token method;

@@ -72,7 +72,7 @@ public class StructValue extends HashMap<Field, Object>
 			throw new IllegalArgumentException( "type == null" );
 		
 		this.type = type;
-		this.level = vf.getLevel();
+		level = vf.getLevel();
 	}
 
 	private final Type type;

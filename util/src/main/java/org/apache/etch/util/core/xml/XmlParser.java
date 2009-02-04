@@ -203,7 +203,7 @@ public class XmlParser
 		int cc = getCharClass( c );
 		int stateAction = transitions[state][cc];
 		int newState = stateAction & STATE_MASK;
-		int action = (stateAction >>> ACTION_SHIFT) & ACTION_MASK;
+		int action = stateAction >>> ACTION_SHIFT & ACTION_MASK;
 		switch (action)
 		{
 			case A_ERROR:
@@ -630,7 +630,7 @@ public class XmlParser
 		if (c == '\\')
 			return "'\\\\'";
 		
-		return "'"+((char) c)+'\'';
+		return "'"+(char) c+'\'';
 	}
 
 	private static String expectedChars( int state )
@@ -638,7 +638,7 @@ public class XmlParser
 		StringBuffer sb = new StringBuffer();
 		for (int i = 0; i < NCC; i++)
 		{
-			if ((transitions[state][i]>>>ACTION_SHIFT) != A_ERROR)
+			if (transitions[state][i]>>>ACTION_SHIFT != A_ERROR)
 			{
 				if (sb.length() > 0)
 					sb.append( '|' );
@@ -984,7 +984,7 @@ public class XmlParser
 		Assertion.check( transitions[staticNextState][cc] == 0, "stateActions[staticNextState][cc] == 0" );
 		Assertion.check( (newState & ~STATE_MASK) == 0, "(newState & ~STATE_MASK) == 0" );
 		Assertion.check( (action & ~ACTION_MASK) == 0, "(action & ~ACTION_MASK) == 0" );
-		int sa = newState | (action << ACTION_SHIFT);
+		int sa = newState | action << ACTION_SHIFT;
 		transitions[staticNextState][cc] = (short) sa;
 	}
 	
@@ -992,7 +992,7 @@ public class XmlParser
 	{
 		Assertion.check( (newState & ~STATE_MASK) == 0, "(newState & ~STATE_MASK) == 0" );
 		Assertion.check( (action & ~ACTION_MASK) == 0, "(action & ~ACTION_MASK) == 0" );
-		int sa = newState | (action << ACTION_SHIFT);
+		int sa = newState | action << ACTION_SHIFT;
 		for (int i = 0; i < NCC; i++)
 		{
 			if (i == CC_EOF)
@@ -1526,7 +1526,7 @@ public class XmlParser
 			
 			Element e = getChild( 0 );
 			
-			return (e instanceof CdataElement);
+			return e instanceof CdataElement;
 		}
 
 		public String getCdataValue()
@@ -1797,13 +1797,13 @@ public class XmlParser
 			String[] x = StringUtil.leftSplit( qName, ':' );
 			if (x != null)
 			{
-				this.qualifier = x[0];
-				this.name = x[1];
+				qualifier = x[0];
+				name = x[1];
 			}
 			else
 			{
-				this.qualifier = null;
-				this.name = qName;
+				qualifier = null;
+				name = qName;
 			}
 		}
 

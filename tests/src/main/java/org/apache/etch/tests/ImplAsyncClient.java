@@ -37,16 +37,19 @@ public class ImplAsyncClient extends BaseAsyncClient
 	
 	private final RemoteAsyncServer server;
 
+	@Override
 	public Integer sync( Integer count )
 	{
 		return count > 0 ? server.sync( count - 1 ) + 1 : 0;
 	}
 
+	@Override
 	public Integer async_queued( Integer count )
 	{
 		return count > 0 ? server.async_queued( count - 1 ) + 1 : 0;
 	}
 
+	@Override
 	public Integer async_free( Integer count )
 	{
 		return count > 0 ? server.async_free( count - 1 ) + 1 : 0;

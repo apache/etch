@@ -224,7 +224,7 @@ public final class Packetizer implements SessionData, TransportPacket
 		if (reset)
 			buf.reset();
 		
-		if (pktSize < 0 || (maxPktSize > 0 && pktSize > maxPktSize))
+		if (pktSize < 0 || maxPktSize > 0 && pktSize > maxPktSize)
 			throw new IOException( "pktSize < 0 || (maxPktSize > 0 && pktSize > maxPktSize)" );
 		
 		return pktSize;

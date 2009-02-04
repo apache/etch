@@ -22,11 +22,6 @@ import java.util.Date;
 
 import org.apache.etch.bindings.java.support.Mailbox;
 import org.apache.etch.bindings.java.support.ServerFactory;
-import org.apache.etch.examples.perf.PerfClient;
-import org.apache.etch.examples.perf.PerfHelper;
-import org.apache.etch.examples.perf.PerfServer;
-import org.apache.etch.examples.perf.RemotePerfClient;
-import org.apache.etch.examples.perf.RemotePerfServer;
 import org.apache.etch.examples.perf.Perf.Point;
 import org.apache.etch.examples.perf.PerfHelper.PerfClientFactory;
 import org.apache.etch.examples.perf.PerfHelper.PerfServerFactory;
@@ -323,11 +318,11 @@ public class MainPerfClient implements PerfClientFactory, PerfServerFactory
 		long adj = 3600000L;
 
 		Date t1 = server.add2( t0, adj );
-		Assertion.check( (t1.getTime() - t0.getTime()) == adj, String.format(
+		Assertion.check( t1.getTime() - t0.getTime() == adj, String.format(
 			"server.add2( %s, %s ) => %s [bogus!]", t0, adj, t1 ) );
 
 		t1 = server.add2( t0, -adj );
-		Assertion.check( (t1.getTime() - t0.getTime()) == -adj, String.format(
+		Assertion.check( t1.getTime() - t0.getTime() == -adj, String.format(
 			"server.add2( %s, %s ) => %s [bogus!]", t0, -adj, t1 ) );
 
 		server.report2( new Date(), 20, "begin" );

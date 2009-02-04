@@ -284,7 +284,7 @@ public class TestKeepAlive
 			throws Exception
 		{
 			Log.report( "transportMessage", "recipient", recipient, "msg", msg );
-			this.what = What.TRANSPORT_MESSAGE;
+			what = What.TRANSPORT_MESSAGE;
 			this.recipient = recipient;
 			
 			this.msg = msg;
@@ -354,7 +354,7 @@ public class TestKeepAlive
 			throws Exception
 		{
 			Log.report( "sessionMessage", "sender", sender, "msg", msg );
-			this.what = What.SESSION_MESSAGE;
+			what = What.SESSION_MESSAGE;
 			this.sender = sender;
 			this.msg = msg;
 			return handled;

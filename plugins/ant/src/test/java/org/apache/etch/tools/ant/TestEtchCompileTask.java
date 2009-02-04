@@ -25,7 +25,6 @@ import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.etch.tools.ant.EtchCompileTask;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.types.DirSet;
 import org.junit.Ignore;

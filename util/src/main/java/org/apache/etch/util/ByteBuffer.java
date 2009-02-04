@@ -180,7 +180,7 @@ abstract public class ByteBuffer
 		int b1 = get() & 255;
 		int b2 = get() & 255;
 		int b3 = get() & 255;
-		return b0 | (b1 << 8) | (b2 << 16) | (b3 << 24);
+		return b0 | b1 << 8 | b2 << 16 | b3 << 24;
 	}
 	
 	/**

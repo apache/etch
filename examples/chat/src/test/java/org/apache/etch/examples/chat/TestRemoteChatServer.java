@@ -20,11 +20,6 @@ package org.apache.etch.examples.chat;
 // import static org.junit.Assert.*; 
 
 import org.apache.etch.bindings.java.support.ServerFactory;
-import org.apache.etch.examples.chat.ChatClient;
-import org.apache.etch.examples.chat.ChatHelper;
-import org.apache.etch.examples.chat.ImplChatClient;
-import org.apache.etch.examples.chat.MainChatListener;
-import org.apache.etch.examples.chat.RemoteChatServer;
 import org.apache.etch.examples.chat.Chat.Failure;
 import org.apache.etch.util.Log;
 import org.apache.etch.util.core.io.Transport;

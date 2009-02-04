@@ -597,7 +597,7 @@ public class TestPlainMailbox
 		public void mailboxStatus( Mailbox mb, Object state, boolean closed )
 		{
 			mailboxStatus = true;
-			this.mailbox = mb;
+			mailbox = mb;
 			this.state = state;
 			this.closed = closed;
 		}

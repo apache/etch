@@ -81,13 +81,13 @@ public class Tcp2Connection implements TransportData, StreamHandlerFactory, Alar
 			if (p <= 0 || p > 65535)
 				throw new IllegalArgumentException( "port <= 0 || port > 65535" );
 
-			this.host = h;
-			this.port = p;
+			host = h;
+			port = p;
 		}
 		else
 		{
-			this.host = null;
-			this.port = 0;
+			host = null;
+			port = 0;
 		}
 	}
 

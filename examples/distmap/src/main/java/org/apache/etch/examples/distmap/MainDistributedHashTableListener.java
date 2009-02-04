@@ -22,9 +22,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.etch.bindings.java.support.ServerFactory;
-import org.apache.etch.examples.distmap.DistributedHashTableHelper;
-import org.apache.etch.examples.distmap.DistributedHashTableServer;
-import org.apache.etch.examples.distmap.RemoteDistributedHashTableClient;
 import org.apache.etch.util.core.io.Transport;
 
 

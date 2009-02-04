@@ -43,6 +43,7 @@ public class ConsoleLogHandler extends AbstractLogHandler
 		super();
 	}
 
+	@Override
 	protected void log( Message msg )
 	{
 		PrintStream ps = selectPrintStream( msg.level );

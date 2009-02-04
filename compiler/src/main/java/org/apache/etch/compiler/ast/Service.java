@@ -531,7 +531,7 @@ public class Service extends Named<Module> implements OptList, Iterable<Named<?>
 		}
 
 		if (list.size() == 1 )
-			return (Named<?>)list.get( 0 );
+			return list.get( 0 );
 
 
 		return null;

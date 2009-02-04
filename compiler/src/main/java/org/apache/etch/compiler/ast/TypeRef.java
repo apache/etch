@@ -64,7 +64,7 @@ public class TypeRef
 	 */
 	public void setDim( int d )
 	{
-		this.dim = d;
+		dim = d;
 	}
 	
 	private int dim;

@@ -18,9 +18,6 @@
 package org.apache.etch.examples.example;
 
 import org.apache.etch.bindings.java.support.ServerFactory;
-import org.apache.etch.examples.example.ExampleHelper;
-import org.apache.etch.examples.example.ExampleServer;
-import org.apache.etch.examples.example.RemoteExampleClient;
 import org.apache.etch.util.core.io.Transport;
 
 

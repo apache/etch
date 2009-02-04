@@ -36,42 +36,49 @@ public class ImplFooServer extends BaseFooServer
 	@SuppressWarnings("unused")
 	private final RemoteFooClient client;
 
+	@Override
 	public Boolean foo1( Foo.FooData fooData )
 	{
 		System.out.println( "foo1 called with "+fooData );
 		return true;
 	}
 
+	@Override
 	public Boolean foo2( Foo.FooData fooData )
 	{
 		System.out.println( "foo2 called with "+fooData );
 		return false;
 	}
 
+	@Override
 	public Boolean bar1( BarData barData )
 	{
 		System.out.println( "bar1 called with "+barData );
 		return true;
 	}
 
+	@Override
 	public Boolean bar2( BarData barData )
 	{
 		System.out.println( "bar2 called with "+barData );
 		return false;
 	}
 
+	@Override
 	public Boolean baz1( BazData bazData )
 	{
 		System.out.println( "baz1 called with "+bazData );
 		return true;
 	}
 
+	@Override
 	public Boolean baz2( BazData bazData )
 	{
 		System.out.println( "baz2 called with "+bazData );
 		return false;
 	}
 
+	@Override
 	public void _sessionNotify( Object event ) throws Exception
 	{
 		System.out.println( event );

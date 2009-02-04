@@ -21,10 +21,6 @@ package org.apache.etch.examples.example;
 import junit.framework.Assert;
 
 import org.apache.etch.bindings.java.support.ServerFactory;
-import org.apache.etch.examples.example.ExampleHelper;
-import org.apache.etch.examples.example.MainExampleClient;
-import org.apache.etch.examples.example.MainExampleListener;
-import org.apache.etch.examples.example.RemoteExampleServer;
 import org.apache.etch.util.Log;
 import org.apache.etch.util.core.io.Transport;
 import org.junit.After;

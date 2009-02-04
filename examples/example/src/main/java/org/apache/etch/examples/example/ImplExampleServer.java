@@ -17,8 +17,6 @@
 
 package org.apache.etch.examples.example;
 
-import org.apache.etch.examples.example.BaseExampleServer;
-import org.apache.etch.examples.example.RemoteExampleClient;
 
 /**
  * Your custom implementation of BaseExampleServer. Add methods here to provide

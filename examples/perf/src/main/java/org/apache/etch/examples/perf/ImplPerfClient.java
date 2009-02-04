@@ -17,8 +17,6 @@
 
 package org.apache.etch.examples.perf;
 
-import org.apache.etch.examples.perf.BasePerfClient;
-import org.apache.etch.examples.perf.RemotePerfServer;
 
 /**
  * Your custom implementation of BasePerfClient. Add methods here to provide

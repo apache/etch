@@ -1234,9 +1234,9 @@ public class TestXml {
 				String elementName = children.item(i).getNodeName();
 				
 				boolean matches = false;
-				for(int j = 0; j < elementNamesToCheck.length; j++)
+				for (String element : elementNamesToCheck)
 				{
-					if(0 == elementName.compareTo(elementNamesToCheck[j]) )
+					if(0 == elementName.compareTo(element) )
 					{
 						matches = true;
 						break;
@@ -1265,9 +1265,9 @@ public class TestXml {
 			String attrName = attrs.item(i).getNodeName();
 			
 			boolean matches = false;
-			for(int j = 0; j < attrNamesToCheck.length; j++)
+			for (String element : attrNamesToCheck)
 			{
-				if(0 == attrName.compareTo(attrNamesToCheck[j]) )
+				if(0 == attrName.compareTo(element) )
 				{
 					matches = true;
 					break;

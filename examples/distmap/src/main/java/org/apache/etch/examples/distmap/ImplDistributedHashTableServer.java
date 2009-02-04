@@ -19,9 +19,6 @@ package org.apache.etch.examples.distmap;
 
 import java.util.Map;
 
-import org.apache.etch.examples.distmap.BaseDistributedHashTableServer;
-import org.apache.etch.examples.distmap.RemoteDistributedHashTableClient;
-
 
 /**
  * Your custom implementation of BaseDistributedHashTableServer. Add methods here to provide
@@ -53,6 +50,7 @@ public class ImplDistributedHashTableServer extends BaseDistributedHashTableServ
 	 * 
 	 * @return an array of entries
 	 */
+	@Override
 	public Entry[] getAll()
 	{
 		synchronized (map)
@@ -71,6 +69,7 @@ public class ImplDistributedHashTableServer extends BaseDistributedHashTableServ
 	 * @param key key associated with value
 	 * @return the value to which the key is mapped
 	 */
+	@Override
 	public Object getObject( String key )
 	{
 		return map.get( key );
@@ -82,6 +81,7 @@ public class ImplDistributedHashTableServer extends BaseDistributedHashTableServ
 	 * @param key the key
 	 * @param value the value
 	 */
+	@Override
 	public Object putObject( String key, Object value )
 	{
 		return map.put( key, value );
@@ -93,6 +93,7 @@ public class ImplDistributedHashTableServer extends BaseDistributedHashTableServ
 	 * @param key the key
 	 * @return the value associated with key
 	 */
+	@Override
 	public Object removeObject( String key )
 	{
 		return map.remove( key );
@@ -103,6 +104,7 @@ public class ImplDistributedHashTableServer extends BaseDistributedHashTableServ
 	 * 
 	 * @return the number of key-value mappings in this map
 	 */
+	@Override
 	public Integer size()
 	{
 		return map.size();

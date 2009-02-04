@@ -55,7 +55,7 @@ public class Timeout extends Opt
 		if (v < 0)
 			throw new ParseException( String.format( "Timeout arg should be integer constant >= 0: "+arg.image ) );
 		
-		this.timeout = v;
+		timeout = v;
 	}
 	
 	private final int timeout;

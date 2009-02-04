@@ -62,7 +62,7 @@ public class Resources
 	public boolean containsKey( String key )
 	{
 		return res.containsKey( key ) ||
-			(related != null && related.containsKey( key ));
+			related != null && related.containsKey( key );
 	}
 	
 	/**

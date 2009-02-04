@@ -17,9 +17,6 @@
 
 package org.apache.etch.examples.example;
 
-import org.apache.etch.examples.example.ExampleClient;
-import org.apache.etch.examples.example.ExampleHelper;
-import org.apache.etch.examples.example.RemoteExampleServer;
 
 /**
  * Main program for ExampleClient. This program makes a connection to the

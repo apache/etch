@@ -196,7 +196,7 @@ public class Compiler extends Backend
 		// xml always wants to not flatten packages:
 		options.noFlattenPackages = true;
 		
-		this.lh = options.lh;
+		lh = options.lh;
 		
 		Output dir = options.output;
 		
@@ -330,7 +330,7 @@ public class Compiler extends Backend
 						t.beginLine, t.image ) );
 				String s = n.efqname( this );
 				
-				if ( ( s == null ) && ( n instanceof Extern ) )
+				if ( s == null && n instanceof Extern )
 					s = t.image;
 				
 				return s;

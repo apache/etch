@@ -46,16 +46,19 @@ public class ImplAsyncServer extends BaseAsyncServer
 			System.out.println( event );
 	}
 
+	@Override
 	public Integer sync( Integer count )
 	{
 		return count > 0 ? client.sync( count - 1 ) + 1 : 0;
 	}
 
+	@Override
 	public Integer async_queued( Integer count )
 	{
 		return count > 0 ? client.async_queued( count - 1 ) + 1 : 0;
 	}
 
+	@Override
 	public Integer async_free( Integer count )
 	{
 		return count > 0 ? client.async_free( count - 1 ) + 1 : 0;

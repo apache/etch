@@ -20,8 +20,6 @@ package org.apache.etch.examples.chat;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.etch.examples.chat.BaseChatClient;
-import org.apache.etch.examples.chat.RemoteChatServer;
 import org.apache.etch.util.core.io.Session;
 
 
@@ -53,12 +51,14 @@ public class ImplChatClient extends BaseChatClient
 	
 	private final boolean snub;
 
+	@Override
 	public Boolean isLoggedIn()
 	{
 		// server is always logged in to the client.
 		return true;
 	}
 
+	@Override
 	public void statusChange( String name, Boolean online ) 
 	{
 		if (online)
@@ -73,6 +73,7 @@ public class ImplChatClient extends BaseChatClient
 		}
 	}
 
+	@Override
 	public void whoIsOnline( String[] names )
     {
 		for (String name: names)
@@ -84,6 +85,7 @@ public class ImplChatClient extends BaseChatClient
 	
 	private Set<String> whoIsOnline = new HashSet<String>();
 
+	@Override
 	public void send( String who, String msg ) throws Failure
     {
 		System.out.printf( "%s: msg from %s: %s\n", whoami, who, msg );
@@ -94,6 +96,7 @@ public class ImplChatClient extends BaseChatClient
 		}
     }
 
+	@Override
 	public void _sessionNotify( Object event ) throws Exception
 	{
 		if (event == Session.DOWN)

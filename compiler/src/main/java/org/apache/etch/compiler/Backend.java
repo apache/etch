@@ -167,7 +167,7 @@ abstract public class Backend
 	{
 		if (md == null)
 			throw new NullPointerException( "md == null" );
-		return (md == MessageDirection.SERVER);
+		return md == MessageDirection.SERVER;
 	}
 
 	/**
@@ -179,7 +179,7 @@ abstract public class Backend
 	{
 		if (md == null)
 			throw new NullPointerException( "md == null" );
-		return (md == MessageDirection.CLIENT);
+		return md == MessageDirection.CLIENT;
 	}
 
 	/**
@@ -191,7 +191,7 @@ abstract public class Backend
 	{
 		if ( md == null )
 			throw new NullPointerException( "md == null" );
-		return ( md == MessageDirection.BOTH );
+		return md == MessageDirection.BOTH;
 	}
 
 	/**
@@ -299,7 +299,7 @@ abstract public class Backend
 					if (currentTokens.hasMoreTokens())
 						value = currentTokens.nextToken();
 					else
-						value = (Character.isUpperCase(key.codePointAt(0))) ?
+						value = Character.isUpperCase(key.codePointAt(0)) ?
 								valuePrefix.toUpperCase() + key :
 								valuePrefix + key;
 
@@ -380,9 +380,9 @@ abstract public class Backend
 		// SERVER
 		// BOTH, CLIENT, SERVER
 		Assertion.check(
-			   (what.contains( WHAT_CLIENT ) && !what.contains( WHAT_SERVER ) && !what.contains( WHAT_BOTH ))
-			|| (!what.contains( WHAT_CLIENT ) && what.contains( WHAT_SERVER ) && !what.contains( WHAT_BOTH ))
-			|| (what.contains( WHAT_CLIENT ) && what.contains( WHAT_SERVER ) && what.contains( WHAT_BOTH ))
+			   what.contains( WHAT_CLIENT ) && !what.contains( WHAT_SERVER ) && !what.contains( WHAT_BOTH )
+			|| !what.contains( WHAT_CLIENT ) && what.contains( WHAT_SERVER ) && !what.contains( WHAT_BOTH )
+			|| what.contains( WHAT_CLIENT ) && what.contains( WHAT_SERVER ) && what.contains( WHAT_BOTH )
 			, "what files is {CLIENT}, {SERVER}, OR {CLIENT,SERVER,BOTH}" );
 		
 		// files group

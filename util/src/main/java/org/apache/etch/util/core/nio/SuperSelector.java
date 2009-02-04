@@ -237,7 +237,7 @@ public class SuperSelector
 	{
 		public Key( int avail, Selector selector )
 		{
-			this._avail = avail;
+			_avail = avail;
 			this.selector = selector;
 		}
 
@@ -258,7 +258,7 @@ public class SuperSelector
 
 		public void setAvail( int avail )
 		{
-			this._avail = avail;
+			_avail = avail;
 		}
 		
 		@Override

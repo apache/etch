@@ -28,7 +28,7 @@ public class CharIterator
 	public CharIterator( String s )
 	{
 		this.s = s;
-		this.n = s.length();
+		n = s.length();
 	}
 	
 	private final String s;

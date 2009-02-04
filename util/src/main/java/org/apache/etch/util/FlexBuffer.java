@@ -373,8 +373,8 @@ public final class FlexBuffer
 		{
 			// little-endian
 			int value = buffer[index++] & 255;
-			value += ((buffer[index++] & 255) << 8);
-			value += ((buffer[index++] & 255) << 16);
+			value += (buffer[index++] & 255) << 8;
+			value += (buffer[index++] & 255) << 16;
 			return value + ((buffer[index++] & 255) << 24);
 		}
 		
@@ -397,13 +397,13 @@ public final class FlexBuffer
 		{
 			// little-endian
 			long value = buffer[index++] & 255;
-			value += (((long)(buffer[index++] & 255)) << 8);
-			value += (((long)(buffer[index++] & 255)) << 16);
-			value += (((long)(buffer[index++] & 255)) << 24);
-			value += (((long)(buffer[index++] & 255)) << 32);
-			value += (((long)(buffer[index++] & 255)) << 40);
-			value += (((long)(buffer[index++] & 255)) << 48);
-			return value + (((long)(buffer[index++] & 255)) << 56);
+			value += (long)(buffer[index++] & 255) << 8;
+			value += (long)(buffer[index++] & 255) << 16;
+			value += (long)(buffer[index++] & 255) << 24;
+			value += (long)(buffer[index++] & 255) << 32;
+			value += (long)(buffer[index++] & 255) << 40;
+			value += (long)(buffer[index++] & 255) << 48;
+			return value + ((long)(buffer[index++] & 255) << 56);
 		}
 		
 		// big-endian

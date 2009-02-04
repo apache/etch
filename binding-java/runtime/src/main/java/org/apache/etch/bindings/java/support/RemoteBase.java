@@ -38,8 +38,8 @@ public class RemoteBase
 	 */
 	public RemoteBase( DeliveryService svc, ValueFactory vf )
 	{
-		this._svc = svc;
-		this._vf = vf;
+		_svc = svc;
+		_vf = vf;
 	}
 	
 	private final DeliveryService _svc;

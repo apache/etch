@@ -141,7 +141,7 @@ public class ToString extends Opt
 				else if (c == 'n') c = '\n';
 				else if (c == '{') c = '{';
 				else if (c == '\\') c = '\\';
-				else throw new IOException( "bad escape. expecting one of t, r, n, {, or \\. got '"+((char) c)+"'" );
+				else throw new IOException( "bad escape. expecting one of t, r, n, {, or \\. got '"+(char) c+"'" );
 				escape = false;
 			}
 			

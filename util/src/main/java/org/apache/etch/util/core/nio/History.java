@@ -206,7 +206,7 @@ public class History
 		int sum = 0;
 		for (int h : hstry)
 			sum += h;
-		return sum / (hstry.length);
+		return sum / hstry.length;
 	}
 
 	/**

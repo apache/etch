@@ -17,8 +17,6 @@
 
 package org.apache.etch.examples.example;
 
-import org.apache.etch.examples.example.BaseExampleClient;
-import org.apache.etch.examples.example.RemoteExampleServer;
 
 
 /**

@@ -344,7 +344,7 @@ public class TestUrl1
 		URL url = new URL("tcp://localhost:10000");
 		url.addTerm(name, value);
 
-		assertEquals(value, (url.getTerm(name)));
+		assertEquals(value, url.getTerm(name));
 	}
 
 	/**

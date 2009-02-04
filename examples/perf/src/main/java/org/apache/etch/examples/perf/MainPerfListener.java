@@ -18,9 +18,6 @@
 package org.apache.etch.examples.perf;
 
 import org.apache.etch.bindings.java.support.ServerFactory;
-import org.apache.etch.examples.perf.PerfHelper;
-import org.apache.etch.examples.perf.PerfServer;
-import org.apache.etch.examples.perf.RemotePerfClient;
 import org.apache.etch.util.Log;
 import org.apache.etch.util.core.io.Transport;
 

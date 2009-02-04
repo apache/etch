@@ -201,7 +201,7 @@ public class StringUtil
 		StringBuffer sb = new StringBuffer( digest.length * 2 );
 		for (byte b: digest)
 		{
-			sb.append( toHex( (b >>> 4) & 15 ) );
+			sb.append( toHex( b >>> 4 & 15 ) );
 			sb.append( toHex( b & 15 ) );
 		}
 		return sb.toString();

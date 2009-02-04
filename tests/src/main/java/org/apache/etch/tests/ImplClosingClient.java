@@ -37,6 +37,7 @@ public class ImplClosingClient extends BaseClosingClient
 	@SuppressWarnings( "unused" )
 	private final RemoteClosingServer server;
 
+	@Override
 	public void _sessionNotify( Object event ) throws Exception
 	{
 		Log.report( "ImplClosingClient._sessionNotify", "event", event );

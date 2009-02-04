@@ -17,9 +17,6 @@
 
 package org.apache.etch.examples.distmap;
 
-import org.apache.etch.examples.distmap.DistributedHashTableClient;
-import org.apache.etch.examples.distmap.DistributedHashTableHelper;
-import org.apache.etch.examples.distmap.RemoteDistributedHashTableServer;
 import org.apache.etch.examples.distmap.DistributedHashTable.Entry;
 import org.apache.etch.util.Log;
 

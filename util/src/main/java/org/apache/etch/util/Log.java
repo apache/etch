@@ -937,13 +937,13 @@ public class Log
 			if (!isLimitedLogging())
 				return false;	// logging is not limited.
 			
-			if (Timer.getSecondsSince(this.lastNanos) > 60)
+			if (Timer.getSecondsSince(lastNanos) > 60)
 			{
 				// over a minute now, reset counters.
 				minuteCount = 0;
 				//dropCount = 0;
 				// reset time stamp.
-				this.lastNanos = Timer.getNanos();
+				lastNanos = Timer.getNanos();
 				
 				return false;
 			}
@@ -958,7 +958,7 @@ public class Log
 
 		private boolean isLimitedLogging()
 		{
-			return ( this.limit != UNLIMITED_ENTRIES );
+			return limit != UNLIMITED_ENTRIES;
 		}
 	}
 	

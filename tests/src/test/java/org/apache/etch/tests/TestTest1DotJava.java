@@ -606,9 +606,9 @@ public class TestTest1DotJava
 		assertEquals( type, s.tipe );
 		assertEquals( sz, myObject.length );
 		
-		for ( int i = 0; i < myObject.length; i++ ) 
+		for (Object element : myObject)
 		{
-			assertEquals( value, myObject[i] );
+			assertEquals( value, element );
 		}
 	}
 
@@ -658,9 +658,9 @@ public class TestTest1DotJava
 		assertEquals( msg, e.msg );
 		assertEquals( code, e.code );
 
-		for ( int i = 0; i < myObject.length; i++ ) 
+		for (Object element : myObject)
 		{
-			assertEquals( value, myObject[i] );
+			assertEquals( value, element );
 		}
 		
 		e = new Test1.Excp6( null, null, null );
@@ -680,9 +680,9 @@ public class TestTest1DotJava
 		assertEquals( msg, e.msg );
 		assertEquals( code, e.code );
 		
-		for ( int i = 0; i < myObject.length; i++ ) 
+		for (Object element : myObject)
 		{
-			assertEquals( value, myObject[i] );
+			assertEquals( value, element );
 		}
 		
 		e.msg = null;
@@ -738,9 +738,9 @@ public class TestTest1DotJava
 	{
 		Object[] myObject = test.fillObject( sz, value );
 		
-		for ( int i = 0; i < myObject.length; i++ ) 
+		for (Object element : myObject)
 		{
-			assertEquals( value, myObject[i] );
+			assertEquals( value, element );
 		}	
 	}
 

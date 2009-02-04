@@ -68,7 +68,7 @@ public class BinaryTaggedData extends TaggedData
 		final Class<?> c = value.getClass();
 		
 		if (c == Boolean.class)
-			return ((Boolean) value) ? TypeCode.BOOLEAN_TRUE : TypeCode.BOOLEAN_FALSE;
+			return (Boolean) value ? TypeCode.BOOLEAN_TRUE : TypeCode.BOOLEAN_FALSE;
 		
 		if (value instanceof Number)
 		{

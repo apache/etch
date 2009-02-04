@@ -37,7 +37,7 @@ public class Parameter extends Named<ParamList<?>>
 	public Parameter( ParamList<?> pl, Name name, TypeRef rt )
 	{
 		super( pl, name, null );
-		this.type = rt;
+		type = rt;
 		vname = name.name;
 	}
 	

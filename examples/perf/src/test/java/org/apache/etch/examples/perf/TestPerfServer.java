@@ -22,10 +22,6 @@ import java.util.Date;
 import junit.framework.Assert;
 
 import org.apache.etch.bindings.java.support.ServerFactory;
-import org.apache.etch.examples.perf.MainPerfClient;
-import org.apache.etch.examples.perf.MainPerfListener;
-import org.apache.etch.examples.perf.PerfHelper;
-import org.apache.etch.examples.perf.RemotePerfServer;
 import org.apache.etch.examples.perf.Perf.Point;
 import org.apache.etch.util.Log;
 import org.apache.etch.util.core.io.Transport;

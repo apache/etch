@@ -225,12 +225,12 @@ public class Timer
 		
 		int m = s / 60;
 		if (m < 60)
-			return Integer.toString( m ) + "m "+(s%60)+"s";
+			return Integer.toString( m ) + "m "+s%60+"s";
 		
 		int h = m / 60;
 		if (h < 24)
-			return Integer.toString( h ) + "h "+(m%60)+"m";
+			return Integer.toString( h ) + "h "+m%60+"m";
 		
-		return Integer.toString( h / 24 ) + "d "+(h%24)+"h";
+		return Integer.toString( h / 24 ) + "d "+h%24+"h";
 	}
 }

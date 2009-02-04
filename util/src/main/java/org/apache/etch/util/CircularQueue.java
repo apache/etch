@@ -372,6 +372,6 @@ public final class CircularQueue<T>
 
 	private long getEndTime( long now, int maxDelay )
 	{
-		return maxDelay > 0 ? now + (maxDelay * Timer.NANOS_PER_MILLI) : Long.MAX_VALUE;
+		return maxDelay > 0 ? now + maxDelay * Timer.NANOS_PER_MILLI : Long.MAX_VALUE;
 	}
 }

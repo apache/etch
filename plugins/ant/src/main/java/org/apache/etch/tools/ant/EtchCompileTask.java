@@ -225,7 +225,7 @@ public class EtchCompileTask extends Task
 	 */
 	public void setHome( File value )
 	{
-		this.home = value;
+		home = value;
 	}
 
 	private File home;

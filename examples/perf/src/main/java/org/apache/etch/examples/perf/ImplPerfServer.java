@@ -19,8 +19,6 @@ package org.apache.etch.examples.perf;
 
 import java.util.Date;
 
-import org.apache.etch.examples.perf.BasePerfServer;
-import org.apache.etch.examples.perf.RemotePerfClient;
 import org.apache.etch.util.core.io.Session;
 
 

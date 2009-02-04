@@ -61,6 +61,6 @@ abstract public class DefaultServerFactory implements ServerFactory
 		if (implFactory instanceof Session)
 			((Session) implFactory).sessionNotify( event );
 		else if (event instanceof Exception)
-			throw ((Exception) event);
+			throw (Exception) event;
 	}
 }
