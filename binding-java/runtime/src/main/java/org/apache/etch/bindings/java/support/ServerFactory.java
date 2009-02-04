@@ -18,6 +18,7 @@
 package org.apache.etch.bindings.java.support;
 
 import org.apache.etch.bindings.java.msg.ValueFactory;
+import org.apache.etch.bindings.java.transport.TransportMessage;
 import org.apache.etch.util.core.io.Session;
 
 
@@ -28,11 +29,12 @@ import org.apache.etch.util.core.io.Session;
 public interface ServerFactory extends Session
 {
 	/**
-	 * @param d the delivery service to use with the new server.
+	 * @param m the TransportMessage to use with the new server.
 	 * @param vf the value factory to use with the new server.
+	 * @return the constructed DeliveryService
 	 * @throws Exception
 	 */
-	public void newServer( DeliveryService d, ValueFactory vf ) throws Exception;
+	public DeliveryService newServer( TransportMessage m, ValueFactory vf ) throws Exception;
 	
 	/**
 	 * @return a new instance of value factory for this connection.

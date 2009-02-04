@@ -15,13 +15,15 @@
 // under the License.
 
 using System;
+using Org.Apache.Etch.Bindings.Csharp.Msg;
+using Org.Apache.Etch.Bindings.Csharp.Transport;
 using Org.Apache.Etch.Bindings.Csharp.Util;
 
 namespace Org.Apache.Etch.Bindings.Csharp.Support
 {
     abstract public class DefaultServerFactory : ServerFactory
     {
-        public DefaultServerFactory(object implFactory)
+        protected DefaultServerFactory(object implFactory)
         {
             this.implFactory = implFactory;
         }
@@ -57,9 +59,9 @@ namespace Org.Apache.Etch.Bindings.Csharp.Support
 
         #region ServerFactory Members
 
-        abstract public void NewServer(DeliveryService d, Org.Apache.Etch.Bindings.Csharp.Msg.ValueFactory vf);
+        abstract public DeliveryService NewServer( TransportMessage m, ValueFactory vf);
 
-        abstract public Org.Apache.Etch.Bindings.Csharp.Msg.ValueFactory NewValueFactory();
+        abstract public ValueFactory NewValueFactory();
 
         #endregion
     }

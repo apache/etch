@@ -66,7 +66,7 @@ public class TcpTransportFactory extends TransportFactory
 	private final static String SOCKET = "TcpTransportFactory.socket";
 	
 	@Override
-	public DeliveryService newTransport( String uri,
+	public TransportMessage newTransport( String uri,
 		Resources resources ) throws Exception
 	{
 		URL u = new URL( uri );
@@ -86,14 +86,10 @@ public class TcpTransportFactory extends TransportFactory
 		
 		m = addFilters( m, u, resources );
 		
-		MailboxManager r = new PlainMailboxManager( m, u, resources );
-		
-		DeliveryService d = new DefaultDeliveryService( r, u, resources );
-		
 		ValueFactory vf = (ValueFactory) resources.get( Transport.VALUE_FACTORY );
 		vf.lockDynamicTypes();
 		
-		return d;
+		return m;
 	}
 
 	@Override
@@ -179,9 +175,9 @@ public class TcpTransportFactory extends TransportFactory
 			ValueFactory vf = session.newValueFactory();
 			r.put( Transport.VALUE_FACTORY, vf );
 			
-			DeliveryService d = newTransport( uri, r );
+			TransportMessage m = newTransport( uri, r );
 			
-			session.newServer( d, vf );
+			DeliveryService d = session.newServer( m, vf );
 			
 			d.transportControl( Transport.START, null );
 		}

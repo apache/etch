@@ -39,27 +39,27 @@ import org.apache.etch.util.core.io.Transport;
 abstract public class TransportFactory
 {
 	/**
-	 * Constructs a new Transport stack topped by a DeliveryService
+	 * Constructs a new Transport stack topped by a TransportMessage
 	 * which is used by the remote service implementations to send
-	 * messages and make calls.
+	 * messages.
 	 * @param uri transport configuration parameters.
 	 * @param resources additional resources needed by the stack.
-	 * @return the DeliveryService topping the transport stack.
+	 * @return the TransportMessage topping the transport stack.
 	 * @throws Exception
 	 */
-	abstract protected DeliveryService newTransport( String uri,
+	abstract protected TransportMessage newTransport( String uri,
 		Resources resources ) throws Exception;
 
 	/**
-	 * Constructs a new Transport stack topped by a DeliveryService
+	 * Constructs a new Transport stack topped by a TransportMessage
 	 * which is used by the remote service implementations to send
-	 * messages and make calls.
+	 * messages.
 	 * @param uri transport configuration parameters.
 	 * @param resources additional resources needed by the stack.
-	 * @return the DeliveryService topping the transport stack.
+	 * @return the TransportMessage topping the transport stack.
 	 * @throws Exception
 	 */
-	static public DeliveryService getTransport( String uri,
+	static public TransportMessage getTransport( String uri,
 		Resources resources ) throws Exception
 	{
 		URL u = new URL( uri );

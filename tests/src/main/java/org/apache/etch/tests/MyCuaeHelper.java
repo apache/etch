@@ -23,8 +23,13 @@ import org.apache.etch.bindings.java.support.DeliveryService;
 import org.apache.etch.bindings.java.support.Pool;
 import org.apache.etch.bindings.java.support.ServerFactory;
 import org.apache.etch.bindings.java.support.TransportFactory;
+import org.apache.etch.bindings.java.transport.DefaultDeliveryService;
+import org.apache.etch.bindings.java.transport.MailboxManager;
+import org.apache.etch.bindings.java.transport.PlainMailboxManager;
 import org.apache.etch.bindings.java.transport.SessionMessage;
+import org.apache.etch.bindings.java.transport.TransportMessage;
 import org.apache.etch.util.Resources;
+import org.apache.etch.util.URL;
 import org.apache.etch.util.core.io.Transport;
 
 
@@ -59,14 +64,18 @@ abstract public class MyCuaeHelper extends CuaeHelper
 		final Resources res = initResources( resources );
 		if (!res.containsKey( Transport.VALUE_FACTORY ))
 			res.put( Transport.VALUE_FACTORY, new MyValueFactoryCuae( "tcp:" ) );
+		final URL u = new URL( uri );
 
 		return TransportFactory.getListener( uri, res, new DefaultServerFactory( implFactory )
 		{
-			public void newServer( DeliveryService d, ValueFactory vf ) throws Exception
+			public DeliveryService newServer( TransportMessage m, ValueFactory vf ) throws Exception
 			{
+				MailboxManager x = new PlainMailboxManager( m, u, res );
+				DeliveryService d = new DefaultDeliveryService( x, u, res );
 				Pool qp = (Pool) res.get( QUEUED_POOL );
 				Pool fp = (Pool) res.get( FREE_POOL );
 				implFactory.newMyCuaeServer( d, qp, fp, (MyValueFactoryCuae) vf );
+				return d;
 			}
 
 			public ValueFactory newValueFactory()
