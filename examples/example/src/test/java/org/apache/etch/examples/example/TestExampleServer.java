@@ -54,7 +54,7 @@ public class TestExampleServer
 		Log.addSink(null);
 		Log.report("StartExampleListener");
 			
-		String uri = "tcp://localhost:4008";
+		String uri = "tcp://localhost:4800";
 		MainExampleListener implFactory = new MainExampleListener();
 		listener = ExampleHelper.newListener( uri, null, implFactory );
 
@@ -86,7 +86,7 @@ public class TestExampleServer
 	public void makeConnection()
 		throws Exception
 	{
-		String uri = "tcp://localhost:4008";
+		String uri = "tcp://localhost:4800";
 
 		server = ExampleHelper.newServer( uri, null, new MainExampleClient() );
 

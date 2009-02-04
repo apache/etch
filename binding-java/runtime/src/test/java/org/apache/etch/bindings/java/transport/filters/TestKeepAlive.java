@@ -61,7 +61,7 @@ public class TestKeepAlive
 	public void constructor1() throws Exception
 	{
 		transport.is_server = true;
-		String uri = "tcp://localhost:4008?filter=KeepAlive";
+		String uri = "tcp://localhost:4801?filter=KeepAlive";
 		KeepAlive filter = newKeepAlive(uri);
 		filter.setSession( session );
 		
@@ -77,7 +77,7 @@ public class TestKeepAlive
 	public void constructor2() throws Exception
 	{
 		transport.is_server = true;
-		String uri = "tcp://localhost:4008?filter=KeepAlive&KeepAlive.delay=20&KeepAlive.count=5";
+		String uri = "tcp://localhost:4801?filter=KeepAlive&KeepAlive.delay=20&KeepAlive.count=5";
 		KeepAlive filter = newKeepAlive(uri);
 		filter.setSession( session );
 		
@@ -93,7 +93,7 @@ public class TestKeepAlive
 	public void constructor3() throws Exception
 	{
 		transport.is_server = false;
-		String uri = "tcp://localhost:4008?filter=KeepAlive";
+		String uri = "tcp://localhost:4801?filter=KeepAlive";
 		KeepAlive filter = newKeepAlive(uri);
 		filter.setSession( session );
 		
@@ -109,7 +109,7 @@ public class TestKeepAlive
 	public void clientup() throws Exception
 	{
 		transport.is_server = false;
-		String uri = "tcp://localhost:4008?filter=KeepAlive&KeepAlive.delay=3";
+		String uri = "tcp://localhost:4801?filter=KeepAlive&KeepAlive.delay=3";
 		KeepAlive filter = newKeepAlive(uri);
 		filter.setSession( session );		
 		filter.sessionNotify( Session.UP );
@@ -128,7 +128,7 @@ public class TestKeepAlive
 	public void clientup1() throws Exception
 	{
 		transport.is_server = false;
-		String uri = "tcp://localhost:4008?filter=KeepAlive&KeepAlive.delay=2";
+		String uri = "tcp://localhost:4801?filter=KeepAlive&KeepAlive.delay=2";
 		KeepAlive filter = newKeepAlive(uri);
 		filter.setSession( session );		
 		filter.sessionNotify( Session.UP );
@@ -150,7 +150,7 @@ public class TestKeepAlive
 		
 		transport.is_server = false;
 		
-		String uri = "tcp://localhost:4008?filter=KeepAlive"; 
+		String uri = "tcp://localhost:4801?filter=KeepAlive"; 
 		
 		KeepAlive filter = newKeepAlive(uri);
 		filter.setSession( session );		
@@ -164,7 +164,7 @@ public class TestKeepAlive
 	public void serverUp() throws Exception
 	{
 		transport.is_server = true;
-		String uri = "tcp://localhost:4008?filter=KeepAlive"; 		
+		String uri = "tcp://localhost:4801?filter=KeepAlive"; 		
 		KeepAlive filter = newKeepAlive(uri);
 		filter.setSession( session );		
 		filter.sessionNotify( Session.UP );	
@@ -185,7 +185,7 @@ public class TestKeepAlive
 		
 		transport.is_server = true;
 		
-		String uri = "tcp://localhost:4008?filter=KeepAlive"; 
+		String uri = "tcp://localhost:4801?filter=KeepAlive"; 
 		
 		KeepAlive filter = newKeepAlive(uri);
 		filter.setSession( session );		
@@ -198,7 +198,7 @@ public class TestKeepAlive
 	public void resetClient() throws Exception
 	{
 		transport.is_server = false;
-		String uri = "tcp://localhost:4008?filter=KeepAlive&KeepAlive.delay=2&KeepAlive.count=4"; 	
+		String uri = "tcp://localhost:4801?filter=KeepAlive&KeepAlive.delay=2&KeepAlive.count=4"; 	
 		KeepAlive filter = newKeepAlive(uri);
 		filter.setSession( session );		
 		filter.sessionNotify( Session.UP );	
