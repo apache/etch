@@ -83,7 +83,23 @@ public class Selector extends Thread
 			{
 				runActions();
 				
-				int n = selector.select();
+				int n;
+				while ( true )
+				{
+					try
+					{
+						n = selector.select();
+						break;
+					}
+					catch( IOException e )
+					{
+						// Workaround, see sun bug 6693490
+						//System.out.println("****** caught IOException");
+						if ( e.getMessage() != null && e.getMessage().indexOf("File exists") != -1 )
+							continue;
+						throw e;
+					}
+				}
 //				Log.report( "selected", "selector", this, "n", n );
 				if (n > 0)
 				{
