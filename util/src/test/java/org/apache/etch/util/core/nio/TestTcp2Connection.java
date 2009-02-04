@@ -779,6 +779,8 @@ public class TestTcp2Connection
 		{
 			if (event instanceof Exception)
 				Log.report( "listener.notify", "event", event );
+			
+			System.out.println( "TestTcp2Connection.MyListener: event = " + event );
 		}
 	}
 	

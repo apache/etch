@@ -59,7 +59,7 @@ public class TestLogger
 	/** @throws Exception */
 	@Test
 	public void constructor1() throws Exception {
-		String uri = "tcp://localhost:4008?filter=Logger";
+		String uri = "tcp://localhost:4802?filter=Logger";
 		Logger.testFlag = true;
 		Logger logger = newLogger(uri);
 		assertEquals(logger.getFileName(),"Log.txt");
@@ -70,7 +70,7 @@ public class TestLogger
 	/** @throws Exception */
 	@Test
 	public void constructor2() throws Exception {
-		String uri = "tcp://localhost:4008?filter=Logger&Logger.filePath=Test.txt";
+		String uri = "tcp://localhost:4802?filter=Logger&Logger.filePath=Test.txt";
 		Logger.testFlag = true;
 		Logger logger = newLogger(uri);
 		assertEquals(logger.getFileName(),"Test.txt");
@@ -80,7 +80,7 @@ public class TestLogger
 	/** @throws Exception */
 	@Test
 	public void logger() throws Exception {
-		String uri = "tcp://localhost:4008?filter=Logger";
+		String uri = "tcp://localhost:4802?filter=Logger";
 		Logger.testFlag = true;
 		Logger logger = newLogger(uri);
 		logger.setSession( session );
@@ -91,7 +91,7 @@ public class TestLogger
 	/** @throws Exception */
 	@Test
 	public void logger1() throws Exception {
-		String uri = "tcp://localhost:4008?filter=Logger";
+		String uri = "tcp://localhost:4802?filter=Logger";
 		Logger.testFlag = true;
 		Logger logger = newLogger(uri);
 		logger.setSession( session );
@@ -105,7 +105,7 @@ public class TestLogger
 	/** @throws Exception */
 	@Test
 	public void logger2() throws Exception {
-		String uri = "tcp://localhost:4008?filter=Logger";
+		String uri = "tcp://localhost:4802?filter=Logger";
 		Logger.testFlag = true;
 		Logger logger = newLogger(uri);
 		logger.setSession( session );

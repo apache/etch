@@ -911,7 +911,14 @@ public class TestMainTest1Client
 		{
 			while(c > this.myCount)
 			{
-				;
+				try
+				{
+					Thread.sleep( 10 );
+				}
+				catch ( InterruptedException e )
+				{
+					// ignore
+				}
 			}
 
 			try
