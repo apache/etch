@@ -3,7 +3,9 @@
 @set d=-d ../../../target/generated-sources/main/etch/xml
 @set i=-I .
 @set n=-n
- 
+
+@set walf=-w all,force
+
 @set testsdir=tests\src\main\etch
 @set examplesdir=examples
 
@@ -29,7 +31,7 @@
 @call %x%scripts\etch-eclipse.bat %q% %b% %n% %d% %i%        Types.etch
 
 @popd
-@cd %examplesdir%
+@pushd %examplesdir%
 
 @pushd chat\src\main\etch
 @call %x%scripts\etch-eclipse.bat %q% %b% %n% %d% %i%        Chat.etch
