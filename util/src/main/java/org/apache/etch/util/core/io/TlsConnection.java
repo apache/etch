@@ -209,6 +209,9 @@ public class TlsConnection extends TcpTransport
 			if (msg.indexOf( "socket closed" ) >= 0)
 				return;
 			
+			if (msg.indexOf( "Socket is closed" ) >= 0)
+				return;
+			
 			if (msg.indexOf( "recv failed" ) >= 0)
 				return;
 			
