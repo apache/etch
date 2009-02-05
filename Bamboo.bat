@@ -1,6 +1,8 @@
 @echo off
 :: This batch file is a wrapper so that we can set up our environment, and then
 :: kick off a build in bamboo
+::  (dixson) this really only useful in the Etch committers build-env
+
 
 :: Run our env setup script
 call %TOOLS_DIR%\Environment.bat -qnc -p ETCH
