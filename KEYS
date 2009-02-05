@@ -1,0 +1,46 @@
+This file contains the PGP keys of various developers.
+
+Users: pgp < KEYS
+       gpg --import KEYS
+       Developers: 
+               pgp -kxa <your name> and append it to this file.
+               (pgpk -ll <your name> && pgpk -xa <your name>) >> this file.
+               (gpg --list-sigs <your name>
+                    && gpg --armor --export <your name>) >> this file.
+
+pub   1024D/F18E2A13 2009-02-04
+uid                  James Dixson (CODE SIGNING KEY) <dixson@apache.org>
+sig 3        F18E2A13 2009-02-04  James Dixson (CODE SIGNING KEY) <dixson@apache.org>
+sub   2048g/353721F9 2009-02-04
+sig          F18E2A13 2009-02-04  James Dixson (CODE SIGNING KEY) <dixson@apache.org>
+
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+Version: GnuPG v1.4.9 (Darwin)
+
+mQGiBEmKEnsRBAChrlGgZom8tAup/WeNnq09HjsvUw1shEGmIYmQ1My0u+zNA0OK
+iF/ZkJW4ao22eYqIvw+3a80CG/QHqf7VPUdh48TddVsDeYgpqoYCL+SaXJ0djWH2
+45piZmAawdd0gnuJkVUGjVm2lHQJIAhgpxh2dR3BN4RgMInyZAqXReq0VwCgnvRn
+iDm3doCUnfhl00UkQcl4KAED/RReavNu/tNR5Ourv62KTs36yKIBOqfz0q+9QErl
+h3E9SQsEqYp8tuQ8MqOVo50+vtrOldHEiOnBjbLG12dN8anR44l9rNT022JRA3V0
+kuXQw85chsTy5m6IBcLRemCe4cKN37YHyAzeFsSLry4wyc84B1jVJiUdajvTmW+p
+kPnGA/9MUd6oIvGTa2fbg4Vo8yPHeOq4QfgkU8hNW70uMPU4wCMMJ6BH5LdwNrNc
+iruBW4wFAbBufWYsW5FAY3j89/Lv1oHYfMIiHaU1QfrpzmvlFpnlPZEFB1uTJjQT
+MU3dQxzq9t8BvnqWrxpRx7ZxQosIGqFmKLXn5GEayhN/hyqwIrQzSmFtZXMgRGl4
+c29uIChDT0RFIFNJR05JTkcgS0VZKSA8ZGl4c29uQGFwYWNoZS5vcmc+iGAEExEC
+ACAFAkmKEnsCGwMGCwkIBwMCBBUCCAMEFgIDAQIeAQIXgAAKCRCerigk8Y4qE1Yx
+AJ495RyPWkTxVfKN3g8KGNw6UGVFUgCeLwdHaoynhtHP9TwHnK3HU/gRLK65Ag0E
+SYoSexAIAN3fRCOy0F/GhBA9oNHtDK4IRcs44YF9P3sTlmGIniJ7xKsSZlYNe5wy
+VLTrmXk2ERWFueH9jUBeDM9AzHGMQBX+8IqKI4Z3Doow1rg2VHLclERR9eyRzH3b
+Scub8Asn7qLZwhuBFpIsJ1gGygirFw+wNlmX00MVQmHwFJoudkEXBcXMxhlergeS
+NldBTIraKC5/dzTakENq5nJqCKqYj8CHp4ZDfGUFvVaw+Wza2VwzBc5sACxyIVqO
+xfPRRiEfVhEqd1Y3DXkTU4OSqTqZnnnVGZx3LZNyfyG4Ku9Fm5OWrOX4Gy2Hmp7U
+KxTrV5e/AFUri3mIBsoZIDBPlN/9VG8ABAsH/RLbnZib0He0JG3evIqzks5SCH74
+fXFjEtOSuDqcyGYu93eD+Ui3BwrMogEDUQ62MlxKRb4bvb6CqlgGhO0zr38i6i82
+yfw3iAnj8s62qKgW/Fk+M+Qi55990NIIygbRdoRp390kJESccN/gaE61j4ES+gqQ
+/F/qCxb9gmoxCNRJIbhRacRhX3Zk0dF99meygF8hc++lXF9p//Mv0/CTRch6YIW4
+V0U0+VYsS2fZdFT/wSiqI6Wt+CZxzAorEO7QZOrCSU9w/8tvFuPp5tdTvJDkO7kW
+8avQwvpwr3rOJWZj0v+BehwQ0brDKqavgR3aHr+85RzuMNe7oso34hrAfByISQQY
+EQIACQUCSYoSewIbDAAKCRCerigk8Y4qE/2zAJ0Yh12VznL3tk2/OZU2oPIMA0FR
+sACfSn/Myyx3nrpwWtQTFf83n/8Lu2E=
+=LLpx
+-----END PGP PUBLIC KEY BLOCK-----
