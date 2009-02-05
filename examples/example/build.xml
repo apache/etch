@@ -22,7 +22,7 @@
     <property name="Etch.buildSupportDirectory" location="../../build-support" />
 
     <!-- compute etch.version -->
-    <condition property="etch.version" value="1.1.0" >
+    <condition property="etch.version" value="${Etch.version}" >
         <not><isset property="etch.version" /></not>
     </condition>
 
@@ -229,7 +229,7 @@
 
 Build Complete!
 
-To run java example, open a cmd window and run these
+To run java example example, open a cmd window and run these
 commands:
 
 > cd target\bin
@@ -257,9 +257,11 @@ You can mix and match the various clients and listeners.
     <target name="init-release" >
         <property name="build.target" value="Release" />
     </target>
-
+    
     <target name="dist-src" >
-        <copy file="dist-build.xml" tofile="${dist-src}/build.xml" overwrite="true" />
+        <copy file="dist-build.xml" tofile="${dist-src}/build.xml" overwrite="true" >
+            <filterset refid="Etch.buildTokens" />
+        </copy>    
         <copy file="dist-README.txt" tofile="${dist-src}/README.txt" overwrite="true" />
         
         <copy todir="${dist-src}/src/main/etch" overwrite="true" >
