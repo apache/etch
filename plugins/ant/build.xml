@@ -87,7 +87,7 @@
                 <metainf dir="${Etch.basedir}">
                     <include name="NOTICE.txt" />
                     <include name="LICENSE.txt" />
-                </metainf">
+                </metainf>
                 <fileset dir="${classesDirectory}/main"/>
             </jar>
 
