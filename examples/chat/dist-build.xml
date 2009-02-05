@@ -3,7 +3,7 @@
     <description>Chat Example</description>
 
     <property name="etch.home" location="${basedir}/../.."/>
-    <property name="etch.version" value="1.1.0"/>
+    <property name="etch.version" value="@EtchVersion@"/>
     <property name="etch-java-runtime-name" value="etch-java-runtime-${etch.version}.jar"/>
 
     <property name="etch-ant-plugin.jar"   location="${etch.home}/lib/etch-ant-plugin-${etch.version}.jar"/>
@@ -26,7 +26,7 @@
     </condition>    
 
     <taskdef
-    	resource="org/apache/etch/tools/ant/etch.xml"
+        resource="org/apache/etch/tools/ant/etch.xml"
         classpath="${etch-ant-plugin.jar}"/>
 
     <target name="build" depends="build-java, build-csharp, done"/>
