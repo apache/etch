@@ -1,6 +1,22 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 9.00
 # Visual Studio 2005
+# * Licensed to the Apache Software Foundation (ASF) under one   *
+# * or more contributor license agreements.  See the NOTICE file *
+# * distributed with this work for additional information        *
+# * regarding copyright ownership.  The ASF licenses this file   *
+# * to you under the Apache License, Version 2.0 (the            *
+# * "License"); you may not use this file except in compliance   *
+# * with the License.  You may obtain a copy of the License at   *
+# *                                                              *
+# *   http://www.apache.org/licenses/LICENSE-2.0                 *
+# *                                                              *
+# * Unless required by applicable law or agreed to in writing,   *
+# * software distributed under the License is distributed on an  *
+# * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY       *
+# * KIND, either express or implied.  See the License for the    *
+# * specific language governing permissions and limitations      *
+# * under the License.                                           *
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EtchTestProj", "binding-csharp\runtime\src\test\csharp\EtchTestProj.csproj", "{3D44C33C-0E5F-443B-A0B4-ABDF16B64AC5}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EtchProj", "binding-csharp\runtime\src\main\csharp\EtchProj.csproj", "{0E518F2A-3016-4C2F-A21B-9BD52B2DC846}"
