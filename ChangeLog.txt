@@ -3,6 +3,43 @@ Release 1.0.2
 -------------
 
 ------------------------------------------------------------------------
+r741746 | dixson | 2009-02-06 15:49:08 -0600 (Fri, 06 Feb 2009) | 2 lines
+
+AssemblyFileVersion in AssemblyInfo.cs needs to be in Mj.Mn.Pt.Bd format
+
+------------------------------------------------------------------------
+r741713 | dixson | 2009-02-06 14:49:27 -0600 (Fri, 06 Feb 2009) | 2 lines
+
+move antsetup.bat out of the root
+
+------------------------------------------------------------------------
+r741683 | dixson | 2009-02-06 13:17:57 -0600 (Fri, 06 Feb 2009) | 2 lines
+
+remove test reference from clover setup
+
+------------------------------------------------------------------------
+r741389 | dixson | 2009-02-05 21:41:04 -0600 (Thu, 05 Feb 2009) | 4 lines
+
+rats! rats! rats!...
+
+clean/add license headers to keep apache-rat happy
+
+------------------------------------------------------------------------
+r741387 | dixson | 2009-02-05 21:37:22 -0600 (Thu, 05 Feb 2009) | 2 lines
+
+remove defunct unit tests from plugins/ant
+
+------------------------------------------------------------------------
+r741382 | dixson | 2009-02-05 20:52:26 -0600 (Thu, 05 Feb 2009) | 2 lines
+
+add copyright to silence 'apache-rat'
+
+------------------------------------------------------------------------
+r741377 | dixson | 2009-02-05 20:19:49 -0600 (Thu, 05 Feb 2009) | 2 lines
+
+rename RELEASE_NOTES.txt to match conventional capitalization
+
+------------------------------------------------------------------------
 r741241 | dixson | 2009-02-05 12:52:46 -0600 (Thu, 05 Feb 2009) | 2 lines
 
 update csharp version strings
