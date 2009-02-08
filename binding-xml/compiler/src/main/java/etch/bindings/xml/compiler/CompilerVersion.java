@@ -26,5 +26,5 @@ public interface CompilerVersion
 	// of VERSION below with whatever it wants the version string to actually be.
 	
 	/** The version of this Etch backend (compiler) */
-	public String VERSION = "xml 1.0.0 (LOCAL-0)";
+	public String VERSION = "xml apache-etch-1.0.2-incubating (LOCAL-0)";
 }
