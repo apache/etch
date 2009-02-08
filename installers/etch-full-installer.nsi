@@ -1,16 +1,32 @@
-!define PRODUCT_NAME "Etch"
+# Licensed to the Apache Software Foundation (ASF) under one   *
+# or more contributor license agreements.  See the NOTICE file *
+# distributed with this work for additional information        *
+# regarding copyright ownership.  The ASF licenses this file   *
+# to you under the Apache License, Version 2.0 (the            *
+# "License"); you may not use this file except in compliance   *
+# with the License.  You may obtain a copy of the License at   *
+#                                                              *
+#   http://www.apache.org/licenses/LICENSE-2.0                 *
+#                                                              *
+# Unless required by applicable law or agreed to in writing,   *
+# software distributed under the License is distributed on an  *
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY       *
+# KIND, either express or implied.  See the License for the    *
+# specific language governing permissions and limitations      *
+# under the License.                                           *
+!define PRODUCT_NAME "Apache Etch"
 !ifndef PRODUCT_VERSION
     !define PRODUCT_VERSION "1.0"
 !endif
-!define PRODUCT_PUBLISHER "Etch"
-!define PRODUCT_WEB_SITE "http://developer.cisco.com/web/cuae/etch"
+!define PRODUCT_PUBLISHER "Apache Software Foundation"
+!define PRODUCT_WEB_SITE "http://incubator.apache.org/projects/etch.html"
 !define PRODUCT_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_NAME}-${PRODUCT_VERSION}"
 !define PRODUCT_UNINST_ROOT_KEY "HKLM"
 !ifndef ROOT_DIRECTORY
     !define ROOT_DIRECTORY "..\target\Installers\dist"
 !endif
 !ifndef OUT_FILE
-    !define OUT_FILE "etch-${PRODUCT_VERSION}-win32-setup.exe"
+    !define OUT_FILE "apache-etch-${PRODUCT_VERSION}-win32-setup.exe"
 !endif
 
 !include WinMessages.nsh
@@ -18,7 +34,7 @@
 Name "${PRODUCT_NAME} ${PRODUCT_VERSION}"
 OutFile "${OUT_FILE}"
 LoadLanguageFile "${NSISDIR}\Contrib\Language files\English.nlf"
-InstallDir "$PROGRAMFILES\${PRODUCT_PUBLISHER}\etch-${PRODUCT_VERSION}"
+InstallDir "$PROGRAMFILES\${PRODUCT_PUBLISHER}\apache-etch-${PRODUCT_VERSION}"
 Icon "${NSISDIR}\Contrib\Graphics\Icons\pixel-install.ico"
 UninstallIcon "${NSISDIR}\Contrib\Graphics\Icons\pixel-uninstall.ico"
 DirText "Setup will install $(^Name) in the following folder.$\r$\n$\r$\nTo install in a different folder, click Browse and select another folder."
@@ -100,8 +116,8 @@ Section -AdditionalIcons
   SetOutPath $INSTDIR
 #  WriteIniStr "$INSTDIR\etch-homepage.url" "InternetShortcut" "URL" "${PRODUCT_WEB_SITE}"
   CreateDirectory "$SMPROGRAMS\$(^Name)"
-#  CreateShortCut "$SMPROGRAMS\$(^Name)\Etch Homepage.lnk" "$INSTDIR\etch-homepage.url"
-  CreateShortCut "$SMPROGRAMS\$(^Name)\Uninstall Etch.lnk" "$INSTDIR\uninst.exe"
+#  CreateShortCut "$SMPROGRAMS\$(^Name)\Apache Etch Homepage.lnk" "$INSTDIR\etch-homepage.url"
+  CreateShortCut "$SMPROGRAMS\$(^Name)\Uninstall Apache Etch.lnk" "$INSTDIR\uninst.exe"
 SectionEnd
 
 Section -Post

@@ -1,3 +1,19 @@
+@rem  Licensed to the Apache Software Foundation (ASF) under one   *
+@rem  or more contributor license agreements.  See the NOTICE file *
+@rem  distributed with this work for additional information        *
+@rem  regarding copyright ownership.  The ASF licenses this file   *
+@rem  to you under the Apache License, Version 2.0 (the            *
+@rem  "License"); you may not use this file except in compliance   *
+@rem  with the License.  You may obtain a copy of the License at   *
+@rem                                                               *
+@rem    http://www.apache.org/licenses/LICENSE-2.0                 *
+@rem                                                               *
+@rem  Unless required by applicable law or agreed to in writing,   *
+@rem  software distributed under the License is distributed on an  *
+@rem  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY       *
+@rem  KIND, either express or implied.  See the License for the    *
+@rem  specific language governing permissions and limitations      *
+@rem  under the License.                                           *
 @set q=-q
 @set b=-b java
 @set d=-d ../../../target/generated-sources/main/etch/java
@@ -5,9 +21,8 @@
 @set n=-n
 
 @set walf=-w all,force
- 
+
 @set testsdir=tests\src\main\etch
-@rem set xmlcompilertestdir=src/etch/bindings/xml/compiler/test
 @set examplesdir=examples
 
 @set x=%CD%\
@@ -32,7 +47,7 @@
 @call %x%scripts\etch-eclipse.bat %q% %b% %n% %d% %i%        Types.etch
 
 @popd
-@cd %examplesdir%
+@pushd %examplesdir%
 
 @pushd chat\src\main\etch
 @call %x%scripts\etch-eclipse.bat %q% %b% %n% %d% %i%        Chat.etch
@@ -51,8 +66,3 @@
 @popd
 
 @popd
-
-@rem set b=-b xml
-
-@rem call bin\etch %q% %b% %d% %i% %xmlcompilertestdir%/Test.etch
-@rem call bin\etch %q% %b% %d% %i% %xmlcompilertestdir%/mixin/Foo.etch

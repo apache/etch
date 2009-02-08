@@ -1,9 +1,16 @@
+To get started with the example you will need jdk 1.5.0_x,
+where x is pretty recent (>= 15), or any release of jdk 1.6.
+You will also need ant 1.7.0, with ant .net plugin if you
+want to build csharp. You will also need microsoft .net
+sdk 2.0 for csharp builds.
+
 To build:
 
-> ant debug
+> ant
 
-The debug ant target will build both the java and csharp
-programs.
+This will run the default target which will build both java
+and csharp programs. You can also use build-java or build-csharp
+targets to build only java or only csharp.
 
 To run java chat, open a cmd window and run these commands:
 

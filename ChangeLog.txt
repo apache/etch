@@ -2,6 +2,90 @@
 Release 1.0.2
 -------------
 
+------------------------------------------------------------------------
+r741746 | dixson | 2009-02-06 15:49:08 -0600 (Fri, 06 Feb 2009) | 2 lines
+
+AssemblyFileVersion in AssemblyInfo.cs needs to be in Mj.Mn.Pt.Bd format
+
+------------------------------------------------------------------------
+r741713 | dixson | 2009-02-06 14:49:27 -0600 (Fri, 06 Feb 2009) | 2 lines
+
+move antsetup.bat out of the root
+
+------------------------------------------------------------------------
+r741683 | dixson | 2009-02-06 13:17:57 -0600 (Fri, 06 Feb 2009) | 2 lines
+
+remove test reference from clover setup
+
+------------------------------------------------------------------------
+r741389 | dixson | 2009-02-05 21:41:04 -0600 (Thu, 05 Feb 2009) | 4 lines
+
+rats! rats! rats!...
+
+clean/add license headers to keep apache-rat happy
+
+------------------------------------------------------------------------
+r741387 | dixson | 2009-02-05 21:37:22 -0600 (Thu, 05 Feb 2009) | 2 lines
+
+remove defunct unit tests from plugins/ant
+
+------------------------------------------------------------------------
+r741382 | dixson | 2009-02-05 20:52:26 -0600 (Thu, 05 Feb 2009) | 2 lines
+
+add copyright to silence 'apache-rat'
+
+------------------------------------------------------------------------
+r741377 | dixson | 2009-02-05 20:19:49 -0600 (Thu, 05 Feb 2009) | 2 lines
+
+rename RELEASE_NOTES.txt to match conventional capitalization
+
+------------------------------------------------------------------------
+r741241 | dixson | 2009-02-05 12:52:46 -0600 (Thu, 05 Feb 2009) | 2 lines
+
+update csharp version strings
+
+------------------------------------------------------------------------
+r741240 | dixson | 2009-02-05 12:52:27 -0600 (Thu, 05 Feb 2009) | 2 lines
+
+fix cleanup of 'target'
+
+------------------------------------------------------------------------
+r741239 | dixson | 2009-02-05 12:51:51 -0600 (Thu, 05 Feb 2009) | 2 lines
+
+update public key list of committers
+
+------------------------------------------------------------------------
+r739287 | sccomer | 2009-01-30 08:16:14 -0600 (Fri, 30 Jan 2009) | 1 line
+
+fix for selector under linux where it throws random file exists io exceptions.
+------------------------------------------------------------------------
+r739282 | sccomer | 2009-01-30 08:12:58 -0600 (Fri, 30 Jan 2009) | 1 line
+
+updates to the unit tests which make the unit tests more stable on linux by changing the port numbers of listening sockets to all be unique.
+------------------------------------------------------------------------
+r739277 | sccomer | 2009-01-30 07:53:46 -0600 (Fri, 30 Jan 2009) | 1 line
+
+update eclipse build scripts and add linux versions.
+------------------------------------------------------------------------
+r738652 | dixson | 2009-01-28 16:36:21 -0600 (Wed, 28 Jan 2009) | 2 lines
+
+make examples more tolerant of changes in the etch version
+
+------------------------------------------------------------------------
+r738635 | dixson | 2009-01-28 15:44:54 -0600 (Wed, 28 Jan 2009) | 7 lines
+
+* update version string to include "-incubating" and "apache-etch" where it seemed appropriate
+* collapsed all build-related .txt files into single 'BUILD.txt'
+* collapsed readme/reference .txt files into single 'README.txt'
+* added 'NOTICE.txt'
+* added 'LICENSE.txt' and 'NOTICE.txt' to the manifest of all generated .jar files
+
+------------------------------------------------------------------------
+r738231 | sccomer | 2009-01-27 14:33:33 -0600 (Tue, 27 Jan 2009) | 1 line
+
+updated changelog and added releasenotes.
+------------------------------------------------------------------------
+
 r738160 | sccomer | 2009-01-27 11:30:43 CST
 
 fix for ETCH-31: MySessionListener in TcpTransportFactory does not override

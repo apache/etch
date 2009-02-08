@@ -25,6 +25,7 @@ import java.nio.channels.SelectionKey;
 import java.util.LinkedList;
 
 import etch.util.Assertion;
+//import etch.util.Log;
 
 /**
  * An experiment in selection.
@@ -81,9 +82,29 @@ public class Selector extends Thread
 			while (selector.isOpen())
 			{
 				runActions();
-				
-				int n = selector.select();
-//				Log.report( "selected", "selector", this, "n", n );
+				int n;
+				while ( true )
+				{
+					try
+					{
+						n = selector.select();
+						break;
+					}
+					catch( IOException e )
+					{
+						// Workaround, see sun bug 6693490
+						//System.out.println("****** caught IOException");
+						if ( e.getMessage() != null && e.getMessage().indexOf("File exists") != -1 )
+						{
+							continue;
+						}
+						else
+							throw e;
+					}
+				}
+					
+//				}
+				//Log.report( "selected", "selector", this, "n", n );
 				if (n > 0)
 				{
 					for (SelectionKey key : selector.selectedKeys())

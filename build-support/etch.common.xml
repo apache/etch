@@ -1,4 +1,25 @@
 <?xml version="1.0" encoding="utf-8" ?>
+<!--
+ 
+ Licensed to the Apache Software Foundation (ASF) under one
+ or more contributor license agreements.  See the NOTICE file
+ distributed with this work for additional information
+ regarding copyright ownership.  The ASF licenses this file
+ to you under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in compliance
+ with the License.  You may obtain a copy of the License at
+ 
+   http://www.apache.org/licenses/LICENSE-2.0
+ 
+ Unless required by applicable law or agreed to in writing,
+ software distributed under the License is distributed on an
+ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ KIND, either express or implied.  See the License for the
+ specific language governing permissions and limitations
+ under the License.
+ 
+-->
+
 <project name="etch.common" basedir="." >
 
     <!-- Static properties -->
@@ -39,7 +60,9 @@
     <condition property="Etch.runtime.revisionNumber" value="0" >
         <not><isset property="Etch.runtime.revisionNumber" /></not>
     </condition>
-
+    <condition property="Etch.property.suffix" value="" >
+        <not><isset property="Etch.property.suffix" /></not>
+    </condition>
 
     <property name="Etch.target"                location="${Etch.basedir}/target" />
     <property name="Etch.dist"                  location="${Etch.target}/Installers/dist" />
@@ -48,6 +71,8 @@
     <property name="Etch.clover-support"        location="${Etch.target}/Support/dist-clover" />
 
     <property name="Etch.version"               value="${Etch.property.majorVersion}.${Etch.property.minorVersion}.${Etch.property.patchVersion}" />
+    <property name="Etch.longversion"           value="${Etch.version}${Etch.property.suffix}" />
+    <property name="Etch.longname"              value="apache-etch-${Etch.longversion}" />
     <property name="Etch.shortversion"          value="${Etch.property.majorVersion}.${Etch.property.minorVersion}" />
     <property name="Etch.buildTag"              value="${Etch.runtime.buildKey}-${Etch.runtime.buildNumber}" />
     <property name="Etch.buildSupportDirectory" location="${Etch.basedir}/build-support" />
@@ -77,6 +102,8 @@
     <!-- Define filterset for build-time substitutions -->
     <filterset id="Etch.buildTokens" >
         <filter token="EtchVersion"               value="${Etch.version}" />
+        <filter token="EtchLongVersion"           value="${Etch.longversion}" />
+        <filter token="EtchLongName"              value="${Etch.longname}" />
         <filter token="EtchBuildTag"              value="${Etch.buildTag}" />
         <filter token="EtchRuntimeRevisionNumber" value="${Etch.runtime.revisionNumber}" />
         <filter token="EtchRuntimeBuildKey"       value="${Etch.runtime.buildKey}" />

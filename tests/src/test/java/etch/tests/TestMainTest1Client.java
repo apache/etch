@@ -909,11 +909,26 @@ public class TestMainTest1Client
 		 */
 		public void getLock(final int c)
 		{
+			//System.out.println("getLock c = " + c);
 			while(c > this.myCount)
 			{
-				;
+				try
+				{
+					// In the absence of any statements, its upto the OS to preempt this 
+					// thread to let other threads to run. Java does not guarantee that 
+					// the underlying thread scheduling policy is preemptive. A sleep statement
+					// will force a context switch, giving other threads a chance to run. 
+					
+					// Basically, in the absence of everything, it's easy to imagine a DEADLOCK 
+					// to occur between multiple threads wanting to execute their own versions 
+					// of this while loop. 
+					Thread.sleep(10);
+				}
+				catch ( InterruptedException e )
+				{
+					e.printStackTrace();
+				}
 			}
-
 			try
 			{
 				this.mySemaphore.acquire();
@@ -922,6 +937,7 @@ public class TestMainTest1Client
 			{
 				// Won't happen thanks to atomic release.
 			}
+			//System.out.println("getLock exit c = " + c );
 		}
 
 		/**
@@ -930,11 +946,13 @@ public class TestMainTest1Client
 		 */
 		public synchronized void releaseLock(final int c)
 		{
+			//System.out.println("releaseLock c = " + c);
 			if ((c == this.myCount) && (this.mySemaphore.availablePermits() == 0))
 			{
 				this.mySemaphore.release();
 				++this.myCount;
 			}
+			//System.out.println("releaseLock exit c  = " + c);
 		}
 	}
 
@@ -985,7 +1003,6 @@ public class TestMainTest1Client
 				this.myHasErrors = true;
 			}
 			this.ourLock.releaseLock(1);
-
 			// 2. The listener dies.
 		}
 
