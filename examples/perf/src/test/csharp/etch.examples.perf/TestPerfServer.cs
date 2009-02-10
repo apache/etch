@@ -32,7 +32,7 @@ namespace org.apache.etch.examples.perf
     {
         private static RemotePerfServer server;
 
-        private static Transport<ServerFactory> listener;
+        private static ServerFactory listener;
 
         [TestFixtureSetUp]
         public void StartListener()

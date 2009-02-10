@@ -37,7 +37,7 @@ public class MainFooListener : FooHelper.FooServerFactory
 	
 
 		MainFooListener implFactory = new MainFooListener();
-        Transport<ServerFactory> listener = FooHelper.NewListener(uri, null, implFactory);
+        ServerFactory listener = FooHelper.NewListener(uri, null, implFactory);
 
 		listener.TransportControl( TransportConsts.START_AND_WAIT_UP, 4000 );
 	}

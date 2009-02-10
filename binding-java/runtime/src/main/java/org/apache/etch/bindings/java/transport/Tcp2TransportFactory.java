@@ -20,7 +20,6 @@ package org.apache.etch.bindings.java.transport;
 import java.nio.channels.SocketChannel;
 
 import org.apache.etch.bindings.java.msg.ValueFactory;
-import org.apache.etch.bindings.java.support.DeliveryService;
 import org.apache.etch.bindings.java.support.ServerFactory;
 import org.apache.etch.bindings.java.support.TransportFactory;
 import org.apache.etch.util.Resources;
@@ -87,17 +86,14 @@ public class Tcp2TransportFactory extends TransportFactory
 
 	@Override
 	public Transport<ServerFactory> newListener( final String uri,
-		final Resources resources, final ServerFactory factory )
-		throws Exception
+		final Resources resources ) throws Exception
 	{
 		URL u = new URL( uri );
 		
 		Transport<SessionListener<SocketChannel>> l = new Tcp2Listener( u,
 			resources );
 		
-		MySessionListener b = new MySessionListener( l, uri, resources );
-		b.setSession( factory );
-		return b;
+		return new MySessionListener( l, uri, resources );
 	}
 	
 	private class MySessionListener implements Transport<ServerFactory>,
@@ -168,11 +164,9 @@ public class Tcp2TransportFactory extends TransportFactory
 			ValueFactory vf = session.newValueFactory();
 			r.put( Transport.VALUE_FACTORY, vf );
 			
-			TransportMessage m = newTransport( uri, r );
+			TransportMessage transport = newTransport( uri, r );
 			
-			DeliveryService d = session.newServer( m, vf );
-			
-			d.transportControl( Transport.START, null );
+			session.newServer( uri, r, transport );
 		}
 
 		public Object sessionQuery( Object query ) throws Exception

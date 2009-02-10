@@ -22,7 +22,6 @@ import java.net.Socket;
 import javax.net.ssl.SSLSocket;
 
 import org.apache.etch.bindings.java.msg.ValueFactory;
-import org.apache.etch.bindings.java.support.DeliveryService;
 import org.apache.etch.bindings.java.support.ServerFactory;
 import org.apache.etch.bindings.java.support.TransportFactory;
 import org.apache.etch.util.Resources;
@@ -94,8 +93,7 @@ public class TcpTransportFactory extends TransportFactory
 
 	@Override
 	public Transport<ServerFactory> newListener( final String uri,
-		final Resources resources, final ServerFactory factory )
-		throws Exception
+		final Resources resources ) throws Exception
 	{
 		URL u = new URL( uri );
 		
@@ -106,9 +104,7 @@ public class TcpTransportFactory extends TransportFactory
 		else
 			l = new TcpListener( u, resources );
 		
-		MySessionListener b = new MySessionListener( l, uri, resources );
-		b.setSession( factory );
-		return b;
+		return new MySessionListener( l, uri, resources );
 	}
 	
 	private class MySessionListener implements Transport<ServerFactory>, SessionListener<Socket>
@@ -167,7 +163,8 @@ public class TcpTransportFactory extends TransportFactory
 			transport.transportNotify( event );
 		}
 
-		public void sessionAccepted( Socket socket ) throws Exception
+		public void sessionAccepted( Socket socket )
+			throws Exception
 		{
 			Resources r = new Resources( resources );
 			r.put( SOCKET, socket );
@@ -175,11 +172,9 @@ public class TcpTransportFactory extends TransportFactory
 			ValueFactory vf = session.newValueFactory();
 			r.put( Transport.VALUE_FACTORY, vf );
 			
-			TransportMessage m = newTransport( uri, r );
+			TransportMessage t = newTransport( uri, r );
 			
-			DeliveryService d = session.newServer( m, vf );
-			
-			d.transportControl( Transport.START, null );
+			session.newServer( uri, r, t );
 		}
 
 		public Object sessionQuery( Object query ) throws Exception

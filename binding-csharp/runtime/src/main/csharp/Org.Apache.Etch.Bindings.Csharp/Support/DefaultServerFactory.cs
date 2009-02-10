@@ -23,26 +23,29 @@ namespace Org.Apache.Etch.Bindings.Csharp.Support
 {
     abstract public class DefaultServerFactory : ServerFactory
     {
-        protected DefaultServerFactory(object implFactory)
+        protected DefaultServerFactory(Transport<ServerFactory> listener, object implFactory)
         {
-            this.implFactory = implFactory;
+            this.listener = listener;
+            if (implFactory is Session)
+                SetSession((Session)implFactory);
+            listener.SetSession(this);
         }
 
-        private readonly object implFactory;
+        private readonly Transport<ServerFactory> listener;
 
         public Object SessionQuery(Object query)
         {
-            if (implFactory is Session)
-                return ((Session)implFactory).SessionQuery(query);
+            if (session != null)
+                return session.SessionQuery(query);
 
             throw new NotSupportedException("unknown query " + query);
         }
 
         public void SessionControl(Object control, Object value)
         {
-            if (implFactory is Session)
+            if (session != null)
             {
-                ((Session)implFactory).SessionControl(control, value);
+                session.SessionControl(control, value);
                 return;
             }
 
@@ -51,15 +54,44 @@ namespace Org.Apache.Etch.Bindings.Csharp.Support
 
         public void SessionNotify(Object evnt)
         {
-            if (implFactory is Session)
-                ((Session)implFactory).SessionNotify(evnt);
-            else if (evnt is Exception)
-                throw new Exception("caught exception", (Exception)evnt);
+            if (session != null)
+                session.SessionNotify(evnt);
         }
+
+        #region Transport Members
+
+        public Session GetSession()
+        {
+            return session;
+        }
+
+        public void SetSession(Session session)
+        {
+            this.session = session;
+        }
+
+        private Session session;
+
+        public object TransportQuery(object query)
+        {
+            return listener.TransportQuery(query);
+        }
+
+        public void TransportControl(object control, object value)
+        {
+            listener.TransportControl(control, value);
+        }
+
+        public void TransportNotify(object eventObj)
+        {
+            listener.TransportNotify(eventObj);
+        }
+
+        #endregion
 
         #region ServerFactory Members
 
-        abstract public DeliveryService NewServer( TransportMessage m, ValueFactory vf);
+        abstract public void NewServer(string uri, Resources resources, TransportMessage transport);
 
         abstract public ValueFactory NewValueFactory();
 

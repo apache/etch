@@ -18,6 +18,7 @@
 package org.apache.etch.bindings.java.support;
 
 import org.apache.etch.util.core.io.Session;
+import org.apache.etch.util.core.io.Transport;
 
 /**
  * Default implementation of ServerFactory. Used by Etch generated Helper files
@@ -28,28 +29,35 @@ abstract public class DefaultServerFactory implements ServerFactory
 {
 	/**
 	 * Constructs the DefaultServerFactory.
+	 * @param listener 
 	 * @param implFactory
 	 */
-	public DefaultServerFactory( Object implFactory )
+	public DefaultServerFactory( Transport<ServerFactory> listener,
+		Object implFactory )
 	{
-		this.implFactory = implFactory;
+		this.listener = listener;
+		
+		if (implFactory instanceof Session)
+			setSession( (Session) implFactory );
+		
+		listener.setSession( this );
 	}
-
-	private final Object implFactory;
+	
+	private final Transport<ServerFactory> listener;
 
 	public Object sessionQuery( Object query ) throws Exception
 	{
-		if (implFactory instanceof Session)
-			return ((Session) implFactory).sessionQuery( query );
+		if (session != null)
+			return session.sessionQuery( query );
 
 		throw new UnsupportedOperationException( "unknown query " + query );
 	}
 
 	public void sessionControl( Object control, Object value ) throws Exception
 	{
-		if (implFactory instanceof Session)
+		if (session != null)
 		{
-			((Session) implFactory).sessionControl( control, value );
+			session.sessionControl( control, value );
 			return;
 		}
 
@@ -58,9 +66,35 @@ abstract public class DefaultServerFactory implements ServerFactory
 
 	public void sessionNotify( Object event ) throws Exception
 	{
-		if (implFactory instanceof Session)
-			((Session) implFactory).sessionNotify( event );
-		else if (event instanceof Exception)
-			throw (Exception) event;
+		if (session != null)
+			session.sessionNotify( event );
+	}
+
+	public Session getSession()
+	{
+		return session;
+	}
+
+	public void setSession( Session session )
+	{
+		this.session = session;
+	}
+	
+	private Session session;
+
+	public void transportControl( Object control, Object value )
+		throws Exception
+	{
+		listener.transportControl( control, value );
+	}
+
+	public void transportNotify( Object event ) throws Exception
+	{
+		listener.transportNotify( event );
+	}
+
+	public Object transportQuery( Object query ) throws Exception
+	{
+		return listener.transportQuery( query );
 	}
 }

@@ -34,7 +34,7 @@ namespace org.apache.etch.examples.chat
         public static void Main(String[] args)
         {
             string uri = "tcp://127.0.0.1:4005";
-            Transport<ServerFactory> listener = ChatHelper.NewListener(uri, null, new MainChatListener());
+            ServerFactory listener = ChatHelper.NewListener(uri, null, new MainChatListener());
             listener.TransportControl(TransportConsts.START_AND_WAIT_UP, 4000);
         }
 

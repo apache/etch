@@ -29,7 +29,7 @@ namespace org.apache.etch.examples.chat
        
         private static RemoteChatServer fred_server;
 
-        private static Transport<ServerFactory> listener;
+        private static ServerFactory listener;
 
         [TestFixtureSetUp]
         public  void SetupListener()

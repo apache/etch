@@ -24,36 +24,37 @@ namespace etch.tests
 {
     abstract public class MyCuaeHelper : CuaeHelper
     {
-        public static Transport<ServerFactory> NewListener(string uri,
+        public static ServerFactory NewListener(string uri,
             Resources resources, MyCuaeServerFactory implFactory)
         {
             Resources res = InitResources(resources);
-            return TransportFactory.GetListener(uri, res, new MyServerFactory(uri, res, implFactory));
+            Transport<ServerFactory> listener = TransportFactory.GetListener(uri, res);
+            return new MyServerFactory(listener, uri, implFactory);
         }
 
         public new class MyServerFactory : DefaultServerFactory
         {
-            private string _uri;
-            private Resources _resources;
-            private MyCuaeServerFactory _implFactory;
-
-            public MyServerFactory(string uri, Resources resources, MyCuaeServerFactory implFactory)
-                : base(implFactory)
+            public MyServerFactory(Transport<ServerFactory> listener, string uri, MyCuaeServerFactory implFactory)
+                : base(listener, implFactory)
             {
                 _uri = uri;
-                _resources = resources;
                 _implFactory = implFactory;
             }
 
-            public override DeliveryService NewServer(TransportMessage m, ValueFactory vf)
+            private readonly string _uri;
+
+            private readonly MyCuaeServerFactory _implFactory;
+
+            public override void NewServer(string uri, Resources resources, TransportMessage m)
             {
-                URL u = new URL(_uri);
-                MailboxManager x = new PlainMailboxManager(m, u, _resources);
-                DeliveryService d = new DefaultDeliveryService(x, u, _resources);
-                Pool qp = (Pool)_resources[QUEUED_POOL];
-                Pool fp = (Pool)_resources[FREE_POOL];
+                ValueFactory vf = (ValueFactory)resources.Get(TransportConsts.VALUE_FACTORY);
+                URL u = new URL(uri);
+                MailboxManager x = new PlainMailboxManager(m, u, resources);
+                DeliveryService d = new DefaultDeliveryService(x, u, resources);
+                Pool qp = (Pool)resources[QUEUED_POOL];
+                Pool fp = (Pool)resources[FREE_POOL];
                 _implFactory.NewMyCuaeServer(d, qp, fp, (MyValueFactoryCuae)vf);
-                return d;
+                d.TransportControl(TransportConsts.START, null);
             }
 
             public override ValueFactory NewValueFactory()

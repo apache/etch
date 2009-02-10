@@ -58,7 +58,7 @@ public class MainChatListener implements ChatHelper.ChatServerFactory
 		
 		MainChatListener implFactory = new MainChatListener();
 		
-		Transport<ServerFactory> listener = ChatHelper.newListener( uri, null,
+		ServerFactory listener = ChatHelper.newListener( uri, null,
 			implFactory );
 
 		listener.transportControl( Transport.START_AND_WAIT_UP, 4000 );

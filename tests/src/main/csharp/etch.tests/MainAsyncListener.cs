@@ -38,7 +38,7 @@ public class MainAsyncListener : AsyncHelper.AsyncServerFactory
 			uri = args[0];
 
 		MainAsyncListener implFactory = new MainAsyncListener();
-        Transport<ServerFactory> listener = AsyncHelper.NewListener(uri, null, implFactory);
+        ServerFactory listener = AsyncHelper.NewListener(uri, null, implFactory);
 
 		listener.TransportControl( TransportConsts.START_AND_WAIT_UP, 4000 );
 	}

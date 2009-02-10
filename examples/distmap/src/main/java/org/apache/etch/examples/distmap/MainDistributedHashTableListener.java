@@ -42,7 +42,7 @@ public class MainDistributedHashTableListener implements DistributedHashTableHel
 	{
 		String uri = "tcp://0.0.0.0:4007";
 		
-		Transport<ServerFactory> listener = DistributedHashTableHelper.newListener( uri, null,
+		ServerFactory listener = DistributedHashTableHelper.newListener( uri, null,
 			new MainDistributedHashTableListener() );
 
 		listener.transportControl( Transport.START_AND_WAIT_UP, 4000 );

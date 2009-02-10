@@ -33,7 +33,7 @@ namespace org.apache.etch.examples.perf
             bool startListener = false;
             const int maxWaitTime = 4000;
 
-            Transport<ServerFactory> listener;
+            ServerFactory listener;
 
             if (startListener)
             {

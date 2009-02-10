@@ -55,7 +55,7 @@ public class TestRemoteDistributedHashTableServer
 		Collections.synchronizedMap( new HashMap<String, Object>() );
 	
 	/** transport */
-	public static Transport<ServerFactory> listener;
+	public static ServerFactory listener;
 
 	/**
 	 * Connect to service

@@ -42,7 +42,7 @@ public class MainInheritanceListener implements InheritanceHelper.InheritanceSer
 	{
 		String uri = args.length > 0 ? args[0] : "tcp://0.0.0.0:4001";
 		
-		Transport<ServerFactory> listener = InheritanceHelper.newListener( uri, null,
+		ServerFactory listener = InheritanceHelper.newListener( uri, null,
 			new MainInheritanceListener() );
 
 		listener.transportControl( Transport.START_AND_WAIT_UP, 4000 );

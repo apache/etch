@@ -30,7 +30,7 @@ namespace org.apache.etch.examples.perf
 		{
             const string uri = "tcp://localhost:4004";
 			
-			Transport<ServerFactory> listener = PerfHelper.NewListener( uri, null,
+            ServerFactory listener = PerfHelper.NewListener(uri, null,
                 new MainPerfListener());
 			
 			// Start the Listener

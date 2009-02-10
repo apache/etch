@@ -73,7 +73,7 @@ public class TestRemoteChatServer
 		}
 	}
 	
-	private static Transport<ServerFactory> listener;
+	private static ServerFactory listener;
 	
 	/**
 	 * testLogin1: Login user

@@ -58,31 +58,33 @@ abstract public class MyCuaeHelper extends CuaeHelper
 	 *
 	 * @throws Exception
 	 */
-	public static Transport<ServerFactory> newListener( final String uri, Resources resources,
+	public static ServerFactory newListener( final String uri, Resources resources,
 		final MyCuaeServerFactory implFactory ) throws Exception
 	{
 		final Resources res = initResources( resources );
-		if (!res.containsKey( Transport.VALUE_FACTORY ))
-			res.put( Transport.VALUE_FACTORY, new MyValueFactoryCuae( "tcp:" ) );
-		final URL u = new URL( uri );
 
-		return TransportFactory.getListener( uri, res, new DefaultServerFactory( implFactory )
+		Transport<ServerFactory> listener =  TransportFactory.getListener( uri, res );
+		
+		return new DefaultServerFactory( listener, implFactory )
 		{
-			public DeliveryService newServer( TransportMessage m, ValueFactory vf ) throws Exception
+			public void newServer( String uri, Resources resources,
+				TransportMessage transport ) throws Exception
 			{
-				MailboxManager x = new PlainMailboxManager( m, u, res );
-				DeliveryService d = new DefaultDeliveryService( x, u, res );
-				Pool qp = (Pool) res.get( QUEUED_POOL );
-				Pool fp = (Pool) res.get( FREE_POOL );
+				ValueFactory vf = (ValueFactory) resources.get( Transport.VALUE_FACTORY );
+				URL u = new URL( uri );
+				MailboxManager x = new PlainMailboxManager( transport, u, resources );
+				DeliveryService d = new DefaultDeliveryService( x, u, resources );
+				Pool qp = (Pool) resources.get( QUEUED_POOL );
+				Pool fp = (Pool) resources.get( FREE_POOL );
 				implFactory.newMyCuaeServer( d, qp, fp, (MyValueFactoryCuae) vf );
-				return d;
+				d.transportControl( START, null );
 			}
 
 			public ValueFactory newValueFactory()
 			{
 				return new MyValueFactoryCuae( uri );
 			}
-		} );
+		};
 	}
 
 	/**

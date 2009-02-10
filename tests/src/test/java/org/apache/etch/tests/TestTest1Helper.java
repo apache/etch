@@ -29,7 +29,7 @@ import org.junit.Test;
 /** Test of Test1Helper */
 public class TestTest1Helper
 {
-	private static Transport<ServerFactory> listener;
+	private static ServerFactory listener;
 	
 	/** @throws Exception */
 	@BeforeClass

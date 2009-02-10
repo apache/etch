@@ -21,8 +21,6 @@ import org.apache.etch.bindings.java.support.ServerFactory;
 import org.apache.etch.util.Log;
 import org.apache.etch.util.core.io.Transport;
 
-
-
 /**
  * Main program for PerfServer. This program makes a listener to accept
  * connections from MainPerfClient.
@@ -42,7 +40,7 @@ public class MainPerfListener implements PerfHelper.PerfServerFactory
 		
 		final String uri = "tcp://localhost:4004";
 		
-		Transport<ServerFactory> listener = PerfHelper.newListener( uri, null,
+		ServerFactory listener = PerfHelper.newListener( uri, null,
 			new MainPerfListener() );
 
 		listener.transportControl( Transport.START_AND_WAIT_UP, 4000 );

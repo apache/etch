@@ -31,7 +31,7 @@ namespace org.apache.etch.examples.example
     {
         private static RemoteExampleServer server;
 
-        private static Transport<ServerFactory> listener;
+        private static ServerFactory listener;
 
         [TestFixtureSetUp]
         public void StartListener()

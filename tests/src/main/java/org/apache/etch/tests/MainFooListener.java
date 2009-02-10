@@ -37,7 +37,7 @@ public class MainFooListener implements FooServerFactory
 	{
 		String uri = "tcp://0.0.0.0:4001";
 
-		Transport<ServerFactory> listener = FooHelper.newListener( uri, null, new MainFooListener() );
+		ServerFactory listener = FooHelper.newListener( uri, null, new MainFooListener() );
 
 		listener.transportControl( Transport.START_AND_WAIT_UP, 4000 );
 	}

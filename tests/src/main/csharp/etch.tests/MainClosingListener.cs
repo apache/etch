@@ -39,7 +39,7 @@ public class MainClosingListener : ClosingHelper.ClosingServerFactory
 			uri = args[0]; */
 
 		MainClosingListener implFactory = new MainClosingListener();
-        Transport<ServerFactory> listener = ClosingHelper.NewListener(uri, null, implFactory);
+        ServerFactory listener = ClosingHelper.NewListener(uri, null, implFactory);
 
 		listener.TransportControl( TransportConsts.START_AND_WAIT_UP, 4000 );
 
