@@ -19,22 +19,25 @@ package org.apache.etch.bindings.java.support;
 
 import org.apache.etch.bindings.java.msg.ValueFactory;
 import org.apache.etch.bindings.java.transport.TransportMessage;
+import org.apache.etch.util.Resources;
 import org.apache.etch.util.core.io.Session;
+import org.apache.etch.util.core.io.Transport;
 
 
 /**
  * Interface to use for constructing new server instances by
  * TransportHelper.
  */
-public interface ServerFactory extends Session
+public interface ServerFactory extends Session, Transport<Session>
 {
 	/**
-	 * @param m the TransportMessage to use with the new server.
-	 * @param vf the value factory to use with the new server.
-	 * @return the constructed DeliveryService
+	 * @param uri 
+	 * @param resources 
+	 * @param transport the TransportMessage to use with the new server.
 	 * @throws Exception
 	 */
-	public DeliveryService newServer( TransportMessage m, ValueFactory vf ) throws Exception;
+	public void newServer( String uri, Resources resources,
+		TransportMessage transport ) throws Exception;
 	
 	/**
 	 * @return a new instance of value factory for this connection.

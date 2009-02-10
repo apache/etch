@@ -27,7 +27,7 @@ namespace etch.tests
     {
 
         private static RemoteAsyncServer server;
-        private static Transport<ServerFactory> listener;
+        private static ServerFactory listener;
 
         [TestFixtureSetUp]
         public void Setup()

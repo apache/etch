@@ -31,7 +31,7 @@ namespace org.apache.etch.examples.distmap
     {
         private static RemoteDistributedHashTableServer server;
 
-        private static Transport<ServerFactory> listener;
+        private static ServerFactory listener;
 
         public const bool myBool1 = true;
         public const sbyte myByte1 = 127;

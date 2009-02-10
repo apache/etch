@@ -37,7 +37,7 @@ public class TestExampleServer
 {
 	
 	/** transport */
-	public static Transport<ServerFactory> listener;
+	public static ServerFactory listener;
 	
 	RemoteExampleServer server;
 

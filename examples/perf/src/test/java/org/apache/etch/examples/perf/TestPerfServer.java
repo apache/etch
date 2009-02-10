@@ -37,7 +37,7 @@ public class TestPerfServer
 {
 
 	/** transport */
-	public static Transport<ServerFactory> listener;
+	public static ServerFactory listener;
 	
 	RemotePerfServer server;
 

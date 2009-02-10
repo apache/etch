@@ -39,7 +39,7 @@ public class MainExampleListener implements ExampleHelper.ExampleServerFactory
 		// TODO Change to correct URI
 		String uri = "tcp://0.0.0.0:4002";
 		
-		Transport<ServerFactory> listener = ExampleHelper.newListener( uri, null,
+		ServerFactory listener = ExampleHelper.newListener( uri, null,
 			new MainExampleListener() );
 
 		// Start the Listener

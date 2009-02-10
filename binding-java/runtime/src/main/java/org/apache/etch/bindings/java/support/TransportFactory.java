@@ -72,28 +72,26 @@ abstract public class TransportFactory
 	 * server sessions.
 	 * @param uri listener configuration parameters.
 	 * @param resources additional resources needed by the listener.
-	 * @param factory constructs the actual service class instances.
 	 * @return an out-of-band source which may be used to control the listener.
 	 * @throws Exception
 	 */
 	abstract protected Transport<ServerFactory> newListener( String uri,
-		Resources resources, ServerFactory factory ) throws Exception;
+		Resources resources ) throws Exception;
 
 	/**
 	 * Constructs a new Transport Listener which is used to construct
 	 * server sessions.
 	 * @param uri listener configuration parameters.
 	 * @param resources additional resources needed by the listener.
-	 * @param factory constructs the actual service class instances.
 	 * @return an out-of-band source which may be used to control the listener.
 	 * @throws Exception
 	 */
 	static public Transport<ServerFactory> getListener( String uri,
-		Resources resources, ServerFactory factory ) throws Exception
+		Resources resources ) throws Exception
 	{
 		URL u = new URL( uri );
 		TransportFactory f = getTransportFactory( u.getScheme() );
-		return f.newListener( uri, resources, factory );
+		return f.newListener( uri, resources );
 	}
 
 	/**

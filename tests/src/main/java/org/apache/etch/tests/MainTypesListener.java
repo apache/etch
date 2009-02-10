@@ -38,7 +38,7 @@ public class MainTypesListener implements TypesHelper.TypesServerFactory
 	{
 		String uri = "tcp://0.0.0.0:4001";
 		
-		Transport<ServerFactory> listener = TypesHelper.newListener( uri, null,
+		ServerFactory listener = TypesHelper.newListener( uri, null,
 			new MainTypesListener() );
 
 		listener.transportControl( Transport.START_AND_WAIT_UP, 4000 );

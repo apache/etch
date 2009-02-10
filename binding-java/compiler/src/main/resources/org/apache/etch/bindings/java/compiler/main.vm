@@ -52,7 +52,7 @@ public class Main${i}Listener implements ${i}Helper.${i}ServerFactory
 		// TODO Change to correct URI
 		String uri = "tcp://0.0.0.0:4001";
 		
-		Transport<ServerFactory> listener = ${i}Helper.newListener( uri, null,
+		ServerFactory listener = ${i}Helper.newListener( uri, null,
 			new Main${i}Listener() );
 
 		// Start the Listener

@@ -38,7 +38,7 @@ public class MainInheritanceListener : InheritanceHelper.InheritanceServerFactor
 			uri = args[0];
 
 		MainInheritanceListener implFactory = new MainInheritanceListener();
-        Transport<ServerFactory> listener = InheritanceHelper.NewListener(uri, null, implFactory);
+        ServerFactory listener = InheritanceHelper.NewListener(uri, null, implFactory);
 
 		listener.TransportControl( TransportConsts.START_AND_WAIT_UP, 4000 );
 	}

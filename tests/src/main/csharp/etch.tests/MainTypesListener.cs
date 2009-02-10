@@ -37,7 +37,7 @@ public class MainTypesListener : TypesHelper.TypesServerFactory
 		
 
 		MainTypesListener implFactory = new MainTypesListener();
-        Transport<ServerFactory> listener = TypesHelper.NewListener(uri, null, implFactory);
+        ServerFactory listener = TypesHelper.NewListener(uri, null, implFactory);
 
 		listener.TransportControl( TransportConsts.START_AND_WAIT_UP, 4000 );
 	}

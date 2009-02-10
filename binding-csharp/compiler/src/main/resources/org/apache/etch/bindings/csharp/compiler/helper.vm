@@ -43,44 +43,52 @@ namespace $intf.parent().name()
 		/// <returns> an out-of-band source that may be used to control
 		/// the listener.</returns>
 
-		public static Transport<ServerFactory> NewListener( string uri,		
+		public static ServerFactory NewListener( string uri,		
 			Resources resources, ${i}ServerFactory implFactory )
 		{
-			Resources res = InitResources( resources );
-			return TransportFactory.GetListener( uri, res,
-				new MyServerFactory( uri, res, implFactory ) );
+			Resources res = InitResources(resources);
+			Transport<ServerFactory> listener = TransportFactory.GetListener(uri, res);
+			return new MyServerFactory(listener, uri, implFactory);
 		}
 		
 		public class MyServerFactory : DefaultServerFactory
 		{
-			private readonly string _uri;
-			private readonly Resources _resources;
-			private readonly ${i}ServerFactory _implFactory;
-			
-			public MyServerFactory( string uri, Resources resources, ${i}ServerFactory implFactory )
-				: base(implFactory)
+			public MyServerFactory(Transport<ServerFactory> listener, string uri, ${i}ServerFactory implFactory )
+				: base(listener, implFactory)
 			{
+				_listener = listener;
 				_uri = uri;
-				_resources = resources;
 				_implFactory = implFactory;
 			}
-		
-			public override DeliveryService NewServer(TransportMessage m, ValueFactory vf)
+
+		    private readonly Transport<ServerFactory> _listener;
+
+            private readonly string _uri;
+
+            private readonly ${i}ServerFactory _implFactory;
+
+            public override void NewServer(string uri, Resources resources, TransportMessage m)
 			{
-                URL u = new URL(_uri);
-                MailboxManager r = new PlainMailboxManager(m, u, _resources);
-                DeliveryService d = new DefaultDeliveryService(r, u, _resources);
+                ValueFactory vf = (ValueFactory)resources.Get(TransportConsts.VALUE_FACTORY);
+                URL u = new URL(uri);
+                MailboxManager r = new PlainMailboxManager(m, u, resources);
+                DeliveryService d = new DefaultDeliveryService(r, u, resources);
 				Remote${i}Client client = new Remote${i}Client(d, vf);
 				${i}Server server = _implFactory.New${i}Server(client);
-				Pool qp = (Pool)_resources[QUEUED_POOL];
-				Pool fp = (Pool)_resources[FREE_POOL];
+                Pool qp = (Pool)resources[QUEUED_POOL];
+                Pool fp = (Pool)resources[FREE_POOL];
 				new Stub${i}Server(d, server, qp, fp);
-				return d;
+				client._Start();
 			}
 
             public override ValueFactory NewValueFactory()
             {
                 return new ValueFactory${i}(_uri);
+            }
+
+            public override string ToString()
+            {
+                return "${i}Helper.ServerFactory/" + _listener;
             }
 		}
 		

@@ -38,7 +38,7 @@ public class MainCuaeListener : MyCuaeHelper.MyCuaeServerFactory
 			uri = args[0]; */
 
 		MainCuaeListener implFactory = new MainCuaeListener();
-        Transport<ServerFactory> listener = MyCuaeHelper.NewListener(uri, null, implFactory);
+        ServerFactory listener = MyCuaeHelper.NewListener(uri, null, implFactory);
 
 		listener.TransportControl( TransportConsts.START_AND_WAIT_UP, 4000 );
 	}

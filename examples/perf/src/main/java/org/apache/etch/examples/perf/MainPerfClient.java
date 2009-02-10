@@ -77,7 +77,7 @@ public class MainPerfClient implements PerfClientFactory, PerfServerFactory
 
 		implFactory = new MainPerfClient();
 
-		final Transport<ServerFactory> listener;
+		final ServerFactory listener;
 
 		if (startListener)
 		{

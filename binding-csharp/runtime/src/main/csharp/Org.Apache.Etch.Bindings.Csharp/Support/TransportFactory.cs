@@ -48,9 +48,9 @@ namespace Org.Apache.Etch.Bindings.Csharp.Support
         /// <returns>the TransportMessage topping the transport stack.</returns>
         public static TransportMessage GetTransport(string uri, Resources resources) 
 	    {
-		    URL u = new URL( uri );
-		    TransportFactory f = GetTransportFactory( u.Scheme );
-		    return f.NewTransport( uri, resources );
+            URL u = new URL(uri);
+            TransportFactory f = GetTransportFactory(u.Scheme);
+            return f.NewTransport(uri, resources);
 	    }
 
         /// <summary>
@@ -59,9 +59,8 @@ namespace Org.Apache.Etch.Bindings.Csharp.Support
         /// </summary>
         /// <param name="uri">listener configuration parameters.</param>
         /// <param name="resources">additional resources needed by the listener.</param>
-        /// <param name="factory">constructs the actual service class instances.</param>
         /// <returns>an out-of-band source which may be used to control the listener.</returns>
-        protected abstract Transport<ServerFactory> NewListener(string uri, Resources resources, ServerFactory factory);
+        protected abstract Transport<ServerFactory> NewListener(string uri, Resources resources);
 
         /// <summary>
         /// Constructs a new Transport Listener which is used to construct
@@ -69,13 +68,12 @@ namespace Org.Apache.Etch.Bindings.Csharp.Support
         /// </summary>
         /// <param name="uri">listener configuration parameters.</param>
         /// <param name="resources">additional resources needed by the listener.</param>
-        /// <param name="factory">constructs the actual service class instances.</param>
         /// <returns>an out-of-band source which may be used to control the listener.</returns>
-        public static Transport<ServerFactory> GetListener( string uri, Resources resources, ServerFactory factory ) 
+        public static Transport<ServerFactory> GetListener(string uri, Resources resources) 
 	    {
-		    URL u = new URL( uri );
-		    TransportFactory f = GetTransportFactory( u.Scheme );
-		    return f.NewListener( uri, resources, factory );
+            URL u = new URL(uri);
+            TransportFactory f = GetTransportFactory(u.Scheme);
+            return f.NewListener(uri, resources);
 	    }
 
         /// <summary>

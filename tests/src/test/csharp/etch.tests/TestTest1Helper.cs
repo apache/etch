@@ -26,7 +26,7 @@ namespace etch.tests
     [TestFixture]
     public class TestTest1Helper
     {
-        public static Transport<ServerFactory> listener;
+        public static ServerFactory listener;
         
         [TestFixtureSetUp]
         public void First()

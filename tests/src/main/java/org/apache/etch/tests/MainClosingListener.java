@@ -41,7 +41,7 @@ public class MainClosingListener implements ClosingHelper.ClosingServerFactory
 	{
 		String uri = "tcp://0.0.0.0:4006";
 		
-		Transport<ServerFactory> listener = ClosingHelper.newListener( uri, null, new MainClosingListener() );
+		ServerFactory listener = ClosingHelper.newListener( uri, null, new MainClosingListener() );
 
 		listener.transportControl( Transport.START_AND_WAIT_UP, 4000 );
 		

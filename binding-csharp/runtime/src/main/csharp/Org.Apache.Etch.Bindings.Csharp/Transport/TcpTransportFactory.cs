@@ -71,13 +71,10 @@ namespace Org.Apache.Etch.Bindings.Csharp.Transport
             return m;
         }
 
-        protected override Transport<ServerFactory> NewListener( string uri, Resources resources,
-            ServerFactory factory )
+        protected override Transport<ServerFactory> NewListener( string uri, Resources resources )
         {
             Transport<SessionListener<Socket>> l = new TcpListener(uri, resources);
-            MySessionListener b = new MySessionListener(this, l, uri, resources);
-            b.SetSession(factory);
-            return b;
+            return new MySessionListener(this, l, uri, resources);
         }
 
         public class MySessionListener : Transport<ServerFactory>, SessionListener<Socket>
@@ -111,11 +108,9 @@ namespace Org.Apache.Etch.Bindings.Csharp.Transport
                 ValueFactory vf = session.NewValueFactory();
                 r.Add(TransportConsts.VALUE_FACTORY, vf);
 
-                TransportMessage m = ttf.NewTransport(uri, r);
+                TransportMessage t = ttf.NewTransport(uri, r);
 
-                DeliveryService d = session.NewServer(m, vf);
-
-                d.TransportControl(TransportConsts.START, null);
+                session.NewServer(uri, r, t);
             }
 
             #region Transport<ServerFactory> Members

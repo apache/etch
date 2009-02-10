@@ -31,8 +31,8 @@ namespace org.apache.etch.examples.distmap
 		{
 			// TODO: Change to correct URI
 			string uri = "tcp://localhost:4007";
-			
-			Transport<ServerFactory> listener = DistributedHashTableHelper.NewListener( uri, null, new MainDistributedHashTableListener());
+
+            ServerFactory listener = DistributedHashTableHelper.NewListener(uri, null, new MainDistributedHashTableListener());
 			
 			// Start the Listener
 			listener.TransportControl( TransportConsts.START_AND_WAIT_UP, 4000 );

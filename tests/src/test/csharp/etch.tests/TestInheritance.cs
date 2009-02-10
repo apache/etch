@@ -27,7 +27,7 @@ namespace etch.tests
     public class TestInheritance
     {
         private static RemoteInheritanceServer server;
-        private static Transport<ServerFactory> listener;
+        private static ServerFactory listener;
         
         [TestFixtureSetUp]
         public void Setup()

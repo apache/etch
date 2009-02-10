@@ -42,7 +42,7 @@ public class MainAsyncListener implements AsyncHelper.AsyncServerFactory
 		
 		String uri = "tcp://0.0.0.0:4003";
 
-		Transport<ServerFactory> listener = AsyncHelper.newListener( uri, null,
+		ServerFactory listener = AsyncHelper.newListener( uri, null,
 			new MainAsyncListener() );
 
 		listener.transportControl( Transport.START_AND_WAIT_UP, 4000 );

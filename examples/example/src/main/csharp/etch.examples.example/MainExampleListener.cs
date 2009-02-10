@@ -31,7 +31,7 @@ namespace org.apache.etch.examples.example
 			// TODO: Change to correct URI
 			string uri = "tcp://localhost:4002";
 			
-			Transport<ServerFactory> listener = ExampleHelper.NewListener( uri, null, new MainExampleListener());
+            ServerFactory listener = ExampleHelper.NewListener(uri, null, new MainExampleListener());
 			
 			// Start the Listener
 			listener.TransportControl( TransportConsts.START_AND_WAIT_UP, 4000 );

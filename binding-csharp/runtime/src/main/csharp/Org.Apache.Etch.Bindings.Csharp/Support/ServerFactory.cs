@@ -24,15 +24,15 @@ namespace Org.Apache.Etch.Bindings.Csharp.Support
     /// Interface to use for constructing new server instances by 
     /// TransportHelper
     /// </summary>
-    public interface ServerFactory : Session
+    public interface ServerFactory : Session, Transport<Session>
     {
         /// <summary>
         /// Constructs a new server session.
         /// </summary>
-        /// <param name="m"> the TransportMessage to be used with the new session</param>
-        /// <param name="vf">the value factory to be used with the new session</param>
-        /// <returns>the constructed DeliveryService</returns>
-        DeliveryService NewServer(TransportMessage m, ValueFactory vf);
+        /// <param name="uri"></param>
+        /// <param name="resources"></param>
+        /// <param name="transport"> the TransportMessage to be used with the new session</param>
+        void NewServer(string uri, Resources resources, TransportMessage transport);
 
         /// <summary>
         /// Constructs a new instance of value factory for this session.

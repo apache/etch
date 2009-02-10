@@ -40,7 +40,7 @@ public class MainCuaeListener implements MyCuaeHelper.MyCuaeServerFactory
 	{
 		String uri = "tcp://0.0.0.0:4006";
 
-		Transport<ServerFactory> listener = MyCuaeHelper.newListener( uri, null, new MainCuaeListener() );
+		ServerFactory listener = MyCuaeHelper.newListener( uri, null, new MainCuaeListener() );
 
 		listener.transportControl( Transport.START_AND_WAIT_UP, 4000 );
 	}
