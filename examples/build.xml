@@ -7,6 +7,10 @@
     <property name="target" location="${basedir}/target" />
     
     <target name="do-clean">
+        <build_example dir="chat" logdir="${basedir}/target/logs" />
+        <build_example dir="distmap" logdir="${basedir}/target/logs" />
+        <build_example dir="example" logdir="${basedir}/target/logs" />
+        <build_example dir="perf" logdir="${basedir}/target/logs" />
         <delete dir="${target}" failonerror="false" quiet="true" />
     </target>
     
