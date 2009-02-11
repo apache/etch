@@ -63,6 +63,7 @@
             </copy>
 
             <!-- Compile Tests -->
+            <!--
             <javac  debug="${Etch.javac.debug}"
                     target="1.5"
                     optimize="${Etch.javac.optimize}"
@@ -75,12 +76,14 @@
                     <pathelement location="${Etch.HOME}/lib/${etch-compiler.jar}" />
                 </classpath>
             </javac>
+            -->
 
             <!-- compiler plugin resources -->
+            <!--
             <copy todir="${classesDirectory}/test" >
                 <fileset dir="${src}/test/resources" excludes="**/.svn/**" />
             </copy>
-
+            -->
         </sequential>
     </macrodef>
     
