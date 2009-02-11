@@ -144,9 +144,11 @@
             <fileset dir="${src}/main/java">
                 <include name="**/*.java" />
             </fileset>
+            <!--
             <testsources dir="${src}/test/java">
                 <include name="**/*.java" />
             </testsources>
+            -->
         </initialize-clover>
         
         <!-- Initialize target directories -->
