@@ -1,5 +1,5 @@
-﻿ <?xml version="1.0" encoding="utf-8"?>
- <!--
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <!--
  * Licensed to the Apache Software Foundation (ASF) under one   *
  * or more contributor license agreements.  See the NOTICE file *
  * distributed with this work for additional information        *
@@ -16,8 +16,7 @@
  * KIND, either express or implied.  See the License for the    *
  * specific language governing permissions and limitations      *
  * under the License.                                           *
- -->
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    -->
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -50,43 +49,43 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\org.apache.etch.examples.chat\BaseChatClient.cs">
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.examples.chat\BaseChatClient.cs">
       <Link>BaseChatClient.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\org.apache.etch.examples.chat\BaseChatServer.cs">
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.examples.chat\BaseChatServer.cs">
       <Link>BaseChatServer.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\org.apache.etch.examples.chat\Chat.cs">
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.examples.chat\Chat.cs">
       <Link>Chat.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\org.apache.etch.examples.chat\ChatClient.cs">
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.examples.chat\ChatClient.cs">
       <Link>ChatClient.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\org.apache.etch.examples.chat\ChatHelper.cs">
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.examples.chat\ChatHelper.cs">
       <Link>ChatHelper.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\org.apache.etch.examples.chat\ChatServer.cs">
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.examples.chat\ChatServer.cs">
       <Link>ChatServer.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\org.apache.etch.examples.chat\RemoteChat.cs">
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.examples.chat\RemoteChat.cs">
       <Link>RemoteChat.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\org.apache.etch.examples.chat\RemoteChatClient.cs">
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.examples.chat\RemoteChatClient.cs">
       <Link>RemoteChatClient.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\org.apache.etch.examples.chat\RemoteChatServer.cs">
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.examples.chat\RemoteChatServer.cs">
       <Link>RemoteChatServer.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\org.apache.etch.examples.chat\StubChat.cs">
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.examples.chat\StubChat.cs">
       <Link>StubChat.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\org.apache.etch.examples.chat\StubChatClient.cs">
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.examples.chat\StubChatClient.cs">
       <Link>StubChatClient.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\org.apache.etch.examples.chat\StubChatServer.cs">
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.examples.chat\StubChatServer.cs">
       <Link>StubChatServer.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\org.apache.etch.examples.chat\ValueFactoryChat.cs">
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\etch.examples.chat\ValueFactoryChat.cs">
       <Link>ValueFactoryChat.cs</Link>
     </Compile>
     <Compile Include="..\etch.examples.chat\ImplChatClient.cs">
