@@ -1,4 +1,4 @@
-Welcome to the 1.0.2 release of Etch.
+Welcome to the 1.0.2-incubating release of Apache Etch.
 
 The jumping off point for Etch information and help is here:
 
@@ -9,22 +9,28 @@ The top-level structure of the install image is:
 	ChangeLog.txt
 	LICENSE.txt
 	README.txt
-	bin
-	lib
-	maven
+    NOTICE.txt
+    RELEASE_NOTES.txt
+	bin/
+	lib/
+    examples/
+	maven/
+    uninst.exe (windows only)
 
-Please take a moment to review the ChangeLog.txt and LICENSE.txt files.
+Please take a moment to review the RELEASE_NOTES.txt, ChangeLog.txt and
+LICENSE.txt files.
 
-The Windows installer (etch-1.0.2-setup.exe) has created a user environment
-variable (ETCH_HOME) which points to the Etch installation directory. If you
-installed Etch using either etch-1.0.2.tar.gz or etch-1.0.2.zip, you will want
-to create this environment variable yourself:
+The Windows installer (apache-etch-1.0.2-incubating-setup.exe) has created a 
+user environment variable (ETCH_HOME) which points to the Etch installation
+directory. If you installed Etch using either apache-etch-1.0.2-incubating-bin.tar.gz
+or apache-etch-1.0.2-incubating-bin.zip, you will want to create this environment
+variable yourself:
 
 windows:
-	set ETCH_HOME=C:\Program Files\Etch\etch-1.0.2
+	set ETCH_HOME=C:\Program Files\Apache Software Foundation\apache-etch-1.0.2-incubating
 
-unix:
-	export ETCH_HOME=/usr/local/etch/etch-1.0.2
+*nix:
+	export ETCH_HOME=/path/to/apache-etch-1.0.2-incubating
 
 The bin directory has also been put on your path by the Windows installer. If
 you are using the archives, you will need to do this yourself:
@@ -32,10 +38,10 @@ you are using the archives, you will need to do this yourself:
 windows:
 	PATH %PATH%;%ETCH_HOME%\bin
 
-unix:
-	PATH="$PATH:$ETCH_HOME/bin"
+*nix:
+	export PATH="$PATH:$ETCH_HOME/bin"
 
-The bin directory contains a Windows bat script and a unix shell script.
+The bin/ directory contains a Windows bat script and a unix shell script.
 
 You will also need to have a java sdk installed (later versions of 1.5 or
 any version of 1.6). A JAVA_HOME environment variable should point to the
@@ -61,9 +67,11 @@ The lib directory contains the various jar files, zipped sources, and a C# dll:
 	etch-java-runtime-1.0.2.jar
 	...
 
-The main items of interest are the java binding runtime, which you need to
-put on the classpath of your projects: etch-java-runtime-1.0.2.jar. There is
-source code to go with it in etch-java-runtime-1.0.2-src.zip.
+The main items of interest are the language binding runtimes, which you need to
+link with your projects.
+
+For java you need to put on the classpath of your projects: etch-java-runtime-1.0.2.jar.
+There is source code to go with it in etch-java-runtime-1.0.2-src.zip.
 
 The C# (.NET 2.0) Etch.dll should be added to any C# projects.
 
@@ -81,7 +89,9 @@ etch-java-runtime-1.0.2.jar will be installed into your local repository with
 group "etch.etch", artifact id "etch-java-runtime", and version "1.0.2". You
 may then reference Etch from your maven projects.
 
-Examples and unit tests can be had by checking out the source code from the
+Examples have been provided in the examples/ subdirectory.
+
+Unit tests can be had by checking out the source code from the
 subversion repository and performing a complete build:
 
- https://svn.apache.org/repos/asf/incubator/etch
+ https://svn.apache.org/repos/asf/incubator/etch/releases/release-1.0.2
