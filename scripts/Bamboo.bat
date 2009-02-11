@@ -12,5 +12,6 @@ set ETCH_HOME=
 set DOTNET_HOME=C:\WINDOWS\Microsoft.NET\Framework\v2.0.50727
 
 :: Call ant with the arguments that we pass in
+cd ..
 call ant %*
 
