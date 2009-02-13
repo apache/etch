@@ -50,7 +50,7 @@ public class MainIOTListener implements IOTHelper.IOTServerFactory
 		
 		String uri = args.length > 0 ? args[0] : "tcp://127.0.0.1:4001";
 		
-		Transport<ServerFactory> listener = IOTHelper.newListener( uri, null,
+		ServerFactory listener = IOTHelper.newListener( uri, null,
 			new MainIOTListener() );
 
 		// Start the Listener

@@ -203,12 +203,12 @@ public class Test implements TestIntf
 
 	public void run( Map<String, String> overrides ) throws Exception
 	{
-		System.out.println( "Test.run: "+name+", overrides = "+overrides );
+		//System.out.println( "Test.run: "+name+", overrides = "+overrides );
 		
 		Map<String, String> substs = Param.processOverrides( "test", params,
 			overrides );
 		
-		System.out.println( "Test.run: "+name+", substs = "+substs );
+		//System.out.println( "Test.run: "+name+", substs = "+substs );
 		
 		runProgs( setup, substs );
 		try

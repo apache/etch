@@ -163,14 +163,14 @@ public class InteropTest implements InteropTestIntf
 
 	public void run( Map<String, String> overrides ) throws Exception
 	{
-		System.out.println( "InteropTest.run: overrides = "+overrides );
+		//System.out.println( "InteropTest.run: overrides = "+overrides );
 		
 		// construct substs out of params + overrides
 		
 		Map<String, String> substs = Param.processOverrides( "interoptest",
 			params, overrides );
 		
-		System.out.println( "InteropTest.run: substs = "+substs );
+		//System.out.println( "InteropTest.run: substs = "+substs );
 		
 		// run each "run" defined in interoptest
 		
