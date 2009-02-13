@@ -160,6 +160,6 @@ public class DefaultRunningProg implements RunningProg
 
 	private void report( String msg )
 	{
-		System.out.println( this.toString() + ": " + msg );
+		//System.out.println( this.toString() + ": " + msg );
 	}
 }

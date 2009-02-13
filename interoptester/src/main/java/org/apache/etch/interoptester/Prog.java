@@ -130,12 +130,12 @@ public class Prog
 		private Map<String, String> processSubst( String who,
 			Map<String, String> substs )
 		{
-			System.out.println( "Prog."+who+": name "+name+", substs = "+substs );
+			//System.out.println( "Prog."+who+": name "+name+", substs = "+substs );
 			
 			Map<String, String> overrides = Arg.processSubst( "prog", args,
 				substs );
 			
-			System.out.println( "Prog."+who+": name "+name+", overrides = "+overrides );
+			//System.out.println( "Prog."+who+": name "+name+", overrides = "+overrides );
 			
 			return overrides;
 		}

@@ -123,7 +123,7 @@ public class Run
 						disable = Boolean.valueOf( te.getCdataValue() );
 					else
 						disable = true;
-					System.out.println( "run "+name+" test "+test+", disable = "+disable );
+					//System.out.println( "run "+name+" test "+test+", disable = "+disable );
 					return true;
 				}
 				

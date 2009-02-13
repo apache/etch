@@ -67,7 +67,7 @@ public class MainInteropTester
 			overrides.put( x[0], x[1] );
 		}
 
-		System.out.println( "main: overrides = " + overrides );
+		//System.out.println( "main: overrides = " + overrides );
 
 		new Thread( new Runnable()
 		{

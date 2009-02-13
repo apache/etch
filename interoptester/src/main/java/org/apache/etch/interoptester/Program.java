@@ -278,7 +278,7 @@ public class Program
 		Map<String, String> substs = processOverrides( "start", overrides );
 		List<String> tkns = processTokens( substs );
 		Map<String, String> nvs = processEnvs( substs );
-		System.out.printf( "Program.start: tokens %s envs %s\n", tkns, nvs );
+		//System.out.printf( "Program.start: tokens %s envs %s\n", tkns, nvs );
 		DefaultRunningProg rp = new DefaultRunningProg( tkns, nvs, stdoutTag, stderrTag );
 		try
 		{
@@ -309,7 +309,7 @@ public class Program
 		Map<String, String> substs = processOverrides( "run", overrides );
 		List<String> tkns = processTokens( substs );
 		Map<String, String> nvs = processEnvs( substs );
-		System.out.printf( "Program.run: tokens %s envs %s\n", tkns, nvs );
+		//System.out.printf( "Program.run: tokens %s envs %s\n", tkns, nvs );
 		
 		DefaultRunningProg rp = new DefaultRunningProg( tkns, nvs, stdoutTag, stderrTag );
 		try
@@ -345,12 +345,12 @@ public class Program
 	private Map<String, String> processOverrides( String who,
 		Map<String, String> overrides )
 	{
-		System.out.println( "Program."+who+": name "+name+", overrides = "+overrides );
+		//System.out.println( "Program."+who+": name "+name+", overrides = "+overrides );
 		
 		Map<String, String> substs = Param.processOverrides( "program", params,
 			overrides );
 		
-		System.out.println( "Program."+who+": name "+name+", substs = "+substs );
+		//System.out.println( "Program."+who+": name "+name+", substs = "+substs );
 		
 		return substs;
 	}
