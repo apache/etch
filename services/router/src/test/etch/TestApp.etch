@@ -1,0 +1,9 @@
+module cisco.uc.cuae.etchrouter.test.app
+
+service TestPlugin
+{
+   //mixin cisco.uc.cuae.etchrouter.EtchRouter
+
+   mixin cisco.uc.cuae.etchrouter.test.plugin.TestPlugin
+    
+}
