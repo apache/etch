@@ -1,0 +1,12 @@
+module cisco.uc.cuae.etchrouter.test.plugin
+
+service TestPlugin
+{
+
+   enum TestEnum ( ItemA, ItemB )
+   struct TestStruct ( int fieldA, long fieldB )
+   exception TestException ( string msg, int errCode )
+
+   int addMethod( int valA, int valB)
+    
+}

@@ -1,0 +1,25 @@
+
+// The service module namespace, this will be translated to the
+// namespace of the generated source code.
+module cisco.uc.cuae.etchrouter
+
+// The name of your service.
+service EtchRouter
+{
+
+    enum PluginServiceState ( UP, DOWN )
+
+    exception EtchRouterException
+    (
+        int errorCode,
+        string msg
+    )
+    
+    @Direction( client )
+    @Oneway
+    void routerPluginServiceStateChange ( string pluginGroupName, PluginServiceState state, string detail )
+
+    string registerRouterApplication ( string applicationName, string applicationParam ) throws EtchRouterException
+
+}
+
