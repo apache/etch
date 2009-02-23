@@ -22,6 +22,7 @@ package org.apache.etch.bindings.java.transport;
 
 import org.apache.etch.bindings.java.msg.Message;
 import org.apache.etch.bindings.java.msg.ValueFactory;
+import org.apache.etch.bindings.java.support.RetryMessageException;
 import org.apache.etch.util.FlexBuffer;
 import org.apache.etch.util.Resources;
 import org.apache.etch.util.URL;
@@ -120,12 +121,25 @@ public final class Messagizer implements SessionPacket, TransportMessage
 	{
 		// messagize the packet.
 		
+    	int i = buf.index();
+    	try
+    	{
+    		doMessage( sender, buf );
+    	}
+    	catch ( RetryMessageException e )
+    	{
+    		buf.setIndex( i );
+    		doMessage( sender, buf );
+    	}
+	}
+    
+    private void doMessage( Who sender, FlexBuffer buf ) throws Exception
+    {
 		Message msg = tdi.readMessage( buf );
-//		Log.report( "Messagizer.packet", "who", this, "recv", msg );
 		boolean handled = session.sessionMessage( sender, msg );
 		if (!handled)
 			session.sessionNotify( new UnwantedMessage( sender, msg ) );
-	}
+    }
 
 	////////////////////
 	// Message Source //

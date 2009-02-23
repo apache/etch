@@ -65,11 +65,18 @@ public class DefaultDeliveryService implements DeliveryService
 		Resources resources )
 	{
 		this.transport = transport;
+		this.uri = uri.toString();
+		this.resources = resources;
+
 		transport.setSession( this );
 		disableTimeout = uri.getBooleanTerm( DISABLE_TIMEOUT , false );
 	}
 	
 	private final MailboxManager transport;
+	
+	private final String uri;
+	
+	private final Resources resources;
 	
 	/**
 	 * @return the transport.
@@ -86,8 +93,8 @@ public class DefaultDeliveryService implements DeliveryService
 	
 	public void setSession( SessionMessage session )
 	{
-		if (this.session != null)
-			throw new UnsupportedOperationException( "only one stub for now" );
+//		if (this.session != null)
+//			throw new UnsupportedOperationException( "only one stub for now" );
 		this.session = session;
 	}
 	
@@ -153,6 +160,12 @@ public class DefaultDeliveryService implements DeliveryService
 			waitDown( ((WaitDown) query).maxDelay );
 			return null;
 		}
+		else if (query.equals( "ds" ))
+			return this;
+		else if (query.equals( "uri" ))
+			return uri;
+		else if (query.equals( "res" ))
+			return resources;
 		else
 		{
 			return transport.transportQuery( query );

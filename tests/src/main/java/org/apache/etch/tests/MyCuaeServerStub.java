@@ -75,7 +75,7 @@ public class MyCuaeServerStub extends StubBase<Object>
 	public MyCuaeServerStub( DeliveryService svc, Pool queued, Pool free,
 		MyValueFactoryCuae vf )
 	{
-		super( svc, new MyCuaeServerImpl( svc, vf ), queued, free );
+		super( svc, new MyCuaeServerImpl( svc, vf ), queued, free, null );
 	}
 
 	/**

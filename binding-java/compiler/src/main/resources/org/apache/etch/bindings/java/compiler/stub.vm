@@ -21,6 +21,7 @@ package $intf.parent().name();
 
 import org.apache.etch.util.core.Who;
 import org.apache.etch.bindings.java.msg.Message;
+import org.apache.etch.bindings.java.msg.ValueFactory;
 import org.apache.etch.bindings.java.support.DeliveryService;
 import org.apache.etch.bindings.java.support.Pool;
 import org.apache.etch.bindings.java.support.StubHelper;
@@ -60,10 +61,12 @@ public class Stub$i$suffix<T extends $i$suffix> extends StubBase<T>
 	 * @param obj the implementation of $i$suffix responsive to requests.
 	 * @param queued thread pool used to run AsyncMode.QUEUED methods.
 	 * @param free thread pool used to run AsyncMode.FREE methods.
+	 * @param vf the ValueFactory associated with this stub's service.
 	 */
-	public Stub$i$suffix( DeliveryService svc, $T obj, Pool queued, Pool free )
+	public Stub$i$suffix( DeliveryService svc, $T obj, Pool queued, Pool free,
+		ValueFactory vf )
 	{
-		super( svc, obj, queued, free );
+		super( svc, obj, queued, free, vf );
 	}
 	
 	static

@@ -44,7 +44,7 @@ public class MainExampleClient implements ExampleHelper.ExampleClientFactory
 		// Connect to the service
 		server._startAndWaitUp( 4000 );
 
-		// TODO Insert Your Code Here
+		System.out.println( "helloServer = "+server.helloServer( "helloServer blah", null ) );
 
 		// Disconnect from the service
 		server._stopAndWaitDown( 4000 );

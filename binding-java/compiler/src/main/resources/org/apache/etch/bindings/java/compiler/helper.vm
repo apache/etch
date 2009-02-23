@@ -77,13 +77,15 @@ abstract public class ${i}Helper extends TransportHelper
 				TransportMessage transport ) throws Exception
 			{
 				ValueFactory vf = (ValueFactory) resources.get( Transport.VALUE_FACTORY );
+				
 				MailboxManager x = new PlainMailboxManager( transport, u, res );
 				DeliveryService d = new DefaultDeliveryService( x, u, res );
 				Remote${i}Client client = new Remote${i}Client( d, vf );
 				${i}Server server = implFactory.new${i}Server( client );
 				Pool qp = (Pool) res.get( QUEUED_POOL );
 				Pool fp = (Pool) res.get( FREE_POOL );
-				new Stub${i}Server( d, server, qp, fp );
+				d.setSession( new Stub${i}Server( d, server, qp, fp, vf ) );
+				
 				client._start();
 			}
 
@@ -160,7 +162,7 @@ abstract public class ${i}Helper extends TransportHelper
 		${i}Client client = implFactory.new${i}Client( server );
 		Pool qp = (Pool) res.get( QUEUED_POOL );
 		Pool fp = (Pool) res.get( FREE_POOL );
-		new Stub${i}Client( d, client, qp, fp );
+		d.setSession( new Stub${i}Client( d, client, qp, fp, vf ) );
 
 		return server;
 	}
