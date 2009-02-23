@@ -22,12 +22,12 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import etch.bindings.java.msg.Type;
-import etch.bindings.java.msg.TypeMap;
-import etch.bindings.java.support.Class2TypeMap;
-import etch.bindings.java.support.DefaultValueFactory;
-import etch.bindings.java.support.Validator_long;
-import etch.bindings.java.support.Validator_string;
+import org.apache.etch.bindings.java.msg.Type;
+import org.apache.etch.bindings.java.msg.TypeMap;
+import org.apache.etch.bindings.java.support.Class2TypeMap;
+import org.apache.etch.bindings.java.support.DefaultValueFactory;
+import org.apache.etch.bindings.java.support.Validator_long;
+import org.apache.etch.bindings.java.support.Validator_string;
 
 /**
  * 

@@ -21,8 +21,8 @@ import cisco.uc.cuae.etchrouter.test.plugin.ImplTestPluginServer;
 import cisco.uc.cuae.etchrouter.test.plugin.RemoteTestPluginClient;
 import cisco.uc.cuae.etchrouter.test.plugin.TestPluginHelper;
 import cisco.uc.cuae.etchrouter.test.plugin.TestPluginServer;
-import etch.bindings.java.support.ServerFactory;
-import etch.util.core.io.Transport;
+import org.apache.etch.bindings.java.support.ServerFactory;
+import org.apache.etch.util.core.io.Transport;
 
 public class PluginTestServerRunner implements TestPluginHelper.TestPluginServerFactory
 {

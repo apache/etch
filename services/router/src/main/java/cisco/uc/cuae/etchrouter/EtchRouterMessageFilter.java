@@ -23,14 +23,14 @@ import cisco.uc.cuae.etchrouter.EtchRouter.EtchRouterException;
 import cisco.uc.cuae.etchrouter.ConnectionStackInfo.ConnectionType;
 import cisco.uc.cuae.etchrouter.plugin.PluginGroup;
 import cisco.uc.cuae.etchrouter.plugin.PluginMemberConnection;
-import etch.bindings.java.msg.Direction;
-import etch.bindings.java.msg.Message;
-import etch.bindings.java.msg.Type;
-import etch.bindings.java.transport.SessionMessage;
-import etch.bindings.java.transport.TransportMessage;
-import etch.util.Resources;
-import etch.util.URL;
-import etch.util.core.Who;
+import org.apache.etch.bindings.java.msg.Direction;
+import org.apache.etch.bindings.java.msg.Message;
+import org.apache.etch.bindings.java.msg.Type;
+import org.apache.etch.bindings.java.transport.SessionMessage;
+import org.apache.etch.bindings.java.transport.TransportMessage;
+import org.apache.etch.util.Resources;
+import org.apache.etch.util.URL;
+import org.apache.etch.util.core.Who;
 
 /**
  * 

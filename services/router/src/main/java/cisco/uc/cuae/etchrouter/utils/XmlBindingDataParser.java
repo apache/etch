@@ -26,23 +26,23 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import cisco.uc.cuae.etchrouter.xml.Module;
-import etch.bindings.java.msg.AsyncMode;
-import etch.bindings.java.msg.Direction;
-import etch.bindings.java.msg.Type;
-import etch.bindings.java.msg.Validator;
-import etch.bindings.java.support.DefaultValueFactory;
-import etch.bindings.java.support.Validator_StructValue;
-import etch.bindings.java.support.Validator_boolean;
-import etch.bindings.java.support.Validator_byte;
-import etch.bindings.java.support.Validator_custom;
-import etch.bindings.java.support.Validator_double;
-import etch.bindings.java.support.Validator_float;
-import etch.bindings.java.support.Validator_int;
-import etch.bindings.java.support.Validator_long;
-import etch.bindings.java.support.Validator_object;
-import etch.bindings.java.support.Validator_short;
-import etch.bindings.java.support.Validator_string;
-import etch.bindings.java.support.Validator_void;
+import org.apache.etch.bindings.java.msg.AsyncMode;
+import org.apache.etch.bindings.java.msg.Direction;
+import org.apache.etch.bindings.java.msg.Type;
+import org.apache.etch.bindings.java.msg.Validator;
+import org.apache.etch.bindings.java.support.DefaultValueFactory;
+import org.apache.etch.bindings.java.support.Validator_StructValue;
+import org.apache.etch.bindings.java.support.Validator_boolean;
+import org.apache.etch.bindings.java.support.Validator_byte;
+import org.apache.etch.bindings.java.support.Validator_custom;
+import org.apache.etch.bindings.java.support.Validator_double;
+import org.apache.etch.bindings.java.support.Validator_float;
+import org.apache.etch.bindings.java.support.Validator_int;
+import org.apache.etch.bindings.java.support.Validator_long;
+import org.apache.etch.bindings.java.support.Validator_object;
+import org.apache.etch.bindings.java.support.Validator_short;
+import org.apache.etch.bindings.java.support.Validator_string;
+import org.apache.etch.bindings.java.support.Validator_void;
 
 /**
  * 
@@ -203,7 +203,7 @@ public class XmlBindingDataParser
 		for (Module.Service.Enums.Enum.Entry entry : entries)
 		{
 			entryValues.add( entry.getValue() );
-			myType.putValidator( new etch.bindings.java.msg.Field( entry.getValue()), etch.bindings.java.support.Validator_boolean.get( 0 ) );
+			myType.putValidator( new org.apache.etch.bindings.java.msg.Field( entry.getValue()), org.apache.etch.bindings.java.support.Validator_boolean.get( 0 ) );
 		}
 		try
 		{
@@ -427,10 +427,10 @@ public class XmlBindingDataParser
 	{
 		if (isResultMethod)
 		{
-			myType.putValidator( DefaultValueFactory._mf__inReplyTo, etch.bindings.java.support.Validator_long.get( 0 ) );
-			myType.putValidator( DefaultValueFactory._mf_result, etch.bindings.java.support.Validator_RuntimeException.get() );
+			myType.putValidator( DefaultValueFactory._mf__inReplyTo, org.apache.etch.bindings.java.support.Validator_long.get( 0 ) );
+			myType.putValidator( DefaultValueFactory._mf_result, org.apache.etch.bindings.java.support.Validator_RuntimeException.get() );
 		}
-		myType.putValidator( DefaultValueFactory._mf__messageId, etch.bindings.java.support.Validator_long.get( 0 ) );
+		myType.putValidator( DefaultValueFactory._mf__messageId, org.apache.etch.bindings.java.support.Validator_long.get( 0 ) );
 		List<cisco.uc.cuae.etchrouter.xml.Field> myfields = mymethod.getField();
 		resolveFieldValidators( myType, myfields);
 		if (isResultMethod) return;
@@ -473,7 +473,7 @@ public class XmlBindingDataParser
 			String isPrimitive = myfield.getIsPrimitiveType();
 			String typeName = myfield.getType();
 			Validator validator = getWellknownValidator(typeName, nDims);
-			etch.bindings.java.msg.Field thisField = new etch.bindings.java.msg.Field(fieldName);
+			org.apache.etch.bindings.java.msg.Field thisField = new org.apache.etch.bindings.java.msg.Field(fieldName);
 			if (validator!=null)
 			{
 				myType.putValidator( thisField, validator );

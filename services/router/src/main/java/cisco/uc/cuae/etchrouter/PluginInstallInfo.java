@@ -25,7 +25,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import etch.bindings.java.msg.Type;
+import org.apache.etch.bindings.java.msg.Type;
 
 /**
  * Class

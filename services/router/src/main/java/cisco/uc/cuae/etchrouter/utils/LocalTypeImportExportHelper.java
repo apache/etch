@@ -16,8 +16,8 @@
  */
 package cisco.uc.cuae.etchrouter.utils;
 
-import etch.bindings.java.msg.ImportExportHelper;
-import etch.bindings.java.msg.Type;
+import org.apache.etch.bindings.java.msg.ImportExportHelper;
+import org.apache.etch.bindings.java.msg.Type;
 
 public abstract class LocalTypeImportExportHelper implements ImportExportHelper
 {

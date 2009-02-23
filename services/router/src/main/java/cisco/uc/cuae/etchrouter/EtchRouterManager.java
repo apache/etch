@@ -38,17 +38,17 @@ import cisco.uc.cuae.etchrouter.utils.LocalTypeImportExportHelper;
 import cisco.uc.cuae.etchrouter.utils.StructValueImportExportHelper;
 import cisco.uc.cuae.etchrouter.utils.XmlBindingData;
 import cisco.uc.cuae.etchrouter.utils.XmlBindingDataParser;
-import etch.bindings.java.msg.Direction;
-import etch.bindings.java.msg.Field;
-import etch.bindings.java.msg.Message;
-import etch.bindings.java.msg.StructValue;
-import etch.bindings.java.msg.Type;
-import etch.bindings.java.support.DeliveryService;
-import etch.bindings.java.support.Mailbox;
-import etch.bindings.java.support.ServerFactory;
-import etch.util.core.Who;
-import etch.util.core.io.Session;
-import etch.util.core.io.Transport;
+import org.apache.etch.bindings.java.msg.Direction;
+import org.apache.etch.bindings.java.msg.Field;
+import org.apache.etch.bindings.java.msg.Message;
+import org.apache.etch.bindings.java.msg.StructValue;
+import org.apache.etch.bindings.java.msg.Type;
+import org.apache.etch.bindings.java.support.DeliveryService;
+import org.apache.etch.bindings.java.support.Mailbox;
+import org.apache.etch.bindings.java.support.ServerFactory;
+import org.apache.etch.util.core.Who;
+import org.apache.etch.util.core.io.Session;
+import org.apache.etch.util.core.io.Transport;
 
 /**
  * Main class for the Etch Router service
@@ -534,7 +534,7 @@ public class EtchRouterManager
 		return _localMethodsMap.get( aType )!=null;
 	}
 	
-	private Transport<ServerFactory> _listener = null;
+	private ServerFactory _listener = null;
 	
 	private PluginStateMonitor _pluginMon = null;
 	

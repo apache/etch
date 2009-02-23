@@ -29,8 +29,8 @@ import cisco.uc.cuae.etchrouter.plugin.PluginGroup;
 import cisco.uc.cuae.etchrouter.plugin.PluginMember;
 import cisco.uc.cuae.etchrouter.plugin.PluginMemberConnection;
 import cisco.uc.cuae.etchrouter.utils.ApplicationAttributes;
-import etch.bindings.java.msg.Direction;
-import etch.bindings.java.msg.Type;
+import org.apache.etch.bindings.java.msg.Direction;
+import org.apache.etch.bindings.java.msg.Type;
 
 /**
  * 
