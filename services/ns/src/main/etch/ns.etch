@@ -18,7 +18,7 @@
  * under the License.
  */
 
-module etch.services.ns
+module org.apache.etch.services.ns
 
 /**
  * The NameService provides translation from an abstract name for a service to a

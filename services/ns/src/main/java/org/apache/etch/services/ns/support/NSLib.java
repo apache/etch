@@ -18,13 +18,13 @@
  * under the License.
  */
 
-package etch.services.ns.support;
+package org.apache.etch.services.ns.support;
 
 import java.util.Map;
 
+import org.apache.etch.services.ns.NameService.Entry;
 import org.apache.etch.util.core.io.Session;
 
-import etch.services.ns.NameService.Entry;
 
 /**
  * 

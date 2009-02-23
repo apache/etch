@@ -18,12 +18,16 @@
  * under the License.
  */
 
-package etch.services.ns;
+package org.apache.etch.services.ns;
 
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.apache.etch.services.ns.BaseNameServiceServer;
+import org.apache.etch.services.ns.RemoteNameServiceClient;
+
 
 /**
  * Your custom implementation of BaseNameServiceServer. Add methods here to provide

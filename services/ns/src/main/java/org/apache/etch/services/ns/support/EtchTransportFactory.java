@@ -18,10 +18,8 @@
  * under the License.
  */
 
-package etch.services.ns.support;
+package org.apache.etch.services.ns.support;
 
-import etch.services.ns.NameService.Entry;
-import etch.services.ns.support.DefaultNSLib;
 
 import org.apache.etch.bindings.java.msg.Message;
 import org.apache.etch.bindings.java.msg.ValueFactory;
@@ -29,6 +27,8 @@ import org.apache.etch.bindings.java.support.ServerFactory;
 import org.apache.etch.bindings.java.support.TransportFactory;
 import org.apache.etch.bindings.java.transport.SessionMessage;
 import org.apache.etch.bindings.java.transport.TransportMessage;
+import org.apache.etch.services.ns.NameService.Entry;
+import org.apache.etch.services.ns.support.DefaultNSLib;
 import org.apache.etch.util.AlarmListener;
 import org.apache.etch.util.AlarmManager;
 import org.apache.etch.util.Resources;

@@ -18,9 +18,13 @@
  * under the License.
  */
 
-package etch.services.ns;
+package org.apache.etch.services.ns;
 
 import java.net.ConnectException;
+
+import org.apache.etch.services.ns.BaseNameServiceClient;
+import org.apache.etch.services.ns.RemoteNameServiceServer;
+
 
 /**
  * Your custom implementation of BaseNameServiceClient. Add methods here to provide

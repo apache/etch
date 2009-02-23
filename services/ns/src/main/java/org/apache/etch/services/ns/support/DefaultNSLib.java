@@ -18,22 +18,22 @@
  * under the License.
  */
 
-package etch.services.ns.support;
+package org.apache.etch.services.ns.support;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.etch.services.ns.BaseNameServiceClient;
+import org.apache.etch.services.ns.NameServiceClient;
+import org.apache.etch.services.ns.NameServiceHelper;
+import org.apache.etch.services.ns.RemoteNameServiceServer;
+import org.apache.etch.services.ns.NameService.Entry;
 import org.apache.etch.util.AlarmListener;
 import org.apache.etch.util.AlarmManager;
 import org.apache.etch.util.URL;
 import org.apache.etch.util.core.io.Session;
 
-import etch.services.ns.BaseNameServiceClient;
-import etch.services.ns.NameServiceClient;
-import etch.services.ns.NameServiceHelper;
-import etch.services.ns.RemoteNameServiceServer;
-import etch.services.ns.NameService.Entry;
 
 public class DefaultNSLib extends NSLib
 {

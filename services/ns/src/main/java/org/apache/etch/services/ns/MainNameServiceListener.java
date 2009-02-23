@@ -18,10 +18,14 @@
  * under the License.
  */
 
-package etch.services.ns;
+package org.apache.etch.services.ns;
 
 import org.apache.etch.bindings.java.support.ServerFactory;
+import org.apache.etch.services.ns.NameServiceHelper;
+import org.apache.etch.services.ns.NameServiceServer;
+import org.apache.etch.services.ns.RemoteNameServiceClient;
 import org.apache.etch.util.core.io.Transport;
+
 
 /**
  * Main program for NameServiceServer. This program makes a listener to accept
