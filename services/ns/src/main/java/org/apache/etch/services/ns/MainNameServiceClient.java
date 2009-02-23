@@ -18,7 +18,11 @@
  * under the License.
  */
 
-package etch.services.ns;
+package org.apache.etch.services.ns;
+
+import org.apache.etch.services.ns.NameServiceClient;
+import org.apache.etch.services.ns.NameServiceHelper;
+import org.apache.etch.services.ns.RemoteNameServiceServer;
 
 /**
  * Main program for NameServiceClient. This program makes a connection to the

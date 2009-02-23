@@ -18,21 +18,23 @@
  * under the License.
  */
 
-package etch.services.ns.support;
+package org.apache.etch.services.ns.support;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 import org.apache.etch.bindings.java.support.ServerFactory;
+import org.apache.etch.services.ns.MainNameServiceListener;
+import org.apache.etch.services.ns.NameServiceHelper;
+import org.apache.etch.services.ns.NameService.Entry;
+import org.apache.etch.services.ns.support.DefaultNSLib;
+import org.apache.etch.services.ns.support.NSLib;
 import org.apache.etch.util.core.io.Session;
 import org.apache.etch.util.core.io.Transport;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import etch.services.ns.MainNameServiceListener;
-import etch.services.ns.NameServiceHelper;
-import etch.services.ns.NameService.Entry;
 
 public class TestNSLib
 {
