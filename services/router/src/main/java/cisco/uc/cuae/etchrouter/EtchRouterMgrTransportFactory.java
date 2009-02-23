@@ -20,26 +20,26 @@ import java.net.Socket;
 
 import javax.net.ssl.SSLSocket;
 
-import etch.bindings.java.msg.ValueFactory;
-import etch.bindings.java.support.DeliveryService;
-import etch.bindings.java.support.ServerFactory;
-import etch.bindings.java.transport.DefaultDeliveryService;
-import etch.bindings.java.transport.MailboxManager;
-import etch.bindings.java.transport.Messagizer;
-import etch.bindings.java.transport.PlainMailboxManager;
-import etch.bindings.java.transport.TcpTransportFactory;
-import etch.bindings.java.transport.TransportMessage;
-import etch.util.Resources;
-import etch.util.URL;
-import etch.util.core.io.Packetizer;
-import etch.util.core.io.SessionListener;
-import etch.util.core.io.TcpConnection;
-import etch.util.core.io.TcpListener;
-import etch.util.core.io.TlsConnection;
-import etch.util.core.io.TlsListener;
-import etch.util.core.io.Transport;
-import etch.util.core.io.TransportData;
-import etch.util.core.io.TransportPacket;
+import org.apache.etch.bindings.java.msg.ValueFactory;
+import org.apache.etch.bindings.java.support.DeliveryService;
+import org.apache.etch.bindings.java.support.ServerFactory;
+import org.apache.etch.bindings.java.transport.DefaultDeliveryService;
+import org.apache.etch.bindings.java.transport.MailboxManager;
+import org.apache.etch.bindings.java.transport.Messagizer;
+import org.apache.etch.bindings.java.transport.PlainMailboxManager;
+import org.apache.etch.bindings.java.transport.TcpTransportFactory;
+import org.apache.etch.bindings.java.transport.TransportMessage;
+import org.apache.etch.util.Resources;
+import org.apache.etch.util.URL;
+import org.apache.etch.util.core.io.Packetizer;
+import org.apache.etch.util.core.io.SessionListener;
+import org.apache.etch.util.core.io.TcpConnection;
+import org.apache.etch.util.core.io.TcpListener;
+import org.apache.etch.util.core.io.TlsConnection;
+import org.apache.etch.util.core.io.TlsListener;
+import org.apache.etch.util.core.io.Transport;
+import org.apache.etch.util.core.io.TransportData;
+import org.apache.etch.util.core.io.TransportPacket;
 
 /**
  * 
@@ -65,6 +65,7 @@ public class EtchRouterMgrTransportFactory extends TcpTransportFactory
 		return f;
 	}
 	
+	// TODO these methods should not be here. they come from Transport.
 	static public DeliveryService getTransport( String uri,
 		Resources resources ) throws Exception
 	{
@@ -73,12 +74,13 @@ public class EtchRouterMgrTransportFactory extends TcpTransportFactory
 		return f.newTransport( uri, resources );
 	}
 	
+	// TODO these methods should not be here. they come from Transport.
 	static public Transport<ServerFactory> getListener( String uri,
-		Resources resources, ServerFactory factory ) throws Exception
+		Resources resources ) throws Exception
 	{
 		URL u = new URL( uri );
 		EtchRouterMgrTransportFactory f = getFactoryByScheme( u.getScheme(), uri );
-		return f.newListener( uri, resources, factory );
+		return f.newListener( uri, resources );
 	}
 
 	/**
@@ -143,31 +145,29 @@ public class EtchRouterMgrTransportFactory extends TcpTransportFactory
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Transport<ServerFactory> newListener( final String uri, final Resources resources, final ServerFactory factory )
+	public Transport<ServerFactory> newListener( final String uri, final Resources resources )
 		throws Exception
 	{
 		URL u = new URL( uri );
 		
-		Transport<SessionListener> l;
+		Transport<SessionListener<Socket>> l;
 
 		if (_isSecure)
 			l = new TlsListener( u, resources );
 		else
 			l = new TcpListener( u, resources );
 		
-		MySessionListener b = new MySessionListener( l, uri, resources );
-		b.setSession( factory );
-		return b;
+		return new MySessionListener( l, uri, resources );
 	}
 	
-	private class MySessionListener implements Transport<ServerFactory>, SessionListener
+	private class MySessionListener implements Transport<ServerFactory>, SessionListener<Socket>
 	{
 		/**
 		 * @param transport
 		 * @param uri
 		 * @param resources
 		 */
-		public MySessionListener( Transport<SessionListener> transport, String uri, Resources resources )
+		public MySessionListener( Transport<SessionListener<Socket>> transport, String uri, Resources resources )
 		{
 			this.transport = transport;
 			this.uri = uri;
@@ -176,7 +176,7 @@ public class EtchRouterMgrTransportFactory extends TcpTransportFactory
 			transport.setSession( this );
 		}
 		
-		private final Transport<SessionListener> transport;
+		private final Transport<SessionListener<Socket>> transport;
 		
 		private final String uri;
 		
@@ -218,11 +218,9 @@ public class EtchRouterMgrTransportFactory extends TcpTransportFactory
 			ValueFactory vf = session.newValueFactory();
 			r.put( Transport.VALUE_FACTORY, vf );
 			
-			DeliveryService d = newTransport( uri, r );
+			TransportMessage t = newTransport( uri, r );
 			
-			session.newServer( d, vf );
-			
-			d.transportControl( Transport.START, null );
+			session.newServer( uri, r, t );
 		}
 
 		public Object sessionQuery( Object query ) throws Exception

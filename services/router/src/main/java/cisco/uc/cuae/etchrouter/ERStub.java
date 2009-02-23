@@ -16,9 +16,9 @@
  */
 package cisco.uc.cuae.etchrouter;
 
-import etch.bindings.java.support.DeliveryService;
-import etch.bindings.java.support.Pool;
-import etch.bindings.java.support.StubBase;
+import org.apache.etch.bindings.java.support.DeliveryService;
+import org.apache.etch.bindings.java.support.Pool;
+import org.apache.etch.bindings.java.support.StubBase;
 
 public class ERStub extends StubBase<ImplBase>
 {

@@ -17,10 +17,10 @@
 package cisco.uc.cuae.etchrouter;
 
 import cisco.uc.cuae.etchrouter.utils.UniqueKeyGenerator;
-import etch.bindings.java.msg.ValueFactory;
-import etch.bindings.java.support.DeliveryService;
-import etch.bindings.java.transport.MailboxManager;
-import etch.util.core.io.Connection;
+import org.apache.etch.bindings.java.msg.ValueFactory;
+import org.apache.etch.bindings.java.support.DeliveryService;
+import org.apache.etch.bindings.java.transport.MailboxManager;
+import org.apache.etch.util.core.io.Connection;
 
 /**
  * 

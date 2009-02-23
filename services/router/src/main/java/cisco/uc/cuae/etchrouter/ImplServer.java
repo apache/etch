@@ -16,7 +16,7 @@
  */
 package cisco.uc.cuae.etchrouter;
 
-import etch.bindings.java.support.ObjSession;
+import org.apache.etch.bindings.java.support.ObjSession;
 
 /**
  * 

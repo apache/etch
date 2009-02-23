@@ -16,8 +16,8 @@
  */
 package cisco.uc.cuae.etchrouter;
 
-import etch.bindings.java.msg.ValueFactory;
-import etch.bindings.java.support.DeliveryService;
+import org.apache.etch.bindings.java.msg.ValueFactory;
+import org.apache.etch.bindings.java.support.DeliveryService;
 
 public class ERRemoteServer extends ERRemote
 {

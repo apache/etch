@@ -16,9 +16,9 @@
  */
 package cisco.uc.cuae.etchrouter.utils;
 
-import etch.bindings.java.msg.ImportExportHelper;
-import etch.bindings.java.msg.StructValue;
-import etch.bindings.java.msg.ValueFactory;
+import org.apache.etch.bindings.java.msg.ImportExportHelper;
+import org.apache.etch.bindings.java.msg.StructValue;
+import org.apache.etch.bindings.java.msg.ValueFactory;
 
 public class StructValueImportExportHelper implements ImportExportHelper
 {

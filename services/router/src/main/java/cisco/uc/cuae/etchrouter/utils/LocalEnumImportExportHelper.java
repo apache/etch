@@ -21,9 +21,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import etch.bindings.java.msg.StructValue;
-import etch.bindings.java.msg.Type;
-import etch.bindings.java.msg.ValueFactory;
+import org.apache.etch.bindings.java.msg.StructValue;
+import org.apache.etch.bindings.java.msg.Type;
+import org.apache.etch.bindings.java.msg.ValueFactory;
 
 public class LocalEnumImportExportHelper extends LocalTypeImportExportHelper
 {	
@@ -33,7 +33,7 @@ public class LocalEnumImportExportHelper extends LocalTypeImportExportHelper
 	
 	private Method _nameMethod = null;
 	
-	private Map<String, etch.bindings.java.msg.Field> _fieldMap = null;
+	private Map<String, org.apache.etch.bindings.java.msg.Field> _fieldMap = null;
 	
 	public LocalEnumImportExportHelper( Type enumType, List<String> entryValues )
 		throws Exception
@@ -54,7 +54,7 @@ public class LocalEnumImportExportHelper extends LocalTypeImportExportHelper
 				"The number of declared enum fields in Enum type '%s' is %s, but the size of entry value list is %s",
 				typeName, enumValues.length, _entryValues.size() ));
 		_enumConstMap = new HashMap<String, Object>(_entryValues.size());
-		_fieldMap = new HashMap<String, etch.bindings.java.msg.Field>();
+		_fieldMap = new HashMap<String, org.apache.etch.bindings.java.msg.Field>();
 		_nameMethod = _typeClass.getMethod( "name", null );
 		for (int i=0; i<enumValues.length; i++)
 		{
@@ -62,7 +62,7 @@ public class LocalEnumImportExportHelper extends LocalTypeImportExportHelper
 			if (!_entryValues.contains( name ))
 				throw new Exception(String.format( "The declared field '%s' in enum type '%s' is not included in the entry value list", name, typeName ));
 			_enumConstMap.put( name, enumValues[i] );
-			_fieldMap.put( name, new etch.bindings.java.msg.Field(name) );
+			_fieldMap.put( name, new org.apache.etch.bindings.java.msg.Field(name) );
 		}
 	}
 	
@@ -84,7 +84,7 @@ public class LocalEnumImportExportHelper extends LocalTypeImportExportHelper
 
 	public Object importValue( StructValue struct )
 	{
-		etch.bindings.java.msg.Field key = struct.keySet().iterator().next();
+		org.apache.etch.bindings.java.msg.Field key = struct.keySet().iterator().next();
 		return _enumConstMap.get( key.getName() );
 	}
 

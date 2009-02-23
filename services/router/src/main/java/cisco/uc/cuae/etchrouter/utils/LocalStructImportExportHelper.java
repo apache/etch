@@ -21,16 +21,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import etch.bindings.java.msg.StructValue;
-import etch.bindings.java.msg.Type;
-import etch.bindings.java.msg.ValueFactory;
+import org.apache.etch.bindings.java.msg.StructValue;
+import org.apache.etch.bindings.java.msg.Type;
+import org.apache.etch.bindings.java.msg.ValueFactory;
 
 public class LocalStructImportExportHelper extends LocalTypeImportExportHelper
 {
 
 	private List<String> _fieldNames = null;
 	
-	private Map<String, etch.bindings.java.msg.Field> _fieldMap = null;
+	private Map<String, org.apache.etch.bindings.java.msg.Field> _fieldMap = null;
 	
 	private Map<String, java.lang.reflect.Field> _reflectFieldMap = null;
 	
@@ -55,14 +55,14 @@ public class LocalStructImportExportHelper extends LocalTypeImportExportHelper
 			throw new Exception(String.format( 
 				"The number of public fields in class type '%s' is %s, but the size of field name list is %s",
 				typeName, publicFields.length, _fieldNames.size() ));
-		_fieldMap = new HashMap<String, etch.bindings.java.msg.Field>(publicFields.length);
+		_fieldMap = new HashMap<String, org.apache.etch.bindings.java.msg.Field>(publicFields.length);
 		_reflectFieldMap = new HashMap<String, java.lang.reflect.Field>(publicFields.length);
 		for (java.lang.reflect.Field reflectField : publicFields)
 		{
 			String name = reflectField.getName();
 			if (!_fieldNames.contains( name ))
 				throw new Exception(String.format( "The public field '%s' in class type '%s' is not included in the field name list", name, typeName ));
-			_fieldMap.put( name, new etch.bindings.java.msg.Field(name) );
+			_fieldMap.put( name, new org.apache.etch.bindings.java.msg.Field(name) );
 			_reflectFieldMap.put( name, reflectField );
 		}
 	}

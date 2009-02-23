@@ -17,14 +17,18 @@
 package cisco.uc.cuae.etchrouter;
 
 import cisco.uc.cuae.etchrouter.ConnectionStackInfo.ConnectionType;
-import etch.bindings.java.msg.ValueFactory;
-import etch.bindings.java.support.DefaultServerFactory;
-import etch.bindings.java.support.DeliveryService;
-import etch.bindings.java.support.Pool;
-import etch.bindings.java.support.ServerFactory;
-import etch.bindings.java.support.TransportHelper;
-import etch.util.Resources;
-import etch.util.core.io.Transport;
+import org.apache.etch.bindings.java.msg.ValueFactory;
+import org.apache.etch.bindings.java.support.DefaultServerFactory;
+import org.apache.etch.bindings.java.support.DeliveryService;
+import org.apache.etch.bindings.java.support.Pool;
+import org.apache.etch.bindings.java.support.ServerFactory;
+import org.apache.etch.bindings.java.support.TransportHelper;
+import org.apache.etch.bindings.java.transport.DefaultDeliveryService;
+import org.apache.etch.bindings.java.transport.MailboxManager;
+import org.apache.etch.bindings.java.transport.PlainMailboxManager;
+import org.apache.etch.bindings.java.transport.TransportMessage;
+import org.apache.etch.util.Resources;
+import org.apache.etch.util.core.io.Transport;
 
 /**
  * 
@@ -43,31 +47,43 @@ public class EtchRouterManagerHelper extends TransportHelper
 	 * @return
 	 * @throws Exception
 	 */
-	public static Transport<ServerFactory> newListener( final EtchRouterManager routerMgr, final String uri,
+	public static ServerFactory newListener( final EtchRouterManager routerMgr, final String uri,
 		Resources resources )
 		throws Exception
 	{
 		final Resources res = initResources( resources );
 		res.put( EtchRouterManager._ETCH_ROUTER_MANAGER, routerMgr );
 
-		return EtchRouterMgrTransportFactory.getListener( uri, res,
-			new DefaultServerFactory( routerMgr )
-			{
-				public void newServer( DeliveryService d, ValueFactory vf ) throws Exception
+		final Transport<ServerFactory> listener = EtchRouterMgrTransportFactory.getListener( uri, res );
+		
+		return new DefaultServerFactory( listener, routerMgr )
+		{
+				public void newServer( String uri, Resources resources,
+						TransportMessage transport ) throws Exception
 				{
+					ValueFactory vf = (ValueFactory) resources.get( Transport.VALUE_FACTORY );
+					MailboxManager x = new PlainMailboxManager( transport, uri, res );
+					DeliveryService d = new DefaultDeliveryService( x, uri, res );
 					ConnectionStackInfo info = routerMgr.getConnectionStackInfo( d );
 					ERRemoteClient client = new ERRemoteClient( d, vf, routerMgr, info );
 					ImplServer server = new ImplServer( client, routerMgr );
 					Pool qp = (Pool) res.get( QUEUED_POOL );
 					Pool fp = (Pool) res.get( FREE_POOL );
 					new ERStub( d, server, qp, fp );
+					client._start();
 				}
 	
 				public ValueFactory newValueFactory()
 				{
 					return new DynamicValueFactory( uri );
 				}
-			} );
+				
+				@Override
+				public String toString()
+				{
+					return "PerfHelper.ServerFactory/" + listener;
+				}
+		};
 	}
 	
 	/**

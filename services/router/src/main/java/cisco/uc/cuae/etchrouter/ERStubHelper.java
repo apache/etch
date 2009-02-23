@@ -16,10 +16,10 @@
  */
 package cisco.uc.cuae.etchrouter;
 
-import etch.bindings.java.msg.Message;
-import etch.bindings.java.support.DeliveryService;
-import etch.bindings.java.support.StubHelper;
-import etch.util.core.Who;
+import org.apache.etch.bindings.java.msg.Message;
+import org.apache.etch.bindings.java.support.DeliveryService;
+import org.apache.etch.bindings.java.support.StubHelper;
+import org.apache.etch.util.core.Who;
 
 /**
  * 

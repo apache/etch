@@ -20,7 +20,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import etch.bindings.java.msg.Type;
+import org.apache.etch.bindings.java.msg.Type;
 
 public class ApplicationInstallInfo
 {
