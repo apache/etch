@@ -6,16 +6,16 @@ http://cwiki.apache.org/ETCH
 
 The top-level structure of the install image is:
 
-	ChangeLog.txt
-	LICENSE.txt
-	README.txt
-    NOTICE.txt
-    RELEASE_NOTES.txt
-	bin/
-	lib/
-    examples/
-	maven/
-    uninst.exe (windows only)
+  ChangeLog.txt
+  LICENSE.txt
+  NOTICE.txt
+  README.txt
+  RELEASE_NOTES.txt
+  bin/
+  examples/
+  lib/
+  maven/
+  uninst.exe (windows only)
 
 Please take a moment to review the RELEASE_NOTES.txt, ChangeLog.txt and
 LICENSE.txt files.
@@ -27,10 +27,10 @@ or apache-etch-1.0.2-incubating-bin.zip, you will want to create this environmen
 variable yourself:
 
 windows:
-	set ETCH_HOME=C:\Program Files\Apache Software Foundation\apache-etch-1.0.2-incubating
+	set ETCH_HOME=C:\Program Files\Apache Software Foundation\apache-etch-1.0.2
 
 *nix:
-	export ETCH_HOME=/path/to/apache-etch-1.0.2-incubating
+	export ETCH_HOME=/path/to/apache-etch-1.0.2
 
 The bin directory has also been put on your path by the Windows installer. If
 you are using the archives, you will need to do this yourself:
