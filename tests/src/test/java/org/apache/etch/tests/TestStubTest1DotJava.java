@@ -506,7 +506,7 @@ public class TestStubTest1DotJava
 	};
 
 	private final MyMessageSource src = new MyMessageSource();
-	private final StubTest1<Test1> stub = new StubTest1<Test1>( src, test, pool, pool );
+	private final StubTest1<Test1> stub = new StubTest1<Test1>( src, test, pool, pool, vf );
 	
 	/** a fake MessageSource for testing */
 	public static class MyMessageSource implements DeliveryService

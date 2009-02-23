@@ -29,8 +29,8 @@
 	<classpathentry kind="src" path="examples/distmap/src/main/java"/>
 	<classpathentry kind="src" path="examples/distmap/target/generated-sources/main/etch/java"/>
 	<classpathentry kind="src" path="examples/distmap/src/test/java"/>
-	<classpathentry kind="src" path="examples/example/src/main/java"/>
-	<classpathentry kind="src" path="examples/example/target/generated-sources/main/etch/java"/>
+	<classpathentry excluding="org/apache/etch/examples/example/old/" kind="src" path="examples/example/src/main/java"/>
+	<classpathentry excluding="org/apache/etch/examples/example/old/" kind="src" path="examples/example/target/generated-sources/main/etch/java"/>
 	<classpathentry kind="src" path="examples/example/src/test/java"/>
 	<classpathentry kind="src" path="examples/perf/src/main/java"/>
 	<classpathentry kind="src" path="examples/perf/target/generated-sources/main/etch/java"/>

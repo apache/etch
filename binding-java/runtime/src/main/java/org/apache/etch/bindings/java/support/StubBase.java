@@ -22,6 +22,7 @@ package org.apache.etch.bindings.java.support;
 
 import org.apache.etch.bindings.java.msg.Message;
 import org.apache.etch.bindings.java.msg.Type;
+import org.apache.etch.bindings.java.msg.ValueFactory;
 import org.apache.etch.bindings.java.support.Pool.PoolRunnable;
 import org.apache.etch.bindings.java.transport.SessionMessage;
 import org.apache.etch.util.core.Who;
@@ -39,8 +40,10 @@ public class StubBase<T> implements SessionMessage
 	 * @param obj the target of decoded messages.
 	 * @param queued thread pool used to run AsyncMode.QUEUED methods.
 	 * @param free thread pool used to run AsyncMode.FREE methods.
+	 * @param vf the ValueFactory associated with this stub's service.
 	 */
-	public StubBase( DeliveryService svc, T obj, Pool queued, Pool free )
+	protected StubBase( DeliveryService svc, T obj, Pool queued, Pool free,
+		ValueFactory vf )
 	{
 		if (svc == null)
 			throw new NullPointerException( "svc == null" );
@@ -53,7 +56,8 @@ public class StubBase<T> implements SessionMessage
 		this._queued = queued;
 		this._free = free;
 		
-		svc.setSession( this );
+//		svc.setSession( this );
+		this._vf = vf;
 	}
 	
 	/**
@@ -75,11 +79,16 @@ public class StubBase<T> implements SessionMessage
 	 * The thread pool used to run AsyncMode.FREE methods.
 	 */
 	protected final Pool _free;
+	
+	private final ValueFactory _vf;
 
 	@SuppressWarnings("unchecked")
 	public final boolean sessionMessage( Who sender, Message msg ) throws Exception
 	{
 		Type type = msg.type();
+		
+		if (_vf != null && _vf.getType( type.getId() ) == null)
+			return false;
 		
 		StubHelper<T> helper = (StubHelper<T>) type.getStubHelper();
 		if (helper == null)

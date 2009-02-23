@@ -44,6 +44,9 @@ public class TestStubBase
 	private final MyPool queued = new MyPool();
 	private final MyPool free = new MyPool();
 	private final MyStub stub = new MyStub( transport, session, queued, free );
+	{
+		transport.setSession( stub );
+	}
 	private final Who who = new Who() { /* */ };
 	private final Type howdy = new Type( "howdy" );
 	private final Type nogood = new Type( "nogood" );
@@ -210,7 +213,6 @@ public class TestStubBase
 	/**
 	 * MyDeliveryService (fake for testing).
 	 */
-	@SuppressWarnings("hiding")
 	static class MyDeliveryService implements DeliveryService
 	{
 		/** */ public What what;
@@ -309,14 +311,13 @@ public class TestStubBase
 		 */
 		public MyStub( DeliveryService svc, MyObject obj, Pool queued, Pool free )
 		{
-			super( svc, obj, queued, free );
+			super( svc, obj, queued, free, null );
 		}
 	}
 	
 	/**
 	 * MyObject (fake for testing).
 	 */
-	@SuppressWarnings("hiding")
 	static class MyObject implements ObjSession
 	{
 		/** */ public What what;
