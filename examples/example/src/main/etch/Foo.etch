@@ -1,0 +1,7 @@
+module org.apache.etch.examples.example
+
+service Foo
+{
+	@Timeout( 1234 )
+	int foo( string msg )
+}

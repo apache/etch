@@ -1,0 +1,7 @@
+module org.apache.etch.examples.example
+
+service ExampleFoo
+{
+	mixin Example
+	mixin Foo
+}
