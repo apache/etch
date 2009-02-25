@@ -81,35 +81,19 @@ public class ImplExampleServer extends BaseExampleServer
 			
 			// try to load Foo
 
-			ValueFactory nvf = new ValueFactoryFoo( uri );
+			ValueFactoryFoo nvf = new ValueFactoryFoo( uri );
 			if (nvf.getType( type.getId() ) != null)
 			{
-				addService( nvf, client );
+				FooHelper.addServer( nvf, client );
 				throw new RetryMessageException();
 			}
+			
+			// no other service to try, fall through...
 		}
 		
 		if (event instanceof Throwable)
 			((Throwable) event).printStackTrace();
 		else
 			System.out.println( "event = "+event );
-	}
-
-	private static void addService( ValueFactory nvf, RemoteBase client ) throws Exception
-	{
-		Resources res = (Resources) client._transportQuery( "res" );
-		DeliveryService d = (DeliveryService) client._transportQuery( "ds" );
-		
-		ComboValueFactory vf = (ComboValueFactory) res.get( Transport.VALUE_FACTORY );
-		FooServerFactory implFactory = (FooServerFactory) res.get( FooServerFactory.class.getName() );
-		
-		vf.addVf( nvf );
-		
-		FooServer server = implFactory.newFooServer( new RemoteFooClient( d, vf ) );
-		Pool qp = (Pool) res.get( TransportHelper.QUEUED_POOL );
-		Pool fp = (Pool) res.get( TransportHelper.FREE_POOL );
-		
-		ComboStub cs = (ComboStub) d.getSession();
-		cs.addStub( new StubFooServer( d, server, qp, fp, nvf ) );
 	}
 }
