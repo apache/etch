@@ -19,8 +19,11 @@
 #set($i = $intf.name()) 
 package $intf.parent().name();
 
+import org.apache.etch.bindings.java.support.ComboStub;
+import org.apache.etch.bindings.java.support.ComboValueFactory;
 import org.apache.etch.bindings.java.support.DeliveryService;
 import org.apache.etch.bindings.java.support.Pool;
+import org.apache.etch.bindings.java.support.RemoteBase;
 #if($helper.isServer($mc) || $helper.isBoth($mc))
 import org.apache.etch.bindings.java.support.ServerFactory;
 import org.apache.etch.bindings.java.msg.ValueFactory;
@@ -67,7 +70,6 @@ abstract public class ${i}Helper extends TransportHelper
 		throws Exception
 	{
 		final Resources res = initResources( resources );
-		final URL u = new URL( uri );
 		
 		final Transport<ServerFactory> listener = TransportFactory.getListener( uri, res );
 		
@@ -76,22 +78,22 @@ abstract public class ${i}Helper extends TransportHelper
 			public void newServer( String uri, Resources resources,
 				TransportMessage transport ) throws Exception
 			{
-				ValueFactory vf = (ValueFactory) resources.get( Transport.VALUE_FACTORY );
+				ComboValueFactory vf = (ComboValueFactory) resources.get( Transport.VALUE_FACTORY );
 				
-				MailboxManager x = new PlainMailboxManager( transport, u, res );
-				DeliveryService d = new DefaultDeliveryService( x, u, res );
+				MailboxManager x = new PlainMailboxManager( transport, uri, resources );
+				DeliveryService d = new DefaultDeliveryService( x, uri, resources );
 				Remote${i}Client client = new Remote${i}Client( d, vf );
 				${i}Server server = implFactory.new${i}Server( client );
-				Pool qp = (Pool) res.get( QUEUED_POOL );
-				Pool fp = (Pool) res.get( FREE_POOL );
-				d.setSession( new Stub${i}Server( d, server, qp, fp, vf ) );
+				Pool qp = (Pool) resources.get( QUEUED_POOL );
+				Pool fp = (Pool) resources.get( FREE_POOL );
+				d.setSession( new ComboStub( new Stub${i}Server( d, server, qp, fp, vf.getDefaultVf() ) ) );
 				
 				client._start();
 			}
 
 			public ValueFactory newValueFactory()
 			{
-				return new ValueFactory${i}( uri );
+				return new ComboValueFactory( new ValueFactory${i}( uri ) );
 			}
 			
 			@Override
@@ -100,6 +102,30 @@ abstract public class ${i}Helper extends TransportHelper
 				return "${i}Helper.ServerFactory/" + listener;
 			}
 		};
+	}
+
+	/**
+	 * @param nvf
+	 * @param client
+	 * @throws Exception
+	 */
+	public static void addServer( ValueFactory${i} nvf, RemoteBase client )
+		throws Exception
+	{
+		Resources res = (Resources) client._transportQuery( "res" );
+		DeliveryService d = (DeliveryService) client._transportQuery( "ds" );
+		
+		ComboValueFactory vf = (ComboValueFactory) res.get( Transport.VALUE_FACTORY );
+		${i}ServerFactory implFactory = (${i}ServerFactory) res.get( ${i}ServerFactory.class.getName() );
+		
+		vf.addVf( nvf );
+		
+		${i}Server server = implFactory.new${i}Server( new Remote${i}Client( d, vf ) );
+		Pool qp = (Pool) res.get( TransportHelper.QUEUED_POOL );
+		Pool fp = (Pool) res.get( TransportHelper.FREE_POOL );
+		
+		ComboStub cs = (ComboStub) d.getSession();
+		cs.addStub( new Stub${i}Server( d, server, qp, fp, nvf ) );
 	}
 
 	/**
