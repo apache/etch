@@ -1,0 +1,398 @@
+module org.apache.etch.services.config
+
+/**
+ * Configuration service provides access to configuration data. The data is
+ * modeled as a general tree structure with a root node which might be a scalar
+ * (boolean, int, double, string, Datetime), a List, or a Map. A List is
+ * indexed by int starting at 0, while a Map is indexed by non-empty string,
+ * generally following identifier syntax (case-sensitive, initial alpha then
+ * alphanumeric) but not required to. Each node in this tree is assigned an id.
+ * The id of the root node is null.
+ *
+ * At a given node in the tree, you may navigate up to the parent, down to the
+ * children, get the name, get the path (absolute, from the root), get the value
+ * if a scalar, enumerate the children if a List or Map, test if it is the root,
+ * a List, or a Map.
+ *
+ * This interface is only used to query configuration data, it does not include
+ * a facility to list available configurations, nor to manage configurations. It
+ * also does not include methods to alter existing configuration data, but it
+ * does allow you to subscribe to receive notification of changes.
+ *
+ * Configuration data is organized into separate spaces. The space is called out
+ * by name. You must have authorization to access the named space. There is no
+ * particular meaning to the name outside the interpretation given by the target
+ * service implementation. The configurations might come from a database, a
+ * directory tree of yaml files, etc. For services, anyway, a good idea would be
+ * to use the service name as it appears in the name service directory entry.
+ *
+ * Here is an example use of these interfaces:
+ *
+ * RemoteConfigurationServer server = ConfigurationHelper.newServer( ... );
+ * server._startAndWaitUp( 4000 );
+ * server.loadConfig( "org.apache.etch.services.ns.NameService/titan" );
+ * String host = server.getStringPath( null, "host" );
+ * int port = server.getIntegerPath( null, "port" );
+ *
+ * A path is a string delimited with '/' characters, much like a file system
+ * path. A path which begins with a '/' is absolute and begins at the root.
+ * Otherwise the path is relative to a specified node. The special names '.'
+ * and '..' may be used to refer to the current node and the parent node.
+ * When a path traverses a List, the index in the list is give as an integer in
+ * the path (e.g., /users/1/age). This would refer to the age of the 2nd user
+ * in a list of users. When a path is specified as null or blank, it is the same
+ * as '.'.
+ */
+@Timeout( 30000 )
+service Configuration
+{
+	/**
+	 * ConfigurationException is used to report any problem loading a
+	 * Configuration.
+	 * @param msg a text description of the problem.
+	 */
+	exception ConfigurationException( string msg )
+	
+	/**
+	 * Loads a configuration. Any previous configuration is discarded along
+	 * with any subscriptions. Depending upon the configuration service
+	 * capabilities, it may be able to monitor the configuration for changes
+	 * and automatically load them.
+	 * @param name the name of the configuration.
+	 * @throws ConfigurationException if there is any problem.
+	 */
+	@Authorize( canLoad, name )
+	void loadConfig( string name )
+		throws ConfigurationException
+	
+	/**
+	 * Unloads the current configuration if any.
+	 */
+	void unloadConfig()
+	
+	/**
+	 * Tests whether the configuration exists and can be loaded by this user.
+	 * @param name the name of the configuration.
+	 * @return true if the configuration exists and can be loaded by this user.
+	 */
+	boolean canLoad( string name )
+	
+	/**
+	 * Tests whether a configuration has been loaded.
+	 * @return true if a configuration has been loaded.
+	 */
+	boolean isLoaded()
+	
+	//////////////////////
+	// NODE PROPERTIES //
+	//////////////////////
+	
+	/**
+	 * Gets the parent of a node.
+	 * @param id the id of a node.
+	 * @return the id of the parent of the node, or null if it is the root.
+	 */
+	object getParent( object id )
+	
+	/**
+	 * Gets the name of a node which is a child of a map or list.
+	 * @param id the id of a node.
+	 * @return the name of the node. The name is a string if the parent is a
+	 * Map or a List, or "" (the empty string) if the value is the root.
+	 */
+	string getName( object id )
+	
+	/**
+	 * Gets the index of a node which is a child of a list.
+	 * @param id the id of a node.
+	 * @return the index of the node if the parent is a list, or null otherwise.
+	 */
+	int getIndex( object id )
+	
+	/**
+	 * Gets the path of a node.
+	 * @param id the id of a node.
+	 * @return the concatenation of the names of the ancestors of the node
+	 * with "/" between the names.
+	 */
+	string getPath( object id )
+	
+	/**
+	 * Tests whether a node is the root.
+	 * @param id the id of a node.
+	 * @return true if the node is the root.
+	 */
+	boolean isRoot( object id )
+	
+	/**
+	 * Tests whether a node is a List.
+	 * @param id the id of a node.
+	 * @return true if the node is a List.
+	 */
+	boolean isList( object id )
+	
+	/**
+	 * Tests whether a node is a Map.
+	 * @param id the id of a node.
+	 * @return true if the node is a Map.
+	 */
+	boolean isMap( object id )
+	
+	/**
+	 * Gets the number of children of a node which is a List or Map.
+	 * @param id the id of a node.
+	 * @return the number of children.
+	 */
+	int size( object id )
+	
+	//////////////
+	// CHILDREN //
+	//////////////
+	
+	/**
+	 * Lists the ids of the children of a node.
+	 * @param id the id of a node.
+	 * @param offset index into the result set of the first item to return. If
+	 * null, 0 is used.
+	 * @param count count of items to return. If null, all remaining items are
+	 * returned.
+	 * @return array of child ids, or null if the node is a scalar node.
+	 */
+	object[] listConfigIds( object id, int offset, int count )
+	
+	/**
+	 * Lists the ids of the children of a node.
+	 * @param id the id of a node.
+	 * @param path a path relative to the node.
+	 * @param offset index into the result set of the first item to return. If
+	 * null, 0 is used.
+	 * @param count count of items to return. If null, all remaining items are
+	 * returned.
+	 * @return array of child ids, or null if the node is a scalar node.
+	 */
+	object[] listConfigPathIds( object id, string path, int offset, int count )
+	
+	/**
+	 * Gets the id of a child of a node by index. The node must be a List.
+	 * @param id the id of a node.
+	 * @param index an index of the child node. Starts at 0.
+	 * @return id of the child.
+	 */
+	object getConfigIndex( object id, int index )
+
+	/**
+	 * Gets the id of a child of a node by path. The nodes along the path must
+	 * all be a List or Map except the last. Whenever a path element is being
+	 * applied to a list node, it must be an integer.
+	 * @param id the id of a node.
+	 * @param path a path relative to the node.
+	 * @return id of the child.
+	 */
+	object getConfigPath( object id, string path )
+	
+	////////////////////////
+	// NODE / PATH ACCESS //
+	////////////////////////
+	
+	/**
+	 * Tests whether a node has a value.
+	 * @param id the id of a node.
+	 * @param path a path relative to the node.
+	 * @return true if the node has a value.
+     */
+	boolean hasValuePath( object id, string path )
+	
+	/**
+	 * Gets the value value of a node.
+	 * @param id the id of a node.
+	 * @param path a path relative to the node.
+	 * @return the value of the node, or null if none. Note that the value may
+	 * not be the expected type. That depends upon the underlying
+	 * implementation. If you want the value as a specific type, use
+	 * getTypePath() methods below.
+     */
+	object getValuePath( object id, string path )
+
+	/**
+	 * Gets the boolean value of a node.
+	 * @param id the id of a node.
+	 * @param path a path relative to the node.
+	 * @return the value of the node, or null if none.
+     */
+	boolean getBooleanPath( object id, string path )
+
+	/**
+	 * Gets the integer value of a node.
+	 * @param id the id of a node.
+	 * @param path a path relative to the node.
+	 * @return the value of the node, or null if none.
+     */
+	int getIntegerPath( object id, string path )
+
+	/**
+	 * Gets the double value of a node.
+	 * @param id the id of a node.
+	 * @param path a path relative to the node.
+	 * @return the value of the node, or null if none.
+     */
+	double getDoublePath( object id, string path )
+
+	/**
+	 * Gets the string value of a node.
+	 * @param id the id of a node.
+	 * @param path a path relative to the node.
+	 * @return the value of the node, or null if none.
+     */
+	string getStringPath( object id, string path )
+
+	/**
+	 * Gets the Datetime value of a node.
+	 * @param id the id of a node.
+	 * @param path a path relative to the node.
+	 * @return the value of the node, or null if none.
+     */
+	Datetime getDatePath( object id, string path )
+	
+	/**
+	 * Gets the List value of a node.
+	 * @param id the id of a node.
+	 * @param path a path relative to the node.
+	 * @param depth if any of the values in the list are themselves maps or
+	 * lists, recursively get those values too up to the specified depth. Depth
+	 * value of 0 means only get the values of the node itself.
+	 * @return the List value of the node.
+	 */
+	List getListPath( object id, string path, int depth )
+	
+	/**
+	 * Gets the Map value of a node.
+	 * @param id the id of a node.
+	 * @param path a path relative to the node.
+	 * @param depth if any of the values in the map are themselves maps or
+	 * lists, recursively get those values too up to the specified depth. Depth
+	 * value of 0 means only get the values of the node itself.
+	 * @return the Map value of the node.
+	 */
+	Map getMapPath( object id, string path, int depth )
+	
+	/////////////////
+	// NODE ACCESS //
+	/////////////////
+
+	/**
+	 * Tests whether a node has a value.
+	 * @param id the id of a node.
+	 * @return true if the node has a value.
+     */
+	boolean hasValue( object id )
+	
+	/**
+	 * Gets the value value of a node.
+	 * @param id the id of a node.
+	 * @return the value of the node, or null if none. Note that the value may
+	 * not be the expected type. That depends upon the underlying
+	 * implementation. If you want the value as a specific type, use getType()
+	 * methods below.
+     */
+	object getValue( object id )
+
+	/**
+	 * Gets the boolean value of a node.
+	 * @param id the id of a node.
+	 * @return the value of the node, or null if none.
+     */
+	boolean getBoolean( object id )
+
+	/**
+	 * Gets the integer value of a node.
+	 * @param id the id of a node.
+	 * @return the value of the node, or null if none.
+     */
+	int getInteger( object id )
+
+	/**
+	 * Gets the double value of a node.
+	 * @param id the id of a node.
+	 * @return the value of the node, or null if none.
+     */
+	double getDouble( object id )
+
+	/**
+	 * Gets the string value of a node.
+	 * @param id the id of a node.
+	 * @return the value of the node, or null if none.
+     */
+	string getString( object id )
+
+	/**
+	 * Gets the Datetime value of a node.
+	 * @param id the id of a node.
+	 * @return the value of the node, or null if none.
+     */
+	Datetime getDate( object id )
+	
+	/**
+	 * Gets the List value of a node.
+	 * @param id the id of a node.
+	 * @param depth if any of the values in the list are themselves maps or
+	 * lists, recursively get those values too up to the specified depth. Depth
+	 * value of 0 means only get the values of the node itself.
+	 * @return the List value of the node.
+	 */
+	List getList( object id, int depth )
+	
+	/**
+	 * Gets the Map value of a node.
+	 * @param id the id of a node.
+	 * @param depth if any of the values in the map are themselves maps or
+	 * lists, recursively get those values too up to the specified depth. Depth
+	 * value of 0 means only get the values of the node itself.
+	 * @return the Map value of the node.
+	 */
+	Map getMap( object id, int depth )
+	
+	/////////////////////////
+	// CHANGE NOTIFICATION //
+	/////////////////////////
+	
+	/**
+	 * Subscribes to changes at or below a node.
+	 * @param id the id of a node.
+	 */
+	void subscribe( object id )
+	
+	/**
+	 * Subscribes to changes at or below a node.
+	 * @param id the id of a node.
+	 * @param path a path relative to the node.
+	 */
+	void subscribePath( object id, string path )
+	
+	/**
+	 * Unsubscribes to changes at or below a node.
+	 * @param id the id of a node.
+	 */
+	void unsubscribe( object id )
+	
+	/**
+	 * Unsubscribes to changes at or below a node.
+	 * @param id the id of a node.
+	 * @param path a path relative to the node.
+	 */
+	void unsubscribePath( object id, string path )
+	
+	/**
+	 * Unsubscribes to all changes.
+	 */
+	void unsubscribeAll()
+	
+	/**
+	 * Notifies client of changes to the values of nodes. Added or deleted nodes
+	 * are treated as updates to the parent. Reporting is done on a best effort
+	 * basis. The nodes reported might be an ancestor of the nodes which
+	 * actually changed.
+	 * @param updated the ids of nodes that have been updated.
+	 */
+	@Direction( Client )
+	void configValuesChanged( object[] updated )
+}
