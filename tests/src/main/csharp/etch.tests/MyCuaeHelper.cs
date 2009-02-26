@@ -32,37 +32,41 @@ namespace etch.tests
         {
             Resources res = InitResources(resources);
             Transport<ServerFactory> listener = TransportFactory.GetListener(uri, res);
-            return new MyServerFactory(listener, uri, implFactory);
+            return new MyServerFactory(listener, implFactory);
         }
 
         public new class MyServerFactory : DefaultServerFactory
         {
-            public MyServerFactory(Transport<ServerFactory> listener, string uri, MyCuaeServerFactory implFactory)
+            public MyServerFactory(Transport<ServerFactory> listener, MyCuaeServerFactory implFactory)
                 : base(listener, implFactory)
             {
-                _uri = uri;
+                _listener = listener;
                 _implFactory = implFactory;
             }
 
-            private readonly string _uri;
+            private readonly Transport<ServerFactory> _listener;
 
             private readonly MyCuaeServerFactory _implFactory;
 
-            public override void NewServer(string uri, Resources resources, TransportMessage m)
+            public override void NewServer(TransportMessage m, string uri, Resources resources)
             {
                 ValueFactory vf = (ValueFactory)resources.Get(TransportConsts.VALUE_FACTORY);
-                URL u = new URL(uri);
-                MailboxManager x = new PlainMailboxManager(m, u, resources);
-                DeliveryService d = new DefaultDeliveryService(x, u, resources);
+                MailboxManager x = new PlainMailboxManager(m, uri, resources);
+                DeliveryService d = new DefaultDeliveryService(x, uri, resources);
                 Pool qp = (Pool)resources[QUEUED_POOL];
                 Pool fp = (Pool)resources[FREE_POOL];
                 _implFactory.NewMyCuaeServer(d, qp, fp, (MyValueFactoryCuae)vf);
                 d.TransportControl(TransportConsts.START, null);
             }
 
-            public override ValueFactory NewValueFactory()
+            public override ValueFactory NewValueFactory(string uri)
             {
-                return new ValueFactoryCuae(_uri);
+                return new ValueFactoryCuae(uri);
+            }
+
+            public override string ToString()
+            {
+                return "MyCuaeHelper.ServerFactory/" + _listener;
             }
         }
 

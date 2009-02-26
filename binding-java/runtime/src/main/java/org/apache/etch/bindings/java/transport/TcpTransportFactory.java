@@ -117,7 +117,8 @@ public class TcpTransportFactory extends TransportFactory
 		 * @param uri
 		 * @param resources
 		 */
-		public MySessionListener( Transport<SessionListener<Socket>> transport, String uri, Resources resources )
+		public MySessionListener( Transport<SessionListener<Socket>> transport,
+			String uri, Resources resources )
 		{
 			this.transport = transport;
 			this.uri = uri;
@@ -172,12 +173,12 @@ public class TcpTransportFactory extends TransportFactory
 			Resources r = new Resources( resources );
 			r.put( SOCKET, socket );
 			
-			ValueFactory vf = session.newValueFactory();
+			ValueFactory vf = session.newValueFactory( uri );
 			r.put( Transport.VALUE_FACTORY, vf );
 			
 			TransportMessage t = newTransport( uri, r );
 			
-			session.newServer( uri, r, t );
+			session.newServer( t, uri, r );
 		}
 
 		public Object sessionQuery( Object query ) throws Exception

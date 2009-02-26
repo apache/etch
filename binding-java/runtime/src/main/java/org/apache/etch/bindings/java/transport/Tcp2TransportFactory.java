@@ -164,12 +164,12 @@ public class Tcp2TransportFactory extends TransportFactory
 			Resources r = new Resources( resources );
 			r.put( "connection", connection );
 			
-			ValueFactory vf = session.newValueFactory();
+			ValueFactory vf = session.newValueFactory( uri );
 			r.put( Transport.VALUE_FACTORY, vf );
 			
-			TransportMessage transport = newTransport( uri, r );
+			TransportMessage t = newTransport( uri, r );
 			
-			session.newServer( uri, r, transport );
+			session.newServer( t, uri, r );
 		}
 
 		public Object sessionQuery( Object query ) throws Exception
