@@ -94,9 +94,9 @@ namespace Org.Apache.Etch.Bindings.Csharp.Support
 
         #region ServerFactory Members
 
-        abstract public void NewServer(string uri, Resources resources, TransportMessage transport);
+        abstract public void NewServer(TransportMessage transport, string uri, Resources resources);
 
-        abstract public ValueFactory NewValueFactory();
+        abstract public ValueFactory NewValueFactory(string uri);
 
         #endregion
     }

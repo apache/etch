@@ -32,15 +32,16 @@ namespace Org.Apache.Etch.Bindings.Csharp.Support
         /// <summary>
         /// Constructs a new server session.
         /// </summary>
-        /// <param name="uri"></param>
-        /// <param name="resources"></param>
-        /// <param name="transport"> the TransportMessage to be used with the new session</param>
-        void NewServer(string uri, Resources resources, TransportMessage transport);
+        /// <param name="transport">the TransportMessage to use with the new server instance.</param>
+        /// <param name="uri">the uri to use to configure the new server instance.</param>
+        /// <param name="resources">the resources to use for the new server instance.</param>
+        void NewServer(TransportMessage transport, string uri, Resources resources);
 
         /// <summary>
         /// Constructs a new instance of value factory for this session.
         /// </summary>
+        /// <param name="uri">the uri to use to configure the new value factory.</param>
         /// <returns>a new instance of value factory for this session.</returns>
-        ValueFactory NewValueFactory();
+        ValueFactory NewValueFactory(string uri);
     }
 }

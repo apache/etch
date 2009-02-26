@@ -34,16 +34,17 @@ import org.apache.etch.util.core.io.Transport;
 public interface ServerFactory extends Session, Transport<Session>
 {
 	/**
-	 * @param uri 
-	 * @param resources 
-	 * @param transport the TransportMessage to use with the new server.
+	 * @param transport the TransportMessage to use with the new server instance.
+	 * @param uri the uri to use to configure the new server instance.
+	 * @param resources the resources to use for the new server instance.
 	 * @throws Exception
 	 */
-	public void newServer( String uri, Resources resources,
-		TransportMessage transport ) throws Exception;
+	public void newServer( TransportMessage transport, String uri,
+		Resources resources ) throws Exception;
 	
 	/**
+	 * @param uri the uri to use to configure the new value factory.
 	 * @return a new instance of value factory for this connection.
 	 */
-	public ValueFactory newValueFactory();
+	public ValueFactory newValueFactory( String uri );
 }

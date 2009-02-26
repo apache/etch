@@ -63,31 +63,30 @@ abstract public class ${i}Helper extends TransportHelper
 	 * @throws Exception
 	 */
 	public static ServerFactory newListener( final String uri,
-		Resources resources, final ${i}ServerFactory implFactory )
+		final Resources resources, final ${i}ServerFactory implFactory )
 		throws Exception
 	{
 		final Resources res = initResources( resources );
-		final URL u = new URL( uri );
 		
 		final Transport<ServerFactory> listener = TransportFactory.getListener( uri, res );
 		
 		return new DefaultServerFactory( listener, implFactory )
 		{
-			public void newServer( String uri, Resources resources,
-				TransportMessage transport ) throws Exception
+			public void newServer( TransportMessage t, String uri, Resources r )
+				throws Exception
 			{
-				ValueFactory vf = (ValueFactory) resources.get( Transport.VALUE_FACTORY );
-				MailboxManager x = new PlainMailboxManager( transport, u, res );
-				DeliveryService d = new DefaultDeliveryService( x, u, res );
+				ValueFactory vf = (ValueFactory) r.get( Transport.VALUE_FACTORY );
+				MailboxManager x = new PlainMailboxManager( t, uri, r );
+				DeliveryService d = new DefaultDeliveryService( x, uri, r );
 				Remote${i}Client client = new Remote${i}Client( d, vf );
 				${i}Server server = implFactory.new${i}Server( client );
-				Pool qp = (Pool) res.get( QUEUED_POOL );
-				Pool fp = (Pool) res.get( FREE_POOL );
+				Pool qp = (Pool) r.get( QUEUED_POOL );
+				Pool fp = (Pool) r.get( FREE_POOL );
 				new Stub${i}Server( d, server, qp, fp );
 				client._start();
 			}
 
-			public ValueFactory newValueFactory()
+			public ValueFactory newValueFactory( String uri )
 			{
 				return new ValueFactory${i}( uri );
 			}

@@ -108,12 +108,12 @@ namespace Org.Apache.Etch.Bindings.Csharp.Transport
                 Resources r = new Resources(resources);
                 r.Add(SOCKET, socket);
 
-                ValueFactory vf = session.NewValueFactory();
+                ValueFactory vf = session.NewValueFactory(uri);
                 r.Add(TransportConsts.VALUE_FACTORY, vf);
 
                 TransportMessage t = ttf.NewTransport(uri, r);
 
-                session.NewServer(uri, r, t);
+                session.NewServer(t, uri, r);
             }
 
             #region Transport<ServerFactory> Members
