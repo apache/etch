@@ -1,0 +1,2 @@
+---
+configUri: tcp://localhost:4001/services/config/remote

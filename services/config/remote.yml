@@ -1,0 +1,10 @@
+bool: true
+int: 23
+dbl: 4.5
+str: boo
+date: 12/19/2008
+users:
+  fred: 1234
+  mary: 2345
+  alice: 9876
+  jack: 8765
