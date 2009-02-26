@@ -1,0 +1,97 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{14D7A923-0CB4-442A-9499-7F0C25C239EE}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>IOTClientProj</RootNamespace>
+    <AssemblyName>IOTClientProj</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\org.apache.etch.interoptester.example.iot\BaseIOTClient.cs">
+      <Link>BaseIOTClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\org.apache.etch.interoptester.example.iot\BaseIOTServer.cs">
+      <Link>BaseIOTServer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\org.apache.etch.interoptester.example.iot\IOT.cs">
+      <Link>IOT.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\org.apache.etch.interoptester.example.iot\IOTClient.cs">
+      <Link>IOTClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\org.apache.etch.interoptester.example.iot\IOTHelper.cs">
+      <Link>IOTHelper.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\org.apache.etch.interoptester.example.iot\IOTServer.cs">
+      <Link>IOTServer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\org.apache.etch.interoptester.example.iot\RemoteIOT.cs">
+      <Link>RemoteIOT.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\org.apache.etch.interoptester.example.iot\RemoteIOTClient.cs">
+      <Link>RemoteIOTClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\org.apache.etch.interoptester.example.iot\RemoteIOTServer.cs">
+      <Link>RemoteIOTServer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\org.apache.etch.interoptester.example.iot\StubIOT.cs">
+      <Link>StubIOT.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\org.apache.etch.interoptester.example.iot\StubIOTClient.cs">
+      <Link>StubIOTClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\org.apache.etch.interoptester.example.iot\StubIOTServer.cs">
+      <Link>StubIOTServer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\target\generated-sources\main\etch\csharp\org.apache.etch.interoptester.example.iot\ValueFactoryIOT.cs">
+      <Link>ValueFactoryIOT.cs</Link>
+    </Compile>
+    <Compile Include="..\ImplIOTClient.cs">
+      <Link>ImplIOTClient.cs</Link>
+    </Compile>
+    <Compile Include="..\MainIOTClient.cs">
+      <Link>MainIOTClient.cs</Link>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\..\binding-csharp\runtime\src\main\csharp\EtchProj.csproj">
+      <Project>{0E518F2A-3016-4C2F-A21B-9BD52B2DC846}</Project>
+      <Name>EtchProj</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
