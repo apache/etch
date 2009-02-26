@@ -48,7 +48,7 @@ public class MainIOTListener implements IOTHelper.IOTServerFactory
 			System.exit( 1 );
 		}
 		
-		String uri = args.length > 0 ? args[0] : "tcp://127.0.0.1:4001";
+		String uri = args.length > 0 ? args[0] : "tcp://localhost:4001";
 		
 		ServerFactory listener = IOTHelper.newListener( uri, null,
 			new MainIOTListener() );

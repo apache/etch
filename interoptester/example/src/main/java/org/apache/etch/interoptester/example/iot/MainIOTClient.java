@@ -26,6 +26,7 @@ import org.apache.etch.bindings.java.support._Etch_RuntimeException;
 import org.apache.etch.interoptester.example.iot.IOTClient;
 import org.apache.etch.interoptester.example.iot.IOTHelper;
 import org.apache.etch.interoptester.example.iot.RemoteIOTServer;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.Description;
 import org.junit.runner.JUnitCore;
@@ -59,17 +60,7 @@ public class MainIOTClient implements IOTHelper.IOTClientFactory
 		if (args.length > 0)
 			uri = args[0];
 		
-		RemoteIOTServer server = IOTHelper.newServer( uri, null,
-			new MainIOTClient() );
-
-		// Connect to the service
-		server._startAndWaitUp( 4000 );
-
-		assertEquals( (Object) 11, server.add( 5, 6 ) );
-
-		// Disconnect from the service
-		server._stopAndWaitDown( 4000 );
-		server = null;
+		dontStartListener = true;
 		
 		JUnitCore c = new org.junit.runner.JUnitCore();
 		
@@ -130,7 +121,17 @@ public class MainIOTClient implements IOTHelper.IOTClientFactory
 		System.exit( 0 );
 	}
 	
-	private static String uri = "tcp://127.0.0.1:4001";
+	private static boolean dontStartListener;
+	
+	private static String uri = "tcp://localhost:4001";
+	
+	/** @throws Exception */
+	@BeforeClass
+	public static void beforeClass() throws Exception
+	{
+		if (!dontStartListener)
+			MainIOTListener.main( new String[] {} );
+	}
 	
 	/** @throws Exception */
 	@org.junit.Before
