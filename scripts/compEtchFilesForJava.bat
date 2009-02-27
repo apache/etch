@@ -60,7 +60,7 @@
 @pushd example\src\main\etch
 @call %x%scripts\etch-eclipse.bat %q% %b% %n% %d% %i%        Example.etch
 @call %x%scripts\etch-eclipse.bat %q% %b% %n% %d% %i%        Foo.etch
-@call %x%scripts\etch-eclipse.bat %q% %b% %n% %d% %i%        FooExample.etch
+@call %x%scripts\etch-eclipse.bat %q% %b% %n% %d% %i%        ExampleFoo.etch
 @popd
 
 @pushd perf\src\main\etch
