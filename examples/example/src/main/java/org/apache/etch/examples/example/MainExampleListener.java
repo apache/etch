@@ -21,9 +21,9 @@
 package org.apache.etch.examples.example;
 
 import org.apache.etch.bindings.java.support.ServerFactory;
+import org.apache.etch.examples.example.ExampleHelper.ExampleServerFactory;
 import org.apache.etch.examples.example.FooHelper.FooServerFactory;
 import org.apache.etch.util.Resources;
-import org.apache.etch.util.core.io.Session;
 import org.apache.etch.util.core.io.Transport;
 
 
@@ -32,7 +32,8 @@ import org.apache.etch.util.core.io.Transport;
  * Main program for ExampleServer. This program makes a listener to accept
  * connections from MainExampleClient.
  */
-public class MainExampleListener implements ExampleHelper.ExampleServerFactory, FooHelper.FooServerFactory, Session
+public class MainExampleListener implements ExampleServerFactory,
+	FooServerFactory
 {
 	/**
 	 * Main program for ExampleServer.
@@ -48,7 +49,7 @@ public class MainExampleListener implements ExampleHelper.ExampleServerFactory, 
 		MainExampleListener factory = new MainExampleListener();
 		
 		Resources res = new Resources();
-		res.put( FooServerFactory.class.getName(), factory );
+		res.put( FooServerFactory.class.getName(), (FooServerFactory) factory );
 		
 		ServerFactory listener = ExampleHelper.newListener( uri, res,
 			factory );
@@ -65,23 +66,5 @@ public class MainExampleListener implements ExampleHelper.ExampleServerFactory, 
 	public FooServer newFooServer( RemoteFooClient client ) throws Exception
 	{
 		return new ImplFooServer( client );
-	}
-
-	public void sessionControl( Object control, Object value ) throws Exception
-	{
-		throw new UnsupportedOperationException( "unknown control "+control );
-	}
-
-	public void sessionNotify( Object event ) throws Exception
-	{
-		if (event instanceof Throwable)
-			((Throwable) event).printStackTrace();
-		else
-			System.out.println( "event = "+event );
-	}
-
-	public Object sessionQuery( Object query ) throws Exception
-	{
-		throw new UnsupportedOperationException( "unknown query "+query );
 	}
 }

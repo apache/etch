@@ -24,18 +24,8 @@ import java.util.Date;
 
 import org.apache.etch.bindings.java.msg.Message;
 import org.apache.etch.bindings.java.msg.Type;
-import org.apache.etch.bindings.java.msg.ValueFactory;
-import org.apache.etch.bindings.java.support.ComboStub;
-import org.apache.etch.bindings.java.support.ComboValueFactory;
-import org.apache.etch.bindings.java.support.DeliveryService;
-import org.apache.etch.bindings.java.support.Pool;
-import org.apache.etch.bindings.java.support.RemoteBase;
 import org.apache.etch.bindings.java.support.RetryMessageException;
-import org.apache.etch.bindings.java.support.TransportHelper;
 import org.apache.etch.bindings.java.transport.UnwantedMessage;
-import org.apache.etch.examples.example.FooHelper.FooServerFactory;
-import org.apache.etch.util.Resources;
-import org.apache.etch.util.core.io.Transport;
 
 
 /**
@@ -59,7 +49,6 @@ public class ImplExampleServer extends BaseExampleServer
 	 * A connection to the client session. Use this to send a
 	 * message to the client.
 	 */
-	@SuppressWarnings( "unused" )
 	private final RemoteExampleClient client;
 
 	@Override
@@ -74,16 +63,17 @@ public class ImplExampleServer extends BaseExampleServer
 		if (event instanceof UnwantedMessage)
 		{
 			Message msg = ((UnwantedMessage) event).msg;
-			System.out.println( "unwanted msg "+msg );
-			
 			Type type = msg.type();
+			System.out.println( "unknown msg type "+type );
+			
 			String uri = (String) client._transportQuery( "uri" );
 			
-			// try to load Foo
+			// try to load ValueFactoryFoo
 
 			ValueFactoryFoo nvf = new ValueFactoryFoo( uri );
 			if (nvf.getType( type.getId() ) != null)
 			{
+				System.out.println( "loading "+ValueFactoryFoo.class.getName() );
 				FooHelper.addServer( nvf, client );
 				throw new RetryMessageException();
 			}
@@ -91,6 +81,7 @@ public class ImplExampleServer extends BaseExampleServer
 			// no other service to try, fall through...
 		}
 		
+		super._sessionNotify( event );
 		if (event instanceof Throwable)
 			((Throwable) event).printStackTrace();
 		else
