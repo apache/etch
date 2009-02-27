@@ -67,6 +67,10 @@
 
 @popd
 
+@pushd services\config\src\main\etch
+@call %x%scripts\etch-eclipse.bat %q% %b% %n% %d% %i%        Configuration.etch
+@popd
+
 @pushd interoptester\example\src\main\etch
 @call %x%scripts\etch-eclipse.bat %q% %b% %n% %d% %i%        IOT.etch
 @popd
