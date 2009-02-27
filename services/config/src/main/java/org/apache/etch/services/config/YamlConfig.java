@@ -46,10 +46,12 @@ public class YamlConfig implements ConfigurationServer
 	/**
 	 * Constructs an empty YamlConfigurationServer.
 	 * @param client 
+	 * @throws ConfigurationException 
 	 */
 	public YamlConfig( ConfigurationClient client )
+		throws ConfigurationException
 	{
-		this.client = client;
+		this( client, null );
 	}
 	
 	@SuppressWarnings("unused")
@@ -64,7 +66,7 @@ public class YamlConfig implements ConfigurationServer
 	public YamlConfig( ConfigurationClient client, String name )
 		throws ConfigurationException
 	{
-		this( client );
+		this.client = client;
 		loadConfig( name );
 	}
 
@@ -72,6 +74,8 @@ public class YamlConfig implements ConfigurationServer
 		throws ConfigurationException
 	{
 		unloadConfig();
+		if (name == null)
+			return;
 		file = new File( name+".yml" );
 		importConfigs( loadConfig() );
 	}
@@ -555,6 +559,9 @@ public class YamlConfig implements ConfigurationServer
 	
 	private Conf getConf( Integer iid )
 	{
+		if (configs == null)
+			throw new IllegalStateException( "no config loaded" );
+		
 		if (iid == null)
 			iid = 0;
 //			throw new IllegalArgumentException( "id == null" );

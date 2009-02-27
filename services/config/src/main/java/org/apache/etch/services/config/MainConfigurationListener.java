@@ -22,6 +22,7 @@ package org.apache.etch.services.config;
 
 import org.apache.etch.bindings.java.support.ObjSession;
 import org.apache.etch.bindings.java.support.ServerFactory;
+import org.apache.etch.services.config.Configuration.ConfigurationException;
 import org.apache.etch.util.core.io.Session;
 import org.apache.etch.util.core.io.Transport;
 
@@ -51,14 +52,14 @@ public class MainConfigurationListener implements ConfigurationHelper.Configurat
 		listener.transportControl( Transport.START_AND_WAIT_UP, 4000 );
 	}
 
-	public ConfigurationServer newConfigurationServer( RemoteConfigurationClient client )
+	public ConfigurationServer newConfigurationServer( RemoteConfigurationClient client ) throws ConfigurationException
 	{
 		return new MyYamlConfig( client );
 	}
 	
 	public static class MyYamlConfig extends YamlConfig implements ObjSession
 	{
-		public MyYamlConfig( RemoteConfigurationClient client )
+		public MyYamlConfig( RemoteConfigurationClient client ) throws ConfigurationException
 		{
 			super( client );
 		}
