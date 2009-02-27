@@ -1,7 +1,7 @@
 
 // The service module namespace, this will be translated to the
 // namespace of the generated source code.
-module cisco.uc.cuae.etchrouter
+module org.apache.etch.services.router
 
 // The name of your service.
 service EtchRouter
