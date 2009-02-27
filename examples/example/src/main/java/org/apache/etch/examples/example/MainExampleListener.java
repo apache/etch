@@ -51,8 +51,7 @@ public class MainExampleListener implements ExampleServerFactory,
 		Resources res = new Resources();
 		res.put( FooServerFactory.class.getName(), (FooServerFactory) factory );
 		
-		ServerFactory listener = ExampleHelper.newListener( uri, res,
-			factory );
+		ServerFactory listener = ExampleHelper.newListener( uri, res, factory );
 
 		// Start the Listener
 		listener.transportControl( Transport.START_AND_WAIT_UP, 4000 );
