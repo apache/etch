@@ -1,4 +1,4 @@
-module cisco.uc.cuae.etchrouter.test.app
+module org.apache.etch.services.router.test.app
 
 service TestPlugin
 {

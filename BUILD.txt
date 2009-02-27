@@ -253,6 +253,8 @@ You can do this by:
 
  Select Run / External Tools / Compile Java Etch Files.
 
+ Select Run / External Tools / Compile Router Etch Files.
+
 (You may want to configure the external tools first. Select Run / External
 Tools / Organize Favorites... Click Add... Select All. Ok. Ok.)
 
