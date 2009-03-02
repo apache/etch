@@ -79,10 +79,11 @@ service Configuration
 	 * capabilities, it may be able to monitor the configuration for changes
 	 * and automatically load them.
 	 * @param name the name of the configuration.
+	 * @return the id of the root node.
 	 * @throws ConfigurationException if there is any problem.
 	 */
 	@Authorize( canLoad, name )
-	void loadConfig( string name )
+	object loadConfig( string name )
 		throws ConfigurationException
 	
 	/**
@@ -103,9 +104,15 @@ service Configuration
 	 */
 	boolean isLoaded()
 	
-	//////////////////////
+	/**
+	 * Returns the id of the root node.
+	 * @return the id of the root node.
+	 */
+	object getRoot()
+	
+	/////////////////////
 	// NODE PROPERTIES //
-	//////////////////////
+	/////////////////////
 	
 	/**
 	 * Gets the parent of a node.

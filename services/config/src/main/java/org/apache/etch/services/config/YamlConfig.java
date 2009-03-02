@@ -54,9 +54,6 @@ public class YamlConfig implements ConfigurationServer
 		this( client, null );
 	}
 	
-	@SuppressWarnings("unused")
-	private final ConfigurationClient client;
-	
 	/**
 	 * Constructs a YamlConfigurationServer, then loads the config.
 	 * @param client 
@@ -67,64 +64,82 @@ public class YamlConfig implements ConfigurationServer
 		throws ConfigurationException
 	{
 		this.client = client;
+		if (name == null)
+			return;
 		loadConfig( name );
 	}
+	
+	@SuppressWarnings("unused")
+	private final ConfigurationClient client;
 
-	public void loadConfig( String name )
+	////////////////////
+	// PUBLIC METHODS //
+	////////////////////
+
+	public Object loadConfig( String name )
 		throws ConfigurationException
 	{
 		unloadConfig();
-		if (name == null)
-			return;
-		file = new File( name+".yml" );
-		importConfigs( loadConfig() );
-	}
-	
-	public void unloadConfig()
-	{
-		file = null;
-		lastModified = 0;
-		configs = new ArrayList<Conf>();
-		unsubscribeAll();
-	}
-	
-	private Object loadConfig() throws ConfigurationException
-	{
+		
+		File f = mkfile( name );
+		if (f == null)
+			throw new ConfigurationException( "bad name "+name );
+		
 		for (int i = 0; i < 4; i++)
 		{
+			long t0 = f.lastModified();
+			Object o = loadConfig0( f );
+			long t1 = f.lastModified();
+			
+			if (t1 == t0)
+			{
+				file = f;
+				lastModified = t0;
+				configs = importConfigs( o );
+				return getConfigPath( null, "/" );
+			}
+			
 			try
 			{
-				long t0 = file.lastModified();
-				Object o = Yaml.load( file );
-				long t1 = file.lastModified();
-				if (t1 != t0)
-				{
-					Thread.sleep( 1000 );
-					continue;
-				}
-				lastModified = t1;
-				return o;
-			}
-			catch ( FileNotFoundException e )
-			{
-				throw new ConfigurationException( "file not found: " + file );
+				Thread.sleep( 50 );
 			}
 			catch ( InterruptedException e )
 			{
 				break;
 			}
 		}
-		throw new ConfigurationException( "file changed while loading: " + file );
+		throw new ConfigurationException( "config is changing: "+name );
 	}
 
-	private File file;
-	
-	private long lastModified;
+	public void unloadConfig()
+	{
+		file = null;
+		lastModified = 0;
+		configs = null;
+		unsubscribeAll();
+	}
 
 	public Boolean canLoad( String name )
 	{
-		return true;
+		File f = mkfile( name );
+		if (f == null)
+			return false;
+		return f.isFile() && f.canRead();
 	}
+
+	public Boolean isLoaded()
+	{
+		return configs != null;
+	}
+
+	public Object getRoot()
+	{
+		return getConfigPath( null, "/" );
+	}
+	
+	/////////////////////
+	// NODE PROPERTIES //
+	/////////////////////
 
 	public Object getParent( Object id )
 	{
@@ -139,6 +154,12 @@ public class YamlConfig implements ConfigurationServer
 		if (n instanceof String)
 			return (String) n;
 		return n.toString();
+	}
+
+	public Integer getIndex( Object id )
+	{
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	public String getPath( Object id )
@@ -246,13 +267,19 @@ public class YamlConfig implements ConfigurationServer
 		return toId( iid );
 	}
 
-	//////////////////////
-	// NODE PATH VALUES //
-	//////////////////////
+	////////////////////////
+	// NODE / PATH ACCESS //
+	////////////////////////
 
 	public Boolean hasValuePath( Object id, String path )
 	{
 		return hasValue( getConfigPath( id, path ) );
+	}
+
+	public Object getValuePath( Object id, String path )
+	{
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	public Boolean getBooleanPath( Object id, String path )
@@ -297,6 +324,12 @@ public class YamlConfig implements ConfigurationServer
 	public Boolean hasValue( Object id )
 	{
 		return id != null && getConf( id ).hasValue();
+	}
+
+	public Object getValue( Object id )
+	{
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	public Boolean getBoolean( Object id )
@@ -351,26 +384,6 @@ public class YamlConfig implements ConfigurationServer
 	/////////////////////////
 	// CHANGE NOTIFICATION //
 	/////////////////////////
-	
-	private final static int INTERVAL = 5*1000;
-	
-	private final AlarmListener LISTENER = new AlarmListener()
-	{
-		public int wakeup( AlarmManager manager, Object state,
-			long due )
-		{
-			try
-			{
-				updateConfig();
-			}
-			catch ( Exception e )
-			{
-				e.printStackTrace();
-				return 0;
-			}
-			return INTERVAL;
-		}
-	};
 
 	public void subscribe( Object id )
 	{
@@ -388,20 +401,6 @@ public class YamlConfig implements ConfigurationServer
 			if (wasEmpty)
 				AlarmManager.staticAdd( LISTENER, null, INTERVAL );
 		}
-	}
-
-	private Object toId( Integer iid )
-	{
-		return iid;
-	}
-
-	private Integer fromId( Object id )
-	{
-		if (id == null)
-			return null;
-		if (id instanceof Integer)
-			return (Integer) id;
-		return ((Number) id).intValue();
 	}
 
 	public void subscribePath( Object id, String path )
@@ -439,16 +438,79 @@ public class YamlConfig implements ConfigurationServer
 			AlarmManager.staticRemove( LISTENER );
 		}
 	}
-	
-	private final Set<Integer> subs = Collections.synchronizedSet( new HashSet<Integer>() );
 
 	/////////////
 	// PRIVATE //
 	/////////////
+	
+	private final Set<Integer> subs = Collections.synchronizedSet( new HashSet<Integer>() );
 
-	private void importConfigs( Object root )
+	private Object toId( Integer iid )
 	{
-		importObject( null, null, root );
+		return iid;
+	}
+
+	private Integer fromId( Object id )
+	{
+		if (id == null)
+			return null;
+		if (id instanceof Integer)
+			return (Integer) id;
+		return ((Number) id).intValue();
+	}
+	
+	private final static int INTERVAL = 5*1000;
+	
+	private final AlarmListener LISTENER = new AlarmListener()
+	{
+		public int wakeup( AlarmManager manager, Object state,
+			long due )
+		{
+			try
+			{
+				updateConfig();
+			}
+			catch ( Exception e )
+			{
+				e.printStackTrace();
+				return 0;
+			}
+			return INTERVAL;
+		}
+	};
+	
+	private File mkfile( String name )
+	{
+		if (name == null || name.length() == 0)
+			return null;
+		
+		return new File( name+".yml" );
+	}
+
+	private File file;
+	
+	private long lastModified;
+
+	private List<Conf> configs;
+	
+	private static Object loadConfig0( File file ) throws ConfigurationException
+	{
+		try
+		{
+			Object o = Yaml.load( file );
+			return o;
+		}
+		catch ( FileNotFoundException e )
+		{
+			throw new ConfigurationException( "file not found: " + file );
+		}
+	}
+
+	private static List<Conf> importConfigs( Object root )
+	{
+		List<Conf> c = new ArrayList<Conf>();
+		importObject( c, null, null, root );
+		return c;
 	}
 	
 	private void updateConfig() throws ConfigurationException
@@ -456,25 +518,25 @@ public class YamlConfig implements ConfigurationServer
 		if (file.lastModified() != lastModified)
 		{
 			List<Integer> changeSet = new ArrayList<Integer>();
-			updateObject( changeSet, 0, null, null, loadConfig() );
+			updateObject( changeSet, 0, null, null, loadConfig0( null ) );
 			// TODO notify about changeSet
 		}
 	}
 
-	private int importObject( Integer parent, Object name, Object value )
+	private static int importObject( List<Conf> c, Integer parent, Object name, Object value )
 	{
 		if (value instanceof List)
 		{
-			return importList( parent, name, (List<?>) value );
+			return importList( c, parent, name, (List<?>) value );
 		}
 		else if (value instanceof Map)
 		{
-			return importMap( parent, name, (Map<?, ?>) value );
+			return importMap( c, parent, name, (Map<?, ?>) value );
 		}
 		else if (isScalar( value ))
 		{
-			int k = configs.size();
-			configs.add( new Conf( parent, name, value ) );
+			int k = c.size();
+			c.add( new Conf( parent, name, value ) );
 			return k;
 		}
 		else
@@ -484,7 +546,7 @@ public class YamlConfig implements ConfigurationServer
 		}
 	}
 	
-	private boolean isScalar( Object value )
+	private static boolean isScalar( Object value )
 	{
 		return value instanceof Boolean || value instanceof Number ||
 			value instanceof String || value instanceof Date;
@@ -527,39 +589,37 @@ public class YamlConfig implements ConfigurationServer
 		}
 	}
 
-	private int importList( Integer parent, Object name, List<?> value )
+	private static int importList( List<Conf> c, Integer parent, Object name, List<?> value )
 	{
 		List<Integer> v = new ArrayList<Integer>( value.size() );
-		int k = configs.size();
-		configs.add( new Conf( parent, name, v ) );
+		int k = c.size();
+		c.add( new Conf( parent, name, v ) );
 		
 		int i = 0;
 		for (Object o: value )
-			v.add( importObject( k, i++, o ) );
+			v.add( importObject( c, k, i++, o ) );
 		
 		return k;
 	}
 	
-	private int importMap( Integer parent, Object name, Map<?, ?> value )
+	private static int importMap( List<Conf> c, Integer parent, Object name, Map<?, ?> value )
 	{
 		Map<String, Integer> v = new HashMap<String, Integer>( value.size() * 4 / 3 + 1 );
-		int k = configs.size();
-		configs.add( new Conf( parent, name, v ) );
+		int k = c.size();
+		c.add( new Conf( parent, name, v ) );
 		
 		for (Map.Entry<?, ?> me: value.entrySet() )
 		{
 			String n = (String) me.getKey();
-			v.put( n, importObject( k, n, me.getValue() ) );
+			v.put( n, importObject( c, k, n, me.getValue() ) );
 		}
 		
 		return k;
 	}
-
-	private List<Conf> configs;
 	
 	private Conf getConf( Integer iid )
 	{
-		if (configs == null)
+		if (!isLoaded())
 			throw new IllegalStateException( "no config loaded" );
 		
 		if (iid == null)
@@ -757,29 +817,5 @@ public class YamlConfig implements ConfigurationServer
 			// TODO Auto-generated method stub
 			return null;
 		}
-	}
-
-	public Integer getIndex( Object id )
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public Object getValue( Object id )
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public Object getValuePath( Object id, String path )
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public Boolean isLoaded()
-	{
-		// TODO Auto-generated method stub
-		return null;
 	}
 }
