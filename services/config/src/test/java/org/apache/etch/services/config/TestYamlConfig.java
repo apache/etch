@@ -11,6 +11,8 @@ public class TestYamlConfig
 	
 	private static final String BOGUS = "services/config/bogus";
 	
+	private static final String EMPTY = "services/config/empty";
+	
 	private static final String DIR = "services/config/dir";
 	
 	private final MyConfigurationClient client = new MyConfigurationClient();
@@ -65,6 +67,13 @@ public class TestYamlConfig
 	}
 	
 	/** @throws Exception */
+	@Test( expected = ConfigurationException.class)
+	public void construct4d() throws Exception
+	{
+		new YamlConfig( null, EMPTY );
+	}
+	
+	/** @throws Exception */
 	@Test
 	public void construct5() throws Exception
 	{
@@ -100,6 +109,13 @@ public class TestYamlConfig
 	}
 	
 	/** @throws Exception */
+	@Test( expected = ConfigurationException.class)
+	public void construct6d() throws Exception
+	{
+		new YamlConfig( client, EMPTY );
+	}
+	
+	/** @throws Exception */
 	@Test
 	public void canload() throws Exception
 	{
@@ -108,6 +124,7 @@ public class TestYamlConfig
 		Assert.assertFalse( c.canLoad( "" ) );
 		Assert.assertFalse( c.canLoad( DIR ) );
 		Assert.assertFalse( c.canLoad( BOGUS ) );
+		Assert.assertTrue( c.canLoad( EMPTY ) );
 		Assert.assertTrue( c.canLoad( REMOTE ) );
 	}
 	
@@ -116,7 +133,8 @@ public class TestYamlConfig
 	public void notloaded1() throws Exception
 	{
 		ConfigurationServer c = new YamlConfig( null );
-		c.getPath( null );
+		Assert.assertFalse( c.isLoaded() );
+		c.getRoot();
 	}
 	
 	/** @throws Exception */
@@ -124,7 +142,8 @@ public class TestYamlConfig
 	public void notloaded2() throws Exception
 	{
 		ConfigurationServer c = new YamlConfig( null, null );
-		c.getPath( null );
+		Assert.assertFalse( c.isLoaded() );
+		c.getRoot();
 	}
 	
 	/** @throws Exception */
@@ -176,8 +195,8 @@ public class TestYamlConfig
 	public void loaded1() throws Exception
 	{
 		ConfigurationServer c = new YamlConfig( null );
-		c.loadConfig( REMOTE );
-		Assert.assertEquals( "", c.getPath( null ) );
+		Object r = c.loadConfig( REMOTE );
+		Assert.assertEquals( "/", c.getPath( r ) );
 	}
 	
 	/** @throws Exception */
@@ -185,7 +204,7 @@ public class TestYamlConfig
 	public void loaded2() throws Exception
 	{
 		ConfigurationServer c = new YamlConfig( null, REMOTE );
-		Assert.assertEquals( "", c.getPath( null ) );
+		Assert.assertEquals( "/", c.getPath( c.getRoot() ) );
 	}
 	
 	/** @throws Exception */
@@ -193,10 +212,10 @@ public class TestYamlConfig
 	public void unloaded1() throws Exception
 	{
 		ConfigurationServer c = new YamlConfig( null );
-		c.loadConfig( REMOTE );
-		Assert.assertEquals( "", c.getPath( null ) );
+		Object r = c.loadConfig( REMOTE );
+		Assert.assertEquals( "/", c.getPath( r ) );
 		c.unloadConfig();
-		c.getPath( null );
+		c.getPath( r );
 	}
 	
 	/** @throws Exception */

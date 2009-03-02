@@ -52,14 +52,24 @@ public class MainConfigurationListener implements ConfigurationHelper.Configurat
 		listener.transportControl( Transport.START_AND_WAIT_UP, 4000 );
 	}
 
-	public ConfigurationServer newConfigurationServer( RemoteConfigurationClient client ) throws ConfigurationException
+	public ConfigurationServer newConfigurationServer(
+		RemoteConfigurationClient client ) throws ConfigurationException
 	{
 		return new MyYamlConfig( client );
 	}
 	
+	/**
+	 * Wrapper around YamlConfig which watches for {@link Session#DOWN} and
+	 * unloads the config (thus canceling all subscriptions).
+	 */
 	public static class MyYamlConfig extends YamlConfig implements ObjSession
 	{
-		public MyYamlConfig( RemoteConfigurationClient client ) throws ConfigurationException
+		/**
+		 * Constructs MyYamlConfig.
+		 * @param client
+		 * @throws ConfigurationException
+		 */
+		public MyYamlConfig( ConfigurationClient client ) throws ConfigurationException
 		{
 			super( client );
 		}

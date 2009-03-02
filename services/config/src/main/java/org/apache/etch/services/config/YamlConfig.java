@@ -38,6 +38,7 @@ import org.apache.etch.util.AlarmListener;
 import org.apache.etch.util.AlarmManager;
 import org.apache.etch.util.Assertion;
 import org.ho.yaml.Yaml;
+import org.ho.yaml.exception.YamlException;
 
 
 /** Local Yaml implementation of ConfigurationServer */
@@ -96,7 +97,7 @@ public class YamlConfig implements ConfigurationServer
 				file = f;
 				lastModified = t0;
 				configs = importConfigs( o );
-				return getConfigPath( null, "/" );
+				return getRoot();
 			}
 			
 			try
@@ -134,7 +135,11 @@ public class YamlConfig implements ConfigurationServer
 
 	public Object getRoot()
 	{
-		return getConfigPath( null, "/" );
+		if (!isLoaded())
+			throw new IllegalStateException( "no config loaded" );
+		if (configs.size() == 0)
+			throw new IllegalStateException( "config is empty" );
+		return toId( 0 );
 	}
 	
 	/////////////////////
@@ -158,7 +163,11 @@ public class YamlConfig implements ConfigurationServer
 
 	public Integer getIndex( Object id )
 	{
-		// TODO Auto-generated method stub
+		Object i = getConf( id ).name;
+		if (i == null)
+			return null;
+		if (i instanceof Integer)
+			return (Integer) i;
 		return null;
 	}
 
@@ -167,9 +176,14 @@ public class YamlConfig implements ConfigurationServer
 		Conf c = getConf( id );
 		
 		if (c.isRoot())
-			return "";
+			return "/";
 		
-		return getPath( toId( c.parent ) ) + '/' + c.name;
+		String s = getPath( toId( c.parent ) );
+		
+		if (s.equals( "/" ))
+			return s + c.name;
+		
+		return s + '/' + c.name;
 	}
 
 	public Boolean isRoot( Object id )
@@ -242,13 +256,34 @@ public class YamlConfig implements ConfigurationServer
 
 	public Object getConfigPath( Object id, String path )
 	{
-		if (path == null || path.length() == 0)
+		checkPath( path );
+		// path is not null.
+		
+		// id == null: path must be absolute.
+		// id != null: path may be relative or absolute.
+		
+		if (id == null)
 		{
-			getConf( id );
-			return id;
+			if (!isAbsolute( path ))
+				throw new IllegalArgumentException( "path must be absolute when id == null" );
+			
+			id = getRoot();
+			path = abs2rel( path );
+		}
+		else
+		{
+			if (isAbsolute( path ))
+			{
+				id = getRoot();
+				path = abs2rel( path );
+			}
+			else
+			{
+				getConf( id );
+			}
 		}
 		
-		// path is not null and not empty.
+		// id might be null.
 		
 		Integer iid = fromId( id );
 		
@@ -266,6 +301,31 @@ public class YamlConfig implements ConfigurationServer
 		
 		return toId( iid );
 	}
+	
+	private String abs2rel( String path )
+	{
+		if (!isAbsolute( path ))
+			return path;
+		return path.substring( 1 );
+	}
+
+	private static boolean isAbsolute( String path )
+	{
+		checkPath( path );
+		return path.startsWith( "/" );
+	}
+	
+	private static boolean isRelative( String path )
+	{
+		checkPath( path );
+		return !path.startsWith( "/" );
+	}
+	
+	private static void checkPath( String path )
+	{
+		if (path == null)
+			throw new IllegalArgumentException( "path == null" );
+	}
 
 	////////////////////////
 	// NODE / PATH ACCESS //
@@ -278,8 +338,7 @@ public class YamlConfig implements ConfigurationServer
 
 	public Object getValuePath( Object id, String path )
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return getValue( getConfigPath( id, path ) );
 	}
 
 	public Boolean getBooleanPath( Object id, String path )
@@ -323,61 +382,46 @@ public class YamlConfig implements ConfigurationServer
 
 	public Boolean hasValue( Object id )
 	{
-		return id != null && getConf( id ).hasValue();
+		return getConf( id ).hasValue();
 	}
 
 	public Object getValue( Object id )
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return getConf( id ).getValue();
 	}
 
 	public Boolean getBoolean( Object id )
 	{
-		if (id == null)
-			return null;
 		return getConf( id ).getBoolean();
 	}
 
 	public Integer getInteger( Object id )
 	{
-		if (id == null)
-			return null;
 		return getConf( id ).getInteger();
 	}
 
 	public Double getDouble( Object id )
 	{
-		if (id == null)
-			return null;
 		return getConf( id ).getDouble();
 	}
 
 	public String getString( Object id )
 	{
-		if (id == null)
-			return null;
 		return getConf( id ).getString();
 	}
 
 	public Date getDate( Object id )
 	{
-		if (id == null)
-			return null;
 		return getConf( id ).getDate();
 	}
 
 	public List<?> getList( Object id, Integer depth )
 	{
-		if (id == null)
-			return null;
 		return getConf( id ).getList( depth );
 	}
 
 	public Map<?, ?> getMap( Object id, Integer depth )
 	{
-		if (id == null)
-			return null;
 		return getConf( id ).getMap( depth );
 	}
 	
@@ -447,13 +491,15 @@ public class YamlConfig implements ConfigurationServer
 
 	private Object toId( Integer iid )
 	{
+		if (iid == null)
+			throw new NullPointerException( "iid == null" );
 		return iid;
 	}
 
-	private Integer fromId( Object id )
+	private int fromId( Object id )
 	{
 		if (id == null)
-			return null;
+			throw new IllegalArgumentException( "id == null" );
 		if (id instanceof Integer)
 			return (Integer) id;
 		return ((Number) id).intValue();
@@ -503,6 +549,10 @@ public class YamlConfig implements ConfigurationServer
 		catch ( FileNotFoundException e )
 		{
 			throw new ConfigurationException( "file not found: " + file );
+		}
+		catch ( YamlException e )
+		{
+			throw new ConfigurationException( "file not loaded: " + file + "; "+e );
 		}
 	}
 
@@ -617,14 +667,10 @@ public class YamlConfig implements ConfigurationServer
 		return k;
 	}
 	
-	private Conf getConf( Integer iid )
+	private Conf getConf( int iid )
 	{
 		if (!isLoaded())
 			throw new IllegalStateException( "no config loaded" );
-		
-		if (iid == null)
-			iid = 0;
-//			throw new IllegalArgumentException( "id == null" );
 		
 		if (iid < 0 || iid >= configs.size())
 			throw new IllegalArgumentException( "id < 0 || id >= configs.size()" );
@@ -704,6 +750,12 @@ public class YamlConfig implements ConfigurationServer
 			this.value = value;
 		}
 		
+		public Object getValue()
+		{
+			// TODO Auto-generated method stub
+			return null;
+		}
+
 		public Integer parent;
 		
 		public Object name;
