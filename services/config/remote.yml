@@ -8,3 +8,11 @@ users:
   mary: 2345
   alice: 9876
   jack: 8765
+primes:
+  - 1
+  - 2
+  - 3
+  - 5
+  - 7
+  - 11
+  - 13

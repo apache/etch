@@ -148,10 +148,7 @@ public class YamlConfig implements ConfigurationServer
 
 	public Object getParent( Object id )
 	{
-		Integer iid = getConf( id ).parent;
-		if (iid == null)
-			return null;
-		return toId( iid );
+		return toId( getConf( id ).parent );
 	}
 
 	public String getName( Object id )
@@ -286,48 +283,22 @@ public class YamlConfig implements ConfigurationServer
 			}
 		}
 		
-		// id might be null.
+		// id is not null
 		
 		Integer iid = fromId( id );
+		
+		// if we have a simple path just let getConfig0 handle it
 		
 		if (path.indexOf( '/' ) < 0)
 			return toId( getConfig0( iid, path ) );
 		
-		if (iid != null && path.startsWith( "/" ))
-			iid = null;
-		
-		getConf( iid );
+		// complex path
 		
 		StringTokenizer st = new StringTokenizer( path, "/" );
-		while (st.hasMoreTokens())
+		while (iid != null && st.hasMoreTokens())
 			iid = getConfig0( iid, st.nextToken() );
 		
 		return toId( iid );
-	}
-	
-	private String abs2rel( String path )
-	{
-		if (!isAbsolute( path ))
-			return path;
-		return path.substring( 1 );
-	}
-
-	private static boolean isAbsolute( String path )
-	{
-		checkPath( path );
-		return path.startsWith( "/" );
-	}
-	
-	private static boolean isRelative( String path )
-	{
-		checkPath( path );
-		return !path.startsWith( "/" );
-	}
-	
-	private static void checkPath( String path )
-	{
-		if (path == null)
-			throw new IllegalArgumentException( "path == null" );
 	}
 
 	////////////////////////
@@ -490,22 +461,61 @@ public class YamlConfig implements ConfigurationServer
 	// PRIVATE //
 	/////////////
 	
+	private static final int ID_RADIX = Character.MAX_RADIX;
+	
+	private String abs2rel( String path )
+	{
+		if (!isAbsolute( path ))
+			return path;
+		return path.substring( 1 );
+	}
+
+	private static boolean isAbsolute( String path )
+	{
+		checkPath( path );
+		return path.startsWith( "/" );
+	}
+	
+	private static boolean isRelative( String path )
+	{
+		checkPath( path );
+		return !path.startsWith( "/" );
+	}
+	
+	private static void checkPath( String path )
+	{
+		if (path == null)
+			throw new IllegalArgumentException( "path == null" );
+	}
+	
 	private final Set<Integer> subs = Collections.synchronizedSet( new HashSet<Integer>() );
 
 	private Object toId( Integer iid )
 	{
 		if (iid == null)
-			throw new NullPointerException( "iid == null" );
-		return iid;
+			return null;
+		return "#"+Integer.toString( 0, ID_RADIX )+"#";
 	}
 
 	private int fromId( Object id )
 	{
 		if (id == null)
 			throw new IllegalArgumentException( "id == null" );
-		if (id instanceof Integer)
-			return (Integer) id;
-		return ((Number) id).intValue();
+		if (!(id instanceof String))
+			throw new IllegalArgumentException( "id is not valid: "+id );
+		String s = (String) id;
+		if (!s.startsWith( "#" ))
+			throw new IllegalArgumentException( "id is not valid: "+id );
+		if (!s.endsWith( "#" ))
+			throw new IllegalArgumentException( "id is not valid: "+id );
+		try
+		{
+			return Integer.parseInt( s.substring( 1 ).substring( 0, s.length()-2 ), ID_RADIX );
+		}
+		catch ( NumberFormatException e )
+		{
+			throw new IllegalArgumentException( "id is not valid: "+id );
+		}
 	}
 	
 	private final static int INTERVAL = 5*1000;
@@ -610,7 +620,7 @@ public class YamlConfig implements ConfigurationServer
 	{
 		if (true) return;
 		
-		Conf c = getConf( id );
+		Conf c = getConf0( id );
 		
 		Assertion.check( (parent == null && c.parent == null) ||
 			(parent != null && c.parent != null && parent.equals( c.parent )),
@@ -670,20 +680,20 @@ public class YamlConfig implements ConfigurationServer
 		return k;
 	}
 	
-	private Conf getConf( int iid )
+	private Conf getConf0( int iid )
 	{
 		if (!isLoaded())
 			throw new IllegalStateException( "no config loaded" );
 		
 		if (iid < 0 || iid >= configs.size())
-			throw new IllegalArgumentException( "id < 0 || id >= configs.size()" );
+			throw new IllegalArgumentException( "id < 0 || id >= configs.size(): id = "+iid+", configs.size() = "+configs.size() );
 		
 		return configs.get( iid );
 	}
 	
 	private Conf getConf( Object id )
 	{
-		return getConf( fromId( id ) );
+		return getConf0( fromId( id ) );
 	}
 
 	private Object[] toIdArray( Collection<Integer> value, Integer offset,
@@ -721,18 +731,28 @@ public class YamlConfig implements ConfigurationServer
 		return a;
 	}
 	
-	private Integer getConfig0( Integer iid, String name )
+	private Integer getConfig0( int iid, String name )
 	{
-		Conf c = getConf( iid );
+		if (name.length() == 0)
+			return iid;
 		
 		if (name.equals( "." ))
 			return iid;
+		
+		Conf c = getConf0( iid );
 		
 		if (name.equals( ".." ))
 			return c.parent;
 		
 		if (c.isList())
-			return c.list().get( Integer.valueOf( name ) );
+		{
+			int i = Integer.valueOf( name );
+			// i might be out of range.
+			List<Integer> list = c.list();
+			if (i < 0 || i >= list.size())
+				throw new IllegalArgumentException( "i < 0 || i >= list.size()" );
+			return list.get( i );
+		}
 		
 		if (c.isMap())
 		{
@@ -751,12 +771,6 @@ public class YamlConfig implements ConfigurationServer
 			this.parent = parent;
 			this.name = name;
 			this.value = value;
-		}
-		
-		public Object getValue()
-		{
-			// TODO Auto-generated method stub
-			return null;
 		}
 
 		public Integer parent;
@@ -795,6 +809,11 @@ public class YamlConfig implements ConfigurationServer
 		public boolean hasValue()
 		{
 			return value != null;
+		}
+		
+		public Object getValue()
+		{
+			return value;
 		}
 		
 		public Boolean getBoolean()

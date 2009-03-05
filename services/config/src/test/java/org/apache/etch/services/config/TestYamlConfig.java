@@ -230,27 +230,169 @@ public class TestYamlConfig
 	
 	/** @throws Exception */
 	@Test
-	public void getParent1() throws Exception
+	public void root1() throws Exception
 	{
 		ConfigurationServer c = new YamlConfig( null, REMOTE );
-		
 		Object r = c.getRoot();
 		Assert.assertNotNull( r );
 		
-		// these are euphemisms for the root node
-		Assert.assertNull( c.getParent( r ) );
-		Assert.assertNull( c.getParent( c.getConfigPath( r, "" ) ) );
-		Assert.assertNull( c.getParent( c.getConfigPath( r, "." ) ) );
-		Assert.assertNull( c.getParent( c.getConfigPath( r, "/" ) ) );
-		Assert.assertNull( c.getParent( c.getConfigPath( null, "/" ) ) );
-
-		Assert.assertEquals( r,
-			c.getParent( c.getConfigPath( null, "/bool" ) ) );
-		Assert.assertEquals( r,
-			c.getParent( c.getConfigPath( r, "bool" ) ) );
+		// test properties on the root node
 		
-		Assert.assertEquals( c.getConfigPath( null, "users" ),
-			c.getParent( c.getConfigPath( null, "users/fred" ) ) );
+		Assert.assertNull( c.getParent( r ) );
+		Assert.assertEquals( "", c.getName( r ) );
+		Assert.assertNull( c.getIndex( r ) );
+		Assert.assertEquals( "/", c.getPath( r ) );
+		Assert.assertTrue( c.isRoot( r ) );
+		Assert.assertFalse( c.isList( r ) );
+		Assert.assertTrue( c.isMap( r ) );
+		Assert.assertEquals( 7, c.size( r ) );
+
+		// try absolute paths for root
+		
+		Assert.assertEquals( r, c.getConfigPath( null, "/" ) ); // root
+		Assert.assertEquals( r, c.getConfigPath( -1, "/" ) ); // root
+		Assert.assertEquals( r, c.getConfigPath( "abc", "/" ) ); // root
+		Assert.assertEquals( r, c.getConfigPath( false, "/" ) ); // root
+		Assert.assertEquals( r, c.getConfigPath( r, "/" ) ); // root
+		
+		// try relative paths for root
+
+		Assert.assertEquals( r, c.getConfigPath( r, "" ) ); // root
+		Assert.assertEquals( r, c.getConfigPath( r, "." ) ); // root
+		Assert.assertEquals( r, c.getConfigPath( r, "./." ) ); // root
+		Assert.assertEquals( r, c.getConfigPath( r, "././." ) ); // root
+		Assert.assertEquals( r, c.getConfigPath( r, "bool/.." ) ); // root
+		
+		// other relative paths
+		
+		Assert.assertNull( c.getConfigPath( r, ".." ) ); // parent
+		Assert.assertNotNull( c.getConfigPath( r, "bool" ) ); // child
+		
+		// bad paths
+
+		Assert.assertNull( c.getConfigPath( r, "blah" ) );
+		Assert.assertNull( c.getConfigPath( r, "blah/blah" ) );
+		Assert.assertNotNull( c.getConfigPath( r, "primes/4" ) );
+	}
+	
+	/** @throws Exception */
+	@Test( expected = IllegalArgumentException.class )
+	public void root2() throws Exception
+	{
+		ConfigurationServer c = new YamlConfig( null, REMOTE );
+		Object r = c.getRoot();
+		Assert.assertNotNull( r );
+		
+		// path == null
+		c.getConfigPath( r, null );
+	}
+	
+	/** @throws Exception */
+	@Test( expected = IllegalArgumentException.class )
+	public void root3() throws Exception
+	{
+		ConfigurationServer c = new YamlConfig( null, REMOTE );
+		Object r = c.getRoot();
+		Assert.assertNotNull( r );
+		
+		// path must be absolute when id == null
+		c.getConfigPath( null, "foo" );
+	}
+	
+	/** @throws Exception */
+	@Test( expected = IllegalArgumentException.class )
+	public void root4() throws Exception
+	{
+		ConfigurationServer c = new YamlConfig( null, REMOTE );
+		Object r = c.getRoot();
+		Assert.assertNotNull( r );
+		
+		// id is not valid
+		c.getConfigPath( -1, "foo" );
+	}
+	
+	/** @throws Exception */
+	@Test( expected = IllegalArgumentException.class )
+	public void root5() throws Exception
+	{
+		ConfigurationServer c = new YamlConfig( null, REMOTE );
+		Object r = c.getRoot();
+		Assert.assertNotNull( r );
+		
+		// id is not valid
+		c.getConfigPath( 0, "foo" );
+	}
+	
+	/** @throws Exception */
+	@Test( expected = IllegalArgumentException.class )
+	public void root6() throws Exception
+	{
+		ConfigurationServer c = new YamlConfig( null, REMOTE );
+		Object r = c.getRoot();
+		Assert.assertNotNull( r );
+		
+		// id is not valid
+		c.getConfigPath( 99, "foo" );
+	}
+	
+	/** @throws Exception */
+	@Test( expected = IllegalArgumentException.class )
+	public void root7() throws Exception
+	{
+		ConfigurationServer c = new YamlConfig( null, REMOTE );
+		Object r = c.getRoot();
+		Assert.assertNotNull( r );
+		
+		// id is not valid
+		c.getConfigPath( "abc", "foo" );
+	}
+	
+	/** @throws Exception */
+	@Test( expected = IllegalArgumentException.class )
+	public void root8() throws Exception
+	{
+		ConfigurationServer c = new YamlConfig( null, REMOTE );
+		Object r = c.getRoot();
+		Assert.assertNotNull( r );
+		
+		// id is not valid
+		c.getConfigPath( "#abc#", "foo" );
+	}
+	
+	/** @throws Exception */
+	@Test( expected = IllegalArgumentException.class )
+	public void root9() throws Exception
+	{
+		ConfigurationServer c = new YamlConfig( null, REMOTE );
+		Object r = c.getRoot();
+		Assert.assertNotNull( r );
+		
+		// id is not valid
+		c.getConfigPath( "#?#", "foo" );
+	}
+	
+	/** @throws Exception */
+	@Test( expected = IllegalArgumentException.class )
+	public void root10() throws Exception
+	{
+		ConfigurationServer c = new YamlConfig( null, REMOTE );
+		Object r = c.getRoot();
+		Assert.assertNotNull( r );
+		
+		// id is not valid
+		c.getConfigPath( false, "foo" );
+	}
+	
+	/** @throws Exception */
+	@Test( expected = IllegalArgumentException.class )
+	public void root11() throws Exception
+	{
+		ConfigurationServer c = new YamlConfig( null, REMOTE );
+		Object r = c.getRoot();
+		Assert.assertNotNull( r );
+		
+		// i < 0 || i >= list.size()
+		c.getConfigPath( r, "primes/12" );
 	}
 	
 	private static class MyConfigurationClient implements ConfigurationClient
