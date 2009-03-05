@@ -11,6 +11,8 @@ public class TestYamlConfig
 	
 	private static final String BOGUS = "services/config/bogus";
 	
+	private static final String BLANK = "";
+	
 	private static final String EMPTY = "services/config/empty";
 	
 	private static final String DIR = "services/config/dir";
@@ -21,98 +23,90 @@ public class TestYamlConfig
 	@Test
 	public void construct1() throws Exception
 	{
-		new YamlConfig( null );
+		YamlConfig c = new YamlConfig( null );
+		Assert.assertFalse( c.isLoaded() );
 	}
 	
 	/** @throws Exception */
 	@Test
 	public void construct2() throws Exception
 	{
-		new YamlConfig( client );
+		YamlConfig c = new YamlConfig( client );
+		Assert.assertFalse( c.isLoaded() );
 	}
 	
 	/** @throws Exception */
 	@Test
 	public void construct3() throws Exception
 	{
-		new YamlConfig( null, null );
+		YamlConfig c = new YamlConfig( null, null );
+		Assert.assertFalse( c.isLoaded() );
 	}
 	
 	/** @throws Exception */
 	@Test
 	public void construct4() throws Exception
 	{
-		new YamlConfig( null, REMOTE );
-	}
-	
-	/** @throws Exception */
-	@Test( expected = ConfigurationException.class)
-	public void construct4a() throws Exception
-	{
-		new YamlConfig( null, "" );
-	}
-	
-	/** @throws Exception */
-	@Test( expected = ConfigurationException.class)
-	public void construct4b() throws Exception
-	{
-		new YamlConfig( null, DIR );
-	}
-	
-	/** @throws Exception */
-	@Test( expected = ConfigurationException.class)
-	public void construct4c() throws Exception
-	{
-		new YamlConfig( null, BOGUS );
-	}
-	
-	/** @throws Exception */
-	@Test( expected = ConfigurationException.class)
-	public void construct4d() throws Exception
-	{
-		new YamlConfig( null, EMPTY );
+		YamlConfig c = new YamlConfig( client, null );
+		Assert.assertFalse( c.isLoaded() );
 	}
 	
 	/** @throws Exception */
 	@Test
 	public void construct5() throws Exception
 	{
-		new YamlConfig( client, null );
+		YamlConfig c = new YamlConfig( null, REMOTE );
+		Assert.assertTrue( c.isLoaded() );
 	}
 	
 	/** @throws Exception */
 	@Test
 	public void construct6() throws Exception
 	{
-		new YamlConfig( client, REMOTE );
+		YamlConfig c = new YamlConfig( client, REMOTE );
+		Assert.assertTrue( c.isLoaded() );
 	}
 	
 	/** @throws Exception */
 	@Test( expected = ConfigurationException.class)
-	public void construct6a() throws Exception
+	public void construct7() throws Exception
 	{
-		new YamlConfig( client, "" );
+		new YamlConfig( null, BLANK );
 	}
 	
 	/** @throws Exception */
 	@Test( expected = ConfigurationException.class)
-	public void construct6b() throws Exception
+	public void construct8() throws Exception
 	{
-		new YamlConfig( client, DIR );
+		new YamlConfig( client, BLANK );
 	}
 	
 	/** @throws Exception */
 	@Test( expected = ConfigurationException.class)
-	public void construct6c() throws Exception
+	public void construct9() throws Exception
 	{
-		new YamlConfig( client, BOGUS );
+		new YamlConfig( null, EMPTY );
 	}
 	
 	/** @throws Exception */
 	@Test( expected = ConfigurationException.class)
-	public void construct6d() throws Exception
+	public void construct10() throws Exception
 	{
 		new YamlConfig( client, EMPTY );
+	}
+	
+	/** @throws Exception */
+	@Test( expected = ConfigurationException.class)
+	public void construct11() throws Exception
+	{
+		new YamlConfig( null, DIR );
+	}
+	
+	/** @throws Exception */
+	@Test( expected = ConfigurationException.class)
+	public void construct12() throws Exception
+	{
+		new YamlConfig( client, DIR );
 	}
 	
 	/** @throws Exception */
@@ -121,130 +115,114 @@ public class TestYamlConfig
 	{
 		ConfigurationServer c = new YamlConfig( null );
 		Assert.assertFalse( c.canLoad( null ) );
-		Assert.assertFalse( c.canLoad( "" ) );
-		Assert.assertFalse( c.canLoad( DIR ) );
-		Assert.assertFalse( c.canLoad( BOGUS ) );
-		Assert.assertTrue( c.canLoad( EMPTY ) );
 		Assert.assertTrue( c.canLoad( REMOTE ) );
-	}
-	
-	/** @throws Exception */
-	@Test( expected = IllegalStateException.class )
-	public void notloaded1() throws Exception
-	{
-		ConfigurationServer c = new YamlConfig( null );
-		Assert.assertFalse( c.isLoaded() );
-		c.getRoot();
-	}
-	
-	/** @throws Exception */
-	@Test( expected = IllegalStateException.class )
-	public void notloaded2() throws Exception
-	{
-		ConfigurationServer c = new YamlConfig( null, null );
-		Assert.assertFalse( c.isLoaded() );
-		c.getRoot();
+		Assert.assertFalse( c.canLoad( BOGUS ) );
+		Assert.assertFalse( c.canLoad( BLANK ) );
+		Assert.assertTrue( c.canLoad( EMPTY ) );
+		Assert.assertFalse( c.canLoad( DIR ) );
 	}
 	
 	/** @throws Exception */
 	@Test( expected = ConfigurationException.class)
-	public void notloaded3() throws Exception
+	public void loadConfig1() throws Exception
 	{
-		ConfigurationServer c = new YamlConfig( null, null );
+		ConfigurationServer c = new YamlConfig( null );
+		c.loadConfig( null );
+	}
+	
+	/** @throws Exception */
+	@Test
+	public void loadConfig2() throws Exception
+	{
+		ConfigurationServer c = new YamlConfig( null );
+		c.loadConfig( REMOTE );
+		Assert.assertTrue( c.isLoaded() );
+	}
+	
+	/** @throws Exception */
+	@Test( expected = ConfigurationException.class)
+	public void loadConfig3() throws Exception
+	{
+		ConfigurationServer c = new YamlConfig( null );
 		c.loadConfig( BOGUS );
 	}
 	
 	/** @throws Exception */
+	@Test( expected = ConfigurationException.class)
+	public void loadConfig4() throws Exception
+	{
+		ConfigurationServer c = new YamlConfig( null );
+		c.loadConfig( BLANK );
+	}
+	
+	/** @throws Exception */
+	@Test( expected = ConfigurationException.class)
+	public void loadConfig5() throws Exception
+	{
+		ConfigurationServer c = new YamlConfig( null );
+		c.loadConfig( EMPTY );
+	}
+	
+	/** @throws Exception */
+	@Test( expected = ConfigurationException.class)
+	public void loadConfig6() throws Exception
+	{
+		ConfigurationServer c = new YamlConfig( null );
+		c.loadConfig( DIR );
+	}
+	
+	/** @throws Exception */
 	@Test
-	public void notloaded4() throws Exception
+	public void isLoaded() throws Exception
+	{
+		testLoadConfig( null, false );
+		testLoadConfig( REMOTE, true );
+		testLoadConfig( BOGUS, false );
+		testLoadConfig( BLANK, false );
+		testLoadConfig( EMPTY, false );
+		testLoadConfig( DIR, false );
+	}
+	
+	private void testLoadConfig( String name, boolean expected )
+		throws Exception
+	{
+		ConfigurationServer c = new YamlConfig( null );
+		Assert.assertFalse( c.isLoaded() );
+		try { c.loadConfig( name ); } catch ( Exception e ) {}
+		Assert.assertEquals( expected, c.isLoaded() );
+		c.unloadConfig();
+		Assert.assertFalse( c.isLoaded() );
+	}
+
+	/** @throws Exception */
+	@Test
+	public void unloadConfig1() throws Exception
 	{
 		ConfigurationServer c = new YamlConfig( null, null );
-		try { c.loadConfig( BOGUS ); } catch ( ConfigurationException e ) {}
+		Assert.assertFalse( c.isLoaded() );
+		c.unloadConfig();
 		Assert.assertFalse( c.isLoaded() );
 	}
-	
+
 	/** @throws Exception */
 	@Test
-	public void notloaded5() throws Exception
+	public void unloadConfig2() throws Exception
 	{
 		ConfigurationServer c = new YamlConfig( null, null );
-		
-		c.loadConfig( REMOTE );
-		Assert.assertTrue( c.isLoaded() );
-		try { c.loadConfig( null ); } catch ( ConfigurationException e ) {}
 		Assert.assertFalse( c.isLoaded() );
-		
-		c.loadConfig( REMOTE );
-		Assert.assertTrue( c.isLoaded() );
-		try { c.loadConfig( "" ); } catch ( ConfigurationException e ) {}
-		Assert.assertFalse( c.isLoaded() );
-		
-		c.loadConfig( REMOTE );
-		Assert.assertTrue( c.isLoaded() );
-		try { c.loadConfig( DIR ); } catch ( ConfigurationException e ) {}
-		Assert.assertFalse( c.isLoaded() );
-		
-		c.loadConfig( REMOTE );
-		Assert.assertTrue( c.isLoaded() );
-		try { c.loadConfig( BOGUS ); } catch ( ConfigurationException e ) {}
-		Assert.assertFalse( c.isLoaded() );
-	}
-	
-	/** @throws Exception */
-	@Test
-	public void loaded1() throws Exception
-	{
-		ConfigurationServer c = new YamlConfig( null );
-		Object r = c.loadConfig( REMOTE );
-		Assert.assertEquals( "/", c.getPath( r ) );
-	}
-	
-	/** @throws Exception */
-	@Test
-	public void loaded2() throws Exception
-	{
-		ConfigurationServer c = new YamlConfig( null, REMOTE );
-		Assert.assertEquals( "/", c.getPath( c.getRoot() ) );
-	}
-	
-	/** @throws Exception */
-	@Test( expected = IllegalStateException.class )
-	public void unloaded1() throws Exception
-	{
-		ConfigurationServer c = new YamlConfig( null );
-		Object r = c.loadConfig( REMOTE );
-		Assert.assertEquals( "/", c.getPath( r ) );
 		c.unloadConfig();
-		c.getPath( r );
-	}
-	
-	/** @throws Exception */
-	@Test( expected = IllegalStateException.class )
-	public void unloaded2() throws Exception
-	{
-		ConfigurationServer c = new YamlConfig( null, REMOTE );
-		Assert.assertEquals( "", c.getPath( null ) );
-		c.unloadConfig();
-		c.getPath( null );
-	}
-	
-	/** @throws Exception */
-	@Test
-	public void isloaded1() throws Exception
-	{
-		ConfigurationServer c = new YamlConfig( null );
 		Assert.assertFalse( c.isLoaded() );
-		c.loadConfig( REMOTE );
-		Assert.assertTrue( c.isLoaded() );
 		c.unloadConfig();
 		Assert.assertFalse( c.isLoaded() );
 	}
-	
+
 	/** @throws Exception */
 	@Test
-	public void isloaded2() throws Exception
+	public void unloadConfig3() throws Exception
 	{
-		ConfigurationServer c = new YamlConfig( null, REMOTE );
+		ConfigurationServer c = new YamlConfig( null, null );
+		Assert.assertFalse( c.isLoaded() );
+		c.loadConfig( REMOTE );
 		Assert.assertTrue( c.isLoaded() );
 		c.unloadConfig();
 		Assert.assertFalse( c.isLoaded() );
@@ -256,18 +234,20 @@ public class TestYamlConfig
 	{
 		ConfigurationServer c = new YamlConfig( null, REMOTE );
 		
-		Object root = c.getConfigPath( null, null );
-		Assert.assertNotNull( root );
+		Object r = c.getRoot();
+		Assert.assertNotNull( r );
 		
 		// these are euphemisms for the root node
-		Assert.assertNull( c.getParent( null ) );
-		Assert.assertNull( c.getParent( c.getConfigPath( null, null ) ) );
-		Assert.assertNull( c.getParent( c.getConfigPath( null, "" ) ) );
-		Assert.assertNull( c.getParent( c.getConfigPath( null, "." ) ) );
+		Assert.assertNull( c.getParent( r ) );
+		Assert.assertNull( c.getParent( c.getConfigPath( r, "" ) ) );
+		Assert.assertNull( c.getParent( c.getConfigPath( r, "." ) ) );
+		Assert.assertNull( c.getParent( c.getConfigPath( r, "/" ) ) );
 		Assert.assertNull( c.getParent( c.getConfigPath( null, "/" ) ) );
-		
-		Assert.assertEquals( c.getConfigPath( null, null ),
-			c.getParent( c.getConfigPath( null, "bool" ) ) );
+
+		Assert.assertEquals( r,
+			c.getParent( c.getConfigPath( null, "/bool" ) ) );
+		Assert.assertEquals( r,
+			c.getParent( c.getConfigPath( r, "bool" ) ) );
 		
 		Assert.assertEquals( c.getConfigPath( null, "users" ),
 			c.getParent( c.getConfigPath( null, "users/fred" ) ) );

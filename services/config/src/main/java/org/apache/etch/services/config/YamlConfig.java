@@ -148,7 +148,10 @@ public class YamlConfig implements ConfigurationServer
 
 	public Object getParent( Object id )
 	{
-		return toId( getConf( id ).parent );
+		Integer iid = getConf( id ).parent;
+		if (iid == null)
+			return null;
+		return toId( iid );
 	}
 
 	public String getName( Object id )
