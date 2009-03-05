@@ -49,6 +49,7 @@
         <copy file="${Etch.basedir}/LICENSE.txt" todir="${Etch.dist}" />
         <copy file="${Etch.basedir}/ChangeLog.txt" todir="${Etch.dist}" />
         <copy file="${Etch.basedir}/README.txt" tofile="${Etch.dist}/README.txt" />
+        <copy file="${Etch.basedir}/DISCLAIMER.txt" tofile="${Etch.dist}/README.txt" />
         <copy file="${Etch.basedir}/RELEASE_NOTES.txt" tofile="${Etch.dist}/RELEASE_NOTES.txt" />
         <copy file="${Etch.basedir}/NOTICE.txt" tofile="${Etch.dist}/NOTICE.txt" />
         <copy file="${proj}/etch-maven-install.bat" todir="${Etch.dist}/maven" >

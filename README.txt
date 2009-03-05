@@ -1,8 +1,23 @@
 Welcome to the 1.0.2-incubating release of Apache Etch.
 
+= What is Etch? =
+
+Etch is a cross-platform, language- and transport-independent framework for building
+and consuming network services. The Etch toolset includes a network service description
+language, a compiler, and binding libraries for a variety of programming languages. Etch
+is also transport-independent, allowing for a variety of different transports to used
+based on need and circumstance. The goal of Etch is to make it simple to define small,
+focused services that can be easily accessed, combined, and deployed in a similar
+manner. With Etch, service development and consumption becomes no more difficult than
+library development and consumption.
+
+= Online Help =
+
 The jumping off point for Etch information and help is here:
 
 http://cwiki.apache.org/ETCH
+
+= Binary Distribution =
 
 The top-level structure of the install image is:
 
