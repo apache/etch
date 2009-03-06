@@ -395,6 +395,104 @@ public class TestYamlConfig
 		c.getConfigPath( r, "primes/12" );
 	}
 	
+	/** @throws Exception */
+	@Test
+	public void hasValuePath() throws Exception
+	{
+		ConfigurationServer c = new YamlConfig( null, REMOTE );
+		Object r = c.getRoot();
+		Assert.assertNotNull( r );
+
+		Assert.assertTrue( c.hasValuePath( r, "." ) );
+		Assert.assertTrue( c.hasValuePath( r, "bool" ) );
+		Assert.assertFalse( c.hasValuePath( r, "blah" ) );
+	}
+	
+	/** @throws Exception */
+	@Test
+	public void getValuePath() throws Exception
+	{
+		ConfigurationServer c = new YamlConfig( null, REMOTE );
+		Object r = c.getRoot();
+		Assert.assertNotNull( r );
+
+		Assert.assertNotNull( c.getValuePath( r, "." ) );
+		Assert.assertNotNull( c.getValuePath( r, "bool" ) );
+		Assert.assertNull( c.getValuePath( r, "blah" ) );
+	}
+	
+	/** @throws Exception */
+	@Test
+	public void getBooleanPath1() throws Exception
+	{
+		ConfigurationServer c = new YamlConfig( null, REMOTE );
+		Object r = c.getRoot();
+		Assert.assertNotNull( r );
+
+		Assert.assertEquals( true, c.getBooleanPath( r, "bool" ) );
+		Assert.assertNull( c.getBooleanPath( r, "blah" ) );
+	}
+	
+	/** @throws Exception */
+	@Test( expected = IllegalArgumentException.class )
+	public void getBooleanPath2() throws Exception
+	{
+		ConfigurationServer c = new YamlConfig( null, REMOTE );
+		Object r = c.getRoot();
+		Assert.assertNotNull( r );
+
+		// cannot convert value to Boolean
+		c.getBooleanPath( r, "." );
+	}
+	
+	/** @throws Exception */
+	@Test( expected = IllegalArgumentException.class )
+	public void getBooleanPath3() throws Exception
+	{
+		ConfigurationServer c = new YamlConfig( null, REMOTE );
+		Object r = c.getRoot();
+		Assert.assertNotNull( r );
+		
+		// cannot convert value to Boolean
+		c.getBooleanPath( r, "int" );
+	}
+	
+	/** @throws Exception */
+	@Test
+	public void getIntegerPath1() throws Exception
+	{
+		ConfigurationServer c = new YamlConfig( null, REMOTE );
+		Object r = c.getRoot();
+		Assert.assertNotNull( r );
+
+		Assert.assertEquals( 23, c.getIntegerPath( r, "int" ) );
+		Assert.assertNull( c.getIntegerPath( r, "blah" ) );
+	}
+	
+	/** @throws Exception */
+	@Test( expected = IllegalArgumentException.class )
+	public void getIntegerPath2() throws Exception
+	{
+		ConfigurationServer c = new YamlConfig( null, REMOTE );
+		Object r = c.getRoot();
+		Assert.assertNotNull( r );
+
+		// cannot convert value to Integer
+		c.getIntegerPath( r, "." );
+	}
+	
+	/** @throws Exception */
+	@Test( expected = IllegalArgumentException.class )
+	public void getIntegerPath3() throws Exception
+	{
+		ConfigurationServer c = new YamlConfig( null, REMOTE );
+		Object r = c.getRoot();
+		Assert.assertNotNull( r );
+		
+		// cannot convert value to Integer
+		c.getIntegerPath( r, "bool" );
+	}
+	
 	private static class MyConfigurationClient implements ConfigurationClient
 	{
 		public void configValuesChanged( Object[] updated )

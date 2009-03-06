@@ -356,46 +356,64 @@ public class YamlConfig implements ConfigurationServer
 
 	public Boolean hasValue( Object id )
 	{
+		if (id == null)
+			return false;
 		return getConf( id ).hasValue();
 	}
 
 	public Object getValue( Object id )
 	{
+		if (id == null)
+			return null;
 		return getConf( id ).getValue();
 	}
 
 	public Boolean getBoolean( Object id )
 	{
+		if (id == null)
+			return null;
 		return getConf( id ).getBoolean();
 	}
 
 	public Integer getInteger( Object id )
 	{
+		if (id == null)
+			return null;
 		return getConf( id ).getInteger();
 	}
 
 	public Double getDouble( Object id )
 	{
+		if (id == null)
+			return null;
 		return getConf( id ).getDouble();
 	}
 
 	public String getString( Object id )
 	{
+		if (id == null)
+			return null;
 		return getConf( id ).getString();
 	}
 
 	public Date getDate( Object id )
 	{
+		if (id == null)
+			return null;
 		return getConf( id ).getDate();
 	}
 
 	public List<?> getList( Object id, Integer depth )
 	{
+		if (id == null)
+			return null;
 		return getConf( id ).getList( depth );
 	}
 
 	public Map<?, ?> getMap( Object id, Integer depth )
 	{
+		if (id == null)
+			return null;
 		return getConf( id ).getMap( depth );
 	}
 	
@@ -494,7 +512,7 @@ public class YamlConfig implements ConfigurationServer
 	{
 		if (iid == null)
 			return null;
-		return "#"+Integer.toString( 0, ID_RADIX )+"#";
+		return "#"+Integer.toString( iid, ID_RADIX )+"#";
 	}
 
 	private int fromId( Object id )
