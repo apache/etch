@@ -20,7 +20,6 @@
 
 package org.apache.etch.examples.example;
 
-
 /**
  * Main program for ExampleClient. This program makes a connection to the
  * listener created by MainExampleListener.
@@ -36,7 +35,7 @@ public class MainExampleClient implements ExampleHelper.ExampleClientFactory
 	public static void main( String[] args ) throws Exception
 	{
 		// TODO Change to correct URI
-		String uri = "tcp://localhost:4002";
+		String uri = "tcp://localhost:4001";
 		
 		RemoteExampleServer server = ExampleHelper.newServer( uri, null,
 			new MainExampleClient() );

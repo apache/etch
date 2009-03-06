@@ -20,8 +20,6 @@
 
 package org.apache.etch.examples.example;
 
-
-
 /**
  * Your custom implementation of BaseExampleClient. Add methods here to provide
  * implementations of messages from the server.

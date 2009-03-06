@@ -23,8 +23,6 @@ package org.apache.etch.examples.example;
 import org.apache.etch.bindings.java.support.ServerFactory;
 import org.apache.etch.util.core.io.Transport;
 
-
-
 /**
  * Main program for ExampleServer. This program makes a listener to accept
  * connections from MainExampleClient.
@@ -40,7 +38,7 @@ public class MainExampleListener implements ExampleHelper.ExampleServerFactory
 	public static void main( String[] args ) throws Exception
 	{
 		// TODO Change to correct URI
-		String uri = "tcp://0.0.0.0:4002";
+		String uri = "tcp://0.0.0.0:4001";
 		
 		ServerFactory listener = ExampleHelper.newListener( uri, null,
 			new MainExampleListener() );
