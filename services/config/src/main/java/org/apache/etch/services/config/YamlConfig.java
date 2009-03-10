@@ -479,6 +479,17 @@ public class YamlConfig implements ConfigurationServer
 	// PRIVATE //
 	/////////////
 	
+	/**
+	 * Dumps the config space.
+	 */
+	public void dump()
+	{
+		int i = 0;
+		for (Conf c : configs)
+			System.out.printf( "%d: %s\n", i++, c );
+		System.out.println( "done" );
+	}
+	
 	private static final int ID_RADIX = Character.MAX_RADIX;
 	
 	private String abs2rel( String path )
@@ -492,12 +503,6 @@ public class YamlConfig implements ConfigurationServer
 	{
 		checkPath( path );
 		return path.startsWith( "/" );
-	}
-	
-	private static boolean isRelative( String path )
-	{
-		checkPath( path );
-		return !path.startsWith( "/" );
 	}
 	
 	private static void checkPath( String path )
@@ -587,7 +592,7 @@ public class YamlConfig implements ConfigurationServer
 		}
 	}
 
-	private static List<Conf> importConfigs( Object root )
+	private List<Conf> importConfigs( Object root )
 	{
 		List<Conf> c = new ArrayList<Conf>();
 		importObject( c, null, null, root );
@@ -604,7 +609,7 @@ public class YamlConfig implements ConfigurationServer
 		}
 	}
 
-	private static int importObject( List<Conf> c, Integer parent, Object name, Object value )
+	private int importObject( List<Conf> c, Integer parent, Object name, Object value )
 	{
 		if (value instanceof List)
 		{
@@ -670,7 +675,7 @@ public class YamlConfig implements ConfigurationServer
 		}
 	}
 
-	private static int importList( List<Conf> c, Integer parent, Object name, List<?> value )
+	private int importList( List<Conf> c, Integer parent, Object name, List<?> value )
 	{
 		List<Integer> v = new ArrayList<Integer>( value.size() );
 		int k = c.size();
@@ -683,7 +688,7 @@ public class YamlConfig implements ConfigurationServer
 		return k;
 	}
 	
-	private static int importMap( List<Conf> c, Integer parent, Object name, Map<?, ?> value )
+	private int importMap( List<Conf> c, Integer parent, Object name, Map<?, ?> value )
 	{
 		Map<String, Integer> v = new HashMap<String, Integer>( value.size() * 4 / 3 + 1 );
 		int k = c.size();
@@ -782,7 +787,7 @@ public class YamlConfig implements ConfigurationServer
 		throw new NoSuchElementException( name );
 	}
 	
-	private static class Conf
+	private class Conf
 	{
 		public Conf( Integer parent, Object name, Object value )
 		{
@@ -796,6 +801,12 @@ public class YamlConfig implements ConfigurationServer
 		public Object name;
 		
 		public Object value;
+		
+		@Override
+		public String toString()
+		{
+			return String.format( "Conf name %s, value %s", name, value );
+		}
 
 		public boolean isRoot()
 		{
@@ -900,14 +911,68 @@ public class YamlConfig implements ConfigurationServer
 		
 		public List<?> getList( Integer depth )
 		{
-			// TODO Auto-generated method stub
-			return null;
+			if (value == null)
+				return null;
+			
+			if (isList())
+				return getList0( depth );
+			
+			throw new IllegalArgumentException( "cannot convert value to List" );
 		}
 		
+		private List<?> getList0( Integer depth )
+		{
+			if (depth == null)
+				depth = Integer.MAX_VALUE;
+			
+			if (depth <= 0)
+				return null;
+			
+			List<Object> l = new ArrayList<Object>( list().size() );
+			for (Integer iid: list())
+			{
+				Conf c = getConf0( iid );
+				if (c.isList())
+					l.add( c.getList0( depth-1 ) );
+				else if (c.isMap())
+					l.add( c.getMap0( depth-1 ) );
+				else
+					l.add( c.getValue() );
+			}
+			return l;
+		}
+
 		public Map<?, ?> getMap( Integer depth )
 		{
-			// TODO Auto-generated method stub
-			return null;
+			if (value == null)
+				return null;
+			
+			if (isMap())
+				return getMap0( depth );
+			
+			throw new IllegalArgumentException( "cannot convert value to Map" );
+		}
+
+		private Map<?, ?> getMap0( Integer depth )
+		{
+			if (depth == null)
+				depth = Integer.MAX_VALUE;
+			
+			if (depth <= 0)
+				return null;
+			
+			Map<String, Object> m = new HashMap<String, Object>( (map().size() * 4 + 2) / 3 );
+			for (Map.Entry<String, Integer> e: map().entrySet())
+			{
+				Conf c = getConf0( e.getValue() );
+				if (c.isList())
+					m.put( e.getKey(), c.getList0( depth-1 ) );
+				else if (c.isMap())
+					m.put( e.getKey(), c.getMap0( depth-1 ) );
+				else
+					m.put( e.getKey(), c.getValue() );
+			}
+			return m;
 		}
 	}
 }

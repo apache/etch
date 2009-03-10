@@ -1,5 +1,11 @@
 package org.apache.etch.services.config;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.etch.services.config.Configuration.ConfigurationException;
 import org.junit.Assert;
 import org.junit.Test;
@@ -491,6 +497,222 @@ public class TestYamlConfig
 		
 		// cannot convert value to Integer
 		c.getIntegerPath( r, "bool" );
+	}
+	
+	/** @throws Exception */
+	@Test
+	public void getDoublePath1() throws Exception
+	{
+		ConfigurationServer c = new YamlConfig( null, REMOTE );
+		Object r = c.getRoot();
+		Assert.assertNotNull( r );
+
+		Assert.assertEquals( 4.5, c.getDoublePath( r, "dbl" ) );
+		Assert.assertNull( c.getDoublePath( r, "blah" ) );
+	}
+	
+	/** @throws Exception */
+	@Test( expected = IllegalArgumentException.class )
+	public void getDoublePath2() throws Exception
+	{
+		ConfigurationServer c = new YamlConfig( null, REMOTE );
+		Object r = c.getRoot();
+		Assert.assertNotNull( r );
+
+		// cannot convert value to Double
+		c.getDoublePath( r, "." );
+	}
+	
+	/** @throws Exception */
+	@Test( expected = IllegalArgumentException.class )
+	public void getDoublePath3() throws Exception
+	{
+		ConfigurationServer c = new YamlConfig( null, REMOTE );
+		Object r = c.getRoot();
+		Assert.assertNotNull( r );
+		
+		// cannot convert value to Double
+		c.getDoublePath( r, "bool" );
+	}
+	
+	/** @throws Exception */
+	@SuppressWarnings("deprecation")
+	@Test
+	public void getDatePath1() throws Exception
+	{
+		ConfigurationServer c = new YamlConfig( null, REMOTE );
+		Object r = c.getRoot();
+		Assert.assertNotNull( r );
+
+		Assert.assertEquals( new Date( "12/19/2008" ), c.getDatePath( r, "date" ) );
+		Assert.assertNull( c.getDatePath( r, "blah" ) );
+	}
+	
+	/** @throws Exception */
+	@Test( expected = IllegalArgumentException.class )
+	public void getDatePath2() throws Exception
+	{
+		ConfigurationServer c = new YamlConfig( null, REMOTE );
+		Object r = c.getRoot();
+		Assert.assertNotNull( r );
+
+		// cannot convert value to Date
+		c.getDatePath( r, "." );
+	}
+	
+	/** @throws Exception */
+	@Test( expected = IllegalArgumentException.class )
+	public void getDatePath3() throws Exception
+	{
+		ConfigurationServer c = new YamlConfig( null, REMOTE );
+		Object r = c.getRoot();
+		Assert.assertNotNull( r );
+		
+		// cannot convert value to Date
+		c.getDatePath( r, "bool" );
+	}
+	
+	/** @throws Exception */
+	@Test
+	public void getStringPath1() throws Exception
+	{
+		ConfigurationServer c = new YamlConfig( null, REMOTE );
+		Object r = c.getRoot();
+		Assert.assertNotNull( r );
+
+		Assert.assertEquals( "true", c.getStringPath( r, "bool" ) );
+		Assert.assertEquals( "23", c.getStringPath( r, "int" ) );
+		Assert.assertEquals( "4.5", c.getStringPath( r, "dbl" ) );
+		Assert.assertEquals( "boo", c.getStringPath( r, "str" ) );
+		Assert.assertEquals( "12/19/2008", c.getStringPath( r, "date" ) );
+		Assert.assertNull( c.getStringPath( r, "blah" ) );
+	}
+	
+	/** @throws Exception */
+	@Test( expected = IllegalArgumentException.class )
+	public void getStringPath2() throws Exception
+	{
+		ConfigurationServer c = new YamlConfig( null, REMOTE );
+		Object r = c.getRoot();
+		Assert.assertNotNull( r );
+
+		// cannot convert value to String
+		c.getStringPath( r, "." );
+	}
+	
+	/** @throws Exception */
+	@Test( expected = IllegalArgumentException.class )
+	public void getStringPath3() throws Exception
+	{
+		ConfigurationServer c = new YamlConfig( null, REMOTE );
+		Object r = c.getRoot();
+		Assert.assertNotNull( r );
+		
+		// cannot convert value to String
+		c.getStringPath( r, "primes" );
+	}
+	
+	/** @throws Exception */
+	@Test( expected = IllegalArgumentException.class )
+	public void getStringPath4() throws Exception
+	{
+		ConfigurationServer c = new YamlConfig( null, REMOTE );
+		Object r = c.getRoot();
+		Assert.assertNotNull( r );
+		
+		// cannot convert value to String
+		c.getStringPath( r, "users" );
+	}
+	
+	/** @throws Exception */
+	@Test
+	public void getListPath1() throws Exception
+	{
+		ConfigurationServer c = new YamlConfig( null, REMOTE );
+		Object r = c.getRoot();
+		Assert.assertNotNull( r );
+		
+		List<Integer> l = new ArrayList<Integer>();
+		l.add( 1 );
+		l.add( 2 );
+		l.add( 3 );
+		l.add( 5 );
+		l.add( 7 );
+		l.add( 11 );
+		l.add( 13 );
+
+		Assert.assertEquals( l, c.getListPath( r, "primes", null ) );
+		Assert.assertEquals( l, c.getListPath( r, "primes", 1 ) );
+		Assert.assertNull( c.getListPath( r, "primes", 0 ) );
+		Assert.assertNull( c.getListPath( r, "blah", null ) );
+	}
+	
+	/** @throws Exception */
+	@Test( expected = IllegalArgumentException.class )
+	public void getListPath2() throws Exception
+	{
+		ConfigurationServer c = new YamlConfig( null, REMOTE );
+		Object r = c.getRoot();
+		Assert.assertNotNull( r );
+		
+		// cannot convert value to List
+		c.getListPath( r, "users", null );
+	}
+	
+	/** @throws Exception */
+	@Test( expected = IllegalArgumentException.class )
+	public void getListPath3() throws Exception
+	{
+		ConfigurationServer c = new YamlConfig( null, REMOTE );
+		Object r = c.getRoot();
+		Assert.assertNotNull( r );
+		
+		// cannot convert value to List
+		c.getListPath( r, "int", null );
+	}
+	
+	/** @throws Exception */
+	@Test
+	public void getMapPath1() throws Exception
+	{
+		ConfigurationServer c = new YamlConfig( null, REMOTE );
+		Object r = c.getRoot();
+		Assert.assertNotNull( r );
+		
+		Map<String, Object> m = new HashMap<String, Object>();
+		m.put( "fred", 1234 );
+		m.put( "mary", 2345 );
+		m.put( "alice", 9876 );
+		m.put( "jack", 8765 );
+		
+		Assert.assertEquals( m, c.getMapPath( r, "users", null ) );
+		Assert.assertEquals( m, c.getMapPath( r, "users", 1 ) );
+		Assert.assertNull( c.getMapPath( r, "users", 0 ) );
+		Assert.assertNull( c.getMapPath( r, "blah", null ) );
+	}
+	
+	/** @throws Exception */
+	@Test( expected = IllegalArgumentException.class )
+	public void getMapPath2() throws Exception
+	{
+		ConfigurationServer c = new YamlConfig( null, REMOTE );
+		Object r = c.getRoot();
+		Assert.assertNotNull( r );
+		
+		// cannot convert value to Map
+		c.getMapPath( r, "primes", null );
+	}
+	
+	/** @throws Exception */
+	@Test( expected = IllegalArgumentException.class )
+	public void getMapPath3() throws Exception
+	{
+		ConfigurationServer c = new YamlConfig( null, REMOTE );
+		Object r = c.getRoot();
+		Assert.assertNotNull( r );
+		
+		// cannot convert value to Map
+		c.getMapPath( r, "int", null );
 	}
 	
 	private static class MyConfigurationClient implements ConfigurationClient
