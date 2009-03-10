@@ -39,7 +39,7 @@ public class MainConfigurationClient implements
 	{
 		// get our configUri from a local config file.
 		ConfigurationServer local = new YamlConfig( null, "services/config/local" );
-		String configUri = local.getStringPath( null, "configUri" );
+		String configUri = local.getStringPath( local.getRoot(), "configUri" );
 		System.out.println( "configUri = "+configUri );
 		local.unloadConfig();
 		local = null;		
@@ -52,22 +52,30 @@ public class MainConfigurationClient implements
 		System.out.println( "connected to config service" );
 		
 		String name = new URL( configUri ).getUri();
-		server.loadConfig( name );
+		Object root = server.loadConfig( name );
 		System.out.println( "loaded configuration named '"+name+"'" );
 		
 		// Load a config and play with it.
-		System.out.println( "bool = "+server.getBooleanPath( null, "bool" ) );
-		System.out.println( "int = "+server.getIntegerPath( null, "int" ) );
-		System.out.println( "dbl = "+server.getDoublePath( null, "dbl" ) );
-		System.out.println( "str = "+server.getStringPath( null, "str" ) );
-		System.out.println( "date = "+server.getDatePath( null, "date" ) );
+		System.out.println( "bool = "+server.getBooleanPath( root, "bool" ) );
+		System.out.println( "int = "+server.getIntegerPath( root, "int" ) );
+		System.out.println( "dbl = "+server.getDoublePath( root, "dbl" ) );
+		System.out.println( "str = "+server.getStringPath( root, "str" ) );
+		System.out.println( "date = "+server.getDatePath( root, "date" ) );
 		
-		System.out.println( "users/mary = "+server.getStringPath( null, "users/mary" ) );
+		System.out.println( "users/mary = "+server.getStringPath( root, "users/mary" ) );
 		
-		Object users = server.getConfigPath( null, "users" );
+		Object users = server.getConfigPath( root, "users" );
 		System.out.println( "users/mary = "+server.getStringPath( users, "mary" ) );
 		System.out.println( "users/alice = "+server.getStringPath( users, "alice" ) );
 
+		System.out.println( "primes/4 = "+server.getIntegerPath( root, "primes/4" ) );
+		System.out.println( "primes/5 = "+server.getIntegerPath( root, "primes/5" ) );
+		
+		System.out.println( "paths:" );
+		for (Object o: server.listConfigIds( root, null, null ))
+			System.out.println( server.getPath( o ) );
+		System.out.println( "done." );
+		
 		// Disconnect from the service.
 		server._stopAndWaitDown( 4000 );
 	}

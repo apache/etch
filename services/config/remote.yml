@@ -1,8 +1,16 @@
 bool: true
+bool2: "false"
 int: 23
+int2: "34"
+int3: abc
 dbl: 4.5
+dbl2: "5.6"
+dbl3: 67
+dbl4: abc
 str: boo
+str2: false
 date: 12/19/2008
+date2: !java.util.Date 12/23/2008
 users:
   fred: 1234
   mary: 2345

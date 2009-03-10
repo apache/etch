@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 import org.apache.etch.services.config.Configuration.ConfigurationException;
 import org.junit.Assert;
@@ -236,7 +237,7 @@ public class TestYamlConfig
 	
 	/** @throws Exception */
 	@Test
-	public void root1() throws Exception
+	public void props1() throws Exception
 	{
 		ConfigurationServer c = new YamlConfig( null, REMOTE );
 		Object r = c.getRoot();
@@ -244,14 +245,95 @@ public class TestYamlConfig
 		
 		// test properties on the root node
 		
-		Assert.assertNull( c.getParent( r ) );
-		Assert.assertEquals( "", c.getName( r ) );
-		Assert.assertNull( c.getIndex( r ) );
-		Assert.assertEquals( "/", c.getPath( r ) );
-		Assert.assertTrue( c.isRoot( r ) );
-		Assert.assertFalse( c.isList( r ) );
-		Assert.assertTrue( c.isMap( r ) );
-		Assert.assertEquals( 7, c.size( r ) );
+		testProps( c, r, null, "", null, "/", true, false, true, 15 );
+				
+		// test properties on the users node
+		
+		testProps( c, c.getConfigPath( r, "users" ), r, "users", null, "/users",
+			false, false, true, 4 );
+				
+		// test properties on the primes node
+		
+		testProps( c, c.getConfigPath( r, "primes" ), r, "primes", null,
+			"/primes", false, true, false, 7 );
+				
+		// test properties on the primes/4 node
+		
+		testProps( c, c.getConfigPath( r, "primes/4" ),
+			c.getConfigPath( r, "primes" ), "4", 4, "/primes/4", false, false,
+			false, null );
+	}
+	
+	/** @throws Exception */
+	@Test( expected = NoSuchElementException.class )
+	public void props2() throws Exception
+	{
+		ConfigurationServer c = new YamlConfig( null, REMOTE );
+		Object r = c.getRoot();
+		Assert.assertNotNull( r );
+		
+		// value is not a List or a Map
+		c.size( c.getConfigPath( r, "primes/4" ) );
+	}
+	
+	/** @throws Exception */
+	@Test( expected = IllegalArgumentException.class )
+	public void props3() throws Exception
+	{
+		ConfigurationServer c = new YamlConfig( null, REMOTE );
+		// id == null
+		c.size( null );
+	}
+	
+	/** @throws Exception */
+	@Test( expected = IllegalArgumentException.class )
+	public void props4() throws Exception
+	{
+		ConfigurationServer c = new YamlConfig( null, REMOTE );
+		// id == null
+		c.size( "#" );
+	}
+	
+	/** @throws Exception */
+	@Test( expected = IllegalArgumentException.class )
+	public void props5() throws Exception
+	{
+		ConfigurationServer c = new YamlConfig( null, REMOTE );
+		// id == null
+		c.size( "#0" );
+	}
+	
+	/** @throws Exception */
+	@Test( expected = IllegalStateException.class )
+	public void props6() throws Exception
+	{
+		ConfigurationServer c = new YamlConfig( null );
+		// id == null
+		c.size( "#0#" );
+	}
+	
+	private void testProps( ConfigurationServer c, Object node, Object parent,
+		String name, Integer index, String path, boolean isRoot, boolean isList,
+		boolean isMap, Integer size )
+	{
+		Assert.assertEquals( parent, c.getParent( node ) );
+		Assert.assertEquals( name, c.getName( node ) );
+		Assert.assertEquals( index, c.getIndex( node ) );
+		Assert.assertEquals( path, c.getPath( node ) );
+		Assert.assertEquals( isRoot, c.isRoot( node ) );
+		Assert.assertEquals( isList, c.isList( node ) );
+		Assert.assertEquals( isMap, c.isMap( node ) );
+		if (size != null)
+			Assert.assertEquals( size, c.size( node ) );
+	}
+
+	/** @throws Exception */
+	@Test
+	public void root1() throws Exception
+	{
+		ConfigurationServer c = new YamlConfig( null, REMOTE );
+		Object r = c.getRoot();
+		Assert.assertNotNull( r );
 
 		// try absolute paths for root
 		
@@ -402,6 +484,26 @@ public class TestYamlConfig
 	}
 	
 	/** @throws Exception */
+	@Test( expected = IllegalStateException.class )
+	public void root12() throws Exception
+	{
+		ConfigurationServer c = new YamlConfig( null );
+		c.getRoot();
+	}
+	
+	/** @throws Exception */
+	@Test( expected = NoSuchElementException.class )
+	public void root13() throws Exception
+	{
+		ConfigurationServer c = new YamlConfig( null, REMOTE );
+		Object r = c.getRoot();
+		Assert.assertNotNull( r );
+		
+		// abc
+		c.getConfigPath( r, "primes/4/abc" );
+	}
+	
+	/** @throws Exception */
 	@Test
 	public void hasValuePath() throws Exception
 	{
@@ -436,6 +538,7 @@ public class TestYamlConfig
 		Assert.assertNotNull( r );
 
 		Assert.assertEquals( true, c.getBooleanPath( r, "bool" ) );
+		Assert.assertEquals( false, c.getBooleanPath( r, "bool2" ) );
 		Assert.assertNull( c.getBooleanPath( r, "blah" ) );
 	}
 	
@@ -472,6 +575,7 @@ public class TestYamlConfig
 		Assert.assertNotNull( r );
 
 		Assert.assertEquals( 23, c.getIntegerPath( r, "int" ) );
+		Assert.assertEquals( 34, c.getIntegerPath( r, "int2" ) );
 		Assert.assertNull( c.getIntegerPath( r, "blah" ) );
 	}
 	
@@ -500,6 +604,18 @@ public class TestYamlConfig
 	}
 	
 	/** @throws Exception */
+	@Test( expected = IllegalArgumentException.class )
+	public void getIntegerPath4() throws Exception
+	{
+		ConfigurationServer c = new YamlConfig( null, REMOTE );
+		Object r = c.getRoot();
+		Assert.assertNotNull( r );
+		
+		// cannot convert value to Integer
+		c.getIntegerPath( r, "int3" );
+	}
+	
+	/** @throws Exception */
 	@Test
 	public void getDoublePath1() throws Exception
 	{
@@ -508,6 +624,8 @@ public class TestYamlConfig
 		Assert.assertNotNull( r );
 
 		Assert.assertEquals( 4.5, c.getDoublePath( r, "dbl" ) );
+		Assert.assertEquals( 5.6, c.getDoublePath( r, "dbl2" ) );
+		Assert.assertEquals( 67, c.getDoublePath( r, "dbl3" ) );
 		Assert.assertNull( c.getDoublePath( r, "blah" ) );
 	}
 	
@@ -536,6 +654,18 @@ public class TestYamlConfig
 	}
 	
 	/** @throws Exception */
+	@Test( expected = IllegalArgumentException.class )
+	public void getDoublePath4() throws Exception
+	{
+		ConfigurationServer c = new YamlConfig( null, REMOTE );
+		Object r = c.getRoot();
+		Assert.assertNotNull( r );
+		
+		// cannot convert value to Double
+		c.getDoublePath( r, "dbl4" );
+	}
+	
+	/** @throws Exception */
 	@SuppressWarnings("deprecation")
 	@Test
 	public void getDatePath1() throws Exception
@@ -545,6 +675,7 @@ public class TestYamlConfig
 		Assert.assertNotNull( r );
 
 		Assert.assertEquals( new Date( "12/19/2008" ), c.getDatePath( r, "date" ) );
+		Assert.assertEquals( new Date( "12/23/2008" ), c.getDatePath( r, "date2" ) );
 		Assert.assertNull( c.getDatePath( r, "blah" ) );
 	}
 	
@@ -585,6 +716,7 @@ public class TestYamlConfig
 		Assert.assertEquals( "4.5", c.getStringPath( r, "dbl" ) );
 		Assert.assertEquals( "boo", c.getStringPath( r, "str" ) );
 		Assert.assertEquals( "12/19/2008", c.getStringPath( r, "date" ) );
+		Assert.assertEquals( "Tue Dec 23 00:00:00 CST 2008", c.getStringPath( r, "date2" ) );
 		Assert.assertNull( c.getStringPath( r, "blah" ) );
 	}
 	
@@ -713,6 +845,184 @@ public class TestYamlConfig
 		
 		// cannot convert value to Map
 		c.getMapPath( r, "int", null );
+	}
+	
+	/** @throws Exception */
+	@Test
+	public void getConfigIndex1() throws Exception
+	{
+		ConfigurationServer c = new YamlConfig( null, REMOTE );
+		Object r = c.getRoot();
+		Assert.assertNotNull( r );
+		
+		Object p = c.getConfigPath( r, "primes" );
+		Assert.assertEquals( 7, c.getInteger( c.getConfigIndex( p, 4 ) ) );
+	}
+	
+	/** @throws Exception */
+	@Test( expected = IllegalArgumentException.class )
+	public void getConfigIndex2() throws Exception
+	{
+		ConfigurationServer c = new YamlConfig( null, REMOTE );
+		Object r = c.getRoot();
+		Assert.assertNotNull( r );
+		
+		Object p = c.getConfigPath( r, "primes" );
+		c.getConfigIndex( p, -1 );
+	}
+	
+	/** @throws Exception */
+	@Test( expected = IllegalArgumentException.class )
+	public void getConfigIndex3() throws Exception
+	{
+		ConfigurationServer c = new YamlConfig( null, REMOTE );
+		Object r = c.getRoot();
+		Assert.assertNotNull( r );
+		
+		Object p = c.getConfigPath( r, "primes" );
+		c.getConfigIndex( p, 99 );
+	}
+	
+	/** @throws Exception */
+	@Test( expected = IllegalArgumentException.class )
+	public void getConfigIndex4() throws Exception
+	{
+		ConfigurationServer c = new YamlConfig( null, REMOTE );
+		Object r = c.getRoot();
+		Assert.assertNotNull( r );
+		
+		Object p = c.getConfigPath( r, "primes" );
+		c.getConfigIndex( p, null );
+	}
+	
+	/** @throws Exception */
+	@Test( expected = IllegalArgumentException.class )
+	public void getConfigIndex5() throws Exception
+	{
+		ConfigurationServer c = new YamlConfig( null, REMOTE );
+		Object r = c.getRoot();
+		Assert.assertNotNull( r );
+		
+		c.getConfigIndex( r, 0 );
+	}
+	
+	/** @throws Exception */
+	@Test( expected = IllegalArgumentException.class )
+	public void getConfigIndex6() throws Exception
+	{
+		ConfigurationServer c = new YamlConfig( null, REMOTE );
+		Object r = c.getRoot();
+		Assert.assertNotNull( r );
+		
+		c.getConfigIndex( null, 0 );
+	}
+	
+	/** @throws Exception */
+	@Test
+	public void listConfigPathIds1() throws Exception
+	{
+		ConfigurationServer c = new YamlConfig( null, REMOTE );
+		Object r = c.getRoot();
+		Assert.assertNotNull( r );
+		
+		Object[] ids = c.listConfigPathIds( r, "users", null, null );
+		Assert.assertEquals( 4, ids.length );
+	}
+	
+	/** @throws Exception */
+	@Test
+	public void listConfigPathIds2() throws Exception
+	{
+		ConfigurationServer c = new YamlConfig( null, REMOTE );
+		Object r = c.getRoot();
+		Assert.assertNotNull( r );
+		
+		Object[] ids = c.listConfigPathIds( r, "primes", null, null );
+		Assert.assertEquals( 7, ids.length );
+	}
+	
+	/** @throws Exception */
+	@Test( expected = NoSuchElementException.class )
+	public void listConfigPathIds3() throws Exception
+	{
+		ConfigurationServer c = new YamlConfig( null, REMOTE );
+		Object r = c.getRoot();
+		Assert.assertNotNull( r );
+		
+		// value is not a List or a Map
+		c.listConfigPathIds( r, "primes/4", null, null );
+	}
+	
+	/** @throws Exception */
+	@Test
+	public void listConfigPathIds4() throws Exception
+	{
+		ConfigurationServer c = new YamlConfig( null, REMOTE );
+		Object r = c.getRoot();
+		Assert.assertNotNull( r );
+		
+		Object[] ids = c.listConfigPathIds( r, "primes", 1, 3 );
+		Assert.assertEquals( 3, ids.length );
+	}
+	
+	/** @throws Exception */
+	@Test
+	public void listConfigPathIds5() throws Exception
+	{
+		ConfigurationServer c = new YamlConfig( null, REMOTE );
+		Object r = c.getRoot();
+		Assert.assertNotNull( r );
+		
+		Object[] ids = c.listConfigPathIds( r, "primes", 5, 4 );
+		Assert.assertEquals( 2, ids.length );
+	}
+	
+	/** @throws Exception */
+	@Test( expected = IllegalArgumentException.class )
+	public void listConfigPathIds6() throws Exception
+	{
+		ConfigurationServer c = new YamlConfig( null, REMOTE );
+		Object r = c.getRoot();
+		Assert.assertNotNull( r );
+		
+		// offset < 0
+		c.listConfigPathIds( r, "primes", -1, 4 );
+	}
+	
+	/** @throws Exception */
+	@Test
+	public void listConfigPathIds7() throws Exception
+	{
+		ConfigurationServer c = new YamlConfig( null, REMOTE );
+		Object r = c.getRoot();
+		Assert.assertNotNull( r );
+		
+		Object[] ids = c.listConfigPathIds( r, "primes", 7, 4 );
+		Assert.assertEquals( 0, ids.length );
+	}
+	
+	/** @throws Exception */
+	@Test( expected = IllegalArgumentException.class )
+	public void listConfigPathIds8() throws Exception
+	{
+		ConfigurationServer c = new YamlConfig( null, REMOTE );
+		Object r = c.getRoot();
+		Assert.assertNotNull( r );
+		
+		// offset > size
+		c.listConfigPathIds( r, "primes", 8, 4 );
+	}
+	
+	/** @throws Exception */
+	@Test( expected = IllegalArgumentException.class )
+	public void listConfigPathIds9() throws Exception
+	{
+		ConfigurationServer c = new YamlConfig( null, REMOTE );
+		Object r = c.getRoot();
+		Assert.assertNotNull( r );
+		
+		// count < 0
+		c.listConfigPathIds( r, "primes", 0, -1 );
 	}
 	
 	private static class MyConfigurationClient implements ConfigurationClient

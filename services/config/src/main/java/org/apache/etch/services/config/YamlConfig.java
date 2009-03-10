@@ -102,7 +102,7 @@ public class YamlConfig implements ConfigurationServer
 			
 			try
 			{
-				Thread.sleep( 50 );
+				Thread.sleep( 1000 );
 			}
 			catch ( InterruptedException e )
 			{
@@ -479,6 +479,8 @@ public class YamlConfig implements ConfigurationServer
 	// PRIVATE //
 	/////////////
 	
+	///CLOVER:OFF
+	
 	/**
 	 * Dumps the config space.
 	 */
@@ -490,12 +492,13 @@ public class YamlConfig implements ConfigurationServer
 		System.out.println( "done" );
 	}
 	
+	///CLOVER:ON
+	
 	private static final int ID_RADIX = Character.MAX_RADIX;
 	
 	private String abs2rel( String path )
 	{
-		if (!isAbsolute( path ))
-			return path;
+		Assertion.check( isAbsolute( path ), "path is absolute" );
 		return path.substring( 1 );
 	}
 
@@ -524,16 +527,25 @@ public class YamlConfig implements ConfigurationServer
 	{
 		if (id == null)
 			throw new IllegalArgumentException( "id == null" );
+		
 		if (!(id instanceof String))
 			throw new IllegalArgumentException( "id is not valid: "+id );
+		
 		String s = (String) id;
+		
 		if (!s.startsWith( "#" ))
 			throw new IllegalArgumentException( "id is not valid: "+id );
+		
 		if (!s.endsWith( "#" ))
 			throw new IllegalArgumentException( "id is not valid: "+id );
+		
 		try
 		{
 			return Integer.parseInt( s.substring( 1 ).substring( 0, s.length()-2 ), ID_RADIX );
+		}
+		catch ( StringIndexOutOfBoundsException e )
+		{
+			throw new IllegalArgumentException( "id is not valid: "+id );
 		}
 		catch ( NumberFormatException e )
 		{
@@ -746,9 +758,15 @@ public class YamlConfig implements ConfigurationServer
 		for (int v: value)
 		{
 			if (offset > 0)
+			{
 				offset--;
-			else
-				a[i++] = toId( v );
+				continue;
+			}
+			
+			if (i >= a.length)
+				break;
+			
+			a[i++] = toId( v );
 		}
 		
 		return a;
@@ -802,11 +820,15 @@ public class YamlConfig implements ConfigurationServer
 		
 		public Object value;
 		
+		///CLOVER:OFF
+		
 		@Override
 		public String toString()
 		{
 			return String.format( "Conf name %s, value %s", name, value );
 		}
+		
+		///CLOVER:ON
 
 		public boolean isRoot()
 		{
@@ -847,61 +869,74 @@ public class YamlConfig implements ConfigurationServer
 		
 		public Boolean getBoolean()
 		{
-			if (value == null)
-				return null;
 			if (value instanceof Boolean)
 				return (Boolean) value;
+			
 			if (value instanceof String)
 				return Boolean.valueOf( (String) value );
+			
 			throw new IllegalArgumentException( "cannot convert value to Boolean" );
 		}
 		
 		public Integer getInteger()
 		{
-			if (value == null)
-				return null;
 			if (value instanceof Integer)
 				return (Integer) value;
-			if (value instanceof Number)
-				return ((Number) value).intValue();
+			
 			if (value instanceof String)
-				return Integer.valueOf( (String) value );
+			{
+				try
+				{
+					return Integer.valueOf( (String) value );
+				}
+				catch ( NumberFormatException e )
+				{
+					throw new IllegalArgumentException( "cannot convert value to Integer: "+value );
+				}
+			}
+			
 			throw new IllegalArgumentException( "cannot convert value to Integer" );
 		}
 		
 		public Double getDouble()
 		{
-			if (value == null)
-				return null;
 			if (value instanceof Double)
 				return (Double) value;
+			
 			if (value instanceof Number)
 				return ((Number) value).doubleValue();
+			
 			if (value instanceof String)
-				return Double.valueOf( (String) value );
+			{
+				try
+				{
+					return Double.valueOf( (String) value );
+				}
+				catch ( NumberFormatException e )
+				{
+					throw new IllegalArgumentException( "cannot convert value to Double: "+value );
+				}
+			}
+			
 			throw new IllegalArgumentException( "cannot convert value to Double" );
 		}
 		
 		public String getString()
 		{
-			if (value == null)
-				return null;
-			if (value instanceof String)
-				return (String) value;
-			if (value instanceof Number)
-				return value.toString();
 			if (value instanceof Boolean)
+				return value.toString();
+			if (value instanceof Number)
 				return value.toString();
 			if (value instanceof Date)
 				return value.toString();
+			if (value instanceof String)
+				return (String) value;
 			throw new IllegalArgumentException( "cannot convert value to String" );
 		}
 		
 		@SuppressWarnings("deprecation")
 		public Date getDate()
 		{
-			if (value == null)
-				return null;
 			if (value instanceof Date)
 				return (Date) value;
 			if (value instanceof String)
@@ -911,9 +946,6 @@ public class YamlConfig implements ConfigurationServer
 		
 		public List<?> getList( Integer depth )
 		{
-			if (value == null)
-				return null;
-			
 			if (isList())
 				return getList0( depth );
 			
@@ -944,9 +976,6 @@ public class YamlConfig implements ConfigurationServer
 
 		public Map<?, ?> getMap( Integer depth )
 		{
-			if (value == null)
-				return null;
-			
 			if (isMap())
 				return getMap0( depth );
 			
