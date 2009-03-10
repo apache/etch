@@ -1,21 +1,36 @@
 Welcome to the 1.0.2-incubating release of Apache Etch.
 
+= What is Etch? =
+
+Etch is a cross-platform, language- and transport-independent framework for building
+and consuming network services. The Etch toolset includes a network service description
+language, a compiler, and binding libraries for a variety of programming languages. Etch
+is also transport-independent, allowing for a variety of different transports to used
+based on need and circumstance. The goal of Etch is to make it simple to define small,
+focused services that can be easily accessed, combined, and deployed in a similar
+manner. With Etch, service development and consumption becomes no more difficult than
+library development and consumption.
+
+= Online Help =
+
 The jumping off point for Etch information and help is here:
 
 http://cwiki.apache.org/ETCH
 
+= Binary Distribution =
+
 The top-level structure of the install image is:
 
-	ChangeLog.txt
-	LICENSE.txt
-	README.txt
-    NOTICE.txt
-    RELEASE_NOTES.txt
-	bin/
-	lib/
-    examples/
-	maven/
-    uninst.exe (windows only)
+  ChangeLog.txt
+  LICENSE.txt
+  NOTICE.txt
+  README.txt
+  RELEASE_NOTES.txt
+  bin/
+  examples/
+  lib/
+  maven/
+  uninst.exe (windows only)
 
 Please take a moment to review the RELEASE_NOTES.txt, ChangeLog.txt and
 LICENSE.txt files.
@@ -27,10 +42,10 @@ or apache-etch-1.0.2-incubating-bin.zip, you will want to create this environmen
 variable yourself:
 
 windows:
-	set ETCH_HOME=C:\Program Files\Apache Software Foundation\apache-etch-1.0.2-incubating
+	set ETCH_HOME=C:\Program Files\Apache Software Foundation\apache-etch-1.0.2
 
 *nix:
-	export ETCH_HOME=/path/to/apache-etch-1.0.2-incubating
+	export ETCH_HOME=/path/to/apache-etch-1.0.2
 
 The bin directory has also been put on your path by the Windows installer. If
 you are using the archives, you will need to do this yourself:
