@@ -22,6 +22,7 @@ package org.apache.etch.services.config;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -83,8 +84,6 @@ public class YamlConfig implements ConfigurationServer
 		unloadConfig();
 		
 		File f = mkfile( name );
-		if (f == null)
-			throw new ConfigurationException( "bad name "+name );
 		
 		for (int i = 0; i < 4; i++)
 		{
@@ -94,9 +93,10 @@ public class YamlConfig implements ConfigurationServer
 			
 			if (t1 == t0)
 			{
+				configs = importConfigs( o );
 				file = f;
 				lastModified = t0;
-				configs = importConfigs( o );
+				subs = Collections.synchronizedSet( new HashSet<Integer>() );
 				return getRoot();
 			}
 			
@@ -109,23 +109,30 @@ public class YamlConfig implements ConfigurationServer
 				break;
 			}
 		}
+		
 		throw new ConfigurationException( "config is changing: "+name );
 	}
 
 	public void unloadConfig()
 	{
-		file = null;
-		lastModified = 0;
-		configs = null;
 		unsubscribeAll();
+		file = null;
+		lastModified = null;
+		configs = null;
+		subs = null;
 	}
 
 	public Boolean canLoad( String name )
 	{
-		File f = mkfile( name );
-		if (f == null)
+		try
+		{
+			mkfile( name );
+			return true;
+		}
+		catch ( ConfigurationException e )
+		{
 			return false;
-		return f.isFile() && f.canRead();
+		}
 	}
 
 	public Boolean isLoaded()
@@ -137,8 +144,10 @@ public class YamlConfig implements ConfigurationServer
 	{
 		if (!isLoaded())
 			throw new IllegalStateException( "no config loaded" );
+		
 		if (configs.size() == 0)
 			throw new IllegalStateException( "config is empty" );
+		
 		return toId( 0 );
 	}
 	
@@ -153,37 +162,17 @@ public class YamlConfig implements ConfigurationServer
 
 	public String getName( Object id )
 	{
-		Object n = getConf( id ).name;
-		if (n == null)
-			return "";
-		if (n instanceof String)
-			return (String) n;
-		return n.toString();
+		return getConf( id ).name();
 	}
 
 	public Integer getIndex( Object id )
 	{
-		Object i = getConf( id ).name;
-		if (i == null)
-			return null;
-		if (i instanceof Integer)
-			return (Integer) i;
-		return null;
+		return getConf( id ).index();
 	}
 
 	public String getPath( Object id )
 	{
-		Conf c = getConf( id );
-		
-		if (c.isRoot())
-			return "/";
-		
-		String s = getPath( toId( c.parent ) );
-		
-		if (s.equals( "/" ))
-			return s + c.name;
-		
-		return s + '/' + c.name;
+		return getConf( id ).getPath();
 	}
 
 	public Boolean isRoot( Object id )
@@ -203,15 +192,7 @@ public class YamlConfig implements ConfigurationServer
 	
 	public Integer size( Object id )
 	{
-		Conf c = getConf( id );
-		
-		if (c.isList())
-			return c.list().size();
-		
-		if (c.isMap())
-			return c.map().size();
-		
-		throw new NoSuchElementException( "value is not a List or a Map" );
+		return getConf( id ).size();
 	}
 	
 	//////////////
@@ -231,7 +212,8 @@ public class YamlConfig implements ConfigurationServer
 		throw new NoSuchElementException( "value is not a List or a Map" );
 	}
 	
-	public Object[] listConfigPathIds( Object id, String path, Integer offset, Integer count )
+	public Object[] listConfigPathIds( Object id, String path, Integer offset,
+		Integer count )
 	{
 		return listConfigIds( getConfigPath( id, path ), offset, count );
 	}
@@ -246,12 +228,15 @@ public class YamlConfig implements ConfigurationServer
 		if (c.isList())
 		{
 			List<Integer> list = c.list();
+			
 			if (index < 0 || index >= list.size())
-				throw new IllegalArgumentException( "index < 0 || index >= list.size()" );
+				throw new IllegalArgumentException(
+					"index < 0 || index >= list.size()" );
+			
 			return toId( c.list().get( index ) );
 		}
 		
-		throw new IllegalArgumentException( "node is not a list" );
+		throw new IllegalArgumentException( "value is not a List" );
 	}
 
 	public Object getConfigPath( Object id, String path )
@@ -265,7 +250,8 @@ public class YamlConfig implements ConfigurationServer
 		if (id == null)
 		{
 			if (!isAbsolute( path ))
-				throw new IllegalArgumentException( "path must be absolute when id == null" );
+				throw new IllegalArgumentException(
+					"path must be absolute when id == null" );
 			
 			id = getRoot();
 			path = abs2rel( path );
@@ -290,13 +276,13 @@ public class YamlConfig implements ConfigurationServer
 		// if we have a simple path just let getConfig0 handle it
 		
 		if (path.indexOf( '/' ) < 0)
-			return toId( getConfig0( iid, path ) );
+			return toId( getConfigName( iid, path ) );
 		
 		// complex path
 		
 		StringTokenizer st = new StringTokenizer( path, "/" );
 		while (iid != null && st.hasMoreTokens())
-			iid = getConfig0( iid, st.nextToken() );
+			iid = getConfigName( iid, st.nextToken() );
 		
 		return toId( iid );
 	}
@@ -426,16 +412,16 @@ public class YamlConfig implements ConfigurationServer
 		if (id == null)
 			return;
 		
-		getConf( id );
+		int iid = fromId( id );
+		Conf c = getConf0( iid );
 		
 		synchronized (subs)
 		{
-			boolean wasEmpty = subs.isEmpty();
-			
-			subs.add( fromId( id ) );
-			
-			if (wasEmpty)
+			if (subs.isEmpty())
 				AlarmManager.staticAdd( LISTENER, null, INTERVAL );
+			
+			subs.add( iid );
+			c.subcribed = true;
 		}
 	}
 
@@ -449,11 +435,13 @@ public class YamlConfig implements ConfigurationServer
 		if (id == null)
 			return;
 		
-		getConf( id );
+		int iid = fromId( id );
+		Conf c = getConf0( iid );
 		
 		synchronized (subs)
 		{
-			subs.remove( id );
+			subs.remove( iid );
+			c.subcribed = false;
 			
 			if (subs.isEmpty())
 				AlarmManager.staticRemove( LISTENER );
@@ -467,8 +455,17 @@ public class YamlConfig implements ConfigurationServer
 	
 	public void unsubscribeAll()
 	{
+		if (subs == null)
+			return;
+		
 		synchronized (subs)
 		{
+			for (Integer iid: subs)
+			{
+				Conf c = getConf0( iid );
+				if (c != null)
+					c.subcribed = false;
+			}
 			subs.clear();
 
 			AlarmManager.staticRemove( LISTENER );
@@ -513,8 +510,6 @@ public class YamlConfig implements ConfigurationServer
 		if (path == null)
 			throw new IllegalArgumentException( "path == null" );
 	}
-	
-	private final Set<Integer> subs = Collections.synchronizedSet( new HashSet<Integer>() );
 
 	private Object toId( Integer iid )
 	{
@@ -541,7 +536,8 @@ public class YamlConfig implements ConfigurationServer
 		
 		try
 		{
-			return Integer.parseInt( s.substring( 1 ).substring( 0, s.length()-2 ), ID_RADIX );
+			return Integer.parseInt( s.substring( 1 )
+				.substring( 0, s.length()-2 ), ID_RADIX );
 		}
 		catch ( StringIndexOutOfBoundsException e )
 		{
@@ -555,37 +551,66 @@ public class YamlConfig implements ConfigurationServer
 	
 	private final static int INTERVAL = 5*1000;
 	
+	private final static int FAIL_INTERVAL = 60*1000;
+
+	private static final String configDir = ".";
+	
 	private final AlarmListener LISTENER = new AlarmListener()
 	{
-		public int wakeup( AlarmManager manager, Object state,
-			long due )
+		public int wakeup( AlarmManager manager, Object state, long due )
 		{
 			try
 			{
 				updateConfig();
+				return INTERVAL;
 			}
 			catch ( Exception e )
 			{
 				e.printStackTrace();
-				return 0;
+				return FAIL_INTERVAL;
 			}
-			return INTERVAL;
 		}
 	};
 	
-	private File mkfile( String name )
+	private File mkfile( String name ) throws ConfigurationException
 	{
 		if (name == null || name.length() == 0)
-			return null;
+			throw new ConfigurationException( "name is null or blank" );
 		
-		return new File( name+".yml" );
+		// filter out references to non-existent configs.
+		
+		File f = new File( name+".yml" );
+		if (!f.isFile() || !f.canRead())
+			throw new ConfigurationException( "could not verify name: "+name );
+		
+		// make sure the config is in the config directory.
+		
+		try
+		{
+			String fcp = f.getCanonicalPath();
+//			System.out.println( "fcp = "+fcp );
+			
+			String cd = new File( configDir ).getCanonicalPath() + File.separatorChar;
+//			System.out.println( "cd = "+cd );
+			
+			if (!fcp.startsWith( cd ))
+				throw new ConfigurationException( "could not verify name: "+name );
+		}
+		catch ( IOException e )
+		{
+			throw new ConfigurationException( "could not verify name: "+name );
+		}
+		
+		return f;
 	}
 
 	private File file;
 	
-	private long lastModified;
+	private Long lastModified;
 
 	private List<Conf> configs;
+	
+	private Set<Integer> subs;
 	
 	private static Object loadConfig0( File file ) throws ConfigurationException
 	{
@@ -615,26 +640,47 @@ public class YamlConfig implements ConfigurationServer
 	{
 		if (file.lastModified() != lastModified)
 		{
-			List<Integer> changeSet = new ArrayList<Integer>();
-			updateObject( changeSet, 0, null, null, loadConfig0( null ) );
-			// TODO notify about changeSet
+			long t0 = file.lastModified();
+			Object o = loadConfig0( file );
+			long t1 = file.lastModified();
+			
+			if (t1 == t0)
+			{
+				synchronized (subs)
+				{
+					List<Conf> newConfigs = new ArrayList<Conf>( configs );
+					Set<Integer> newSubs = Collections.synchronizedSet(
+						new HashSet<Integer>( subs ) );
+					List<Integer> changeSet = new ArrayList<Integer>();
+
+					updateObject( newConfigs, newSubs, changeSet, 0,
+						null, null, o );
+
+					lastModified = t0;
+					configs = newConfigs;
+					subs = newSubs;
+				}
+				
+				// TODO notify about changeSet
+			}
 		}
 	}
 
-	private int importObject( List<Conf> c, Integer parent, Object name, Object value )
+	private int importObject( List<Conf> c, Integer parent, Object nameOrIndex,
+		Object value )
 	{
 		if (value instanceof List)
 		{
-			return importList( c, parent, name, (List<?>) value );
+			return importList( c, parent, nameOrIndex, (List<?>) value );
 		}
 		else if (value instanceof Map)
 		{
-			return importMap( c, parent, name, (Map<?, ?>) value );
+			return importMap( c, parent, nameOrIndex, (Map<?, ?>) value );
 		}
 		else if (isScalar( value ))
 		{
 			int k = c.size();
-			c.add( new Conf( parent, name, value ) );
+			c.add( new Conf( parent, nameOrIndex, value ) );
 			return k;
 		}
 		else
@@ -650,8 +696,9 @@ public class YamlConfig implements ConfigurationServer
 			value instanceof String || value instanceof Date;
 	}
 
-	private void updateObject( List<Integer> changeSet, int id,
-		Integer parent, Object name, Object value )
+	private void updateObject( List<Conf> newConfigs, Set<Integer> newSubs,
+		List<Integer> changeSet, int id, Integer parent, Object nameOrIndex,
+		Object value )
 	{
 		if (true) return;
 		
@@ -661,8 +708,8 @@ public class YamlConfig implements ConfigurationServer
 			(parent != null && c.parent != null && parent.equals( c.parent )),
 				"parents match" );
 		
-		Assertion.check( (name == null && c.name == null) ||
-			(name != null && c.name != null && name.equals( c.name )),
+		Assertion.check( (nameOrIndex == null && c.nameOrIndex == null) ||
+			(nameOrIndex != null && c.nameOrIndex != null && nameOrIndex.equals( c.nameOrIndex )),
 			"names match" );
 		
 		if (value instanceof List)
@@ -687,11 +734,11 @@ public class YamlConfig implements ConfigurationServer
 		}
 	}
 
-	private int importList( List<Conf> c, Integer parent, Object name, List<?> value )
+	private int importList( List<Conf> c, Integer parent, Object nameOrIndex, List<?> value )
 	{
 		List<Integer> v = new ArrayList<Integer>( value.size() );
 		int k = c.size();
-		c.add( new Conf( parent, name, v ) );
+		c.add( new Conf( parent, nameOrIndex, v ) );
 		
 		int i = 0;
 		for (Object o: value )
@@ -700,11 +747,11 @@ public class YamlConfig implements ConfigurationServer
 		return k;
 	}
 	
-	private int importMap( List<Conf> c, Integer parent, Object name, Map<?, ?> value )
+	private int importMap( List<Conf> c, Integer parent, Object nameOrIndex, Map<?, ?> value )
 	{
 		Map<String, Integer> v = new HashMap<String, Integer>( value.size() * 4 / 3 + 1 );
 		int k = c.size();
-		c.add( new Conf( parent, name, v ) );
+		c.add( new Conf( parent, nameOrIndex, v ) );
 		
 		for (Map.Entry<?, ?> me: value.entrySet() )
 		{
@@ -772,7 +819,7 @@ public class YamlConfig implements ConfigurationServer
 		return a;
 	}
 	
-	private Integer getConfig0( int iid, String name )
+	private Integer getConfigName( int iid, String name )
 	{
 		if (name.length() == 0)
 			return iid;
@@ -807,32 +854,91 @@ public class YamlConfig implements ConfigurationServer
 	
 	private class Conf
 	{
-		public Conf( Integer parent, Object name, Object value )
+		public Conf( Integer parent, Object nameOrIndex, Object value )
 		{
+			if (parent == null && nameOrIndex != null)
+				throw new IllegalArgumentException(
+					"parent == null && nameOrIndex != null" );
+			
+			if (parent != null && nameOrIndex == null)
+				throw new IllegalArgumentException(
+					"parent != null && nameOrIndex == null" );
+			
+			if (value == null)
+				throw new IllegalArgumentException( "value == null" );
+			
 			this.parent = parent;
-			this.name = name;
+			this.nameOrIndex = nameOrIndex;
 			this.value = value;
+		}
+
+		public String getPath()
+		{
+			if (isRoot())
+				return "/";
+			
+			String s = getConf0( parent ).getPath();
+			
+			if (s.equals( "/" ))
+				return s + nameOrIndex;
+			
+			return s + '/' + nameOrIndex;
+		}
+
+		public Integer size()
+		{
+			if (isList())
+				return list().size();
+			
+			if (isMap())
+				return map().size();
+			
+			throw new NoSuchElementException( "value is not a List or a Map" );
+		}
+
+		public Integer index()
+		{
+			if (nameOrIndex == null)
+				return null;
+			
+			if (nameOrIndex instanceof Integer)
+				return (Integer) nameOrIndex;
+			
+			return null;
+		}
+
+		public String name()
+		{
+			if (nameOrIndex == null)
+				return "";
+			
+			if (nameOrIndex instanceof String)
+				return (String) nameOrIndex;
+			
+			return nameOrIndex.toString();
 		}
 
 		public Integer parent;
 		
-		public Object name;
+		public Object nameOrIndex;
 		
 		public Object value;
+		
+		public boolean subcribed;
 		
 		///CLOVER:OFF
 		
 		@Override
 		public String toString()
 		{
-			return String.format( "Conf name %s, value %s", name, value );
+			return String.format( "Conf parent %s nameOrIndex %s, value %s", parent, nameOrIndex, value );
 		}
 		
 		///CLOVER:ON
 
 		public boolean isRoot()
 		{
-			return name == null;
+			return nameOrIndex == null;
 		}
 		
 		public boolean isList()

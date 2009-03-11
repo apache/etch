@@ -1025,6 +1025,58 @@ public class TestYamlConfig
 		c.listConfigPathIds( r, "primes", 0, -1 );
 	}
 	
+	/** @throws Exception */
+	@Test
+	public void subscribePath1() throws Exception
+	{
+		ConfigurationServer c = new YamlConfig( null, REMOTE );
+		Object r = c.getRoot();
+		Assert.assertNotNull( r );
+
+		c.subscribePath( r, "users" );
+		c.subscribePath( r, "users" );
+		
+		c.subscribePath( r, "primes" );
+		c.subscribePath( r, "primes" );
+	}
+	
+	/** @throws Exception */
+	@Test
+	public void subscribePath2() throws Exception
+	{
+		ConfigurationServer c = new YamlConfig( null, REMOTE );
+		Object r = c.getRoot();
+		Assert.assertNotNull( r );
+
+		c.subscribePath( r, "blah" );
+	}
+	
+	/** @throws Exception */
+	@Test
+	public void unsubscribePath1() throws Exception
+	{
+		ConfigurationServer c = new YamlConfig( null, REMOTE );
+		Object r = c.getRoot();
+		Assert.assertNotNull( r );
+
+		c.subscribePath( r, "users" );
+		c.unsubscribePath( r, "users" );
+		
+		c.subscribePath( r, "primes" );
+		c.unsubscribePath( r, "primes" );
+	}
+	
+	/** @throws Exception */
+	@Test
+	public void unsubscribePath2() throws Exception
+	{
+		ConfigurationServer c = new YamlConfig( null, REMOTE );
+		Object r = c.getRoot();
+		Assert.assertNotNull( r );
+
+		c.unsubscribePath( r, "blah" );
+	}
+	
 	private static class MyConfigurationClient implements ConfigurationClient
 	{
 		public void configValuesChanged( Object[] updated )
