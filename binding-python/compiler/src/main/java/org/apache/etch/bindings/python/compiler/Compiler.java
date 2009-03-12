@@ -1,21 +1,5 @@
-/* $Id: Compiler.java 1 2008-07-29 06:31:55Z jadixson $
- *
- * Copyright 2007-2008 Cisco Systems Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy
- * of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations
- * under the License.
- */
+package org.apache.etch.bindings.python.compiler;
 
-package etch.bindings.csharp.compiler;
 
 import java.io.File;
 import java.io.IOException;
@@ -36,34 +20,34 @@ import org.apache.velocity.exception.ResourceNotFoundException;
 import org.apache.velocity.runtime.RuntimeServices;
 import org.apache.velocity.runtime.log.LogChute;
 
-import etch.compiler.Backend;
-import etch.compiler.CmdLineOptions;
-import etch.compiler.EtchGrammarConstants;
-import etch.compiler.LogHandler;
-import etch.compiler.ParseException;
-import etch.compiler.Token;
-import etch.compiler.Version;
-import etch.compiler.ast.Builtin;
-import etch.compiler.ast.Except;
-import etch.compiler.ast.Item;
-import etch.compiler.ast.Message;
-import etch.compiler.ast.MessageDirection;
-import etch.compiler.ast.Module;
-import etch.compiler.ast.MsgDirHelper;
-import etch.compiler.ast.Name;
-import etch.compiler.ast.Named;
-import etch.compiler.ast.ParamList;
-import etch.compiler.ast.Parameter;
-import etch.compiler.ast.ReservedWordChecker;
-import etch.compiler.ast.Service;
-import etch.compiler.ast.Struct;
-import etch.compiler.ast.Thrown;
-import etch.compiler.ast.TypeRef;
-import etch.compiler.opt.ToString;
-import etch.compiler.opt.ToString.FieldItem;
-import etch.compiler.opt.ToString.FmtItem;
-import etch.compiler.opt.ToString.StringItem;
-import etch.util.Assertion;
+import org.apache.etch.compiler.Backend;
+import org.apache.etch.compiler.CmdLineOptions;
+import org.apache.etch.compiler.EtchGrammarConstants;
+import org.apache.etch.compiler.LogHandler;
+import org.apache.etch.compiler.ParseException;
+import org.apache.etch.compiler.Token;
+import org.apache.etch.compiler.Version;
+import org.apache.etch.compiler.ast.Builtin;
+import org.apache.etch.compiler.ast.Except;
+import org.apache.etch.compiler.ast.Item;
+import org.apache.etch.compiler.ast.Message;
+import org.apache.etch.compiler.ast.MessageDirection;
+import org.apache.etch.compiler.ast.Module;
+import org.apache.etch.compiler.ast.MsgDirHelper;
+import org.apache.etch.compiler.ast.Name;
+import org.apache.etch.compiler.ast.Named;
+import org.apache.etch.compiler.ast.ParamList;
+import org.apache.etch.compiler.ast.Parameter;
+import org.apache.etch.compiler.ast.ReservedWordChecker;
+import org.apache.etch.compiler.ast.Service;
+import org.apache.etch.compiler.ast.Struct;
+import org.apache.etch.compiler.ast.Thrown;
+import org.apache.etch.compiler.ast.TypeRef;
+import org.apache.etch.compiler.opt.ToString;
+import org.apache.etch.compiler.opt.ToString.FieldItem;
+import org.apache.etch.compiler.opt.ToString.FmtItem;
+import org.apache.etch.compiler.opt.ToString.StringItem;
+import org.apache.etch.util.Assertion;
 
 /**
  * Compiler is a helper class not only for Backend, but also for the templates.
@@ -71,9 +55,9 @@ import etch.util.Assertion;
  */
 public class Compiler extends Backend
 {
-	private final static String tmplPath1 = "etch/bindings/python/compiler/";
+	private final static String tmplPath1 = "org/apache/etch/bindings/python/compiler/";
 
-	private final static String tmplPath2 = "resources/etch/bindings/python/compiler/";
+	private final static String tmplPath2 = "resources/org/apache/etch/bindings/python/compiler/";
 
 	private final static String fnSuffix = ".py";
 
@@ -940,14 +924,13 @@ public class Compiler extends Backend
 		}
 
 		StringBuffer sb = new StringBuffer();
-		sb.append( "String.Format( " );
 		sb.append( "\"" );
 		int j = 0;
 		for (FmtItem i : list)
 		{
 			if (i instanceof FieldItem)
 			{
-				sb.append( "{" + j + "}" );
+				sb.append( "%s" );
 				j++;
 			}
 			else
@@ -957,13 +940,14 @@ public class Compiler extends Backend
 		}
 		j = 0;
 
-		sb.append( "\"" );
+		sb.append( "\" % ( " );
 		for (FmtItem i : list)
 		{
 			if (i instanceof FieldItem)
 			{
-				sb.append( ", " );
+				sb.append( ", repr( " );
 				sb.append( ((FieldItem) i).value() );
+                sb.append( " )" );
 			}
 		}
 		sb.append( " )" );
@@ -1113,7 +1097,7 @@ public class Compiler extends Backend
 		if (named instanceof Item)
 			return "Validator_boolean.Get( 0 )";
 
-		return "null";
+		return "None";
 	}
 
 
@@ -1145,9 +1129,9 @@ public class Compiler extends Backend
 				list.remove( i );
 				list.add(i, new FieldItem(  "base.GetMessage()" ) );
 			}
-			if (item.value().contains( "super.toString()" )) {
+			if (item.value().contains( "super.__repr__()" )) {
 				list.remove( i );
-				list.add(i, new FieldItem(  "base.ToString()" ) );
+				list.add(i, new FieldItem(  "base.__repr__()" ) );
 			}
 		}
 	}
