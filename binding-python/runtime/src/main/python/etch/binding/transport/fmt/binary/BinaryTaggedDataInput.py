@@ -27,7 +27,7 @@ from ...ArrayValue import *
 from ....msg.StructValue import *
 from ....msg.Message import *
 from .....util.Flexbuffer import *
-from ....support.Validator_int *
+from ....support.Validator_int import *
 
 class BinaryTaggedDataInput(BinaryTaggedData,TaggedDataInput):
     

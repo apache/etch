@@ -15,8 +15,8 @@
 #
 """
 import unittest
-from etch.util.Types import *
-from etch.support.TypeValidator import *
+from etch.python.Types import *
+from etch.binding.support.TypeValidator import *
 
 class MyTypeValidator(TypeValidator):
     pass

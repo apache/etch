@@ -24,7 +24,7 @@ from ..TypeCode import *
 from .BinaryTaggedData import *
 from ...TaggedDataOutput import *
 from .....util.Flexbuffer import *
-from ....support.Validator_int *
+from ....support.Validator_int import *
 from .Validator_none import *
 
 class BinaryTaggedDataOutput(BinaryTaggedData,TaggedDataOutput):

@@ -16,10 +16,10 @@
 """
 import unittest
 import types
-from etch.util.Types import *
-from etch.support.Validator_boolean import *
-from etch.msg.Validator import *
-from etch.transport.fmt.TypeCode import *
+from etch.python.Types import *
+from etch.binding.support.Validator_boolean import *
+from etch.binding.msg.Validator import *
+from etch.binding.transport.fmt.TypeCode import *
 
 class Test_EtchSupportValidator_boolean(unittest.TestCase):
 

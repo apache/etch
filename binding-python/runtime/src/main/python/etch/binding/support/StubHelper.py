@@ -16,7 +16,7 @@ $Id: StubHelper.py 712747 2008-08-16 21:53:35Z dixson3 $
 # under the License.
 #
 """
-from __future__ import *
+from __future__ import absolute_import 
 from ...python.Exception import *
 
 class StubHelper(object):

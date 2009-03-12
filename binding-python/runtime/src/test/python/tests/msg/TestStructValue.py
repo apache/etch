@@ -15,15 +15,15 @@
 #
 """
 import unittest
-from etch.util.Types import *
-from etch.msg.StructValue import *
-from etch.msg.Type import Type
-from etch.msg.Field import Field
-from etch.msg.IdName import IdName
-#from etch.support.ComboValidator import ComboValidator
-from etch.support.Validator_int import Validator_int
-from etch.support.Validator_boolean import Validator_boolean
-from etch.support.Validator_string import Validator_string
+from etch.python.Types import *
+from etch.binding.msg.StructValue import *
+from etch.binding.msg.Type import Type
+from etch.binding.msg.Field import Field
+from etch.binding.msg.IdName import IdName
+#from etch.binding.support.ComboValidator import ComboValidator
+from etch.binding.support.Validator_int import Validator_int
+from etch.binding.support.Validator_boolean import Validator_boolean
+from etch.binding.support.Validator_string import Validator_string
 
 class Test_EtchMsgStructValue(unittest.TestCase):
 

@@ -15,8 +15,8 @@
 #
 """
 import unittest
-from etch.util.Types import *
-from etch.support.RemoteBase import *
+from etch.python.Types import *
+from etch.binding.support.RemoteBase import *
 
 class What:
     SEND      = "SEND"

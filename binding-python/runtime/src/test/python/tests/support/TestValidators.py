@@ -15,14 +15,14 @@
 #
 """
 import unittest
-from etch.util.Types import *
-from etch.msg.Validator import *
-from etch.support.Validator_boolean import *
-from etch.support.Validator_int import *
-from etch.support.Validator_short import *
-from etch.support.Validator_byte import *
-from etch.support.Validator_string import *
-from etch.transport.fmt.TypeCode import *
+from etch.python.Types import *
+from etch.binding.msg.Validator import *
+from etch.binding.support.Validator_boolean import *
+from etch.binding.support.Validator_int import *
+from etch.binding.support.Validator_short import *
+from etch.binding.support.Validator_byte import *
+from etch.binding.support.Validator_string import *
+from etch.binding.transport.fmt.TypeCode import *
 
 class Test_EtchSupportValidators(unittest.TestCase):
 

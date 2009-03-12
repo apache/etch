@@ -16,9 +16,9 @@ Etch.BinaryTaggedData
 # under the License.
 #
 """
-import types
-
 from __future__ import absolute_import
+
+import types
 from .....python.Exceptions import *
 from .....python.Types import *
 from ..TypeCode import TypeCode

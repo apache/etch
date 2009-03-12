@@ -15,8 +15,8 @@
 #
 """
 import unittest
-from etch.util.Types import *
-from etch.util.Exceptions import *
+from etch.python.Types import *
+from etch.python.Exceptions import *
 from etch.util.FlexBuffer import *
 
 class Test_EtchUtilFlexBuffer(unittest.TestCase):

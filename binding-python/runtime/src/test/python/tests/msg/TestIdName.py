@@ -15,8 +15,8 @@
 #
 """
 import unittest
-from etch.util.Types import *
-from etch.msg.IdName import IdName
+from etch.python.Types import *
+from etch.binding.msg.IdName import IdName
 
 class Test_EtchMsgIdName(unittest.TestCase):
 

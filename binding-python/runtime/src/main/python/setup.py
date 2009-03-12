@@ -19,8 +19,8 @@ import nose
 from setuptools import setup, find_packages
 
 setup(name='etch',
-      version='1.0.0',
-      author='Cisco Systems',
+      version='@EtchVersion@',
+      author='Apache Foundation',
       package_dir = {'':'src'},
       packages = find_packages('src', exclude=["*.tests","*.test.*","tests.*","tests"]),
       test_suite = "nose.collector"

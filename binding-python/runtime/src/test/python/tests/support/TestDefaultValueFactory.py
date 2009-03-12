@@ -15,17 +15,17 @@
 #
 """
 import unittest
-from etch.util.Types import *
-from etch.msg.Type import *
-from etch.msg.Field import *
-from etch.support.DefaultValueFactory import *
-from etch.support.TypeMap import *
-from etch.support.Class2TypeMap import *
-from etch.support._Etch_AuthException import *
-from etch.support._Etch_RuntimeException import *
-from etch.support.Validator_long import *
-from etch.msg.Message import *
-from etch.msg.StructValue import *
+from etch.python.Types import *
+from etch.binding.msg.Type import *
+from etch.binding.msg.Field import *
+from etch.binding.support.DefaultValueFactory import *
+from etch.binding.support.TypeMap import *
+from etch.binding.support.Class2TypeMap import *
+from etch.binding.support._Etch_AuthException import *
+from etch.binding.support._Etch_RuntimeException import *
+from etch.binding.support.Validator_long import *
+from etch.binding.msg.Message import *
+from etch.binding.msg.StructValue import *
 
 
 class MyValueFactory(DefaultValueFactory):

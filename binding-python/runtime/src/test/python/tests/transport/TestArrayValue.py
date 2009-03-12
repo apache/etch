@@ -15,8 +15,8 @@
 #
 """
 import unittest
-from etch.util.Types import *
-from etch.msg.Type import *
+from etch.python.Types import *
+from etch.binding.msg.Type import *
 
 # TODO - finish this
 
