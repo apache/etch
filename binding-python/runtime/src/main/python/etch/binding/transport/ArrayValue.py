@@ -77,7 +77,7 @@ class ArrayValue(object):
         """
         Alias for len(self)
         """
-        returns self.__len__()        
+        return self.__len__()        
 
     def __len__(self):
         """

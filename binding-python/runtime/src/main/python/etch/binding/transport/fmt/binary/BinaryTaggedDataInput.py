@@ -16,16 +16,18 @@ Etch.Transport.BinaryTaggedDataInput
 # under the License.
 #
 """
-from etch.util.Exceptions import *
-from etch.util.Types      import *
-from etch.transport.fmt.TypeCode   import TypeCode
-from etch.transport.fmt.binary.BinaryTaggedData import BinaryTaggedData
-from etch.transport.TaggedDataInput import TaggedDataInput
-from etch.transport.ArrayValue import ArrayValue
-from etch.msg.StructValue import StructValue
-from etch.msg.Message import Message
-from etch.util.FlexBuffer import FlexBuffer
-from etch.support.Validator_int import Validator_int
+from __future__ import absolute_import
+
+from .....python.Exceptions import *
+from .....python.Types import *
+from ..TypeCode import *
+from .BinaryTaggedData import *
+from ...TaggedDataInput import *
+from ...ArrayValue import *
+from ....msg.StructValue import *
+from ....msg.Message import *
+from .....util.Flexbuffer import *
+from ....support.Validator_int *
 
 class BinaryTaggedDataInput(BinaryTaggedData,TaggedDataInput):
     

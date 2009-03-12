@@ -1,6 +1,4 @@
 """
-$Id: Message.py 712747 2008-08-16 21:53:35Z dixson3 $
-
 # Copyright 2007-2008 Cisco Systems Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
@@ -41,7 +39,7 @@ class Message(StructValue):
         @param valueFactory   The value factory
         @param length         Suggested length (ignored)
         """
-        super(StructValue, self).__init__(messageType, length)
+        super(StructValue, self).__init__(messageType, valueFactory, length)
         if not isinstance(valueFactory, ValueFactory):
             raise IllegalArgumentException, "valueFactory must be of type msg.ValueFactory"
         self.__vf = valueFactory

@@ -1,6 +1,4 @@
 """
-$Id: IdName.py 712748 2008-08-17 05:58:09Z dixson3 $
-
 # Copyright 2007-2008 Cisco Systems Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not

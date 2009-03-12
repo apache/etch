@@ -16,16 +16,16 @@ etch.Transport.BinaryTaggedDataOutput
 # under the License.
 #
 """
+from __future__ import absolute_import
 
-from etch.util.Exceptions import *
-from etch.util.Types import *
-from etch.transport.fmt.TypeCode import TypeCode
-from etch.transport.fmt.binary.BinaryTaggedData import BinaryTaggedData
-from etch.transport.TaggedDataOutput import TaggedDataOutput
-from etch.util.FlexBuffer import FlexBuffer
-from etch.support.Validator_int import Validator_int
-from etch.transport.fmt.binary.Validator_none import Validator_none
-# Validator_int, Validator_none
+from .....python.Exceptions import *
+from .....python.Types import *
+from ..TypeCode import *
+from .BinaryTaggedData import *
+from ...TaggedDataOutput import *
+from .....util.Flexbuffer import *
+from ....support.Validator_int *
+from .Validator_none import *
 
 class BinaryTaggedDataOutput(BinaryTaggedData,TaggedDataOutput):
 

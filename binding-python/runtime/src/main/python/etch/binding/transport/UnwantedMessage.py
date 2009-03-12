@@ -19,7 +19,7 @@ $Id: UnwantedMessage.py 712749 2008-08-18 03:26:52Z dixson3 $
 from __future__ import absolute_import
 from ...python.Exceptions import *
 from ..msg.Message import *
-from ...util.core.Who
+from ...util.core.Who import *
 
 class UnwantedMessage(object):
     """
