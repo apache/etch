@@ -1,6 +1,4 @@
 """
-$Id: StructValue.py 712748 2008-08-17 05:58:09Z dixson3 $
-
 # Copyright 2007-2008 Cisco Systems Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
@@ -120,13 +118,13 @@ class StructValue(dict):
             super(StructValue,self).__delitem__(key)
 
         # TODO - disable validate on put?
-        if self.__level == Validator.NONE:
+        if self.__level != Validator.NONE:
             v = self.__type.getValidator(key)
             
             if self.__level == Validator.FULL and v is None:
                 raise IllegalArgumentException, "validator missing for type %s field %s" % (repr(self.__type), key)
                 
-            if not v or not v.validate(value):
+            if v is not None or not v.validate(value):
                 raise IllegalArgumentException, "Validator %s failed for type %s field %s: value %s" % (repr(v), repr(self.__type), repr(key), repr(value))
 
         super(StructValue,self).__setitem__(key, value)

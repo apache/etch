@@ -1,6 +1,4 @@
 """
-$Id: __init__.py 712748 2008-08-17 05:58:09Z dixson3 $
-
 # Copyright 2007-2008 Cisco Systems Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
@@ -17,17 +15,17 @@ $Id: __init__.py 712748 2008-08-17 05:58:09Z dixson3 $
 #
 """
 from __future__ import absolute_import
-from .AsyncMode          import *
-from .ComboValidator     import *
-from .Direction          import *
-from .Field              import *
-from .FieldMap           import *
-from .IdName             import *
-from .IdNameMap          import *
+from .AsyncMode import *
+from .ComboValidator import *
+from .Direction import *
+from .Field import *
+from .FieldMap import * 
+from .IdName import *
+from .IdNameMap import *
 from .ImportExportHelper import *
-from .Message            import *
-from .StructValue        import *
-from .Type               import *
-from .TypeMap            import *
-from .Validator          import *
-from .ValueFactory       import *
+from .Message import *
+from .StructValue import *
+from .Type import *
+from .TypeMap import *
+from .Validator import * 
+from .ValueFactory import *

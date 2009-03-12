@@ -16,6 +16,7 @@ etch.Transport.fmt.binary.Validator_none
 # under the License.
 #
 """
+from __future__ import absolute_import
 
 from etch.msg.Validator import Validator
 from etch.transport.fmt.TypeCode import TypeCode

@@ -1,7 +1,4 @@
 """
-etch.support.Validator_void
-
-# Copyright 2007-2008 Cisco Systems Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
 # use this file except in compliance with the License. You may obtain a copy
@@ -16,9 +13,13 @@ etch.support.Validator_void
 # under the License.
 #
 """
+from __future__ import absolute_import
+import types
 
-from etch.msg.TypeValidator import *
-from etch.transport.fmt.TypeCode import TypeCode
+from ...python.Exceptions import *
+from ...python.Types import *
+from .TypeValidator import *
+from ..transport.fmt.TypeCode import *
 
 class Validator_void(ScalarOnlyTypeValidator):
     """

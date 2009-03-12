@@ -22,5 +22,5 @@ from .TypeCode import *
 
 #from .binary import *
 #from .xml import *
-import binary
-import xml
+from . import binary
+from . import xml

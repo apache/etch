@@ -1,6 +1,4 @@
 """
-$Id: Field.py 712747 2008-08-16 21:53:35Z dixson3 $
-
 # Copyright 2007-2008 Cisco Systems Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not

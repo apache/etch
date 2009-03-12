@@ -16,9 +16,11 @@ etch.util.FlexBuffer
 # under the License.
 #
 """
+from __future__ import absolute_import
+
 from struct import pack,unpack
-from etch.util.Types import *
-from etch.util.Exceptions import *
+from ..python.Types import *
+from ..python.Exceptions import *
 
 __all__ = ['FlexBuffer']
 

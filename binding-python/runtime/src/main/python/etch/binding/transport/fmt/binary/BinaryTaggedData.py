@@ -18,12 +18,13 @@ Etch.BinaryTaggedData
 """
 import types
 
-from etch.util.Exceptions import *
-from etch.util.Types import *
-from etch.transport.fmt.TypeCode import TypeCode
-from etch.transport.fmt.TaggedData import *
-from etch.transport.ArrayValue import ArrayValue
-from etch.msg.StructValue import StructValue
+from __future__ import absolute_import
+from .....python.Exceptions import *
+from .....python.Types import *
+from ..TypeCode import TypeCode
+from ..TaggedData import *
+from ...ArrayValue import *
+from ....msg.StructValue import *
 
 # TODO - make this singleton
 class NoneObject(object):

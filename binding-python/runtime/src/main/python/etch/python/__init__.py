@@ -21,5 +21,5 @@ from .Array import *
 from .Exceptions import *
 from .Singleton import *
 from .SynchronizedMap import *
-from .SynchronizedOn import *
+from .SynchronizeOn import *
 from .Types import *

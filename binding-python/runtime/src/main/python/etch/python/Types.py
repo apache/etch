@@ -19,7 +19,7 @@ etch.util.Types
 import array
 import types
 import struct
-from etch.util.Exceptions import *
+from .Exceptions import *
 
 Boolean = types.BooleanType
 

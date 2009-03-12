@@ -1,6 +1,4 @@
 """
-$Id: ComboValidator.py 718128 2008-11-16 22:35:35Z dixson $
-
 # Copyright 2007-2008 Cisco Systems Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
@@ -77,7 +75,7 @@ class ComboValidator(Validator):
         """
         return self.__a
         
-    def b(self)::
+    def b(self):
         """
         @return - the 'b' child of this validator.
         """

@@ -16,9 +16,10 @@ Etch.fmt.TaggedData
 # under the License.
 #
 """
-from etch.util.Exceptions import *
-from etch.transport.fmt.TypeCode import TypeCode
-from etch.transport.ArrayValue import *
+from __future__ import absolute_import
+from ....python.Exceptions import *
+from .Typecode import TypeCode
+from ..ArrayValue import *
 
 class TaggedData(object):
     """

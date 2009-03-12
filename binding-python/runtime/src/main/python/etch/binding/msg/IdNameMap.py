@@ -1,6 +1,4 @@
 """
-$Id: IdNameMap.py 718128 2008-11-16 22:35:35Z dixson $
-
 # Copyright 2007-2008 Cisco Systems Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
@@ -20,6 +18,7 @@ from __future__ import absolute_import
 import types
 
 class IdNameMap(object):
+    """Map by id and name of IdNames"""
     
     def __init__(self):
         

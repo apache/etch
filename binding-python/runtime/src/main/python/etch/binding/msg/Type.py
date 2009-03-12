@@ -1,6 +1,4 @@
 """
-$Id: Type.py 712749 2008-08-18 03:26:52Z dixson3 $
-
 # Copyright 2007-2008 Cisco Systems Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
@@ -243,7 +241,7 @@ class Type(IdName):
 
         """
         if not self.isAssignableFrom(other):
-            raise IllegalArgumentException "This is not a super type of other"
+            raise IllegalArgumentException, "This is not a super type of other"
             
     def superType(self):
         """
@@ -284,8 +282,8 @@ class Type(IdName):
         Sets the message direction
         @param direction the direction to set
         """
-        if self.checkNotLocked()
-        self.__direction = direction
+        if self.checkNotLocked():
+            self.__direction = direction
 
 
 

@@ -18,7 +18,7 @@ $Id: __init__.py 712748 2008-08-17 05:58:09Z dixson3 $
 """
 from __future__ import absolute_import
 
-import binding
-import compiler
-import python
-import util
+from . import binding
+from . import compiler
+from . import python
+from . import util

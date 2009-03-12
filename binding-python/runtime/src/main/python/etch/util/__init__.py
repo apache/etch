@@ -22,4 +22,4 @@ from .Hash import *
 from .Todo import *
 from .TodoManager import *
 
-import core
+from . import core
