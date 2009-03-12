@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<project name="etch-python-runtime" basedir="." default="help">
+    <description>Etch-to-Python runtime binding implementation</description>
+    <property name="Etch.basedir" location="${basedir}/../.." />
+    <import file="${Etch.basedir}/build-support/etch.includes.xml" />
+
+    <!-- Static properties of the sub-project -->
+    <property name="proj"                 location="${Etch.basedir}/binding-python/runtime" />
+    <property name="target"               location="${proj}/target" />
+    <property name="src"                  location="${proj}/src" />
+    <property name="testResultsDirectory" location="${target}/test-results"  />
+
+    <!-- INIT TARGET -->
+    <!-- Modify this target to define project specific properties that can only be set at runtime -->
+    <target name="do-init">
+        <delete dir="${target}" failonerror="false" quiet="true" />
+
+        <mkdir dir="${target}" />
+        <mkdir dir="${testResultsDirectory}" />
+    </target>
+
+    <!-- CLEAN TARGET -->
+    <target name="do-clean">
+        <delete dir="${target}" />
+    </target>
+
+    <!-- BUILD TARGET -->
+
+    <target name="generate-sources" >
+        <!-- Generate version info -->
+        <!-- <update-tokens filename="${src}/main/python/etch/version.py.tmpl" /> -->
+    </target>
+
+    <target name="do-build" depends="generate-sources" >
+
+        <mkdir dir="${Etch.dist}/lib" />
+        <mkdir dir="${Etch.clover-dist}/lib" />
+
+        <copy todir="${Etch.clover-dist}/lib" >
+            <fileset dir="${target}" >
+                <include name="*.egg" />
+            </fileset>
+        </copy>
+
+        <copy todir="${Etch.dist}/lib" >
+            <fileset dir="${target}">
+                <include name="*.egg" />
+            </fileset>
+        </copy>
+    </target>
+
+    <!-- TEST TARGET -->
+
+    <target name="do-test" >        
+    </target>
+
+    <!-- POSTBUILD TARGET -->
+    <target name="do-postbuild">
+    </target>
+
+    <target name="do-publish" if="build.tests.fail">
+        <!-- Set flag file if any tests failed -->
+        <touch file="${Etch.runtime.tests.fail}"/>
+    </target>
+
+</project>
