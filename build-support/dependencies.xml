@@ -25,33 +25,51 @@
     <property environment="env" />
     
     <!-- Load dependencies -->
-    <property file="${Etch.basedir}/build.dependencies" prefix="default" />
+    <property file="${Etch.basedir}/build.dependencies" prefix="file" />
     
+    <!-- Pull properties from commandline -->
+    <condition property="build.javacc.home" value="${javacc.home}" >
+        <isset property="javacc.home" />
+    </condition>
+
+    <condition property="build.junit.lib" value="${junit.lib}" >
+        <isset property="junit.lib" />
+    </condition>
+
+    <condition property="build.velocity.lib" value="${velocity.lib}" >
+        <isset property="velocity.lib" />
+    </condition>
+    
+    <property file="${Etch.basedir}/build.dependencies" prefix="build" />
+
     <target name="check-javacc" >
-        <fail message="${default.javacc.home}/bin/lib/javacc.jar cannot be found. Please set 'javacc.home' in build.dependencies">
+        <echo message="javacc.home = ${build.javacc.home}" />
+        <fail message="'javacc.jar' cannot be found. Please set 'javacc.home' in build.dependencies or specify value for 'javacc.home' on command-line">
             <condition>
-                <not><available file="${default.javacc.home}/bin/lib/javacc.jar" /></not>
+                <and>
+                <not><available file="${build.javacc.home}/JavaCC.zip" /></not>
+                <not><available file="${build.javacc.home}/bin/lib/JavaCC.zip" /></not>
+                <not><available file="${build.javacc.home}/javacc.jar" /></not>
+                <not><available file="${build.javacc.home}/bin/lib/javacc.jar" /></not>
+                </and>
             </condition>
         </fail>
-        <echo message="Using ${default.javacc.home}/bin/lib/javacc.jar ..." />
     </target>
     
     <target name="check-junit">
-        <fail message="${default.junit.lib}/junit-4.3.1.jar cannot be found. Please set 'junit.lib' in build.dependencies">
+        <fail message="'junit-4.3.1.jar' cannot be found. Please set 'junit.lib' in build.dependencies or specify value for 'junit.lib' onthe command-line">
             <condition>
-                <not><available file="${default.junit.lib}/junit-4.3.1.jar" /></not>
+                <not><available file="${build.junit.lib}/junit-4.3.1.jar" /></not>
             </condition>
         </fail>        
-        <echo message="Using ${default.junit.lib}/junit-4.3.1.jar ..." />
     </target>
     
     <target name="check-velocity">
-        <fail message="${default.velocity.lib}/velocity-dep-1.5.jar cannot be found. Please set 'velocity.lib' in build.dependencies">
+        <fail message="'velocity-dep-1.5.jar' cannot be found. Please set 'velocity.lib' in build.dependencies or specify value for 'velocity.lib' on the command-line">
             <condition>
-                <not><available file="${default.velocity.lib}/velocity-dep-1.5.jar" /></not>
+                <not><available file="${build.velocity.lib}/velocity-dep-1.5.jar" /></not>
             </condition>
         </fail>        
-        <echo message="Using ${default.velocity.lib}/velocity-dep-1.5.jar ..." />
     </target>
     
     <target name="check-dotnet" >
@@ -59,6 +77,5 @@
     </target>
     
     <target name="check-all" depends="check-javacc,check-junit,check-velocity,check-dotnet" />
-    
 
 </project>
