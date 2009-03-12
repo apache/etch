@@ -1,0 +1,3 @@
+* 2008-08-16 - Initial commit into public source tree 
+  ** 'compiler' is just a copy of the binding-csharp code,
+  ** 'runtime' is incomplete and needs to be brought up to parity w/ java-runtime 1.0.
