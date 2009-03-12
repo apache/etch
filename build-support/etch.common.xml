@@ -24,8 +24,24 @@
 
     <!-- Load Environment -->
     <property environment="env" />
-    <property file="${Etch.basedir}/build.dependencies" prefix="build" />
+    <property file="${Etch.basedir}/build.dependencies" prefix="file" />
+    
+    <!-- Pull properties from commandline -->
+    <condition property="build.javacc.home" value="${javacc.home}" >
+        <isset property="javacc.home" />
+    </condition>
 
+    <condition property="build.junit.lib" value="${junit.lib}" >
+        <isset property="junit.lib" />
+    </condition>
+
+    <condition property="build.velocity.lib" value="${velocity.lib}" >
+        <isset property="velocity.lib" />
+    </condition>
+    
+    <property file="${Etch.basedir}/build.dependencies" prefix="build" />
+    
+    
     <!-- Validate properties -->
     
     <!-- Compute top of tree -->
