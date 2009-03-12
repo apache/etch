@@ -15,13 +15,13 @@
 #
 """
 import unittest
-from etch.util.Types import *
-from etch.msg.Message import Message
-from etch.msg.Type import Type
-from etch.msg.Field import Field
-from etch.msg.ValueFactory import ValueFactory
-from etch.support.Validator_int import Validator_int
-from etch.support.Validator_long import Validator_long
+from etch.python.Types import *
+from etch.binding.msg.Message import Message
+from etch.binding.msg.Type import Type
+from etch.binding.msg.Field import Field
+from etch.binding.msg.ValueFactory import ValueFactory
+from etch.binding.support.Validator_int import Validator_int
+from etch.binding.support.Validator_long import Validator_long
 
 
 class Test_EtchMsgMessage(unittest.TestCase):

@@ -15,9 +15,9 @@
 #
 """
 import unittest
-from etch.util.Types import *
-from etch.support.IdNameMap import *
-from etch.msg.IdName import *
+from etch.python.Types import *
+from etch.binding.support.IdNameMap import *
+from etch.binding.msg.IdName import *
 
 class IdNameMapTest(IdNameMap):
 

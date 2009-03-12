@@ -77,7 +77,7 @@ class FormatFactory(object):
         if isinstance(factoryInstance, FormatFactory):
             return factoryInstance
         else:
-            raise IllegalArgumentException "instance for format name %s(%s) does not implement FormatFactory" % (name, repr(factory))    
+            raise IllegalArgumentException, "instance for format name %s(%s) does not implement FormatFactory" % (name, repr(factory))    
 
 
     @classmethod

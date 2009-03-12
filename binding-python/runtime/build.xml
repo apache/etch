@@ -10,6 +10,16 @@
     <property name="src"                  location="${proj}/src" />
     <property name="testResultsDirectory" location="${target}/test-results"  />
 
+    <taskdef resource="pyAntTasks.properties" classpath="/Users/dixson/Downloads/pyAntTasks-1.2.jar" />
+
+    <macrodef name="do-python">
+        <attribute name="python" default="/opt/local/bin/python2.6" />
+        <sequential>
+
+        </sequential>
+    </macrodef>
+
+
     <!-- INIT TARGET -->
     <!-- Modify this target to define project specific properties that can only be set at runtime -->
     <target name="do-init">
@@ -28,30 +38,52 @@
 
     <target name="generate-sources" >
         <!-- Generate version info -->
-        <!-- <update-tokens filename="${src}/main/python/etch/version.py.tmpl" /> -->
+        <mkdir dir="${target}" />
+        <mkdir dir="${target}/" />
+        <mkdir dir="${target}/src" />
+        <mkdir dir="${target}/test" />
+        <copy todir="${target}/src" >
+            <fileset dir="${src}/main/python" >
+                <include name="etch/**" />
+            </fileset>
+        </copy>
+        <copy todir="${target}/src" >
+            <fileset dir="${src}/main/resources" >
+                <include name="*egg*/*" />
+            </fileset>
+            <filterset refid="Etch.buildTokens" />
+        </copy>
+        <copy todir="${target}/src" >
+            <fileset dir="${src}/test/python" >
+                <include name="**" />
+            </fileset>
+        </copy>
+        <copy todir="${target}" file="${src}/main/python/setup.py" >
+            <filterset refid="Etch.buildTokens" />
+        </copy>
+    
     </target>
 
     <target name="do-build" depends="generate-sources" >
+        <py-compile python="/opt/local/bin/python2.6" dir="${target}/src" pythonpath="${target}/src" />
 
-        <mkdir dir="${Etch.dist}/lib" />
-        <mkdir dir="${Etch.clover-dist}/lib" />
-
-        <copy todir="${Etch.clover-dist}/lib" >
-            <fileset dir="${target}" >
-                <include name="*.egg" />
+        <mkdir dir="${target}/dist" />
+        <copy todir="${target}/dist" >
+            <fileset dir="${target}/src" >
+                <include name="etch/**" />
             </fileset>
         </copy>
-
-        <copy todir="${Etch.dist}/lib" >
-            <fileset dir="${target}">
-                <include name="*.egg" />
-            </fileset>
-        </copy>
+    
     </target>
 
     <!-- TEST TARGET -->
 
-    <target name="do-test" >        
+    <target name="do-test" >
+        <py-test python="/opt/local/bin/python2.6" pythonpath="${target}/dist" dir="${target}/src/tests" >
+            <fileset dir="${target}/src/tests" >
+                <include name="**/msg/Test*.py" />
+            </fileset>
+        </py-test>
     </target>
 
     <!-- POSTBUILD TARGET -->

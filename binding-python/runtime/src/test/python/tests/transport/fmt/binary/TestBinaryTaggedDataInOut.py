@@ -19,12 +19,12 @@ tests.transport.fmt.binary.TestBinaryTaggedDataInOut
 import unittest
 import time
 
-from etch.transport.fmt.binary.BinaryTaggedDataOutput import BinaryTaggedDataOutput
-from etch.support.DefaultValueFactory import DefaultValueFactory
-from etch.support.TypeMap import TypeMap
-from etch.support.Class2TypeMap import Class2TypeMap
-from etch.msg.Type import Type
-from etch.util.Types import *
+from etch.binding.transport.fmt.binary.BinaryTaggedDataOutput import BinaryTaggedDataOutput
+from etch.binding.support.DefaultValueFactory import DefaultValueFactory
+from etch.binding.support.TypeMap import TypeMap
+from etch.binding.support.Class2TypeMap import Class2TypeMap
+from etch.binding.msg.Type import Type
+from etch.pyhon.Types import *
 from etch.util.PacketSource import PacketSource
 
 class TestBinaryTaggedDataInOut(unittest.TestCase):

@@ -15,11 +15,11 @@
 #
 """
 import unittest
-from etch.util.Types import *
-from etch.support.ComboValidator import *
-from etch.support.Validator_boolean import *
-from etch.support.Validator_int import *
-from etch.transport.fmt.TypeCode import *
+from etch.python.Types import *
+from etch.binding.support.ComboValidator import *
+from etch.binding.support.Validator_boolean import *
+from etch.binding.support.Validator_int import *
+from etch.binding.transport.fmt.TypeCode import *
 
 class Test_EtchSupportComboValidator(unittest.TestCase):
 

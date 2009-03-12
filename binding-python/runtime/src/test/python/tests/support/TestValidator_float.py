@@ -15,9 +15,9 @@
 #
 """
 import unittest
-from etch.util.Types import *
-from etch.support.Validator_float import *
-from etch.transport.fmt.TypeCode import *
+from etch.python.Types import *
+from etch.binding.support.Validator_float import *
+from etch.binding.transport.fmt.TypeCode import *
 
 class Test_EtchSupportValidator_float(unittest.TestCase):
 

@@ -44,7 +44,7 @@ class _ListenerHandler(ListenerHandler):
     
         self.__src = None
         
-    def accepted(self, s)::
+    def accepted(self, s):
         r = Resources(self.__resources)
         r.put('SOCKET', s)
         

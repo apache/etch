@@ -37,5 +37,5 @@ class UnwantedMessage(object):
         self.__msg    = msg
     
     def __repr__(self):
-        return "Unwanted message from %s: %s" % (repr(self.__sender), repr(self.__msg)
+        return "Unwanted message from %s: %s" % (repr(self.__sender), repr(self.__msg))
 

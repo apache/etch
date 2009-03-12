@@ -153,7 +153,7 @@ class PlainMailboxManager(MailboxManager):
     def redeliver(self, sender, msg):
         self.__session.sessionMessage(sender, msg)
     
-    def size(self)::
+    def size(self):
         """
         @return the number of mailboxes
         """

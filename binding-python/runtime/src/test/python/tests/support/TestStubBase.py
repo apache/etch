@@ -15,8 +15,8 @@
 #
 """
 import unittest
-from etch.util.Types import *
-from etch.support.StubBase import *
+from etch.python.Types import *
+from etch.binding.support.StubBase import *
 
 class What:
     UNWANTED = 'UNWANTED'
