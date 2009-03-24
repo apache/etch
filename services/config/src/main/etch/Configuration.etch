@@ -421,5 +421,6 @@ service Configuration
 	 * @param updated the ids of nodes that have been updated.
 	 */
 	@Direction( Client )
+	@AsyncReceiver( Queued )
 	void configValuesChanged( object[] updated )
 }

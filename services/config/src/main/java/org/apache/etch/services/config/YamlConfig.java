@@ -38,6 +38,8 @@ import java.util.StringTokenizer;
 import org.apache.etch.util.AlarmListener;
 import org.apache.etch.util.AlarmManager;
 import org.apache.etch.util.Assertion;
+import org.apache.etch.util.Todo;
+import org.apache.etch.util.TodoManager;
 import org.ho.yaml.Yaml;
 import org.ho.yaml.exception.YamlException;
 
@@ -71,7 +73,6 @@ public class YamlConfig implements ConfigurationServer
 		loadConfig( name );
 	}
 	
-	@SuppressWarnings("unused")
 	private final ConfigurationClient client;
 
 	////////////////////
@@ -420,11 +421,36 @@ public class YamlConfig implements ConfigurationServer
 			if (subs.isEmpty())
 				AlarmManager.staticAdd( LISTENER, null, INTERVAL );
 			
-			subs.add( iid );
+			if (!subs.add( iid ))
+			{
+				Assertion.check( c.subcribed, "subcribed" );
+				return;
+			}
+			
+			Assertion.check( !c.subcribed, "!subcribed" );
 			c.subcribed = true;
 		}
+		
+		fireConfigValuesChanged( new Object[] { id } );
 	}
+	
+	private void fireConfigValuesChanged( final Object[] updated )
+	{
+		TodoManager.addTodo( new Todo()
+		{
 
+			public void doit( TodoManager mgr ) throws Exception
+			{
+				client.configValuesChanged( updated );
+			}
+
+			public void exception( TodoManager mgr, Exception e )
+			{
+				e.printStackTrace();
+			}
+		} );
+	}
+	
 	public void subscribePath( Object id, String path )
 	{
 		subscribe( getConfigPath( id, path ) );
@@ -440,7 +466,13 @@ public class YamlConfig implements ConfigurationServer
 		
 		synchronized (subs)
 		{
-			subs.remove( iid );
+			if (!subs.remove( iid ))
+			{
+				Assertion.check( !c.subcribed, "!subcribed" );
+				return;
+			}
+			
+			Assertion.check( c.subcribed, "subcribed" );
 			c.subcribed = false;
 			
 			if (subs.isEmpty())
@@ -458,6 +490,8 @@ public class YamlConfig implements ConfigurationServer
 		if (subs == null)
 			return;
 		
+		AlarmManager.staticRemove( LISTENER );
+		
 		synchronized (subs)
 		{
 			for (Integer iid: subs)
@@ -467,8 +501,6 @@ public class YamlConfig implements ConfigurationServer
 					c.subcribed = false;
 			}
 			subs.clear();
-
-			AlarmManager.staticRemove( LISTENER );
 		}
 	}
 

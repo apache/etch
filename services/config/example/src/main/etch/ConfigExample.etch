@@ -1,0 +1,6 @@
+module org.apache.etch.services.config.example
+
+service ConfigExample
+{
+	int add( int x, int y )
+}

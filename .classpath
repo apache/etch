@@ -46,6 +46,8 @@
 	<classpathentry kind="src" path="services/config/src/main/java"/>
 	<classpathentry kind="src" path="services/config/src/test/java"/>
 	<classpathentry kind="src" path="services/config/target/generated-sources/main/etch/java"/>
+	<classpathentry kind="src" path="services/config/example/src/main/java"/>
+	<classpathentry kind="src" path="services/config/example/target/generated-sources/main/etch/java"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/ETCH_DEPENDENT_JARS"/>
 	<classpathentry kind="output" path="bin"/>

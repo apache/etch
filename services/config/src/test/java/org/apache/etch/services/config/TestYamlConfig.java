@@ -1,11 +1,34 @@
+/* $Id$
+ *
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
 package org.apache.etch.services.config;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Set;
 
 import org.apache.etch.services.config.Configuration.ConfigurationException;
 import org.junit.Assert;
@@ -1029,7 +1052,9 @@ public class TestYamlConfig
 	@Test
 	public void subscribePath1() throws Exception
 	{
-		ConfigurationServer c = new YamlConfig( null, REMOTE );
+		ConfigurationServer c = new YamlConfig( client, REMOTE );
+		client.setServer( c );
+		
 		Object r = c.getRoot();
 		Assert.assertNotNull( r );
 
@@ -1044,7 +1069,8 @@ public class TestYamlConfig
 	@Test
 	public void subscribePath2() throws Exception
 	{
-		ConfigurationServer c = new YamlConfig( null, REMOTE );
+		ConfigurationServer c = new YamlConfig( client, REMOTE );
+		client.setServer( c );
 		Object r = c.getRoot();
 		Assert.assertNotNull( r );
 
@@ -1055,7 +1081,8 @@ public class TestYamlConfig
 	@Test
 	public void unsubscribePath1() throws Exception
 	{
-		ConfigurationServer c = new YamlConfig( null, REMOTE );
+		ConfigurationServer c = new YamlConfig( client, REMOTE );
+		client.setServer( c );
 		Object r = c.getRoot();
 		Assert.assertNotNull( r );
 
@@ -1070,18 +1097,102 @@ public class TestYamlConfig
 	@Test
 	public void unsubscribePath2() throws Exception
 	{
-		ConfigurationServer c = new YamlConfig( null, REMOTE );
+		ConfigurationServer c = new YamlConfig( client, REMOTE );
+		client.setServer( c );
 		Object r = c.getRoot();
 		Assert.assertNotNull( r );
 
 		c.unsubscribePath( r, "blah" );
 	}
 	
+	/** @throws Exception */
+	@Test
+	public void configValuesChanged1() throws Exception
+	{
+		ConfigurationServer c = new YamlConfig( client, REMOTE );
+		client.setServer( c );
+		Object r = c.getRoot();
+		Assert.assertNotNull( r );
+		
+		Assert.assertFalse( client.changed.contains( r ) );
+		Assert.assertEquals( 0, client.changed.size() );
+		
+		c.subscribe( r );
+		Thread.sleep( 1000 );
+		
+		Assert.assertTrue( client.changed.contains( r ) );
+		Assert.assertEquals( 1, client.changed.size() );
+	}
+	
+	/** @throws Exception */
+	@Test
+	public void configValuesChanged2() throws Exception
+	{
+		ConfigurationServer c = new YamlConfig( client, REMOTE );
+		client.setServer( c );
+		Object r = c.getRoot();
+		Assert.assertNotNull( r );
+		
+		Object x = c.getConfigPath( r, "users" );
+		Assert.assertNotNull( x );
+		
+		Assert.assertFalse( client.changed.contains( x ) );
+		Assert.assertEquals( 0, client.changed.size() );
+		
+		c.subscribe( x );
+		Thread.sleep( 1000 );
+		
+		Assert.assertTrue( client.changed.contains( x ) );
+		Assert.assertEquals( 1, client.changed.size() );
+	}
+	
+	/** @throws Exception */
+	@Test
+	public void configValuesChanged3() throws Exception
+	{
+		ConfigurationServer c = new YamlConfig( client, REMOTE );
+		client.setServer( c );
+		Object r = c.getRoot();
+		Assert.assertNotNull( r );
+		
+		Object x = c.getConfigPath( r, "users" );
+		Assert.assertNotNull( x );
+		
+		Object y = c.getConfigPath( r, "primes" );
+		Assert.assertNotNull( y );
+
+		Assert.assertFalse( client.changed.contains( x ) );
+		Assert.assertFalse( client.changed.contains( y ) );
+		Assert.assertEquals( 0, client.changed.size() );
+
+		c.subscribe( x );
+		c.subscribe( y );
+		Thread.sleep( 1000 );
+
+		Assert.assertTrue( client.changed.contains( x ) );
+		Assert.assertTrue( client.changed.contains( y ) );
+		Assert.assertEquals( 2, client.changed.size() );
+	}
+	
 	private static class MyConfigurationClient implements ConfigurationClient
 	{
 		public void configValuesChanged( Object[] updated )
 		{
-			throw new UnsupportedOperationException( "configValuesChanged" );
+			for (Object id: updated)
+			{
+				System.out.println( "id changed: "+id );
+				System.out.println( "path changed: "+server.getPath( id ) );
+				changed.add( id );
+			}
 		}
+		
+		private final Set<Object> changed = Collections.synchronizedSet( new HashSet<Object>() );
+
+		public void setServer( ConfigurationServer server )
+		{
+			this.server = server;
+		}
+		
+		private ConfigurationServer server;
 	}
 }

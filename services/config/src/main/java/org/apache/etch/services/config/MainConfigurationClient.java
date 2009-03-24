@@ -42,7 +42,7 @@ public class MainConfigurationClient implements
 		String configUri = local.getStringPath( local.getRoot(), "configUri" );
 		System.out.println( "configUri = "+configUri );
 		local.unloadConfig();
-		local = null;		
+		local = null;
 		
 		RemoteConfigurationServer server = ConfigurationHelper.newServer(
 			configUri, null, new MainConfigurationClient() );
