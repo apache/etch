@@ -1,1 +1,2 @@
 configUri: tcp://localhost:4001/services/config/example/remote?TcpTransport.reconnectDelay=4000
+blah: 2

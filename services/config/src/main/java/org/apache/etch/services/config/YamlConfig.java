@@ -678,12 +678,13 @@ public class YamlConfig implements ConfigurationServer
 			
 			if (t1 == t0)
 			{
+				List<Integer> changeSet = new ArrayList<Integer>();
+				
 				synchronized (subs)
 				{
 					List<Conf> newConfigs = new ArrayList<Conf>( configs );
 					Set<Integer> newSubs = Collections.synchronizedSet(
 						new HashSet<Integer>( subs ) );
-					List<Integer> changeSet = new ArrayList<Integer>();
 
 					updateObject( newConfigs, newSubs, changeSet, 0,
 						null, null, o );
@@ -693,7 +694,7 @@ public class YamlConfig implements ConfigurationServer
 					subs = newSubs;
 				}
 				
-				// TODO notify about changeSet
+				fireConfigValuesChanged( changeSet.toArray() );
 			}
 		}
 	}
@@ -729,12 +730,13 @@ public class YamlConfig implements ConfigurationServer
 	}
 
 	private void updateObject( List<Conf> newConfigs, Set<Integer> newSubs,
-		List<Integer> changeSet, int id, Integer parent, Object nameOrIndex,
+		List<Integer> changeSet, int iid, Integer parent, Object nameOrIndex,
 		Object value )
 	{
+		// TODO implement this.
 		if (true) return;
 		
-		Conf c = getConf0( id );
+		Conf c = getConf0( iid );
 		
 		Assertion.check( (parent == null && c.parent == null) ||
 			(parent != null && c.parent != null && parent.equals( c.parent )),
