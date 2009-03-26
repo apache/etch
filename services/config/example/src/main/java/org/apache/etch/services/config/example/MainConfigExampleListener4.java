@@ -34,7 +34,10 @@ import org.apache.etch.util.core.io.Transport;
 
 /**
  * Main program for ConfigExampleServer. This program makes a listener to accept
- * connections from MainConfigExampleClient.
+ * connections from MainConfigExampleClient. This is a standard etch listener
+ * modified to load the listen uri from a remote config whenever it changes.
+ * The remote config is defined in a local config, which is also monitored for
+ * changes.
  */
 public class MainConfigExampleListener4 implements ConfigExampleServerFactory
 {
@@ -55,14 +58,14 @@ public class MainConfigExampleListener4 implements ConfigExampleServerFactory
 		// Create the server session factory.
 		factory = new MainConfigExampleListener4();
 		
-		// Create the config client factory.
+		// Create the remote config client factory.
 		configClientFactory = new MyConfigurationClientFactory();
 		
-		// Open the local config file.
+		// Open the local config.
 		local = new YamlConfig( new MyLocalConfigurationClient(), LOCAL );
 		System.out.println( "loaded local configuration named '" + LOCAL + "'" );
 
-		// Subscribe to changes in the local config file.
+		// Subscribe to changes in the local config.
 		local.subscribe( local.getRoot() );
 		System.out.println( "subscribed to changes in '" + LOCAL + "'" );
 	}
@@ -78,11 +81,10 @@ public class MainConfigExampleListener4 implements ConfigExampleServerFactory
 	{
 		public void configValuesChanged( Object[] updated )
 		{
+			System.out.println( "local config changed" );
 			try
 			{
-				String configUri = local.getStringPath( local.getRoot(), CONFIG_URI );
-				System.out.println( "local " + CONFIG_URI + " changed: " + configUri );
-				configUriChanged( configUri );
+				resetRemoteConfig();
 			}
 			catch ( Exception e )
 			{
@@ -91,25 +93,31 @@ public class MainConfigExampleListener4 implements ConfigExampleServerFactory
 		}
 	}
 
-	private static void configUriChanged( String configUri ) throws Exception
+	private static void resetRemoteConfig() throws Exception
 	{
-		if (server != null)
+		if (remote != null)
 		{
-			System.out.println( "stopping remote config service" );
-			server._stopAndWaitDown( 4000 );
-			server = null;
+			System.out.println( "stopping remote config" );
+			remote._stopAndWaitDown( 4000 );
+			remote = null;
 		}
-
-		server = ConfigurationHelper.newServer( configUri, null, configClientFactory );
-		configName = new URL( configUri ).getUri();
 		
-		System.out.println( "starting remote config service connection "+server );
-		server._start();
+		// Get the remote config uri from the local config.
+		configUri = local.getStringPath( local.getRoot(), CONFIG_URI );
+		System.out.println( "remote config uri = " + configUri );
+
+		// Create the remote config stack.
+		remote = ConfigurationHelper.newServer( configUri, null, configClientFactory );
+		System.out.println( "remote config created "+remote );
+		
+		// Start the remote config stack.
+		System.out.println( "starting remote config "+remote );
+		remote._start();
 	}
 
-	private static RemoteConfigurationServer server;
+	private static String configUri;
 	
-	private static String configName;
+	private static RemoteConfigurationServer remote;
 
 	private static class MyConfigurationClientFactory implements
 		ConfigurationClientFactory
@@ -117,20 +125,13 @@ public class MainConfigExampleListener4 implements ConfigExampleServerFactory
 		public ConfigurationClient newConfigurationClient(
 			RemoteConfigurationServer server ) throws Exception
 		{
-			return new MyRemoteConfigurationClient( server );
+			return new MyRemoteConfigurationClient();
 		}
 	}
 
 	private static class MyRemoteConfigurationClient extends
 		BaseConfigurationClient
 	{
-		public MyRemoteConfigurationClient( RemoteConfigurationServer server )
-		{
-			this.server = server;
-		}
-
-		private final RemoteConfigurationServer server;
-
 		@Override
 		public void _sessionNotify( Object event ) throws Exception
 		{
@@ -138,27 +139,25 @@ public class MainConfigExampleListener4 implements ConfigExampleServerFactory
 			{
 				System.out.println( "remote config service connection is up" );
 				
-				System.out.println( "loading remote configuration named '"
-					+ configName + "'" );
-				root = server.loadConfig( configName );
-				System.out.println( "loaded remote configuration named '"
+				String configName = new URL( configUri ).getUri();
+				System.out.println( "remote config name = '"
 					+ configName + "'" );
 				
-				System.out.println( "subscribing to remote configuration" );
-				server.subscribe( root );
+				root = remote.loadConfig( configName );
+				System.out.println( "loaded remote config named '"
+					+ configName + "'" );
+				
+				System.out.println( "subscribing to remote config" );
+				remote.subscribe( root );
 			}
 		}
-		
-		private Object root;
 
 		@Override
 		public void configValuesChanged( Object[] updated )
 		{
 			try
 			{
-				String uri = server.getStringPath( root, LISTEN_URI );
-				System.out.println( "listen uri = " + uri );
-				resetListener( uri );
+				resetListener();
 			}
 			catch ( Exception e )
 			{
@@ -166,19 +165,25 @@ public class MainConfigExampleListener4 implements ConfigExampleServerFactory
 			}
 		}
 	}
+	
+	private static Object root;
 
-	private static void resetListener( String listenUri ) throws Exception
+	private static void resetListener() throws Exception
 	{
-		// Stop any old listener.
+		// Stop the old listener.
 		if (listener != null)
 		{
 			System.out.println( "stopping listener " + listener );
 			listener.transportControl( Transport.STOP_AND_WAIT_DOWN, 4000 );
 			listener = null;
 		}
+		
+		// Get the listener uri from the remote config.
+		String uri = remote.getStringPath( root, LISTEN_URI );
+		System.out.println( "listen uri = " + uri );
 
 		// Create the listener stack.
-		listener = ConfigExampleHelper.newListener( listenUri, null, factory );
+		listener = ConfigExampleHelper.newListener( uri, null, factory );
 		System.out.println( "listener created " + listener );
 		
 		// Start the Listener

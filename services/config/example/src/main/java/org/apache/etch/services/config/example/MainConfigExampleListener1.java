@@ -20,15 +20,14 @@
 package org.apache.etch.services.config.example;
 
 import org.apache.etch.bindings.java.support.ServerFactory;
+import org.apache.etch.services.config.example.ConfigExampleHelper.ConfigExampleServerFactory;
 import org.apache.etch.util.core.io.Transport;
 
 /**
  * Main program for ConfigExampleServer. This program makes a listener to accept
- * connections from MainConfigExampleClient. This is a standard generic etch
- * listener.
+ * connections from MainConfigExampleClient. This is a standard etch listener.
  */
-public class MainConfigExampleListener1 implements
-	ConfigExampleHelper.ConfigExampleServerFactory
+public class MainConfigExampleListener1 implements ConfigExampleServerFactory
 {
 	/**
 	 * Main program for ConfigExampleServer.

@@ -32,8 +32,7 @@ import org.apache.etch.util.core.io.Transport;
  * modified to load the listen uri from a local config file at startup and
  * whenever the file changes.
  */
-public class MainConfigExampleListener3 implements
-	ConfigExampleServerFactory
+public class MainConfigExampleListener3 implements ConfigExampleServerFactory
 {
 	private static final String LOCAL = "services/config/example/local2";
 
@@ -50,11 +49,11 @@ public class MainConfigExampleListener3 implements
 		// Create the server session factory.
 		factory = new MainConfigExampleListener3();
 		
-		// Open the local config file.
+		// Open the local config.
 		local = new YamlConfig( new MyLocalConfigurationClient(), LOCAL );
 		System.out.println( "loaded local configuration named '" + LOCAL + "'" );
 
-		// Subscribe to changes in the local config file.
+		// Subscribe to changes in the local config.
 		local.subscribe( local.getRoot() );
 		System.out.println( "subscribed to changes in '" + LOCAL + "'" );
 	}
@@ -68,11 +67,10 @@ public class MainConfigExampleListener3 implements
 	{
 		public void configValuesChanged( Object[] updated )
 		{
+			System.out.println( "local config changed" );
 			try
 			{
-				String uri = local.getStringPath( local.getRoot(), LISTEN_URI );
-				System.out.println( "listen uri = " + uri );
-				resetListener( uri );
+				resetListener();
 			}
 			catch ( Exception e )
 			{
@@ -81,9 +79,9 @@ public class MainConfigExampleListener3 implements
 		}
 	}
 
-	private static void resetListener( String listenUri ) throws Exception
+	private static void resetListener() throws Exception
 	{
-		// Stop any old listener.
+		// Stop the old listener.
 		if (listener != null)
 		{
 			System.out.println( "stopping listener " + listener );
@@ -91,8 +89,12 @@ public class MainConfigExampleListener3 implements
 			listener = null;
 		}
 		
+		// Get the listener uri from the local config.
+		String uri = local.getStringPath( local.getRoot(), LISTEN_URI );
+		System.out.println( "listen uri = " + uri );
+		
 		// Create the listener stack.
-		listener = ConfigExampleHelper.newListener( listenUri, null, factory );
+		listener = ConfigExampleHelper.newListener( uri, null, factory );
 		System.out.println( "listener created " + listener );
 
 		// Start the listener stack.

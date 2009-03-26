@@ -22,15 +22,15 @@ package org.apache.etch.services.config.example;
 import org.apache.etch.bindings.java.support.ServerFactory;
 import org.apache.etch.services.config.ConfigurationServer;
 import org.apache.etch.services.config.YamlConfig;
+import org.apache.etch.services.config.example.ConfigExampleHelper.ConfigExampleServerFactory;
 import org.apache.etch.util.core.io.Transport;
 
 /**
  * Main program for ConfigExampleServer. This program makes a listener to accept
  * connections from MainConfigExampleClient. This is a standard etch listener
- * modified to load the listen uri from a local config file at startup.
+ * modified to load the listen uri from a local config at startup.
  */
-public class MainConfigExampleListener2 implements
-	ConfigExampleHelper.ConfigExampleServerFactory
+public class MainConfigExampleListener2 implements ConfigExampleServerFactory
 {
 	private static final String LOCAL = "services/config/example/local2";
 
@@ -44,11 +44,11 @@ public class MainConfigExampleListener2 implements
 	 */
 	public static void main( String[] args ) throws Exception
 	{
-		// Open the local config file.
+		// Open the local config.
 		ConfigurationServer local = new YamlConfig( null, LOCAL );
 		System.out.println( "loaded local configuration named '" + LOCAL + "'" );
 
-		// Get the listener uri from the config file.
+		// Get the listener uri from the local config.
 		String uri = local.getStringPath( local.getRoot(), LISTEN_URI );
 		System.out.println( "listen uri = " + uri );
 
