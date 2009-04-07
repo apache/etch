@@ -338,19 +338,16 @@ public class TestNSLib
 	 */
 	private class MySession implements Session
 	{
-		@Override
 		public void sessionControl( Object arg0, Object arg1 ) throws Exception
 		{
 			System.out.println( "session control" );
 		}
 
-		@Override
 		public void sessionNotify( Object arg0 ) throws Exception
 		{	
 			System.out.println( "session notify: " + arg0 );
 		}
 
-		@Override
 		public Object sessionQuery( Object arg0 ) throws Exception
 		{
 			System.out.println( "sessionQuery: " + arg0 );

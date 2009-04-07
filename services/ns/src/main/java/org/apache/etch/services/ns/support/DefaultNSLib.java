@@ -35,6 +35,9 @@ import org.apache.etch.util.URL;
 import org.apache.etch.util.core.io.Session;
 
 
+/**
+ * Default implementation of NSLib.
+ */
 public class DefaultNSLib extends NSLib
 {
 	private final static int INITIAL_ALARM_DELAY = 1;
@@ -69,7 +72,6 @@ public class DefaultNSLib extends NSLib
 		return NameServiceHelper.newServer( nsUri, null, 
 					new NameServiceHelper.NameServiceClientFactory()
 					{
-						@Override
 						public NameServiceClient newNameServiceClient(
 								RemoteNameServiceServer server )
 								throws Exception
@@ -113,6 +115,11 @@ public class DefaultNSLib extends NSLib
 		}
 	}
 
+	/**
+	 * @param nsUri
+	 * @return appropriate instance of RemoteNameServiceServer
+	 * @throws Exception
+	 */
 	public RemoteNameServiceServer getServer( String nsUri ) throws Exception
 	{
 		synchronized( serversByNsUri )
@@ -148,7 +155,6 @@ public class DefaultNSLib extends NSLib
 			this.ttl = ttl;
 		}
 
-		@Override
 		public int wakeup( AlarmManager manager, Object state, long due )
 		{
 			try

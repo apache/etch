@@ -94,7 +94,7 @@ public class EtchTransportFactory extends TransportFactory
 		
 		/**
 		 * 
-		 * @param etchUri uri based on the etch scheme
+		 * @param uri uri based on the etch scheme
 		 * @param resources 
 		 */
 		public EtchTransport( String uri, Resources resources )
@@ -108,26 +108,22 @@ public class EtchTransportFactory extends TransportFactory
 			
 		}
 		
-		@Override
 		public void transportMessage( Who recipient, Message msg )
 				throws Exception
 		{
 			transport.transportMessage( recipient, msg );
 		}
 
-		@Override
 		public SessionMessage getSession()
 		{
 			return session;
 		}
 
-		@Override
 		public void setSession( SessionMessage session )
 		{
 			this.session = session;
 		}
 
-		@Override
 		public void transportControl( Object control, Object value )
 				throws Exception
 		{
@@ -183,14 +179,12 @@ public class EtchTransportFactory extends TransportFactory
 						"to implement the control: " + control );
 		}
 
-		@Override
 		public void transportNotify( Object event ) throws Exception
 		{
 			if ( transport != null )
 				transport.transportNotify( event );
 		}
 
-		@Override
 		public Object transportQuery( Object query ) throws Exception
 		{
 			if ( transport != null )
@@ -201,21 +195,18 @@ public class EtchTransportFactory extends TransportFactory
 
 		}
 
-		@Override
 		public boolean sessionMessage( Who sender, Message msg )
 				throws Exception
 		{
 			return session.sessionMessage( sender, msg );
 		}
 
-		@Override
 		public void sessionControl( Object control, Object value )
 				throws Exception
 		{
 			session.sessionControl( control, value );
 		}
 
-		@Override
 		public void sessionNotify( Object event ) throws Exception
 		{
 			/*
@@ -241,13 +232,11 @@ public class EtchTransportFactory extends TransportFactory
 			}
 		}
 
-		@Override
 		public Object sessionQuery( Object query ) throws Exception
 		{
 			return session.sessionQuery( query );
 		}
 
-		@Override
 		public int wakeup( AlarmManager manager, Object state, long due )
 		{
 			try
@@ -289,51 +278,44 @@ public class EtchTransportFactory extends TransportFactory
 		private ServerFactory session = new ServerFactory()
 		{
 			private ServerFactory _session;
-			@Override
+			
 			public void newServer( String arg0, Resources arg1,
 					TransportMessage arg2 ) throws Exception
 			{
 				_session.newServer( arg0, arg1, arg2 );
 			}
 
-			@Override
 			public ValueFactory newValueFactory()
 			{
 				return _session.newValueFactory();
 			}
 
-			@Override
 			public void sessionControl( Object arg0, Object arg1 )
 					throws Exception
 			{
 				_session.sessionControl( arg0, arg1 );
 			}
 
-			@Override
 			public void sessionNotify( Object arg0 ) throws Exception
 			{
 				_session.sessionNotify( arg0 );
 			}
 
-			@Override
 			public Object sessionQuery( Object arg0 ) throws Exception
 			{
 				return _session.sessionQuery( arg0 );
 			}
 
-			@Override
 			public Session getSession()
 			{
 				return _session;
 			}
 
-			@Override
 			public void setSession( Session arg0 )
 			{
 				_session = (ServerFactory)arg0;
 			}
 
-			@Override
 			public void transportControl( Object arg0, Object arg1 )
 					throws Exception
 			{
@@ -341,21 +323,19 @@ public class EtchTransportFactory extends TransportFactory
 				
 			}
 
-			@Override
 			public void transportNotify( Object arg0 ) throws Exception
 			{
 				// TODO Auto-generated method stub
 				
 			}
 
-			@Override
 			public Object transportQuery( Object arg0 ) throws Exception
 			{
 				// TODO Auto-generated method stub
 				return null;
 			}
 		};
-		@Override
+		
 		public void transportControl( Object control, Object value )
 				throws Exception
 		{
@@ -379,25 +359,21 @@ public class EtchTransportFactory extends TransportFactory
 			}
 		}
 
-		@Override
 		public void transportNotify( Object event ) throws Exception
 		{
 			transport.transportNotify( event );
 		}
 
-		@Override
 		public Object transportQuery( Object query ) throws Exception
 		{
 			return transport.transportQuery( query );
 		}
 
-		@Override
 		public ServerFactory getSession()
 		{
 			return (ServerFactory) session.getSession();
 		}
 		
-		@Override
 		public void setSession( ServerFactory session )
 		{
 			this.session.setSession( session );
