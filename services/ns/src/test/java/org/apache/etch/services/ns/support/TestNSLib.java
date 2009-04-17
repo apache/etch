@@ -38,8 +38,8 @@ import org.junit.Test;
 public class TestNSLib
 {
 	private static String defaultNSUri = null;
-	private static String listenerUri = "etch:sourceListener?suri=listenerUri&curi=targetListener&nsuri=tcp://127.0.0.1:8002";
-	private static String clientUri = "etch://127.0.0.1:8002/sourceListener";
+	private static String listenerUri = "etch:sourceListener?suri=listenerUri&curi=targetListener&nsuri=tcp://127.0.0.1:8003";
+	private static String clientUri = "etch://127.0.0.1:8003/sourceListener";
 	private static String testSourceUri1 = "sourceListener";
 	private static String testtargetUri1 = "targetListener";
 	private static ServerFactory nsListener; 
@@ -71,7 +71,7 @@ public class TestNSLib
 	@Test( expected = IllegalArgumentException.class )
 	public void register2() throws Exception
 	{
-		String uri = "suri=listenerUri&curi=targetListener&nsuri=tcp://127.0.0.1:8002";
+		String uri = "suri=listenerUri&curi=targetListener&nsuri=tcp://127.0.0.1:8003";
 		NSLib.staticRegister( new MySession(), uri, null, 0 );
 	}
 	
@@ -175,11 +175,11 @@ public class TestNSLib
 		NSLib.staticRegister( session, listenerUri, null, 0 );
 		
 		MySession session2 = new MySession();
-		String listenerUri1 = "etch:sourceListener2?suri=listenerUri&curi=targetListener2&nsuri=tcp://127.0.0.1:8002";
+		String listenerUri1 = "etch:sourceListener2?suri=listenerUri&curi=targetListener2&nsuri=tcp://127.0.0.1:8003";
 		NSLib.staticRegister( session2, listenerUri1, null, 0 );
 		
 		MySession session3 = new MySession();
-		String listenerUri2  = "etch:sourceListener3?suri=listenerUri&curi=targetListener3&nsuri=tcp://127.0.0.1:8002";
+		String listenerUri2  = "etch:sourceListener3?suri=listenerUri&curi=targetListener3&nsuri=tcp://127.0.0.1:8003";
 		NSLib.staticRegister( session3, listenerUri2, null, 0 );
 		
 		Thread.sleep( 250 );
@@ -190,14 +190,14 @@ public class TestNSLib
 		assertEquals( 0, e.ttl );
 		assertEquals( null, e.qualities );
 		
-		String clientUri1 = "etch://127.0.0.1:8002/sourceListener2";
+		String clientUri1 = "etch://127.0.0.1:8003/sourceListener2";
 		e = NSLib.staticLookup( clientUri1 );
 		assertEquals( testSourceUri1 + "2", e.sourceUri );
 		assertEquals( testtargetUri1 + "2", e.targetUri );
 		assertEquals( 0, e.ttl );
 		assertEquals( null, e.qualities );
 		
-		String clientUri2 = "etch://127.0.0.1:8002/sourceListener3";
+		String clientUri2 = "etch://127.0.0.1:8003/sourceListener3";
 		e = NSLib.staticLookup( clientUri2 );
 		assertEquals( testSourceUri1 + "3", e.sourceUri );
 		assertEquals( testtargetUri1 + "3", e.targetUri );
@@ -245,7 +245,7 @@ public class TestNSLib
 		
 		Thread.sleep( 250 );
 		
-		String clientUri1 = "etch://127.0.0.1:8002/invalidSourceUri";
+		String clientUri1 = "etch://127.0.0.1:8003/invalidSourceUri";
 		Entry e = NSLib.staticLookup( clientUri1 );
 		
 		assertEquals( null, e );
@@ -261,7 +261,7 @@ public class TestNSLib
 	public void unregister2() throws Exception
 	{
 		Session session = new MySession();
-		String listenerUri1 = "suri=listenerUri&curi=targetListener&nsuri=tcp://127.0.0.1:8002";
+		String listenerUri1 = "suri=listenerUri&curi=targetListener&nsuri=tcp://127.0.0.1:8003";
 		
 		NSLib.staticUnregister( session, listenerUri1, false );
 	}
@@ -275,7 +275,7 @@ public class TestNSLib
 		Thread.sleep( 250 );
 		
 		// try unregistering an invalid entry
-		String listenerUri1 = "etch:sourceListener_invalid?suri=listenerUri&curi=targetListener&nsuri=tcp://127.0.0.1:8002";
+		String listenerUri1 = "etch:sourceListener_invalid?suri=listenerUri&curi=targetListener&nsuri=tcp://127.0.0.1:8003";
 		NSLib.staticUnregister( session, listenerUri1, true );
 
 		// above unregister doesn't affect existing entry in NS table

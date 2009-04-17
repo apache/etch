@@ -329,7 +329,7 @@ public class DefaultNSLib extends NSLib
 		return result;
 	}
 	
-	private String defaultNsUri = "tcp://127.0.0.1:8002"; 
+	private String defaultNsUri = "tcp://127.0.0.1:8003"; 
 
 	public String getDefaultNsUri()
 	{

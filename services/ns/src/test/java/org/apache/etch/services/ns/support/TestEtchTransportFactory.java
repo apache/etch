@@ -18,6 +18,7 @@ import org.apache.etch.util.Resources;
 import org.apache.etch.util.core.Who;
 import org.apache.etch.util.core.io.Session;
 import org.apache.etch.util.core.io.Transport;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -41,6 +42,13 @@ public class TestEtchTransportFactory
 	{
 		nsLibInstance = new MockNSLib();
 		NSLib.setInstance( nsLibInstance );
+	}
+	
+	/** @throws Exception */
+	@After
+	public void finiNsLibInstance() throws Exception
+	{
+		NSLib.setInstance( null );
 	}
 
 	/** @throws Exception */
