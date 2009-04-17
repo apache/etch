@@ -63,10 +63,12 @@ public class EtchTransportFactory extends TransportFactory
 		URL u = new URL( uri );
 		
 		// Extract uri for the listener to listen on 
-		if ( !u.hasTerm( LISTENER_URI ) )
+		if ( !u.hasTerm( LISTENER_URI ) || (listenerUri = u.getTerm( LISTENER_URI )).isEmpty() )
 			throw new IllegalArgumentException( "listener uri not configured properly within the etch uri" );
 		
-		listenerUri = u.getTerm( LISTENER_URI ); 
+		if ( !u.hasTerm( LISTENER_REGISTERED_URI ) || u.getTerm( LISTENER_REGISTERED_URI).isEmpty() )
+			throw new IllegalArgumentException( "listener registered uri " +
+			"not configured properly within the etch uri" );
 		
 		// call to create transport stack underneath
 		Transport<ServerFactory> transport = TransportFactory.getListener( listenerUri, resources );
@@ -103,9 +105,12 @@ public class EtchTransportFactory extends TransportFactory
 			this.uri = uri;
 			
 			URL u = new URL( uri );
+
+			if ( u.getUri() == null || u.getUri().isEmpty() )
+				throw new IllegalArgumentException( "source uri == null" );
+
 			if ( u.hasTerm( RECONNECT_TERM ) )
 				reconnect = u.getIntegerTerm( RECONNECT_TERM, 0 );
-			
 		}
 		
 		public void transportMessage( Who recipient, Message msg )
@@ -345,7 +350,7 @@ public class EtchTransportFactory extends TransportFactory
 			if ( control == START || control == START_AND_WAIT_UP )
 			{	
 				// register to the naming service here
-				DefaultNSLib.staticRegister( getSession(), uri, null, 0 );
+				NSLib.staticRegister( getSession(), uri, null, 0 );
 				
 				return;
 			}
@@ -353,7 +358,7 @@ public class EtchTransportFactory extends TransportFactory
 			if ( control == STOP || control == STOP_AND_WAIT_DOWN )
 			{
 				// unregister from the name service
-				DefaultNSLib.staticUnregister( getSession(), uri, false );
+				NSLib.staticUnregister( getSession(), uri, false );
 				
 				return;
 			}

@@ -29,8 +29,9 @@ import org.apache.etch.util.core.io.Session;
 /**
  * 
  * Class that acts as an interface between core etch and the naming service.
- *
- * NOTE: One NSLib instance deals with only one connection to the name service
+ * 
+ * Several implementations of this class can exist, depending upon the need.
+ * Currently, DefaultNSLib is the default implementation used for NSLib.
  * 
  */
 public abstract class NSLib
@@ -49,14 +50,14 @@ public abstract class NSLib
 	public static NSLib getInstance()
 	{
 		
-		/*if ( instance == null )
+		if ( instance == null )
 		{
 			synchronized ( instanceSync )
 			{
 				if ( instance == null )
-					instance = instance.getImplInstance();		
+					instance = new DefaultNSLib();		
 			}
-		}*/
+		}
 		return instance;
 	}
 
@@ -71,6 +72,11 @@ public abstract class NSLib
 	
 	/**
 	 * Sets the default NSUri for this NSLib
+	 * 
+	 * This uri will be used when a naming service uri is not 
+	 * specified in the url or if such a uri cannot be 
+	 * extracted using other means.
+	 * 
 	 * @param defaultNsUri the new default NsUri
 	 */
 	public static void staticSetDefaultNsUri( String defaultNsUri )
@@ -79,7 +85,10 @@ public abstract class NSLib
 	}
 	
 	/**
-	 * 
+	 * Sets the specific version of NSLib to be used for forwarding 
+	 * calls. By default, DefaultNSLib is used and there's no need to 
+	 * set it explicitly using this method.
+	 *  
 	 * @param newInstance
 	 * @return old instance 
 	 */
@@ -93,18 +102,15 @@ public abstract class NSLib
 		}
 	}
 
+	/**
+	 * Shut down method to release resources etc.
+	 */
 	public static void staticShutdown()
 	{
 		NSLib oldInstance = setInstance( null );
 		if ( oldInstance != null )
 			oldInstance.shutdown();
 	}
-	
-	/**
-	 * Obtain instance of the specific NSLib implementation
-	 * @return
-	 */
-	public abstract NSLib getImplInstance();
 	
 	/**
 	 * Cleanup method for the NSLib implementation

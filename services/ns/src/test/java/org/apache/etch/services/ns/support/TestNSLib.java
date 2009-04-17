@@ -27,7 +27,6 @@ import org.apache.etch.bindings.java.support.ServerFactory;
 import org.apache.etch.services.ns.MainNameServiceListener;
 import org.apache.etch.services.ns.NameServiceHelper;
 import org.apache.etch.services.ns.NameService.Entry;
-import org.apache.etch.services.ns.support.DefaultNSLib;
 import org.apache.etch.services.ns.support.NSLib;
 import org.apache.etch.util.core.io.Session;
 import org.apache.etch.util.core.io.Transport;
@@ -48,7 +47,6 @@ public class TestNSLib
 	@BeforeClass
 	public static void startNS()
 	{
-		NSLib.setInstance( new DefaultNSLib() );
 		defaultNSUri = NSLib.staticGetDefaultNsUri();
 		try
 		{

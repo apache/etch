@@ -42,23 +42,14 @@ public class DefaultNSLib extends NSLib
 {
 	private final static int INITIAL_ALARM_DELAY = 1;
 	
-	public NSLib getImplInstance()
-	{
-		return new DefaultNSLib();
-	}
-	
-	/**
-	 * Collection of <session, record> entries to keep track of all listeners connected 
-	 * to this instance of NSLib
-	 */
+	// Collection of <session, record> entries to keep track of all listeners connected 
+	// to this instance of NSLib
 	public Map<Session, Record> recordsBySession = Collections.synchronizedMap( 
 			new HashMap<Session, Record>() );
 	
-	/*
-	 * Map of <nsUri, RemoteNameServiceServer> 
-	 */
+	// Map of <nsUri, RemoteNameServiceServer>
 	private Map<String, RemoteNameServiceServer> serversByNsUri = 
-		new HashMap<String, RemoteNameServiceServer>();
+		Collections.synchronizedMap( new HashMap<String, RemoteNameServiceServer>() );
 	
 	/**
 	 * Create a new RemoteNameServiceServer with the nsUri supplied
@@ -120,6 +111,12 @@ public class DefaultNSLib extends NSLib
 	 * @return appropriate instance of RemoteNameServiceServer
 	 * @throws Exception
 	 */
+	/**
+	 * Get server object to communicate with the name service
+	 * @param nsUri name service uri
+	 * @return server object
+	 * @throws Exception
+	 */
 	public RemoteNameServiceServer getServer( String nsUri ) throws Exception
 	{
 		synchronized( serversByNsUri )
@@ -135,9 +132,8 @@ public class DefaultNSLib extends NSLib
 		}
 	}
 
-	/**
-	 * Convenience object holding relevant listener data
-	 */
+	// Convenience object holding relevant listener data
+	// Also listens to alarm events
 	private class Record implements AlarmListener
 	{
 		String nsUri;
@@ -176,16 +172,16 @@ public class DefaultNSLib extends NSLib
 
 		URL u = new URL( uri );
 
+		String sourceUri = u.getUri();
+		if ( sourceUri == null || sourceUri.isEmpty() )
+			throw new IllegalArgumentException( "sourceUri == null" );
+		
 		if ( ! u.hasTerm( EtchTransportFactory.LISTENER_REGISTERED_URI ) )
 			throw new IllegalArgumentException( "listener registered uri " +
 			"not configured properly within the etch uri" );
-		
-		String sourceUri = u.getUri();
 		String targetUri = u.getTerm( EtchTransportFactory.LISTENER_REGISTERED_URI );
-		String nsUri = null;
 		
-		if ( sourceUri == null || sourceUri.isEmpty() )
-			throw new IllegalArgumentException( "sourceUri == null" );
+		String nsUri = null;
 		
 		// extract if present in uri
 		if ( u.hasTerm( EtchTransportFactory.NS_URI ) )
@@ -195,7 +191,7 @@ public class DefaultNSLib extends NSLib
 			nsUri = defaultNsUri;
 		
 		Record record = new Record( nsUri, sourceUri, qualities, targetUri, ttl );
-		//Assertion.check( recordsBySession.containsKey( session ), "session already exists" );
+		// org.apache.etch.util.Assertion.check( recordsBySession.containsKey( session ), "session already exists" );
 		recordsBySession.put( session, record );
 		
 		// add register task to the alarm manager
