@@ -1,0 +1,19 @@
+CFLAGS = -O
+
+.cc.o:
+	gcc $(CFLAGS) -c $<
+
+O = recycle.o lookupa.o hashtab.o unique.o
+
+unique : $(O)
+	gcc -o unique $(O) -lm
+
+# DEPENDENCIES
+
+recycle.o : recycle.c standard.h recycle.h
+
+lookupa.o : lookupa.c standard.h lookupa.h
+
+hashtab.o : hashtab.c standard.h recycle.h lookupa.h hashtab.h
+
+unique.o  : unique.c standard.h hashtab.h
