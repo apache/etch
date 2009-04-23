@@ -23,9 +23,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("Chat Client")]
 [assembly: AssemblyDescription("Chat Client Executable")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Cisco Systems")]
-[assembly: AssemblyProduct("Etch")]
-[assembly: AssemblyCopyright("Copyright © 2008")]
+[assembly: AssemblyCompany("Apache Software Foundation")]
+[assembly: AssemblyProduct("Apache Etch (incubating)")]
+[assembly: AssemblyCopyright("Copyright © Apache Software Foundation 2009")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

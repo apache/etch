@@ -24,8 +24,8 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyDescription("Perf Listener Executable")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Apache Software Foundation")]
-[assembly: AssemblyProduct("Etch")]
-[assembly: AssemblyCopyright("Copyright © 2008")]
+[assembly: AssemblyProduct("Apache Etch (incubating)")]
+[assembly: AssemblyCopyright("Copyright © Apache Software Foundation 2009")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
