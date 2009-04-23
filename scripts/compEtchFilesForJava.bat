@@ -24,6 +24,7 @@
 
 @set testsdir=tests\src\main\etch
 @set examplesdir=examples
+@set servicesdir=services
 
 @set x=%CD%\
 @pushd %testsdir%
@@ -63,6 +64,17 @@
 
 @pushd perf\src\main\etch
 @call %x%scripts\etch-eclipse.bat %q% %b% %n% %d% %i%        Perf.etch
+@popd
+
+@popd
+@pushd %servicesdir%
+
+@pushd log\src\main\etch
+@call %x%scripts\etch-eclipse.bat %q% %b% %n% %d% %i%        LogService.etch
+@popd
+
+@pushd ns\src\main\etch
+@call %x%scripts\etch-eclipse.bat %q% %b% %n% %d% %i%        NameService.etch
 @popd
 
 @popd
