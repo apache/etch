@@ -3,66 +3,82 @@ us here:
 
 Project info:
 
-	http://incubator.apache.org/projects/etch.html
+    http://incubator.apache.org/projects/etch.html
 
 Documentation info:
 
-	http://cwiki.apache.org/ETCH/
+    http://cwiki.apache.org/ETCH/
 
 Issues:
 
-	https://issues.apache.org/jira/browse/ETCH
+    https://issues.apache.org/jira/browse/ETCH
 
 SVN:
 
-	http://svn.apache.org/repos/asf/incubator/etch/
+    http://svn.apache.org/repos/asf/incubator/etch/
 
 Mailing lists:
 
-	mailto:etch-dev@incubator.apache.org (etch developers)
-	mailto:etch-users@incubator.apache.org (etch users)
+    mailto:etch-dev@incubator.apache.org (etch developers)
+    mailto:etch-user@incubator.apache.org (etch users)
 
 Subscribing to the mailing lists:
 
-	mailto:etch-dev-subscribe@incubator.apache.org (etch developers)
-	mailto:etch-users-subscribe@incubator.apache.org (etch users)
+    mailto:etch-dev-subscribe@incubator.apache.org (etch developers)
+    mailto:etch-user-subscribe@incubator.apache.org (etch users)
 
-This release of Etch is the first from our new home at Apache. It is a bug fix
-release only. While some new functionality has been committed to the tree, it
-is not yet functional enough to claim that you should use it.
+This release of Apache Etch resolves issues related to our new home at Apache.
+One Apache requirement is that the java (and csharp) name spaces look something
+like org.apache.etch... These changes have been made, however, they will break
+existing users of etch. All that need be done for java is to correct the package
+names from etch.* to org.apache.etch.*. For C#, the namespace has changed from
+Etch.* to Org.Apache.Etch.*.
+
+There are also some new components in this release, the biggest of which are the
+contribution of the python and c bindings from Cisco. There is also an
+interoperability testing framework, also from Cisco. While these components are
+not yet fully functional, getting them here is an important milestone. There is
+still some work to be done, interested parties should send inquiries to
+etch-dev@incubator.apache.org.
+
+There are a few bugs fixed in this release, too, as detailed below. Some of
+these fixes are compiler changes. Please be sure to recompile all your etch
+source files.
 
 Here are the issues resolved in this release:
 
-Key			Res		Summary
-ETCH-6		Fixed	If free pool exceeds maximum number of threads the exception
-					thrown will kill the connection.
-ETCH-8		Fixed 	Canceling mailbox notification registration throws exception
-					if not registered.
-ETCH-11 	Fixed 	AlarmManager deadlocks during shutdown().
-ETCH-13 	Fixed 	Copy the rest of the example sources into the distribution.
-ETCH-17 	Fixed 	SessionListener needs to be more independent.
-ETCH-18 	Fixed 	KeepAlive throws exception while trying to shutdown
-					connection.
-ETCH-19 	Fixed 	Break out common tcp transport options so that they may be
-					shared among various transports.
-ETCH-23 	Fixed 	FreePool has synchronization issues with quick back to back
-					calls to Run.
-ETCH-24 	Fixed 	The message direction is always "server" for the
-					result_method messages in the java-binding valuefactory.
-ETCH-25 	Fixed 	DefaultDeliveryService ends call with mb.CloseDelivery() and
-					it should end it with mb.CloseRead().
-ETCH-27 	Fixed 	Mixins cause trouble when two or more mixed in files define
-					a type with the same name.
-ETCH-28 	Fixed 	Examples do not build due to outdated ant files.
-ETCH-29 	Fixed 	Installing all Maven artifacts along with their sources.
-ETCH-31 	Fixed 	MySessionListener in TcpTransportFactory does not override
-					toString() method to show something useful about the
-					transport stack.
+Key         Summary
+---         -------
+ETCH-22     Change Java (and C#) package names to org.apache.etch
+ETCH-32     import the c binding
+ETCH-35     import the python binding
+ETCH-38     import interoperability tester
+ETCH-44     put header comments in order per apache standard
+ETCH-49     merge changes from 1.0.2 branch to trunk
+ETCH-50     ETCH-49> merge changes from 1.0.2 branch to trunk - 738635 update
+            version string
+ETCH-51     ETCH-49> merge changes from 1.0.2 branch to trunk - 738652 make
+            examples more tolerant
+ETCH-52     ETCH-49> merge changes from 1.0.2 branch to trunk - 739277 update
+            eclipse build
+ETCH-53     ETCH-49> merge changes from 1.0.2 branch to trunk - 739282 updates
+            to unit tests
+ETCH-55     ETCH-49> merge changes from 1.0.2 branch to trunk - 739287 fix for
+            selector under linux
+ETCH-54     TransportFactory.newTransport returns stack topped by DeliveryService
+            which makes it hard to implement meta transports
+ETCH-56     UnwantedMessage.ToString method attempts to format using the java
+            style formatting instead of csharp style
+ETCH-57     Sometimes closing a TlsConnection normally will result in an
+            IOException with Socket is closed.
+ETCH-59     Listener stack is build 1/2 upside down and strange inhibiting name
+            service and other transport filters
 
 Here are the outstanding issues in this release:
 
-Key 		Summary
-ETCH-12 	An exception return value from a message is indistinguishable from a
-			thrown exception.
-ETCH-26 	Some unexpected exceptions are thrown if .Net Framework Language
-			Pack is installed.
+Key         Summary
+---         -------
+ETCH-12     An exception return value from a message is indistinguishable from a
+            thrown exception.
+ETCH-26     Some unexpected exceptions are thrown if .Net Framework Language
+            Pack is installed.

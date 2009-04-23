@@ -1,4 +1,446 @@
 -------------
+Release 1.1.0
+-------------
+
+----------------------------------------------------------------------------
+r767991 | sccomer | 2009-04-23 12:36:27 CDT
+
+clean up some more copyright notices.
+
+disabled the eclipse compile of the broken Compiler.java for python.
+----------------------------------------------------------------------------
+r767594 | jdecocq | 2009-04-22 12:25:43 CDT
+----------------------------------------------------------------------------
+r752724 | dixson | 2009-03-11 19:28:42 CDT
+
+created top level README for python binding
+----------------------------------------------------------------------------
+r752723 | dixson | 2009-03-11 19:28:36 CDT
+
+update license headers
+----------------------------------------------------------------------------
+r752722 | dixson | 2009-03-11 19:27:30 CDT
+
+update python binding, correct package names for compiler
+----------------------------------------------------------------------------
+r752721 | dixson | 2009-03-11 19:27:18 CDT
+
+updating python binding compiler
+----------------------------------------------------------------------------
+r752720 | dixson | 2009-03-11 19:27:07 CDT
+
+update python binding compiler
+----------------------------------------------------------------------------
+r752719 | dixson | 2009-03-11 19:26:53 CDT
+
+update meta-data template to be version agnostic
+----------------------------------------------------------------------------
+r752718 | dixson | 2009-03-11 19:26:48 CDT
+
+unit test package refactor
+----------------------------------------------------------------------------
+r752717 | dixson | 2009-03-11 19:25:55 CDT
+
+first cut at build integration
+----------------------------------------------------------------------------
+r752716 | dixson | 2009-03-11 19:25:27 CDT
+
+update package info
+----------------------------------------------------------------------------
+r752715 | dixson | 2009-03-11 19:25:22 CDT
+
+clear execute bit
+----------------------------------------------------------------------------
+r752714 | dixson | 2009-03-11 19:25:18 CDT
+
+update README to reference requirement for python 2.6
+----------------------------------------------------------------------------
+r752713 | dixson | 2009-03-11 19:25:14 CDT
+
+update execute bit
+----------------------------------------------------------------------------
+r752712 | dixson | 2009-03-11 19:24:55 CDT
+
+clear execute bit
+----------------------------------------------------------------------------
+r752710 | dixson | 2009-03-11 19:24:41 CDT
+
+clear execute bit
+----------------------------------------------------------------------------
+r752709 | dixson | 2009-03-11 19:24:35 CDT
+
+clear execute bit
+----------------------------------------------------------------------------
+r752708 | dixson | 2009-03-11 19:24:21 CDT
+
+clear execute bit
+----------------------------------------------------------------------------
+r752707 | dixson | 2009-03-11 19:24:11 CDT
+
+clear execute bit
+----------------------------------------------------------------------------
+r752706 | dixson | 2009-03-11 19:24:05 CDT
+
+- synchronize binding.msg with java
+- update import stanzas with 'from __future__ import absolute_import'
+----------------------------------------------------------------------------
+r752705 | dixson | 2009-03-11 19:23:44 CDT
+
+remove .gitignore files, use repo-global
+----------------------------------------------------------------------------
+r752704 | dixson | 2009-03-11 19:23:39 CDT
+
+change to allow 'javacc.home', 'velocity.lib' and 'junit.lib' to be
+overriden on the ant command-line
+----------------------------------------------------------------------------
+r752703 | dixson | 2009-03-11 19:23:35 CDT
+
+adding .gitignore files, by default ignoring "target/" directories
+----------------------------------------------------------------------------
+r752702 | dixson | 2009-03-11 19:23:28 CDT
+
+python-binding commit
+----------------------------------------------------------------------------
+r752214 | dixson | 2009-03-10 13:52:04 CDT
+
+Add DISCLAIMER.txt
+----------------------------------------------------------------------------
+r749661 | sccomer | 2009-03-03 11:09:51 CST
+
+configuring c directory tree
+----------------------------------------------------------------------------
+r748262 | sccomer | 2009-02-26 12:28:10 CST
+
+fix for ETCH-42: create a csharp example test
+----------------------------------------------------------------------------
+r748254 | sccomer | 2009-02-26 12:14:11 CST
+
+update java interoptest example to also run during normal etch build.
+----------------------------------------------------------------------------
+r748251 | sccomer | 2009-02-26 12:09:47 CST
+
+more fiddlings with the listener newServer api. the api is now more consistent
+and everything that might vary and is needed to finish the construction of the
+transport comes in the method call.
+----------------------------------------------------------------------------
+r743982 | sccomer | 2009-02-12 22:41:18 CST
+
+tone down some of the debugging output, account for listener api change.
+----------------------------------------------------------------------------
+r743752 | dixson | 2009-02-12 08:09:19 CST
+
+correct package names in Chat Client project
+----------------------------------------------------------------------------
+r743420 | dixson | 2009-02-11 11:43:53 CST
+
+fixing binary tag broken by 1.0.2 merge
+----------------------------------------------------------------------------
+r743400 | dixson | 2009-02-11 10:57:38 CST
+
+more 1.0.2 merge .. update README to reflect correct install paths on
+windows
+add NOTICE.txt and RELEASE_NOTES.txt to binary distribution packages
+----------------------------------------------------------------------------
+r743399 | dixson | 2009-02-11 10:57:36 CST
+
+update license info in default versions of generated source
+----------------------------------------------------------------------------
+r743398 | dixson | 2009-02-11 10:57:28 CST
+
+ETCH-49 - merge changes from 1.0.2 into trunk (specifcally license
+updates)
+----------------------------------------------------------------------------
+r743394 | dixson | 2009-02-11 10:56:29 CST
+
+update clean target for example/build.xml to clean submodules too
+----------------------------------------------------------------------------
+r743393 | dixson | 2009-02-11 10:56:26 CST
+
+remove test reference from clover setup for plugins/ant
+----------------------------------------------------------------------------
+r743392 | dixson | 2009-02-11 10:56:23 CST
+
+remove defunct unit tests from plugins/ant/src/test
+----------------------------------------------------------------------------
+r743391 | dixson | 2009-02-11 10:56:14 CST
+
+update copyright strings in generated AssemblyInfo.cs in C# binding
+----------------------------------------------------------------------------
+r743390 | dixson | 2009-02-11 10:56:11 CST
+
+AssemblyFileVersion in C# AssemblyInfo needs to be in Mj.Mn.P.B format
+----------------------------------------------------------------------------
+r743388 | dixson | 2009-02-11 10:56:07 CST
+
+update 'scripts/Bamboo.bat' to operate correctly from 'scripts/' folder
+----------------------------------------------------------------------------
+r743387 | dixson | 2009-02-11 10:56:05 CST
+
+rename 'ReleaseNotes.txt' to canonical 'RELEASE_NOTES.txt'
+----------------------------------------------------------------------------
+r743386 | dixson | 2009-02-11 10:56:03 CST
+
+Revert "change 'ReleaseNotes.txt' to canonical 'RELEASE_NOTES.txt'"
+
+This reverts commit 2c0a6ba0be08f462eb798fa861c77be551da93d3.
+----------------------------------------------------------------------------
+r743385 | dixson | 2009-02-11 10:56:00 CST
+
+move 'Bamboo.txt' and 'antsetup.txt' into scripts folder
+----------------------------------------------------------------------------
+r743384 | dixson | 2009-02-11 10:55:55 CST
+
+change 'ReleaseNotes.txt' to canonical 'RELEASE_NOTES.txt'
+----------------------------------------------------------------------------
+r743358 | sccomer | 2009-02-11 09:18:15 CST
+
+fix for ETCH-46: put csharp header comments in order per apache standard
+----------------------------------------------------------------------------
+r743147 | sccomer | 2009-02-10 16:53:01 CST
+
+fix for ETCH-45: put java header comments in order per apache standard
+
+some csharp headers adjusted, but they are not yet the proper text.
+----------------------------------------------------------------------------
+r743011 | sccomer | 2009-02-10 10:40:34 CST
+
+fix for ETCH-59: Listener stack is build 1/2 upside down and strange inhibiting
+name service and other transport filters
+----------------------------------------------------------------------------
+r741247 | dixson | 2009-02-05 13:03:45 CST
+
+ETCH-49 - merge changes from 1.0.2. into trunk
+----------------------------------------------------------------------------
+r741245 | dixson | 2009-02-05 12:59:14 CST
+
+fix syntax error in plugins/ant/build.xml
+----------------------------------------------------------------------------
+r741244 | dixson | 2009-02-05 12:58:22 CST
+
+ETCH-49 - merge changes from 1.0.2 branch to trunk
+ETCH-50 - update version strings to include '-incubating'
+----------------------------------------------------------------------------
+r741243 | dixson | 2009-02-05 12:57:18 CST
+
+ETCH-51 -- make examples more tolerant of verison changes
+----------------------------------------------------------------------------
+r740938 | sccomer | 2009-02-04 17:33:49 CST
+
+used eclipse cleanup to remove superfluous items such as unused private members,
+unneeded parenthesis, this. qualification, casts, and unused local variables.
+----------------------------------------------------------------------------
+r740904 | sccomer | 2009-02-04 15:39:34 CST
+
+fix for ETCH-57: Sometimes closing a TlsConnection normally will result in an
+IOException with Socket is closed.
+----------------------------------------------------------------------------
+r740898 | sccomer | 2009-02-04 15:30:37 CST
+
+fix for ETCH-39: create directory structure for interoperability tester
+----------------------------------------------------------------------------
+r740897 | sccomer | 2009-02-04 15:29:06 CST
+
+fix for ETCH-39: create directory structure for interoperability tester
+----------------------------------------------------------------------------
+r740894 | sccomer | 2009-02-04 15:17:25 CST
+
+fix for ETCH-56: UnwantedMessage.ToString method attempts to format using the
+java style formatting instead of csharp style
+----------------------------------------------------------------------------
+r740892 | sccomer | 2009-02-04 15:16:33 CST
+
+refactored java binding runtime package names from etch to org.apache.etch.
+
+in this case, fix the transport stack filter names.
+----------------------------------------------------------------------------
+r740890 | sccomer | 2009-02-04 15:14:40 CST
+
+refactored csharp binding runtime namespace from Etch to
+Org.Apache.Etch.Bindings.Csharp.
+
+in this case, fix the transport stack filter names.
+----------------------------------------------------------------------------
+r740792 | sccomer | 2009-02-04 11:04:20 CST
+
+fix for ETCH-52: merge changes from 1.0.2 branch to trunk - 739277 update
+eclipse build
+
+this adds eclipse external tools for linux. and renames the external tools for
+windows to have Win in their name.
+----------------------------------------------------------------------------
+r740787 | sccomer | 2009-02-04 10:51:40 CST
+
+fix for ETCH-55: merge changes from 1.0.2 branch to trunk - 739287 fix for
+selector under linux
+
+under linux the java selector's select method occasionally throws an IOException
+with message File exists. it means nothing and can be ignored. this is a work
+around for a java bug.
+----------------------------------------------------------------------------
+r740780 | sccomer | 2009-02-04 10:30:22 CST
+
+fix for ETCH-53: merge changes from 1.0.2 branch to trunk - 739282 updates to
+unit tests
+
+these update to the unit tests make them more resilient to timing issues with
+regard to listening sockets when used on different operating systems.
+----------------------------------------------------------------------------
+r740767 | sccomer | 2009-02-04 09:27:52 CST
+
+fix for ETCH-54: TransportFactory.newTransport returns stack topped by
+DeliveryService which makes it hard to implement meta transports
+----------------------------------------------------------------------------
+r740325 | sccomer | 2009-02-03 09:55:25 CST
+
+fix for ETCH-33: create directory structure for c binding
+
+fix for ETCH-36: create the directory structure for the python binding
+----------------------------------------------------------------------------
+r739689 | sccomer | 2009-01-31 21:20:00 CST
+
+remove optimize using.
+
+added Binding to description.
+
+corrected xml binding unit test.
+----------------------------------------------------------------------------
+r739436 | sccomer | 2009-01-30 16:27:02 CST
+
+refactored csharp binding runtime namespace from Etch to
+Org.Apache.Etch.Bindings.Csharp.
+----------------------------------------------------------------------------
+r739432 | sccomer | 2009-01-30 16:25:03 CST
+
+refactored csharp binding runtime namespace from Etch to
+Org.Apache.Etch.Bindings.Csharp.
+----------------------------------------------------------------------------
+r739428 | sccomer | 2009-01-30 16:09:22 CST
+
+refactored csharp binding runtime namespace from Etch to
+Org.Apache.Etch.Bindings.Csharp.
+----------------------------------------------------------------------------
+r739426 | sccomer | 2009-01-30 16:08:23 CST
+
+refactored csharp binding runtime namespace from Etch to
+Org.Apache.Etch.Bindings.Csharp.
+----------------------------------------------------------------------------
+r739422 | sccomer | 2009-01-30 16:01:26 CST
+
+refactored csharp binding runtime namespace from Etch to
+Org.Apache.Etch.Bindings.Csharp.
+----------------------------------------------------------------------------
+r739327 | sccomer | 2009-01-30 10:44:10 CST
+
+optimize using (this is a resharper thing like eclipse optimize imports).
+----------------------------------------------------------------------------
+r739325 | sccomer | 2009-01-30 10:36:17 CST
+
+optimize using (this is a resharper thing like eclipse optimize imports).
+----------------------------------------------------------------------------
+r739168 | sccomer | 2009-01-29 22:36:32 CST
+
+remove obsolete packages.
+----------------------------------------------------------------------------
+r739165 | sccomer | 2009-01-29 22:28:58 CST
+
+remove obsolete packages.
+----------------------------------------------------------------------------
+r739164 | sccomer | 2009-01-29 22:27:24 CST
+
+remove obsolete packages.
+----------------------------------------------------------------------------
+r739163 | sccomer | 2009-01-29 22:21:28 CST
+
+finished java package name conversion. some conversion of csharp code.
+----------------------------------------------------------------------------
+r739093 | sccomer | 2009-01-29 18:03:49 CST
+
+remove obsolete packages.
+----------------------------------------------------------------------------
+r739092 | sccomer | 2009-01-29 18:03:06 CST
+
+remove obsolete packages.
+----------------------------------------------------------------------------
+r739091 | sccomer | 2009-01-29 18:02:03 CST
+
+refactor ant task package names.
+----------------------------------------------------------------------------
+r739074 | sccomer | 2009-01-29 17:10:17 CST
+
+optimize java imports.
+
+remove obsolete packages.
+----------------------------------------------------------------------------
+r739033 | sccomer | 2009-01-29 15:50:44 CST
+
+refactored etch tests, java pieces and some csharp.
+----------------------------------------------------------------------------
+r738969 | sccomer | 2009-01-29 13:11:26 CST
+
+remove obsolete packages.
+----------------------------------------------------------------------------
+r738968 | sccomer | 2009-01-29 13:09:33 CST
+
+remove obsolete packages.
+----------------------------------------------------------------------------
+r738967 | sccomer | 2009-01-29 13:08:32 CST
+
+remove obsolete packages.
+----------------------------------------------------------------------------
+r738966 | sccomer | 2009-01-29 13:07:12 CST
+
+remove obsolete packages.
+----------------------------------------------------------------------------
+r738964 | sccomer | 2009-01-29 13:04:33 CST
+
+remove obsolete packages.
+----------------------------------------------------------------------------
+r738963 | sccomer | 2009-01-29 13:01:27 CST
+
+remove obsolete packages.
+----------------------------------------------------------------------------
+r738923 | sccomer | 2009-01-29 10:45:53 CST
+
+removed obsolete packages.
+----------------------------------------------------------------------------
+r738922 | sccomer | 2009-01-29 10:45:29 CST
+
+removed obsolete packages.
+----------------------------------------------------------------------------
+r738921 | sccomer | 2009-01-29 10:45:18 CST
+
+removed obsolete packages.
+----------------------------------------------------------------------------
+r738919 | sccomer | 2009-01-29 10:43:46 CST
+
+removed obsolete files.
+----------------------------------------------------------------------------
+r738915 | sccomer | 2009-01-29 10:37:49 CST
+
+java name space refactorage 1: util, compiler, all binding compilers, and java
+binding runtime.
+----------------------------------------------------------------------------
+r738897 | dixson | 2009-01-29 09:41:20 CST
+
+Reverted to revision 738231
+----------------------------------------------------------------------------
+r738639 | dixson | 2009-01-28 16:02:55 CST
+
+
+* update version string to include "-incubating" and "apache-etch" where it
+  seemed appropriate
+* collapsed all build-related .txt files into single 'BUILD.txt'
+* collapsed readme/reference .txt files into single 'README.txt'
+* added 'NOTICE.txt'
+* added 'LICENSE.txt' and 'NOTICE.txt' to the manifest of all generated .jar
+  files
+----------------------------------------------------------------------------
+r738231 | sccomer | 2009-01-27 14:33:33 CST
+
+updated changelog and added releasenotes.
+----------------------------------------------------------------------------
+
+-------------
 Release 1.0.2
 -------------
 
