@@ -1,0 +1,33 @@
+module etch.bindings.ruby.test
+@Direction(Both) 
+@Timeout(4000)
+service Test
+{
+	const int FOO = 23
+	
+	enum E1 ( A, B, C )
+	void nothing()
+	
+	struct S1( int x, int y, int z )
+	struct S2( S1 a, S1 b, E1 c )
+	
+	int incr( int x )
+	int sum( int[] x )
+	int trans( E1 e, int x )
+	double dist( S1 a, S1 b )
+	int[] fill( int n, int x )
+	
+	exception Excp1( string msg, int code )
+	void blow( string msg, int code ) throws Excp1
+	
+	@Unchecked(true)
+	exception Excp3()
+	@Unchecked(false)
+	exception Excp4()
+	int beets( E1 e ) throws Excp3, Excp4
+	
+	exception X( int g, int h, int i )
+	exception Y( int g, int h, int i )
+	int add( int x, int y ) throws X
+	int sub( int x, int y ) throws X, Y
+}
