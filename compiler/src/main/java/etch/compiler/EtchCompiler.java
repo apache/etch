@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
@@ -219,7 +220,10 @@ public class EtchCompiler
                 String s = u.toString();
                 if (s.startsWith( "file:" ) && s.endsWith( ".jar" ))
                 {
-                    File f = new File( u.toURI() );
+                    final String scheme = "file";
+					final String path = s.substring( scheme.length() + 1 );
+					// multi-arg constructor properly escapes paths
+					File f = new File( new URI( scheme, null, path, null ) );
                     if (f.isFile() && f.canRead())
                     {
                         s = f.getCanonicalPath();
