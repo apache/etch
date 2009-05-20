@@ -28,6 +28,8 @@ clean up some more copyright notices.
 disabled the eclipse compile of the broken Compiler.java for python.
 ----------------------------------------------------------------------------
 r767594 | jdecocq | 2009-04-22 12:25:43 CDT
+
+(contributed the c-binding -scott)
 ----------------------------------------------------------------------------
 r752724 | dixson | 2009-03-11 19:28:42 CDT
 
