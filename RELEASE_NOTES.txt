@@ -1,4 +1,4 @@
-Welcome to Apache Etch 1.0.2. Etch is now incubating at apache.org. You can find
+Welcome to Apache Etch 1.1.0. Etch is incubating at apache.org. You can find
 us here:
 
 Project info:
@@ -32,7 +32,8 @@ One Apache requirement is that the java (and csharp) name spaces look something
 like org.apache.etch... These changes have been made, however, they will break
 existing users of etch. All that need be done for java is to correct the package
 names from etch.* to org.apache.etch.*. For C#, the namespace has changed from
-Etch.* to Org.Apache.Etch.*.
+Etch.* to Org.Apache.Etch.*. In both cases, you will need to re-etch your *.etch
+source files.
 
 There are also some new components in this release, the biggest of which are the
 contribution of the python and c bindings from Cisco. There is also an
@@ -73,8 +74,10 @@ ETCH-57     Sometimes closing a TlsConnection normally will result in an
             IOException with Socket is closed.
 ETCH-59     Listener stack is build 1/2 upside down and strange inhibiting name
             service and other transport filters
+ETCH-69     Compiler throws URISyntaxException if there are spaces in the
+            classpath
 
-Here are the outstanding issues in this release:
+Here are the outstanding bugs in this release:
 
 Key         Summary
 ---         -------
