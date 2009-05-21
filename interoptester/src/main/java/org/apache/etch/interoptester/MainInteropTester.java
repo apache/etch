@@ -1,4 +1,4 @@
-/* $Id: InteropTester.java 2575 2009-01-29 16:53:50Z sccomer $
+/* $Id$
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements. See the NOTICE file
