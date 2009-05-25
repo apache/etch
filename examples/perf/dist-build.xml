@@ -17,16 +17,18 @@
  * specific language governing permissions and limitations      *
  * under the License.                                           *
  -->
-<project name="etch-perf-perf" basedir="." default="build">
-    <description>Perf Perf</description>
+<project name="etch-perf-example" basedir="." default="build">
+    <description>Perf Example</description>
 
     <property name="etch.home" location="${basedir}/../.."/>
     <property name="etch.version" value="@EtchVersion@"/>
-    <property name="etch-java-runtime-name" value="etch-java-runtime-${etch.version}.jar"/>
-
-    <property name="etch-ant-plugin.jar"   location="${etch.home}/lib/etch-ant-plugin-${etch.version}.jar"/>
+    <property name="etch.longversion" value="@EtchLongVersion@"/>
+    <property name="etch-java-runtime-name" value="apache-etch-java-runtime-${etch.longversion}.jar"/>
+	<property name="etch-csharp-runtime.dll" value="ApacheEtchCsharpIncubating.dll"/>
+	
+    <property name="etch-ant-plugin.jar"   location="${etch.home}/lib/apache-etch-ant-plugin-${etch.longversion}.jar"/>
     <property name="etch-java-runtime.jar" location="${etch.home}/lib/${etch-java-runtime-name}"/>
-    <property name="etch.dll"              location="${etch.home}/lib/Etch.dll"/>
+    <property name="etch.dll"              location="${etch.home}/lib/${etch-csharp-runtime.dll}"/>
 
     <property name="src"               location="${basedir}/src"/>
     <property name="src-main-etch"     location="${src}/main/etch"/>
@@ -71,18 +73,17 @@
     <target name="done">
         <echo>
 
-To run java performance example, open a cmd window and run these
-commands:
+To run java perf, open a cmd window and run these commands:
 
 > cd target\bin
-> start java -cp perf.jar etch.examples.perf.MainPerfListener
-> start java -cp perf.jar etch.examples.perf.MainPerfClient
+> start java -cp perf.jar org.apache.etch.examples.perf.MainPerfListener
+> start java -cp perf.jar org.apache.etch.examples.perf.MainPerfClient
 
-To run csharp example:
+To run csharp perf, open a cmd window and run these commands:
 
 > cd target\bin
-> start perfListener.exe
-> start perfClient.exe
+> start PerfListener.exe
+> start PerfClient.exe
 
 You can mix and match the various clients and listeners.
 
@@ -96,9 +97,9 @@ You can mix and match the various clients and listeners.
                 unsafe="false"
                 targetType="exe"
                 incremental="false"
-                mainClass = "etch.examples.perf.MainPerfClient"
-                destFile="${bin}/perfClient.exe">
-            <src dir="${src-main-csharp}/perfClientProj" includes="**/*.cs"/>
+                mainClass = "org.apache.etch.examples.perf.MainPerfClient"
+                destFile="${bin}/PerfClient.exe">
+            <src dir="${src-main-csharp}/PerfClientProj" includes="**/*.cs"/>
             <src dir="${src-main-csharp}/etch.examples.perf" includes="**/*.cs"/>
             <src dir="${gensrc-main-etch-csharp}" includes="**/*.cs"/>
             <reference file="${etch.dll}"/>
@@ -110,9 +111,9 @@ You can mix and match the various clients and listeners.
                 unsafe="false"
                 targetType="exe"
                 incremental="false"
-                mainClass = "etch.examples.perf.MainPerfListener"
-                destFile="${bin}/perfListener.exe">
-            <src dir="${src-main-csharp}/perfListenerProj" includes="**/*.cs"/>
+                mainClass = "org.apache.etch.examples.perf.MainPerfListener"
+                destFile="${bin}/PerfListener.exe">
+            <src dir="${src-main-csharp}/PerfListenerProj" includes="**/*.cs"/>
             <src dir="${src-main-csharp}/etch.examples.perf" includes="**/*.cs"/>
             <src dir="${gensrc-main-etch-csharp}" includes="**/*.cs"/>
             <reference file="${etch.dll}"/>

@@ -84,13 +84,14 @@ unix:
   Etch version is Apache Etch 1.1.0-incubating (some build info)
 
 The lib directory contains the various jar files, zipped sources, and a C# dll
-with associated symbols:
+with associated symbols and source:
 
-  Etch.dll
-  Etch.pdb
+  ApacheEtchCsharpIncubating.dll
+  ApacheEtchCsharpIncubating.pdb
+  ApacheEtchCsharpIncubatingSrc.zip
   ...
-  etch-java-runtime-1.1.0-src.zip
-  etch-java-runtime-1.1.0.jar
+  apache-etch-java-runtime-1.1.0-incubating-src.zip
+  apache-etch-java-runtime-1.1.0-incubating.jar
   ...
 
 The main items of interest, shown above, are the language binding runtimes,
@@ -99,11 +100,12 @@ which you need to link with your projects.
 For java you need to put the etch java runtime jar on the classpath of your
 projects:
 
-  etch-java-runtime-1.1.0.jar
+  apache-etch-java-runtime-1.1.0-incubating.jar
 
-There is source code to go with it in etch-java-runtime-1.1.0-src.zip.
+There is source code to go with it in apache-etch-java-runtime-1.1.0-incubating-src.zip.
 
-The C# (.NET 2.0 and later) Etch.dll should be added to any C# projects.
+The C# (.NET 2.0 and later) ApacheEtchCsharpIncubating.dll should be added to
+any C# projects.
 
 There is an ant plugin which you can use with ant 1.7.0 or later to invoke the
 compiler as a task. It is documented on the wiki referenced above.

@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
- <!--
+<!--
  * Licensed to the Apache Software Foundation (ASF) under one   *
  * or more contributor license agreements.  See the NOTICE file *
  * distributed with this work for additional information        *
@@ -26,8 +26,8 @@
     <ProjectGuid>{0E518F2A-3016-4C2F-A21B-9BD52B2DC846}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Etch</RootNamespace>
-    <AssemblyName>Etch</AssemblyName>
+    <RootNamespace>Org.Apache.Etch</RootNamespace>
+    <AssemblyName>ApacheEtchCsharpIncubating</AssemblyName>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>etch.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>

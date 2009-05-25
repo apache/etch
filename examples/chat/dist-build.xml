@@ -22,11 +22,13 @@
 
     <property name="etch.home" location="${basedir}/../.."/>
     <property name="etch.version" value="@EtchVersion@"/>
-    <property name="etch-java-runtime-name" value="etch-java-runtime-${etch.version}.jar"/>
-
-    <property name="etch-ant-plugin.jar"   location="${etch.home}/lib/etch-ant-plugin-${etch.version}.jar"/>
+    <property name="etch.longversion" value="@EtchLongVersion@"/>
+    <property name="etch-java-runtime-name" value="apache-etch-java-runtime-${etch.longversion}.jar"/>
+	<property name="etch-csharp-runtime.dll" value="ApacheEtchCsharpIncubating.dll"/>
+	
+    <property name="etch-ant-plugin.jar"   location="${etch.home}/lib/apache-etch-ant-plugin-${etch.longversion}.jar"/>
     <property name="etch-java-runtime.jar" location="${etch.home}/lib/${etch-java-runtime-name}"/>
-    <property name="etch.dll"              location="${etch.home}/lib/Etch.dll"/>
+    <property name="etch.dll"              location="${etch.home}/lib/${etch-csharp-runtime.dll}"/>
 
     <property name="src"               location="${basedir}/src"/>
     <property name="src-main-etch"     location="${src}/main/etch"/>
@@ -74,9 +76,9 @@
 To run java chat, open a cmd window and run these commands:
 
 > cd target\bin
-> start java -cp chat.jar etch.examples.chat.MainChatListener
-> start java -cp chat.jar etch.examples.chat.MainChatClient
-> start java -cp chat.jar etch.examples.chat.MainChatClient
+> start java -cp chat.jar org.apache.etch.examples.chat.MainChatListener
+> start java -cp chat.jar org.apache.etch.examples.chat.MainChatClient
+> start java -cp chat.jar org.apache.etch.examples.chat.MainChatClient
 
 Two chat clients will be started; there is a help command;
 login as a different user in each with any password; they
@@ -101,7 +103,7 @@ You can mix and match the various clients and listeners.
                 unsafe="false"
                 targetType="exe"
                 incremental="false"
-                mainClass = "etch.examples.chat.MainChatClient"
+                mainClass = "org.apache.etch.examples.chat.MainChatClient"
                 destFile="${bin}/ChatClient.exe">
             <src dir="${src-main-csharp}/ChatClientProj" includes="**/*.cs"/>
             <src dir="${src-main-csharp}/etch.examples.chat" includes="**/*.cs"/>
@@ -115,7 +117,7 @@ You can mix and match the various clients and listeners.
                 unsafe="false"
                 targetType="exe"
                 incremental="false"
-                mainClass = "etch.examples.chat.MainChatListener"
+                mainClass = "org.apache.etch.examples.chat.MainChatListener"
                 destFile="${bin}/ChatListener.exe">
             <src dir="${src-main-csharp}/ChatListenerProj" includes="**/*.cs"/>
             <src dir="${src-main-csharp}/etch.examples.chat" includes="**/*.cs"/>

@@ -55,6 +55,13 @@
     <target name="generate-sources" >
         <!-- Generate version info -->
         <update-tokens filename="${src}/main/csharp/Properties/AssemblyInfo.cs" />
+    	
+    	<!-- package up etch-java-runtime src -->
+        <zip destfile="${Etch.dist}/lib/${etch-csharp-runtime-src.zip}" >
+            <fileset dir="${src}/main/csharp" >
+                <include name="Org.Apache.Etch.Bindings.Csharp/**/*.cs" />
+            </fileset>
+        </zip>
     </target>
 
     <target name="build-main-with-mono" if="USE.mono" >
@@ -78,15 +85,15 @@
 
         <copy todir="${Etch.clover-dist}/lib" >
             <fileset dir="${src}/main/csharp/bin/${Etch.build.target}">
-                <include name="*.pdb" />
-                <include name="*.dll" />
+                <include name="${etch-csharp-runtime.pdb}" />
+                <include name="${etch-csharp-runtime.dll}" />
             </fileset>
         </copy>
 
         <copy todir="${Etch.dist}/lib" >
             <fileset dir="${src}/main/csharp/bin/${Etch.build.target}">
-                <include name="*.pdb" />
-                <include name="*.dll" />
+                <include name="${etch-csharp-runtime.pdb}" />
+                <include name="${etch-csharp-runtime.dll}" />
             </fileset>
         </copy>
     </target>

@@ -24,7 +24,7 @@ set ETCH_HOME=%~dp0..
 rem Make enough of a classpath to get to first base
 
 set ETCH_CP=
-for %%i in ("%ETCH_HOME%\lib\etch-compiler-*.jar") do set ETCH_CP=%ETCH_CP%;%%i
+for %%i in ("%ETCH_HOME%\lib\apache-etch-compiler-*-incubating.jar") do set ETCH_CP=%ETCH_CP%;%%i
 
 rem add clover to classpath if defined and exists
 

@@ -26,9 +26,9 @@ setlocal
 rem Define the etch home directory and artifact particulars
 
 set ETCH_HOME=%~dp0..
-set GROUP=etch.etch
-set ARTIFACTS=etch-ant-plugin, etch-compiler, etch-csharp-compiler, etch-java-compiler, etch-java-runtime, etch-xml-compiler
-set VERSION=@EtchVersion@
+set GROUP=org.apache.etch
+set ARTIFACTS=apache-etch-ant-plugin, apache-etch-compiler, apache-etch-csharp-compiler, apache-etch-java-compiler, apache-etch-java-runtime, apache-etch-xml-compiler
+set VERSION=@EtchVersion@-incubating
 
 if "%M2_HOME%" == "" goto try_maven_home
 set MVN=%M2_HOME%\bin\mvn.bat
@@ -46,4 +46,4 @@ set MVN=mvn.bat
 
 :run_mvn
 FOR %%A IN (%ARTIFACTS%) DO CALL "%MVN%" install:install-file "-Dfile=%ETCH_HOME%\lib\%%A-%VERSION%.jar" -DgroupId=%GROUP% -DartifactId=%%A -Dversion=%VERSION% -Dpackaging=jar
-FOR %%A IN (%ARTIFACTS%) DO CALL "%MVN%" install:install-file "-Dfile=%ETCH_HOME%\lib\%%A-%VERSION%-src.zip" -DgroupId=%GROUP% -DartifactId=%%A -Dversion=%VERSION% -Dpackaging=jar -Dclassifier=sources
+FOR %%A IN (%ARTIFACTS%) DO CALL "%MVN%" install:install-file "-Dfile=%ETCH_HOME%\lib\%%A-%VERSION%-src.zip" -DgroupId=%GROUP% -DartifactId=%%A -Dversion=%VERSION% -Dpackaging=zip -Dclassifier=src

@@ -43,6 +43,10 @@
     <condition property="etch.version" value="${Etch.version}" >
         <not><isset property="etch.version" /></not>
     </condition>
+	
+    <condition property="etch.longversion" value="${Etch.longversion}" >
+        <not><isset property="etch.longversion" /></not>
+    </condition>
 
     <!-- Csharp Support -->
     <condition property="USE.dotnet" >
@@ -70,7 +74,7 @@
     <taskdef
         onerror="report"
         resource="org/apache/etch/tools/ant/etch.xml"
-        classpath="${etch.home}/lib/etch-ant-plugin-${etch.version}.jar" />
+        classpath="${etch.home}/lib/apache-etch-ant-plugin-${etch.longversion}.jar" />
 
     <!-- import dotnet task -->
     <condition property="ant.dotnet.jar" value="ant-dotnet-1.0.jar" >
@@ -141,7 +145,7 @@
     </target>
 
     <property name="etch-java-runtime-name"
-        value="etch-java-runtime-${etch.version}.jar" />
+        value="apache-etch-java-runtime-${etch.longversion}.jar" />
 
     <property name="Etch.dependency.java.runtime"
         location="${etch.home}/lib/${etch-java-runtime-name}" />

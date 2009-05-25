@@ -22,11 +22,13 @@
 
     <property name="etch.home" location="${basedir}/../.."/>
     <property name="etch.version" value="@EtchVersion@"/>
-    <property name="etch-java-runtime-name" value="etch-java-runtime-${etch.version}.jar"/>
-
-    <property name="etch-ant-plugin.jar"   location="${etch.home}/lib/etch-ant-plugin-${etch.version}.jar"/>
+    <property name="etch.longversion" value="@EtchLongVersion@"/>
+    <property name="etch-java-runtime-name" value="apache-etch-java-runtime-${etch.longversion}.jar"/>
+	<property name="etch-csharp-runtime.dll" value="ApacheEtchCsharpIncubating.dll"/>
+	
+    <property name="etch-ant-plugin.jar"   location="${etch.home}/lib/apache-etch-ant-plugin-${etch.longversion}.jar"/>
     <property name="etch-java-runtime.jar" location="${etch.home}/lib/${etch-java-runtime-name}"/>
-    <property name="etch.dll"              location="${etch.home}/lib/Etch.dll"/>
+    <property name="etch.dll"              location="${etch.home}/lib/${etch-csharp-runtime.dll}"/>
 
     <property name="src"               location="${basedir}/src"/>
     <property name="src-main-etch"     location="${src}/main/etch"/>
@@ -71,14 +73,13 @@
     <target name="done">
         <echo>
 
-To run java distributed map, open a cmd window and run these
-commands:
+To run java distributed map, open a cmd window and run these commands:
 
 > cd target\bin
-> start java -cp distmap.jar etch.examples.distmap.MainDistributedHashTableListener
-> start java -cp distmap.jar etch.examples.distmap.MainDistributedHashTableClient
+> start java -cp distmap.jar org.apache.etch.examples.distmap.MainDistributedHashTableListener
+> start java -cp distmap.jar org.apache.etch.examples.distmap.MainDistributedHashTableClient
 
-To run csharp distributed map:
+To run csharp distributed map, open a cmd window and run these commands:
 
 > cd target\bin
 > start DistMapListener.exe
@@ -96,7 +97,7 @@ You can mix and match the various clients and listeners.
                 unsafe="false"
                 targetType="exe"
                 incremental="false"
-                mainClass = "etch.examples.distmap.MainDistributedHashTableClient"
+                mainClass = "org.apache.etch.examples.distmap.MainDistributedHashTableClient"
                 destFile="${bin}/DistMapClient.exe">
             <src dir="${src-main-csharp}/DistMapClientProj" includes="**/*.cs"/>
             <src dir="${src-main-csharp}/etch.examples.distmap" includes="**/*.cs"/>
@@ -110,7 +111,7 @@ You can mix and match the various clients and listeners.
                 unsafe="false"
                 targetType="exe"
                 incremental="false"
-                mainClass = "etch.examples.distmap.MainDistributedHashTableListener"
+                mainClass = "org.apache.etch.examples.distmap.MainDistributedHashTableListener"
                 destFile="${bin}/DistMapListener.exe">
             <src dir="${src-main-csharp}/DistMapListenerProj" includes="**/*.cs"/>
             <src dir="${src-main-csharp}/etch.examples.distmap" includes="**/*.cs"/>

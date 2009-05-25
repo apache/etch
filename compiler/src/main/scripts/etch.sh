@@ -36,7 +36,7 @@ export ETCH_HOME=`dirname "$0"`/..
 
 # Compute classpath for compiler
 ETCH_CP=
-for x in `cd "${ETCH_HOME}"; echo lib/etch-compiler-*.jar` ; do
+for x in `cd "${ETCH_HOME}"; echo lib/apache-etch-compiler-*-incubating.jar` ; do
     ETCH_CP="${ETCH_CP}:${ETCH_HOME}/$x"
 done
 

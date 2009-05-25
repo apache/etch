@@ -22,11 +22,13 @@
 
     <property name="etch.home" location="${basedir}/../.."/>
     <property name="etch.version" value="@EtchVersion@"/>
-    <property name="etch-java-runtime-name" value="etch-java-runtime-${etch.version}.jar"/>
-
-    <property name="etch-ant-plugin.jar"   location="${etch.home}/lib/etch-ant-plugin-${etch.version}.jar"/>
+    <property name="etch.longversion" value="@EtchLongVersion@"/>
+    <property name="etch-java-runtime-name" value="apache-etch-java-runtime-${etch.longversion}.jar"/>
+	<property name="etch-csharp-runtime.dll" value="ApacheEtchCsharpIncubating.dll"/>
+	
+    <property name="etch-ant-plugin.jar"   location="${etch.home}/lib/apache-etch-ant-plugin-${etch.longversion}.jar"/>
     <property name="etch-java-runtime.jar" location="${etch.home}/lib/${etch-java-runtime-name}"/>
-    <property name="etch.dll"              location="${etch.home}/lib/Etch.dll"/>
+    <property name="etch.dll"              location="${etch.home}/lib/${etch-csharp-runtime.dll}"/>
 
     <property name="src"               location="${basedir}/src"/>
     <property name="src-main-etch"     location="${src}/main/etch"/>
@@ -71,18 +73,17 @@
     <target name="done">
         <echo>
 
-To run java example example, open a cmd window and run these
-commands:
+To run java example, open a cmd window and run these commands:
 
 > cd target\bin
-> start java -cp example.jar etch.examples.example.MainExmapleListener
-> start java -cp example.jar etch.examples.example.MainExampleClient
+> start java -cp example.jar org.apache.etch.examples.example.MainExampleListener
+> start java -cp example.jar org.apache.etch.examples.example.MainExampleClient
 
-To run csharp example:
+To run csharp example, open a cmd window and run these commands:
 
 > cd target\bin
-> start exampleListener.exe
-> start exampleClient.exe
+> start ExampleListener.exe
+> start ExampleClient.exe
 
 Now modify the example to implement the service however you like.
 
@@ -98,9 +99,9 @@ You can mix and match the various clients and listeners.
                 unsafe="false"
                 targetType="exe"
                 incremental="false"
-                mainClass = "etch.examples.example.MainExampleClient"
-                destFile="${bin}/exampleClient.exe">
-            <src dir="${src-main-csharp}/exampleClientProj" includes="**/*.cs"/>
+                mainClass = "org.apache.etch.examples.example.MainExampleClient"
+                destFile="${bin}/ExampleClient.exe">
+            <src dir="${src-main-csharp}/ExampleClientProj" includes="**/*.cs"/>
             <src dir="${src-main-csharp}/etch.examples.example" includes="**/*.cs"/>
             <src dir="${gensrc-main-etch-csharp}" includes="**/*.cs"/>
             <reference file="${etch.dll}"/>
@@ -112,9 +113,9 @@ You can mix and match the various clients and listeners.
                 unsafe="false"
                 targetType="exe"
                 incremental="false"
-                mainClass = "etch.examples.example.MainExampleListener"
-                destFile="${bin}/exampleListener.exe">
-            <src dir="${src-main-csharp}/exampleListenerProj" includes="**/*.cs"/>
+                mainClass = "org.apache.etch.examples.example.MainExampleListener"
+                destFile="${bin}/ExampleListener.exe">
+            <src dir="${src-main-csharp}/ExampleListenerProj" includes="**/*.cs"/>
             <src dir="${src-main-csharp}/etch.examples.example" includes="**/*.cs"/>
             <src dir="${gensrc-main-etch-csharp}" includes="**/*.cs"/>
             <reference file="${etch.dll}"/>
