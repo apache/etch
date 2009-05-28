@@ -76,6 +76,11 @@ ETCH-59     Listener stack is build 1/2 upside down and strange inhibiting name
             service and other transport filters
 ETCH-69     Compiler throws URISyntaxException if there are spaces in the
             classpath
+ETCH-70     Rename jar file build products to include incubating in the name.
+ETCH-71     Repair license header in c binding.
+ETCH-72     Repair license header in interop tester.
+ETCH-73     Repair license header in tests.
+ETCH-74     Repair license header in scripts.
 
 Here are the outstanding bugs in this release:
 

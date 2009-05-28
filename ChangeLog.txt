@@ -3,6 +3,50 @@ Release 1.1.0
 -------------
 
 ----------------------------------------------------------------------------
+r779752 | sccomer | 2009-05-28 14:59:02 CDT
+
+fix for ETCH-71: repair license header in c binding
+----------------------------------------------------------------------------
+r779693 | sccomer | 2009-05-28 12:42:09 CDT
+
+fix for ETCH-71: repair license header in c binding.
+----------------------------------------------------------------------------
+r779588 | sccomer | 2009-05-28 08:02:14 CDT
+
+fix for ETCH-74: repair license header in scripts
+----------------------------------------------------------------------------
+r779291 | sccomer | 2009-05-27 14:59:35 CDT
+
+fix for ETCH-73: repair license header in tests
+----------------------------------------------------------------------------
+r779260 | sccomer | 2009-05-27 12:56:47 CDT
+
+fix for ETCH-72: repair license header in interop tester
+----------------------------------------------------------------------------
+r778422 | sccomer | 2009-05-25 08:52:00 CDT
+
+cleaning up build.
+
+fix maven installation script.
+
+ETCH-70: include incubating in the artifact version.
+----------------------------------------------------------------------------
+r777138 | sccomer | 2009-05-21 09:44:35 CDT
+
+cleanup svn properties.
+----------------------------------------------------------------------------
+r776747 | sccomer | 2009-05-20 10:53:47 CDT
+
+correcting svn properties and header comment.
+----------------------------------------------------------------------------
+r776736 | sccomer | 2009-05-20 10:34:51 CDT
+
+added detail noting c-binding contribution.
+----------------------------------------------------------------------------
+r776733 | sccomer | 2009-05-20 10:30:30 CDT
+
+updated release notes, change log, and top readme.
+----------------------------------------------------------------------------
 r772416 | sccomer | 2009-05-06 15:31:38 CDT
 
 fix for ETCH-69: Compiler throws URISyntaxException if there are spaces in the classpath
