@@ -209,4 +209,13 @@ public class StringUtil
 		}
 		return sb.toString();
 	}
+
+	/**
+	 * @param s
+	 * @return true if s is null or empty.
+	 */
+	public static boolean isEmpty( String s )
+	{
+		return s == null || s.length() == 0;
+	}
 }

@@ -32,6 +32,7 @@ import org.apache.etch.services.ns.support.DefaultNSLib;
 import org.apache.etch.util.AlarmListener;
 import org.apache.etch.util.AlarmManager;
 import org.apache.etch.util.Resources;
+import org.apache.etch.util.StringUtil;
 import org.apache.etch.util.URL;
 import org.apache.etch.util.core.Who;
 import org.apache.etch.util.core.io.Session;
@@ -63,10 +64,10 @@ public class EtchTransportFactory extends TransportFactory
 		URL u = new URL( uri );
 		
 		// Extract uri for the listener to listen on 
-		if ( !u.hasTerm( LISTENER_URI ) || (listenerUri = u.getTerm( LISTENER_URI )).isEmpty() )
+		if ( !u.hasTerm( LISTENER_URI ) || StringUtil.isEmpty( listenerUri = u.getTerm( LISTENER_URI ) ) )
 			throw new IllegalArgumentException( "listener uri not configured properly within the etch uri" );
 		
-		if ( !u.hasTerm( LISTENER_REGISTERED_URI ) || u.getTerm( LISTENER_REGISTERED_URI).isEmpty() )
+		if ( !u.hasTerm( LISTENER_REGISTERED_URI ) || StringUtil.isEmpty( u.getTerm( LISTENER_REGISTERED_URI) ) )
 			throw new IllegalArgumentException( "listener registered uri " +
 			"not configured properly within the etch uri" );
 		
@@ -106,7 +107,7 @@ public class EtchTransportFactory extends TransportFactory
 			
 			URL u = new URL( uri );
 
-			if ( u.getUri() == null || u.getUri().isEmpty() )
+			if ( StringUtil.isEmpty( u.getUri() ) )
 				throw new IllegalArgumentException( "source uri == null" );
 
 			if ( u.hasTerm( RECONNECT_TERM ) )

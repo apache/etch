@@ -31,6 +31,7 @@ import org.apache.etch.services.ns.RemoteNameServiceServer;
 import org.apache.etch.services.ns.NameService.Entry;
 import org.apache.etch.util.AlarmListener;
 import org.apache.etch.util.AlarmManager;
+import org.apache.etch.util.StringUtil;
 import org.apache.etch.util.URL;
 import org.apache.etch.util.core.io.Session;
 
@@ -42,8 +43,10 @@ public class DefaultNSLib extends NSLib
 {
 	private final static int INITIAL_ALARM_DELAY = 1;
 	
-	// Collection of <session, record> entries to keep track of all listeners connected 
-	// to this instance of NSLib
+	/**
+	 * Collection of <session, record> entries to keep track of all listeners
+	 * connected to this instance of NSLib
+	 */
 	public Map<Session, Record> recordsBySession = Collections.synchronizedMap( 
 			new HashMap<Session, Record>() );
 	
@@ -144,7 +147,7 @@ public class DefaultNSLib extends NSLib
 		
 		public Record( String nsUri, String sourceUri, Map<?,?> qualities, String targetUri, int ttl )
 		{
-			this.nsUri = ( nsUri == null || nsUri.isEmpty() )? defaultNsUri : nsUri;
+			this.nsUri = StringUtil.isEmpty( nsUri ) ? defaultNsUri : nsUri;
 			this.sourceUri = sourceUri;
 			this.qualities = qualities;
 			this.targetUri = targetUri;
@@ -173,8 +176,8 @@ public class DefaultNSLib extends NSLib
 		URL u = new URL( uri );
 
 		String sourceUri = u.getUri();
-		if ( sourceUri == null || sourceUri.isEmpty() )
-			throw new IllegalArgumentException( "sourceUri == null" );
+		if ( StringUtil.isEmpty( sourceUri ) )
+			throw new IllegalArgumentException( "sourceUri is empty" );
 		
 		if ( ! u.hasTerm( EtchTransportFactory.LISTENER_REGISTERED_URI ) )
 			throw new IllegalArgumentException( "listener registered uri " +
@@ -187,7 +190,7 @@ public class DefaultNSLib extends NSLib
 		if ( u.hasTerm( EtchTransportFactory.NS_URI ) )
 			nsUri = u.getTerm( EtchTransportFactory.NS_URI );
 		
-		if ( nsUri == null || nsUri.isEmpty() )
+		if ( StringUtil.isEmpty( nsUri ) )
 			nsUri = defaultNsUri;
 		
 		Record record = new Record( nsUri, sourceUri, qualities, targetUri, ttl );
@@ -246,13 +249,13 @@ public class DefaultNSLib extends NSLib
 		URL u = new URL( uri );
 		
 		String sourceUri = u.getUri();
-		if ( sourceUri == null || sourceUri.isEmpty() )
-			throw new IllegalArgumentException( "sourceUri == null" );
+		if ( StringUtil.isEmpty( sourceUri ) )
+			throw new IllegalArgumentException( "sourceUri is empty" );
 		
 		String nsUri = null;
 		if ( u.hasTerm( EtchTransportFactory.NS_URI ) )
 			nsUri = u.getTerm( EtchTransportFactory.NS_URI );
-		if ( nsUri == null || nsUri.isEmpty() )
+		if ( StringUtil.isEmpty( nsUri ) )
 			nsUri = getDefaultNsUri();
 		
 		// remove alarm for that session/record
@@ -296,11 +299,11 @@ public class DefaultNSLib extends NSLib
 		
 		String sourceUri = u.getUri();
 		
-		if ( nsUri == null || nsUri.isEmpty() )
+		if ( StringUtil.isEmpty( nsUri ) )
 			nsUri = getDefaultNsUri();
 		
-		if ( sourceUri == null || sourceUri.isEmpty() )
-			throw new IllegalArgumentException( "sourceUri == null" );
+		if ( StringUtil.isEmpty( sourceUri ) )
+			throw new IllegalArgumentException( "sourceUri is empty" );
 		
 		Entry result = null;
 		
