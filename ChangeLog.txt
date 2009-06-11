@@ -3,6 +3,16 @@ Release 1.1.0
 -------------
 
 ----------------------------------------------------------------------------
+r783606 | manojganesan | 2009-06-10 21:16:08 CDT
+
+Fix for ETCH-76: Build problems if Etch source is downloaded to a path with spaces
+
+Fix for ETCH-77: Incompatibility in the READMEs for the bundled examples
+----------------------------------------------------------------------------
+r779755 | sccomer | 2009-05-28 15:07:25 CDT
+
+bring up to date.
+----------------------------------------------------------------------------
 r779752 | sccomer | 2009-05-28 14:59:02 CDT
 
 fix for ETCH-71: repair license header in c binding

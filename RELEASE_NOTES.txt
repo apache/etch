@@ -50,37 +50,41 @@ Here are the issues resolved in this release:
 
 Key         Summary
 ---         -------
-ETCH-22     Change Java (and C#) package names to org.apache.etch
-ETCH-32     import the c binding
-ETCH-35     import the python binding
-ETCH-38     import interoperability tester
-ETCH-44     put header comments in order per apache standard
-ETCH-49     merge changes from 1.0.2 branch to trunk
-ETCH-50     ETCH-49> merge changes from 1.0.2 branch to trunk - 738635 update
-            version string
-ETCH-51     ETCH-49> merge changes from 1.0.2 branch to trunk - 738652 make
-            examples more tolerant
-ETCH-52     ETCH-49> merge changes from 1.0.2 branch to trunk - 739277 update
-            eclipse build
-ETCH-53     ETCH-49> merge changes from 1.0.2 branch to trunk - 739282 updates
-            to unit tests
-ETCH-55     ETCH-49> merge changes from 1.0.2 branch to trunk - 739287 fix for
-            selector under linux
-ETCH-54     TransportFactory.newTransport returns stack topped by DeliveryService
-            which makes it hard to implement meta transports
-ETCH-56     UnwantedMessage.ToString method attempts to format using the java
-            style formatting instead of csharp style
-ETCH-57     Sometimes closing a TlsConnection normally will result in an
-            IOException with Socket is closed.
-ETCH-59     Listener stack is build 1/2 upside down and strange inhibiting name
-            service and other transport filters
-ETCH-69     Compiler throws URISyntaxException if there are spaces in the
-            classpath
-ETCH-70     Rename jar file build products to include incubating in the name.
-ETCH-71     Repair license header in c binding.
-ETCH-72     Repair license header in interop tester.
-ETCH-73     Repair license header in tests.
-ETCH-74     Repair license header in scripts.
+** Bug
+    * [ETCH-56] - UnwantedMessage.ToString method attempts to format using the
+                  java style formatting instead of csharp style
+    * [ETCH-57] - Sometimes closing a TlsConnection normally will result in an
+                  IOException with Socket is closed.
+    * [ETCH-69] - Compiler throws URISyntaxException if there are spaces in the
+                  classpath
+    * [ETCH-76] - Build problems if Etch source is downloaded to a path with
+                  spaces
+    * [ETCH-77] - Incompatibility in the READMEs for the bundled examples
+
+** Improvement
+    * [ETCH-54] - TransportFactory.newTransport returns stack topped by
+                  DeliveryService which makes it hard to implement meta transports
+    * [ETCH-59] - Listener stack is built 1/2 upside down and strange inhibiting
+                  name service and other transport filters
+    * [ETCH-63] - Change maven groupId to "org.apache.etch" from "etch.etch"
+
+** New Feature
+    * [ETCH-15] - design and implement a framework for interoperability testing,
+                  plus a simple demonstration test
+
+** Task
+    * [ETCH-22] - Change Java (and C#) package names to org.apache.etch
+    * [ETCH-32] - import the c binding
+    * [ETCH-35] - import the python binding
+    * [ETCH-38] - import interoperability tester
+    * [ETCH-44] - put header comments in order per apache standard
+    * [ETCH-49] - merge changes from 1.0.2 branch to trunk
+    * [ETCH-70] - Rename jar file build products to include incubating in the
+                  name.
+    * [ETCH-71] - repair license header in c binding
+    * [ETCH-72] - repair license header in interop tester
+    * [ETCH-73] - repair license header in tests
+    * [ETCH-74] - repair license header in scripts
 
 Here are the outstanding bugs in this release:
 
