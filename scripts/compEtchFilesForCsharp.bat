@@ -28,45 +28,45 @@
 @set x=%CD%\
 @pushd %testsdir%
 
-@call %x%scripts\etch-eclipse.bat %q% %b% %n% %d% %i%        Async.etch
-@call %x%scripts\etch-eclipse.bat %q% %b% %n% %d% %i%        Bar.etch
-@call %x%scripts\etch-eclipse.bat %q% %b% %n% %d% %i%        Baz.etch
-@call %x%scripts\etch-eclipse.bat %q% %b% %n% %d% %i%        BigIdl.etch
-@call %x%scripts\etch-eclipse.bat %q% %b% %n% %d% %i%        Closing.etch
-@call %x%scripts\etch-eclipse.bat %q% %b% %n% %d% %i%        Cuae.etch
-@call %x%scripts\etch-eclipse.bat %q% %b% %n% %d% %i%        Foo.etch
-@call %x%scripts\etch-eclipse.bat %q% %b% %n% %d% %i%        Inheritance.etch
-@call %x%scripts\etch-eclipse.bat %q% %b% %n% %d% %i% %walf% Test1.etch
-@call %x%scripts\etch-eclipse.bat %q% %b% %n% %d% %i%        Test2.etch
-@call %x%scripts\etch-eclipse.bat %q% %b% %n% %d% %i%        Test3.etch
-@call %x%scripts\etch-eclipse.bat %q% %b% %n% %d% %i%        Test4.etch
+@call "%x%scripts\etch-eclipse.bat" %q% %b% %n% %d% %i%        Async.etch
+@call "%x%scripts\etch-eclipse.bat" %q% %b% %n% %d% %i%        Bar.etch
+@call "%x%scripts\etch-eclipse.bat" %q% %b% %n% %d% %i%        Baz.etch
+@call "%x%scripts\etch-eclipse.bat" %q% %b% %n% %d% %i%        BigIdl.etch
+@call "%x%scripts\etch-eclipse.bat" %q% %b% %n% %d% %i%        Closing.etch
+@call "%x%scripts\etch-eclipse.bat" %q% %b% %n% %d% %i%        Cuae.etch
+@call "%x%scripts\etch-eclipse.bat" %q% %b% %n% %d% %i%        Foo.etch
+@call "%x%scripts\etch-eclipse.bat" %q% %b% %n% %d% %i%        Inheritance.etch
+@call "%x%scripts\etch-eclipse.bat" %q% %b% %n% %d% %i% %walf% Test1.etch
+@call "%x%scripts\etch-eclipse.bat" %q% %b% %n% %d% %i%        Test2.etch
+@call "%x%scripts\etch-eclipse.bat" %q% %b% %n% %d% %i%        Test3.etch
+@call "%x%scripts\etch-eclipse.bat" %q% %b% %n% %d% %i%        Test4.etch
 @rem *** Test5.etch is a negative test ***
-@call %x%scripts\etch-eclipse.bat %q% %b% %n% %d% %i%        Test6.etch
-@call %x%scripts\etch-eclipse.bat %q% %b% %n% %d% %i% %walf% TestIncludes.etch
+@call "%x%scripts\etch-eclipse.bat" %q% %b% %n% %d% %i%        Test6.etch
+@call "%x%scripts\etch-eclipse.bat" %q% %b% %n% %d% %i% %walf% TestIncludes.etch
 @rem *** TestReservedWords.etch is a negative test ***
-@call %x%scripts\etch-eclipse.bat %q% %b% %n% %d% %i%        Types.etch
+@call "%x%scripts\etch-eclipse.bat" %q% %b% %n% %d% %i%        Types.etch
 
 @popd
 @pushd %examplesdir%
 
 @pushd chat\src\main\etch
-@call %x%scripts\etch-eclipse.bat %q% %b% %n% %d% %i%        Chat.etch
+@call "%x%scripts\etch-eclipse.bat" %q% %b% %n% %d% %i%        Chat.etch
 @popd
 
 @pushd distmap\src\main\etch
-@call %x%scripts\etch-eclipse.bat %q% %b% %n% %d% %i%        DistributedHashTable.etch
+@call "%x%scripts\etch-eclipse.bat" %q% %b% %n% %d% %i%        DistributedHashTable.etch
 @popd
 
 @pushd example\src\main\etch
-@call %x%scripts\etch-eclipse.bat %q% %b% %n% %d% %i%        Example.etch
+@call "%x%scripts\etch-eclipse.bat" %q% %b% %n% %d% %i%        Example.etch
 @popd
 
 @pushd perf\src\main\etch
-@call %x%scripts\etch-eclipse.bat %q% %b% %n% %d% %i%        Perf.etch
+@call "%x%scripts\etch-eclipse.bat" %q% %b% %n% %d% %i%        Perf.etch
 @popd
 
 @popd
 
 @pushd interoptester\example\src\main\etch
-@call %x%scripts\etch-eclipse.bat %q% %b% %n% %d% %i%        IOT.etch
+@call "%x%scripts\etch-eclipse.bat" %q% %b% %n% %d% %i%        IOT.etch
 @popd

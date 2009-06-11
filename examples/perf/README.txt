@@ -16,8 +16,8 @@ To run java performance example, open a cmd window and run these
 commands:
 
 > cd target\bin
-> start java -cp perf.jar etch.examples.perf.MainPerfListener
-> start java -cp perf.jar etch.examples.perf.MainPerfClient
+> start java -cp perf.jar org.apache.etch.examples.perf.MainPerfListener
+> start java -cp perf.jar org.apache.etch.examples.perf.MainPerfClient
 
 To run csharp example:
 

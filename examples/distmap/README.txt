@@ -16,8 +16,8 @@ To run java distributed map, open a cmd window and run these
 commands:
 
 > cd target\bin
-> start java -cp distmap.jar etch.examples.distmap.MainDistributedHashTableListener
-> start java -cp distmap.jar etch.examples.distmap.MainDistributedHashTableClient
+> start java -cp distmap.jar org.apache.etch.examples.distmap.MainDistributedHashTableListener
+> start java -cp distmap.jar org.apache.etch.examples.distmap.MainDistributedHashTableClient
 
 To run csharp distributed map:
 

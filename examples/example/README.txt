@@ -16,8 +16,8 @@ To run java example example, open a cmd window and run these
 commands:
 
 > cd target\bin
-> start java -cp example.jar etch.examples.example.MainExmapleListener
-> start java -cp example.jar etch.examples.example.MainExampleClient
+> start java -cp example.jar org.apache.etch.examples.example.MainExampleListener
+> start java -cp example.jar org.apache.etch.examples.example.MainExampleClient
 
 To run csharp example:
 

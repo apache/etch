@@ -15,9 +15,9 @@ targets to build only java or only csharp.
 To run java chat, open a cmd window and run these commands:
 
 > cd target\bin
-> start java -cp chat.jar etch.examples.chat.MainChatListener
-> start java -cp chat.jar etch.examples.chat.MainChatClient
-> start java -cp chat.jar etch.examples.chat.MainChatClient
+> start java -cp chat.jar org.apache.etch.examples.chat.MainChatListener
+> start java -cp chat.jar org.apache.etch.examples.chat.MainChatClient
+> start java -cp chat.jar org.apache.etch.examples.chat.MainChatClient
 
 Two chat clients will be started; there is a help command;
 login as a different user in each with any password; they
