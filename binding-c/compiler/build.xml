@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="utf-8" ?>
+ <!--
+ * Licensed to the Apache Software Foundation (ASF) under one   *
+ * or more contributor license agreements.  See the NOTICE file *
+ * distributed with this work for additional information        *
+ * regarding copyright ownership.  The ASF licenses this file   *
+ * to you under the Apache License, Version 2.0 (the            *
+ * "License"); you may not use this file except in compliance   *
+ * with the License.  You may obtain a copy of the License at   *
+ *                                                              *
+ *   http://www.apache.org/licenses/LICENSE-2.0                 *
+ *                                                              *
+ * Unless required by applicable law or agreed to in writing,   *
+ * software distributed under the License is distributed on an  *
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY       *
+ * KIND, either express or implied.  See the License for the    *
+ * specific language governing permissions and limitations      *
+ * under the License.                                           *
+ -->
+<project name="etch-c-compiler" basedir="." default="help">
+    <description>Etch-to-C compiler implementation</description>
+    <property name="Etch.basedir" location="${basedir}/../.." />
+    <import file="${Etch.basedir}/build-support/etch.includes.xml" />
+
+    <!-- Static properties of the sub-project -->
+    <property name="proj"                 location="${Etch.basedir}/binding-c/compiler" />
+    <property name="target"               location="${proj}/target" />
+    <property name="src"                  location="${proj}/src" />        
+    <property name="generatedSrc"         location="${target}/generated-sources" />
+    <property name="classesDirectory"     location="${target}/classes" />
+    <property name="resourcesDirectory"   location="${target}/resources" />
+    <property name="testResultsDirectory" location="${target}/test-results" />
+
+    <!-- MACRO: init-target -->
+    <macrodef name="init-target" >
+        <sequential>
+            <delete dir="${classesDirectory}"   failonerror="false" quiet="true" />
+            <delete dir="${resourcesDirectory}" failonerror="false" quiet="true" />
+            <mkdir dir="${classesDirectory}" />
+            <mkdir dir="${classesDirectory}/main" />
+            <mkdir dir="${classesDirectory}/test" />
+            <mkdir dir="${resourcesDirectory}" />
+        </sequential>
+    </macrodef>
+
+    <!-- MACRO: compile-sources -->
+    <macrodef name="compile-sources" >
+        <sequential>            
+            <!-- compile compiler plugin -->
+            <javac  debug="${Etch.javac.debug}"
+                    target="1.5"
+                    optimize="${Etch.javac.optimize}"
+                    destdir="${classesDirectory}/main" >
+                <src path="${src}/main/java" />
+                <exclude name="**/.svn/**" />
+                <classpath refid="Etch.dependencies.jar.paths" />
+                <classpath>
+                    <pathelement location="${Etch.HOME}/lib/${etch-compiler.jar}" />
+                </classpath>
+            </javac>
+
+            <!-- compiler plugin resources -->
+            <copy todir="${classesDirectory}/main" >
+                <fileset dir="${src}/main/resources">
+                    <include name="**/*.kwd" />
+                    <include name="**/*.vm" />
+                </fileset>
+            </copy>
+
+            <!--
+            <javac  debug="${Etch.javac.debug}"
+                    target="1.5"
+                    optimize="${Etch.javac.optimize}"
+                    destdir="${classesDirectory}/test" >
+                <src path="${src}/test/java" />
+                <exclude name="**/.svn/**" />
+                <classpath refid="Etch.dependencies.jar.paths" />
+                <classpath>
+                    <pathelement location="${classesDirectory}/main" />
+                    <pathelement location="${Etch.HOME}/lib/${etch-compiler.jar}" />
+                </classpath>
+            </javac>
+            -->
+
+        </sequential>
+    </macrodef>
+    
+    <!-- MACRO: bundle-jars -->
+    <macrodef name="bundle-jars" >
+        <attribute name="dist" default="${Etch.dist}" />
+        <sequential>
+            <mkdir dir="@{dist}/lib" />
+            
+            <!-- CREATE jars -->
+
+            <!-- Package up etch-java-compiler jar -->
+            <jar jarfile="@{dist}/lib/${etch-c-compiler.jar}" >
+                <manifest>
+                    <attribute name="Copyright"    value="${Etch.copyrightNotice}" />
+                    <attribute name="Version"      value="${Etch.version}" />
+                    <attribute name="LongVersion"  value="${Etch.longversion}" />
+                    <attribute name="Build-Tag"    value="${Etch.buildTag}" />
+                    <attribute name="SVN-Revision" value="${Etch.runtime.revisionNumber}" />
+                </manifest>
+                <metainf dir="${Etch.basedir}" >
+                    <include name="NOTICE.txt" />
+                    <include name="LICENSE.txt" />
+                </metainf>
+                <fileset dir="${classesDirectory}/main">
+                    <include name="org/apache/etch/bindings/**" />
+                    <!-- <include name="resources/**" /> -->
+                </fileset>
+            </jar>
+
+            <!-- CREATE source archives -->
+            
+            <!-- package up etch-java-compiler src -->
+            <zip destfile="@{dist}/lib/${etch-c-compiler-src.zip}" >
+                <fileset dir="${src}/main/java" >
+                    <include name="org/apache/etch/bindings/**/*.java" />
+                </fileset>
+                <fileset dir="${src}/main/resources" >
+                    <include name="**/*" />
+                </fileset>
+            </zip>
+
+        </sequential>
+    </macrodef>
+    
+    <!-- INIT TARGET -->
+    <!-- Modify this target to define project specific properties that can only be set at runtime -->
+    <target name="do-init">
+        <delete dir="${target}" failonerror="false" quiet="true" />
+
+        <mkdir dir="${target}" />
+        <mkdir dir="${generatedSrc}" />
+        <mkdir dir="${classesDirectory}" />
+        <mkdir dir="${resourcesDirectory}" />
+        <mkdir dir="${testResultsDirectory}" />
+    </target>
+
+    <!-- CLEAN TARGET -->
+    <target name="do-clean">
+        <delete dir="${target}" />
+    </target>
+
+    <!-- BUILD TARGET -->
+    
+    <target name="generate-sources" >
+        <!-- Generate version info -->
+        <update-tokens filename="${src}/main/java/org/apache/etch/bindings/c/compiler/CompilerVersion.java" />  
+    </target>
+
+    <target name="compile-for-dist" >
+        <!-- Initialize target directories -->
+        <init-target />
+
+        <!-- Compile Source -->
+        <compile-sources />
+
+        <!-- Bundle Jars -->
+        <bundle-jars dist="${Etch.dist}" />
+    </target>
+    
+    <target name="compile-for-clover" if="Clover.enabled" >
+
+        <echo message="Rebuilding with clover" />
+
+        <!-- initialize-clover -->
+        <initialize-clover suffix="etchccompiler" >
+            <fileset dir="${src}/main/java">
+                <include name="**/*.java" />
+            </fileset>
+            <!--
+            <testsources dir="${src}/test/java">
+                <include name="**/*.java" />
+            </testsources>
+            -->
+        </initialize-clover>
+        
+        <!-- Initialize target directories -->
+        <init-target />
+        
+        <!-- Compile Source -->
+        <compile-sources />
+        
+        <!-- Bundle Jars -->
+        <bundle-jars dist="${Etch.clover-dist}" />
+
+    </target>
+    
+    <target name="do-build" depends="generate-sources,compile-for-dist,compile-for-clover" />
+
+    <!-- TEST TARGET -->
+    <target name="do-test">
+        
+        <!-- Run Unit Tests -->
+        <!--
+        <junit printsummary="yes" haltonfailure="no" dir="${classesDirectory}"
+            errorProperty="build.tests.fail" failureProperty="build.tests.fail">
+            <classpath>
+                <pathelement location="${classesDirectory}/main" />
+                <pathelement location="${classesDirectory}/test" />
+                <pathelement location="${Etch.dependency.junit.jar}" />
+                <pathelement location="${Etch.HOME}/lib/${etch-compiler.jar}" />
+                <pathelement location="${Etch.dependency.clover.jar}"/>
+            </classpath>
+            <formatter type="xml"/>
+            <batchtest fork="true" todir="${testResultsDirectory}">
+                <fileset dir="${src}/test/java">
+                    <include name="**/*.java" />
+                </fileset>
+            </batchtest>
+        </junit>
+        -->
+    </target>
+
+    <!-- POSTBUILD TARGET -->
+    <target name="do-postbuild">
+    </target>
+
+    <target name="do-publish" if="build.tests.fail">
+        <!-- Set flag file if any tests failed -->
+        <touch file="${Etch.runtime.tests.fail}"/>
+    </target>
+
+</project>
