@@ -193,10 +193,9 @@ namespace Org.Apache.Etch.Bindings.Csharp.Util
         {
             Socket s = CheckSocket();
 
-            s.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.KeepAlive, options.keepAlive);
+            s.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, options.keepAlive);
             s.LingerState = new LingerOption(options.lingerTime >= 0, options.lingerTime >= 0 ? options.lingerTime : 0);
             s.NoDelay = options.noDelay;
-            //s.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.TypeOfService, trafficClass);
 
             stream = new NetworkStream(socket);
             // TODO do something about buffering this stream.
