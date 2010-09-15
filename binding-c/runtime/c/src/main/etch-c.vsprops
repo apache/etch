@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioPropertySheet
+	ProjectType="Visual C++"
+	Version="8.00"
+	Name="etch-c"
+	>
+	<UserMacro
+		Name="APR"
+		Value="$(SolutionDir)src\extern\apr\apr"
+		PerformEnvironmentSet="true"
+	/>
+	<UserMacro
+		Name="APR_ICONV"
+		Value="$(SolutionDir)src\extern\apr\apr-iconv"
+		PerformEnvironmentSet="true"
+	/>
+</VisualStudioPropertySheet>

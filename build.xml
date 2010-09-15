@@ -153,6 +153,7 @@
         <build_component dir="binding-xml" />
         <build_component dir="binding-java" />
         <build_component dir="binding-csharp" />
+        <build_component dir="binding-c" />
         
         <!-- Examples -->
         <build_component dir="examples" />

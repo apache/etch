@@ -1,0 +1,16 @@
+module etch.cbinding.test
+
+service helloworld {
+	struct user (
+		int id,
+		string name
+	)
+
+	exception UserUnknownException (
+		string mes
+	)
+
+	@Direction(Server)
+	string say_hello(user to_whom) throws UserUnknownException
+
+}
