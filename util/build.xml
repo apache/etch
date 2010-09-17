@@ -242,8 +242,7 @@
     <target name="do-build" depends="generate-sources,compile-for-dist,compile-for-clover" />
 
     <!-- TEST TARGET -->
-    <target name="do-test">
-        
+    <target name="do-test" unless="build.skip.tests">
         <!-- Run Unit Tests -->
         <junit printsummary="yes" haltonfailure="no" dir="${classesDirectory}"
             errorProperty="build.tests.fail" failureProperty="build.tests.fail">

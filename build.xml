@@ -140,29 +140,38 @@
     </target>    
 
     <!-- Component targets; Add to this set -->
+    <target name="component-all" depends="component-core, component-plugins, component-bindings, component-examples, component-tests, component-bundles" />
 
-    <target name="component-all" >
+    <target name="component-core" >
         <!-- Core -->
         <build_component dir="util" />
         <build_component dir="compiler" />
-        
+    </target>
+
+    <target name="component-plugins" >
         <!-- IDE/tool plugins -->
         <build_component dir="plugins/ant" />
-        
+    </target>
+
+    <target name="component-bindings">
         <!-- Bindings -->
         <build_component dir="binding-xml" />
         <build_component dir="binding-java" />
         <build_component dir="binding-csharp" />
         <build_component dir="binding-c" />
-        
+    </target>
+
+    <target name="component-examples">
         <!-- Examples -->
         <build_component dir="examples" />
-        
-        <!-- Functional Tests -->
-        <build_component dir="tests" />
-        
+    </target>
+
+    <target name="component-tests" unless="build.skip.tests">
+          <build_component dir="tests" />
+    </target>
+
+    <target name="component-bundles">
         <!-- Installer/zip Bundles -->
         <build_component dir="installers" />
     </target>
-
 </project>

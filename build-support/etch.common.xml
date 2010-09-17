@@ -23,6 +23,10 @@
     <property name="Etch.copyrightNotice"
 		value="Copyright © Apache Software Foundation 2009" />
 
+    <condition property="build.skip.tests">
+            <isset property="skip.tests" />
+    </condition>
+
     <!-- Load Environment -->
     <property environment="env" />
     <property file="${Etch.basedir}/build.dependencies" prefix="file" />
@@ -39,10 +43,13 @@
     <condition property="build.velocity.lib" value="${velocity.lib}" >
         <isset property="velocity.lib" />
     </condition>
+
+    <condition property="build.nsis.home" value="${nsis.home}" >
+        <isset property="nsis.home" />
+    </condition>
     
     <property file="${Etch.basedir}/build.dependencies" prefix="build" />
-    
-    
+
     <!-- Validate properties -->
     
     <!-- Compute top of tree -->
@@ -53,7 +60,6 @@
 
     <!-- load runtime properties -->
     <property prefix="Etch.property."      file="${Etch.basedir}/etch.properties" />
-    <property prefix="Etch.runtime."       file="${Etch.basedir}/bamboo.properties" />
     
     <!-- Compute version numbers -->
     <condition property="Etch.property.majorVersion" value="0">
@@ -157,7 +163,9 @@
     <condition property="USE.dotnet">
         <and>
             <os family="windows" />
-            <available file="${build.dotnet.home}/msbuild.exe" />
+            <available file="${env.DOTNET_HOME}/msbuild.exe" />
+            <available file="${build.ant-dotnet.lib}/ant-dotnet-1.0.jar" />
+            <available file="${env.NUNIT_HOME}/bin/nunit.exe" />
         </and>
     </condition>
     <condition property="USE.mono">

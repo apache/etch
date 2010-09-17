@@ -52,7 +52,9 @@
     <condition property="USE.dotnet" >
         <and>
             <os family="windows" />
-            <available file="${env.windir}/Microsoft.NET/Framework/v2.0.50727/msbuild.exe" />
+            <available file="${env.DOTNET_HOME}/msbuild.exe" />
+            <available file="${build.ant-dotnet.lib}/ant-dotnet-1.0.jar" />
+            <available file="${env.NUNIT_HOME}/bin/nunit.exe" />
         </and>
     </condition>
     <condition property="USE.mono" >
@@ -216,7 +218,7 @@
 
     <!-- run unit tests -->
 
-    <target name="test-java" depends="build-java" >
+    <target name="test-java" depends="build-java" unless="build.skip.tests">
         <!-- Run Unit Tests -->
         <junit printsummary="yes" haltonfailure="no" dir="${classes-test}"
             errorProperty="build.tests.fail" failureProperty="build.tests.fail" >
@@ -234,7 +236,7 @@
         </junit>
     </target>
 
-    <target name="test-csharp" depends="build-csharp" if="BUILD.csharp" >
+    <target name="test-csharp" depends="build-csharp" if="BUILD.csharp" unless="build.skip.tests">
          <nunit xmlout="${nunit-results}/NUnitResults.xml">
              <testassembly name="${src}/test/csharp/DistMapTestProj/bin/${build.target}/DistMapTestProj.dll" />
          </nunit>

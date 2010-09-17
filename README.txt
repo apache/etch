@@ -123,9 +123,9 @@ etch-java-runtime-1.1.0.jar will be installed into your local repository with
 group "etch.etch", artifact id "etch-java-runtime", and version "1.1.0". You
 may then reference Etch from your maven projects.
 
-= C and Python Bindings =
+= Python and XML Bindings =
 
-The source distribution includes code to support c and python bindings, but
+The source distribution includes code to support XML and python bindings, but
 these bindings are not yet complete, and there is no build products associated
 with those. They are mainly there to 1) capture the code contribution from
 cisco systems, and 2) inspire any fence sitters, ah, helpers to jump in and

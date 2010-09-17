@@ -71,11 +71,36 @@
             </condition>
         </fail>        
     </target>
-    
-    <target name="check-dotnet" >
-        <echo message="ANT-DOTNET" />
+
+    <target name="check-dotnet" depends="check-dotnet-check" if="dotnet-missing-components">
+         <echo>       
+              *
+              *
+              *
+              ************************************************************************
+              WARNING: ant-dotnet-1.0.jar and/or msbuild.exe and/or nunit.exe is missing, 
+                       dotnet support will be disabled on your windows system.
+                       (please check scripts/antSetup.bat for correct paths)
+              ************************************************************************
+              *
+              *
+              *
+         </echo>
+    </target>
+
+    <target name="check-dotnet-check">
+            <condition property="dotnet-missing-components" value="true">
+             <and>
+             <os family="windows" />
+             <or>
+                <not><available file="${build.ant-dotnet.lib}/ant-dotnet-1.0.jar" /></not>
+                <not><available file="${env.DOTNET_HOME}/msbuild.exe" /></not>
+                <not><available file="${env.NUNIT_HOME}/bin/nunit.exe" /></not>
+             </or>
+             </and>
+            </condition>      
     </target>
     
-    <target name="check-all" depends="check-javacc,check-junit,check-velocity,check-dotnet" />
+    <target name="check-all" depends="check-javacc,check-junit,check-velocity, check-dotnet" />
 
 </project>
