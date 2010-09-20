@@ -23,6 +23,9 @@
 	<classpathentry kind="src" path="tests/src/main/resources"/>
 	<classpathentry kind="src" path="tests/target/generated-sources/main/etch/java"/>
 	<classpathentry kind="src" path="tests/src/test/java"/>
+	<classpathentry kind="src" path="examples/helloworld/src/main/java"/>
+	<classpathentry kind="src" path="examples/helloworld/src/test/java"/>
+	<classpathentry kind="src" path="examples/helloworld/target/generated-sources/main/etch/java"/>
 	<classpathentry kind="src" path="examples/chat/src/main/java"/>
 	<classpathentry kind="src" path="examples/chat/target/generated-sources/main/etch/java"/>
 	<classpathentry kind="src" path="examples/chat/src/test/java"/>
