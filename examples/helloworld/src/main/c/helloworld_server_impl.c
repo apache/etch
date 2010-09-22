@@ -40,6 +40,9 @@ unsigned short CLASSID_HELLOWORLD_SERVER_IMPL;
 	
 char* HELLOWORLD_ETCHSIMP = "SIMP";
 
+
+etch_string* say_hello_impl(void* thisx, helloworld_user* to_whom);
+
 /* generated signatures */
 int destroy_helloworld_server_implx(void*);
 helloworld_server_impl* init_helloworld_server_impl(struct helloworld_remote_client*, etch_object_destructor);
@@ -62,8 +65,9 @@ helloworld_server_impl* new_helloworld_server_impl(struct helloworld_remote_clie
     i_helloworld_server* pserver_base = pserver->helloworld_server_base;
     
     ((etch_object*)pserver_base)->class_id = get_dynamic_classid_unique(&CLASSID_HELLOWORLD_SERVER_IMPL);
+    
     /* add virtual method overrides, if any, here */
-    //pserver->xxx = implementation
+    pserver->say_hello = pserver_base->say_hello = say_hello_impl;
 
     return pserver;
 }
@@ -97,3 +101,7 @@ int destroy_helloworld_server_implx(void* data)
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  */
  
+etch_string* say_hello_impl(void* thisx, helloworld_user* to_whom){
+  etch_string* ret = new_stringw(L"Hello World from C Binding!");
+  return ret;
+}

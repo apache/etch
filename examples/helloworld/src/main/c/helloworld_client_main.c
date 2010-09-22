@@ -61,10 +61,10 @@ int main(int argc, char* argv[])
     etch_status_t etch_status    = ETCH_SUCCESS;
     helloworld_remote_server* remote = NULL;
     int waitupms = 4000;
-    etch_string result = NULL;
+    etch_string* result = NULL;
     helloworld_user* user = NULL;
 
-    wchar_t* uri = L"tcp://127.0.0.1:4004";	
+    wchar_t* uri = L"tcp://127.0.0.1:4001";	
 	
        etch_config_t* config = NULL;
     etch_config_create(&config);
@@ -90,8 +90,11 @@ int main(int argc, char* argv[])
     user->id = 51;
     user->name = new_stringw(L"Test");
     result = remote->say_hello(remote, user);
-    wprintf("%s\n",result->v.valw);
-
+    wprintf(L"%s\n",result->v.valw);
+    
+    // wait for keypress
+    waitkey();
+    
     etch_status = helloworld_helper_remote_server_stop_wait(remote, waitupms);
     if(etch_status != ETCH_SUCCESS) {
         // error

@@ -93,7 +93,7 @@ int main(int argc, char* argv[])
     i_sessionlistener* listener = NULL;
     int waitupms = 4000;
     
-    wchar_t* uri = L"tcp://0.0.0.0:4001";
+    wchar_t* uri = L"tcp://127.0.0.1:4001";
 
     etch_config_t* config = NULL;
     etch_config_create(&config);
@@ -110,6 +110,7 @@ int main(int argc, char* argv[])
     }
 
     // wait for keypress
+
     waitkey();
 
     etch_status = helloworld_listener_stop(listener, waitupms);
@@ -123,8 +124,6 @@ int main(int argc, char* argv[])
         return 1;
     }
 	etch_config_destroy(config);
-    // wait for keypress
-    waitkey();
 	
     return 0;
 }
