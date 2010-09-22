@@ -14,9 +14,12 @@
 @rem  KIND, either express or implied.  See the License for the    *
 @rem  specific language governing permissions and limitations      *
 @rem  under the License.                                           *
+@echo off
 
+IF "%ETCH_EXTERNAL_DEPENDS%" == "" (
+set ETCH_EXTERNAL_DEPENDS=C:\etch\external
+)
 
-IF "%ETCH_EXTERNAL_DEPENDS%" == "" set ETCH_EXTERNAL_DEPENDS=C:\etch-external-depends\
 set ANT_HOME=%ETCH_EXTERNAL_DEPENDS%\apache-ant\1.7.0
 set JAVA_HOME=c:\Program Files (x86)\Java\jdk1.6.0_18\
 set NUNIT_HOME=%ETCH_EXTERNAL_DEPENDS%\NUnit\2.4.7

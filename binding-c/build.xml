@@ -72,7 +72,7 @@
 
     <target name="component-all" >
         <build_component dir="compiler" />
-        <!--<build_component dir="runtime" />-->
+        <build_component dir="runtime" />
     </target>
 
 </project>

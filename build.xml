@@ -19,6 +19,7 @@
 -->
 <project name="etch" default="debug" basedir=".">
     <description>Master build script for Etch</description>
+    <property name="Etch.basedir" location="${basedir}" />
     <import file="build-support/etch.common.xml" />
 
     <!-- standard, supported targets -->

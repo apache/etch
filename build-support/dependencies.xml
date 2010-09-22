@@ -39,7 +39,15 @@
     <condition property="build.velocity.lib" value="${velocity.lib}" >
         <isset property="velocity.lib" />
     </condition>
-    
+
+    <condition property="build.ant-dotnet.lib" value="${ant-dotnet.lib}" >
+        <isset property="ant-dotnet.lib" />
+    </condition>
+
+    <condition property="build.ant-cmake.lib" value="${ant-cmake.lib}" >
+        <isset property="ant-cmake.lib" />
+    </condition>
+
     <property file="${Etch.basedir}/build.dependencies" prefix="build" />
 
     <target name="check-javacc" >
@@ -98,9 +106,31 @@
                 <not><available file="${env.NUNIT_HOME}/bin/nunit.exe" /></not>
              </or>
              </and>
-            </condition>      
+            </condition>
     </target>
-    
-    <target name="check-all" depends="check-javacc,check-junit,check-velocity, check-dotnet" />
+
+    <target name="check-cmake" depends="check-cmake-check" if="cmake-missing-components">
+         <echo>
+              *
+              *
+              *
+              ************************************************************************
+              WARNING: cmakeant.jar is missing, cmake build is not possible.
+                     (please check scripts/antSetup.bat for correct paths)
+              ************************************************************************
+              *
+              *
+              *
+         </echo>
+    </target>
+
+    <target name="check-cmake-check">
+    <echo message="check: ${build.ant-cmake.lib}" />
+        <condition property="cmake-missing-components" value="true">
+            <not><available file="${build.ant-cmake.lib}/cmakeant.jar" /></not>
+        </condition>
+    </target>
+
+    <target name="check-all" depends="check-javacc,check-junit,check-velocity,check-dotnet,check-cmake" />
 
 </project>

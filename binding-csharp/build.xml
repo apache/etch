@@ -21,7 +21,7 @@
     <description>Etch-to-Csharp Binding</description>
     <property name="Etch.basedir" location="${basedir}/.." />
     <import file="${Etch.basedir}/build-support/etch.common.xml" />
-	<target name="help"><echo>Please select a target...</echo></target>
+    <target name="help"><echo>Please select a target...</echo></target>
 
     <!-- standard, supported targets -->
     <target name="Debug"         depends="debug" />

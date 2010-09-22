@@ -1,3 +1,4 @@
+#!/bin/bash
 # Licensed to the Apache Software Foundation (ASF) under one   *
 # or more contributor license agreements.  See the NOTICE file *
 # distributed with this work for additional information        *
@@ -15,26 +16,5 @@
 # specific language governing permissions and limitations      *
 # under the License.                                           *
 
-##
-## Core Dependencies .. these must be set
-##
-
-javacc.home=${env.ETCH_EXTERNAL_DEPENDS}/javacc/4.0
-junit.lib=${env.ETCH_EXTERNAL_DEPENDS}/junit/4.3.1
-velocity.lib=${env.ETCH_EXTERNAL_DEPENDS}/velocity/1.5
-
-##
-## Optional Dependencies
-##
-
-## NSIS
-nsis.home=${env.ETCH_EXTERNAL_DEPENDS}/nsis/2.23
-
-## Clover
-clover.home=${env.ETCH_EXTERNAL_DEPENDS}/clover-ant/2.3.2
-
-## Csharp ANT support
-ant-dotnet.lib=${env.ETCH_EXTERNAL_DEPENDS}/apache-ant-dotnet/1.0
-
-## CMake ANT support
-ant-cmake.lib=${env.ETCH_EXTERNAL_DEPENDS}/apache-ant-cmake/1.0
+export ETCH_EXTERNAL_DEPENDS=/home/user/projects/apache/etch/external
+echo "ETCH_EXTERNAL_DEPENDS set to " $ETCH_EXTERNAL_DEPENDS 

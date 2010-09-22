@@ -65,7 +65,7 @@
             </zipfileset>
             <zipfileset dir="${Etch.dist}" prefix="${packageName}/" filemode="755" >
                 <include name="bin/etch" />
-            </zipfileset>                
+            </zipfileset>
         </zip>
 
         <!-- create tar-gzip binary distribution -->
@@ -80,14 +80,14 @@
     </target>
 
     <target name="do-nsis" if="NSIS.enabled" >
-        <makensis destfile="${target}/${packageName}-setup.exe" root="${Etch.basedir}" dir="installers" script="etch-full-installer" />        
+        <makensis destfile="${target}/${packageName}-setup.exe" root="${Etch.basedir}" dir="installers" script="etch-full-installer" />
     </target>
 
     <target name="do-build" depends="do-txts,do-nsis,do-zips" />
 
     <!-- TEST TARGET -->
     <target name="do-test">
-		<available property="build.tests.fail" file="${Etch.runtime.tests.fail}"/>
+        <available property="build.tests.fail" file="${Etch.runtime.tests.fail}"/>
     </target>
 
     <!-- POSTBUILD TARGET -->
