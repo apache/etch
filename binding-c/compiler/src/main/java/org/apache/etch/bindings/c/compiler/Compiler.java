@@ -138,7 +138,7 @@ public class Compiler extends Backend {
 		impl_h_vm = getTemplate(path, "impl_h.vm");
 		impl_c_vm = getTemplate(path, "impl_c.vm");
 
-		etch_keywords_vm = getTemplate(path, "etch_keywords.vm");
+		etch_keywords_vm = getTemplate(path, "etch_wireshark.vm");
 		
 		// Keyword list
 		local_kwd = getPath(path, "cKeywords.kwd");
@@ -1064,7 +1064,6 @@ public class Compiler extends Backend {
 	public String getKeywordForWireshark(String fieldname) {
 		int hash = Hash.hash(fieldname);
 		return String.format("0x%08x", hash) + "," + fieldname;
-		
 	}
 	
 	
@@ -1134,7 +1133,7 @@ public class Compiler extends Backend {
 	}
 
 	public String getKeywordFilename(Service intf) {
-		return getServiceName(intf) + "_keywords_wireshark.txt";
+		return getServiceName(intf) + "_wireshark.ewh";
 	}
 	
 	public String getBaseFileNameI(Service intf, String suffix) {
