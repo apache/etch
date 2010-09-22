@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # set install prefix
-export set INSTALL_PREFIX=/home/fitzner/Projekte/2010_apache/etch/external
+export INSTALL_PREFIX=/tmp
 
 #
 # download apr sources
@@ -46,7 +46,7 @@ make install
 cd ../../..
 }
 
-build_apr-iconv(){
+build_apr_iconv(){
 cd apr/apr-iconv
 mkdir linux
 cd linux
@@ -57,7 +57,7 @@ make install
 
 download
 build_apr
-build_apr-iconv
+build_apr_iconv
 
 
 
