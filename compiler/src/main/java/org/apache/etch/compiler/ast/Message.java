@@ -114,6 +114,24 @@ public class Message extends ParamList<Service>
 
 	/**
 	 *
+	 * @return true if this message's direction is server
+	 */
+	public boolean isMsgDirServer()
+	{
+		return md == MessageDirection.SERVER;
+	}
+
+	/**
+	 *
+	 * @return true if this message's direction is client
+	 */
+	public boolean isMsgDirClient()
+	{
+		return md == MessageDirection.CLIENT;
+	}
+	
+	/**
+	 *
 	 * @return trus if this message's direction is both
 	 */
 	public boolean isMsgDirBoth()
