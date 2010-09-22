@@ -1649,29 +1649,35 @@ etch_validator* etchvtor_struct_element_validator(etch_validator* vtor)
 }
 
 
+char* construct_namebuf(etch_type* type, char* prefix, int numdimensions) 
+{
+    char *abuf = NULL, *namebuf = NULL;    
+    // this mallocs mem in abuf
+    etch_encoding_transcode_wchar(&abuf, ETCH_ENCODING_UTF8, type->name, NULL);
+    namebuf = (char*) etch_malloc(7 + strlen(abuf) + 8 /* max length of dimension */ + 2 + 1, NULL);
+    sprintf(namebuf, "%s%s[%d]", prefix, abuf, numdimensions);
+    etch_free(abuf);  /* todo change id_name to ascii */     
+    return namebuf;
+}
+
+
 /**
  * new_validator_struct()
  * constructor for struct validator
  */
 etch_validator* new_validator_struct (etch_type* type, const int numdimensions)
 {
-    char namebuf[64] = "struct_", ascbuf[64], dimbuf[8], *abuf = ascbuf;
+    
     etch_validator* newvtor = NULL;
+    char* namebuf = NULL;
     if (!type || !is_good_type(type)) return NULL;
 
-    // TODO: pool
-    etch_encoding_transcode_wchar(&abuf, ETCH_ENCODING_UTF8, type->name, NULL);
-
-    strcat(namebuf, abuf); strcat(namebuf, "[");
-    sprintf(dimbuf, "%d", numdimensions);
-    strcat(namebuf, dimbuf); strcat(namebuf, "]");
-    etch_free(abuf);  /* todo change id_name to ascii */     
-
+    //this mallocs namebuf
+    namebuf = construct_namebuf(type, "struct_", numdimensions);
     newvtor = new_type_validator_1(CLASSID_VALIDATOR_STRUCT, ETCHTYPEB_STRUCTVAL,
         CLASSID_STRUCTVALUE, 0, CLASSID_ARRAY_OBJECT, numdimensions, namebuf);
-
+    etch_free(namebuf);
     newvtor->struct_type = type;
-
     newvtor->validate          = etchvtor_struct_validate;
     newvtor->check_value       = etchvtor_struct_check_value;
     newvtor->element_validator = etchvtor_struct_element_validator;
@@ -1740,18 +1746,12 @@ etch_validator* etchvtor_custom_element_validator (etch_validator* vtor)
 etch_validator* new_validator_custom (const unsigned short obj_type,
     const unsigned short class_id, etch_type* type, const int numdims)
 {
-    char namebuf[64] = "custom_", ascbuf[64], dimbuf[8], *abuf = ascbuf;
+    char* namebuf = NULL;
     etch_validator* newvtor = NULL;
     if (!type || !is_good_type(type)) return NULL;
-    // TODO: pool
-    etch_encoding_transcode_wchar(&abuf, ETCH_ENCODING_UTF8, type->name, NULL);
-    strcat(namebuf, abuf); strcat(namebuf, "[");
-    sprintf(dimbuf, "%d", numdims);
-    strcat(namebuf, dimbuf); strcat(namebuf, "]");
-    etch_free(abuf);  /* todo change id_name to ascii */
-
+    namebuf = construct_namebuf(type, "custom_", numdims);
     newvtor = new_type_validator_1(CLASSID_VALIDATOR_CUSTOM, obj_type, class_id, 0, CLASSID_ARRAY_OBJECT, numdims, namebuf);
-
+    etch_free(namebuf);
     newvtor->struct_type = type;
 
     newvtor->validate          = etchvtor_custom_validate;
