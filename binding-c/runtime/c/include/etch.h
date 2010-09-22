@@ -19,10 +19,6 @@
 #ifndef _ETCH_H_
 #define _ETCH_H_
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -39,6 +35,10 @@ extern "C" {
 #include <apr_portable.h>
 #include <apr_strings.h>
 #include <apr_time.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /**
  * macros
