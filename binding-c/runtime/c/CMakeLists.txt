@@ -27,6 +27,7 @@ ENDIF (NOT ETCH_EXTERNAL_DEPENDS)
 # Set definitions
 IF (UNIX)
     add_definitions(-D_GNU_SOURCE -D_REENTRANT -DLINUX=2 -D__LINUX__)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m32")
 ENDIF (UNIX)
 add_definitions(-D_UNICODE -DUNICODE)
 
