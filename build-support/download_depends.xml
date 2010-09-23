@@ -1,0 +1,6 @@
+<project name="download_depends" default="download" basedir=".">
+    <target name="download">
+      <get src="${download-url}" dest="${download-dest}"/>
+      <unzip src="${download-dest}" dest="${unzip-dest}"/>
+    </target>
+</project>
