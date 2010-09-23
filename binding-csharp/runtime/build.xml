@@ -53,9 +53,12 @@
     <target name="generate-sources" >
         <!-- Generate version info -->
         <update-tokens filename="${src}/main/csharp/Properties/AssemblyInfo.cs" />
-    	
-    	<!-- package up etch-java-runtime src -->
-        <zip destfile="${Etch.dist}/lib/${etch-csharp-runtime-src.zip}" >
+
+        <!-- create dist folder -->
+        <mkdir dir="${Etch.dist}/binding-csharp/lib" />
+
+        <!-- package up etch-java-runtime src -->
+        <zip destfile="${Etch.dist}/binding-csharp/${etch-csharp-runtime-src.zip}" >
             <fileset dir="${src}/main/csharp" >
                 <include name="Org.Apache.Etch.Bindings.Csharp/**/*.cs" />
             </fileset>
@@ -81,14 +84,14 @@
         <mkdir dir="${Etch.dist}/lib" />
         <mkdir dir="${Etch.clover-dist}/lib" />
 
-        <copy todir="${Etch.clover-dist}/lib" >
+        <copy todir="${Etch.clover-dist}/binding-csharp/lib" >
             <fileset dir="${src}/main/csharp/bin/${Etch.build.target}">
                 <include name="${etch-csharp-runtime.pdb}" />
                 <include name="${etch-csharp-runtime.dll}" />
             </fileset>
         </copy>
 
-        <copy todir="${Etch.dist}/lib" >
+        <copy todir="${Etch.dist}/binding-csharp/lib" >
             <fileset dir="${src}/main/csharp/bin/${Etch.build.target}">
                 <include name="${etch-csharp-runtime.pdb}" />
                 <include name="${etch-csharp-runtime.dll}" />

@@ -25,7 +25,7 @@
     <!-- Static properties of the sub-project -->
     <property name="proj"                 location="${Etch.basedir}/binding-c/runtime/c" />
     <property name="target"               location="${proj}/target" />
-    <property name="testResultsDirectory" location="${target}/test-results"  />
+    <property name="testResultsDirectory" location="${target}/test-results" />
     
     <!-- INIT TARGET -->
     <!-- Modify this target to define project specific properties that can only be set at runtime -->
@@ -47,8 +47,9 @@
     </target>
     
     <target name="do-build-generate-sources" if="USE.cmake">
+        <mkdir dir="${Etch.dist}/binding-c" />
         <!-- package up etch-java-runtime src -->
-        <zip destfile="${Etch.dist}/lib/${etch-c-runtime-src.zip}">
+        <zip destfile="${Etch.dist}/binding-c/${etch-c-runtime-src.zip}">
             <fileset dir="${proj}">
                 <exclude name="target/" />
                 <exclude name="doc/" />
@@ -69,17 +70,24 @@
         <mkdir dir="${Etch.dist}/binding-c/include" />
         <mkdir dir="${Etch.dist}/binding-c/lib" />
 
+        <!-- copy etch library to dist folder -->
         <copy todir="${Etch.dist}/binding-c/include">
             <fileset dir="${proj}/include">
                 <exclude name="**/.svn" />
             </fileset>
         </copy>
 
-        <copy todir="${Etch.dist}/binding-c/lib">
+        <copy todir="${Etch.dist}/binding-c/lib" flatten="true">
             <fileset dir="${target}/src/main">
                 <include name="debug/etch.lib" />
                 <include name="debug/etch.pdb" />
                 <include name="libetch.a" />
+            </fileset>
+        </copy>
+
+        <!-- copy apr library to dist folder -->
+        <copy todir="${Etch.dist}/binding-c/extern/apr">
+            <fileset dir="${env.ETCH_EXTERNAL_DEPENDS}/apr/1.3.12">
             </fileset>
         </copy>
     </target>

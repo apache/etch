@@ -17,7 +17,7 @@
  * specific language governing permissions and limitations      *
  * under the License.                                           *
  -->
-<project name="etch-c-binding" basedir="." default="help">
+<project name="etch-c-binding" basedir="." default="">
     <description>Etch-to-C Binding</description>
     <property name="Etch.basedir" location="${basedir}/.." />
     <import file="${Etch.basedir}/build-support/etch.common.xml" />

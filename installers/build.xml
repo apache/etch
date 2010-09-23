@@ -52,14 +52,14 @@
         <copy file="${Etch.basedir}/DISCLAIMER.txt" tofile="${Etch.dist}/DISCLAIMER.txt" />
         <copy file="${Etch.basedir}/RELEASE_NOTES.txt" tofile="${Etch.dist}/RELEASE_NOTES.txt" />
         <copy file="${Etch.basedir}/NOTICE.txt" tofile="${Etch.dist}/NOTICE.txt" />
-        <copy file="${proj}/etch-maven-install.bat" todir="${Etch.dist}/maven" >
+        <copy file="${proj}/etch-maven-install.bat" todir="${Etch.dist}/bin" >
             <filterset refid="Etch.buildTokens" />
         </copy>
     </target>
 
     <target name="do-zips" >
         <!-- create zipped binary distribution -->
-        <zip destfile="${target}/${packageName}.zip" >
+        <zip destfile="${target}/${packageName}-${Etch.property.osVersion}-${Etch.property.platformVersion}-bin.zip" >
             <zipfileset dir="${Etch.dist}" prefix="${packageName}/" >
                 <exclude name="bin/etch" />
             </zipfileset>
@@ -69,7 +69,7 @@
         </zip>
 
         <!-- create tar-gzip binary distribution -->
-        <tar destfile="${target}/${packageName}.tar.gz" compression="gzip" >
+        <tar destfile="${target}/${packageName}-${Etch.property.osVersion}-${Etch.property.platformVersion}-bin.tar.gz" compression="gzip" >
             <tarfileset dir="${Etch.dist}" prefix="${packageName}/">
                 <exclude name="bin/etch" />
             </tarfileset>
@@ -80,7 +80,7 @@
     </target>
 
     <target name="do-nsis" if="NSIS.enabled" >
-        <makensis destfile="${target}/${packageName}-setup.exe" root="${Etch.basedir}" dir="installers" script="etch-full-installer" />
+        <makensis destfile="${target}/${packageName}-${Etch.property.osVersion}-${Etch.property.platformVersion}-setup.exe" root="${Etch.basedir}" dir="installers" script="etch-full-installer" />
     </target>
 
     <target name="do-build" depends="do-txts,do-nsis,do-zips" />
