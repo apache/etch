@@ -81,6 +81,8 @@
             <fileset dir="${target}/src/main">
                 <include name="debug/etch.lib" />
                 <include name="debug/etch.pdb" />
+                <include name="Debug/etch.lib" />
+                <include name="Debug/etch.pdb" />
                 <include name="libetch.a" />
             </fileset>
         </copy>
