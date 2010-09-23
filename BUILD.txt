@@ -26,6 +26,7 @@ This is the source tree for Etch. It is organized as follows:
    util/          - shared java classes
    tests/         - functional tests
    examples/      - Etch application examples
+      helloworld/ - classic example
       chat/       - simple IM application
       distmap/    - example implementation of a distributed map in etch
       perf/       - etch client/server performance test
@@ -35,6 +36,7 @@ This is the source tree for Etch. It is organized as follows:
    binding-xml    - xml binding
    binding-java   - java-language binding
    binding-csharp - C#-language binding
+   binding-c      - C-language binding
    
 
   About the Structure of Etch bindings
@@ -78,19 +80,84 @@ To compile NSIS installers:
 
  * NSIS 2.23
 
+To compile the C binding:
+
+ * Apache APR 1.3.12
+ * Apache APR Util 1.3.12
+ * Apache APR iconv
+ * Cunit 2.1
+ * Apache Ant CMake 1.0 (cmakeant.jar)
+
+Setting up your ETCH_EXTERNAL_DEPENDS folder:
+---------------------------------------------
+
+Set up a folder containing all external dependencies of the Etch build (all languages).
+This folder will be called ETCH_EXTERNAL_DEPENDS later on.
+
+To ease the download of the APR dependencies, we have created scripts/apr-install.sh
+and scripts/apr-install.bat for linux and windows. Those scripts provide you a complete
+APR installation folder for the directory structure below. See also binding-c/runtime/c/README.txt
+for more details on this.
+
+You can use the workspace contents of our continous integration server as a reference 
+for you machine, e.g. for Win32:
+https://hudson.apache.org/hudson/view/etch/job/etch-trunk-windows-x86/ws/externals/
+
+You should have the following structure, if you want to compile and build for all language bindings
+(newer version could, but do not have to, work):
+
+  ETCH_EXTERNAL_DEPENDS/
+    javacc/
+        4.0/
+          javacc.jar
+    junit /
+        4.3.1/
+          junit-4.3.1.jar
+    nunit/
+        2.4.7/
+          [contents of nunit 2.4.7 release tgz/zip]               
+    velocity/
+        1.5/
+          velocity-dep-1.5.jar
+    apache-ant/
+        1.7.0/
+          [contents of apache ant 1.7 release tgz/zip]
+    apache-ant-cmake/
+        1.0/
+          cmakeant.jar
+    apache-ant-dotnet/
+        1.0/
+          [contents of apache ant dotnet 1.0 release tgz/zip]
+    apr/
+        1.3.2/
+          [apr binary installation, see above]
+    cmake/
+        2.8.2/
+          [contents of cmake standalone 2.8.2 release tgz/zip]    
+    cunit/
+        2.1/
+          [built cunit version, 
+           on linux: you can skip this and use system libraries on your machine, e.g. apt-get install libcunit1 libcunit1-dev
+           on win32: see binding-c/runtime/c/README.txt for instructions on building cunit on Win32]
+    nsis/ (WINDOWS ONLY)
+        2.23/
+          [skip if you want no installer built, else: contents of nsis 2.23 standalone zip/tgz]
+
 Setup development environment
 -----------------------------
 
 The primary development environments for the Etch committers are Win32 and
-*nix (Mac OS X). As such we have attempted to make the build process platform
-neutral. In addition, Etch builds are done daily on our internal Bamboo server
-here at Cisco on the win32 platform. This means that we tend to have a bias
-towards a working Win32 build. To further complicate matters, we have much
-development-environment divergence in our committer base, some of us being very
-shell-centric (dixson) while others of us being firmly rooted in Eclipse (sccomer).
-So the compromise has been to attempt to structure the build such it can be
-friendly and productive to both groups and keep the sectarian violence to
-a minimum. :-)
+*nix (Linux, Mac OS X). As such we have attempted to make the build process platform
+neutral. 
+
+The build is running contiously for Windows and Linux on our build server at Apache:
+https://hudson.apache.org/hudson/view/etch/
+
+To further complicate matters, we have much development-environment divergence in 
+our committer base, some of us being very shell-centric while others of us 
+being firmly rooted in Eclipse. So the compromise has been to attempt to structure 
+the build such it can be friendly and productive to both groups and keep the 
+sectarian violence to a minimum. :-)
 
 1. Install JDK. Make certain that you set your JAVA_HOME environment variable
    to point to the correct location.
@@ -100,37 +167,17 @@ Building from ANT
 
 1. Install Apache ANT (version 1.7 or later). 
 
-2. Put /path/to/apache-ant-1.7/bin in your PATH.
+2. on Win32: 
+      set ETCH_EXTERNAL_DEPENDS=<YOUR_EXTERNAL_DEPENDS_FOLDER>
+      Execute scripts/antSetup.bat 
+   on Linux: 
+      export ETCH_EXTERNAL_DEPENDS=<YOUR_EXTERNAL_DEPENDS_FOLDER>
 
-3. If you have Mono, make certain MONO_HOME is set correctly. If you have .NET
-   framework, make certain msbuild.exe is in your PATH.
+3. Check 'build.dependencies' with the correct paths to the jar's this project depends upon.
 
-4. If building C#, make certain NUNIT_HOME is set correctly.
+4. At the shell prompt type:
 
-5. If building on Win32 and you want to build the NSIS installers, set
-   NSIS_HOME to /path/to/nsis/2.23.
-
-6. [IMPORTANT] Update 'build.dependencies' with the correct paths to the jar's
-   this project depends upon:
-
-  * javacc.home=/path/to/javacc-4.0      
-        ('${javacc.home}/bin/lib/javacc.jar' should exist)
-        
-  * junit.lib=/path/to/junit-4.3.1
-        ('${junit.lib}/junit-4.3.1.jar' should exist)
-        
-  * velocity.lib=/path/to/velocity-1.5            
-        ('${velocity.lib}/velocity-dep-1.5.jar' should exist)
-
-  --OPTIONAL--        
-  * ant-dotnet.lib=/path/to/apache-ant-dotnet-1.0 
-
-(dixson) This is a hack until I get autoconf working. Just not there yet :-(
-
-
-7. At the shell prompt type:
-
- > ant release
+ > ant Debug
 
 This will build all compilers and all the bindings for which you have setup
 dependencies. It will also build and run all unit/functional tests and build
@@ -241,6 +288,8 @@ Tools / Organize Favorites... Click Add... Select All. Ok. Ok.)
 You should see a nice output in the Console reporting successful compilation
 of a bunch of etch files. Eclipse should then rebuilt the project.
 
+(alternative: do ant debug in examples directory)
+
 Finally, you can check things out by running the unit tests.
 
  Right click on the etch project, select Run as... / Junit test.
@@ -249,5 +298,4 @@ You'll get some output on the console window, including scary looking stack
 traces. That's ok. JUnit runner should tell you that 1197 tests passed, 22
 ignored, with 0 errors and 0 failures. This takes 66 seconds for me (sccomer).
 
-You're done, start exploring. Check out examples, perf or chat.
-
+You're done, start exploring. Check out examples: helloworld, perf or chat.

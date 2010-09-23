@@ -16,7 +16,7 @@ development and consumption.
 
 The jumping off point for Etch information and help is here:
 
-  http://cwiki.apache.org/ETCH
+  http://incubator.apache.org/etch
 
 = Binary Distribution =
 
@@ -25,13 +25,17 @@ The top-level structure of the install image is:
   ChangeLog.txt
   DISCLAIMER.txt
   LICENSE.txt
+  LICENSE_THIRD_PARTY.txt
   NOTICE.txt
+  NOTICE_THIRD_PARTY.txt
   README.txt
   RELEASE_NOTES.txt
   bin/
   examples/
   lib/
-  maven/
+  binding-c/
+  binding-csharp/
+  binding-java/
   uninst.exe (for windows use only)
 
 Please take a moment to review the RELEASE_NOTES.txt, ChangeLog.txt and
@@ -41,11 +45,11 @@ The Windows installer (apache-etch-1.1.0-incubating-setup.exe) has created a
 user environment variable (ETCH_HOME) which points to the Etch installation
 directory. If you installed Etch using either
 
-  apache-etch-1.1.0-incubating-bin.tar.gz
+  apache-etch-1.1.0-incubating-windows-x86-bin.zip
 
 or
 
-  apache-etch-1.1.0-incubating-bin.zip
+  apache-etch-1.1.0-incubating-linux-x86-bin.tgz
 
 you will want to create this environment variable yourself:
 
@@ -83,32 +87,82 @@ unix:
   bash-3.2$ etch -v
   Etch version is Apache Etch 1.1.0-incubating (some build info)
 
-The lib directory contains the various jar files, zipped sources, and a C# dll
-with associated symbols and source:
+The lib directory contains the various jar files for the compiler and the Apache Velocity dependency jar:
 
-  ApacheEtchCsharpIncubating.dll
-  ApacheEtchCsharpIncubating.pdb
-  ApacheEtchCsharpIncubatingSrc.zip
+  apache-etch-java-compiler-1.1.0-incubating.jar
+  apache-etch-java-compiler-1.1.0-incubating-src.jar
   ...
+
+The top level folders binding-c, binding-java and binding-csharp contain the language specific 
+runtime libraries:
+
+= Binding for Java =
+
+binding-java is organized as follows:
+
   apache-etch-java-runtime-1.1.0-incubating-src.zip
-  apache-etch-java-runtime-1.1.0-incubating.jar
-  ...
+  lib/
+    apache-etch-java-runtime-1.1.0-incubating.jar
 
-The main items of interest, shown above, are the language binding runtimes,
-which you need to link with your projects.
-
-For java you need to put the etch java runtime jar on the classpath of your
-projects:
-
-  apache-etch-java-runtime-1.1.0-incubating.jar
-
+The generated java source from the etch compiler needs apache-etch-java-runtime-1.1.0-incubating.jar.
 There is source code to go with it in apache-etch-java-runtime-1.1.0-incubating-src.zip.
 
-The C# (.NET 2.0 and later) ApacheEtchCsharpIncubating.dll should be added to
-any C# projects.
+= Binding for C# =
+
+binding-csharp is organized as follows:
+
+  apache-etch-csharp-runtime-1.1.0-incubating-src.zip  
+  lib/
+    ApacheEtchCsharpIncubating.dll
+    ApacheEtchCsharpIncubating.pdb
+
+The generated c# source from the etch compiler needs ApacheEtchCsharpIncubating.dll
+The C# (.NET 2.0 and later) ApacheEtchCsharpIncubating.dll should be added to any C# projects.
+There is source code to go with it in apache-etch-csharp-runtime-1.1.0-incubating-src.zip.
+
+= Binding for C =
+
+binding-c is organized as follows:
+
+  bin/
+    apr-1-config		(on linux)
+    apriconv			(on linux)
+  include/
+    [etch-*].h			(on win32)
+    apr-1			(on linux)
+  lib/
+    etch.lib			(on win32)
+    etch.pdb			(on win32)
+    libetch.a			(on linux)
+  extern/
+    apr/
+      bin/
+        libapr-1.dll		(on win32)
+        libapr-1.pdb		(on win32)
+        libapriconv-1.dll	(on win32)
+        libapriconv-1.pdb	(on win32)
+      iconv/
+        [iconv*]-stuff
+      include/
+        [apr-*].h
+      lib/
+        libapr-1.lib		(on win32)
+	libapriconv-1.lib	(on win32)
+	libapr-1.so		(on linux)
+	libapriconv-1.so	(on linux)
+  apache-etch-c-runtime-1.1.0-incubating-src.zip
+
+Generated C source depends on the dlls/so/a/h files mentioned above. The best choice to 
+build generated code using the c binding is cmake. You can use the examples/helloworld 
+example as a reference. The C binding has external dependencies to the Apache Portable 
+Runtime (APR). We ship dll/so/h for the apr in the extern folder. There is source code 
+to go with it in apache-etch-c-runtime-1.1.0-incubating-src.zip
+
+= Ant Plugin =
 
 There is an ant plugin which you can use with ant 1.7.0 or later to invoke the
-compiler as a task. It is documented on the wiki referenced above.
+compiler as a task. It is documented on the wiki referenced above. You can also see examples 
+of its usage in the build.xml files in the examples folder
 
 = Maven =
 
@@ -133,7 +187,8 @@ contribute.
 
 = Examples =
 
-Examples have been provided in the examples/ subdirectory. There is a readme
+Examples have been provided in the examples/ subdirectory. Start with the HelloWorld
+example, it contains code for all three language bindings. There is a readme
 file in each example's directory which explains how to build and run it.
 
 = Tests =
@@ -141,7 +196,7 @@ file in each example's directory which explains how to build and run it.
 Unit tests can be had by checking out the source code from the subversion
 repository and performing a complete build:
 
-  https://svn.apache.org/repos/asf/incubator/etch/releases/release-1.1.0
+  http://svn.apache.org/repos/asf/incubator/etch/releases/release-1.1.0-incubating
 
 = Help =
 
