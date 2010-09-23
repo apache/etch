@@ -1,7 +1,10 @@
 #!/bin/bash
 
 # set install prefix
-export INSTALL_PREFIX=/tmp
+if [ $INSTALL_PREFIX = "" ]; then 
+    export INSTALL_PREFIX=/tmp
+fi
+echo using INSTALL_PREFIX: $INSTALL_PREFIX
 
 #
 # download apr sources
