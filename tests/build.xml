@@ -129,7 +129,7 @@
             <src path="${src}/main/java" />
             <src path="${src}/test/java" />
             <classpath>
-                <pathelement location="${Etch.HOME}/lib/${etch-java-runtime.jar}" />
+                <pathelement location="${Etch.HOME}/binding-java/lib/${etch-java-runtime.jar}" />
                 <pathelement location="${Etch.dependency.junit.jar}" />
                 <pathelement location="${Etch.HOME}/lib/${etch-compiler.jar}" />
             </classpath>
@@ -142,7 +142,7 @@
             errorProperty="build.tests.fail" failureProperty="build.tests.fail">
             <classpath>
                 <pathelement location="${classes}" />
-                <pathelement location="${Etch.HOME}/lib/${etch-java-runtime.jar}" />
+                <pathelement location="${Etch.HOME}/binding-java/lib/${etch-java-runtime.jar}" />
                 <pathelement location="${Etch.dependency.junit.jar}" />
                 <pathelement location="${Etch.HOME}/lib/${etch-compiler.jar}" />
                 <!-- TODO: remove if clover not available -->
