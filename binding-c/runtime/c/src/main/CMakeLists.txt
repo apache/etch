@@ -101,5 +101,9 @@ add_library (etch-c STATIC
 target_link_libraries(etch-c "${APR_LIBRARY}")
 target_link_libraries(etch-c "${APR-ICONV_LIBRARY}")
 target_link_libraries(etch-c "${CUNIT_LIBRARY}")
+
+IF (UNIX)
+set_target_properties(etch-c PROPERTIES COMPILE_FLAGS "-m32" LINK_FLAGS "-m32")
+ENDIF (UNIX)
 set_target_properties(etch-c PROPERTIES OUTPUT_NAME "etch")
 

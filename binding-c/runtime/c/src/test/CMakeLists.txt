@@ -63,6 +63,10 @@ add_executable(etch-c-test
     transport/test_messagizer.c
     transport/test_mailboxmgr.c
 )
+
 target_link_libraries (etch-c-test etch-c)
 
+IF (UNIX)
+set_target_properties(etch-c-test PROPERTIES COMPILE_FLAGS "-m32" LINK_FLAGS "-m32")
+ENDIF (UNIX)
 
