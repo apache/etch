@@ -52,6 +52,8 @@
         <copy file="${Etch.basedir}/DISCLAIMER.txt" tofile="${Etch.dist}/DISCLAIMER.txt" />
         <copy file="${Etch.basedir}/RELEASE_NOTES.txt" tofile="${Etch.dist}/RELEASE_NOTES.txt" />
         <copy file="${Etch.basedir}/NOTICE.txt" tofile="${Etch.dist}/NOTICE.txt" />
+        <copy file="${Etch.basedir}/NOTICE_THIRD_PARTY.txt" tofile="${Etch.dist}/NOTICE_THIRD_PARTY.txt" />
+        <copy file="${Etch.basedir}/LICENSE_THIRD_PARTY.txt" tofile="${Etch.dist}/LICENSE_THIRD_PARTY.txt" />
         <copy file="${proj}/etch-maven-install.bat" todir="${Etch.dist}/bin" >
             <filterset refid="Etch.buildTokens" />
         </copy>
