@@ -214,7 +214,28 @@
 
     <target name="build-csharp" depends="build-csharp-with-mono,build-csharp-with-dotnet" />
 
-    <target name="build" depends="build-java,build-csharp" />
+	<target name="build-c" depends="generate-sources" if="USE.cmake">
+		 <cmake srcdir="${basedir}" bindir="${basedir}/target" buildtype="Debug" >
+		           	<variable name="ETCH_HOME" type="PATH" value="${etch.home}" />
+  		 </cmake>
+                 <copy todir="${bin}" flatten="true">
+                    <fileset dir="${basedir}/target/" >
+                         <include name="helloworld-client" />
+                         <include name="helloworld-server" />
+                         <include name="debug/helloworld-client.exe" />
+                         <include name="debug/helloworld-server.exe" />
+                    </fileset>
+                 </copy>
+                 <copy todir="${bin}" flatten="true">
+                    <fileset dir="${etch.home}/binding-c/extern/apr/bin" >
+                         <include name="libapr-1.dll" />
+                         <include name="libapriconv-1.dll" />
+                    </fileset>
+                 </copy>
+                
+	</target>
+	
+    <target name="build" depends="build-java,build-csharp,build-c" />
 
     <!-- run unit tests -->
 
@@ -266,6 +287,14 @@ To run csharp example:
 > start HelloWorldListener.exe
 > start HelloWorldClient.exe
 
+To run the c example:
+
+> build using cmake (see README.txt) (if you are not building from trunk, 
+  e.g. if you have an official release)
+> cd target\debug
+> start helloworld-server.exe
+> start helloworld-client.exe
+
 You can mix and match the various clients and listeners.
 
         </echo>
@@ -284,6 +313,7 @@ You can mix and match the various clients and listeners.
        <copy file="dist-build.xml" tofile="${dist-src}/build.xml" overwrite="true" >
            <filterset refid="Etch.buildTokens" />
        </copy>    
+        <copy file="CMakeLists.txt" tofile="${dist-src}/CMakeLists.txt" overwrite="true" />
         <copy file="README.txt" tofile="${dist-src}/README.txt" overwrite="true" />
         
         <copy todir="${dist-src}/src/main/etch" overwrite="true" >
@@ -304,6 +334,15 @@ You can mix and match the various clients and listeners.
             <fileset dir="${src}/main/csharp" >
                 <exclude name="**/.svn/**" />
                 <include name="**/*.cs" />
+            </fileset>
+        </copy>
+
+        <copy todir="${dist-src}/src/main/c" overwrite="true" >
+            <fileset dir="${src}/main/c" >
+                <exclude name="**/.svn/**" />
+                <include name="**/*.c" />
+                <include name="**/*.h" />
+                <include name="**/CMakeLists.txt" />
             </fileset>
         </copy>
         

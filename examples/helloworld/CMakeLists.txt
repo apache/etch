@@ -17,18 +17,12 @@
 cmake_minimum_required (VERSION 2.6) 
 project (etch-c-helloworld)
 
-message(STATUS "using external libraries ${ETCH_EXTERNAL_DEPENDS}")
 message(STATUS "using etch home ${ETCH_HOME}")
 
 #Etch Home
 IF (NOT ETCH_HOME)
     MESSAGE(FATAL_ERROR "ETCH_HOME not set")
 ENDIF (NOT ETCH_HOME)
-
-# Etch external
-IF (NOT ETCH_EXTERNAL_DEPENDS)
-    MESSAGE(FATAL_ERROR "ETCH_EXTERNAL_DEPENDS not set")
-ENDIF (NOT ETCH_EXTERNAL_DEPENDS)
 
 # Set definitions
 IF (UNIX)
@@ -48,7 +42,7 @@ IF (NOT ETCH_FOUND)
 ENDIF (NOT ETCH_FOUND)
 
 # APR library
-SET(APR ${ETCH_EXTERNAL_DEPENDS}/apr/1.3.12)
+SET(APR ${ETCH_HOME}/binding-c/extern/apr)
 FIND_PATH(APR_INCLUDE_DIR apr.h ${APR}/include ${APR}/include/apr-1)
 FIND_LIBRARY(APR_LIBRARY NAMES libapr-1.lib libapr-1.so PATHS ${APR}/lib)
 IF (APR_INCLUDE_DIR AND APR_LIBRARY)
@@ -59,7 +53,7 @@ IF (NOT APR_FOUND)
 ENDIF (NOT APR_FOUND)
 
 # APR-ICONV library
-SET(APR ${ETCH_EXTERNAL_DEPENDS}/apr/1.3.12)
+SET(APR ${ETCH_HOME}/binding-c/extern/apr)
 FIND_PATH(APR-ICONV_INCLUDE_DIR apr_iconv.h ${APR}/include ${APR}/include/apr-1)
 FIND_LIBRARY(APR-ICONV_LIBRARY NAMES libapriconv-1.lib libapriconv-1.so PATHS ${APR}/lib)
 IF (APR-ICONV_INCLUDE_DIR AND APR-ICONV_LIBRARY)
@@ -69,21 +63,10 @@ IF (NOT APR-ICONV_FOUND)
     MESSAGE(FATAL_ERROR "Could not find libapriconv")
 ENDIF (NOT APR-ICONV_FOUND)
 
-# APR-ICONV library
-SET(CUNIT ${ETCH_EXTERNAL_DEPENDS}/cunit/2.1)
-FIND_PATH(CUNIT_INCLUDE_DIR CUnit.h ${CUNIT}/include /usr/include/CUnit)
-FIND_LIBRARY(CUNIT_LIBRARY NAMES libcunit.lib libcunit.a PATHS ${CUNIT}/lib /usr/lib)
-IF (CUNIT_INCLUDE_DIR AND CUNIT_LIBRARY)
-    SET(CUNIT_FOUND TRUE)
-ENDIF (CUNIT_INCLUDE_DIR AND CUNIT_LIBRARY)
-IF (NOT CUNIT_FOUND)
-    MESSAGE(FATAL_ERROR "Could not find libcunit")
-ENDIF (NOT CUNIT_FOUND)
-
 # set include dirs
 include_directories (${APR_INCLUDE_DIR})
-include_directories (${ETCH_INCLUDE_DIR})
 include_directories (${APR-ICONV_INCLUDE_DIR})
+include_directories (${ETCH_INCLUDE_DIR})
 include_directories (${PROJECT_SOURCE_DIR}/src/main/c)
 include_directories (${PROJECT_SOURCE_DIR}/target/generated-sources/main/etch/c)
 

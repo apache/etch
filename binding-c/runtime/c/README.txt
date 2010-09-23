@@ -89,6 +89,8 @@ and ../trunk/binding-c/runtime/c/target/src/test.
 
 Please note that tests need libapr-1.dll and libapriconv-1.dll either in your path environment
 variable or in case of MS Visual Studio under the ..\binding-c\runtime\c\target\src\test\ folder.
+Additionally, you have to set APR_ICONV_PATH to <ETCH_EXTERNAL_DEPENDS>\apr\1.3.12\iconv\ to make
+character conversion run. 
 
 ==================================================
 Build for linux
