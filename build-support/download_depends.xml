@@ -1,6 +1,14 @@
 <project name="download_depends" default="download" basedir=".">
-    <target name="download">
+    <condition property="externals.available">
+     <available file="${unzip-dest}"/>
+    </condition>
+
+    <target name="download" unless="externals.available" depends="echo">
       <get src="${download-url}" dest="${download-dest}"/>
       <unzip src="${download-dest}" dest="${unzip-dest}"/>
+    </target>
+
+    <target name="echo" if="externals.available">
+      <echo message="${unzip-dest} already available, doing nothing"/>
     </target>
 </project>
