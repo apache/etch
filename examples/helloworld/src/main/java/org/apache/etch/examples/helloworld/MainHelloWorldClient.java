@@ -53,7 +53,7 @@ public class MainHelloWorldClient implements HelloWorldHelper.HelloWorldClientFa
 		// Connect to the service
 		server._startAndWaitUp( 4000 );
 
-		user u = new user(5, "Testuser");
+		user u = new user(5, "User");
 		System.out.println(server.say_hello(u));
 
 		// Disconnect from the service

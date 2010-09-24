@@ -87,10 +87,10 @@ int main(int argc, char* argv[])
     }
 	
     user = new_helloworld_user();
-    user->id = 51;
-    user->name = new_stringw(L"Test");
+    user->id = 5;
+    user->name = new_stringw(L"User");
     result = remote->say_hello(remote, user);
-    wprintf(L"%s\n",result->v.valw);
+    printf("%S\n",result->v.valw);
     
     // wait for keypress
     waitkey();

@@ -102,6 +102,10 @@ int destroy_helloworld_server_implx(void* data)
  */
  
 etch_string* say_hello_impl(void* thisx, helloworld_user* to_whom){
-  etch_string* ret = new_stringw(L"Hello World from C Binding!");
+  int len = (6 + wcslen(to_whom->name->v.valw) + 1);
+  wchar_t* retw = (wchar_t*) malloc(len * sizeof(wchar_t));
+  etch_string* ret = NULL;
+  etch_snwprintf(retw, len, L"Hello %s", to_whom->name->v.valw);
+  ret = new_stringw(retw);
   return ret;
 }

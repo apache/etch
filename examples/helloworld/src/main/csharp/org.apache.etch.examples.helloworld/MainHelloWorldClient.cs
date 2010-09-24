@@ -37,7 +37,7 @@ namespace org.apache.etch.examples.helloworld
 			// Connect to the service
 			server._StartAndWaitUp( 4000 );
 
-			org.apache.etch.examples.helloworld.types.HelloWorld.user theUser = new user(15,"Test");
+			org.apache.etch.examples.helloworld.types.HelloWorld.user theUser = new user(5,"User");
 	            	string s = server.say_hello(theUser);
 			Console.Write(s);
 
