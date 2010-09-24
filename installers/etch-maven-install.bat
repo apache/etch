@@ -27,7 +27,10 @@ rem Define the etch home directory and artifact particulars
 
 set ETCH_HOME=%~dp0..
 set GROUP=org.apache.etch
-set ARTIFACTS=apache-etch-ant-plugin, apache-etch-compiler, apache-etch-csharp-compiler, apache-etch-java-compiler, apache-etch-java-runtime, apache-etch-xml-compiler
+set ARTIFACTS_COMPILER=apache-etch-ant-plugin, apache-etch-compiler, apache-etch-csharp-compiler, apache-etch-java-compiler, apache-etch-c-compiler, apache-etch-xml-compiler
+set ARTIFACTS_RUNTIME_BINDING-JAVA=apache-etch-java-runtime
+set ARTIFACTS_RUNTIME_BINDING-CSHARP=apache-etch-csharp-runtime
+set ARTIFACTS_RUNTIME_BINDING-C=apache-etch-c-runtime
 set VERSION=@EtchVersion@-incubating
 
 if "%M2_HOME%" == "" goto try_maven_home
@@ -45,5 +48,9 @@ goto run_mvn
 set MVN=mvn.bat
 
 :run_mvn
-FOR %%A IN (%ARTIFACTS%) DO CALL "%MVN%" install:install-file "-Dfile=%ETCH_HOME%\lib\%%A-%VERSION%.jar" -DgroupId=%GROUP% -DartifactId=%%A -Dversion=%VERSION% -Dpackaging=jar
-FOR %%A IN (%ARTIFACTS%) DO CALL "%MVN%" install:install-file "-Dfile=%ETCH_HOME%\lib\%%A-%VERSION%-src.zip" -DgroupId=%GROUP% -DartifactId=%%A -Dversion=%VERSION% -Dpackaging=zip -Dclassifier=src
+rem compiler bin and source
+FOR %%A IN (%ARTIFACTS_COMPILER%) DO CALL "%MVN%" install:install-file "-Dfile=%ETCH_HOME%\lib\%%A-%VERSION%.jar" -DgroupId=%GROUP% -DartifactId=%%A -Dversion=%VERSION% -Dpackaging=jar
+FOR %%A IN (%ARTIFACTS_COMPILER%) DO CALL "%MVN%" install:install-file "-Dfile=%ETCH_HOME%\lib\%%A-%VERSION%-src.zip" -DgroupId=%GROUP% -DartifactId=%%A -Dversion=%VERSION% -Dpackaging=zip -Dclassifier=src
+rem runtime java bin and source
+FOR %%A IN (%ARTIFACTS_RUNTIME_BINDING-JAVA%) DO CALL "%MVN%" install:install-file "-Dfile=%ETCH_HOME%\binding-java\lib\%%A-%VERSION%.jar" -DgroupId=%GROUP% -DartifactId=%%A -Dversion=%VERSION% -Dpackaging=jar
+FOR %%A IN (%ARTIFACTS_RUNTIME_BINDING-JAVA%) DO CALL "%MVN%" install:install-file "-Dfile=%ETCH_HOME%\binding-java\lib\%%A-%VERSION%-src.zip" -DgroupId=%GROUP% -DartifactId=%%A -Dversion=%VERSION% -Dpackaging=zip -Dclassifier=src

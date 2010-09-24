@@ -19,92 +19,41 @@
 /*
  * test_arrayvalue.c -- test etch_arrayvalue object
  */
-#include "apr_time.h" /* some apr must be included first */
-#include "etchthread.h"
-#include <tchar.h>
-#include <stdio.h>
-#include <conio.h>
-
-#include "cunit.h"
-#include "basic.h"
-#include "automated.h"
-
-#include "etch_global.h"
+#include "etch_runtime.h"
 #include "etch_tagdata_inp.h"
 #include "etch_arrayval.h"
-#include "etchexcp.h"
+#include "etch_exception.h"
+#include "etch_nativearray.h"
+#include "etch_objecttypes.h"
+#include "etch_mem.h"
+#include <wchar.h>
 
+#include <stdio.h>
+#include "CUnit.h"
 
-int apr_setup(void);
-int apr_teardown(void);
-int this_setup();
-int this_teardown();
-apr_pool_t* g_apr_mempool;
-const char* pooltag = "etchpool";
+#define IS_DEBUG_CONSOLE FALSE
 
+// extern types
+extern apr_pool_t* g_etch_main_pool;
 
 /* - - - - - - - - - - - - - - 
  * unit test infrastructure
  * - - - - - - - - - - - - - -
  */
-
-int init_suite(void)
+static int init_suite(void)
 {
-    apr_setup();
-    etch_runtime_init(TRUE);
-    return this_setup();
-}
+    etch_status_t etch_status = ETCH_SUCCESS;
 
-int clean_suite(void)
-{
-    this_teardown();
-    etch_runtime_cleanup(0,0); /* free memtable and cache etc */
-    apr_teardown();
-    return 0;
-}
-
-int g_is_automated_test, g_bytes_allocated;
-
-#define IS_DEBUG_CONSOLE FALSE
-
-/*
- * apr_setup()
- * establish apache portable runtime environment
- */
-int apr_setup(void)
-{
-    int result = apr_initialize();
-    if (result == 0)
-    {   result = etch_apr_init();
-        g_apr_mempool = etch_apr_mempool;
+    etch_status = etch_runtime_initialize(NULL);
+    if(etch_status != NULL) {
+        // error
     }
-    if (g_apr_mempool)
-        apr_pool_tag(g_apr_mempool, pooltag);
-    else result = -1;
-    return result;
-}
-
-/*
- * apr_teardown()
- * free apache portable runtime environment
- */
-int apr_teardown(void)
-{
-    if (g_apr_mempool)
-        apr_pool_destroy(g_apr_mempool);
-    g_apr_mempool = NULL;
-    apr_terminate();
     return 0;
 }
 
-int this_setup()
+static int clean_suite(void)
 {
-    etch_apr_mempool = g_apr_mempool;
-    return 0;
-}
-
-int this_teardown()
-{    
+    etch_runtime_shutdown();
     return 0;
 }
 
@@ -121,9 +70,8 @@ int this_teardown()
 
 #define IS_DEBUG_CONSOLE FALSE  /* TRUE to display test diagnostics */
 
-etch_arraylist* testdata;
-int g_bytes_allocated, g_which_exception_test, g_is_automated_test;
-wchar_t* local_excp_text = L"global text";
+static etch_arraylist* testdata;
+static int g_which_exception_test;
 
 
 #if(0)
@@ -134,21 +82,7 @@ wchar_t* local_excp_text = L"global text";
  */
 typedef struct fake_tdi_impl
 {
-    unsigned int    hashkey;    
-    unsigned short  obj_type;   
-    unsigned short  class_id;   
-    struct objmask* vtab;       
-    int  (*destroy)(void*);     
-    void*(*clone)  (void*); 
-    obj_gethashkey  get_hashkey;               
-    struct objmask* parent;     
-    etchresult*     result;     
-    unsigned int    refcount;       
-    unsigned int    length;     
-    unsigned char   is_null;   
-    unsigned char   is_copy;   
-    unsigned char   is_static;  
-    unsigned char   reserved;
+    etch_object object;
 
     int index;
     byte started, done, ended;
@@ -163,21 +97,7 @@ typedef struct fake_tdi_impl
  */
 typedef struct fake_tdo_impl
 {
-    unsigned int    hashkey;    
-    unsigned short  obj_type;   
-    unsigned short  class_id;   
-    struct objmask* vtab;       
-    int  (*destroy)(void*);     
-    void*(*clone)  (void*);  
-    obj_gethashkey  get_hashkey;              
-    struct objmask* parent;     
-    etchresult*     result;     
-    unsigned int    refcount;       
-    unsigned int    length;     
-    unsigned char   is_null;   
-    unsigned char   is_copy;   
-    unsigned char   is_static;  
-    unsigned char   reserved;
+    etch_object object;
 
     byte started, ended;
     etch_arraylist* list;   
@@ -190,13 +110,12 @@ typedef struct fake_tdo_impl
  * destroy_fake_tdi_impl
  * memory cleanup handler for fake_tdi_impl
  */
-int destroy_fake_tdi_impl(fake_tdi_impl* impl)
+static int destroy_fake_tdi_impl(fake_tdi_impl* impl)
 {
-    int result = verify_object((objmask*)impl, OBJTYPE_FAKETDI_IMPL, CLASSID_FAKETDI_IMPL, NULL);
+    int result = verify_object((etch_object*)impl, OBJTYPE_FAKETDI_IMPL, CLASSID_FAKETDI_IMPL, NULL);
     if (result == -1) return -1; /* object passed was not expected object */
 
-    if (impl->arrray)
-        impl->arrray->destroy(impl->arrray); 
+    etch_object_destroy(impl->arrray); 
 
     etch_free(impl);    
     return 0;
@@ -207,17 +126,17 @@ int destroy_fake_tdi_impl(fake_tdi_impl* impl)
  * destroy_fake_tdo_impl
  * memory cleanup handler for fake_tdo_impl
  */
-int destroy_fake_tdo_impl(fake_tdo_impl* impl)
+static int destroy_fake_tdo_impl(fake_tdo_impl* impl)
 {
     etch_destructor destroy = NULL;
-    int result = verify_object((objmask*)impl, OBJTYPE_FAKETDO_IMPL, CLASSID_FAKETDO_IMPL, NULL);
+    int result = verify_object((etch_object*)impl, OBJTYPE_FAKETDO_IMPL, CLASSID_FAKETDO_IMPL, NULL);
     if (result == -1) return -1; /* object passed was not expected object */
 
     impl->list->is_readonly = TRUE;
-    impl->list->destroy(impl->list);     /* destroy list, but not content */
+    etch_object_destroy(impl->list);     /* destroy list, but not content */
 
     impl->arrray->list->is_readonly = FALSE;
-    impl->arrray->destroy(impl->arrray); /* destroy arravalue and content */
+    etch_object_destroy(impl->arrray); /* destroy arravalue and content */
 
     etch_free(impl);    
     return 0;
@@ -228,7 +147,7 @@ int destroy_fake_tdo_impl(fake_tdo_impl* impl)
  * new_fake_tdi_impl()
  * constructor for TDI implementation instance data
  */
-fake_tdi_impl* new_fake_tdi_impl()
+static fake_tdi_impl* new_fake_tdi_impl()
 {
     fake_tdi_impl* data = (fake_tdi_impl*) new_object
         (sizeof(fake_tdi_impl), ETCHTYPEB_INSTANCEDATA, CLASSID_FAKETDI_IMPL);
@@ -243,7 +162,7 @@ fake_tdi_impl* new_fake_tdi_impl()
  * new_fake_tdo_impl()
  * constructor for TDO implementation instance data
  */
-fake_tdo_impl* new_fake_tdo_impl()
+static fake_tdo_impl* new_fake_tdo_impl()
 {
     fake_tdo_impl* data = (fake_tdo_impl*) new_object
         (sizeof(fake_tdo_impl), ETCHTYPEB_INSTANCEDATA, CLASSID_FAKETDO_IMPL);
@@ -254,8 +173,8 @@ fake_tdo_impl* new_fake_tdo_impl()
 }
 
 
-enum etch_classid CLASSID_VTABLE_FAKETDI = CLASSID_DYNAMIC_START + 0x0;  
-enum etch_classid CLASSID_VTABLE_FAKETDO = CLASSID_DYNAMIC_START + 0x1;
+static enum etch_classid CLASSID_VTABLE_FAKETDI = CLASSID_DYNAMIC_START + 0x0;  
+static enum etch_classid CLASSID_VTABLE_FAKETDO = CLASSID_DYNAMIC_START + 0x1;
 
 
 /**
@@ -264,7 +183,7 @@ enum etch_classid CLASSID_VTABLE_FAKETDO = CLASSID_DYNAMIC_START + 0x1;
  * @return the array that we are reading.
  * @throws IOException if there is a problem with the stream.
  */
-etch_arrayvalue* faketdi_start_array(tagged_data_input* tdi)
+static etch_arrayvalue* faketdi_start_array(tagged_data_input* tdi)
 {
     int result = 0;
     fake_tdi_impl* data = NULL;
@@ -277,7 +196,7 @@ etch_arrayvalue* faketdi_start_array(tagged_data_input* tdi)
     CU_ASSERT_PTR_NOT_NULL_FATAL(tdi->impl);
 
     data = (fake_tdi_impl*) tdi->impl; /* validate instance data */
-    result = verify_object((objmask*)data, OBJTYPE_FAKETDI_IMPL, 0, 0);
+    result = verify_object((etch_object*)data, OBJTYPE_FAKETDI_IMPL, 0, 0);
     CU_ASSERT_EQUAL_FATAL(result,0);
 
     result = data->destroy(NULL); /* ensure we can call instance data destructor */
@@ -304,7 +223,7 @@ etch_arrayvalue* faketdi_start_array(tagged_data_input* tdi)
 /**
  * faketdo_start_array() overrides tdo_start_array()
  */
-etch_arrayvalue* faketdo_start_array(tagged_data_output* tdo, etch_arrayvalue* thisp)
+static etch_arrayvalue* faketdo_start_array(tagged_data_output* tdo, etch_arrayvalue* thisp)
 {
     int result = 0;
     fake_tdo_impl* data = NULL;
@@ -313,7 +232,7 @@ etch_arrayvalue* faketdo_start_array(tagged_data_output* tdo, etch_arrayvalue* t
     CU_ASSERT_PTR_NOT_NULL_FATAL(tdo->impl);
 
     data = (fake_tdo_impl*) tdo->impl; /* validate instance data */
-    result = verify_object((objmask*)data, OBJTYPE_FAKETDO_IMPL, 0, 0);
+    result = verify_object((etch_object*)data, OBJTYPE_FAKETDO_IMPL, 0, 0);
     CU_ASSERT_EQUAL_FATAL(result,0);
 
     result = data->destroy(NULL); /* ensure we can call into instance data destructor */
@@ -335,7 +254,7 @@ etch_arrayvalue* faketdo_start_array(tagged_data_output* tdo, etch_arrayvalue* t
 /**
  * faketdi_read_array_element() overrides tdi_read_array_element()
  */
-int faketdi_read_array_element(tagged_data_input* tdi, ETCH_ARRAY_ELEMENT** out_ae)   
+static int faketdi_read_array_element(tagged_data_input* tdi, ETCH_ARRAY_ELEMENT** out_ae)   
 {
     int result = 0;
     fake_tdi_impl* data = NULL;
@@ -343,7 +262,7 @@ int faketdi_read_array_element(tagged_data_input* tdi, ETCH_ARRAY_ELEMENT** out_
     CU_ASSERT_PTR_NOT_NULL_FATAL(tdi->impl);
 
     data = (fake_tdi_impl*) tdi->impl; /* validate instance data */
-    result = verify_object((objmask*)data, OBJTYPE_FAKETDI_IMPL, 0, 0);
+    result = verify_object((etch_object*)data, OBJTYPE_FAKETDI_IMPL, 0, 0);
     CU_ASSERT_EQUAL_FATAL(result,0);
 
     CU_ASSERT_EQUAL(data->started,TRUE);
@@ -364,7 +283,7 @@ int faketdi_read_array_element(tagged_data_input* tdi, ETCH_ARRAY_ELEMENT** out_
 /**
  * faketdo_write_array_element() overrides tdi_read_array_element()
  */
-int faketdo_write_array_element(tagged_data_output* tdo, objmask* newitem)   
+static int faketdo_write_array_element(tagged_data_output* tdo, etch_object* newitem)   
 {
     int result = 0;
     fake_tdo_impl* data = NULL;
@@ -372,7 +291,7 @@ int faketdo_write_array_element(tagged_data_output* tdo, objmask* newitem)
     CU_ASSERT_PTR_NOT_NULL_FATAL(tdo->impl);
 
     data = (fake_tdo_impl*) tdo->impl; /* validate instance data */
-    result = verify_object((objmask*)data, OBJTYPE_FAKETDO_IMPL, 0, 0);
+    result = verify_object((etch_object*)data, OBJTYPE_FAKETDO_IMPL, 0, 0);
     CU_ASSERT_EQUAL_FATAL(result,0);
     CU_ASSERT_PTR_NOT_NULL_FATAL(data->list);  
 
@@ -390,7 +309,7 @@ int faketdo_write_array_element(tagged_data_output* tdo, objmask* newitem)
  * @param array the array that we read.
  * @throws IOException if there is a problem with the stream.
  */
-int faketdi_end_array(tagged_data_input* tdi, etch_arrayvalue* av)
+static int faketdi_end_array(tagged_data_input* tdi, etch_arrayvalue* av)
 {
     int result = 0;
     fake_tdi_impl* data = NULL;
@@ -398,7 +317,7 @@ int faketdi_end_array(tagged_data_input* tdi, etch_arrayvalue* av)
     CU_ASSERT_PTR_NOT_NULL_FATAL(tdi->impl);
 
     data = (fake_tdi_impl*) tdi->impl; /* validate instance data */
-    result = verify_object((objmask*)data, OBJTYPE_FAKETDI_IMPL, 0, 0);
+    result = verify_object((etch_object*)data, OBJTYPE_FAKETDI_IMPL, 0, 0);
     CU_ASSERT_EQUAL_FATAL(result,0);
     CU_ASSERT_PTR_NOT_NULL_FATAL(data->arrray); 
  
@@ -415,7 +334,7 @@ int faketdi_end_array(tagged_data_input* tdi, etch_arrayvalue* av)
 /**
  * faketdo_end_array() overrides tdo_end_array()
  */
-int faketdo_end_array(tagged_data_output* tdo, etch_arrayvalue* av)
+static int faketdo_end_array(tagged_data_output* tdo, etch_arrayvalue* av)
 {
     int result = 0;
     fake_tdo_impl* data = NULL;
@@ -423,7 +342,7 @@ int faketdo_end_array(tagged_data_output* tdo, etch_arrayvalue* av)
     CU_ASSERT_PTR_NOT_NULL_FATAL(tdo->impl);
 
     data = (fake_tdo_impl*) tdo->impl; /* validate instance data */
-    result = verify_object((objmask*)data, OBJTYPE_FAKETDO_IMPL, 0, 0);
+    result = verify_object((etch_object*)data, OBJTYPE_FAKETDO_IMPL, 0, 0);
     CU_ASSERT_EQUAL_FATAL(result,0);
     CU_ASSERT_PTR_NOT_NULL_FATAL(data->list); 
     CU_ASSERT_PTR_NOT_NULL_FATAL(data->arrray); 
@@ -445,18 +364,18 @@ int faketdo_end_array(tagged_data_output* tdo, etch_arrayvalue* av)
  * destructor to destroy etchobject content such as any exception, and finally
  * the object itself.
  */
-void faketdi_close(tagged_data_input* tdi)  
+static void faketdi_close(tagged_data_input* tdi)  
 {
-    tdi->destroy(tdi); /* destroy object */
+    etch_object_destroy(tdi); /* destroy object */
 }
 
 
 /**
  * faketdo_close() port from java test
  */
-void faketdo_close(tagged_data_output* tdo)  
+static void faketdo_close(tagged_data_output* tdo)  
 {
-    tdo->destroy(tdo); /* destroy object */
+    etch_object_destroy(tdo); /* destroy object */
 }
 
 
@@ -464,7 +383,7 @@ void faketdo_close(tagged_data_output* tdo)
  * new_fake_tdi()
  * constructor for TDI implementation  
  */
-tagged_data_input* new_fake_tdi()
+static tagged_data_input* new_fake_tdi()
 {
     tagged_data_input* faketdi = NULL;
     i_tagged_data_input*  vtab = NULL;
@@ -483,26 +402,26 @@ tagged_data_input* new_fake_tdi()
         vtab->end_array   = faketdi_end_array;
         vtab->read_array_element = faketdi_read_array_element;
 
-        vtab->vtab = faketdi->vtab; /* chain parent vtable to override vtab */
+        ((etch_object*)vtab)->vtab = faketdi->vtab; /* chain parent vtable to override vtab */
 
         cache_insert(vtab->hashkey, vtab, FALSE);
     } 
 
-    CU_ASSERT_EQUAL_FATAL(vtab->class_id, CLASSID_VTABLE_FAKETDI);
+    CU_ASSERT_EQUAL_FATAL(((etch_object*)vtab)->class_id, CLASSID_VTABLE_FAKETDI);
 
-    faketdi->vtab = vtab;  /* set override vtab */
+    ((etch_object*)faketdi)->vtab = vtab;  /* set override vtab */
 
-    faketdi->impl = (objmask*) new_fake_tdi_impl(); /* instantiate tdi instance data */
+    faketdi->impl = (etch_object*) new_fake_tdi_impl(); /* instantiate tdi instance data */
 
     switch(g_which_exception_test)
     {   case EXCPTEST_UNCHECKED_STATICTEXT: 
-             etch_throw((objmask*)faketdi, EXCPTYPE_NULLPTR, NULL, 0);  
+             etch_throw((etch_object*)faketdi, EXCPTYPE_NULLPTR, NULL, 0);  
              break;   
         case EXCPTEST_CHECKED_COPYTEXT:   
-             etch_throw((objmask*)faketdi, EXCPTYPE_CHECKED_BOGUS, L"copied text", ETCHEXCP_COPYTEXT | ETCHEXCP_FREETEXT);  
+             etch_throw((etch_object*)faketdi, EXCPTYPE_CHECKED_BOGUS, L"copied text", ETCHEXCP_COPYTEXT | ETCHEXCP_FREETEXT);  
              break; 
         case EXCPTEST_CHECKED_STATICTEXT:   
-             etch_throw((objmask*)faketdi, EXCPTYPE_CHECKED_BOGUS, local_excp_text, ETCHEXCP_STATICTEXT);  
+             etch_throw((etch_object*)faketdi, EXCPTYPE_CHECKED_BOGUS, local_excp_text, ETCHEXCP_STATICTEXT);  
              break;       
     }
 
@@ -514,7 +433,7 @@ tagged_data_input* new_fake_tdi()
  * new_fake_tdo()
  * constructor for TDO implementation  
  */
-tagged_data_output* new_fake_tdo()
+static tagged_data_output* new_fake_tdo()
 {
     tagged_data_output* faketdo = NULL;
     i_tagged_data_output*  vtab = NULL;
@@ -532,16 +451,16 @@ tagged_data_output* new_fake_tdo()
         vtab->end_array   = faketdo_end_array;
         vtab->write_array_element = faketdo_write_array_element;
 
-        vtab->vtab = faketdo->vtab; /* chain parent vtab to override vtab */
+        ((etch_object*)vtab)->vtab = faketdo->vtab; /* chain parent vtab to override vtab */
     
         cache_insert(vtab->hashkey, vtab, FALSE);
     } 
 
-    CU_ASSERT_EQUAL_FATAL(vtab->class_id, CLASSID_VTABLE_FAKETDO);
+    CU_ASSERT_EQUAL_FATAL(((etch_object*)vtab)->class_id, CLASSID_VTABLE_FAKETDO);
 
-    faketdo->vtab = vtab; /* set override vtab */
+    ((etch_object*)faketdo)->vtab = vtab; /* set override vtab */
 
-    faketdo->impl = (objmask*) new_fake_tdo_impl(); /* instantiate tdo instance data */
+    faketdo->impl = (etch_object*) new_fake_tdo_impl(); /* instantiate tdo instance data */
 
     return faketdo;
 }
@@ -553,7 +472,7 @@ tagged_data_output* new_fake_tdo()
  * load_testdata_string()
  * load testdata array with some ETCH_STRING objects
  */
-int load_testdata_string()
+static int load_testdata_string()
 {
     int i = 0, numitems = 4;
     etch_string* newobj = NULL;
@@ -563,8 +482,8 @@ int load_testdata_string()
     for(; i < numitems; i++)
     {
         /* new_etch_string copies parameter string */        
-        newobj = new_string(strings[i], ETCH_ENCODING_UTF16);  
-        arraylist_add(testdata, newobj);
+        newobj = new_stringw(strings[i]);  
+        etch_arraylist_add(testdata, newobj);
     }
 
     return numitems;
@@ -575,7 +494,7 @@ int load_testdata_string()
  * load_testdata_int()
  * load testdata array with some ETCH_INT objects
  */
-int load_testdata_int()
+static int load_testdata_int()
 {
     int i = 0, numitems = 4;
     etch_int32* newobj = NULL;
@@ -584,7 +503,7 @@ int load_testdata_int()
     for(; i < numitems; i++)
     {
         newobj = new_int32(ints[i]);
-        arraylist_add(testdata, newobj);
+        etch_arraylist_add(testdata, newobj);
     }
 
     return numitems;
@@ -595,11 +514,11 @@ int load_testdata_int()
  * new_testdata()
  * create testdata array and load it up with data objects
  */
-int new_testdata(const int datatype)
+static int new_testdata(const int datatype)
 {
     int count = 0;
     g_which_exception_test = 0;
-    testdata = new_arraylist(0,0);  
+    testdata = new_etch_arraylist(0,0);  
     testdata->content_type = ETCHARRAYLIST_CONTENT_OBJECT;
  
     switch(datatype)
@@ -616,20 +535,21 @@ int new_testdata(const int datatype)
  * destroy_testdata()
  * destroy testdata array and content
  */
-void destroy_testdata()
+static void destroy_testdata()
 {
-    arraylist_destroy(testdata, TRUE);
+    etch_arraylist_destroy(testdata, TRUE);
 }
 
 
+#if 0
 /* 
  * compare_lists()
  * compares testdata list with the arrayvalue's list
  * returns boolean indicating equal or not
  */
-int compare_lists(etch_arrayvalue* av)
+static int compare_lists(etch_arrayvalue* av)
 {
-    int testcount = 0, result = 0, i = 0, eqcount = 0;
+    int testcount = 0, i = 0, eqcount = 0;
     CU_ASSERT_PTR_NOT_NULL_FATAL(av);  
     CU_ASSERT_PTR_NOT_NULL_FATAL(av->list);
 
@@ -638,13 +558,13 @@ int compare_lists(etch_arrayvalue* av)
     if (testcount != testdata->count) return FALSE;
 
     for(; i < (const int) testcount; i++)     
-        if (arraylist_get(testdata, i) == arraylist_get(av->list, i))
+        if (etch_arraylist_get(testdata, i) == etch_arraylist_get(av->list, i))
             eqcount++;  
 
     CU_ASSERT_EQUAL(testcount, eqcount);     
     return testcount == eqcount;
 }
-
+#endif
 
 #if(0)
 
@@ -653,7 +573,7 @@ int compare_lists(etch_arrayvalue* av)
  * create an array value to read current test data
  * and verify that content matches test data
  */
-void run_read_test()
+static void run_read_test()
 {
     int result = 0;
     tagged_data_input* tdi = NULL;
@@ -687,7 +607,7 @@ void run_read_test()
  * create an array value to write current test data
  * and verify that content matches test data
  */
-void run_write_test()
+static void run_write_test()
 {
     int result = 0, i = 0;
     etch_arrayvalue* arrayval = NULL;
@@ -733,13 +653,9 @@ void run_write_test()
  * run_exception_test
  *  
  */
-void run_exception_test(const int whichtest)
+static void run_exception_test(const int whichtest)
 {
-    int result = 0;
     /* global marker asks components to throw exceptions */
-    tagged_data_input* tdi = NULL;
-    etch_arrayvalue* av = NULL;
-    etchexception* excp = NULL;
     g_which_exception_test = whichtest; 
 
     #if(0)
@@ -776,11 +692,14 @@ void run_exception_test(const int whichtest)
     #endif
 
     /* destroy testdata list and content */
-    testdata->destroy(testdata);
+    etch_object_destroy(testdata);
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -789,7 +708,7 @@ void run_exception_test(const int whichtest)
 /* 
  * read_test_integer
  */
-void read_test_integer(void)
+static void read_test_integer(void)
 {
     int itemcount = 0;
     if ((itemcount = new_testdata(1)) > 0)
@@ -800,7 +719,7 @@ void read_test_integer(void)
 /* 
  * write_test_integer
  */
-void write_test_integer(void)
+static void write_test_integer(void)
 {
     int itemcount = 0;
     if ((itemcount = new_testdata(1)) > 0)
@@ -811,7 +730,7 @@ void write_test_integer(void)
 /* 
  * read_test_string
  */
-void read_test_string(void)
+static void read_test_string(void)
 {
     int itemcount = 0;
     if ((itemcount = new_testdata(2)) > 0)
@@ -822,7 +741,7 @@ void read_test_string(void)
 /* 
  * write_test_string
  */
-void write_test_string(void)
+static void write_test_string(void)
 {
     int itemcount = 0;
     if ((itemcount = new_testdata(2)) > 0)
@@ -835,7 +754,7 @@ void write_test_string(void)
 /* 
  * exception_test_1
  */
-void exception_test_1(void)
+static void exception_test_1(void)
 {
     int itemcount = 0;
     if ((itemcount = new_testdata(1)) > 0)
@@ -846,7 +765,7 @@ void exception_test_1(void)
 /* 
  * exception_test_2
  */
-void exception_test_2(void)
+static void exception_test_2(void)
 {
     int itemcount = 0;
     if ((itemcount = new_testdata(1)) > 0)
@@ -857,7 +776,7 @@ void exception_test_2(void)
 /* 
  * exception_test_3
  */
-void exception_test_3(void)
+static void exception_test_3(void)
 {
     int itemcount = 0;
     if ((itemcount = new_testdata(1)) > 0)
@@ -868,10 +787,12 @@ void exception_test_3(void)
 /* 
  * test_iterator_over_arraylist
  */
-void test_iterator_over_arraylist(void)
+static void test_iterator_over_arraylist(void)
 {
     etch_iterator* iterator = NULL; 
     int testcount = 0;
+    struct i_iterable* vtab = NULL;
+
     new_testdata(1);
     CU_ASSERT_PTR_NOT_NULL_FATAL(testdata);
     CU_ASSERT_NOT_EQUAL(testdata->count, 0);
@@ -881,18 +802,16 @@ void test_iterator_over_arraylist(void)
     CU_ASSERT_PTR_NOT_NULL_FATAL(iterator);
     CU_ASSERT_EQUAL_FATAL(iterator->ordinal,1);
     testcount = 1;
-
-    while(iterator->vtab->has_next(iterator))
-          testcount += (iterator->vtab->next(iterator) == 0);  
+    
+    vtab = (struct i_iterable*)((etch_object*)iterator)->vtab;
+    
+    while(vtab->has_next(iterator))
+          testcount += vtab->next(iterator) == 0;  
         
     CU_ASSERT_EQUAL(testcount, testdata->count);
 
     destroy_iterator(iterator);
     destroy_testdata();
-
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE);  /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */ 
 }
 
 
@@ -900,7 +819,7 @@ void test_iterator_over_arraylist(void)
  * test_create_from_1
  * create arrayvalue from single-dimensioned byte nativearray and verify
  */
-void test_create_from_1(void)
+static void test_create_from_1(void)
 {
     etch_arrayvalue* av = NULL;
     etch_byte* thisitem = NULL;
@@ -909,7 +828,7 @@ void test_create_from_1(void)
     char  x[4] = {'a','b','c','d'};
     const int numdimensions = 1, itemcount = 4;
 
-    etch_nativearray* a = new_nativearray 
+    etch_nativearray* a = new_etch_nativearray 
         (CLASSID_ARRAY_BYTE, sizeof(byte), numdimensions, itemcount, 0, 0);  
     CU_ASSERT_PTR_NOT_NULL_FATAL(a); 
 
@@ -929,16 +848,12 @@ void test_create_from_1(void)
     {     
         thisitem = arrayvalue_get(av, i);
         CU_ASSERT_PTR_NOT_NULL_FATAL(thisitem); 
-        CU_ASSERT_EQUAL(thisitem->obj_type, ETCHTYPEB_PRIMITIVE);
-        CU_ASSERT_EQUAL(thisitem->class_id, CLASSID_PRIMITIVE_BYTE);
+        CU_ASSERT_EQUAL(((etch_object*)thisitem)->obj_type, ETCHTYPEB_PRIMITIVE);
+        CU_ASSERT_EQUAL(((etch_object*)thisitem)->class_id, CLASSID_PRIMITIVE_BYTE);
         CU_ASSERT_EQUAL(thisitem->value, x[i]);
     }
 
-    av->destroy(av);  /* destroy array value and content */
-
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE);  
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0); /* assert all memory freed */ 
-    memtable_clear();  /* start fresh for next test */ 
+    etch_object_destroy(av);  /* destroy array value and content */
 }
 
 
@@ -946,7 +861,7 @@ void test_create_from_1(void)
  * test_create_from_2
  * create arrayvalue from single-dimensioned int nativearray and verify
  */
-void test_create_from_2(void)
+static void test_create_from_2(void)
 {
     etch_arrayvalue* av  = NULL;
     etch_int32* thisitem = NULL;
@@ -955,7 +870,7 @@ void test_create_from_2(void)
     int   n[4] = {10,11,12,13};
     const int numdimensions = 1, itemcount = 4;
 
-    etch_nativearray* a = new_nativearray 
+    etch_nativearray* a = new_etch_nativearray 
         (CLASSID_ARRAY_INT32, sizeof(int), numdimensions, itemcount, 0, 0);  
     CU_ASSERT_PTR_NOT_NULL_FATAL(a); 
 
@@ -975,16 +890,12 @@ void test_create_from_2(void)
     {     
         thisitem = arrayvalue_get(av, i);
         CU_ASSERT_PTR_NOT_NULL_FATAL(thisitem); 
-        CU_ASSERT_EQUAL(thisitem->obj_type, ETCHTYPEB_PRIMITIVE);
-        CU_ASSERT_EQUAL(thisitem->class_id, CLASSID_PRIMITIVE_INT32);
+        CU_ASSERT_EQUAL(((etch_object*)thisitem)->obj_type, ETCHTYPEB_PRIMITIVE);
+        CU_ASSERT_EQUAL(((etch_object*)thisitem)->class_id, CLASSID_PRIMITIVE_INT32);
         CU_ASSERT_EQUAL(thisitem->value, n[i]);
     }
 
-    av->destroy(av);  /* destroy array value and content */
-
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE);   
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */ 
+    etch_object_destroy(av);  /* destroy array value and content */
 }
 
 
@@ -992,7 +903,7 @@ void test_create_from_2(void)
  * test_create_from_3
  * create arrayvalue from single-dimensioned long long nativearray and verify
  */
-void test_create_from_3(void)
+static void test_create_from_3(void)
 {
     etch_arrayvalue* av  = NULL;
     etch_int64* thisitem = NULL;
@@ -1001,7 +912,7 @@ void test_create_from_3(void)
     int64 n[5] = {-2, -1, 0 , 1, 2};
     const int numdimensions = 1, itemcount = 5;
 
-    etch_nativearray* a = new_nativearray 
+    etch_nativearray* a = new_etch_nativearray 
         (CLASSID_ARRAY_INT64, sizeof(int64), numdimensions, itemcount, 0, 0);  
     CU_ASSERT_PTR_NOT_NULL_FATAL(a); 
 
@@ -1021,16 +932,19 @@ void test_create_from_3(void)
     {     
         thisitem = arrayvalue_get(av, i);
         CU_ASSERT_PTR_NOT_NULL_FATAL(thisitem); 
-        CU_ASSERT_EQUAL(thisitem->obj_type, ETCHTYPEB_PRIMITIVE);
-        CU_ASSERT_EQUAL(thisitem->class_id, CLASSID_PRIMITIVE_INT64);
+        CU_ASSERT_EQUAL(((etch_object*)thisitem)->obj_type, ETCHTYPEB_PRIMITIVE);
+        CU_ASSERT_EQUAL(((etch_object*)thisitem)->class_id, CLASSID_PRIMITIVE_INT64);
         CU_ASSERT_EQUAL(thisitem->value, n[i]);
     }
 
-    av->destroy(av);  /* destroy array value and content */
+    etch_object_destroy(av);  /* destroy array value and content */
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE);   
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */ 
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -1038,7 +952,7 @@ void test_create_from_3(void)
  * test_create_from_4
  * create arrayvalue from single-dimensioned double nativearray and verify
  */
-void test_create_from_4(void)
+static void test_create_from_4(void)
 {
     etch_arrayvalue* av   = NULL;
     etch_double* thisitem = NULL;
@@ -1047,7 +961,7 @@ void test_create_from_4(void)
     double f[3] = {-1000.0, 3.14149, 65536.0};
     const int numdimensions = 1, itemcount = 3;
 
-    etch_nativearray* a = new_nativearray 
+    etch_nativearray* a = new_etch_nativearray 
         (CLASSID_ARRAY_DOUBLE, sizeof(int64), numdimensions, itemcount, 0, 0);  
     CU_ASSERT_PTR_NOT_NULL_FATAL(a); 
 
@@ -1067,16 +981,19 @@ void test_create_from_4(void)
     {     
         thisitem = arrayvalue_get(av, i);
         CU_ASSERT_PTR_NOT_NULL_FATAL(thisitem); 
-        CU_ASSERT_EQUAL(thisitem->obj_type, ETCHTYPEB_PRIMITIVE);
-        CU_ASSERT_EQUAL(thisitem->class_id, CLASSID_PRIMITIVE_DOUBLE);
+        CU_ASSERT_EQUAL(((etch_object*)thisitem)->obj_type, ETCHTYPEB_PRIMITIVE);
+        CU_ASSERT_EQUAL(((etch_object*)thisitem)->class_id, CLASSID_PRIMITIVE_DOUBLE);
         CU_ASSERT_DOUBLE_EQUAL(thisitem->value, f[i], 0.01);
     }
 
-    av->destroy(av);  /* destroy array value and content */
+    etch_object_destroy(av);  /* destroy array value and content */
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE);   
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */ 
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -1084,27 +1001,31 @@ void test_create_from_4(void)
  * test_create_from_5
  * create arrayvalue from single-dimensioned string nativearray and verify
  */
-void test_create_from_5(void)
+static void test_create_from_5(void)
 {
     etch_arrayvalue* av   = NULL;
     etch_string* thisitem = NULL;
     int   i = 0, result   = 0;
     byte  fake_typecode   = 0xff;
-    char* c[3] = {"hey", "it", "works!"};
+    wchar_t* c[3] = {L"hey", L"it", L"works!"};
+    //char* c[3] = {"hey", "it", "works!"};
     const int numdimensions = 1, itemcount = 3;
 
-    etch_nativearray* a = new_nativearray 
-        (CLASSID_ARRAY_STRING, sizeof(void*), numdimensions, itemcount, 0, 0);  
+    etch_nativearray* a = new_etch_nativearray 
+        (CLASSID_ARRAY_STRING, sizeof(void*), numdimensions, itemcount, 0, 0);
     CU_ASSERT_PTR_NOT_NULL_FATAL(a); 
 
     a->content_obj_type = ETCHTYPEB_STRING; /* array content is type string */
     a->content_class_id = CLASSID_NONE;    /* array content is unwrapped (default) */
+    a->is_content_owned = FALSE;
 
     for(i = 0; i < itemcount; i++) /* populate native array from test data */
         CU_ASSERT_EQUAL(0, result = a->put1(a, &c[i], i));
  
     /* populate arrayvalue from native array */
+    printf("tot1\n");
     av = new_arrayvalue_from(a, fake_typecode, NULL, itemcount, 0, FALSE);
+    printf("tot2\n");
     CU_ASSERT_PTR_NOT_NULL_FATAL(av);
     CU_ASSERT_EQUAL(arrayvalue_count(av), itemcount);
 
@@ -1113,16 +1034,20 @@ void test_create_from_5(void)
     {     
         thisitem = arrayvalue_get(av, i);
         CU_ASSERT_PTR_NOT_NULL_FATAL(thisitem); 
-        CU_ASSERT_EQUAL(thisitem->obj_type, ETCHTYPEB_PRIMITIVE);
-        CU_ASSERT_EQUAL(thisitem->class_id, CLASSID_STRING);
-        CU_ASSERT_NSTRING_EQUAL(thisitem->v.value, c[i], strlen(c[i]));
+        CU_ASSERT_EQUAL(((etch_object*)thisitem)->obj_type, ETCHTYPEB_PRIMITIVE);
+        CU_ASSERT_EQUAL(((etch_object*)thisitem)->class_id, CLASSID_STRING);
+        CU_ASSERT_NSTRING_EQUAL(thisitem->v.value, c[i], wcslen(c[i]));
+        //CU_ASSERT_NSTRING_EQUAL(thisitem->v.value, c[i], strlen(c[i]));
     }
 
-    av->destroy(av);  /* destroy array value and content */
+    etch_object_destroy(av);  /* destroy array value and content */
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE);   
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */ 
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -1130,7 +1055,7 @@ void test_create_from_5(void)
  * test_create_from_10
  * create arrayvalue from two-dimensioned byte nativearray and verify
  */
-void test_create_from_10(void)
+static void test_create_from_10(void)
 {
     etch_arrayvalue* av = NULL;
     etch_arrayvalue* subav = NULL;
@@ -1140,7 +1065,7 @@ void test_create_from_10(void)
     char  x[2][4] = {  {'a','b','c','d',},  {'e', 'f', 'g', 'h',},  };
     const int numdimensions = 2, dim0count = 4, dim1count = 2;
 
-    etch_nativearray* a = new_nativearray 
+    etch_nativearray* a = new_etch_nativearray 
         (CLASSID_ARRAY_BYTE, sizeof(byte), numdimensions, dim0count, dim1count, 0);  
     CU_ASSERT_PTR_NOT_NULL_FATAL(a); 
 
@@ -1165,7 +1090,7 @@ void test_create_from_10(void)
     {
         subav = arrayvalue_get(av, i);
         CU_ASSERT_PTR_NOT_NULL_FATAL(subav); 
-        CU_ASSERT_EQUAL(subav->obj_type, ETCHTYPEB_ARRAYVAL);
+        CU_ASSERT_EQUAL(((etch_object*)subav)->obj_type, ETCHTYPEB_ARRAYVAL);
         CU_ASSERT_EQUAL(arrayvalue_count(subav), dim0count);
 
         for(j = 0; j < dim0count; j++)
@@ -1173,19 +1098,22 @@ void test_create_from_10(void)
             byte expected_value = x[i][j];
             thisitem = arrayvalue_get(subav, j);
             CU_ASSERT_PTR_NOT_NULL_FATAL(thisitem); 
-            CU_ASSERT_EQUAL(thisitem->obj_type, ETCHTYPEB_PRIMITIVE);
-            CU_ASSERT_EQUAL(thisitem->class_id, CLASSID_PRIMITIVE_BYTE);
+            CU_ASSERT_EQUAL(((etch_object*)thisitem)->obj_type, ETCHTYPEB_PRIMITIVE);
+            CU_ASSERT_EQUAL(((etch_object*)thisitem)->class_id, CLASSID_PRIMITIVE_BYTE);
             CU_ASSERT_EQUAL(thisitem->value, expected_value);
         }
     }
 
     /* destroy array value and content. memory includes the sub-arrayvalues,
      * the native array from above, and the sub-native arrays */
-    av->destroy(av);  
+    etch_object_destroy(av);  
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE);  
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0); /* assert all memory freed */ 
-    memtable_clear();  /* start fresh for next test */ 
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -1193,7 +1121,7 @@ void test_create_from_10(void)
  * test_create_from_11
  * create arrayvalue from two-dimensioned int16 nativearray and verify
  */
-void test_create_from_11(void)
+static void test_create_from_11(void)
 {
     etch_arrayvalue* av = NULL;
     etch_arrayvalue* subav = NULL;
@@ -1203,7 +1131,7 @@ void test_create_from_11(void)
     short n[2][4] = { { 100,101,102,103, },  { 0xeffc,0xeffd,0xeffe,0xefff },  };
     const int numdimensions = 2, dim0count = 4, dim1count = 2;
 
-    etch_nativearray* a = new_nativearray 
+    etch_nativearray* a = new_etch_nativearray 
         (CLASSID_ARRAY_INT16, sizeof(short), numdimensions, dim0count, dim1count, 0);  
     CU_ASSERT_PTR_NOT_NULL_FATAL(a); 
 
@@ -1228,7 +1156,7 @@ void test_create_from_11(void)
     {
         subav = arrayvalue_get(av, i);
         CU_ASSERT_PTR_NOT_NULL_FATAL(subav); 
-        CU_ASSERT_EQUAL(subav->obj_type, ETCHTYPEB_ARRAYVAL);
+        CU_ASSERT_EQUAL(((etch_object*)subav)->obj_type, ETCHTYPEB_ARRAYVAL);
         CU_ASSERT_EQUAL(arrayvalue_count(subav), dim0count);
 
         for(j = 0; j < dim0count; j++)
@@ -1236,19 +1164,22 @@ void test_create_from_11(void)
             short expected_value = n[i][j];
             thisitem = arrayvalue_get(subav, j);
             CU_ASSERT_PTR_NOT_NULL_FATAL(thisitem); 
-            CU_ASSERT_EQUAL(thisitem->obj_type, ETCHTYPEB_PRIMITIVE);
-            CU_ASSERT_EQUAL(thisitem->class_id, CLASSID_PRIMITIVE_INT16);
+            CU_ASSERT_EQUAL(((etch_object*)thisitem)->obj_type, ETCHTYPEB_PRIMITIVE);
+            CU_ASSERT_EQUAL(((etch_object*)thisitem)->class_id, CLASSID_PRIMITIVE_INT16);
             CU_ASSERT_EQUAL(thisitem->value, expected_value);
         }
     }
 
     /* destroy array value and content. memory includes the sub-arrayvalues,
      * the native array from above, and the sub-native arrays */
-    av->destroy(av);  
+    etch_object_destroy(av);  
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE);  
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0); /* assert all memory freed */ 
-    memtable_clear();  /* start fresh for next test */ 
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -1256,7 +1187,7 @@ void test_create_from_11(void)
  * test_create_from_12
  * create arrayvalue from two-dimensioned string nativearray and verify
  */
-void test_create_from_12(void)
+static void test_create_from_12(void)
 {
     etch_arrayvalue* av = NULL;
     etch_arrayvalue* subav = NULL;
@@ -1278,7 +1209,7 @@ void test_create_from_12(void)
 
     #if(0) /* create empty native array and populate it item by item */
 
-    etch_nativearray* a = new_nativearray (CLASSID_ARRAY_STRING, 
+    etch_nativearray* a = new_etch_nativearray (CLASSID_ARRAY_STRING, 
         sizeof(void*), numdimensions, dim0count, dim1count, 0);  
     CU_ASSERT_PTR_NOT_NULL_FATAL(a); 
 
@@ -1291,16 +1222,15 @@ void test_create_from_12(void)
 
     #else /* create native array from static array */
 
-    etch_nativearray* a = new_nativearray_from(&x, CLASSID_ARRAY_STRING, 
+    etch_nativearray* a = new_etch_nativearray_from(&x, CLASSID_ARRAY_STRING, 
         sizeof(void*), numdimensions, dim0count, dim1count, 0);  
     CU_ASSERT_PTR_NOT_NULL_FATAL(a); 
 
     a->content_obj_type = ETCHTYPEB_STRING; /* array content is type string */
     a->content_class_id = CLASSID_NONE;     /* array content is unwrapped (default) */
 
-    #endif /* end create native array
+    #endif 
 
-    for(i = 0; i < dim1count; i++) /* verify array content is as expected */
     for(j = 0; j < dim0count; j++)       
     {   wchar_t* thisx = 0, *thatx = x[i][j];          
         result = a->get2(a, &thisx, i, j); 
@@ -1324,7 +1254,7 @@ void test_create_from_12(void)
     {
         subav = arrayvalue_get(av, i);
         CU_ASSERT_PTR_NOT_NULL_FATAL(subav); 
-        CU_ASSERT_EQUAL(subav->obj_type, ETCHTYPEB_ARRAYVAL);
+        CU_ASSERT_EQUAL(((etch_object*)subav)->obj_type, ETCHTYPEB_ARRAYVAL);
         CU_ASSERT_EQUAL(result = arrayvalue_count(subav), dim0count);
 
         for(j = 0; j < dim0count; j++)
@@ -1332,8 +1262,8 @@ void test_create_from_12(void)
             wchar_t* expected_value = x[i][j];
             thisitem = arrayvalue_get(subav, j);
             CU_ASSERT_PTR_NOT_NULL_FATAL(thisitem); 
-            CU_ASSERT_EQUAL(thisitem->obj_type, ETCHTYPEB_PRIMITIVE);
-            CU_ASSERT_EQUAL(thisitem->class_id, CLASSID_STRING);
+            CU_ASSERT_EQUAL(((etch_object*)thisitem)->obj_type, ETCHTYPEB_PRIMITIVE);
+            CU_ASSERT_EQUAL(((etch_object*)thisitem)->class_id, CLASSID_STRING);
             result = wcscmp(expected_value, thisitem->v.value);
             CU_ASSERT_EQUAL(result, 0);
         }
@@ -1341,11 +1271,14 @@ void test_create_from_12(void)
 
     /* destroy array value and content. memory includes the sub-arrayvalues,
      * the native array from above, and the sub-native arrays */
-    av->destroy(av);  
+    etch_object_destroy(av);  
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE);  
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0); /* assert all memory freed */ 
-    memtable_clear();  /* start fresh for next test */ 
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -1353,7 +1286,7 @@ void test_create_from_12(void)
  * test_create_from_13
  * create arrayvalue from two-dimensioned object nativearray and verify
  */
-void test_create_from_13(void)
+static void test_create_from_13(void)
 {
     etch_nativearray* a = NULL;
     etch_arrayvalue* av = NULL;
@@ -1369,8 +1302,7 @@ void test_create_from_13(void)
 
     for(i = 0; i < dim1count; i++)  /* populate array of objects */
     for(j = 0; j < dim0count; j++)
-    {   etch_object* thisobj = new_etch_object(0, etch_malloc(4,0));
-        thisobj->is_value_object = FALSE;  /* indicates etch_free value */
+    {   etch_object* thisobj = new_object(sizeof(etch_object), ETCHTYPEB_ETCHOBJECT,CLASSID_NONE);
         thisobj->hashkey = ++count;     /* usurp hashkey for this test */
         x[i][j] = thisobj;
     }
@@ -1381,7 +1313,7 @@ void test_create_from_13(void)
      * destroys the native array, the objects likewise destroying their
      * own content (that content being the etch_malloc'ed memory, above).
      */
-    a = new_nativearray_from(&x, CLASSID_ARRAY_OBJECT, 
+    a = new_etch_nativearray_from(&x, CLASSID_ARRAY_OBJECT, 
         sizeof(void*), numdimensions, dim0count, dim1count, 0);  
 
     CU_ASSERT_PTR_NOT_NULL_FATAL(a); 
@@ -1413,7 +1345,7 @@ void test_create_from_13(void)
     {
         subav = arrayvalue_get(av, i);
         CU_ASSERT_PTR_NOT_NULL_FATAL(subav); 
-        CU_ASSERT_EQUAL(subav->obj_type, ETCHTYPEB_ARRAYVAL);
+        CU_ASSERT_EQUAL(((etch_object*)subav)->obj_type, ETCHTYPEB_ARRAYVAL);
         CU_ASSERT_EQUAL(result = arrayvalue_count(subav), dim0count);
 
         for(j = 0; j < dim0count; j++)
@@ -1421,20 +1353,23 @@ void test_create_from_13(void)
             etch_object* expected_object = x[i][j];
             thisitem = arrayvalue_get(subav, j);
             CU_ASSERT_PTR_NOT_NULL_FATAL(thisitem); 
-            CU_ASSERT_EQUAL_FATAL(thisitem->obj_type, ETCHTYPEB_ETCHOBJECT);
+            CU_ASSERT_EQUAL_FATAL(((etch_object*)thisitem)->obj_type, ETCHTYPEB_ETCHOBJECT);
             // TODO this is CLASSID_ANY (zero) not CLASSID_OBJECT - verify that this is as expected
-            // CU_ASSERT_EQUAL_FATAL(thisitem->class_id, CLASSID_OBJECT);
+            // CU_ASSERT_EQUAL_FATAL(((etch_object*)thisitem)->class_id, CLASSID_OBJECT);
             CU_ASSERT_EQUAL(thisitem->hashkey, expected_object->hashkey);
         }
     }
 
     /* destroy array value and content. memory freed includes sub-arrayvalues,
      * the native array and test objects from above, and the sub-arrays */
-    av->destroy(av);  
+    etch_object_destroy(av);  
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE);  
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0); /* assert all memory freed */ 
-    memtable_clear();  /* start fresh for next test */ 
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -1442,7 +1377,7 @@ void test_create_from_13(void)
  * test_create_from_21
  * create arrayvalue from three-dimensioned byte nativearray and verify
  */
-void test_create_from_21(void)
+static void test_create_from_21(void)
 {
     etch_arrayvalue* av = NULL;
     etch_arrayvalue* subav1 = NULL;
@@ -1466,7 +1401,7 @@ void test_create_from_21(void)
     const int numdimensions = 3, dim0count = 4, dim1count = 3, dim2count = 2;
 
     #if(0)
-    etch_nativearray* a = new_nativearray   /* construct empty native array */
+    etch_nativearray* a = new_etch_nativearray   /* construct empty native array */
         (CLASSID_ARRAY_BYTE, sizeof(byte), numdimensions, dim0count, dim1count, 0);  
     CU_ASSERT_PTR_NOT_NULL_FATAL(a); 
 
@@ -1480,7 +1415,7 @@ void test_create_from_21(void)
     #else
     /* populate native arrary from static test data array */
 
-    etch_nativearray* a = new_nativearray_from(&x, CLASSID_ARRAY_BYTE, 
+    etch_nativearray* a = new_etch_nativearray_from(&x, CLASSID_ARRAY_BYTE, 
         sizeof(byte), numdimensions, dim0count, dim1count, dim2count);  
 
     CU_ASSERT_PTR_NOT_NULL_FATAL(a); 
@@ -1504,14 +1439,14 @@ void test_create_from_21(void)
     {
         subav1 = arrayvalue_get(av, i);
         CU_ASSERT_PTR_NOT_NULL_FATAL(subav1); 
-        CU_ASSERT_EQUAL(subav1->obj_type, ETCHTYPEB_ARRAYVAL);
+        CU_ASSERT_EQUAL(((etch_object*)subav1)->obj_type, ETCHTYPEB_ARRAYVAL);
         CU_ASSERT_EQUAL(result = arrayvalue_count(subav1), dim1count);
 
         for(j = 0; j < dim1count; j++)
         {     
             subav2 = arrayvalue_get(subav1, j);
             CU_ASSERT_PTR_NOT_NULL_FATAL(subav2); 
-            CU_ASSERT_EQUAL(subav2->obj_type, ETCHTYPEB_ARRAYVAL);
+            CU_ASSERT_EQUAL(((etch_object*)subav2)->obj_type, ETCHTYPEB_ARRAYVAL);
             CU_ASSERT_EQUAL(result = arrayvalue_count(subav2), dim0count);
 
             for(k = 0; k < dim0count; k++)
@@ -1519,9 +1454,9 @@ void test_create_from_21(void)
                 byte expected_value = x[i][j][k];
                 thisitem = arrayvalue_get(subav2, k);
                 CU_ASSERT_PTR_NOT_NULL_FATAL(thisitem); 
-                CU_ASSERT_EQUAL(thisitem->obj_type, ETCHTYPEB_PRIMITIVE);
-                CU_ASSERT_EQUAL(thisitem->class_id, CLASSID_PRIMITIVE_BYTE);
-                CU_ASSERT_EQUAL(thisitem->value, expected_value);
+                CU_ASSERT_EQUAL(((etch_object*)thisitem)->obj_type, ETCHTYPEB_PRIMITIVE);
+                CU_ASSERT_EQUAL(((etch_object*)thisitem)->class_id, CLASSID_PRIMITIVE_BYTE);
+                CU_ASSERT_EQUAL(((etch_byte*)thisitem)->value, expected_value);
             }
         }
     }
@@ -1530,11 +1465,14 @@ void test_create_from_21(void)
      * constructed above, the arrayvalue, its sub-arrayvalues and their sub-
      * native arrays, and any disposable native array content. 
      */ 
-    av->destroy(av);  
+    etch_object_destroy(av);  
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE);  
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0); /* assert all memory freed */ 
-    memtable_clear();  /* start fresh for next test */ 
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -1542,7 +1480,7 @@ void test_create_from_21(void)
  * test_arrayvalue_to_nativearray_10
  * create create native byte[] array from arrayvalue
  */
-void test_arrayvalue_to_nativearray_10(void)
+static void test_arrayvalue_to_nativearray_10(void)
 {
     etch_arrayvalue* av = NULL;
     int   i = 0, result = 0;
@@ -1551,8 +1489,7 @@ void test_arrayvalue_to_nativearray_10(void)
     const int numdimensions = 1, itemcount = 4;
     etch_nativearray* old_nativearray_dangling_ref = NULL;
 
-    etch_nativearray* a = new_nativearray 
-        (CLASSID_ARRAY_BYTE, sizeof(byte), numdimensions, itemcount, 0, 0);  
+    etch_nativearray* a = new_etch_nativearray(CLASSID_ARRAY_BYTE, sizeof(byte), numdimensions, itemcount, 0, 0);  
     CU_ASSERT_PTR_NOT_NULL_FATAL(a); 
 
     a->content_obj_type  = ETCHTYPEB_BYTE; /* array content is type byte */
@@ -1596,11 +1533,7 @@ void test_arrayvalue_to_nativearray_10(void)
         CU_ASSERT_EQUAL(c1, c2); 
     }
 
-    av->destroy(av);  /* destroy array value and content */
-
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE);  
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0); /* assert all memory freed */ 
-    memtable_clear();  /* start fresh for next test */ 
+    etch_object_destroy(av);  /* destroy array value and content */
 }
 
 
@@ -1608,7 +1541,7 @@ void test_arrayvalue_to_nativearray_10(void)
  * test_arrayvalue_to_nativearray_20
  * create create native string[][] array from arrayvalue
  */
-void test_arrayvalue_to_nativearray_20(void)
+static void test_arrayvalue_to_nativearray_20(void)
 {
     etch_arrayvalue* av = NULL;
     etch_arrayvalue* subav = NULL;
@@ -1628,11 +1561,11 @@ void test_arrayvalue_to_nativearray_20(void)
           { L"But such a form", L"as Grecian goldsmiths make", L"Of hammered gold ", L"and gold enameling", }, 
        };
 
-    etch_nativearray* a = new_nativearray_from(&x, CLASSID_ARRAY_STRING, 
+    etch_nativearray* a = new_etch_nativearray_from(&x, CLASSID_ARRAY_STRING, 
         sizeof(void*), numdimensions, dim0count, dim1count, 0);  
     CU_ASSERT_PTR_NOT_NULL_FATAL(a); 
     a->content_obj_type = ETCHTYPEB_STRING; /* content is type string */
-    a->content_class_id = CLASSID_NONE;     /* content is unwrapped (default) */
+    a->content_class_id = CLASSID_UNWRAPPED;     /* content is unwrapped (default) */
 
     /* populate arrayvalue from native array as in earlier test */
     av = new_arrayvalue_from(a, fake_typecode, NULL, DEFSIZE, DEFDELTA, FALSE);
@@ -1657,7 +1590,7 @@ void test_arrayvalue_to_nativearray_20(void)
     {
         subav = arrayvalue_get(av, i);
         CU_ASSERT_PTR_NOT_NULL_FATAL(subav); 
-        CU_ASSERT_EQUAL(subav->obj_type, ETCHTYPEB_ARRAYVAL);
+        CU_ASSERT_EQUAL(((etch_object*)subav)->obj_type, ETCHTYPEB_ARRAYVAL);
         CU_ASSERT_EQUAL(result = arrayvalue_count(subav), dim0count);
 
         for(j = 0; j < dim0count; j++)
@@ -1665,18 +1598,21 @@ void test_arrayvalue_to_nativearray_20(void)
             wchar_t* expected_value = x[i][j];
             thisitem = arrayvalue_get(subav, j);
             CU_ASSERT_PTR_NOT_NULL_FATAL(thisitem); 
-            CU_ASSERT_EQUAL(thisitem->obj_type, ETCHTYPEB_PRIMITIVE);
-            CU_ASSERT_EQUAL(thisitem->class_id, CLASSID_STRING);
+            CU_ASSERT_EQUAL(((etch_object*)thisitem)->obj_type, ETCHTYPEB_PRIMITIVE);
+            CU_ASSERT_EQUAL(((etch_object*)thisitem)->class_id, CLASSID_STRING);
             result = wcscmp(expected_value, thisitem->v.value);
             CU_ASSERT_EQUAL(result, 0);
         }
     }
 
-    av->destroy(av);  /* destroy array value and content */
+    etch_object_destroy(av);  /* destroy array value and content */
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE);  
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0); /* assert all memory freed */ 
-    memtable_clear();  /* start fresh for next test */ 
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -1684,7 +1620,7 @@ void test_arrayvalue_to_nativearray_20(void)
  * test_arrayvalue_to_nativearray_30
  * create create native byte[][][] array from arrayvalue
  */
-void test_arrayvalue_to_nativearray_30(void)
+static void test_arrayvalue_to_nativearray_30(void)
 {
     etch_arrayvalue* av = NULL;
     etch_arrayvalue* subav1 = NULL;
@@ -1707,7 +1643,7 @@ void test_arrayvalue_to_nativearray_30(void)
           },
         };
 
-    etch_nativearray* a = new_nativearray_from(&x, CLASSID_ARRAY_BYTE, 
+    etch_nativearray* a = new_etch_nativearray_from(&x, CLASSID_ARRAY_BYTE, 
         sizeof(byte), numdimensions, dim0count, dim1count, dim2count);  
 
     CU_ASSERT_PTR_NOT_NULL_FATAL(a); 
@@ -1741,14 +1677,14 @@ void test_arrayvalue_to_nativearray_30(void)
     {
         subav1 = arrayvalue_get(av, i);
         CU_ASSERT_PTR_NOT_NULL_FATAL(subav1); 
-        CU_ASSERT_EQUAL(subav1->obj_type, ETCHTYPEB_ARRAYVAL);
+        CU_ASSERT_EQUAL(((etch_object*)subav1)->obj_type, ETCHTYPEB_ARRAYVAL);
         CU_ASSERT_EQUAL(result = arrayvalue_count(subav1), dim1count);
 
         for(j = 0; j < dim1count; j++)
         {     
             subav2 = arrayvalue_get(subav1, j);
             CU_ASSERT_PTR_NOT_NULL_FATAL(subav2); 
-            CU_ASSERT_EQUAL(subav2->obj_type, ETCHTYPEB_ARRAYVAL);
+            CU_ASSERT_EQUAL(((etch_object*)subav2)->obj_type, ETCHTYPEB_ARRAYVAL);
             CU_ASSERT_EQUAL(result = arrayvalue_count(subav2), dim0count);
 
             for(k = 0; k < dim0count; k++)
@@ -1756,32 +1692,31 @@ void test_arrayvalue_to_nativearray_30(void)
                 byte expected_value = x[i][j][k];
                 thisitem = arrayvalue_get(subav2, k);
                 CU_ASSERT_PTR_NOT_NULL_FATAL(thisitem); 
-                CU_ASSERT_EQUAL(thisitem->obj_type, ETCHTYPEB_PRIMITIVE);
-                CU_ASSERT_EQUAL(thisitem->class_id, CLASSID_PRIMITIVE_BYTE);
-                CU_ASSERT_EQUAL(thisitem->value, expected_value);
+                CU_ASSERT_EQUAL(((etch_object*)thisitem)->obj_type, ETCHTYPEB_PRIMITIVE);
+                CU_ASSERT_EQUAL(((etch_object*)thisitem)->class_id, CLASSID_PRIMITIVE_BYTE);
+                CU_ASSERT_EQUAL(((etch_byte*)thisitem)->value, expected_value);
             }
         }
     }
 
-    av->destroy(av);  /* destroy array value and content */
+    etch_object_destroy(av);  /* destroy array value and content */
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE);  
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0); /* assert all memory freed */ 
-    memtable_clear();  /* start fresh for next test */ 
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
 /**
  * main   
  */
-int _tmain(int argc, _TCHAR* argv[])
+//int wmain( int argc, wchar_t* argv[], wchar_t* envp[])
+CU_pSuite test_etch_arrayvalue_suite()
 {    
-    char c=0;
-    CU_pSuite pSuite = NULL;
-    g_is_automated_test = argc > 1 && 0 != wcscmp(argv[1], L"-a");
-    if (CUE_SUCCESS != CU_initialize_registry()) return 0;
-    pSuite = CU_add_suite("suite_arrayvalue", init_suite, clean_suite);
-    CU_set_output_filename("../test_arrayvalue");
+    CU_pSuite pSuite = CU_add_suite("suite_arrayvalue", init_suite, clean_suite);
 
     CU_add_test(pSuite, "test iterator over arraylist",   test_iterator_over_arraylist);
     #if(0)
@@ -1807,15 +1742,5 @@ int _tmain(int argc, _TCHAR* argv[])
     CU_add_test(pSuite, "test arrayvalue to string[][]",  test_arrayvalue_to_nativearray_20);
     CU_add_test(pSuite, "test arrayvalue to byte[][][]",  test_arrayvalue_to_nativearray_30);
 
-    if (g_is_automated_test)    
-        CU_automated_run_tests();    
-    else
-    {   CU_basic_set_mode(CU_BRM_VERBOSE);
-        CU_basic_run_tests();
-    }
-
-    if (!g_is_automated_test) { printf("any key ..."); while(!c) c = _getch(); wprintf(L"\n"); }     
-    CU_cleanup_registry();
-    return CU_get_error(); 
+    return pSuite; 
 }
-

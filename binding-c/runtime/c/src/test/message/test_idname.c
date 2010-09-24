@@ -20,87 +20,34 @@
  * test_id_name.c 
  * tests the C implementation of the etch_id_name object.
  */
-#include "apr_time.h" /* some apr must be included first */
-#include "etchthread.h"
-#include <stdio.h>
-#include <conio.h>
-#include "cunit.h"
-#include "basic.h"
-#include "automated.h"
+#include "etch_runtime.h"
 #include "etch_id_name.h"
-#include "etch_global.h"
 
-
-int apr_setup(void);
-int apr_teardown(void);
-int this_setup();
-int this_teardown();
-apr_pool_t* g_apr_mempool;
-const char* pooltag = "etchpool";
-
-
-/* - - - - - - - - - - - - - - 
- * unit test infrastructure
- * - - - - - - - - - - - - - -
- */
-
-int init_suite(void)
-{
-    apr_setup();
-    etch_runtime_init(TRUE);
-    return this_setup();
-}
-
-int clean_suite(void)
-{
-    this_teardown();
-    etch_runtime_cleanup(0,0); /* free memtable and cache etc */
-    apr_teardown();
-    return 0;
-}
-
-int g_is_automated_test, g_bytes_allocated;
+#include <stdio.h>
+#include "CUnit.h"
+#include <wchar.h>
 
 #define IS_DEBUG_CONSOLE FALSE
 
-/*
- * apr_setup()
- * establish apache portable runtime environment
- */
-int apr_setup(void)
+// extern types
+extern apr_pool_t* g_etch_main_pool;
+
+
+static int init_suite(void)
 {
-    int result = apr_initialize();
-    if (result == 0)
-    {   result = etch_apr_init();
-        g_apr_mempool = etch_apr_mempool;
+    etch_status_t etch_status = ETCH_SUCCESS;
+
+    etch_status = etch_runtime_initialize(NULL);
+    if(etch_status != NULL) {
+        // error
     }
-    if (g_apr_mempool)
-        apr_pool_tag(g_apr_mempool, pooltag);
-    else result = -1;
-    return result;
-}
-
-/*
- * apr_teardown()
- * free apache portable runtime environment
- */
-int apr_teardown(void)
-{
-    if (g_apr_mempool)
-        apr_pool_destroy(g_apr_mempool);
-    g_apr_mempool = NULL;
-    apr_terminate();
     return 0;
 }
 
-int this_setup()
+static int clean_suite(void)
 {
-    etch_apr_mempool = g_apr_mempool;
-    return 0;
-}
-
-int this_teardown()
-{    
+    //this_teardown();
+    etch_runtime_shutdown();
     return 0;
 }
 
@@ -108,24 +55,25 @@ int this_teardown()
 /**
  * test_id_name
  */
-void test_id_name(void)
+static void test_id_name(void)
 {
-    int alloc_a = 0, alloc_b = 0, result = 0;
+    int result = 0;
     etch_id_name *id_name1 = NULL, *id_name2 = NULL;
 
     const wchar_t* nametext1 = L"abracadabra";
-    const size_t   numelts1  = wcslen(nametext1);
-    const size_t   numbytes1 = sizeof(wchar_t) * numelts1;
 
     const wchar_t* nametext2 = L"gilgamesh";
-    const size_t   numelts2  = wcslen(nametext2);
-    const size_t   numbytes2 = sizeof(wchar_t) * numelts2;
-    
+
+#ifdef ETCH_DEBUGALLOC
     alloc_a  = etch_showmem(0, FALSE);
+#endif
     id_name1 = new_id_name(NULL);
-    alloc_b  = etch_showmem(0, FALSE);
     CU_ASSERT_PTR_NULL(id_name1);
+
+#ifdef ETCH_DEBUGALLOC
+    alloc_b  = etch_showmem(0, FALSE);
     CU_ASSERT_EQUAL(alloc_a, alloc_b); 
+#endif
 
     id_name1 = new_id_name(nametext1);
     CU_ASSERT_PTR_NOT_NULL_FATAL(id_name1);
@@ -139,8 +87,10 @@ void test_id_name(void)
     destroy_id_name(id_name1);
     destroy_id_name(id_name2);
 
+#ifdef ETCH_DEBUGALLOC
     alloc_a = etch_showmem(0, FALSE);
     CU_ASSERT_EQUAL(alloc_a, alloc_b); 
+#endif
 
     id_name1 = new_id_name(nametext1);
     id_name2 = new_id_name(nametext2);
@@ -150,9 +100,12 @@ void test_id_name(void)
     destroy_id_name(id_name1);
     destroy_id_name(id_name2);
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -160,9 +113,8 @@ void test_id_name(void)
  * test_id_name_hashfunc
  * Unit test id_name_hashfunc
  */
-void test_id_name_hashfunc(void)
+static void test_id_name_hashfunc(void)
 {
-    int alloc_a = 0, alloc_b = 0, result = 0;
     unsigned hash1 = 0, hash2 = 0;
     etch_id_name *id_name1 = NULL, *id_name2 = NULL;
 
@@ -189,35 +141,25 @@ void test_id_name_hashfunc(void)
     destroy_id_name(id_name1);
     destroy_id_name(id_name2);
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */       
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
 /**
  * main   
  */
-int _tmain(int argc, _TCHAR* argv[])
+//int wmain( int argc, wchar_t* argv[], wchar_t* envp[])
+CU_pSuite test_etch_idname_suite()
 {    
-    char c=0;
-    CU_pSuite pSuite = NULL;
-    g_is_automated_test = argc > 1 && 0 != wcscmp(argv[1], L"-a");
-    if (CUE_SUCCESS != CU_initialize_registry()) return 0;
-    pSuite = CU_add_suite("suite_id_name", init_suite, clean_suite);
-    CU_set_output_filename("../test_id_name");
+    CU_pSuite pSuite = CU_add_suite("suite_id_name", init_suite, clean_suite);
 
     CU_add_test(pSuite, "test etch_id_name constructors/destructors", test_id_name);  
     CU_add_test(pSuite, "test etch_id_name hashing", test_id_name_hashfunc);  
 
-    if (g_is_automated_test)    
-        CU_automated_run_tests();    
-    else
-    {   CU_basic_set_mode(CU_BRM_VERBOSE);
-        CU_basic_run_tests();
-    }
-
-    if (!g_is_automated_test) { printf("any key ..."); while(!c) c = _getch(); wprintf(L"\n"); }     
-    CU_cleanup_registry();
-    return CU_get_error(); 
+    return pSuite;
 }

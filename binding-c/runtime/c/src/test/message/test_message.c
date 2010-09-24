@@ -19,129 +19,52 @@
 /*
  * test_message.c -- test etch_message object
  */
-
-#include "apr_time.h" /* some apr must be included first */
-
-#include <tchar.h>
-#include <stdio.h>
-#include <conio.h>
-
-#include "cunit.h"
-#include "basic.h"
-#include "automated.h"
-
+#include "etch_runtime.h"
 #include "etch_connection.h"
-#include "etch_global.h"
 #include "etch_encoding.h"
-#include "etchthread.h"
-#include "etchlog.h"
+#include "etch_thread.h"
+#include "etch_log.h"
 #include "etch_message.h"
-#include "etchexcp.h"
+#include "etch_objecttypes.h"
+#include "etch_exception.h"
+#include "etch_cache.h"
+#include "etch_mem.h"
 
-int apr_setup(void);
-int apr_teardown(void);
-int this_setup();
-int this_teardown();
-apr_pool_t* g_apr_mempool;
-const char* pooltag = "etchpool";
+#include <stdio.h>
+#include "CUnit.h"
 
-
-int init_suite(void)
-{
-    apr_setup();
-    etch_runtime_init(TRUE);
-    return this_setup();
-}
-
-int clean_suite(void)
-{
-    this_teardown();
-    etch_runtime_cleanup(0,0); /* free memtable and cache etc */
-    apr_teardown();
-    return 0;
-}
-
-int g_is_automated_test, g_bytes_allocated;
 #define IS_DEBUG_CONSOLE FALSE
 
-/*
- * apr_setup()
- * establish apache portable runtime environment
+// extern types
+extern apr_pool_t* g_etch_main_pool;
+
+/* - - - - - - - - - - - - - - 
+ * unit test infrastructure
+ * - - - - - - - - - - - - - -
  */
-int apr_setup(void)
+
+static int init_suite(void)
 {
-    int result = apr_initialize();
-    if (result == 0)
-    {   result = etch_apr_init();
-        g_apr_mempool = etch_apr_mempool;
+    etch_status_t etch_status = ETCH_SUCCESS;
+
+    etch_status = etch_runtime_initialize(NULL);
+    if(etch_status != NULL) {
+        // error
     }
-    if (g_apr_mempool)
-        apr_pool_tag(g_apr_mempool, pooltag);
-    else result = -1;
-    return result;
+    return 0;
 }
 
-/*
- * apr_teardown()
- * free apache portable runtime environment
- */
-int apr_teardown(void)
+static int clean_suite(void)
 {
-    if (g_apr_mempool)
-        apr_pool_destroy(g_apr_mempool);
-    g_apr_mempool = NULL;
-    apr_terminate();
+    //this_teardown();
+    etch_runtime_shutdown();
     return 0;
 }
-
-
-/* - - - - - - - - - - - - - - - - - - - - - - 
- * local declarations 
- * - - - - - - - - - - - - - - - - - - - - - -
- */   
-
-/* - - - - - - - - - - - - - - - - - - - - - - 
- * local setup and teardown
- * - - - - - - - - - - - - - - - - - - - - - -
- */
-
-int this_setup()
-{
-    etch_apr_mempool = g_apr_mempool;
-    return 0;
-}
-
-int this_teardown()
-{    
-    return 0;
-}
-
 
 /* - - - - - - - - - - - - - - - - - - - - - - 
  * individual setup and teardown
  * - - - - - - - - - - - - - - - - - - - - - -
  */
-
-int this_test_setup()
-{
-    int result = -1;
-
-    do
-    {
-      result = 0;
-    } while(0);
-
-    return result;
-}
-
-int this_test_teardown()
-{    
-
-    return 0;
-}
-
-int  g_bytes_allocated, g_which_exception_test, g_is_automated_test;
-wchar_t* local_excp_text = L"global text";
 
 #if(0)
 #define OBJTYPE_FAKETDI_IMPL ETCHTYPEB_INSTANCEDATA
@@ -205,9 +128,11 @@ typedef struct testitems
 
 } testitems;
 
-enum objtyp ETCHTYPE_VTABLE_FAKETDI = 0xfa;
-enum objtyp ETCHTYPE_VTABLE_FAKETDO = 0xfb; 
-enum objtyp ETCHTYPE_VTABLE_FAKEVF  = 0xfc;
+enum objtyp {
+	ETCHTYPE_VTABLE_FAKETDI = 0xfa,
+	ETCHTYPE_VTABLE_FAKETDO = 0xfb,
+	ETCHTYPE_VTABLE_FAKEVF  = 0xfc
+};
 
 
 /* = = = = = = = = = = = = = = =
@@ -221,21 +146,7 @@ enum objtyp ETCHTYPE_VTABLE_FAKEVF  = 0xfc;
  */
 typedef struct fake_vf_impl
 {
-    unsigned int    hashkey;    
-    unsigned short  obj_type;   
-    unsigned short  class_id;   
-    struct objmask* vtab;       
-    int  (*destroy)(void*);     
-    void*(*clone)  (void*); 
-    obj_gethashkey  get_hashkey;    
-    struct objmask* parent;     
-    etchresult*     result;     
-    unsigned int    refcount;       
-    unsigned int    length;     
-    unsigned char   is_null;   
-    unsigned char   is_copy;   
-    unsigned char   is_static;  
-    unsigned char   reserved;
+    etch_object object;
 
     etch_field* mf_message_id;
     etch_field* mf_in_reply_to;
@@ -247,16 +158,17 @@ typedef struct fake_vf_impl
  * destroy_fake_vf_impl
  * destructor for fake_vf_impl
  */
-int destroy_fake_vf_impl(fake_vf_impl* impl)
+static int destroy_fake_vf_impl(void* data)
 {
-    int result = verify_object((objmask*)impl, OBJTYPE_FAKEVF_IMPL, CLASSID_FAKEVF_IMPL, 0);
+  fake_vf_impl* impl = (fake_vf_impl*)data;
+    int result = verify_object((etch_object*)impl, OBJTYPE_FAKEVF_IMPL, CLASSID_FAKEVF_IMPL, 0);
     if (result == -1) return -1; /* object passed was not expected object */
 
     CU_ASSERT_PTR_NOT_NULL_FATAL(impl->mf_message_id);  
     CU_ASSERT_PTR_NOT_NULL_FATAL(impl->mf_in_reply_to); 
 
-    impl->mf_message_id ->destroy(impl->mf_message_id);
-    impl->mf_in_reply_to->destroy(impl->mf_in_reply_to);
+    etch_object_destroy(impl->mf_message_id);
+    etch_object_destroy(impl->mf_in_reply_to);
 
     etch_free(impl); 
     return 0;
@@ -267,17 +179,17 @@ int destroy_fake_vf_impl(fake_vf_impl* impl)
  * new_fake_vf_impl()
  * constructor for TDI implementation instance data
  */
-fake_vf_impl* new_fake_vf_impl(testitems* items)
+static fake_vf_impl* new_fake_vf_impl(testitems* items)
 {
     fake_vf_impl* data = etch_malloc(sizeof(fake_vf_impl), ETCHTYPEB_INSTANCEDATA);
     memset(data, 0, sizeof(fake_vf_impl));
-    data->obj_type = OBJTYPE_FAKEVF_IMPL;
-    data->class_id = CLASSID_FAKEVF_IMPL;
+    ((etch_object*)data)->obj_type = OBJTYPE_FAKEVF_IMPL;
+    ((etch_object*)data)->class_id = CLASSID_FAKEVF_IMPL;
 
-    data->mf_message_id  = items->mf_message_id->clone(items->mf_message_id);
-    data->mf_in_reply_to = items->mf_in_reply_to->clone(items->mf_in_reply_to);
+    data->mf_message_id  = (etch_field*)etch_object_clone_func(items->mf_message_id);
+    data->mf_in_reply_to = (etch_field*)etch_object_clone_func(items->mf_in_reply_to);
  
-    data->destroy = destroy_fake_vf_impl;
+    ((etch_object*)data)->destroy = destroy_fake_vf_impl;
     return data;
 }
 
@@ -290,14 +202,15 @@ fake_vf_impl* new_fake_vf_impl(testitems* items)
  * fvf_get_message_id() -- valuefactory.get_message_id() implementation.
  * @return non-disposable reference to id object, or null if not found.
  */
-etch_int64* fvf_get_message_id (etch_value_factory* vf, etch_message* msg)
+static etch_int64* fvf_get_message_id (void* vfData, etch_message* msg)
 {
+    etch_value_factory* vf = (etch_value_factory*)vfData;
     etch_int64* id = NULL;
     fake_vf_impl* data = (fake_vf_impl*) vf->impl;
 
     id = (etch_int64*) message_get(msg, data->mf_message_id);
 
-    /* return (etch_int64*) verifyx((objmask*) id, 0, 
+    /* return (etch_int64*) verifyx((etch_object*) id, 0, 
        CLASSID_PRIMITIVE_INT64, EXCPTYPE_INTERNALERR); */
 
     return id;
@@ -307,12 +220,13 @@ etch_int64* fvf_get_message_id (etch_value_factory* vf, etch_message* msg)
 /**
  * fvf_set_message_id() -- valuefactory.set_message_id() implementation.
  */
-int fvf_set_message_id (etch_value_factory* vf, etch_message* msg, etch_int64* id)
+static int fvf_set_message_id (void* vfData, etch_message* msg, etch_int64* id)
 {
+    etch_value_factory* vf = (etch_value_factory*)vfData;
     fake_vf_impl* data  = (fake_vf_impl*) vf->impl;
-    etch_field* keycopy = data->mf_message_id->clone(data->mf_message_id);
+    etch_field* keycopy = (etch_field*)etch_object_clone_func(data->mf_message_id);
 
-    const int result = message_put(msg, keycopy, (objmask*) id);  
+    const int result = message_put(msg, keycopy, (etch_object*) id);  
     return result;
 }
 
@@ -320,29 +234,31 @@ int fvf_set_message_id (etch_value_factory* vf, etch_message* msg, etch_int64* i
 /**
  * fvf_get_in_reply_to() -- valuefactory.get_in_reply_to() implementation.
  */
-etch_int64* fvf_get_in_reply_to (etch_value_factory* vf, etch_message* msg)
+static etch_int64* fvf_get_in_reply_to (void* vfData, etch_message* msg)
 {
+    etch_value_factory* vf = (etch_value_factory*)vfData;
     etch_int64* id = NULL;
     fake_vf_impl* data = (fake_vf_impl*) vf->impl;
 
     id = (etch_int64*) message_get(msg, data->mf_in_reply_to);
 
-    return (etch_int64*) verifyx((objmask*) id, 0, CLASSID_PRIMITIVE_INT64, EXCPTYPE_INTERNALERR);
+    return id;
 }
 
 
 /**
  * fvf_set_in_reply_to() -- valuefactory.set_message_id() implementation.
  */
-int fvf_set_in_reply_to (etch_value_factory* vf, etch_message* msg, etch_int64* id)
+static int fvf_set_in_reply_to (void* vfData, etch_message* msg, etch_int64* id)
 {
+    etch_value_factory* vf = (etch_value_factory*)vfData;
     fake_vf_impl* data  = (fake_vf_impl*) vf->impl;
     etch_field* keycopy = clone_field(data->mf_in_reply_to);
 
     /* FYI this copy of the key is put to etch_message* sent message, and gets   
      * freed in msg.destroy(), message owns memory other than vf and type 
      */
-    return message_put(msg, keycopy, (objmask*) id);  
+    return message_put(msg, keycopy, (etch_object*) id);  
 }
 
 /*  
@@ -350,14 +266,15 @@ int fvf_set_in_reply_to (etch_value_factory* vf, etch_message* msg, etch_int64* 
  */
 
 
+#if 0
 /**
  * fakevf_close() ala java test
  */
-void fakevf_close(etch_value_factory* vf)  
+static void fakevf_close(etch_value_factory* vf)  
 {
-    vf->destroy(vf);  
+    etch_object_destroy(vf);  
 }
-
+#endif
 
 #define CLASSID_FAKE_VALUEFACTORY 200
 
@@ -365,21 +282,20 @@ void fakevf_close(etch_value_factory* vf)
  * new_fake_value_factory()
  * constructor for value factory implementation  
  */
-etch_value_factory* new_fake_value_factory(testitems* items)  
+static etch_value_factory* new_fake_value_factory(testitems* items)  
 {
     etch_value_factory* fakevf = NULL;
     i_value_factory* vtab = NULL;
     const int VTABSIZE = sizeof(i_value_factory);
     const unsigned short CLASS_ID = CLASSID_FAKE_VALUEFACTORY;
-    int result = 0;
    
     fakevf = new_value_factory(0);
    
-    vtab = cache_find(get_vtable_cachehkey(CLASS_ID), 0);
+    vtab = etch_cache_find(get_vtable_cachehkey(CLASS_ID), 0);
 
     if(!vtab)  
     {    
-        vtab = new_vtable(fakevf->vtab, VTABSIZE, CLASS_ID);
+        vtab = new_vtable(((etch_object*)fakevf)->vtab, VTABSIZE, CLASS_ID);
 
         /* override four i_value_factory methods */
         vtab->get_message_id  = fvf_get_message_id;
@@ -387,27 +303,15 @@ etch_value_factory* new_fake_value_factory(testitems* items)
         vtab->get_in_reply_to = fvf_get_in_reply_to;
         vtab->set_in_reply_to = fvf_set_in_reply_to;      
 
-        vtab->vtab = fakevf->vtab;  /* chain vtabs */
-        cache_insert(vtab->hashkey, vtab, 0);  
+        ((etch_object*)vtab)->vtab = (vtabmask*)((etch_object*)fakevf)->vtab;  /* chain vtabs */
+        etch_cache_insert(((etch_object*)vtab)->hashkey, vtab, 0);  
     } 
 
-    CU_ASSERT_EQUAL_FATAL(vtab->class_id, CLASS_ID);
+    CU_ASSERT_EQUAL_FATAL(((etch_object*)vtab)->class_id, CLASS_ID);
 
-    fakevf->vtab = vtab;  /* set override vtab */
+    ((etch_object*)fakevf)->vtab = (vtabmask*)vtab;  /* set override vtab */
 
-    fakevf->impl = (objmask*) new_fake_vf_impl(items); /* create vf instance data */
-
-    switch(g_which_exception_test)
-    {   case EXCPTEST_UNCHECKED_STATICTEXT: 
-             etch_throw((objmask*) fakevf, EXCPTYPE_NULLPTR, NULL, 0);  
-             break;   
-        case EXCPTEST_CHECKED_COPYTEXT:   
-             etch_throw((objmask*)fakevf, EXCPTYPE_CHECKED_BOGUS, L"copied text", ETCHEXCP_COPYTEXT | ETCHEXCP_FREETEXT);  
-             break; 
-        case EXCPTEST_CHECKED_STATICTEXT:   
-             etch_throw((objmask*)fakevf, EXCPTYPE_CHECKED_BOGUS, local_excp_text, ETCHEXCP_STATICTEXT);  
-             break;       
-    }
+    fakevf->impl = (etch_object*) new_fake_vf_impl(items); /* create vf instance data */
 
     return fakevf;
 }
@@ -426,21 +330,7 @@ etch_value_factory* new_fake_value_factory(testitems* items)
  */
 typedef struct fake_tdi_impl
 {
-    unsigned int    hashkey;    
-    unsigned short  obj_type;   
-    unsigned short  class_id;   
-    struct i_value_factory* vtab;       
-    int  (*destroy)(void*);     
-    void*(*clone)  (void*); 
-    obj_gethashkey  get_hashkey;    
-    struct objmask* parent;     
-    etchresult*     result;     
-    unsigned int    refcount;       
-    unsigned int    length;     
-    unsigned char   is_null;   
-    unsigned char   is_copy;   
-    unsigned char   is_static;  
-    unsigned char   reserved;
+    etch_object object;
 
     etch_type*    tdi_type;
     etch_message* xmessage;
@@ -457,10 +347,11 @@ typedef struct fake_tdi_impl
  * destroy_fake_tdi_impl
  * memory cleanup handler for fake_tdi_impl
  */
-int destroy_fake_tdi_impl(fake_tdi_impl* impl)
+static int destroy_fake_tdi_impl(void* data)
 {
+  fake_tdi_impl* impl = (fake_tdi_impl*)data;
     etch_destructor destroy = NULL;
-    int result = verify_object((objmask*)impl, OBJTYPE_FAKETDI_IMPL, CLASSID_FAKETDI_IMPL, 0);
+    int result = verify_object((etch_object*)impl, OBJTYPE_FAKETDI_IMPL, CLASSID_FAKETDI_IMPL, 0);
     if (result == -1) return -1; /* object passed was not expected object */
 
     /* type is a reference, it does not belong to the tdi. message is created  
@@ -471,7 +362,7 @@ int destroy_fake_tdi_impl(fake_tdi_impl* impl)
     if (impl->is_owned_message) 
     {   /* not the default case, see comment above */
         CU_ASSERT_PTR_NOT_NULL_FATAL(impl->xmessage);  
-        impl->xmessage->destroy(impl->xmessage);  
+        etch_object_destroy(impl->xmessage);  
     }
  
     etch_free(impl); 
@@ -483,7 +374,7 @@ int destroy_fake_tdi_impl(fake_tdi_impl* impl)
  * new_fake_tdi_impl()
  * constructor for TDI implementation instance data
  */
-fake_tdi_impl* new_fake_tdi_impl(etch_value_factory* vf, etch_type* static_type, testitems* testdata)
+static fake_tdi_impl* new_fake_tdi_impl(etch_value_factory* vf, etch_type* static_type, testitems* testdata)
 {
     fake_tdi_impl* data = (fake_tdi_impl*) 
         new_object(sizeof(fake_tdi_impl), ETCHTYPEB_INSTANCEDATA, CLASSID_FAKETDI_IMPL);
@@ -501,7 +392,7 @@ fake_tdi_impl* new_fake_tdi_impl(etch_value_factory* vf, etch_type* static_type,
 /**
  * faketdi_start_message() overrides tdi_start_message()
  */
-etch_message* faketdi_start_message(tagged_data_input* tdi) 
+static etch_message* faketdi_start_message(tagged_data_input* tdi) 
 {
     int result = 0;
     fake_tdi_impl* tdidata = NULL;
@@ -513,11 +404,11 @@ etch_message* faketdi_start_message(tagged_data_input* tdi)
     CU_ASSERT_PTR_NOT_NULL_FATAL(tdi->impl);
 
     tdidata = (fake_tdi_impl*) tdi->impl; /* validate instance data */
-    result  = verify_object((objmask*)tdidata, OBJTYPE_FAKETDI_IMPL, 0, 0);
+    result  = verify_object((etch_object*)tdidata, OBJTYPE_FAKETDI_IMPL, 0, 0);
     CU_ASSERT_EQUAL_FATAL(result,0);
     CU_ASSERT_PTR_NOT_NULL_FATAL(tdidata->vf);
 
-    result = tdidata->destroy(NULL); /* ensure we can call into instance destructor */
+    etch_object_destroy(NULL); /* ensure we can call into instance destructor */
     CU_ASSERT_EQUAL(result,-1);
 
     CU_ASSERT_EQUAL(tdidata->started,FALSE);
@@ -559,7 +450,7 @@ etch_message* faketdi_start_message(tagged_data_input* tdi)
 /**
  * faketdi_read_struct_element() overrides tdi_read_struct_element()
  */
-int faketdi_read_struct_element(tagged_data_input* tdi, etch_struct_element* out_se)   
+static int faketdi_read_struct_element(tagged_data_input* tdi, etch_struct_element* out_se)   
 {
     int result = 0;
     fake_tdi_impl* data = NULL;
@@ -570,7 +461,7 @@ int faketdi_read_struct_element(tagged_data_input* tdi, etch_struct_element* out
     CU_ASSERT_PTR_NOT_NULL_FATAL(out_se);
 
     data = (fake_tdi_impl*) tdi->impl; /* validate instance data */
-    result = verify_object((objmask*)data, OBJTYPE_FAKETDI_IMPL, 0, 0);
+    result = verify_object((etch_object*)data, OBJTYPE_FAKETDI_IMPL, 0, 0);
     CU_ASSERT_EQUAL_FATAL(result,0);
   
     CU_ASSERT_EQUAL(data->started,TRUE);
@@ -585,7 +476,7 @@ int faketdi_read_struct_element(tagged_data_input* tdi, etch_struct_element* out
         CU_ASSERT_PTR_NOT_NULL_FATAL(iterator->current_value);
 
     	out_se->key   = (etch_field*) iterator->current_key;
-        out_se->value = (objmask*)    iterator->current_value;
+        out_se->value = (etch_object*)    iterator->current_value;
 
         iterator->next(iterator);
 		return TRUE;
@@ -599,7 +490,7 @@ int faketdi_read_struct_element(tagged_data_input* tdi, etch_struct_element* out
 /**
  * faketdi_end_message() overrides tdi_end_struct()
  */
-etch_message* faketdi_end_message(tagged_data_input* tdi, etch_message* msg) 
+static etch_message* faketdi_end_message(tagged_data_input* tdi, etch_message* msg) 
 {
     int result = 0;
     fake_tdi_impl* data = NULL;
@@ -607,7 +498,7 @@ etch_message* faketdi_end_message(tagged_data_input* tdi, etch_message* msg)
     CU_ASSERT_PTR_NOT_NULL_FATAL(tdi->impl);
 
     data = (fake_tdi_impl*) tdi->impl; /* validate instance data */
-    result = verify_object((objmask*)data, OBJTYPE_FAKETDI_IMPL, 0, 0);
+    result = verify_object((etch_object*)data, OBJTYPE_FAKETDI_IMPL, 0, 0);
     CU_ASSERT_EQUAL_FATAL(result,0);
     CU_ASSERT_EQUAL_FATAL(data->xmessage, msg); 
 
@@ -628,9 +519,9 @@ etch_message* faketdi_end_message(tagged_data_input* tdi, etch_message* msg)
  * destructor to destroy etchobject content such as any exception, and finally
  * the object itself.
  */
-void faketdi_close(tagged_data_input* tdi)  
+static void faketdi_close(tagged_data_input* tdi)  
 {
-    tdi->destroy(tdi);  
+    etch_object_destroy(tdi);  
 }
 
 
@@ -638,7 +529,7 @@ void faketdi_close(tagged_data_input* tdi)
  * new_fake_tdi()
  * constructor for TDI implementation  
  */
-tagged_data_input* new_fake_tdi(etch_type* static_type, etch_value_factory* vfobj, testitems* data)  
+static tagged_data_input* new_fake_tdi(etch_type* static_type, etch_value_factory* vfobj, testitems* data)  
 {
     tagged_data_input* faketdi = NULL;
     i_tagged_data_input* vtab  = NULL;
@@ -651,33 +542,33 @@ tagged_data_input* new_fake_tdi(etch_type* static_type, etch_value_factory* vfob
 
     if(!vtab)  
     {    
-        vtab = new_vtable(faketdi->vtab, sizeof(i_tagged_data_input), CLASS_ID);
+        vtab = new_vtable(((etch_object*)faketdi)->vtab, sizeof(i_tagged_data_input), CLASS_ID);
 
         /* override three i_tagged_data_input methods */
         vtab->start_message       = faketdi_start_message;  
         vtab->end_message         = faketdi_end_message;    
         vtab->read_struct_element = faketdi_read_struct_element;
 
-        vtab->vtab = faketdi->vtab;      /* chain parent vtab to override vtab */
+        ((etch_object*)vtab)->vtab = faketdi->vtab;      /* chain parent vtab to override vtab */
         cache_insert(vtab->hashkey, vtab, FALSE);
     } 
 
-    CU_ASSERT_EQUAL_FATAL(vtab->class_id, CLASS_ID);
+    CU_ASSERT_EQUAL_FATAL(((etch_object*)vtab)->class_id, CLASS_ID);
 
-    faketdi->vtab = vtab;  /* set override vtab */
+    ((etch_object*)faketdi)->vtab = vtab;  /* set override vtab */
 
-    faketdi->impl = (objmask*) 
+    faketdi->impl = (etch_object*) 
         new_fake_tdi_impl(vfobj, static_type, data); /* create TDI instance data */
 
     switch(g_which_exception_test)
     {   case EXCPTEST_UNCHECKED_STATICTEXT: 
-             etch_throw((objmask*) faketdi, EXCPTYPE_NULLPTR, NULL, 0);  
+             etch_throw((etch_object*) faketdi, EXCPTYPE_NULLPTR, NULL, 0);  
              break;   
         case EXCPTEST_CHECKED_COPYTEXT:   
-             etch_throw((objmask*) faketdi, EXCPTYPE_CHECKED_BOGUS, L"copied text", ETCHEXCP_COPYTEXT | ETCHEXCP_FREETEXT);  
+             etch_throw((etch_object*) faketdi, EXCPTYPE_CHECKED_BOGUS, L"copied text", ETCHEXCP_COPYTEXT | ETCHEXCP_FREETEXT);  
              break; 
         case EXCPTEST_CHECKED_STATICTEXT:   
-             etch_throw((objmask*) faketdi, EXCPTYPE_CHECKED_BOGUS, local_excp_text, ETCHEXCP_STATICTEXT);  
+             etch_throw((etch_object*) faketdi, EXCPTYPE_CHECKED_BOGUS, local_excp_text, ETCHEXCP_STATICTEXT);  
              break;       
     }
 
@@ -696,21 +587,7 @@ tagged_data_input* new_fake_tdi(etch_type* static_type, etch_value_factory* vfob
  */
 typedef struct fake_tdo_impl
 {
-    unsigned int    hashkey;    
-    unsigned short  obj_type;   
-    unsigned short  class_id;   
-    struct objmask* vtab;       
-    int  (*destroy)(void*);     
-    void*(*clone)  (void*); 
-    obj_gethashkey  get_hashkey;    
-    struct objmask* parent;     
-    etchresult*     result;     
-    unsigned int    refcount;       
-    unsigned int    length;     
-    unsigned char   is_null;   
-    unsigned char   is_copy;   
-    unsigned char   is_static;  
-    unsigned char   reserved;
+    etch_object object;
 
     byte started, ended, closed;
     etch_message* xmessage;  /* reference */
@@ -724,17 +601,18 @@ typedef struct fake_tdo_impl
  * memory cleanup handler for fake_tdo_impl
  * we do not destroy the message and underlying struct, this is a reference. 
  */
-int destroy_fake_tdo_impl(fake_tdo_impl* impl)
+static int destroy_fake_tdo_impl(void* data)
 {
+  fake_tdo_impl* impl = (fake_tdo_impl*)data;
     etch_destructor destroy = NULL;
-    int result = verify_object((objmask*)impl, OBJTYPE_FAKETDO_IMPL, CLASSID_FAKETDO_IMPL, NULL);
+    int result = verify_object((etch_object*)impl, OBJTYPE_FAKETDO_IMPL, CLASSID_FAKETDO_IMPL, NULL);
     if (result == -1) return -1; /* object passed was not expected object */
 
     /* destroy the fake output sink, in this case a map. we do not want the map to
      * destroy its content because the message owns that content, and we did not
      * in this case give the output sink copies of that content. 
     */
-    impl->fakeout->destroy(impl->fakeout); 
+    etch_object_destroy(impl->fakeout); 
 
     etch_free(impl);    
     return 0;
@@ -745,7 +623,7 @@ int destroy_fake_tdo_impl(fake_tdo_impl* impl)
  * new_fake_tdo_impl()
  * constructor for TDO implementation instance data
  */
-fake_tdo_impl* new_fake_tdo_impl(etch_message* msg)
+static fake_tdo_impl* new_fake_tdo_impl(etch_message* msg)
 {
     fake_tdo_impl* data = (fake_tdo_impl*) 
         new_object(sizeof(fake_tdo_impl), ETCHTYPEB_INSTANCEDATA, CLASSID_FAKETDO_IMPL);
@@ -760,7 +638,7 @@ fake_tdo_impl* new_fake_tdo_impl(etch_message* msg)
 /**
  * faketdo_start_message() overrides tdo_start_message()
  */
-etch_message* faketdo_start_message(tagged_data_output* tdo, etch_message* msg)  
+static etch_message* faketdo_start_message(tagged_data_output* tdo, etch_message* msg)  
 {
     int result = 0;
     fake_tdo_impl* data = NULL;
@@ -770,10 +648,10 @@ etch_message* faketdo_start_message(tagged_data_output* tdo, etch_message* msg)
     CU_ASSERT_PTR_NOT_NULL_FATAL(tdo->impl);
 
     data = (fake_tdo_impl*) tdo->impl; /* validate instance data */
-    result = verify_object((objmask*)data, OBJTYPE_FAKETDO_IMPL, 0, (void**) &destructor);
+    result = verify_object((etch_object*)data, OBJTYPE_FAKETDO_IMPL, 0, (void**) &destructor);
     CU_ASSERT_EQUAL_FATAL(result,0);
     
-    result = data->destroy(NULL); /* ensure we can call instance destructor */
+    etch_object_destroy(NULL); /* ensure we can call instance destructor */
     CU_ASSERT_EQUAL(result,-1);
 
     CU_ASSERT_EQUAL(data->started,FALSE);
@@ -790,7 +668,7 @@ etch_message* faketdo_start_message(tagged_data_output* tdo, etch_message* msg)
 /**
  * faketdo_write_struct_element() overrides tdo_write_struct_element()
  */
-int faketdo_write_struct_element(tagged_data_output* tdo, etch_field* key, objmask* val)  
+static int faketdo_write_struct_element(tagged_data_output* tdo, etch_field* key, etch_object* val)  
 {
     int result = 0;
     fake_tdo_impl*  data  = NULL;
@@ -806,7 +684,7 @@ int faketdo_write_struct_element(tagged_data_output* tdo, etch_field* key, objma
     CU_ASSERT_EQUAL_FATAL(result,TRUE);
 
     data = (fake_tdo_impl*) tdo->impl; /* validate instance data */
-    result = verify_object((objmask*)data, OBJTYPE_FAKETDO_IMPL, 0, 0);
+    result = verify_object((etch_object*)data, OBJTYPE_FAKETDO_IMPL, 0, 0);
     CU_ASSERT_EQUAL_FATAL(result,0);
 
     fakeout = data->fakeout;
@@ -818,11 +696,11 @@ int faketdo_write_struct_element(tagged_data_output* tdo, etch_field* key, objma
     CU_ASSERT_EQUAL(data->closed,FALSE);
 
     /* do the write to the fake output */ 
-    result = fakeout->vtab->insert(fakeout->realtable, key, HASHSIZE_FIELD, val, 0, 0, 0);
+    result = ((etch_object*)fakeout)->vtab->insert(fakeout->realtable, key, HASHSIZE_FIELD, val, 0, 0, 0);
     CU_ASSERT_EQUAL_FATAL(result,0);
 
     /* verify the write by accessing the item just written */
-    result = fakeout->vtab->find(fakeout->realtable, key, HASHSIZE_FIELD, 0, &myentry);
+    result = ((etch_object*)fakeout)->vtab->find(fakeout->realtable, key, HASHSIZE_FIELD, 0, &myentry);
     CU_ASSERT_EQUAL_FATAL(result,0);
     CU_ASSERT_EQUAL_FATAL(myentry->key, (void*)key);
     CU_ASSERT_EQUAL_FATAL(myentry->value, val);
@@ -834,7 +712,7 @@ int faketdo_write_struct_element(tagged_data_output* tdo, etch_field* key, objma
 /**
  * faketdo_end_message() overrides tdo_end_message()
  */
-etch_message* faketdo_end_message(tagged_data_output* tdo, etch_message* msg)
+static etch_message* faketdo_end_message(tagged_data_output* tdo, etch_message* msg)
 {
     int result = 0;
     fake_tdo_impl* data = NULL;
@@ -842,7 +720,7 @@ etch_message* faketdo_end_message(tagged_data_output* tdo, etch_message* msg)
     CU_ASSERT_PTR_NOT_NULL_FATAL(tdo->impl);
 
     data = (fake_tdo_impl*)  tdo->impl; /* validate instance data */
-    result = verify_object((objmask*)data, OBJTYPE_FAKETDO_IMPL, 0, 0);
+    result = verify_object((etch_object*)data, OBJTYPE_FAKETDO_IMPL, 0, 0);
     CU_ASSERT_EQUAL_FATAL(result,0);
     CU_ASSERT_PTR_NOT_NULL_FATAL(data->xmessage); 
  
@@ -859,9 +737,9 @@ etch_message* faketdo_end_message(tagged_data_output* tdo, etch_message* msg)
 /**
  * faketdo_close() ala java test
  */
-void faketdo_close(tagged_data_output* tdo)  
+static void faketdo_close(tagged_data_output* tdo)  
 {
-    tdo->destroy(tdo); 
+    etch_object_destroy(tdo); 
 }
 
 
@@ -869,7 +747,7 @@ void faketdo_close(tagged_data_output* tdo)
  * new_fake_tdo()
  * constructor for TDO implementation  
  */
-tagged_data_output* new_fake_tdo(etch_message* msg)  
+static tagged_data_output* new_fake_tdo(etch_message* msg)  
 {
     tagged_data_output* faketdo = NULL;
     i_tagged_data_output*  vtab = NULL;
@@ -883,21 +761,21 @@ tagged_data_output* new_fake_tdo(etch_message* msg)
 
     if(!vtab)  
     {   
-        vtab = new_vtable(faketdo->vtab, sizeof(i_tagged_data_output), CLASS_ID);
+        vtab = new_vtable(((etch_object*)faketdo)->vtab, sizeof(i_tagged_data_output), CLASS_ID);
 
         /* override three i_tagged_data_output methods */
         vtab->start_message        = faketdo_start_message;
         vtab->end_message          = faketdo_end_message;
         vtab->write_struct_element = faketdo_write_struct_element;
 
-        vtab->vtab = faketdo->vtab;       /* chain parent vtab */
+        ((etch_object*)vtab)->vtab = faketdo->vtab;       /* chain parent vtab */
     
         cache_insert(vtab->hashkey, vtab, FALSE);
     } 
 
-    CU_ASSERT_EQUAL_FATAL(vtab->class_id, CLASS_ID);
+    CU_ASSERT_EQUAL_FATAL(((etch_object*)vtab)->class_id, CLASS_ID);
 
-    faketdo->vtab = vtab;  /* set override vtab */
+    ((etch_object*)faketdo)->vtab = vtab;  /* set override vtab */
 
     impl = new_fake_tdo_impl(msg);  /* construct TDO instance data */
     CU_ASSERT_PTR_NOT_NULL_FATAL(impl); 
@@ -906,7 +784,7 @@ tagged_data_output* new_fake_tdo(etch_message* msg)
     CU_ASSERT_PTR_NOT_NULL_FATAL(impl->fakeout);
     impl->fakeout->content_type = ETCHHASHTABLE_CONTENT_OBJECT;
 
-    faketdo->impl = (objmask*) impl;
+    faketdo->impl = (etch_object*) impl;
 
     return faketdo; 
 }
@@ -923,7 +801,7 @@ tagged_data_output* new_fake_tdo(etch_message* msg)
  * testdata_clear_handler()
  * memory callback on testdata clear
  */
-int testdata_clear_handler (etch_field* key, objmask* value)  
+static int testdata_clear_handler (void* key, void* value)  
 {
     return TRUE; /* indicate free handled */
 }
@@ -932,7 +810,7 @@ int testdata_clear_handler (etch_field* key, objmask* value)
  * new_testitems()
  * instantiate and return types and fields used in tests
  */
-testitems* new_testitems()
+static testitems* new_testitems()
 {
     testitems* items = etch_malloc(sizeof(struct testitems), 0);
     items->mt1 = new_type(L"mt1");
@@ -943,8 +821,8 @@ testitems* new_testitems()
     items->mf3 = new_field(L"s1");
     items->mf4 = new_field(L"s2");
 
-    items->s1 = new_string(L"string1", ETCH_ENCODING_UTF16);
-    items->s2 = new_string(L"string2", ETCH_ENCODING_UTF16);
+    items->s1 = new_stringw(L"string1");
+    items->s2 = new_stringw(L"string2");
     items->n1 = new_int32(1);
     items->n2 = new_int32(2);
     items->l1 = new_int64(12345);
@@ -968,33 +846,33 @@ testitems* new_testitems()
     items->mf_message_id  = new_field(L"_messageId"); 
     items->mf_in_reply_to = new_field(L"_inReplyTo"); 
  
-    etchtype_put_validator(items->mt1, clone_field(items->mf_message_id), (objmask*) etchvtor_int64_get(0));
-    etchtype_put_validator(items->mt1, clone_field(items->mf1), (objmask*) etchvtor_int32_get(0));
-    etchtype_put_validator(items->mt1, clone_field(items->mf2), (objmask*) etchvtor_int32_get(0));
-    etchtype_put_validator(items->mt1, clone_field(items->mf3), (objmask*) etchvtor_string_get(0));
-    etchtype_put_validator(items->mt1, clone_field(items->mf4), (objmask*) etchvtor_string_get(0));
+    etchtype_put_validator(items->mt1, clone_field(items->mf_message_id), (etch_object*) etchvtor_int64_get(0));
+    etchtype_put_validator(items->mt1, clone_field(items->mf1), (etch_object*) etchvtor_int32_get(0));
+    etchtype_put_validator(items->mt1, clone_field(items->mf2), (etch_object*) etchvtor_int32_get(0));
+    etchtype_put_validator(items->mt1, clone_field(items->mf3), (etch_object*) etchvtor_string_get(0));
+    etchtype_put_validator(items->mt1, clone_field(items->mf4), (etch_object*) etchvtor_string_get(0));
 
-    etchtype_put_validator(items->rmt, clone_field(items->mf_message_id), (objmask*) etchvtor_int64_get(0));
-    etchtype_put_validator(items->rmt, clone_field(items->mf_in_reply_to),(objmask*) etchvtor_int64_get(0));
+    etchtype_put_validator(items->rmt, clone_field(items->mf_message_id), (etch_object*) etchvtor_int64_get(0));
+    etchtype_put_validator(items->rmt, clone_field(items->mf_in_reply_to),(etch_object*) etchvtor_int64_get(0));
 
     #if(0)
-    etchtype_put_validator(items->mt1, items->mf_bool_d0_1->clone(items->mf_bool_d0_1), (objmask*) etchvtor_boolean_get(0));
-    etchtype_put_validator(items->mt1, items->mf_bool_d0_2->clone(items->mf_bool_d0_2), (objmask*) etchvtor_boolean_get(0));
+    etchtype_put_validator(items->mt1, items->mf_bool_d0_1->clone(items->mf_bool_d0_1), (etch_object*) etchvtor_boolean_get(0));
+    etchtype_put_validator(items->mt1, items->mf_bool_d0_2->clone(items->mf_bool_d0_2), (etch_object*) etchvtor_boolean_get(0));
 
-    etchtype_put_validator(items->mt1, items->mf_bool_d1_1->clone(items->mf_bool_d1_1), (objmask*) etchvtor_boolean_get(1));
-    etchtype_put_validator(items->mt1, items->mf_bool_d1_2->clone(items->mf_bool_d1_2), (objmask*) etchvtor_boolean_get(1));
+    etchtype_put_validator(items->mt1, items->mf_bool_d1_1->clone(items->mf_bool_d1_1), (etch_object*) etchvtor_boolean_get(1));
+    etchtype_put_validator(items->mt1, items->mf_bool_d1_2->clone(items->mf_bool_d1_2), (etch_object*) etchvtor_boolean_get(1));
 
-    etchtype_put_validator(items->mt1, items->mf_int32_d0_1->clone(items->mf_int32_d0_1), (objmask*) etchvtor_int32_get(0));
-    etchtype_put_validator(items->mt1, items->mf_int32_d0_2->clone(items->mf_int32_d0_2), (objmask*) etchvtor_int32_get(0));
+    etchtype_put_validator(items->mt1, items->mf_int32_d0_1->clone(items->mf_int32_d0_1), (etch_object*) etchvtor_int32_get(0));
+    etchtype_put_validator(items->mt1, items->mf_int32_d0_2->clone(items->mf_int32_d0_2), (etch_object*) etchvtor_int32_get(0));
 
-    etchtype_put_validator(items->mt1, items->mf_int32_d1_1->clone(items->mf_int32_d1_1), (objmask*) etchvtor_int32_get(1));
-    etchtype_put_validator(items->mt1, items->mf_int32_d1_2->clone(items->mf_int32_d1_2), (objmask*) etchvtor_int32_get(1));
+    etchtype_put_validator(items->mt1, items->mf_int32_d1_1->clone(items->mf_int32_d1_1), (etch_object*) etchvtor_int32_get(1));
+    etchtype_put_validator(items->mt1, items->mf_int32_d1_2->clone(items->mf_int32_d1_2), (etch_object*) etchvtor_int32_get(1));
 
-    etchtype_put_validator(items->mt1, items->mf_str_d0_1->clone(items->mf_str_d0_1), (objmask*) etchvtor_string_get(0));
-    etchtype_put_validator(items->mt1, items->mf_str_d0_2->clone(items->mf_str_d0_2), (objmask*) etchvtor_string_get(0));
+    etchtype_put_validator(items->mt1, items->mf_str_d0_1->clone(items->mf_str_d0_1), (etch_object*) etchvtor_string_get(0));
+    etchtype_put_validator(items->mt1, items->mf_str_d0_2->clone(items->mf_str_d0_2), (etch_object*) etchvtor_string_get(0));
 
-    etchtype_put_validator(items->mt1, items->mf_str_d1_1->clone(items->mf_str_d1_1), (objmask*) etchvtor_string_get(1));
-    etchtype_put_validator(items->mt1, items->mf_str_d1_2->clone(items->mf_str_d1_2), (objmask*) etchvtor_string_get(1));
+    etchtype_put_validator(items->mt1, items->mf_str_d1_1->clone(items->mf_str_d1_1), (etch_object*) etchvtor_string_get(1));
+    etchtype_put_validator(items->mt1, items->mf_str_d1_2->clone(items->mf_str_d1_2), (etch_object*) etchvtor_string_get(1));
     #endif
 
     items->items = new_hashtable(0);
@@ -1010,40 +888,40 @@ testitems* new_testitems()
  * destroy_testitems()
  * free memory for test data
  */
-void destroy_testitems(testitems* items)
+static void destroy_testitems(testitems* items)
 {
-    items->mt1->destroy(items->mt1);
-    items->mt2->destroy(items->mt2);
-    items->rmt->destroy(items->rmt);
-    items->mf1->destroy(items->mf1);
-    items->mf2->destroy(items->mf2); 
-    items->mf3->destroy(items->mf3);
-    items->mf4->destroy(items->mf4);
+    etch_object_destroy(items->mt1);
+    etch_object_destroy(items->mt2);
+    etch_object_destroy(items->rmt);
+    etch_object_destroy(items->mf1);
+    etch_object_destroy(items->mf2); 
+    etch_object_destroy(items->mf3);
+    etch_object_destroy(items->mf4);
 
-    items->s1->destroy(items->s1); 
-    items->s2->destroy(items->s2); 
-    items->n1->destroy(items->n1); 
-    items->n2->destroy(items->n2); 
-    items->l1->destroy(items->l1); 
-    items->l2->destroy(items->l2); 
+    etch_object_destroy(items->s1); 
+    etch_object_destroy(items->s2); 
+    etch_object_destroy(items->n1); 
+    etch_object_destroy(items->n2); 
+    etch_object_destroy(items->l1); 
+    etch_object_destroy(items->l2); 
 
-    items->mf_message_id->destroy (items->mf_message_id); 
-    items->mf_in_reply_to->destroy(items->mf_in_reply_to);
+    etch_object_destroy (items->mf_message_id); 
+    etch_object_destroy(items->mf_in_reply_to);
 
-    items->mf_bool_d0_1->destroy(items->mf_bool_d0_1);   
-    items->mf_bool_d0_2->destroy(items->mf_bool_d0_2);   
-    items->mf_bool_d1_1->destroy(items->mf_bool_d1_1);  
-    items->mf_bool_d1_2->destroy(items->mf_bool_d1_2);   
+    etch_object_destroy(items->mf_bool_d0_1);   
+    etch_object_destroy(items->mf_bool_d0_2);   
+    etch_object_destroy(items->mf_bool_d1_1);  
+    etch_object_destroy(items->mf_bool_d1_2);   
 
-    items->mf_int32_d0_1->destroy(items->mf_int32_d0_1); 
-    items->mf_int32_d0_2->destroy(items->mf_int32_d0_2);  
-    items->mf_int32_d1_1->destroy(items->mf_int32_d1_1);  
-    items->mf_int32_d1_2->destroy(items->mf_int32_d1_2);  
+    etch_object_destroy(items->mf_int32_d0_1); 
+    etch_object_destroy(items->mf_int32_d0_2);  
+    etch_object_destroy(items->mf_int32_d1_1);  
+    etch_object_destroy(items->mf_int32_d1_2);  
 
-    items->mf_str_d0_1->destroy(items->mf_str_d0_1);    
-    items->mf_str_d0_2->destroy(items->mf_str_d0_2);    
-    items->mf_str_d1_1->destroy(items->mf_str_d1_1);    
-    items->mf_str_d1_2->destroy(items->mf_str_d1_2);   
+    etch_object_destroy(items->mf_str_d0_1);    
+    etch_object_destroy(items->mf_str_d0_2);    
+    etch_object_destroy(items->mf_str_d1_1);    
+    etch_object_destroy(items->mf_str_d1_2);   
 
     etchvtor_clear_cache(); /* free all cached validators */
 
@@ -1053,14 +931,15 @@ void destroy_testitems(testitems* items)
 }
 
 
+#if 0
 /* 
  * compare_lists()
  * compares specified message content with content of some other map.
  * returns boolean indicating equal or not.
  */
-int compare_lists(etch_message* msg, etch_hashtable* otherdata)  
+static int compare_lists(etch_message* msg, etch_hashtable* otherdata)  
 {
-    int thiscount = 0, fakecount = 0, result = 0, i = 0, eqcount = 0;
+    int thiscount = 0, fakecount = 0, result = 0;
     etch_structvalue* svx = NULL;
     etch_iterator  iterator;
   	etch_hashitem  hashbucket;
@@ -1070,32 +949,34 @@ int compare_lists(etch_message* msg, etch_hashtable* otherdata)
     CU_ASSERT_PTR_NOT_NULL_FATAL(svx);  
     CU_ASSERT_PTR_NOT_NULL_FATAL(svx->items);
 
-    thiscount = svx->items->vtab->count(svx->items->realtable,0,0); 
-    fakecount = otherdata ->vtab->count(otherdata->realtable,0,0); 
+    thiscount = ((struct i_hashtable*)((etch_object*)svx->items)->vtab)->count(svx->items->realtable,0,0); 
+    fakecount = ((struct i_hashtable*)((etch_object*)otherdata)->vtab)->count(otherdata->realtable,0,0); 
     CU_ASSERT_EQUAL(fakecount, thiscount);
     if (fakecount != thiscount) return FALSE;
 
     set_iterator(&iterator, otherdata, &otherdata->iterable);
 
-    while(iterator.vtab->has_next(&iterator) && result == 0)
+    while(((struct i_iterable*)iterator.object.vtab)->has_next(&iterator) && result == 0)
     {
-        result = svx->items->vtab->findh
-            (svx->items->realtable, ((objmask*)iterator.current_key)->hashkey, 
-                otherdata, &sventry);
+        result = ((struct i_hashtable*)((etch_object*)svx->items)->vtab)->findh
+            (svx->items->realtable, ((etch_object*)iterator.current_key)->hashkey, 
+	     otherdata, (void**)&sventry);
         CU_ASSERT_EQUAL(iterator.current_value, sventry->value);
 
-        iterator.vtab->next(&iterator);
+        ((struct i_iterable*)iterator.object.vtab)->next(&iterator);
     }
 
     return TRUE;
 }
 
+#endif
 
+#if 0
 /* 
  * hashtable_clear_handler()
  * override callback from hashtable during clear()
  */
-int hashtable_clear_handler (void* key, void* value)  
+static int hashtable_clear_handler (void* key, void* value)  
 {
     /* prior to calling clear() on any hashtable htab, set: 
      *    htab.callback = hashtable_clear_handler; 
@@ -1111,7 +992,7 @@ int hashtable_clear_handler (void* key, void* value)
     return FALSE;
 }
 
-
+#endif
 /* = = = = = = = = = = 
  * TESTS   
  * = = = = = = = = = = 
@@ -1122,7 +1003,7 @@ int hashtable_clear_handler (void* key, void* value)
  * iterate over test collection, inserting pairs to specified message.
  * iterate over message, veriying that content matches test collection.
  */
-int run_iterator_test(etch_message* msg, testitems* data)
+static int run_iterator_test(etch_message* msg, testitems* data)
 {
     etch_iterator* iterator  = NULL;
     int msgcount = 0, testcount = 0, result = 0;
@@ -1153,7 +1034,7 @@ int run_iterator_test(etch_message* msg, testitems* data)
     }
 
     CU_ASSERT_EQUAL(testcount, msgcount);
-    iterator->destroy(iterator);
+    etch_object_destroy(iterator);
     return msgcount;
 }
 
@@ -1161,7 +1042,7 @@ int run_iterator_test(etch_message* msg, testitems* data)
 /* 
  * iterator_test()
  */
-void iterator_test(void)
+static void iterator_test(void)
 {
     int result = 0;
     testitems* data = NULL;
@@ -1179,47 +1060,54 @@ void iterator_test(void)
 
     /* a message owns all its memory except the value factory and type, so we'll
      * make copies of all the testdata keys and values to be inserted into it */
-    ikey1 = data->mf1->clone(data->mf1); ikey2 = data->mf2->clone(data->mf2);
-    skey1 = data->mf3->clone(data->mf3); skey2 = data->mf4->clone(data->mf4);
+    ikey1 = (etch_field*)etch_object_clone_func(data->mf1); 
+    ikey2 = (etch_field*)etch_object_clone_func(data->mf2);
+    skey1 = (etch_field*)etch_object_clone_func(data->mf3); 
+    skey2 = (etch_field*)etch_object_clone_func(data->mf4);
 
-    sval1 = data->s1->clone(data->s1);  sval2 = data->s2->clone(data->s2);
-    ival1 = data->n1->clone(data->n1);  ival2 = data->n2->clone(data->n2);
+    sval1 = (etch_string*)etch_object_clone_func(data->s1);  
+    sval2 = (etch_string*)etch_object_clone_func(data->s2);
+    ival1 = (etch_int32*)etch_object_clone_func(data->n1);  
+    ival2 = (etch_int32*)etch_object_clone_func(data->n2);
 
     /* insert cloned fields and values to the test input collection */
-    map->vtab->inserth(map->realtable, ikey1, ival1, map, 0);
-    map->vtab->inserth(map->realtable, ikey2, ival2, map, 0);
-    map->vtab->inserth(map->realtable, skey1, sval1, map, 0);
-    map->vtab->inserth(map->realtable, skey2, sval2, map, 0);
+    ((struct i_hashtable*)((etch_object*)map)->vtab)->inserth(map->realtable, ikey1, ival1, map, 0);
+    ((struct i_hashtable*)((etch_object*)map)->vtab)->inserth(map->realtable, ikey2, ival2, map, 0);
+    ((struct i_hashtable*)((etch_object*)map)->vtab)->inserth(map->realtable, skey1, sval1, map, 0);
+    ((struct i_hashtable*)((etch_object*)map)->vtab)->inserth(map->realtable, skey2, sval2, map, 0);
    
     vf = new_fake_value_factory(data);
 
     CU_ASSERT_PTR_NOT_NULL_FATAL(vf);
-    CU_ASSERT_FALSE_FATAL(is_exception(vf));
+    CU_ASSERT_FALSE_FATAL(is_etch_exception(vf));
 
     /* a message owns its memory except vf and type, so we give it global type */
     msg = new_message (data->mt1, 0, vf);  
 
     CU_ASSERT_PTR_NOT_NULL_FATAL(msg);
-    CU_ASSERT_FALSE_FATAL(is_exception(msg));
+    CU_ASSERT_FALSE_FATAL(is_etch_exception(msg));
     
     result = run_iterator_test(msg, data);
     CU_ASSERT_EQUAL(result,4);  /* 4 items in message */
 
-    msg->destroy(msg);
-    vf ->destroy(vf); 
+    etch_object_destroy(msg);
+    etch_object_destroy(vf); 
   
     destroy_testitems(data);
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 /* 
  * reply_test
  * test message.reply 
  */
-void reply_test(void)
+static void reply_test(void)
 {
     int result = 0;
     etch_message* msg = NULL; 
@@ -1237,7 +1125,7 @@ void reply_test(void)
     
     msg = new_message (data->mt1, 0, vf);  /* message owns neither arg */
 
-    result = message_set_id(msg, id_original->clone(id_original));  
+    result = message_set_id(msg, (etch_int64*)etch_object_clone_func(id_original));  
     CU_ASSERT_EQUAL_FATAL(result,0);
 
     replytype = data->rmt;    /* again, a message does not own a type */ 
@@ -1245,7 +1133,7 @@ void reply_test(void)
     newmsg = message_reply (msg, replytype);
 
     CU_ASSERT_PTR_NOT_NULL_FATAL(newmsg);
-    CU_ASSERT_FALSE_FATAL(is_exception(newmsg));
+    CU_ASSERT_FALSE_FATAL(is_etch_exception(newmsg));
 
     result = is_equal_types(data->rmt, newmsg->sv->struct_type);
     CU_ASSERT_TRUE(result);
@@ -1254,39 +1142,37 @@ void reply_test(void)
     id_replied_to = message_get_in_reply_to(newmsg);
 
     CU_ASSERT_PTR_NOT_NULL_FATAL(id_replied_to);
-    CU_ASSERT_FALSE_FATAL(is_exception(id_replied_to));
+    CU_ASSERT_FALSE_FATAL(is_etch_exception(id_replied_to));
 
     val_origid  = id_original->value;
     val_replyid = id_replied_to->value;   
     CU_ASSERT_EQUAL(val_origid, val_replyid);
 
-    newmsg->destroy(newmsg);
-    msg->destroy(msg);  
-    vf->destroy(vf);   
+    etch_object_destroy(newmsg);
+    etch_object_destroy(msg);  
+    etch_object_destroy(vf);   
     destroy_testitems(data);
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
+#if 0
 /* 
  * run_exception_test
  * execute an individual exception test 
  */
-void run_exception_test(const int whichtest)
+static void run_exception_test(const int whichtest)
 {
-    int result = 0;
-    tagged_data_input* tdi = NULL;
-    etch_message* msg = NULL;
-    etchexception* excp = NULL;
     etch_type* static_type = NULL;
     etch_value_factory* vf = NULL;
     testitems* data = new_testitems();
 
-    /* global marker asks components to throw exceptions */
-    g_which_exception_test = whichtest; 
     static_type = new_type(L"type1");
     vf = new_fake_value_factory(data);
 
@@ -1319,62 +1205,37 @@ void run_exception_test(const int whichtest)
     faketdi_close(tdi);
 
     /* free struct, it is just a shell with no content other than the exception */
-    msg->destroy(msg);
+    etch_object_destroy(msg);
 
     #endif
 
-    vf->destroy(vf);
+    etch_object_destroy(vf);
 
     destroy_testitems(data);
-    destroy_type(static_type);
-    g_which_exception_test = 0;
+    etch_object_destroy(static_type);
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
-/**
- * exception_test
- * all exception tests   
- */
-void exception_test(void)
-{
-    run_exception_test(EXCPTEST_UNCHECKED_STATICTEXT);
-    run_exception_test(EXCPTEST_CHECKED_COPYTEXT);
-    run_exception_test(EXCPTEST_CHECKED_STATICTEXT);
-    g_which_exception_test = 0;
-}
+#endif
 
 
 
 /**
  * main   
  */
-int _tmain(int argc, _TCHAR* argv[])
+//int _tmain(int argc, _TCHAR* argv[])
+CU_pSuite test_etch_message_suite()
 {    
-    char c=0;
-    CU_pSuite pSuite = NULL;
-    g_is_automated_test = argc > 1 && 0 != wcscmp(argv[1], L"-a");
-    if (CUE_SUCCESS != CU_initialize_registry()) return 0;
-    pSuite = CU_add_suite("suite_message", init_suite, clean_suite);
-    CU_set_output_filename("../test_message");
-    etch_watch_id = 0; 
-
+    CU_pSuite pSuite = CU_add_suite("suite_message", init_suite, clean_suite);
     CU_add_test(pSuite, "test iterator over message", iterator_test);  
-    CU_add_test(pSuite, "test msg exceptions", exception_test); 
     CU_add_test(pSuite, "message reply test", reply_test); 
 
-    if (g_is_automated_test)    
-        CU_automated_run_tests();    
-    else
-    {   CU_basic_set_mode(CU_BRM_VERBOSE);
-        CU_basic_run_tests();
-    }
-
-    if (!g_is_automated_test) { printf("any key ..."); while(!c) c = _getch(); wprintf(L"\n"); }     
-    CU_cleanup_registry();
-    return CU_get_error(); 
+    return pSuite;
 }
-

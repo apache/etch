@@ -15,107 +15,52 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */ 
-
 /*
  * test_flexbuf.c
  * test flex buffer
  */
-#include "apr_time.h" /* some apr must be included first */
-#include "etchthread.h"
+#include "etch_runtime.h"
+#include "etch_flexbuffer.h"
+#include "etch_mem.h"
+
 #include <limits.h>
 #include <float.h>
-#include <tchar.h>
 #include <stdio.h>
-#include <conio.h>
-
-#include "cunit.h"
-#include "basic.h"
-#include "automated.h"
-
-#include "etchflexbuf.h"
-#include "etch_global.h"
-
-
-int apr_setup(void);
-int apr_teardown(void);
-int this_setup();
-int this_teardown();
-apr_pool_t* g_apr_mempool;
-const char* pooltag = "etchpool";
-
-
-/* - - - - - - - - - - - - - - 
- * unit test infrastructure
- * - - - - - - - - - - - - - -
- */
-
-int init_suite(void)
-{
-    apr_setup();
-    etch_runtime_init(TRUE);
-    return this_setup();
-}
-
-int clean_suite(void)
-{
-    this_teardown();
-    etch_runtime_cleanup(0,0); /* free memtable and cache etc */
-    apr_teardown();
-    return 0;
-}
-
-int g_is_automated_test, g_bytes_allocated;
+#include "CUnit.h"
 
 #define IS_DEBUG_CONSOLE FALSE
 
-/*
- * apr_setup()
- * establish apache portable runtime environment
- */
-int apr_setup(void)
+// extern types
+extern apr_pool_t* g_etch_main_pool;
+
+static int init_suite(void)
 {
-    int result = apr_initialize();
-    if (result == 0)
-    {   result = etch_apr_init();
-        g_apr_mempool = etch_apr_mempool;
+    etch_status_t etch_status = ETCH_SUCCESS;
+
+    etch_status = etch_runtime_initialize(NULL);
+    if(etch_status != NULL) {
+        // error
     }
-    if (g_apr_mempool)
-        apr_pool_tag(g_apr_mempool, pooltag);
-    else result = -1;
-    return result;
+    return 0;
 }
 
-/*
- * apr_teardown()
- * free apache portable runtime environment
- */
-int apr_teardown(void)
+static int clean_suite(void)
 {
-    if (g_apr_mempool)
-        apr_pool_destroy(g_apr_mempool);
-    g_apr_mempool = NULL;
-    apr_terminate();
+    //this_teardown();
+    etch_runtime_shutdown();
     return 0;
 }
 
-int this_setup()
-{
-    etch_apr_mempool = g_apr_mempool;
-    return 0;
-}
+static etch_flexbuffer* fbuf = 0;
 
-int this_teardown()
-{    
-    return 0;
-}
-
-etch_flexbuffer* fbuf = 0;
-
+// TODO add testcases
+// test endianes big + little
+// test signed + unsigned values
 
 /**
  * returns number of errors
  */
-int check_buf(etch_flexbuffer* buf, const int len, const int ndx, const int avl)
+static int check_buf(etch_flexbuffer* buf, const int len, const int ndx, const int avl)
 {
     int errors = 0, avail = (int) etch_flexbuf_avail(buf);
     if (buf->datalen != len) errors++;
@@ -124,7 +69,7 @@ int check_buf(etch_flexbuffer* buf, const int len, const int ndx, const int avl)
     return errors;
 }
 
-void testCreateAndDestroy0(void)
+static void testCreateAndDestroy0(void)
 {
     fbuf = new_flexbuffer(0);
     CU_ASSERT_PTR_NOT_NULL(fbuf);
@@ -134,11 +79,12 @@ void testCreateAndDestroy0(void)
     destroy_etch_flexbuffer(fbuf);
 }
 
-void testCreateAndDestroy1(void)
+static void testCreateAndDestroy1(void)
 {
     fbuf = new_flexbuffer(-1);
     CU_ASSERT_PTR_NOT_NULL(fbuf);
-    
+    destroy_etch_flexbuffer(fbuf);
+
     fbuf = new_flexbuffer(1);
     CU_ASSERT_PTR_NOT_NULL(fbuf);
     CU_ASSERT(etch_flexbuf_avail(fbuf) == 0);
@@ -150,7 +96,7 @@ void testCreateAndDestroy1(void)
     destroy_etch_flexbuffer(fbuf); /* takes NULL */
 }
 
-void testCreateAndDestroy2(void)
+static void testCreateAndDestroy2(void)
 {
     void *ptr = etch_malloc(1024, 0);
     fbuf = etch_flexbuf_create_b(ptr, 1024, 0);
@@ -160,7 +106,7 @@ void testCreateAndDestroy2(void)
     destroy_etch_flexbuffer(fbuf);
 }
 
-void testCreateAndDestroy3(void)
+static void testCreateAndDestroy3(void)
 {
     void *ptr = etch_malloc(1024, 0);
     fbuf = etch_flexbuf_create_bi(ptr, 1024, 100, 0);
@@ -170,7 +116,7 @@ void testCreateAndDestroy3(void)
     destroy_etch_flexbuffer(fbuf);
 }
 
-void testPutAndGet(void)
+static void testPutAndGet(void)
 {
     byte test_bytes[] = "testbytes";
     void *test_buffer = etch_malloc(128, 0);
@@ -180,20 +126,20 @@ void testPutAndGet(void)
 
     fbuf = new_flexbuffer(0);
 
-    etch_flexbuf_put(fbuf, test_bytes, 0, strlen(test_bytes));
+    etch_flexbuf_put(fbuf, test_bytes, 0, strlen((char*)test_bytes));
 
     /* rewind the buffer */
     etch_flexbuf_set_index(fbuf, 0);
-    n = etch_flexbuf_get(fbuf, test_buffer, 0, strlen(test_bytes));
+    n = etch_flexbuf_get(fbuf, test_buffer, 0, strlen((char*)test_bytes));
     CU_ASSERT(memcmp(test_buffer, test_bytes, n) == 0);
 
     /* test put byte */
     etch_flexbuf_set_index(fbuf, 0);
-    for(i = 0; i < (int) strlen(test_bytes); i++)
+    for(i = 0; i < (int) strlen((char*)test_bytes); i++)
         etch_flexbuf_put_byte(fbuf, test_bytes[i]);    
 
     etch_flexbuf_set_index(fbuf, 0);
-    n = etch_flexbuf_get(fbuf, test_buffer, 0, strlen(test_bytes));
+    n = etch_flexbuf_get(fbuf, test_buffer, 0, strlen((char*)test_bytes));
     CU_ASSERT(memcmp(test_buffer, test_bytes, n) == 0);
 
     /* test put from another buffer */
@@ -202,7 +148,7 @@ void testPutAndGet(void)
     etch_flexbuf_put_from(efb2, fbuf, n);
 
     etch_flexbuf_set_index(efb2, 0);
-    n = etch_flexbuf_get(efb2, test_buffer, 0, strlen(test_bytes));
+    n = etch_flexbuf_get(efb2, test_buffer, 0, strlen((char*)test_bytes));
     CU_ASSERT(memcmp(test_buffer, test_bytes, n) == 0);
 
     etch_free(test_buffer);
@@ -210,7 +156,7 @@ void testPutAndGet(void)
     destroy_etch_flexbuffer(efb2);
 }
 
-void testPutAndGetFully(void)
+static void testPutAndGetFully(void)
 {
     byte test_bytes[] = "testbytes";
     void *test_buffer = etch_malloc(128, 0);
@@ -218,11 +164,11 @@ void testPutAndGetFully(void)
 
     fbuf = new_flexbuffer(0);
 
-    etch_flexbuf_put(fbuf, test_bytes, 0, strlen(test_bytes));
+    etch_flexbuf_put(fbuf, test_bytes, 0, strlen((char*)test_bytes));
 
     /* rewind the buffer */
     etch_flexbuf_set_index(fbuf, 0);
-    n = etch_flexbuf_get_fully(fbuf, test_buffer, strlen(test_bytes));
+    n = etch_flexbuf_get_fully(fbuf, test_buffer, strlen((char*)test_bytes));
     CU_ASSERT(memcmp(test_buffer, test_bytes, n) == 0);
 
     etch_flexbuf_set_index(fbuf, 0);
@@ -231,14 +177,15 @@ void testPutAndGetFully(void)
 
     etch_flexbuf_set_index(fbuf, 0);
     n = etch_flexbuf_get_fully(fbuf, test_buffer, 32);
-    CU_ASSERT(memcmp(test_buffer, test_bytes, min(strlen(test_bytes), 32)) == 0);
+	
+    CU_ASSERT(memcmp(test_buffer, test_bytes, (strlen((char*)test_bytes) < 32 ? strlen((char*)test_bytes): 32)) == 0);
 
     etch_free(test_buffer);
     destroy_etch_flexbuffer(fbuf);
 }
 
 
-void testPutAndGetByte(void)
+static void testPutAndGetByte(void)
 {
     byte test_bytes[] = "testbytes";
     void *test_buffer = etch_malloc(128, 0);
@@ -248,11 +195,11 @@ void testPutAndGetByte(void)
     fbuf = new_flexbuffer(0);
 
     etch_flexbuf_set_index(fbuf, 0);
-    for(i = 0; i < (int)strlen(test_bytes); i++)
+    for(i = 0; i < (int)strlen((char*)test_bytes); i++)
         etch_flexbuf_put_byte(fbuf, test_bytes[i]);    
 
     etch_flexbuf_set_index(fbuf, 0);
-    n = etch_flexbuf_get(fbuf, test_buffer, 0, strlen(test_bytes));
+    n = etch_flexbuf_get(fbuf, test_buffer, 0, strlen((char*)test_bytes));
     CU_ASSERT(memcmp(test_buffer, test_bytes, n) == 0);
 
 
@@ -260,7 +207,7 @@ void testPutAndGetByte(void)
     destroy_etch_flexbuffer(fbuf);
 }
 
-void testPutAndGetShort(void)
+static void testPutAndGetShort(void)
 {
     short test_shorts[] = {SHRT_MIN, SHRT_MAX, 0, 1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 0x7FFF, \
         0xFFFF, 0xFFFE, -8192, -4096, -2048, -1024, -512, -256, -128, -64, -32, -16, -8, -4, -2, -1};
@@ -285,7 +232,7 @@ void testPutAndGetShort(void)
 }
 
 
-void testPutAndGetInt(void)
+static void testPutAndGetInt(void)
 {
     int test_ints[] = {INT_MIN, INT_MAX, 0, 1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 0x7FFF, \
         0xFFFF, 0xFFFFF, 0xFFFFFF, 0xFFFFFFF, 0xFFFFFFE,0x7FFFFFFF, 0xFFFFFFFF, 0xF7FFFFFF, 0xF6FFFFFF, \
@@ -312,11 +259,11 @@ void testPutAndGetInt(void)
 }
 
 
-void testPutAndGetInt64(void)
+static void testPutAndGetInt64(void)
 {
     int64 test_int64s[] = {LONG_MIN, LONG_MAX, 0, 1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 0x7FFF, \
-        0xFFFF, 0xFFFFF, 0xFFFFFF, 0xFFFFFFF, 0x7FFFFFFF, 0xFFFFFFFF, 0xF7FFFFFF, 0xF6FFFFFF, 0x7FFFFFFFFFFFFFFF,\
-        0xFFFFFFFFFFFFFFFF, 0xFFFFFFFFFFFFFF0, 0xFFFFFFFFFFFFFF00, 0xFFFFFFFFFFFFF000, 0xFFFFFFFFFFFFF000, \
+        0xFFFF, 0xFFFFF, 0xFFFFFF, 0xFFFFFFF, 0x7FFFFFFF, 0xFFFFFFFF, 0xF7FFFFFF, 0xF6FFFFFF, 0x7FFFFFFFFFFFFFFFLL,\
+        0xFFFFFFFFFFFFFFFFLL, 0xFFFFFFFFFFFFFF0LL, 0xFFFFFFFFFFFFFF00LL, 0xFFFFFFFFFFFFF000LL, 0xFFFFFFFFFFFFF000LL, \
         0xF5FFFFFF, 0xF4FFFFFF, 0xF3FFFFFF, 0xF2FFFFFF, 0xF1FFFFFF, 0xF0FFFFFF, 0xFF0FFFFF, \
         -8192, -4096, -2048, -1024, -512, -256, -128, -64, -32, -16, -8, -4, -2, -1};
 
@@ -341,7 +288,7 @@ void testPutAndGetInt64(void)
 }
 
 
-void testPutAndGetFloat(void)
+static void testPutAndGetFloat(void)
 {
     float test_floats[] = {FLT_MIN, 0.0f, 1.1f, 2.2f, 4.4f, 8.8f, 16.16f, 32.32f, 64.64f, 128.128f, 256.256f, 512.512f,\
         1024.1024f, 2048.2048f, 4096.4096f, 8192.8192f, FLT_MAX};
@@ -370,7 +317,7 @@ void testPutAndGetFloat(void)
     destroy_etch_flexbuffer(fbuf);
 }
 
-void testPutAndGetDouble(void)
+static void testPutAndGetDouble(void)
 {
     double test_doubles[] = {DBL_MIN, 0.0, 1.1, 2.2, 4.4, 8.8, 16.16, 32.32, 64.64, 128.128, 256.256, 512.512,\
         1024.1024, 2048.2048, 4096.4096, 8192.8192, DBL_MAX};
@@ -395,7 +342,7 @@ void testPutAndGetDouble(void)
     destroy_etch_flexbuffer(fbuf);
 }
 
-void testSetSize(void)
+static void testSetSize(void)
 {
     etch_flexbuffer *fbuf = new_flexbuffer(0);
 
@@ -408,7 +355,7 @@ void testSetSize(void)
     destroy_etch_flexbuffer(fbuf);
 }
 
-void testCompact(void)
+static void testCompact(void)
 {
     int i;
     etch_flexbuffer *fbuf = new_flexbuffer(128);
@@ -425,15 +372,10 @@ void testCompact(void)
 }
 
 
-int _tmain(int argc, _TCHAR* argv[])
+//int _tmain(int argc, _TCHAR* argv[])
+CU_pSuite test_etch_flexbuf_suite()
 {
-    char c=0;
-    CU_pSuite ps = NULL;
-    g_is_automated_test = argc > 1 && 0 != wcscmp(argv[1], L"-a");
-    if (CUE_SUCCESS != CU_initialize_registry()) return 0;
-    ps = CU_add_suite("suite flexbuffer", init_suite, clean_suite);
-    CU_set_output_filename("../test_flexbuffer");
-    etch_watch_id = 0; 
+    CU_pSuite ps = CU_add_suite("suite flexbuffer", init_suite, clean_suite);
 
     CU_add_test(ps, "testCreateAndDestroy0", testCreateAndDestroy0);
     CU_add_test(ps, "testCreateAndDestroy1", testCreateAndDestroy1);
@@ -450,14 +392,5 @@ int _tmain(int argc, _TCHAR* argv[])
     CU_add_test(ps, "testSetSize", testSetSize);
     CU_add_test(ps, "testCompact", testCompact);
 
-    if (g_is_automated_test)    
-        CU_automated_run_tests();    
-    else
-    {   CU_basic_set_mode(CU_BRM_VERBOSE);
-        CU_basic_run_tests();
-    }
-
-    if (!g_is_automated_test) { printf("any key ..."); while(!c) c = _getch();  printf("\n"); }     
-    CU_cleanup_registry();
-    return CU_get_error(); 
+    return ps;
 }

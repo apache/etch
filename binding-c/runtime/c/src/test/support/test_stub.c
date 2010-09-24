@@ -21,102 +21,57 @@
  * test stub, delivery service, etc.
  */
 
-#include "apr_time.h" /* some apr must be included first */
+
+#include "etch_runtime.h"
 #include "etch_svcobj_masks.h"
 #include "etch_transport.h"  
-#include "etchthread.h"
+#include "etch_thread.h"
+#include "etch_object.h"
 #include "etch_stub.h"
-
-#include <tchar.h>
-#include <stdio.h>
-#include <conio.h>
-
-#include "cunit.h"
-#include "basic.h"
-#include "automated.h"
-
-#include "etch_defvalufact.h"
-#include "etch_plainmboxmgr.h"
+#include "etch_default_value_factory.h"
+#include "etch_plain_mailbox_manager.h"
 #include "etch_transport.h"
-#include "etchmap.h"
-#include "etchlog.h"
-#include "etch_global.h"
-#include "etchlog.h"
+#include "etch_objecttypes.h"
+#include "etch_general.h"
+#include "etch_map.h"
+#include "etch_log.h"
+#include "etch_mem.h"
 
-default_value_factory* new_fake_valuefactory();
-etch_server_factory* new_my_stubparams(xxxx_either_impl*, etch_threadpool* qp, etch_threadpool* fp);
 
+#include <stdio.h>
+#include "CUnit.h"
+
+#define IS_DEBUG_CONSOLE FALSE
 
 /* - - - - - - - - - - - - - - 
  * unit test infrastructure
  * - - - - - - - - - - - - - -
  */
 
-int apr_setup(void);
-int apr_teardown(void);
-int this_setup();
-int this_teardown();
-apr_pool_t* g_apr_mempool;
-const char* pooltag = "etchpool";
-
-int init_suite(void)
+static int init_suite(void)
 {
-    apr_setup();
-    etch_runtime_init(TRUE);
-    return this_setup();
-}
+    etch_status_t etch_status = ETCH_SUCCESS;
 
-int clean_suite(void)
-{
-    this_teardown();
-    etch_runtime_cleanup(0,0); /* free memtable and cache etc */
-    apr_teardown();
-    return 0;
-}
-
-int g_is_automated_test, g_bytes_allocated;
-
-#define IS_DEBUG_CONSOLE TRUE
-
-/*
- * apr_setup()
- * establish apache portable runtime environment
- */
-int apr_setup(void)
-{
-    int result = apr_initialize();
-    if (result == 0)
-    {   result = etch_apr_init();
-        g_apr_mempool = etch_apr_mempool;
+    etch_status = etch_runtime_initialize(NULL);
+    if(etch_status != NULL) {
+        // error
     }
-    if (g_apr_mempool)
-        apr_pool_tag(g_apr_mempool, pooltag);
-    else result = -1;
-    return result;
+    return 0;
 }
 
-/*
- * apr_teardown()
- * free apache portable runtime environment
- */
-int apr_teardown(void)
+static int clean_suite(void)
 {
-    if (g_apr_mempool)
-        apr_pool_destroy(g_apr_mempool);
-    g_apr_mempool = NULL;
-    apr_terminate();
+    etch_runtime_shutdown();
     return 0;
 }
 
-int this_setup()
-{
-    return 0;
-}
+#ifdef _WIN32
+#pragma message ( "this testsuite is not active" )
+#else
+#warning "this testsuite is not active"
+#endif
 
-int this_teardown()
-{    
-    return 0;
-}
+#if 0
 
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -126,64 +81,67 @@ int this_teardown()
 
 #define THISTEST_WHO_VALUE 0x5151
 
-unsigned short CLASSID_MY_VF;
-unsigned short CLASSID_MY_VF_VTAB;
-unsigned short CLASSID_MY_VF_IMPL;
-unsigned short CLASSID_MY_IMPLOBJ;
-unsigned short CLASSID_MY_IMPLBASE;
+static unsigned short CLASSID_MY_VF;
+static unsigned short CLASSID_MY_VF_VTAB;
+static unsigned short CLASSID_MY_VF_IMPL;
+static unsigned short CLASSID_MY_IMPLOBJ;
+static unsigned short CLASSID_MY_IMPLBASE;
 
-i_delivery_service* new_my_delivery_service();
-etch_thread* thistest_proxy_threadpool_run (etch_threadpool*, etch_threadproc, void*);
-char* LOGSRC = "TEST";
+static default_value_factory* new_fake_valuefactory();
+static etch_server_factory* new_my_stubparams(xxxx_either_impl*, etch_threadpool* qp, etch_threadpool* fp);
+
+static i_delivery_service* new_my_delivery_service();
+static etch_thread* thistest_proxy_threadpool_run (etch_threadpool*, etch_threadproc, void*);
+static char* LOGSRC = "TEST";
  
 typedef enum whats
 { TRANSPORT_MESSAGE = 1, TRANSPORT_QUERY, TRANSPORT_CONTROL, TRANSPORT_NOTIFY,
   SESSION_QUERY, SESSION_CONTROL, SESSION_NOTIFY, HOWDY,
 } whats;
 
-etch_resources*         g_my_resources;
-default_value_factory*  g_my_vf;
-i_delivery_service*     g_my_ds;
-i_delivery_service*     g_my_transport; /* alias for g_my_ds */
-etch_tcp_delivery_service* g_my_dsimpl;
-i_xxxx_either*          g_my_iserver;
-etch_threadpool*        g_qpool;
-etch_threadpool*        g_fpool;
-etch_who*               g_who;
-etch_type*              g_mt_howdy;
-etch_type*              g_mt_nogood;
-etch_server_factory*    g_stubparams; 
-int                     g_is_run_on_queued_pool;
-int                     g_is_run_on_free_pool;
-int                     g_stub_errors;
-etch_run                g_real_fpool_run;  /* saved threadpool run procs */
-etch_run                g_real_qpool_run;
+static etch_resources*         g_my_resources;
+static default_value_factory*  g_my_vf;
+static i_delivery_service*     g_my_ds;
+static i_delivery_service*     g_my_transport; /* alias for g_my_ds */
+static etch_tcp_delivery_service* g_my_dsimpl;
+static i_xxxx_either*          g_my_iserver;
+static etch_threadpool*        g_qpool;
+static etch_threadpool*        g_fpool;
+static etch_who*               g_who;
+static etch_type*              g_mt_howdy;
+static etch_type*              g_mt_nogood;
+static etch_server_factory*    g_stubparams; 
+static int                     g_is_run_on_queued_pool;
+static int                     g_is_run_on_free_pool;
+static int                     g_stub_errors;
+static etch_run                g_real_fpool_run;  /* saved threadpool run procs */
+static etch_run                g_real_qpool_run;
 
-etch_who*               gds_who;
-etch_message*           gds_message;   
-etch_int32*             gds_query_result;
-int                     gds_what;
-int                     gds_eventval;
-int                     gds_queryval;
-int                     gds_controlval;
-int                     gds_valueval;
+static etch_who*               gds_who;
+static etch_message*           gds_message;   
+static etch_int32*             gds_query_result;
+static int                     gds_what;
+static int                     gds_eventval;
+static int                     gds_queryval;
+static int                     gds_controlval;
+static int                     gds_valueval;
 
-etch_who*               gsv_who;
-etch_message*           gsv_message;   
-etch_int32*             gsv_query_result;
-i_delivery_service*     gsv_ds;
-int                     gsv_what;
-int                     gsv_eventval;    
-int                     gsv_queryval;
-int                     gsv_controlval;
-int                     gsv_valueval;
+static etch_who*               gsv_who;
+static etch_message*           gsv_message;   
+static etch_int32*             gsv_query_result;
+static i_delivery_service*     gsv_ds;
+static int                     gsv_what;
+static int                     gsv_eventval;    
+static int                     gsv_queryval;
+static int                     gsv_controlval;
+static int                     gsv_valueval;
 
 
 /**
  * new_my_resources()
  * resources map constructor
  */
-etch_resources* new_my_resources(void* valuefactory)
+static etch_resources* new_my_resources(void* valuefactory)
 {   
     etch_resources* resx = get_etch_transport_resources(NULL);
     etch_resources_add(resx, ETCH_RESXKEY_MSGIZER_VALUFACT, valuefactory); 
@@ -204,7 +162,7 @@ etch_resources* new_my_resources(void* valuefactory)
  * setup_this_test()
  * set up an individual unit test
  */
-int setup_this_test()
+static int setup_this_test()
 {
     CLASSID_MY_VF      = get_dynamic_classid();
     CLASSID_MY_VF_VTAB = get_dynamic_classid();
@@ -222,7 +180,7 @@ int setup_this_test()
     //g_my_ds = new_my_delivery_service ();
     //g_my_transport = g_my_ds; /* alias */
    
-    g_who = new_who(new_int32(THISTEST_WHO_VALUE), TRUE);
+    g_who = new_who(new_int32(THISTEST_WHO_VALUE));
     gds_query_result = new_int32(1);
     gsv_query_result = new_int32(2);
         
@@ -238,7 +196,7 @@ int setup_this_test()
  * setup_this_stub()
  * setup for stub
  */
-int setup_this_stub(xxxx_either_impl* implobj, unsigned char stubtype, 
+static int setup_this_stub(xxxx_either_impl* implobj, unsigned char stubtype, 
     etch_threadpool* qp, etch_threadpool* fp) 
 {  
     new_my_stubparams(implobj, qp, fp);  
@@ -258,34 +216,30 @@ int setup_this_stub(xxxx_either_impl* implobj, unsigned char stubtype,
  * teardown_this_test()
  * tear down an individual unit test
  */
-void teardown_this_test()
+static void teardown_this_test()
 { 
     if (g_my_resources)  
     {   /* we did a set_etchobj_static_all() on the g_my_vf value factory  
          * and as a result the map will not destroy it. if we had not done
          * so, the vf would have been destroyed with the resources map. */
-        g_my_resources->destroy(g_my_resources);   
+        etch_object_destroy(g_my_resources);   
     }
 
     if (g_my_vf) 
     {   /* we clear the set_etchobj_static_all() on the g_my_vf value factory  
          * and as a result we can then destroy it */
         clear_etchobj_static_all(g_my_vf);
-        g_my_vf->destroy(g_my_vf);
+        etch_object_destroy(g_my_vf);
     }
 
-    if (g_my_ds) 
-        g_my_ds->destroy(g_my_ds);
+    etch_object_destroy(g_my_ds);
     
     etch_free(g_stubparams);
     etch_free(g_my_iserver);
 
-    if (g_who) 
-        g_who->destroy(g_who);
-    if (gds_message)
-        gds_message->destroy(gds_message);
-    if (gds_query_result)
-        gds_query_result->destroy(gds_query_result);
+    etch_object_destroy(g_who);
+    etch_object_destroy(gds_message);
+    etch_object_destroy(gds_query_result);
 
     gds_what  = 0;
     gds_who   = NULL;
@@ -299,10 +253,8 @@ void teardown_this_test()
     gds_query_result = NULL;
     g_my_resources = NULL;
 
-    if (gsv_message)
-        gsv_message->destroy(gsv_message);
-    if (gsv_query_result)
-        gsv_query_result->destroy(gsv_query_result);
+    etch_object_destroy(gsv_message);
+    etch_object_destroy(gsv_query_result);
 
     gsv_what  = 0;
     gsv_who   = NULL;
@@ -328,24 +280,10 @@ void teardown_this_test()
  */
 typedef struct my_implobj
 {
-    unsigned int    hashkey;  
-    unsigned short  obj_type; 
-    unsigned short  class_id;
-    struct objmask* vtab;  
-    int  (*destroy)(void*);
-    void*(*clone)  (void*); 
-    obj_gethashkey  get_hashkey;
-    struct objmask* parent;
-    etchresult*     result;
-    unsigned int    refcount;
-    unsigned int    length;
-    unsigned char   is_null;
-    unsigned char   is_copy;
-    unsigned char   is_static;
-    unsigned char   reserved;
+    etch_object object;
 
     i_xxxx_either*  either_base;  /* owned */
-    objmask*        ixxxx;        /* not owned */
+    etch_object*        ixxxx;        /* not owned */
     xxxx_remote_either* either;   /* not owned */
 
     int (*destroyex) (void*);  /* user memory destructor */
@@ -382,21 +320,7 @@ typedef struct my_implobj
  */
 typedef struct my_valufactory_impl
 {
-    unsigned int    hashkey;  
-    unsigned short  obj_type; 
-    unsigned short  class_id;
-    struct objmask* vtab;  
-    int  (*destroy)(void*);
-    void*(*clone)  (void*); 
-    obj_gethashkey  get_hashkey;
-    struct objmask* parent;
-    etchresult*     result;
-    unsigned int    refcount;
-    unsigned int    length;
-    unsigned char   is_null;
-    unsigned char   is_copy;
-    unsigned char   is_static;
-    unsigned char   reserved;
+    etch_object object;
 
 	etch_type*      mt_howdy;
     etch_type*      mt_nogood;
@@ -408,10 +332,10 @@ typedef struct my_valufactory_impl
  * destroy_my_valufactory_impl()
  * destructor for inheriting value factory instance data
  */
-int destroy_my_valufactory_impl(my_valufactory_impl* impl)
+static int destroy_my_valufactory_impl(void* data)
 {
+    my_valufactory_impl* impl = (my_valufactory_impl*)data;
     if (NULL == impl) return -1;
-    if (impl->refcount > 0 && --impl->refcount > 0) return -1;  
 
     if (!is_etchobj_static_content(impl))
     {
@@ -419,7 +343,7 @@ int destroy_my_valufactory_impl(my_valufactory_impl* impl)
         destroy_static_type(impl->mt_nogood);
     }
 
-    return destroy_objectex((objmask*) impl);
+    return destroy_objectex((etch_object*) impl);
 }
 
 
@@ -427,7 +351,7 @@ int destroy_my_valufactory_impl(my_valufactory_impl* impl)
  * new_my_valufactory_impl()
  * constructor for our value factory's instance data
  */
-my_valufactory_impl* new_my_valufactory_impl()
+static my_valufactory_impl* new_my_valufactory_impl()
 {
     unsigned short class_id = CLASSID_MY_VF_IMPL? CLASSID_MY_VF_IMPL: 
         (CLASSID_MY_VF_IMPL = get_dynamic_classid());
@@ -435,7 +359,7 @@ my_valufactory_impl* new_my_valufactory_impl()
     my_valufactory_impl* impl = (my_valufactory_impl*) new_object
         (sizeof(my_valufactory_impl), ETCHTYPEB_VALUEFACTIMP, class_id);
 
-    impl->destroy = destroy_my_valufactory_impl;
+    ((etch_object*)impl)->destroy = destroy_my_valufactory_impl;
 
     impl->mt_howdy  = new_static_type(L"howdy");
     impl->mt_nogood = new_static_type(L"nogood");
@@ -449,7 +373,7 @@ my_valufactory_impl* new_my_valufactory_impl()
 /**
  * new_fake_valuefactory()
  */
-default_value_factory* new_fake_valuefactory()
+static default_value_factory* new_fake_valuefactory()
 {
     my_valufactory_impl* impl = NULL;
     etchparentinfo* inheritlist = NULL;
@@ -462,10 +386,10 @@ default_value_factory* new_fake_valuefactory()
     * parent class of our custom vf is default_value_factory.
     * inheritance list is used by validators and object assignment logic.
     */
-    inheritlist = get_vtab_inheritance_list((objmask*)g_my_vf, 2, 1, classid_vf_vtab);
+    inheritlist = get_vtab_inheritance_list((etch_object*)g_my_vf, 2, 1, classid_vf_vtab);
     inheritlist[1].obj_type = ETCHTYPEB_VALUEFACTORY;  
     inheritlist[1].class_id = CLASSID_VALUEFACTORY;  /* parent class */
-    g_my_vf->class_id = classid_vf;  /* our class */
+    ((etch_object*)g_my_vf)->class_id = classid_vf;  /* our class */
 
     /* instantiate the custom vf's instance data and assign it to the vf. 
      * the impl comprises all data specific to the inheriting class, including 
@@ -473,9 +397,9 @@ default_value_factory* new_fake_valuefactory()
      * the destructor on the vf's impl object.
      */  
     impl = new_my_valufactory_impl();
-    g_my_vf->impl = (objmask*) impl;
-    g_my_vf->vtab->add_type(g_my_vf, impl->mt_howdy);
-    g_my_vf->vtab->add_type(g_my_vf, impl->mt_nogood);
+    g_my_vf->impl = (etch_object*) impl;
+    ((struct i_value_factory*)((etch_object*)g_my_vf)->vtab)->add_type(g_my_vf, impl->mt_howdy);
+    ((struct i_value_factory*)((etch_object*)g_my_vf)->vtab)->add_type(g_my_vf, impl->mt_nogood);
 
     return g_my_vf;
 }
@@ -493,7 +417,7 @@ default_value_factory* new_fake_valuefactory()
  * @param out mailbox interface returned on success
  * @return 0 success, or -1 failure. new mailbox return in out parameter.
  */
-int myds_begincall (i_delivery_service* thisx, etch_message* msg, void** out)
+static int myds_begincall (void *data, etch_message* msg, void** out)
 {
     assert(out);
     *out = NULL;
@@ -511,7 +435,7 @@ int myds_begincall (i_delivery_service* thisx, etch_message* msg, void** out)
  * @return 0 success, -1 failure. response object returned via out parameter.
  * @remarks assumed that the reply message and its wrapper are destroyed with the mailbox.
  */
-int myds_endcall (i_delivery_service* thisx, i_mailbox* mbox, etch_type* rtype, void** out)
+static int myds_endcall (void* data, i_mailbox* mbox, etch_type* rtype, void** out)
 {
     assert(out);
     *out = NULL;
@@ -534,9 +458,11 @@ int myds_endcall (i_delivery_service* thisx, i_mailbox* mbox, etch_type* rtype, 
  * @param msg caller relinquishes
  * @return 0 (message handled), or -1 (error, closed, or timeout)  
  */
-int myds_session_message (etch_tcp_delivery_service* thisx, etch_who* whofrom, etch_message* msg)
+static int myds_session_message (void* data, etch_who* whofrom, etch_message* msg)
 {
-    ETCHOBJ_DESTROY(msg);
+    etch_object_destroy(msg);
+    msg = NULL;
+
     return 0;
 }
 
@@ -547,10 +473,14 @@ int myds_session_message (etch_tcp_delivery_service* thisx, etch_who* whofrom, e
  * @param control event, caller relinquishes.
  * @param value control value, caller relinquishes.
  */
-int myds_session_control (etch_tcp_delivery_service* thisx, etch_event* control, objmask* value)
+static int myds_session_control (void* data, etch_event* control, etch_object* value)
 {
-    ETCHOBJ_DESTROY(control);
-    ETCHOBJ_DESTROY(value);
+  etch_object_destroy(control);
+  control = NULL;
+
+  etch_object_destroy(value);
+  value = NULL;
+
     return 0;
 }
 
@@ -559,10 +489,12 @@ int myds_session_control (etch_tcp_delivery_service* thisx, etch_event* control,
  * myds_session_notify()
  * @param evt event, caller relinquishes.
  */
-int myds_session_notify (etch_tcp_delivery_service* thisx, etch_event* evt)
+static int myds_session_notify (void* data, etch_event* evt)
 {
-    ETCHOBJ_DESTROY(evt);
-    return 0;
+  etch_object_destroy(evt);
+  evt = NULL;
+
+  return 0;
 }
 
 
@@ -570,10 +502,12 @@ int myds_session_notify (etch_tcp_delivery_service* thisx, etch_event* evt)
  * myds_session_query()
  * @param query, caller relinquishes.
  */
-objmask* myds_session_query (etch_tcp_delivery_service* thisx, objmask* query) 
+static etch_object* myds_session_query(void* data, etch_query* query) 
 {
-    ETCHOBJ_DESTROY(query);
-    return NULL;
+  etch_object_destroy(query);
+  query = NULL;
+
+  return NULL;
 }
 
 
@@ -588,11 +522,12 @@ objmask* myds_session_query (etch_tcp_delivery_service* thisx, objmask* query)
  * @param message caller relinquishes on success, retains on failure.  
  * @return 0 success, -1 error.
  */
-int myds_transport_message(etch_tcp_delivery_service* thisx, etch_who* whoto, etch_message* msg)
+static int myds_transport_message(void* data, void* whoData, void* messageData)
 {  
     gds_what = TRANSPORT_MESSAGE;
-    gds_who  = whoto;                                                           
-    ETCHOBJ_DESTROY(msg);
+    gds_who  = (etch_who*)whoData;
+    etch_object_destroy((etch_message*)messageData);
+
     return 0;
 }
 
@@ -602,8 +537,9 @@ int myds_transport_message(etch_tcp_delivery_service* thisx, etch_who* whoto, et
  * @param control caller relinquishes.
  * @param value caller relinquishes.
  */
-int myds_transport_control (etch_tcp_delivery_service* thisx, etch_event* control, etch_int32* value)
+static int myds_transport_control (void* data, etch_event* control, etch_object* valueData)
 {
+  etch_int32* value = (etch_int32*)valueData;
     gds_what = TRANSPORT_CONTROL;
     gds_controlval = control->value;   
     gds_valueval   = value->value;                                                        
@@ -616,7 +552,7 @@ int myds_transport_control (etch_tcp_delivery_service* thisx, etch_event* contro
  * i_transportmessage::transport_notify override.
  * @param evt, caller relinquishes.
  */
-int myds_transport_notify (etch_tcp_delivery_service* thisx, etch_event* evt)
+static int myds_transport_notify (void* data, etch_event* evt)
 {
     gds_what  = TRANSPORT_NOTIFY;
     gds_eventval = evt->value;
@@ -629,7 +565,7 @@ int myds_transport_notify (etch_tcp_delivery_service* thisx, etch_event* evt)
  * i_transportmessage::transport_query override.
  * @param query, caller relinquishes.
  */
-objmask* myds_transport_query (etch_tcp_delivery_service* thisx, etch_query* query) 
+static etch_object* myds_transport_query (void* data, etch_query* query) 
 {
     gds_what  = TRANSPORT_QUERY;
     gds_queryval = query->value;
@@ -640,9 +576,10 @@ objmask* myds_transport_query (etch_tcp_delivery_service* thisx, etch_query* que
  * myds_get_session()
  * i_transportmessage::get_session override.
  */
-i_sessionmessage* myds_get_session (etch_tcp_delivery_service* thisx) 
+static i_session* myds_get_session (void* data) 
 {
-    return thisx->session;
+    etch_tcp_delivery_service* thisx = (etch_tcp_delivery_service*)data;
+    return (i_session*)thisx->session;
 }
 
 
@@ -650,8 +587,10 @@ i_sessionmessage* myds_get_session (etch_tcp_delivery_service* thisx)
  * myds_set_session()
  * i_transportmessage::set_session override.
  */
-void myds_set_session (i_delivery_service* ids, i_sessionmessage* newsession) 
+static void myds_set_session (void* data, void* param) 
 {
+    i_delivery_service* ids = (i_delivery_service*)data;
+    i_sessionmessage* newsession = (i_sessionmessage*)param;
     /* we override methods in the ids itm. the itm object belongs to the ds transport,
      * which is the mailbox manager. we need to ensure in the real world that the ds
      * set_session() takes care of housekeeping similarly to this override.
@@ -661,7 +600,7 @@ void myds_set_session (i_delivery_service* ids, i_sessionmessage* newsession)
     assert(tcpds->session == ids->session);
     if (tcpds->session) 
     {   assert(is_etch_sessionmsg(tcpds->session));
-        tcpds->session->destroy(tcpds->session);
+        etch_object_destroy(tcpds->session);
     }
     
     /* replace delivery service impl's sessionmsng with stub's sesssionmsg */
@@ -684,7 +623,7 @@ void myds_set_session (i_delivery_service* ids, i_sessionmessage* newsession)
 /**
  * new_my_delivery_service()
  */
-i_delivery_service* new_my_delivery_service()
+static i_delivery_service* new_my_delivery_service()
 {
     etch_tcp_connection* nullconnection = NULL;
     etch_tcp_delivery_service* delsvc = NULL;
@@ -773,15 +712,16 @@ perf_helper.new_remote_server()
  * etchstub_session_control() assumes the control and value objects have been   
  * assumed by this method, so we destroy them accordingly.
  */
-int mysv_session_control (etch_stub* thisx, etch_event* control, etch_int32* value)
+static int mysv_session_control (void* data, etch_event* control, etch_object* param)
 {
+    etch_int32* value = (etch_int32*)param;
     if (control)
     {   gsv_controlval = control->value;
-        control->destroy(control);
+        etch_object_destroy(control);
     }
     if (value)
     {   gsv_valueval = value->value;
-        value->destroy(value);
+        etch_object_destroy(value);
     }
     gsv_what = SESSION_CONTROL;
     return 0;
@@ -796,11 +736,11 @@ int mysv_session_control (etch_stub* thisx, etch_event* control, etch_int32* val
  * etchstub_session_notify() assumes the event object has been   
  * assumed by this method, so we destroy it accordingly.
  */
-int mysv_session_notify (etch_stub* thisx, etch_event* evt)
+static int mysv_session_notify (void* data, etch_event* evt)
 {
     if (evt)
     {   gsv_eventval = evt->value;
-        evt->destroy(evt);
+        etch_object_destroy(evt);
     }
     gsv_what  = SESSION_NOTIFY;
     return 0;
@@ -815,14 +755,14 @@ int mysv_session_notify (etch_stub* thisx, etch_event* evt)
  * etchstub_session_query() assumes the query object has been assumed by 
  * this method, so we destroy it accordingly.
  */
-etch_int32* mysv_session_query (etch_stub* thisx, etch_query* query) 
+static etch_int32* mysv_session_query (void* data, etch_query* query) 
 {
-    if (query) 
+    if (query)
     {   gsv_queryval = query->value;
         etch_free(query);
     }
     gsv_what = SESSION_QUERY;
-    return gsv_query_result;  
+    return gsv_query_result;
 }
 
 
@@ -835,7 +775,7 @@ etch_int32* mysv_session_query (etch_stub* thisx, etch_query* query)
  * mysv_howdy
  * implementation of my_implobj.howdy().
  */
-int mysv_howdy (my_implobj* thisx, i_delivery_service* ids, etch_who* who, etch_message* msg)
+static int mysv_howdy (my_implobj* thisx, i_delivery_service* ids, etch_who* who, etch_message* msg)
 {
     gsv_what = HOWDY;
     gsv_ds   = ids;
@@ -849,11 +789,14 @@ int mysv_howdy (my_implobj* thisx, i_delivery_service* ids, etch_who* who, etch_
  * destroy_my_implobj()
  * destructor for our fake stub impl object
  */
-int destroy_my_implobj(my_implobj* thisx)
+static int destroy_my_implobj(void* data)
 {
+    my_implobj* thisx = (my_implobj*)data;
     etch_free(thisx->either_base->iobjsession);
-    ETCHOBJ_DESTROY(thisx->either_base);
-    return destroy_objectex((objmask*) thisx);
+    etch_object_destroy(thisx->either_base);
+    thisx->either_base = NULL;
+
+    return destroy_objectex((etch_object*) thisx);
 }
 
 
@@ -864,7 +807,7 @@ int destroy_my_implobj(my_implobj* thisx)
  * is that it implement the i_objsession interface. the stub makes this
  * determination in etchstub_get_session_callbacks_from().
  */
-my_implobj* new_my_implobj()
+static my_implobj* new_my_implobj()
 {
     i_objsession* ios = NULL;
 
@@ -881,8 +824,8 @@ my_implobj* new_my_implobj()
         ETCHTYPEB_EXECLIENTBASE, get_dynamic_classid_unique(&CLASSID_MY_IMPLBASE));
 
     /* populate as much of i_xxxx_either as we need */
-    implobj->destroy = destroy_my_implobj;
-    implobj->either_base->thisx = (objmask*) implobj;  
+    ((etch_object*)implobj)->destroy = destroy_my_implobj;
+    implobj->either_base->thisx = (etch_object*) implobj;  
     ios = new_default_objsession_interface (implobj);
     implobj->either_base->iobjsession = ios;
     implobj->either_base->_session_control = ios->_session_control = mysv_session_control;
@@ -909,7 +852,7 @@ my_implobj* new_my_implobj()
  * thistest_proxy_run()
  * intercept of thread pool's run() which susequently calls the real run()
  */
-etch_thread* thistest_proxy_threadpool_run (etch_threadpool* pool, etch_threadproc threadproc, void* threaddata)
+static etch_thread* thistest_proxy_threadpool_run (etch_threadpool* pool, etch_threadproc threadproc, void* threaddata)
 {    
     switch(pool->pooltype)
     { 
@@ -937,21 +880,21 @@ etch_thread* thistest_proxy_threadpool_run (etch_threadpool* pool, etch_threadpr
  * conform to typedef opaque_stubhelper and are defined with the stub, and
  * attached to the type in the stub implementation constructor. 
  */
-int mystub_run_howdy (void* stub, i_delivery_service* ds, i_xxxx_either* obj, etch_who* whofrom, etch_message* msg)
+static int mystub_run_howdy (void* stub, i_delivery_service* ds, i_xxxx_either* obj, etch_who* whofrom, etch_message* msg)
 {
     int result = 0;
     my_implobj* implobj = NULL;
     if (NULL == obj || NULL == obj->thisx)
     {   /* we can't use cunit macros away from the main thread, so we log errors instead */
-        etchlog(LOGSRC, ETCHLOG_ERROR, "stub helper object null pointer\n"); 
+        ETCH_LOG(LOGSRC, ETCH_LOG_ERROR, "stub helper object null pointer\n"); 
         g_stub_errors++;
         return -1;
     }
 
     implobj = (my_implobj*) obj->thisx;
 
-    if (implobj->class_id != CLASSID_MY_IMPLOBJ)
-    {   etchlog(LOGSRC, ETCHLOG_ERROR, "unexpected stub helper object type\n"); 
+    if (((etch_object*)implobj)->class_id != CLASSID_MY_IMPLOBJ)
+    {   ETCH_LOG(LOGSRC, ETCH_LOG_ERROR, "unexpected stub helper object type\n"); 
         g_stub_errors++;
         return -1;
     }
@@ -960,7 +903,7 @@ int mystub_run_howdy (void* stub, i_delivery_service* ds, i_xxxx_either* obj, et
     result = implobj->howdy (implobj, ds, whofrom, msg);   
 
     if (0 != result)
-    {   etchlog(LOGSRC, ETCHLOG_ERROR, "service method implementation failed\n"); 
+    {   ETCH_LOG(LOGSRC, ETCH_LOG_ERROR, "service method implementation failed\n"); 
         g_stub_errors++;
         return -1;
     }
@@ -979,7 +922,7 @@ int mystub_run_howdy (void* stub, i_delivery_service* ds, i_xxxx_either* obj, et
  * stub helper exepcts to extract the stub implementation object. we therefore
  * must instantiate one of these objects for the purposes of this test.
  */
-etch_server_factory* new_my_stubparams(xxxx_either_impl* implobj, etch_threadpool* qp, etch_threadpool* fp)
+static etch_server_factory* new_my_stubparams(xxxx_either_impl* implobj, etch_threadpool* qp, etch_threadpool* fp)
 {
     g_stubparams = new_server_factory (NULL, NULL, NULL, NULL);  
     g_stubparams->fpool = fp;
@@ -991,7 +934,7 @@ etch_server_factory* new_my_stubparams(xxxx_either_impl* implobj, etch_threadpoo
      * (mystub_run_howdy in this case) */    
     g_my_iserver = etch_malloc(sizeof(i_xxxx_either), 0);
     memset(g_my_iserver, 0, sizeof(i_xxxx_either));
-    g_my_iserver->thisx  = (objmask*) implobj; 
+    g_my_iserver->thisx  = (etch_object*) implobj; 
     // g_stubparams->server = g_my_iserver;
     return g_stubparams;
 }
@@ -1004,7 +947,7 @@ etch_server_factory* new_my_stubparams(xxxx_either_impl* implobj, etch_threadpoo
  * factory through it, and so will instead use our global value factory to access 
  * the howdy message type and then set its stub helper to the above.
  */
-etch_stub* new_mystub (xxxx_either_impl* implobj, unsigned char stubtype, 
+static etch_stub* new_mystub (xxxx_either_impl* implobj, unsigned char stubtype, 
     i_delivery_service* ids, etch_threadpool* qp, etch_threadpool* fp) 
 // TODO REMOVE DS FROM THIS API
 {
@@ -1059,7 +1002,7 @@ etch_stub* new_mystub (xxxx_either_impl* implobj, unsigned char stubtype,
 /**
  * test_setup()
  */
-void test_setup(void)
+static void test_setup(void)
 {
     setup_this_test();
 
@@ -1070,9 +1013,12 @@ void test_setup(void)
     
     teardown_this_test();
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -1080,7 +1026,7 @@ void test_setup(void)
  * test_session_message_1()
  * test a stub runner run on main thread 
  */
-void test_session_message_1(void)
+static void test_session_message_1(void)
 {
     setup_this_test();
 
@@ -1121,9 +1067,12 @@ void test_session_message_1(void)
     
     teardown_this_test();
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();   /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -1131,7 +1080,7 @@ void test_session_message_1(void)
  * test_session_message_2()
  * test a stub runner run on queued thread pool 
  */
-void test_session_message_2(void)
+static void test_session_message_2(void)
 {
     setup_this_test();
 
@@ -1173,9 +1122,12 @@ void test_session_message_2(void)
     
     teardown_this_test();
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();   /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -1183,7 +1135,7 @@ void test_session_message_2(void)
  * test_session_message_3()
  * test a stub runner run on free thread pool 
  */
-void test_session_message_3(void)
+static void test_session_message_3(void)
 {
     setup_this_test();
 
@@ -1219,9 +1171,12 @@ void test_session_message_3(void)
     
     teardown_this_test();
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();   /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -1229,7 +1184,7 @@ void test_session_message_3(void)
  * test_session_message_4()
  * test sending a message whose type has no stub runner
  */
-void test_session_message_4(void)
+static void test_session_message_4(void)
 {
     setup_this_test();
 
@@ -1260,28 +1215,31 @@ void test_session_message_4(void)
         /* fyi messages are not relinquished on failure 
          * since caller may want to reroute the message on failure */
         if (!was_msg_handled)
-            newmsg->destroy(newmsg);
+            etch_object_destroy(newmsg);
        
     } while(0);
     
     teardown_this_test();
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();   /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
 /**
  * test_session_query()
  */
-void test_session_query(void)
+static void test_session_query(void)
 {
     setup_this_test();
 
     do 
     {   const int THISQUERYVAL = 12345;
-        objmask* resultobj = NULL;
+        etch_object* resultobj = NULL;
         my_implobj* my_session = new_my_implobj ();  
 
         etch_stub* stub = new_mystub ((xxxx_either_impl*) my_session, 
@@ -1298,16 +1256,19 @@ void test_session_query(void)
     
     teardown_this_test();
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();   /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
 /**
  * test_session_control()
  */
-void test_session_control(void)
+static void test_session_control(void)
 {
     setup_this_test();
 
@@ -1330,16 +1291,19 @@ void test_session_control(void)
     
     teardown_this_test();
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();   /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
 /**
  * test_session_notify()
  */
-void test_session_notify(void)
+static void test_session_notify(void)
 {
     setup_this_test();
 
@@ -1361,24 +1325,23 @@ void test_session_notify(void)
     
     teardown_this_test();
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();   /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
-
+#endif
 
 /**
  * main   
  */
-int _tmain(int argc, _TCHAR* argv[])
+//int wmain( int argc, wchar_t* argv[], wchar_t* envp[])
+CU_pSuite test_etch_stub_suite()
 {
-    CU_pSuite ps = NULL;
-    g_is_automated_test = argc > 1 && 0 != wcscmp(argv[1], L"-a");
-    if (CUE_SUCCESS != CU_initialize_registry()) return 0;
-    CU_set_output_filename("../test_stub");
-    ps = CU_add_suite("stub base test suite", init_suite, clean_suite);
-    etch_watch_id = 0; 
+    CU_pSuite ps =  CU_add_suite("stub base test suite", init_suite, clean_suite);
 
     // THESE TESTS ARE BROKEN
     // TODO go back to java test and reimplement these tests
@@ -1391,14 +1354,5 @@ int _tmain(int argc, _TCHAR* argv[])
     //CU_add_test(ps, "test session control", test_session_control); 
     //CU_add_test(ps, "test session notify", test_session_notify); 
     
-    if (g_is_automated_test)    
-        CU_automated_run_tests();    
-    else
-    {   CU_basic_set_mode(CU_BRM_VERBOSE);
-        CU_basic_run_tests();
-    }
-
-    if (!g_is_automated_test) { printf("any key ..."); while(!_getch()); printf("\n"); }     
-    CU_cleanup_registry();
-    return CU_get_error();
+    return ps;
 }

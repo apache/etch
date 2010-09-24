@@ -19,94 +19,42 @@
 /*
  * test_url.c -- test etch_url
  */
+#include "etch_runtime.h"
+#include "etch_url.h"
+#include "etch_map.h"
+#include "etch_thread.h"
+#include "etch_objecttypes.h"
 
-#include "apr_time.h" /* some apr must be included first */
-#include "etch_url.h"   
-#include "etchmap.h"    
-
-#include <tchar.h>
 #include <stdio.h>
-#include <conio.h>
-
-#include "cunit.h"
-#include "basic.h"
-#include "automated.h"
-
-#include "etchthread.h"
-#include "etch_global.h"
+#include "CUnit.h"
+#include <wchar.h>
 
 #define IS_DEBUG_CONSOLE FALSE
-int g_is_automated_test, g_bytes_allocated;
 
-int apr_setup(void);
-int apr_teardown(void);
-int this_setup();
-int this_teardown();
-apr_pool_t* g_apr_mempool;
-const char* pooltag = "etchpool";
-
+// extern types
+extern apr_pool_t* g_etch_main_pool;
 
 /* - - - - - - - - - - - - - - 
  * unit test infrastructure
  * - - - - - - - - - - - - - -
  */
 
-int init_suite(void)
+static int init_suite(void)
 {
-    apr_setup();
-    etch_runtime_init(TRUE);
-    return this_setup();
-}
+    etch_status_t etch_status = ETCH_SUCCESS;
 
-int clean_suite(void)
-{
-    this_teardown();
-    etch_runtime_cleanup(0,0); /* free memtable and cache etc */
-    apr_teardown();
-    return 0;
-}
-
-/*
- * apr_setup()
- * establish apache portable runtime environment
- */
-int apr_setup(void)
-{
-    int result = apr_initialize();
-    if (result == 0)
-    {   result = etch_apr_init();
-        g_apr_mempool = etch_apr_mempool;
+    etch_status = etch_runtime_initialize(NULL);
+    if(etch_status != NULL) {
+        // error
     }
-    if (g_apr_mempool)
-        apr_pool_tag(g_apr_mempool, pooltag);
-    else result = -1;
-    return result;
+    return 0;
 }
 
-/*
- * apr_teardown()
- * free apache portable runtime environment
- */
-int apr_teardown(void)
+static int clean_suite(void)
 {
-    if (g_apr_mempool)
-        apr_pool_destroy(g_apr_mempool);
-    g_apr_mempool = NULL;
-    apr_terminate();
+    etch_runtime_shutdown();
     return 0;
 }
-
-int this_setup()
-{
-    etch_apr_mempool = g_apr_mempool;
-    return 0;
-}
-
-int this_teardown()
-{    
-    return 0;
-}
-
 
 /* - - - - - - - - - - - - - - 
  * tests
@@ -116,7 +64,7 @@ int this_teardown()
 /* 
  * test_parse_1
  */
-void test_parse_1(void)
+static void test_parse_1(void)
 {
     int result = 0;
     etch_url* url = NULL;
@@ -137,18 +85,21 @@ void test_parse_1(void)
     result = wcscmp(url->host, RAWURL);
     CU_ASSERT_EQUAL(result,0); 
 
-    url->destroy(url);
+    etch_object_destroy(url);
 
-    g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
 /* 
  * test_parse_2
  */
-void test_parse_2(void)
+static void test_parse_2(void)
 {
     int result = 0;
     etch_url* url = NULL;
@@ -172,18 +123,21 @@ void test_parse_2(void)
     result = wcscmp(url->uri, L"cuae");
     CU_ASSERT_EQUAL(result,0); 
 
-    url->destroy(url);
+    etch_object_destroy(url);
 
-    g_bytes_allocated = etch_showmem(0,0);  /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
 /* 
  * test_parse_3
  */
-void test_parse_3(void)
+static void test_parse_3(void)
 {
     int result = 0;
     etch_url* url = NULL;
@@ -210,18 +164,21 @@ void test_parse_3(void)
     result = wcscmp(url->uri, L"cuae");
     CU_ASSERT_EQUAL(result,0); 
 
-    url->destroy(url);
+    etch_object_destroy(url);
 
-    g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
 /* 
  * test_parse_4
  */
-void test_parse_4(void)
+static void test_parse_4(void)
 {
     int result = 0;
     etch_url* url = NULL;
@@ -254,11 +211,14 @@ void test_parse_4(void)
     result = wcscmp(url->uri, L"cuae");
     CU_ASSERT_EQUAL(result,0); 
 
-    url->destroy(url);
+    etch_object_destroy(url);
 
-    g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -267,7 +227,7 @@ void test_parse_4(void)
  * since colon is both scheme and username:password delimiter
  * ensure we can omit scheme and include password
  */
-void test_parse_5(void)
+static void test_parse_5(void)
 {
     int result = 0;
     etch_url* url = NULL;
@@ -300,18 +260,21 @@ void test_parse_5(void)
     result = wcscmp(url->uri, L"cuae");
     CU_ASSERT_EQUAL(result,0); 
 
-    url->destroy(url);
+    etch_object_destroy(url);
 
-    g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
 /* 
  * test_parse_6
  */
-void test_parse_6(void)
+static void test_parse_6(void)
 {
     int result = 0;
     etch_url* url = NULL;
@@ -363,7 +326,7 @@ void test_parse_6(void)
             CU_ASSERT_EQUAL(matches,1); 
             iterator->next(iterator);
         }
-        iterator->destroy(iterator);
+        etch_object_destroy(iterator);
     } while(0);
 
     do 
@@ -385,11 +348,14 @@ void test_parse_6(void)
         }
     } while(0);
 
-    url->destroy(url);
+    etch_object_destroy(url);
 
-    g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -397,7 +363,7 @@ void test_parse_6(void)
  * test_parse_7
  * test a url with duplicate term names
  */
-void test_parse_7(void)
+static void test_parse_7(void)
 {
     int result = 0;
     etch_url* url = NULL;
@@ -454,7 +420,7 @@ void test_parse_7(void)
             iterator->next(iterator);
         }
 
-        iterator->destroy(iterator);
+        etch_object_destroy(iterator);
 
     } while(0);
 
@@ -470,7 +436,6 @@ void test_parse_7(void)
         while(iterator1.has_next(&iterator1))
         {    
             etch_iterator iterator2;
-            wchar_t*  key    = (wchar_t*) iterator1.current_key;
             etch_set* setobj = (etch_set*)iterator1.current_value;
             CU_ASSERT_EQUAL_FATAL(is_etch_set(setobj), TRUE);
 
@@ -498,27 +463,24 @@ void test_parse_7(void)
 
     } while(0);
 
-    url->destroy(url);
+    etch_object_destroy(url);
 
-    g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
 /**
  * main   
  */
-int _tmain(int argc, _TCHAR* argv[])
+//int _tmain(int argc, _TCHAR* argv[])
+CU_pSuite test_etch_url_suite()
 {
-    char c=0;
-    CU_pSuite pSuite = NULL;
-    g_is_automated_test = argc > 1 && 0 != wcscmp(argv[1], L"-a");
-    if (CUE_SUCCESS != CU_initialize_registry()) return 0;
-    CU_set_output_filename("../test_url");
-    pSuite = CU_add_suite("suite_url", init_suite, clean_suite);
-    etch_watch_id = 0;
-    etch_watch_addr = 0; // 0x4421c8;
+    CU_pSuite pSuite = CU_add_suite("suite_url", init_suite, clean_suite);
 
     CU_add_test(pSuite, "test parse 1", test_parse_1); 
     CU_add_test(pSuite, "test parse 2", test_parse_2); 
@@ -528,15 +490,6 @@ int _tmain(int argc, _TCHAR* argv[])
     CU_add_test(pSuite, "test parse 6", test_parse_6);
     CU_add_test(pSuite, "test parse 7", test_parse_7);
 
-    if (g_is_automated_test)    
-        CU_automated_run_tests();    
-    else
-    {   CU_basic_set_mode(CU_BRM_VERBOSE);
-        CU_basic_run_tests();
-    }
-
-    if (!g_is_automated_test) { printf("any key ..."); while(!c) c = _getch(); wprintf(L"\n"); }     
-    CU_cleanup_registry();
-    return CU_get_error(); 
+    return pSuite;
 }
 

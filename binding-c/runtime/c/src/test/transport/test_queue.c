@@ -19,96 +19,43 @@
 /*
  * test_queue.c 
  */
+#include "etch_runtime.h"
+#include "etch_queue.h"
+#include "etch_thread.h"
+#include "etch_objecttypes.h"
+#include "etch_threadpool_apr.h"
+#include "etch_mem.h"
 
-#include "apr_time.h" /* some apr must be included first */
-#include "etch_queue.h"  
-
-#include <tchar.h>
 #include <stdio.h>
-#include <conio.h>
+#include "CUnit.h"
 
-#include "cunit.h"
-#include "basic.h"
-#include "automated.h"
 
-#include "etchthread.h"
-#include "etch_global.h"
+#define IS_DEBUG_CONSOLE FALSE
 
-#include "etch_threadpool_apr.h"  
-
-int apr_setup(void);
-int apr_teardown(void);
-int this_setup();
-int this_teardown();
-apr_pool_t* g_apr_mempool;
-const char* pooltag = "etchpool";
-
+// extern types
+extern apr_pool_t* g_etch_main_pool;
 
 /* - - - - - - - - - - - - - - 
  * unit test infrastructure
  * - - - - - - - - - - - - - -
  */
 
-int init_suite(void)
+static int init_suite(void)
 {
-    apr_setup();
-    etch_runtime_init(TRUE);
-    return this_setup();
-}
+    etch_status_t etch_status = ETCH_SUCCESS;
 
-int clean_suite(void)
-{
-    this_teardown();
-    etch_runtime_cleanup(0,0); /* free memtable and cache etc */
-    apr_teardown();
-    return 0;
-}
-
-int g_is_automated_test, g_bytes_allocated;
-
-#define IS_DEBUG_CONSOLE FALSE
-
-/*
- * apr_setup()
- * establish apache portable runtime environment
- */
-int apr_setup(void)
-{
-    int result = apr_initialize();
-    if (result == 0)
-    {   result = etch_apr_init();
-        g_apr_mempool = etch_apr_mempool;
+    etch_status = etch_runtime_initialize(NULL);
+    if(etch_status != NULL) {
+        // error
     }
-    if (g_apr_mempool)
-        apr_pool_tag(g_apr_mempool, pooltag);
-    else result = -1;
-    return result;
+    return 0;
 }
 
-/*
- * apr_teardown()
- * free apache portable runtime environment
- */
-int apr_teardown(void)
+static int clean_suite(void)
 {
-    if (g_apr_mempool)
-        apr_pool_destroy(g_apr_mempool);
-    g_apr_mempool = NULL;
-    apr_terminate();
+    etch_runtime_shutdown();
     return 0;
 }
-
-int this_setup()
-{
-    etch_apr_mempool = g_apr_mempool;
-    return 0;
-}
-
-int this_teardown()
-{    
-    return 0;
-}
-
 
 /* - - - - - - - - - - - - - - 
  * unit test support
@@ -120,22 +67,22 @@ int this_teardown()
 #define NUMBER_PRODUCERS     3  
 #define PRODUCER_ACTIVITY    5
 #define ERROR_BAD_THREADDATA 1
-int g_error, g_producercount, g_consumercount, g_unique_id, g_pro, g_con;
+static int g_error, g_producercount, g_consumercount, g_unique_id, g_pro, g_con;
 
 
-unsigned next_test_id()
+static unsigned next_test_id()
 {
     apr_atomic_inc32 ((volatile apr_uint32_t*) &g_unique_id);
     return g_unique_id;
 }
 
-unsigned next_producer()
+static unsigned next_producer()
 {
     apr_atomic_inc32 ((volatile apr_uint32_t*) &g_pro);
     return g_pro;
 }
 
-unsigned next_consumer()
+static unsigned next_consumer()
 {
     apr_atomic_inc32 ((volatile apr_uint32_t*) &g_con);
     return g_con;
@@ -146,7 +93,7 @@ unsigned next_consumer()
  * push_some_objects()
  * push specified number of new objects onto the queue
  */
-int push_some_objects(etch_queue* q, const int howmany)
+static int push_some_objects(etch_queue* q, const int howmany)
 {
     int count = 0, result = 0;
 
@@ -161,16 +108,15 @@ int push_some_objects(etch_queue* q, const int howmany)
  * pop_some_objects()
  * pop specified number of objects off the queue and destroy each object retrieved
  */
-int pop_some_objects(etch_queue* q, const int howmany)
+static int pop_some_objects(etch_queue* q, const int howmany)
 {
     int count = 0, result = 0;
-    objmask* thisobj = NULL;
+    etch_object* thisobj = NULL;
 
     while(count++ < howmany && result == 0)
     {
-        result = etchqueue_get_withwait(q, ETCH_NOWAIT, &thisobj);
-        if (thisobj) 
-            thisobj->destroy(thisobj);
+      result = etchqueue_get_withwait(q, ETCH_NOWAIT, (void**)&thisobj);
+        etch_object_destroy(thisobj);
         thisobj = NULL;
     }
 
@@ -178,19 +124,20 @@ int pop_some_objects(etch_queue* q, const int howmany)
 }
 
 
+#if 0
 /**
  * pop_all_objects()
  * pop all objects off the queue and destroy each object retrieved
  */
-int pop_all_objects(etch_queue* q)
+static int pop_all_objects(etch_queue* q)
 {
     int popcount = 0, result = 0;
     const int queuecount = etchqueue_size(q);
-    objmask* thisobj = NULL;
+    etch_object* thisobj = NULL;
 
     while(popcount++ < queuecount && result == 0)
     {
-        result = etchqueue_get_withwait(q, ETCH_NOWAIT, &thisobj);
+      result = etchqueue_get_withwait(q, ETCH_NOWAIT, (void**)&thisobj);
         if (thisobj) 
             thisobj->destroy(thisobj);
         thisobj = NULL;
@@ -198,7 +145,7 @@ int pop_all_objects(etch_queue* q)
 
     return result;
 }
-
+#endif
 
 /**
  * mytest_threaddata()
@@ -206,32 +153,33 @@ int pop_all_objects(etch_queue* q)
  * we'd have to configure the threadpool to not destroy a thread's data.
  */
 typedef struct mytest_threaddata  { etch_queue* queue; }  mytest_threaddata;
- 
+
+#if 0
 /**
  * new_testdata()
  * constructor for test thread data
  */
-mytest_threaddata* new_testdata(etch_queue* q)
+static mytest_threaddata* new_testdata(etch_queue* q)
 {
     mytest_threaddata* td = etch_malloc(sizeof(mytest_threaddata), 0);
     td->queue = q;
     return td;
 }
-
+#endif
 
 /**
  * consumer_threadproc()
  * consumer thread procedure. derived from APR queue test.
  */
-void consumer_threadproc(void *data)
+static void consumer_threadproc(void *data)
 {
-    etch_threadparams* params = (etch_threadparams*) data;
+    etch_thread_params* params = (etch_thread_params*) data;
     etch_queue* queue = (etch_queue*) params->data; 
 
     int result = 0; 
-    const int thisthread = next_consumer();
     etch_int32* content = NULL;    
     int64 sleeprate = 1000000/CONSUMER_ACTIVITY;
+    next_consumer();
 
     if (!is_etch_queue(queue)) /* can't test assert outside main thread */
     {          
@@ -250,7 +198,7 @@ void consumer_threadproc(void *data)
     {
         g_consumercount++;
                                
-        switch(result = etchqueue_get(queue, &content))
+        switch(result = etchqueue_get(queue, (void**)&content))
         {
             case -1:   
                  break;     /* shutdown or error */
@@ -266,7 +214,7 @@ void consumer_threadproc(void *data)
                      #if IS_DEBUG_CONSOLE
                      printf("consumer thread %d popped content %d\n", thisthread, content->value); fflush(stdout);
                      #endif
-                     content->destroy(content);
+                     etch_object_destroy(content);
                      content = NULL;
                  }
                  apr_sleep(sleeprate); /* sleep this long to achieve our rate */
@@ -283,9 +231,9 @@ void consumer_threadproc(void *data)
  * producer_threadproc()
  * producer thread procedure. derived from APR queue test.
  */
-void producer_threadproc(void *data)
+static void producer_threadproc(void *data)
 {
-    etch_threadparams* params = (etch_threadparams*) data;
+    etch_thread_params* params = (etch_thread_params*) data;
     etch_queue* queue = (etch_queue*) params->data; 
 
     int result = 0, is_timeout = 0;
@@ -326,12 +274,12 @@ void producer_threadproc(void *data)
         switch(result = etchqueue_put(queue, newcontent))
         {
             case -1:  /* queue closed or error */ 
-                 newcontent->destroy(newcontent); 
+                 etch_object_destroy(newcontent); 
                  newcontent = NULL;
                  break;
 
             case ETCH_QUEUE_OPERATION_CANCELED: 
-                 newcontent->destroy(newcontent); 
+                 etch_object_destroy(newcontent); 
                  newcontent = NULL;
                  continue; /* signaled */
 
@@ -357,23 +305,26 @@ void producer_threadproc(void *data)
 /**
  * test_constructor
  */
-void test_constructor(void)
+static void test_constructor(void)
 {
     etch_queue* q = new_queue(ETCH_DEFSIZE);
     CU_ASSERT_PTR_NOT_NULL_FATAL(q); 
 
-    q->destroy(q);
+    etch_object_destroy(q);
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
 /**
  * test_putget()
  */
-void test_putget(void)
+static void test_putget(void)
 {
     int result = 0, qdepth = 0;
     etch_int32* thiscontent = NULL;
@@ -393,7 +344,7 @@ void test_putget(void)
     qdepth = etchqueue_size(q);
     CU_ASSERT_EQUAL(qdepth,2);
 
-    result = etchqueue_get(q, &thiscontent);
+    result = etchqueue_get(q, (void**)&thiscontent);
     CU_ASSERT_EQUAL(result,0);
     result = is_etch_int32(thiscontent);
     CU_ASSERT_EQUAL(result, TRUE);
@@ -402,7 +353,7 @@ void test_putget(void)
     qdepth = etchqueue_size(q);
     CU_ASSERT_EQUAL(qdepth,1);
 
-    result = etchqueue_get(q, &thiscontent);
+    result = etchqueue_get(q, (void**)&thiscontent);
     CU_ASSERT_EQUAL(result,0);
     result = is_etch_int32(thiscontent);
     CU_ASSERT_EQUAL(result, TRUE);
@@ -411,20 +362,23 @@ void test_putget(void)
     qdepth = etchqueue_size(q);
     CU_ASSERT_EQUAL(qdepth,0);
 
-    q->destroy(q);
-    thiscontent1->destroy(thiscontent1);
-    thiscontent2->destroy(thiscontent2);
+    etch_object_destroy(q);
+    etch_object_destroy(thiscontent1);
+    etch_object_destroy(thiscontent2);
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
 /**
  * test_bulkputget()
  */
-void test_bulkputget(void)
+static void test_bulkputget(void)
 {
     int result = 0, qdepth = 0;
     const int HOWMANY = 3;
@@ -442,11 +396,14 @@ void test_bulkputget(void)
     qdepth = etchqueue_size(q);
     CU_ASSERT_EQUAL(qdepth, 0);
 
-    q->destroy(q);
+    etch_object_destroy(q);
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -454,26 +411,29 @@ void test_bulkputget(void)
  * test_destroy_nonempty_queue()
  * destroy a nonempty queue and ensure content memory is freed as expected
  */
-void test_destroy_nonempty_queue(void)
+static void test_destroy_nonempty_queue(void)
 {
-    int result = 0, qdepth = 0;
+    int result = 0;
     const int HOWMANY = 3;
     etch_queue* q = new_queue(HOWMANY);
      
     result = push_some_objects(q, HOWMANY);
 
-    q->destroy(q);
+    etch_object_destroy(q);
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
 /**
  * test_queue_overflow()
  */
-void test_queue_overflow(void)
+static void test_queue_overflow(void)
 {
     int result = 0, qdepth = 0;
     const int MAXDEPTH = 2;
@@ -491,23 +451,26 @@ void test_queue_overflow(void)
 
     result = etchqueue_put_withwait(q, ETCH_NOWAIT, newcontent);
     CU_ASSERT_NOT_EQUAL_FATAL(result, 0);
-    newcontent->destroy(newcontent);
+    etch_object_destroy(newcontent);
 
     qdepth = etchqueue_size(q);
     CU_ASSERT_EQUAL(qdepth, MAXDEPTH);
 
-    q->destroy(q);
+    etch_object_destroy(q);
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
 /**
  * test_queue_underflow()
  */
-void test_queue_underflow(void)
+static void test_queue_underflow(void)
 {
     int result = 0, qdepth = 0;
     const int MAXDEPTH = 2;
@@ -517,32 +480,35 @@ void test_queue_underflow(void)
     result = etchqueue_put_withwait(q, ETCH_NOWAIT, content = new_int32(0));
     CU_ASSERT_EQUAL(result, 0);
      
-    result = etchqueue_get_withwait(q, ETCH_NOWAIT, &content);
+    result = etchqueue_get_withwait(q, ETCH_NOWAIT, (void**)&content);
     CU_ASSERT_EQUAL(result, 0);
-    content->destroy(content);
+    etch_object_destroy(content);
     content = NULL;
 
-    result = etchqueue_try_get(q, &content);
+    result = etchqueue_try_get(q, (void**)&content);
     CU_ASSERT_EQUAL(result, -1);
 
-    result = etchqueue_get_withwait(q, ETCH_NOWAIT, &content);
+    result = etchqueue_get_withwait(q, ETCH_NOWAIT, (void**)&content);
     CU_ASSERT_NOT_EQUAL_FATAL(result, 0);
 
     qdepth = etchqueue_size(q);
     CU_ASSERT_EQUAL(qdepth, 0);
 
-    q->destroy(q);
+    etch_object_destroy(q);
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
 /**
  * test_iterator()
  */
-void test_iterator(void)
+static void test_iterator(void)
 {
     etch_iterator iterator;
     int  iterated = 0;
@@ -565,11 +531,14 @@ void test_iterator(void)
 
     CU_ASSERT_EQUAL(iterated, HOWMANY);  
 
-    q->destroy(q);
+    etch_object_destroy(q);
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -581,7 +550,7 @@ void test_iterator(void)
  * threads  do their thing for a while, and close the queue. verify that all 
  * memory is accounted for.
  */
-void test_blocking(void)
+static void test_blocking(void)
 {
     #define NUMTHREADS NUMBER_CONSUMERS + NUMBER_PRODUCERS
     int result = 0, i = 0;
@@ -621,19 +590,22 @@ void test_blocking(void)
         result = etchqueue_get_withwait(myqueue, ETCHQUEUE_CLEARING_CLOSED_QUEUE, &queuecontent);
         CU_ASSERT_EQUAL(result, -1);  
         if (-1 == result) break;
-        queuecontent->destroy(queuecontent);
+        etch_object_destroy(queuecontent);
     } 
     #endif 
 
     /* note that we should always destroy (or otherwise join) the queue  
      * accessor threads, before destroying the queue, as we do here */
-    threadpool->destroy(threadpool);   
+    etch_object_destroy(threadpool);   
 
-    myqueue->destroy(myqueue);
+    etch_object_destroy(myqueue);
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -642,7 +614,7 @@ void test_blocking(void)
  * - - - - - - - - - - - - - - - - - -
  */
 
-etch_apr_queue_t* g_queue; /* global queue for APR queue test */
+static etch_apr_queue_t* g_queue; /* global queue for APR queue test */
 
 
 /**
@@ -703,7 +675,7 @@ static void * APR_THREAD_FUNC aprqtest_producer_thread(apr_thread_t *thd, void *
  * this is the APR queue test modified to use etch_apr_queue calls.
  * it uses the APR threadpool 
  */
-void test_queue_producer_consumer(void)
+static void test_queue_producer_consumer(void)
 {   
     unsigned int i;
     apr_status_t rv;
@@ -713,10 +685,10 @@ void test_queue_producer_consumer(void)
     srand((unsigned int)apr_time_now());
     g_error = g_producercount = g_consumercount = g_unique_id = g_pro = g_con = 0;
 
-    rv = etch_apr_queue_create(&g_queue, QUEUE_SIZE, etch_apr_mempool);
+    rv = etch_apr_queue_create(&g_queue, QUEUE_SIZE, g_etch_main_pool);
     CU_ASSERT_EQUAL(rv,0);
 
-    rv = etch_apr_thread_pool_create(&threadpool, 0, NUMBER_CONSUMERS + NUMBER_PRODUCERS, etch_apr_mempool);
+    rv = etch_apr_thread_pool_create(&threadpool, 0, NUMBER_CONSUMERS + NUMBER_PRODUCERS, g_etch_main_pool);
     CU_ASSERT_EQUAL(rv,0);
 
     for (i = 0; i < NUMBER_CONSUMERS; i++) 
@@ -748,15 +720,10 @@ void test_queue_producer_consumer(void)
 /**
  * main   
  */
-int _tmain(int argc, _TCHAR* argv[])
+//int wmain( int argc, wchar_t* argv[], wchar_t* envp[])
+CU_pSuite test_etch_queue()
 {    
-    char c=0;
-    CU_pSuite pSuite = NULL;
-    g_is_automated_test = argc > 1 && 0 != wcscmp(argv[1], L"-a");
-    if (CUE_SUCCESS != CU_initialize_registry()) return 0;
-    pSuite = CU_add_suite("queue test suite", init_suite, clean_suite);
-    CU_set_output_filename("../test_queue");
-    etch_watch_id = 0; 
+    CU_pSuite pSuite = CU_add_suite("queue test suite", init_suite, clean_suite);
 
     CU_add_test(pSuite, "test constructor", test_constructor); 
     CU_add_test(pSuite, "test put and get", test_putget);   
@@ -768,14 +735,5 @@ int _tmain(int argc, _TCHAR* argv[])
     CU_add_test(pSuite, "test blocking", test_blocking);
     CU_add_test(pSuite, "test producer-consumer (APR)", test_queue_producer_consumer);
 
-    if (g_is_automated_test)    
-        CU_automated_run_tests();    
-    else
-    {   CU_basic_set_mode(CU_BRM_VERBOSE);
-        CU_basic_run_tests();
-    }
-
-    if (!g_is_automated_test) { printf("any key ..."); while(!c) c = _getch(); printf("\n"); }     
-    CU_cleanup_registry();
-    return CU_get_error(); 
+    return pSuite;
 }

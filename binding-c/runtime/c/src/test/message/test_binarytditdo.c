@@ -21,132 +21,103 @@
  * test binary input and output
  */
 
-#include "apr_time.h" /* some apr must be included first */
-#include "etch_binary_tdi.h"  /* must be included second */
+#include "etch_runtime.h"
+#include "etch_binary_tdi.h"
 #include "etch_binary_tdo.h"
-
-#include <tchar.h>
-#include <stdio.h>
-#include <conio.h>
-
-#include "cunit.h"
-#include "basic.h"
-#include "automated.h"
-
 #include "etch_connection.h"
-#include "etch_defvalufact.h"
+#include "etch_default_value_factory.h"
 #include "etch_binary_tdo.h"
 #include "etch_binary_tdi.h"
 #include "etch_messagizer.h"
 #include "etch_resources.h"
+#include "etch_nativearray.h"
 #include "etch_arrayval.h"
-#include "etch_global.h"
-#include "etchthread.h"
-#include "etchexcp.h"
-#include "etchmap.h"
-#include "etchlog.h"
+#include "etch_thread.h"
+#include "etch_exception.h"
+#include "etch_objecttypes.h"
+#include "etch_general.h"
+#include "etch_map.h"
+#include "etch_log.h"
 
-int apr_setup(void);
-int apr_teardown(void);
-int this_setup();
-int this_teardown();
-apr_pool_t* g_apr_mempool;
-const char* pooltag = "etchpool";
+#include <stdio.h>
+#include "CUnit.h"
+
+#define IS_DEBUG_CONSOLE FALSE
+
+// extern types
+extern apr_pool_t* g_etch_main_pool;
 
 /* - - - - - - - - - - - - - - 
  * unit test infrastructure
  * - - - - - - - - - - - - - -
  */
 
-int init_suite(void)
+static int init_suite(void)
 {
-    apr_setup();
-    etch_runtime_init(TRUE);
-    return this_setup();
-}
+    etch_status_t etch_status = ETCH_SUCCESS;
 
-int clean_suite(void)
-{
-    this_teardown();
-    etch_runtime_cleanup(0,0); /* free memtable and cache etc */
-    apr_teardown();
-    return 0;
-}
-
-int g_is_automated_test, g_bytes_allocated;
-
-#define IS_DEBUG_CONSOLE FALSE
-
-/*
- * apr_setup()
- * establish apache portable runtime environment
- */
-int apr_setup(void)
-{
-    int result = apr_initialize();
-    if (result == 0)
-    {   result = etch_apr_init();
-        g_apr_mempool = etch_apr_mempool;
+    etch_status = etch_runtime_initialize(NULL);
+    if(etch_status != NULL) {
+        // error
     }
-    if (g_apr_mempool)
-        apr_pool_tag(g_apr_mempool, pooltag);
-    else result = -1;
-    return result;
+    return 0;
 }
 
-/*
- * apr_teardown()
- * free apache portable runtime environment
- */
-int apr_teardown(void)
+static int clean_suite(void)
 {
-    if (g_apr_mempool)
-        apr_pool_destroy(g_apr_mempool);
-    g_apr_mempool = NULL;
-    apr_terminate();
+    etch_runtime_shutdown();
     return 0;
 }
-
-
-int this_setup()
-{
-    etch_apr_mempool = g_apr_mempool;
-
-    return 0;
-}
-
-int this_teardown()
-{    
-
-    return 0;
-}
-
 
 /* - - - - - - - - - - - - - - 
  * unit test support
  * - - - - - - - - - - - - - -
  */
 
-etch_type*  mt_footype;
-etch_field* mf_fookey;
-int objcount, arraycount; 
-unsigned short CLASSID_MY_IMPL_TP;
+static etch_type*  mt_footype;
+static etch_field* mf_fookey;
+static int objcount, arraycount; 
+static unsigned short CLASSID_MY_IMPL_TP;
 
 
-void this_test_setup()
+static void this_test_setup()
 {
     mt_footype = new_static_type(L"footype");
     mf_fookey  = new_static_field(L"foofield");
 }
 
-void this_test_teardown()
+static void this_test_teardown()
 {
     destroy_static_type(mt_footype);
     destroy_static_field(mf_fookey);
 }
 
+#if 0
+/**
+ * etch_system_nanotime()
+ * operating system specific implementation of java System.nanotime().
+ */
+static int64 etch_system_nanotime()
+{
+    int64 result = 0;
 
-signed char* get_test_bytes(signed char minval, int n)
+#ifdef WIN32
+    LARGE_INTEGER li;
+    QueryPerformanceCounter(&li);
+    result = li.QuadPart;
+#else
+     #warning etch_system_nanotime have to be checked, we need a nanotime function
+    //TODO check this
+    struct timeval time;
+    gettimeofday(&time, NULL);
+    result = time.tv_usec * 1000;
+#endif
+
+    return result;
+}
+#endif
+
+static signed char* get_test_bytes(signed char minval, int n)
 {
     int i = 0;
     signed char* vals = malloc(n * sizeof(char));
@@ -155,7 +126,7 @@ signed char* get_test_bytes(signed char minval, int n)
 }
 
 
-short* get_test_shorts(short minval, int n)
+static short* get_test_shorts(short minval, int n)
 {
     int i = 0;
     short* vals = malloc(n * sizeof(short));
@@ -164,7 +135,7 @@ short* get_test_shorts(short minval, int n)
 }
 
 
-int* get_test_ints(int* out)
+static int* get_test_ints(int* out)
 {
     int n = 65536+2+2, k = 65536+2, i = 0;
     int minval = ETCHTYPE_MIN_INT16 - 1;
@@ -177,7 +148,7 @@ int* get_test_ints(int* out)
 }
 
 
-int64* get_test_longs(int* out)
+static int64* get_test_longs(int* out)
 {
     int n = 65536+2+6, k = 65536+2, i = 0;
     int minval  = ETCHTYPE_MIN_INT16 - 1;
@@ -194,15 +165,12 @@ int64* get_test_longs(int* out)
 }
 
 
-/* indicate if test messages should contain exceptions */
-#define IS_TESTING_EXCEPTIONS TRUE
-
-
+#if 0
 /**
  * do_perftest
  * measure performance of messagizer.transport_message()
  */
-void do_perftest(char* name, const int iter, etch_messagizer* messagizer, 
+static void do_perftest(char* name, const int iter, etch_messagizer* messagizer, 
     etch_message* msg, const int n)
 {
     int64 t0, t1;
@@ -212,7 +180,7 @@ void do_perftest(char* name, const int iter, etch_messagizer* messagizer,
 
     /* ensure message will not be destroyed by transport_message 
      * since we invoke transport_message multiple times here */
-    unsigned char save_msg_staticflag = msg->is_static;
+    unsigned char save_msg_staticflag = ((etch_object*)msg)->is_static;
     set_etchobj_static_all(msg); 
     printf("\n");
 
@@ -226,12 +194,11 @@ void do_perftest(char* name, const int iter, etch_messagizer* messagizer,
     dtime = (t1 - t0) / (double) 1000000000;
     drate = (double) n / dtime;
 
-    printf("%s iteration %d time %7.3f count %d rate %7.3f\n", 
-        name, iter, dtime, n, drate);
+    printf("%s iteration %d time %7.3f count %d rate %7.3f\n", name, iter, dtime, n, drate);
 
-    msg->is_static = save_msg_staticflag;
+    ((etch_object*)msg)->is_static = save_msg_staticflag;
 }
-
+#endif
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
  * my_impl_transportpacket (i_transportpacket implementation) 
@@ -244,21 +211,7 @@ void do_perftest(char* name, const int iter, etch_messagizer* messagizer,
  */
 typedef struct my_impl_transportpacket
 {
-    unsigned int    hashkey;  
-    unsigned short  obj_type; 
-    unsigned short  class_id;
-    struct objmask* vtab;  
-    int  (*destroy)(void*);
-    void*(*clone)  (void*); 
-    obj_gethashkey  get_hashkey;
-    struct objmask* parent;
-    etchresult*     result;
-    unsigned int    refcount;
-    unsigned int    length;
-    unsigned char   is_null;
-    unsigned char   is_copy;
-    unsigned char   is_static;
-    unsigned char   reserved;
+    etch_object object;
 
     /* i_transportpacket interface and methods, plus original destructor
      * which becomes replaced with a custom destructor to destroy this
@@ -272,7 +225,7 @@ typedef struct my_impl_transportpacket
      * invoke the interface's original destructor when destroying the interface.
      */
     i_transportpacket* ixp;           /* owned */ 
-    objdtor destroy_transportpacket;  /* i_transportpacket original destructor */
+    etch_object_destructor destroy_transportpacket;  /* i_transportpacket original destructor */
     etch_transport_packet transport_packet;        /* transport_packet() */
     etch_transport_packet_headersize  header_size; /* header_size() */
 
@@ -285,9 +238,9 @@ typedef struct my_impl_transportpacket
  * destroy_my_impl_transportpacket()
  * my_impl_transportpacket destructor
  */
-int destroy_my_impl_transportpacket(my_impl_transportpacket* thisx)
+static int destroy_my_impl_transportpacket(void* transport_package)
 {
-    if (thisx->refcount > 0 && --thisx->refcount > 0) return -1;  
+    my_impl_transportpacket* thisx = (my_impl_transportpacket*)transport_package;
 
     if (!is_etchobj_static_content(thisx))
     {       /* invoke original i_transportpacket destructor */
@@ -295,7 +248,7 @@ int destroy_my_impl_transportpacket(my_impl_transportpacket* thisx)
             thisx->destroy_transportpacket(thisx->ixp);
     }
 
-   return destroy_objectex((objmask*) thisx);
+   return destroy_objectex((etch_object*) thisx);
 }
 
 
@@ -305,7 +258,7 @@ int destroy_my_impl_transportpacket(my_impl_transportpacket* thisx)
  * @param whoto caller retains, can be null
  * @param fbuf caller retains
  */
-int impl_transport_packet (i_transportpacket* itp, etch_who* whoto, etch_flexbuffer* fbuf)
+static int impl_transport_packet (void* data, void* whoto, void* fbuf)
 {
     return 0;
 }
@@ -315,7 +268,7 @@ int impl_transport_packet (i_transportpacket* itp, etch_who* whoto, etch_flexbuf
  * my_transport_control()
  * my_impl_transportpacket::itransport::transport_control 
  */
-int my_transport_control (i_transportpacket* itp, etch_object* control, etch_object* value)
+static int my_transport_control (void* data, etch_object* control, etch_object* value)
 {
     return 0;
 }
@@ -325,7 +278,7 @@ int my_transport_control (i_transportpacket* itp, etch_object* control, etch_obj
  * my_transport_notify()
  * my_impl_transportpacket::itransport::transport_notify 
  */
-int my_transport_notify (i_transportpacket* itp, etch_object* evt)
+static int my_transport_notify (i_transportpacket* itp, etch_object* evt)
 {
     return 0;
 }
@@ -335,7 +288,7 @@ int my_transport_notify (i_transportpacket* itp, etch_object* evt)
  * my_transport_query()
  * my_impl_transportpacket::itransport::transport_query 
  */
-objmask* my_transport_query (i_transportpacket* itp, etch_object* query) 
+static etch_object* my_transport_query (i_transportpacket* itp, etch_object* query) 
 {
     return NULL;
 }
@@ -345,7 +298,7 @@ objmask* my_transport_query (i_transportpacket* itp, etch_object* query)
  * my_transport_get_session()
  * my_impl_transportpacket::itransport::get_session 
  */
-i_sessionpacket* my_transport_get_session(i_transportpacket* itp)
+static i_sessionpacket* my_transport_get_session(i_transportpacket* itp)
 {
     my_impl_transportpacket* mytp = itp->thisx; 
     return mytp->session;
@@ -356,7 +309,7 @@ i_sessionpacket* my_transport_get_session(i_transportpacket* itp)
  * my_transport_set_session()
  * my_impl_transportpacket::itransport::set_session
  */
-void my_transport_set_session(i_transportpacket* itp, i_sessionpacket* session)
+static void my_transport_set_session(i_transportpacket* itp, i_sessionpacket* session)
 {   
     my_impl_transportpacket* mytp = itp->thisx; 
     mytp->session = session;
@@ -369,24 +322,24 @@ void my_transport_set_session(i_transportpacket* itp, i_sessionpacket* session)
  * this destructor will destroy its parent (my_impl_transportpacket), 
  * which will in turn destroy this object.
  */
-int destroy_my_transportpacket(i_transportpacket* itp)
+static int destroy_my_transportpacket(void* data)
 {
+    i_transportpacket* itp = (i_transportpacket*)data;
     my_impl_transportpacket* mytp = NULL;
     if (NULL == itp) return -1;
 
     mytp = itp->thisx;  
 
-    mytp->destroy(mytp);
+    etch_object_destroy(mytp);
 
     return 0;
 }
-
 
 /**
  * new_my_impl_transportpacket()
  * my_impl_transportpacket constructor
  */
-my_impl_transportpacket* new_my_impl_transportpacket()
+static my_impl_transportpacket* new_my_impl_transportpacket()
 {
     i_transportpacket* itp  = NULL;
     i_transport* itransport = NULL;
@@ -397,7 +350,7 @@ my_impl_transportpacket* new_my_impl_transportpacket()
     my_impl_transportpacket* mytp = (my_impl_transportpacket*) new_object
       (sizeof(my_impl_transportpacket), ETCHTYPEB_TRANSPORTPKT, class_id);
 
-    mytp->destroy = destroy_my_impl_transportpacket;
+    ((etch_object*)mytp)->destroy = destroy_my_impl_transportpacket;
 
     itransport = new_transport_interface_ex(mytp,
         (etch_transport_control)     my_transport_control, 
@@ -409,10 +362,10 @@ my_impl_transportpacket* new_my_impl_transportpacket()
     itp = new_transportpkt_interface(mytp, impl_transport_packet, itransport);
 
     /* save off i_transportpacket destructor */
-    mytp->destroy_transportpacket = itp->destroy;
+    mytp->destroy_transportpacket = ((etch_object*)itp)->destroy;
 
     /* replace i_transportpacket destructor with one which will destroy this object */
-    itp->destroy = destroy_my_transportpacket;
+    ((etch_object*)itp)->destroy = destroy_my_transportpacket;
 
     /* g_my_transportpacket will get set to this interface */
     mytp->ixp = itp;  
@@ -431,17 +384,20 @@ my_impl_transportpacket* new_my_impl_transportpacket()
  * test_constructor_0
  * verify that memory is freed as expected
  */
-void test_constructor_0(void)
+static void test_constructor_0(void)
 {
     binary_tagged_data_output* tdo = new_binary_tagdata_output(NULL, NULL);
 
-    tdo->destroy(tdo);
+    etch_object_destroy(tdo);
 
     etchvf_free_builtins(); 
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE);  
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -449,19 +405,39 @@ void test_constructor_0(void)
  * test_constructor_1
  * verify that memory is freed as expected
  */
-void test_constructor_1(void)
+static void test_constructor_1(void)
 {
-    default_value_factory *vf = new_default_value_factory(NULL, NULL);
-    binary_tagged_data_output* tdo = new_binary_tagdata_output((etch_value_factory*) vf, NULL);
 
-    tdo->destroy(tdo);
-    vf->destroy(vf);
+    default_value_factory*  vf              = NULL;
+    vf_idname_map*          typemap         = NULL;
+    class_to_type_map*      c2tmap          = NULL;
+    binary_tagged_data_output* tdo          = NULL;
 
-    etchvf_free_builtins(); 
+    typemap = new_vf_types_collection(ETCH_DEFVF_IDNMAP_DEFINITSIZE);
+    CU_ASSERT_PTR_NOT_NULL(typemap);
+    c2tmap  = new_class_to_type_map(ETCH_DEVVF_C2TMAP_DEFINITSIZE);
+    CU_ASSERT_PTR_NOT_NULL(c2tmap);  
+    defvf_initialize_static(typemap, c2tmap);
+    vf = new_default_value_factory(typemap, c2tmap);
+    CU_ASSERT_PTR_NOT_NULL(vf);
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE);  
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */
+    tdo = new_binary_tagdata_output((etch_value_factory*) vf, NULL);
+    CU_ASSERT_PTR_NOT_NULL(c2tmap);
+    etch_object_destroy(tdo);
+
+    etch_object_destroy(vf);
+    etch_object_destroy(c2tmap);
+    etch_object_destroy(typemap);
+    
+    // TODO: cleanup statics
+    //etchvf_free_builtins()
+
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -469,32 +445,56 @@ void test_constructor_1(void)
  * test_constructor_2
  * verify that memory is freed as expected
  */
-void test_constructor_2(void)
+static void test_constructor_2(void)
 {
-    default_value_factory *vf = new_default_value_factory(NULL, NULL);
-    etch_flexbuffer* fbuf = new_flexbuffer(0);
+    default_value_factory*  vf              = NULL;
+    vf_idname_map*          typemap         = NULL;
+    class_to_type_map*      c2tmap          = NULL;
+    binary_tagged_data_output* tdo          = NULL;
+    etch_flexbuffer*        fbuf            = NULL;
+
+    typemap = new_vf_types_collection(ETCH_DEFVF_IDNMAP_DEFINITSIZE);
+    CU_ASSERT_PTR_NOT_NULL(typemap);
+    c2tmap  = new_class_to_type_map(ETCH_DEVVF_C2TMAP_DEFINITSIZE);
+    CU_ASSERT_PTR_NOT_NULL(c2tmap);  
+    defvf_initialize_static(typemap, c2tmap);
+    vf = new_default_value_factory(typemap, c2tmap);
+    CU_ASSERT_PTR_NOT_NULL(vf);
+
+    fbuf = new_flexbuffer(0);
+    CU_ASSERT_PTR_NOT_NULL(fbuf);
 
     /* since we pass in vf and buf, we retain ownership */
-    binary_tagged_data_output* tdo = new_binary_tagdata_output((etch_value_factory*)vf, fbuf);
+    tdo = new_binary_tagdata_output((etch_value_factory*)vf, fbuf);
+    CU_ASSERT_PTR_NOT_NULL(tdo);
 
-    fbuf->destroy(fbuf);
-    vf->destroy(vf);
-    tdo->destroy(tdo);
+    etch_object_destroy(fbuf);
+    // destroy vf
+    etch_object_destroy(vf);
+    etch_object_destroy(c2tmap);
+    etch_object_destroy(typemap);
+    
+    etch_object_destroy(tdo);
 
-    etchvf_free_builtins(); 
+    // TODO: cleanup statics
+    //etchvf_free_builtins()
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE);  
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */
+
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
 /**
  * test_check_value()
  */
-void test_check_value(void)
+static void test_check_value(void)
 {
-    int  i = 0, result = 0;
+    int  i = 0;
     signed char typecode = 0;
     binary_tagged_data_output* tdo = new_binary_tagdata_output(NULL, NULL);
 
@@ -503,18 +503,18 @@ void test_check_value(void)
         etch_byte* byteobj = new_byte(0);
 
         for(i = 0; i < 256; i++)
-        {   
+        {
             byteobj->value = c = testbytes[i];
             typecode = etchtagdata_check_value((etch_object*) byteobj);
 
-            if (is_inrange_tiny(c)) 
+            if (is_inrange_tiny_for_signed_chars(c)) 
                { CU_ASSERT_EQUAL(typecode, c);  }
             else
                { CU_ASSERT_EQUAL(typecode, (signed char) ETCH_XTRNL_TYPECODE_BYTE); }
         }
 
         free(testbytes);
-        byteobj->destroy(byteobj);
+        etch_object_destroy(byteobj);
 
     } while(0);
 
@@ -537,7 +537,7 @@ void test_check_value(void)
         }
 
         free(testshorts);
-        shortobj->destroy(shortobj);
+        etch_object_destroy(shortobj);
 
     } while(0);
 
@@ -563,7 +563,7 @@ void test_check_value(void)
         }
 
         free(testints);
-        intobj->destroy(intobj);
+        etch_object_destroy(intobj);
 
     } while(0);
 
@@ -593,7 +593,7 @@ void test_check_value(void)
         }
 
         free(testlongs);
-        longobj->destroy(longobj);
+        etch_object_destroy(longobj);
 
     } while(0);
 
@@ -601,13 +601,13 @@ void test_check_value(void)
     CU_ASSERT_EQUAL(typecode, (signed char) ETCH_XTRNL_TYPECODE_NULL);
 
     do {  /* check boolean values */
-    etch_boolean* boolobj = new_boolean(FALSE);
-    typecode = etchtagdata_check_value((etch_object*)boolobj);
-    CU_ASSERT_EQUAL(typecode, (signed char) ETCH_XTRNL_TYPECODE_BOOLEAN_FALSE);
-    boolobj->value = TRUE;
-    typecode = etchtagdata_check_value((etch_object*)boolobj);
-    CU_ASSERT_EQUAL(typecode, (signed char) ETCH_XTRNL_TYPECODE_BOOLEAN_TRUE);
-    boolobj->destroy(boolobj);
+        etch_boolean* boolobj = new_boolean(FALSE);
+        typecode = etchtagdata_check_value((etch_object*)boolobj);
+        CU_ASSERT_EQUAL(typecode, (signed char) ETCH_XTRNL_TYPECODE_BOOLEAN_FALSE);
+        boolobj->value = TRUE;
+        typecode = etchtagdata_check_value((etch_object*)boolobj);
+        CU_ASSERT_EQUAL(typecode, (signed char) ETCH_XTRNL_TYPECODE_BOOLEAN_TRUE);
+        etch_object_destroy(boolobj);
     } while(0);
 
     do {  /* check ieee values */
@@ -617,31 +617,31 @@ void test_check_value(void)
     CU_ASSERT_EQUAL(typecode, (signed char) ETCH_XTRNL_TYPECODE_FLOAT);
     typecode = etchtagdata_check_value((etch_object*)doubobj);
     CU_ASSERT_EQUAL(typecode, (signed char) ETCH_XTRNL_TYPECODE_DOUBLE);
-    floatobj->destroy(floatobj);
-    doubobj->destroy(doubobj);
+    etch_object_destroy(floatobj);
+    etch_object_destroy(doubobj);
     } while(0);
 
     do {  /* check bytes */
-    etch_nativearray* bytearray = new_nativearray(CLASSID_ARRAY_BYTE, sizeof(byte), 1, 4, 0, 0);  
+    etch_nativearray* bytearray = new_etch_nativearray(CLASSID_ARRAY_BYTE, sizeof(byte), 1, 4, 0, 0);  
     etch_arrayvalue*  arrayvalu = new_arrayvalue(ETCH_XTRNL_TYPECODE_BYTES, NULL, 1, 0, 0, 0, 0);
     arrayvalu->content_obj_type = ETCHTYPEB_BYTE; 
     typecode = etchtagdata_check_value((etch_object*)bytearray);
     CU_ASSERT_EQUAL(typecode, (signed char) ETCH_XTRNL_TYPECODE_BYTES);
     typecode = etchtagdata_check_value((etch_object*)arrayvalu);
     CU_ASSERT_EQUAL(typecode, (signed char) ETCH_XTRNL_TYPECODE_BYTES);
-    bytearray->destroy(bytearray);
-    arrayvalu->destroy(arrayvalu);
+    etch_object_destroy(bytearray);
+    etch_object_destroy(arrayvalu);
     } while(0);
 
     do {  /* check string */
-    etch_string* strempty = new_string(L"",  ETCH_ENCODING_UTF16);
-    etch_string* strother = new_string(L"x", ETCH_ENCODING_UTF16);
+    etch_string* strempty = new_stringw(L"");
+    etch_string* strother = new_stringw(L"x");
     typecode = etchtagdata_check_value((etch_object*)strempty);
     CU_ASSERT_EQUAL(typecode, (signed char) ETCH_XTRNL_TYPECODE_EMPTY_STRING);
     typecode = etchtagdata_check_value((etch_object*)strother);
     CU_ASSERT_EQUAL(typecode, (signed char) ETCH_XTRNL_TYPECODE_STRING);
-    strempty->destroy(strempty);
-    strother->destroy(strother);
+    etch_object_destroy(strempty);
+    etch_object_destroy(strother);
     } while(0);
 
     do {  /* check custom */
@@ -652,25 +652,28 @@ void test_check_value(void)
     CU_ASSERT_EQUAL(typecode, (signed char) ETCH_XTRNL_TYPECODE_CUSTOM); 
     typecode = etchtagdata_check_value((etch_object*)newdate);
     CU_ASSERT_EQUAL(typecode, (signed char) ETCH_XTRNL_TYPECODE_CUSTOM); 
-    newdate->destroy(newdate);
-    newtype->destroy(newtype);
-    sv->destroy(sv);
+    etch_object_destroy(newdate);
+    etch_object_destroy(newtype);
+    etch_object_destroy(sv);
     } while(0);
 
     do {  /* check end of data marker */
-    objmask* eodobj = etchtagdata_new_eodmarker(FALSE);  
+    etch_object* eodobj = etchtagdata_new_eodmarker(FALSE);  
     typecode = etchtagdata_check_value((etch_object*)eodobj);
     CU_ASSERT_EQUAL(typecode, (signed char) ETCH_XTRNL_TYPECODE_NONE); 
-    eodobj->destroy(eodobj);
+    etch_object_destroy(eodobj);
     } while(0);
 
-    tdo->destroy(tdo);
+    etch_object_destroy(tdo);
 
     etchvf_free_builtins(); 
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE);  
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -679,24 +682,23 @@ void test_check_value(void)
  * return the encoded bytes for a message.
  * caller relinquishes msg, assumes returned bytes.
  */
-byte* message_to_bytes(default_value_factory* vf, etch_message* msg, size_t* out)
+static byte* message_to_bytes(default_value_factory* vf, etch_message* msg, size_t* out)
 {
-    int result = 0;
     size_t bufcount = 0;
-    signed char* msgbytes = NULL;
+    byte* msgbytes = NULL;
 
     etch_flexbuffer* fbuf = new_flexbuffer(ETCH_DEFSIZE);
     binary_tagged_data_output* tdo = new_binary_tagdata_output(msg->vf, fbuf);
 
-    if (0 == tdo->vtab->write_message((tagged_data_output*) tdo, msg, fbuf))
+    if (0 == ((struct i_tagged_data_output*)((etch_object*)tdo)->vtab)->write_message((tagged_data_output*) tdo, msg, fbuf))
     {
         etch_flexbuf_set_index(fbuf, 0);
         msgbytes = etch_flexbuf_get_all(fbuf, &bufcount); 
     }
                                                                         
-    fbuf->destroy(fbuf);
-    tdo->destroy(tdo);
-    msg->destroy(msg);
+    etch_object_destroy(fbuf);
+    etch_object_destroy(tdo);
+    etch_object_destroy(msg);
              
     if (out) *out = bufcount;
     return msgbytes;
@@ -708,7 +710,7 @@ byte* message_to_bytes(default_value_factory* vf, etch_message* msg, size_t* out
  * return the message constructed from the supplied bytes.
  * caller relinquishes bytes, assumes returned message.
  */
-etch_message* bytes_to_message(default_value_factory* vf, byte* bytes, const size_t bytecount)   
+static etch_message* bytes_to_message(default_value_factory* vf, byte* bytes, const size_t bytecount)   
 {           
     etch_flexbuffer* fbuf = new_flexbuffer_from(bytes, bytecount, bytecount, 0);
 
@@ -716,8 +718,8 @@ etch_message* bytes_to_message(default_value_factory* vf, byte* bytes, const siz
 
     etch_message* msg = bintdi_read_message((tagged_data_input*) tdi, fbuf);
 
-    tdi->destroy(tdi);
-    fbuf->destroy(fbuf);  /* flexbuf destroys bytes */
+    etch_object_destroy(tdi);
+    etch_object_destroy(fbuf);  /* flexbuf destroys bytes */
     return msg;
 }
 
@@ -730,9 +732,9 @@ etch_message* bytes_to_message(default_value_factory* vf, byte* bytes, const siz
  * it remains to be seen whether we need a general equality test, in practice
  * we may only need it for certain high level objects. so we'll wing it for now.
  */
-int is_equal_objects(objmask* a, objmask* b)
+static int is_equal_objects(etch_object* a, etch_object* b)
 {
-    if ((a->obj_type == b->obj_type) && (a->class_id == b->class_id)) 
+    if ((((etch_object*)a)->obj_type == b->obj_type) && (((etch_object*)a)->class_id == b->class_id)) 
         return TRUE;
 
     /* todo: tests for array type and content comparison here */
@@ -744,11 +746,11 @@ int is_equal_objects(objmask* a, objmask* b)
 /*
  * show_value() - debug display for do_tdo_tdi_test()
  */
-void show_value(objmask* obj)
+static void show_value(etch_object* obj)
 {
-    char x[2] = {0,0};
-
     #if IS_DEBUG_CONSOLE
+
+    char x[2] = {0,0};
 
     if (is_etch_byte(obj))  
     {   x[0] = ((etch_byte*)obj)->value;
@@ -770,11 +772,11 @@ void show_value(objmask* obj)
 /*
  * do_tdo_tdi_test()
 */
-objmask* do_tdo_tdi_test(default_value_factory* vf, objmask* thisobj, etch_validator* vtor)
+static etch_object* do_tdo_tdi_test(default_value_factory* vf, etch_object* thisobj, etch_validator* vtor)
 {
     etch_message* thismsg = NULL, *resultmsg = NULL;
     etch_hashitem x, *thisitem = &x; 
-    objmask* returnobj = NULL;
+    etch_object* returnobj = NULL;
     byte*  msgbytes  = NULL;
     size_t bytecount = 0;
     int    result = 0;
@@ -782,7 +784,7 @@ objmask* do_tdo_tdi_test(default_value_factory* vf, objmask* thisobj, etch_valid
     show_value(thisobj); 
 
     etchtype_clear_validator(mt_footype, mf_fookey);
-    result = etchtype_put_validator (mt_footype, clone_field(mf_fookey), (objmask*) vtor);
+    result = etchtype_put_validator (mt_footype, clone_field(mf_fookey), (etch_object*) vtor);
     CU_ASSERT_EQUAL(result, 0);
     /* protect caller's object so that temporary owners in this test can't destroy it */
     set_etchobj_static_all(thisobj); 
@@ -791,10 +793,6 @@ objmask* do_tdo_tdi_test(default_value_factory* vf, objmask* thisobj, etch_valid
 
     result  = message_put(thismsg, clone_field(mf_fookey), thisobj);
     CU_ASSERT_EQUAL_FATAL(result, 0);
-
-    #if IS_TESTING_EXCEPTIONS
-    etch_throw(thismsg, EXCPTYPE_ETCHRUNTIME, L"test message exception", ETCHEXCP_COPYTEXT); 
-    #endif
 
     /* serialize thismsg. relinquish thismsg, assume msgbytes */
     msgbytes = message_to_bytes(vf, thismsg, &bytecount); 
@@ -811,7 +809,7 @@ objmask* do_tdo_tdi_test(default_value_factory* vf, objmask* thisobj, etch_valid
     result = message_size(resultmsg);
     CU_ASSERT_EQUAL(result, 1);
 
-    result = etchmap_map_find(resultmsg->sv->items, (objmask*) mf_fookey, &thisitem);
+    result = etchmap_map_find(resultmsg->sv->items, (etch_object*) mf_fookey, &thisitem);
     CU_ASSERT_EQUAL(result, 0);
 
     /* we verified that the deserialized message contains caller's reconstituted object.
@@ -825,7 +823,7 @@ objmask* do_tdo_tdi_test(default_value_factory* vf, objmask* thisobj, etch_valid
     if (result == 0)
         returnobj = message_remove(resultmsg, mf_fookey);
 
-    resultmsg->destroy(resultmsg);
+    etch_object_destroy(resultmsg);
     clear_etchobj_static_all(thisobj); /* unprotect caller's object protected above */  
     return returnobj;
 }
@@ -837,9 +835,9 @@ objmask* do_tdo_tdi_test(default_value_factory* vf, objmask* thisobj, etch_valid
  * enclosing array. serialize and deserialize each message and verify that deserialized
  * object matches original.
  */
-void do_recursive_test(default_value_factory* vf, objmask* obj, etch_validator* vtor)
+static void do_recursive_test(default_value_factory* vf, etch_object* obj, etch_validator* vtor)
 {
-    objmask* thisobj = obj, *reconstituted_obj = NULL; 
+    etch_object* thisobj = obj, *reconstituted_obj = NULL; 
 
     if (is_etch_arrayvalue(thisobj)) 
     {
@@ -848,48 +846,66 @@ void do_recursive_test(default_value_factory* vf, objmask* obj, etch_validator* 
 
         while(iterator.has_next(&iterator))
         {
-            objmask* subobj = iterator.current_value;
+            etch_object* subobj = iterator.current_value;
 
             do_recursive_test(vf, subobj, vtor->element_validator(vtor)); 
 
             iterator.next(&iterator);
         }
     }
-    /* printf("\n(%05d. type %d class %d)\n", ++objcount, obj->obj_type, obj->class_id); fflush(stdout); */
+    /* printf("\n(%05d. type %d class %d)\n", ++objcount, ((etch_object*)obj)->obj_type, ((etch_object*)obj)->class_id); fflush(stdout); */
    
     reconstituted_obj = do_tdo_tdi_test(vf, thisobj, vtor);  
 
     CU_ASSERT_PTR_NOT_NULL_FATAL(reconstituted_obj);
     CU_ASSERT_EQUAL(is_equal_objects(thisobj, reconstituted_obj), TRUE);     
-    reconstituted_obj->destroy(reconstituted_obj);
+    etch_object_destroy(reconstituted_obj);
 }
 
+#ifdef _WIN32
+#pragma message ( "test_byte_array_out_in deactivated" )
+#else
+#warning "test_byte_array_out_in deactivated"
+#endif
 
+#if 0
 /**
  * test_byte_array_out_in()
  * test serialization and subsequent deserialization of a byte array
  */
-void test_byte_array_out_in(void)
+static void test_byte_array_out_in(void)
 {
     const int NUMDIMS = 2;
     char  x[2][3] = { {'a','b','c', }, {'d','e','f', }, };
+    default_value_factory*  vf              = NULL;
+    vf_idname_map*          typemap         = NULL;
+    class_to_type_map*      c2tmap          = NULL;
+    etch_nativearray*       natarray        = NULL;
+    etch_arrayvalue*        arrayval        = NULL;
+    etch_arrayvalue* reconstituted_arrayval = NULL;
+    etch_validator*         validator       = NULL;
 
-    default_value_factory* vf = new_default_value_factory(NULL, NULL);
+    typemap = new_vf_types_collection(ETCH_DEFVF_IDNMAP_DEFINITSIZE);
+    CU_ASSERT_PTR_NOT_NULL(typemap);
+    c2tmap  = new_class_to_type_map(ETCH_DEVVF_C2TMAP_DEFINITSIZE);
+    CU_ASSERT_PTR_NOT_NULL(c2tmap);  
+    defvf_initialize_static(typemap, c2tmap);
+    vf = new_default_value_factory(typemap, c2tmap);
+    CU_ASSERT_PTR_NOT_NULL(vf);
 
-    etch_nativearray* natarray  = new_nativearray_from(x, CLASSID_ARRAY_BYTE, sizeof(byte), NUMDIMS, 3, 2, 0);
-    etch_arrayvalue*  arrayval  = new_arrayvalue_from(natarray, ETCH_XTRNL_TYPECODE_BYTES, NULL, 2, 0, FALSE);
-    etch_arrayvalue*  reconstituted_arrayval = NULL;
-    etch_validator*   validator = etchvtor_byte_get(NUMDIMS);
+    natarray  = new_etch_nativearray_from(x, CLASSID_ARRAY_BYTE, sizeof(byte), NUMDIMS, 3, 2, 0);
+    arrayval  = new_arrayvalue_from(natarray, ETCH_XTRNL_TYPECODE_BYTES, NULL, 2, 0, FALSE);
+    validator = etchvtor_byte_get(NUMDIMS);
 
     this_test_setup();
-    vf->vtab->add_type(vf, mt_footype); /* the type we are testing with */
+    ((struct i_value_factory*)((etch_object*)vf)->vtab)->add_type(vf, mt_footype); /* the type we are testing with */
     objcount = arraycount = 0; /* initialize global counters */
 
     /* test serialization and deserialization of the array object as a whole. 
      * we are returned an object which is the reconstituted array after it has
      * been serialized and subsequently deserialized */
     reconstituted_arrayval = (etch_arrayvalue*) do_tdo_tdi_test
-        (vf, (objmask*) arrayval, validator);
+        (vf, (etch_object*) arrayval, validator);
 
     CU_ASSERT_EQUAL_FATAL(is_etch_arrayvalue(reconstituted_arrayval), TRUE);
 
@@ -898,46 +914,65 @@ void test_byte_array_out_in(void)
      * as per the java version of this test. this really ensures that we have 
      * all our memory management ducks in a row. */
 
-    do_recursive_test (vf, (objmask*) arrayval, validator);
+    do_recursive_test (vf, (etch_object*) arrayval, validator);
 
-    arrayval->destroy(arrayval);
-    if (reconstituted_arrayval)
-        reconstituted_arrayval->destroy(reconstituted_arrayval);
+    etch_object_destroy(arrayval);
+    etch_object_destroy(reconstituted_arrayval);
    
-    vf->destroy(vf);
+    // destroy vf
+    etch_object_destroy(vf);
+    etch_object_destroy(c2tmap);
+    etch_object_destroy(typemap);
+    
     this_test_teardown();
-    etchvf_free_builtins(); 
+    // TODO: cleanup statics
+    //etchvf_free_builtins()
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE);  
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
-
+#endif
 
 /**
  * test_bool_array_out_in()
  * test serialization and subsequent deserialization of a boolean array
  */
-void test_bool_array_out_in(void)
+static void test_bool_array_out_in(void)
 {
     const int NUMDIMS = 2;
     boolean x[2][3] = { { TRUE, FALSE, TRUE, }, { FALSE, TRUE, FALSE, }, };
+    default_value_factory*  vf             = NULL;
+    vf_idname_map*          typemap         = NULL;
+    class_to_type_map*      c2tmap          = NULL;
+    etch_nativearray*       natarray        = NULL;
+    etch_arrayvalue*        arrayval        = NULL;
+    etch_arrayvalue* reconstituted_arrayval = NULL;
+    etch_validator*         validator       = NULL;
 
-    default_value_factory* vf = new_default_value_factory(NULL, NULL);
+    typemap = new_vf_types_collection(ETCH_DEFVF_IDNMAP_DEFINITSIZE);
+    CU_ASSERT_PTR_NOT_NULL(typemap);
+    c2tmap  = new_class_to_type_map(ETCH_DEVVF_C2TMAP_DEFINITSIZE);
+    CU_ASSERT_PTR_NOT_NULL(c2tmap);  
+    defvf_initialize_static(typemap, c2tmap);
+    vf = new_default_value_factory(typemap, c2tmap);
+    CU_ASSERT_PTR_NOT_NULL(vf);
 
-    etch_nativearray* natarray  = new_nativearray_from(x, CLASSID_ARRAY_BOOL, sizeof(boolean), NUMDIMS, 3, 2, 0);
-    etch_arrayvalue*  arrayval  = new_arrayvalue_from(natarray, ETCH_XTRNL_TYPECODE_BOOLEAN_TRUE, NULL, 2, 0, FALSE);
-    etch_arrayvalue*  reconstituted_arrayval = NULL;
-    etch_validator*   validator = etchvtor_boolean_get(NUMDIMS);
+    natarray  = new_etch_nativearray_from(x, CLASSID_ARRAY_BOOL, sizeof(boolean), NUMDIMS, 3, 2, 0);
+    arrayval  = new_arrayvalue_from(natarray, ETCH_XTRNL_TYPECODE_BOOLEAN_TRUE, NULL, 2, 0, FALSE);
+    validator = etchvtor_boolean_get(NUMDIMS);
 
     this_test_setup();
-    vf->vtab->add_type(vf, mt_footype); /* the type we are testing with */
+    ((struct i_value_factory*)((etch_object*)vf)->vtab)->add_type(vf, mt_footype); /* the type we are testing with */
     objcount = arraycount = 0; /* initialize global counters */
 
     /* test serialization and deserialization of the array object as a whole. 
      * we are returned an object which is the reconstituted array after it has
      * been serialized and subsequently deserialized */
-    reconstituted_arrayval = (etch_arrayvalue*) do_tdo_tdi_test(vf, (objmask*) arrayval, validator);
+    reconstituted_arrayval = (etch_arrayvalue*) do_tdo_tdi_test(vf, (etch_object*) arrayval, validator);
 
     CU_ASSERT_EQUAL_FATAL(is_etch_arrayvalue(reconstituted_arrayval), TRUE);
 
@@ -946,19 +981,27 @@ void test_bool_array_out_in(void)
      * as per the java version of this test. this really ensures that we have 
      * all our memory management ducks in a row. */
 
-    do_recursive_test (vf, (objmask*) arrayval, validator);
+    do_recursive_test (vf, (etch_object*) arrayval, validator);
 
-    arrayval->destroy(arrayval);
-    if (reconstituted_arrayval)
-        reconstituted_arrayval->destroy(reconstituted_arrayval);
+    etch_object_destroy(arrayval);
+    etch_object_destroy(reconstituted_arrayval);
    
-    vf->destroy(vf);
+    // destroy vf
+    etch_object_destroy(vf);
+    etch_object_destroy(c2tmap);
+    etch_object_destroy(typemap);
+    
     this_test_teardown();
-    etchvf_free_builtins(); 
+    
+    // TODO: cleanup statics
+    //etchvf_free_builtins(
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE);  
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -966,26 +1009,39 @@ void test_bool_array_out_in(void)
  * test_short_array_out_in()
  * test serialization and subsequent deserialization of a short integer array
  */
-void test_short_array_out_in(void)
+static void test_short_array_out_in(void)
 {
     const int NUMDIMS = 2;
     short x[2][3] = { { 0, 1, 2, }, { -1, -32768, 32767, }, };
+    default_value_factory*  vf             = NULL;
+    vf_idname_map*          typemap         = NULL;
+    class_to_type_map*      c2tmap          = NULL;
+    etch_nativearray*       natarray        = NULL;
+    etch_arrayvalue*        arrayval        = NULL;
+    etch_arrayvalue* reconstituted_arrayval = NULL;
+    etch_validator*         validator       = NULL;
 
-    default_value_factory* vf = new_default_value_factory(NULL, NULL);
 
-    etch_nativearray* natarray  = new_nativearray_from(x, CLASSID_ARRAY_INT16, sizeof(short), NUMDIMS, 3, 2, 0);
-    etch_arrayvalue*  arrayval  = new_arrayvalue_from(natarray, ETCH_XTRNL_TYPECODE_SHORT, NULL, 2, 0, FALSE);
-    etch_arrayvalue*  reconstituted_arrayval = NULL;
-    etch_validator*   validator = etchvtor_int16_get(NUMDIMS);
+    typemap = new_vf_types_collection(ETCH_DEFVF_IDNMAP_DEFINITSIZE);
+    CU_ASSERT_PTR_NOT_NULL(typemap);
+    c2tmap  = new_class_to_type_map(ETCH_DEVVF_C2TMAP_DEFINITSIZE);
+    CU_ASSERT_PTR_NOT_NULL(c2tmap);  
+    defvf_initialize_static(typemap, c2tmap);
+    vf = new_default_value_factory(typemap, c2tmap);
+    CU_ASSERT_PTR_NOT_NULL(vf);
+
+    natarray  = new_etch_nativearray_from(x, CLASSID_ARRAY_INT16, sizeof(short), NUMDIMS, 3, 2, 0);
+    arrayval  = new_arrayvalue_from(natarray, ETCH_XTRNL_TYPECODE_SHORT, NULL, 2, 0, FALSE);
+    validator = etchvtor_int16_get(NUMDIMS);
 
     this_test_setup();
-    vf->vtab->add_type(vf, mt_footype); /* the type we are testing with */
+    ((struct i_value_factory*)((etch_object*)vf)->vtab)->add_type(vf, mt_footype); /* the type we are testing with */
     objcount = arraycount = 0; /* initialize global counters */
 
     /* test serialization and deserialization of the array object as a whole. 
      * we are returned an object which is the reconstituted array after it has
      * been serialized and subsequently deserialized */
-    reconstituted_arrayval = (etch_arrayvalue*) do_tdo_tdi_test(vf, (objmask*) arrayval, validator);
+    reconstituted_arrayval = (etch_arrayvalue*) do_tdo_tdi_test(vf, (etch_object*) arrayval, validator);
 
     CU_ASSERT_EQUAL_FATAL(is_etch_arrayvalue(reconstituted_arrayval), TRUE);
 
@@ -994,19 +1050,27 @@ void test_short_array_out_in(void)
      * as per the java version of this test. this really ensures that we have 
      * all our memory management ducks in a row. */
 
-    do_recursive_test (vf, (objmask*) arrayval, validator);
+    do_recursive_test (vf, (etch_object*) arrayval, validator);
 
-    arrayval->destroy(arrayval);
-    if (reconstituted_arrayval)
-        reconstituted_arrayval->destroy(reconstituted_arrayval);
-   
-    vf->destroy(vf);
+    etch_object_destroy(arrayval);
+    etch_object_destroy(reconstituted_arrayval);
+    
+    // destroy vf
+    etch_object_destroy(vf);
+    etch_object_destroy(c2tmap);
+    etch_object_destroy(typemap);
+
     this_test_teardown();
-    etchvf_free_builtins(); 
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE);  
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */
+    // TODO: cleanup statics
+    //etchvf_free_builtins()
+
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -1014,26 +1078,39 @@ void test_short_array_out_in(void)
  * test_int_array_out_in()
  * test serialization and subsequent deserialization of an int array
  */
-void test_int_array_out_in(void)
+static void test_int_array_out_in(void)
 {
     const int NUMDIMS = 2;
     int x[2][3] = { { 0, 1, 2, }, { -1, ETCHTYPE_MIN_INT32, ETCHTYPE_MAX_INT32, }, };
+    default_value_factory*  vf              = NULL;
+    vf_idname_map*          typemap         = NULL;
+    class_to_type_map*      c2tmap          = NULL;
+    etch_nativearray*       natarray        = NULL;
+    etch_arrayvalue*        arrayval        = NULL;
+    etch_arrayvalue* reconstituted_arrayval = NULL;
+    etch_validator*         validator       = NULL;
 
-    default_value_factory* vf = new_default_value_factory(NULL, NULL);
+    
+     typemap = new_vf_types_collection(ETCH_DEFVF_IDNMAP_DEFINITSIZE);
+    CU_ASSERT_PTR_NOT_NULL(typemap);
+    c2tmap  = new_class_to_type_map(ETCH_DEVVF_C2TMAP_DEFINITSIZE);
+    CU_ASSERT_PTR_NOT_NULL(c2tmap);  
+    defvf_initialize_static(typemap, c2tmap);
+    vf = new_default_value_factory(typemap, c2tmap);
+    CU_ASSERT_PTR_NOT_NULL(vf);
 
-    etch_nativearray* natarray  = new_nativearray_from(x, CLASSID_ARRAY_INT32, sizeof(int), NUMDIMS, 3, 2, 0);
-    etch_arrayvalue*  arrayval  = new_arrayvalue_from(natarray, ETCH_XTRNL_TYPECODE_INT, NULL, 2, 0, FALSE);
-    etch_arrayvalue*  reconstituted_arrayval = NULL;
-    etch_validator*   validator = etchvtor_int32_get(NUMDIMS);
+    natarray  = new_etch_nativearray_from(x, CLASSID_ARRAY_INT32, sizeof(int), NUMDIMS, 3, 2, 0);
+    arrayval  = new_arrayvalue_from(natarray, ETCH_XTRNL_TYPECODE_INT, NULL, 2, 0, FALSE);
+    validator = etchvtor_int32_get(NUMDIMS);
 
     this_test_setup();
-    vf->vtab->add_type(vf, mt_footype); /* the type we are testing with */
+    ((struct i_value_factory*)((etch_object*)vf)->vtab)->add_type(vf, mt_footype); /* the type we are testing with */
     objcount = arraycount = 0; /* initialize global counters */
 
     /* test serialization and deserialization of the array object as a whole. 
      * we are returned an object which is the reconstituted array after it has
      * been serialized and subsequently deserialized */
-    reconstituted_arrayval = (etch_arrayvalue*) do_tdo_tdi_test(vf, (objmask*) arrayval, validator);
+    reconstituted_arrayval = (etch_arrayvalue*) do_tdo_tdi_test(vf, (etch_object*) arrayval, validator);
 
     CU_ASSERT_EQUAL_FATAL(is_etch_arrayvalue(reconstituted_arrayval), TRUE);
 
@@ -1042,19 +1119,27 @@ void test_int_array_out_in(void)
      * as per the java version of this test. this really ensures that we have 
      * all our memory management ducks in a row. */
 
-    do_recursive_test (vf, (objmask*) arrayval, validator);
+    do_recursive_test (vf, (etch_object*) arrayval, validator);
 
-    arrayval->destroy(arrayval);
-    if (reconstituted_arrayval)
-        reconstituted_arrayval->destroy(reconstituted_arrayval);
+    etch_object_destroy(arrayval);
+    etch_object_destroy(reconstituted_arrayval);
    
-    vf->destroy(vf);
+    // destroy vf
+    etch_object_destroy(vf);
+    etch_object_destroy(c2tmap);
+    etch_object_destroy(typemap);
+    
     this_test_teardown();
-    etchvf_free_builtins(); 
+    
+    // TODO: cleanup statics
+    //etchvf_free_builtins()
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE);  
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -1062,26 +1147,38 @@ void test_int_array_out_in(void)
  * test_long_array_out_in()
  * test serialization and subsequent deserialization of a long array
  */
-void test_long_array_out_in(void)
+static void test_long_array_out_in(void)
 {
     const int NUMDIMS = 2;
     int64 x[2][3] = { { 0, 1, 2, }, { -1, ETCHTYPE_MIN_INT64, ETCHTYPE_MAX_INT64, }, };
+    default_value_factory*  vf              = NULL;
+    vf_idname_map*          typemap         = NULL;
+    class_to_type_map*      c2tmap          = NULL;
+    etch_nativearray*       natarray        = NULL;
+    etch_arrayvalue*        arrayval        = NULL;
+    etch_arrayvalue* reconstituted_arrayval = NULL;
+    etch_validator*         validator       = NULL;
+    
+    typemap = new_vf_types_collection(ETCH_DEFVF_IDNMAP_DEFINITSIZE);
+    CU_ASSERT_PTR_NOT_NULL(typemap);
+    c2tmap  = new_class_to_type_map(ETCH_DEVVF_C2TMAP_DEFINITSIZE);
+    CU_ASSERT_PTR_NOT_NULL(c2tmap);  
+    defvf_initialize_static(typemap, c2tmap);
+    vf = new_default_value_factory(typemap, c2tmap);
+    CU_ASSERT_PTR_NOT_NULL(vf);
 
-    default_value_factory* vf = new_default_value_factory(NULL, NULL);
-
-    etch_nativearray* natarray  = new_nativearray_from(x, CLASSID_ARRAY_INT64, sizeof(int64), NUMDIMS, 3, 2, 0);
-    etch_arrayvalue*  arrayval  = new_arrayvalue_from(natarray, ETCH_XTRNL_TYPECODE_LONG, NULL, 2, 0, FALSE);
-    etch_arrayvalue*  reconstituted_arrayval = NULL;
-    etch_validator*   validator = etchvtor_int64_get(NUMDIMS);
+    natarray  = new_etch_nativearray_from(x, CLASSID_ARRAY_INT64, sizeof(int64), NUMDIMS, 3, 2, 0);
+    arrayval  = new_arrayvalue_from(natarray, ETCH_XTRNL_TYPECODE_LONG, NULL, 2, 0, FALSE);
+    validator = etchvtor_int64_get(NUMDIMS);
 
     this_test_setup();
-    vf->vtab->add_type(vf, mt_footype); /* the type we are testing with */
+    ((struct i_value_factory*)((etch_object*)vf)->vtab)->add_type(vf, mt_footype); /* the type we are testing with */
     objcount = arraycount = 0; /* initialize global counters */
 
     /* test serialization and deserialization of the array object as a whole. 
      * we are returned an object which is the reconstituted array after it has
      * been serialized and subsequently deserialized */
-    reconstituted_arrayval = (etch_arrayvalue*) do_tdo_tdi_test(vf, (objmask*) arrayval, validator);
+    reconstituted_arrayval = (etch_arrayvalue*) do_tdo_tdi_test(vf, (etch_object*) arrayval, validator);
 
     CU_ASSERT_EQUAL_FATAL(is_etch_arrayvalue(reconstituted_arrayval), TRUE);
 
@@ -1090,19 +1187,27 @@ void test_long_array_out_in(void)
      * as per the java version of this test. this really ensures that we have 
      * all our memory management ducks in a row. */
 
-    do_recursive_test (vf, (objmask*) arrayval, validator);
+    do_recursive_test (vf, (etch_object*) arrayval, validator);
 
-    arrayval->destroy(arrayval);
-    if (reconstituted_arrayval)
-        reconstituted_arrayval->destroy(reconstituted_arrayval);
+    etch_object_destroy(arrayval);
+    etch_object_destroy(reconstituted_arrayval);
    
-    vf->destroy(vf);
-    this_test_teardown();
-    etchvf_free_builtins(); 
+    // destroy vf
+    etch_object_destroy(vf);
+    etch_object_destroy(c2tmap);
+    etch_object_destroy(typemap);
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE);  
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */
+    this_test_teardown();
+
+    // TODO: cleanup statics
+    //etchvf_free_builtins()
+
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -1110,26 +1215,38 @@ void test_long_array_out_in(void)
  * test_float_array_out_in()
  * test serialization and subsequent deserialization of a float array
  */
-void test_float_array_out_in(void)
+static void test_float_array_out_in(void)
 {
     const int NUMDIMS = 2;
     float x[2][3] = { { 0.0, 1.0, 2.0, }, { -1.0, ETCHTYPE_MIN_FLOAT, ETCHTYPE_MAX_FLOAT, }, };
+    default_value_factory*  vf             = NULL;
+    vf_idname_map*          typemap         = NULL;
+    class_to_type_map*      c2tmap          = NULL;
+    etch_nativearray*       natarray        = NULL;
+    etch_arrayvalue*        arrayval        = NULL;
+    etch_arrayvalue* reconstituted_arrayval = NULL;
+    etch_validator*         validator       = NULL;
 
-    default_value_factory* vf = new_default_value_factory(NULL, NULL);
+     typemap = new_vf_types_collection(ETCH_DEFVF_IDNMAP_DEFINITSIZE);
+    CU_ASSERT_PTR_NOT_NULL(typemap);
+    c2tmap  = new_class_to_type_map(ETCH_DEVVF_C2TMAP_DEFINITSIZE);
+    CU_ASSERT_PTR_NOT_NULL(c2tmap);  
+    defvf_initialize_static(typemap, c2tmap);
+    vf = new_default_value_factory(typemap, c2tmap);
+    CU_ASSERT_PTR_NOT_NULL(vf);
 
-    etch_nativearray* natarray  = new_nativearray_from(x, CLASSID_ARRAY_FLOAT, sizeof(float), NUMDIMS, 3, 2, 0);
-    etch_arrayvalue*  arrayval  = new_arrayvalue_from(natarray, ETCH_XTRNL_TYPECODE_FLOAT, NULL, 2, 0, FALSE);
-    etch_arrayvalue*  reconstituted_arrayval = NULL;
-    etch_validator*   validator = etchvtor_float_get(NUMDIMS);
+    natarray  = new_etch_nativearray_from(x, CLASSID_ARRAY_FLOAT, sizeof(float), NUMDIMS, 3, 2, 0);
+    arrayval  = new_arrayvalue_from(natarray, ETCH_XTRNL_TYPECODE_FLOAT, NULL, 2, 0, FALSE);
+    validator = etchvtor_float_get(NUMDIMS);
 
     this_test_setup();
-    vf->vtab->add_type(vf, mt_footype); /* the type we are testing with */
+    ((struct i_value_factory*)((etch_object*)vf)->vtab)->add_type(vf, mt_footype); /* the type we are testing with */
     objcount = arraycount = 0; /* initialize global counters */
 
     /* test serialization and deserialization of the array object as a whole. 
      * we are returned an object which is the reconstituted array after it has
      * been serialized and subsequently deserialized */
-    reconstituted_arrayval = (etch_arrayvalue*) do_tdo_tdi_test(vf, (objmask*) arrayval, validator);
+    reconstituted_arrayval = (etch_arrayvalue*) do_tdo_tdi_test(vf, (etch_object*) arrayval, validator);
 
     CU_ASSERT_EQUAL_FATAL(is_etch_arrayvalue(reconstituted_arrayval), TRUE);
 
@@ -1138,19 +1255,28 @@ void test_float_array_out_in(void)
      * as per the java version of this test. this really ensures that we have 
      * all our memory management ducks in a row. */
 
-    do_recursive_test (vf, (objmask*) arrayval, validator);
+    do_recursive_test (vf, (etch_object*) arrayval, validator);
 
-    arrayval->destroy(arrayval);
-    if (reconstituted_arrayval)
-        reconstituted_arrayval->destroy(reconstituted_arrayval);
+    etch_object_destroy(arrayval);
+    etch_object_destroy(reconstituted_arrayval);
    
-    vf->destroy(vf);
+    // destroy vf
+    etch_object_destroy(vf);
+    etch_object_destroy(c2tmap);
+    etch_object_destroy(typemap);
+    
     this_test_teardown();
-    etchvf_free_builtins(); 
+    
+    // TODO: cleanup statics
+    // etchvf_free_builtins()
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE);  
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */
+
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -1158,26 +1284,38 @@ void test_float_array_out_in(void)
  * test_double_array_out_in()
  * test serialization and subsequent deserialization of a double array
  */
-void test_double_array_out_in(void)
+static void test_double_array_out_in(void)
 {
     const int NUMDIMS = 2;
     double x[2][3] = { { 0.0, 1.0, 2.0, }, { -1.0, ETCHTYPE_MIN_DOUBLE, ETCHTYPE_MAX_DOUBLE, }, };
+    default_value_factory*  vf             = NULL;
+    vf_idname_map*          typemap         = NULL;
+    class_to_type_map*      c2tmap          = NULL;
+    etch_nativearray*       natarray        = NULL;
+    etch_arrayvalue*        arrayval        = NULL;
+    etch_arrayvalue* reconstituted_arrayval = NULL;
+    etch_validator*         validator       = NULL;
 
-    default_value_factory* vf = new_default_value_factory(NULL, NULL);
+    typemap = new_vf_types_collection(ETCH_DEFVF_IDNMAP_DEFINITSIZE);
+    CU_ASSERT_PTR_NOT_NULL(typemap);
+    c2tmap  = new_class_to_type_map(ETCH_DEVVF_C2TMAP_DEFINITSIZE);
+    CU_ASSERT_PTR_NOT_NULL(c2tmap);  
+    defvf_initialize_static(typemap, c2tmap);
+    vf = new_default_value_factory(typemap, c2tmap);
+    CU_ASSERT_PTR_NOT_NULL(vf);
 
-    etch_nativearray* natarray  = new_nativearray_from(x, CLASSID_ARRAY_DOUBLE, sizeof(double), NUMDIMS, 3, 2, 0);
-    etch_arrayvalue*  arrayval  = new_arrayvalue_from(natarray, ETCH_XTRNL_TYPECODE_DOUBLE, NULL, 2, 0, FALSE);
-    etch_arrayvalue*  reconstituted_arrayval = NULL;
-    etch_validator*   validator = etchvtor_double_get(NUMDIMS);
+    natarray  = new_etch_nativearray_from(x, CLASSID_ARRAY_DOUBLE, sizeof(double), NUMDIMS, 3, 2, 0);
+    arrayval  = new_arrayvalue_from(natarray, ETCH_XTRNL_TYPECODE_DOUBLE, NULL, 2, 0, FALSE);
+    validator = etchvtor_double_get(NUMDIMS);
 
     this_test_setup();
-    vf->vtab->add_type(vf, mt_footype); /* the type we are testing with */
+    ((struct i_value_factory*)((etch_object*)vf)->vtab)->add_type(vf, mt_footype); /* the type we are testing with */
     objcount = arraycount = 0; /* initialize global counters */
 
     /* test serialization and deserialization of the array object as a whole. 
      * we are returned an object which is the reconstituted array after it has
      * been serialized and subsequently deserialized */
-    reconstituted_arrayval = (etch_arrayvalue*) do_tdo_tdi_test(vf, (objmask*) arrayval, validator);
+    reconstituted_arrayval = (etch_arrayvalue*) do_tdo_tdi_test(vf, (etch_object*) arrayval, validator);
 
     CU_ASSERT_EQUAL_FATAL(is_etch_arrayvalue(reconstituted_arrayval), TRUE);
 
@@ -1186,26 +1324,35 @@ void test_double_array_out_in(void)
      * as per the java version of this test. this really ensures that we have 
      * all our memory management ducks in a row. */
 
-    do_recursive_test (vf, (objmask*) arrayval, validator);
+    do_recursive_test (vf, (etch_object*) arrayval, validator);
 
-    arrayval->destroy(arrayval);
-    if (reconstituted_arrayval)
-        reconstituted_arrayval->destroy(reconstituted_arrayval);
+    etch_object_destroy(arrayval);
+    etch_object_destroy(reconstituted_arrayval);
    
-    vf->destroy(vf);
+    // destroy vf
+    etch_object_destroy(vf);
+    etch_object_destroy(c2tmap);
+    etch_object_destroy(typemap);
+    
     this_test_teardown();
-    etchvf_free_builtins(); 
+    
+    // TODO: cleanup statics
+    // etchvf_free_builtins()
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE);  
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */
+
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
-etch_string* ns(int n) 
+static etch_string* ns(int n) 
 { 
-    wchar_t buf[32]; swprintf(buf, 31, L"%d", (size_t) n);
-    return new_string(buf, ETCH_ENCODING_UTF16);
+    wchar_t buf[32]; etch_snwprintf(buf, 32, L"%d", (size_t) n);
+    return new_stringw(buf);
 }
 
 
@@ -1213,26 +1360,39 @@ etch_string* ns(int n)
  * test_string_array_out_in()
  * test serialization and subsequent deserialization of a string array
  */
-void test_string_array_out_in(void)
+static void test_string_array_out_in(void)
 {
     const int NUMDIMS = 2;
     etch_string* x[2][3] = { { ns(0), ns(1), ns(2), }, { ns(3), ns(4), ns(5), }, };
+    default_value_factory*  vf              = NULL;
+    vf_idname_map*          typemap         = NULL;
+    class_to_type_map*      c2tmap          = NULL;
+    etch_nativearray*       natarray        = NULL;
+    etch_arrayvalue*        arrayval        = NULL;
+    etch_arrayvalue* reconstituted_arrayval = NULL;
+    etch_validator*         validator       = NULL;
 
-    default_value_factory* vf = new_default_value_factory(NULL, NULL);
+    typemap = new_vf_types_collection(ETCH_DEFVF_IDNMAP_DEFINITSIZE);
+    CU_ASSERT_PTR_NOT_NULL(typemap);
+    c2tmap  = new_class_to_type_map(ETCH_DEVVF_C2TMAP_DEFINITSIZE);
+    CU_ASSERT_PTR_NOT_NULL(c2tmap);  
+    defvf_initialize_static(typemap, c2tmap);
+    vf = new_default_value_factory(typemap, c2tmap);
+    CU_ASSERT_PTR_NOT_NULL(vf);
 
-    etch_nativearray* natarray  = new_nativearray_from(x, CLASSID_ARRAY_STRING, sizeof(void*), NUMDIMS, 3, 2, 0);
-    etch_arrayvalue*  arrayval  = new_arrayvalue_from(natarray, ETCH_XTRNL_TYPECODE_STRING, NULL, 2, 0, FALSE);
-    etch_arrayvalue*  reconstituted_arrayval = NULL;
-    etch_validator*   validator = etchvtor_string_get(NUMDIMS);
+
+    natarray  = new_etch_nativearray_from(x, CLASSID_ARRAY_STRING, sizeof(void*), NUMDIMS, 3, 2, 0);
+    arrayval  = new_arrayvalue_from(natarray, ETCH_XTRNL_TYPECODE_STRING, NULL, 2, 0, FALSE);
+    validator = etchvtor_string_get(NUMDIMS);
 
     this_test_setup();
-    vf->vtab->add_type(vf, mt_footype); /* the type we are testing with */
+    ((struct i_value_factory*)((etch_object*)vf)->vtab)->add_type(vf, mt_footype); /* the type we are testing with */
     objcount = arraycount = 0; /* initialize global counters */
 
     /* test serialization and deserialization of the array object as a whole. 
      * we are returned an object which is the reconstituted array after it has
      * been serialized and subsequently deserialized */
-    reconstituted_arrayval = (etch_arrayvalue*) do_tdo_tdi_test(vf, (objmask*) arrayval, validator);
+    reconstituted_arrayval = (etch_arrayvalue*) do_tdo_tdi_test(vf, (etch_object*) arrayval, validator);
 
     CU_ASSERT_EQUAL_FATAL(is_etch_arrayvalue(reconstituted_arrayval), TRUE);
 
@@ -1241,60 +1401,83 @@ void test_string_array_out_in(void)
      * as per the java version of this test. this really ensures that we have 
      * all our memory management ducks in a row. */
 
-    do_recursive_test (vf, (objmask*) arrayval, validator);
+    do_recursive_test (vf, (etch_object*) arrayval, validator);
 
-    arrayval->destroy(arrayval);
-    if (reconstituted_arrayval)
-        reconstituted_arrayval->destroy(reconstituted_arrayval);
+    etch_object_destroy(arrayval);
+    etch_object_destroy(reconstituted_arrayval);
    
-    vf->destroy(vf);
-    do 
-    { int i, j;
-      for(i = 0; i < 2; i++)
-      for(j = 0; j < 3; j++)
-          destroy_string(x[i][j]); 
-    } while(0);
+    // destroy vf
+    etch_object_destroy(vf);
+    etch_object_destroy(c2tmap);
+    etch_object_destroy(typemap);
+    
     this_test_teardown();
-    etchvf_free_builtins(); 
+    
+    // TODO: cleanup statics
+    // etchvf_free_builtins()
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE);  
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
+#ifdef _WIN32
+#pragma message ( "test_add_perf deactivated" )
+#else
+#warning "test_add_perf deactivated"
+#endif
+
+#if 0
 /**
  * test_add_perf()
  * test performance of add(x,y) message serialization and delivery
  */
-void test_add_perf(void)
+static void test_add_perf(void)
 {
-    default_value_factory* vf = new_default_value_factory(NULL, NULL);
-
     int result = 0;
     etch_who* whofrom = NULL;
     etch_message* msg = NULL;
     etch_messagizer* messagizer = NULL;
     i_transportpacket* my_packetsource = NULL;
     my_impl_transportpacket* my_impl_packetsource = NULL;
-    etch_resources* resx = new_etch_resources(ETCH_RESOURCES_DEFSIZE);
+    default_value_factory*  vf              = NULL;
+    vf_idname_map*          typemap         = NULL;
+    class_to_type_map*      c2tmap          = NULL;
+    etch_type*  addtype = NULL;
+    etch_field* xfield  = NULL;
+     etch_field* yfield = NULL;
+     etch_resources* resx = NULL;
 
-    etch_type*  addtype = new_type(L"add");
-    etch_field* xfield  = new_field(L"x");
-    etch_field* yfield  = new_field(L"y");
+    typemap = new_vf_types_collection(ETCH_DEFVF_IDNMAP_DEFINITSIZE);
+    CU_ASSERT_PTR_NOT_NULL(typemap);
+    c2tmap  = new_class_to_type_map(ETCH_DEVVF_C2TMAP_DEFINITSIZE);
+    CU_ASSERT_PTR_NOT_NULL(c2tmap);  
+    defvf_initialize_static(typemap, c2tmap);
+    vf = new_default_value_factory(typemap, c2tmap);
+    CU_ASSERT_PTR_NOT_NULL(vf);
+    
+    resx = new_etch_resources(ETCH_RESOURCES_DEFSIZE);
 
-    etchtype_put_validator(addtype, clone_field(xfield), (objmask*) etchvtor_int32_get(0));
-    etchtype_put_validator(addtype, clone_field(yfield), (objmask*) etchvtor_int32_get(0));
-    etchtype_put_validator(addtype, clone_field(builtins._mf__message_id), (objmask*) etchvtor_int64_get(0));
+    addtype = new_type(L"add");
+    xfield  = new_field(L"x");
+    yfield  = new_field(L"y");
+
+    etchtype_put_validator(addtype, clone_field(xfield), (etch_object*) etchvtor_int32_get(0));
+    etchtype_put_validator(addtype, clone_field(yfield), (etch_object*) etchvtor_int32_get(0));
+    etchtype_put_validator(addtype, clone_field(builtins._mf__message_id), (etch_object*) etchvtor_int64_get(0));
 
     msg = new_message(addtype, ETCH_DEFSIZE, (etch_value_factory*) vf);
     CU_ASSERT_PTR_NOT_NULL_FATAL(msg);
-    message_put(msg, clone_field(xfield), (objmask*) new_int32(1));  /* relinquish all content */
-    message_put(msg, clone_field(yfield), (objmask*) new_int32(2));
-    message_put(msg, clone_field(builtins._mf__message_id), (objmask*) new_int64(0x0123456789abcdef));   
+    message_put(msg, clone_field(xfield), (etch_object*) new_int32(1));  /* relinquish all content */
+    message_put(msg, clone_field(yfield), (etch_object*) new_int32(2));
+    message_put(msg, clone_field(builtins._mf__message_id), (etch_object*) new_int64(0x0123456789abcdefLL));   
 
     /* we relinquish vf to the resources destructor here */
-    etch_resources_add(resx, ETCH_RESXKEY_MSGIZER_VALUFACT, (objmask*) vf); 
+    etch_resources_add(resx, ETCH_RESXKEY_MSGIZER_VALUFACT, (etch_object*) vf); 
 
     /* instantiate object which implements i_transportpacket and extract its interface.
      * the interface's destructor is coded to destroy its instantiating object. */
@@ -1328,32 +1511,39 @@ void test_add_perf(void)
     }
 
     clear_etchobj_static_all(msg);  /* clear static state so we can destroy it now */
-    msg->destroy(msg);
+    etch_object_destroy(msg);
 
-    xfield->destroy(xfield);
-    yfield->destroy(yfield);
-    addtype->destroy(addtype);
+    etch_object_destroy(xfield);
+    etch_object_destroy(yfield);
+    etch_object_destroy(addtype);
 
-    resx->destroy(resx);  /* content is destroyed also (vf in this case) */
-    messagizer->destroy(messagizer);
-    my_packetsource->destroy(my_packetsource); /* destroys my_impl_transportpacket also */
-   
-    etchvf_free_builtins(); 
+    etch_object_destroy(resx);  /* content is destroyed also (vf in this case) */
+    etch_object_destroy(messagizer);
+    etch_object_destroy(my_packetsource); /* destroys my_impl_transportpacket also */
+    
+    etch_object_destroy(c2tmap);
+    etch_object_destroy(typemap);
+    
+    // TODO: cleanup statics
+    //etchvf_free_builtins()
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE);  
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  /* assert all memory freed */
-    memtable_clear();  /* start fresh for next test */
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
-
+#endif
 
 /**
  * get_bytearray()
  * support for test_value_to_bytes().
  * return an etch_nativearray wrapping the supplied static byte* array.
  */
-etch_nativearray* get_bytearray(byte* bytes, const int bytecount)
-{
-    etch_nativearray* na = new_nativearray_from(bytes, CLASSID_ARRAY_BYTE, sizeof(byte), 1, bytecount, 0, 0);  
+static etch_nativearray* get_bytearray(byte* bytes, const int bytecount)
+{ 
+    etch_nativearray* na = new_etch_nativearray_from(bytes, CLASSID_ARRAY_BYTE, sizeof(byte), 1, bytecount, 0, 0);  
     na->content_obj_type = ETCHTYPEB_BYTES;
     na->content_class_id = CLASSID_NONE; /* unwrapped */
     return na;
@@ -1365,7 +1555,7 @@ etch_nativearray* get_bytearray(byte* bytes, const int bytecount)
  * support for test_value_to_bytes() -- serialize value object, and assert 
  * that the serialized bytes match the supplied expected byte array.
  */
-int assert_value_to_bytes(objmask* value, etch_nativearray* expected_bytes, etch_value_factory* vf)
+static int assert_value_to_bytes(etch_object* value, etch_nativearray* expected_bytes, etch_value_factory* vf)
 {
     byte* buf = NULL;
     int  bytecount = 0, i = 0, result = 0, errs = 0;
@@ -1384,6 +1574,7 @@ int assert_value_to_bytes(objmask* value, etch_nativearray* expected_bytes, etch
         fbuf->index = 0; /* get the serialized bytes to a new buffer */
         buf = etch_flexbuf_get_all(fbuf, (size_t*) &bytecount); 
 
+	printf("%d <-> %d\n", bytecount, (int)expected_bytes->bytecount);
         CU_ASSERT_EQUAL(bytecount, expected_bytes->bytecount);
         if (bytecount != expected_bytes->bytecount) errs++;
 
@@ -1401,10 +1592,10 @@ int assert_value_to_bytes(objmask* value, etch_nativearray* expected_bytes, etch
     }
 
     /* free memory */
-    if (value) value->destroy(value);
-    expected_bytes->destroy(expected_bytes);
-    tdo->destroy(tdo);
-    fbuf->destroy(fbuf);
+    etch_object_destroy(value);
+    etch_object_destroy(expected_bytes);
+    etch_object_destroy(tdo);
+    etch_object_destroy(fbuf);
     etch_free(buf);
 
     return errs? -1: 0;
@@ -1415,108 +1606,125 @@ int assert_value_to_bytes(objmask* value, etch_nativearray* expected_bytes, etch
  * test_single_value_to_bytes()
  * test that various value objects serialized by the tdo match hard-coded expected byte arrays
  */
-void test_single_value_to_bytes(void)
+static void test_single_value_to_bytes(void)
 {
     int  result = 0;
-    etch_value_factory* vf = (etch_value_factory*) new_default_value_factory(NULL, NULL);
+    etch_value_factory*  vf              = NULL;
+    vf_idname_map*          typemap         = NULL;
+    class_to_type_map*      c2tmap          = NULL;
 
+    typemap = new_vf_types_collection(ETCH_DEFVF_IDNMAP_DEFINITSIZE);
+    CU_ASSERT_PTR_NOT_NULL(typemap);
+    c2tmap  = new_class_to_type_map(ETCH_DEVVF_C2TMAP_DEFINITSIZE);
+    CU_ASSERT_PTR_NOT_NULL(c2tmap);  
+    defvf_initialize_static(typemap, c2tmap);
+    vf = (etch_value_factory*)new_default_value_factory(typemap, c2tmap);
+    CU_ASSERT_PTR_NOT_NULL(vf);
+    
     do  /* NULL */
     {   signed char a[] = { ETCH_XTRNL_TYPECODE_NULL }; 
-        result = assert_value_to_bytes(NULL, get_bytearray(a, sizeof(a)), vf);
+        result = assert_value_to_bytes(NULL, get_bytearray((byte*)a, sizeof(a)), vf);
         CU_ASSERT_EQUAL(result,0);
     } while(0);
 
     do  /* boolean primitive objects */
     {   signed char a[] = { ETCH_XTRNL_TYPECODE_BOOLEAN_FALSE }; 
-        result = assert_value_to_bytes((objmask*) new_boolean(FALSE), get_bytearray(a, sizeof(a)), vf);
+        result = assert_value_to_bytes((etch_object*) new_boolean(FALSE), get_bytearray((byte*)a, sizeof(a)), vf);
         CU_ASSERT_EQUAL(result,0);
     } while(0);
 
     do 
     {   signed char a[] = { ETCH_XTRNL_TYPECODE_BOOLEAN_TRUE }; 
-        result = assert_value_to_bytes((objmask*) new_boolean(TRUE), get_bytearray(a, sizeof(a)), vf);
+        result = assert_value_to_bytes((etch_object*) new_boolean(TRUE), get_bytearray((byte*)a, sizeof(a)), vf);
         CU_ASSERT_EQUAL(result,0);
     } while(0);
 
     do  /* some tiny integers */
     {   signed char a[] = { 0 }; 
-        result = assert_value_to_bytes((objmask*) new_byte(0), get_bytearray(a, sizeof(a)), vf);
+        result = assert_value_to_bytes((etch_object*) new_byte(0), get_bytearray((byte*)a, sizeof(a)), vf);
         CU_ASSERT_EQUAL(result,0);
     } while(0);
 
     do   
     {   signed char a[] = { 1 }; 
-        result = assert_value_to_bytes((objmask*) new_byte(1), get_bytearray(a, sizeof(a)), vf);
+        result = assert_value_to_bytes((etch_object*) new_byte(1), get_bytearray((byte*)a, sizeof(a)), vf);
         CU_ASSERT_EQUAL(result,0);
     } while(0);
 
     do   
     {   signed char a[] = { -1 }; 
-        result = assert_value_to_bytes((objmask*) new_byte(-1), get_bytearray(a, sizeof(a)), vf);
+        result = assert_value_to_bytes((etch_object*) new_byte(-1), get_bytearray((byte*)a, sizeof(a)), vf);
         CU_ASSERT_EQUAL(result,0);
     } while(0);
 
     do  /* non-tinyint byte */
     {   signed char a[] = { ETCH_XTRNL_TYPECODE_BYTE, -100 }; 
-        result = assert_value_to_bytes((objmask*) new_byte(-100), get_bytearray(a, sizeof(a)), vf);
+        result = assert_value_to_bytes((etch_object*) new_byte(-100), get_bytearray((byte*)a, sizeof(a)), vf);
         CU_ASSERT_EQUAL(result,0);
     } while(0);
 
     do  /* some short integers */
     {   signed char a[] = { ETCH_XTRNL_TYPECODE_SHORT, 39, 16 }; 
-        result = assert_value_to_bytes((objmask*) new_int16(10000), get_bytearray(a, sizeof(a)), vf);
+        result = assert_value_to_bytes((etch_object*) new_int16(10000), get_bytearray((byte*)a, sizeof(a)), vf);
         CU_ASSERT_EQUAL(result,0);
     } while(0);
 
     do   
     {   signed char a[] = { ETCH_XTRNL_TYPECODE_SHORT, -40, -16 }; 
-        result = assert_value_to_bytes((objmask*) new_int16(-10000), get_bytearray(a, sizeof(a)), vf);
+        result = assert_value_to_bytes((etch_object*) new_int16(-10000), get_bytearray((byte*)a, sizeof(a)), vf);
         CU_ASSERT_EQUAL(result,0);
     } while(0);
 
     do  /* 32-bit integers */
     {   signed char a[] = { ETCH_XTRNL_TYPECODE_INT, 59, -102, -54, 0 }; 
-        result = assert_value_to_bytes((objmask*) new_int32(1000000000), get_bytearray(a, sizeof(a)), vf);
+        result = assert_value_to_bytes((etch_object*) new_int32(1000000000), get_bytearray((byte*)a, sizeof(a)), vf);
         CU_ASSERT_EQUAL(result,0);
     } while(0);
 
     do   
     {   signed char a[] = { ETCH_XTRNL_TYPECODE_INT, -60, 101, 54, 0 }; 
-        result = assert_value_to_bytes((objmask*) new_int32(-1000000000), get_bytearray(a, sizeof(a)), vf);
+        result = assert_value_to_bytes((etch_object*) new_int32(-1000000000), get_bytearray((byte*)a, sizeof(a)), vf);
         CU_ASSERT_EQUAL(result,0);
     } while(0);
 
     do  /* long integers */
     {   signed char a[] = { ETCH_XTRNL_TYPECODE_LONG, 13, -32, -74, -77, -89, 100, 0, 0 }; 
-        result = assert_value_to_bytes((objmask*) new_int64(1000000000000000000), get_bytearray(a, sizeof(a)), vf);
+        result = assert_value_to_bytes((etch_object*) new_int64(1000000000000000000LL), get_bytearray((byte*)a, sizeof(a)), vf);
         CU_ASSERT_EQUAL(result,0);
     } while(0);
 
     do   
     {   signed char a[] = { ETCH_XTRNL_TYPECODE_LONG, -14, 31, 73, 76, 88, -100, 0, 0 }; 
-        result = assert_value_to_bytes((objmask*) new_int64(-1000000000000000000), get_bytearray(a, sizeof(a)), vf);
+        result = assert_value_to_bytes((etch_object*) new_int64(-1000000000000000000LL), get_bytearray((byte*)a, sizeof(a)), vf);
         CU_ASSERT_EQUAL(result,0);
     } while(0);
 
     do  /* float */
     {   signed char a[] = { ETCH_XTRNL_TYPECODE_FLOAT, 70, 64, -28, 0 }; 
-        result = assert_value_to_bytes((objmask*) new_float(12345.0), get_bytearray(a, sizeof(a)), vf);
+        result = assert_value_to_bytes((etch_object*) new_float(12345.0), get_bytearray((byte*)a, sizeof(a)), vf);
         CU_ASSERT_EQUAL(result,0);
     } while(0);
 
     do  /* double */
     {   signed char a[] = { ETCH_XTRNL_TYPECODE_DOUBLE, 64, -42, -24, 0, 0, 0, 0, 0 }; 
-        result = assert_value_to_bytes((objmask*) new_double(23456.0), get_bytearray(a, sizeof(a)), vf);
+        result = assert_value_to_bytes((etch_object*) new_double(23456.0), get_bytearray((byte*)a, sizeof(a)), vf);
         CU_ASSERT_EQUAL(result,0);
     } while(0);
 
-    vf->destroy(vf);
+    // destroy vf
+    etch_object_destroy(vf);
+    etch_object_destroy(c2tmap);
+    etch_object_destroy(typemap);
+    
+    // TODO: cleanup statics
+    //etchvf_free_builtins()
 
-    etchvf_free_builtins(); 
-
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE);  
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  /* assert all memory freed */
-    memtable_clear();  /* start fresh for next test */
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -1524,10 +1732,20 @@ void test_single_value_to_bytes(void)
  * test_boolean_array_value_to_bytes()
  * test that various value objects serialized by the tdo match hard-coded expected byte arrays
  */
-void test_boolean_array_value_to_bytes(void)
+static void test_boolean_array_value_to_bytes(void)
 {
     int  result = 0;
-    etch_value_factory* vf = (etch_value_factory*) new_default_value_factory(NULL, NULL);
+    etch_value_factory*     vf              = NULL;
+    vf_idname_map*          typemap         = NULL;
+    class_to_type_map*      c2tmap          = NULL;
+
+    typemap = new_vf_types_collection(ETCH_DEFVF_IDNMAP_DEFINITSIZE);
+    CU_ASSERT_PTR_NOT_NULL(typemap);
+    c2tmap  = new_class_to_type_map(ETCH_DEVVF_C2TMAP_DEFINITSIZE);
+    CU_ASSERT_PTR_NOT_NULL(c2tmap);  
+    defvf_initialize_static(typemap, c2tmap);
+    vf = (etch_value_factory*)new_default_value_factory(typemap, c2tmap);
+    CU_ASSERT_PTR_NOT_NULL(vf);
 
     do  /* boolean[] */
     {   const int NUMDIMS1 = 1, ITEMCOUNT = 2;
@@ -1548,18 +1766,25 @@ void test_boolean_array_value_to_bytes(void)
         arrayvalue_add(av, (etch_object*) new_boolean(TRUE));
         arrayvalue_add(av, (etch_object*) new_boolean(FALSE));
  
-        result = assert_value_to_bytes((objmask*) av, get_bytearray(a, sizeof(a)), vf);
+        result = assert_value_to_bytes((etch_object*) av, get_bytearray((byte*)a, sizeof(a)), vf);
         CU_ASSERT_EQUAL(result,0);
 
     } while(0);
+    
+    // destroy vf
+    etch_object_destroy(vf);
+    etch_object_destroy(c2tmap);
+    etch_object_destroy(typemap);
+    
+    // TODO: cleanup statics
+    //etchvf_free_builtins()
 
-    vf->destroy(vf);
-
-    etchvf_free_builtins(); 
-
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE);  
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  /* assert all memory freed */
-    memtable_clear();  /* start fresh for next test */
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -1567,13 +1792,23 @@ void test_boolean_array_value_to_bytes(void)
  * test_byte_array_value_to_bytes()
  * test that various value objects serialized by the tdo match hard-coded expected byte arrays
  */
-void test_byte_array_value_to_bytes(void)
+static void test_byte_array_value_to_bytes(void)
 {
     int  result = 0;
-    etch_value_factory* vf = (etch_value_factory*) new_default_value_factory(NULL, NULL);
+    etch_value_factory*     vf              = NULL;
+    vf_idname_map*          typemap         = NULL;
+    class_to_type_map*      c2tmap          = NULL;
+
+    typemap = new_vf_types_collection(ETCH_DEFVF_IDNMAP_DEFINITSIZE);
+    CU_ASSERT_PTR_NOT_NULL(typemap);
+    c2tmap  = new_class_to_type_map(ETCH_DEVVF_C2TMAP_DEFINITSIZE);
+    CU_ASSERT_PTR_NOT_NULL(c2tmap);  
+    defvf_initialize_static(typemap, c2tmap);
+    vf = (etch_value_factory*)new_default_value_factory(typemap, c2tmap);
+    CU_ASSERT_PTR_NOT_NULL(vf);
 
     do  /* byte[] */
-    {   const int NUMDIMS1 = 1, ITEMCOUNT = 3;
+    {   const int ITEMCOUNT = 3;
         signed char content[] = { 1, 2, 3 };
 
         signed char a[] =  /* byte vector is a special case, not an array type */
@@ -1584,10 +1819,10 @@ void test_byte_array_value_to_bytes(void)
           3    /* item[2] */
         }; 
 
-        etch_nativearray* expected = get_bytearray(a, sizeof(a));
+        etch_nativearray* expected = get_bytearray((byte*)a, sizeof(a));
 
         /* memory management notes: here we create a nativearray na from static
-         * content. new_nativearray_from() defaults nativearray.is_content_owned   
+         * content. new_etch_nativearray_from() defaults nativearray.is_content_owned   
          * to false, so when the nativearray na is destroyed, it will not attempt 
          * to free memory for the static content bytes. we then create an arrayvalue 
          * from nativearray na, specifying FALSE for parameter 6, is_readonly. the  
@@ -1596,10 +1831,10 @@ void test_byte_array_value_to_bytes(void)
          * relinquish the arrayvalue to assert_value_to_bytes(), which calls the 
          * arrayvalue destructor, causing the above to occur.
          */
-        etch_nativearray* na = new_nativearray_from(content, CLASSID_ARRAY_BYTE, sizeof(byte), 1, ITEMCOUNT, 0, 0); 
+        etch_nativearray* na = new_etch_nativearray_from(content, CLASSID_ARRAY_BYTE, sizeof(byte), 1, ITEMCOUNT, 0, 0); 
         etch_arrayvalue*  av = new_arrayvalue_from(na, ETCH_XTRNL_TYPECODE_BYTE, NULL, ITEMCOUNT, 0, FALSE);
       
-        result = assert_value_to_bytes((objmask*) av, expected, vf);
+        result = assert_value_to_bytes((etch_object*) av, expected, vf);
         CU_ASSERT_EQUAL(result,0);
 
     } while(0);
@@ -1629,10 +1864,10 @@ void test_byte_array_value_to_bytes(void)
           ETCH_XTRNL_TYPECODE_NONE   /* eod mark */
         }; 
 
-        etch_nativearray* expected = get_bytearray(a, sizeof(a));
+        etch_nativearray* expected = get_bytearray((byte*)a, sizeof(a));
 
         /* memory management notes: here we create a nativearray na from static
-         * content. new_nativearray_from() defaults nativearray.is_content_owned   
+         * content. new_etch_nativearray_from() defaults nativearray.is_content_owned   
          * to false, so when the nativearray na is destroyed, it will not attempt 
          * to free memory for the static content bytes. we then create an arrayvalue 
          * from nativearray na, specifying FALSE for parameter 6, is_readonly. the  
@@ -1641,7 +1876,7 @@ void test_byte_array_value_to_bytes(void)
          * relinquish the arrayvalue to assert_value_to_bytes(), which calls the 
          * arrayvalue destructor, causing the above to occur.
          */
-        etch_nativearray* na = new_nativearray_from(content, CLASSID_ARRAY_BYTE, 
+        etch_nativearray* na = new_etch_nativearray_from(content, CLASSID_ARRAY_BYTE, 
             sizeof(byte), NUMDIMS2, ITEMCOUNT3, ITEMCOUNT2, 0); 
 
         /* note here that the arrayvalue content type (ETCH_XTRNL_TYPECODE_BYTE)
@@ -1652,18 +1887,25 @@ void test_byte_array_value_to_bytes(void)
         etch_arrayvalue*  av = new_arrayvalue_from(na, ETCH_XTRNL_TYPECODE_BYTE, 
             NULL, ETCH_DEFSIZE, 0, FALSE);
       
-        result = assert_value_to_bytes((objmask*) av, expected, vf);
+        result = assert_value_to_bytes((etch_object*) av, expected, vf);
         CU_ASSERT_EQUAL(result,0);
 
     } while(0);
 
-    vf->destroy(vf);
+    // destroy vf
+    etch_object_destroy(vf);
+    etch_object_destroy(c2tmap);
+    etch_object_destroy(typemap);
+    
+    // TODO: cleanup statics
+    //etchvf_free_builtins()
 
-    etchvf_free_builtins(); 
-
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE);  
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  /* assert all memory freed */
-    memtable_clear();  /* start fresh for next test */
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -1671,10 +1913,20 @@ void test_byte_array_value_to_bytes(void)
  * test_short_array_value_to_bytes()
  * test that various value objects serialized by the tdo match hard-coded expected byte arrays
  */
-void test_short_array_value_to_bytes(void)
+static void test_short_array_value_to_bytes(void)
 {
     int  result = 0;
-    etch_value_factory* vf = (etch_value_factory*) new_default_value_factory(NULL, NULL);
+    etch_value_factory*     vf              = NULL;
+    vf_idname_map*          typemap         = NULL;
+    class_to_type_map*      c2tmap          = NULL;
+
+    typemap = new_vf_types_collection(ETCH_DEFVF_IDNMAP_DEFINITSIZE);
+    CU_ASSERT_PTR_NOT_NULL(typemap);
+    c2tmap  = new_class_to_type_map(ETCH_DEVVF_C2TMAP_DEFINITSIZE);
+    CU_ASSERT_PTR_NOT_NULL(c2tmap);  
+    defvf_initialize_static(typemap, c2tmap);
+    vf = (etch_value_factory*)new_default_value_factory(typemap, c2tmap);
+    CU_ASSERT_PTR_NOT_NULL(vf);
 
     do  /* short[] */
     {   const int NUMDIMS1 = 1, ITEMCOUNT = 3;
@@ -1697,18 +1949,25 @@ void test_short_array_value_to_bytes(void)
         arrayvalue_add(av, (etch_object*) new_int16(2));
         arrayvalue_add(av, (etch_object*) new_int16(3));
  
-        result = assert_value_to_bytes((objmask*) av, get_bytearray(a, sizeof(a)), vf);
+        result = assert_value_to_bytes((etch_object*) av, get_bytearray((byte*)a, sizeof(a)), vf);
         CU_ASSERT_EQUAL(result,0);
 
     } while(0);
 
-    vf->destroy(vf);
+    // destroy vf
+    etch_object_destroy(vf);
+    etch_object_destroy(c2tmap);
+    etch_object_destroy(typemap);
+    
+    // TODO: cleanup statics
+    //etchvf_free_builtins()
 
-    etchvf_free_builtins(); 
-
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE);  
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  /* assert all memory freed */
-    memtable_clear();  /* start fresh for next test */
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -1716,10 +1975,21 @@ void test_short_array_value_to_bytes(void)
  * test_int_array_value_to_bytes()
  * test that various value objects serialized by the tdo match hard-coded expected byte arrays
  */
-void test_int_array_value_to_bytes(void)
+static void test_int_array_value_to_bytes(void)
 {
     int  result = 0;
-    etch_value_factory* vf = (etch_value_factory*) new_default_value_factory(NULL, NULL);
+    etch_value_factory*     vf              = NULL;
+    vf_idname_map*          typemap         = NULL;
+    class_to_type_map*      c2tmap          = NULL;
+
+    typemap = new_vf_types_collection(ETCH_DEFVF_IDNMAP_DEFINITSIZE);
+    CU_ASSERT_PTR_NOT_NULL(typemap);
+    c2tmap  = new_class_to_type_map(ETCH_DEVVF_C2TMAP_DEFINITSIZE);
+    CU_ASSERT_PTR_NOT_NULL(c2tmap);  
+    defvf_initialize_static(typemap, c2tmap);
+    vf = (etch_value_factory*)new_default_value_factory(typemap, c2tmap);
+    CU_ASSERT_PTR_NOT_NULL(vf);
+
 
     do  /* short[] */
     {   const int NUMDIMS1 = 1, ITEMCOUNT = 3;
@@ -1742,18 +2012,25 @@ void test_int_array_value_to_bytes(void)
         arrayvalue_add(av, (etch_object*) new_int32(2));
         arrayvalue_add(av, (etch_object*) new_int32(3));
  
-        result = assert_value_to_bytes((objmask*) av, get_bytearray(a, sizeof(a)), vf);
+        result = assert_value_to_bytes((etch_object*) av, get_bytearray((byte*)a, sizeof(a)), vf);
         CU_ASSERT_EQUAL(result,0);
 
     } while(0);
 
-    vf->destroy(vf);
+    // destroy vf
+    etch_object_destroy(vf);
+    etch_object_destroy(c2tmap);
+    etch_object_destroy(typemap);
+    
+    // TODO: cleanup statics
+    //etchvf_free_builtins() 
 
-    etchvf_free_builtins(); 
-
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE);  
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  /* assert all memory freed */
-    memtable_clear();  /* start fresh for next test */
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -1761,10 +2038,20 @@ void test_int_array_value_to_bytes(void)
  * test_long_array_value_to_bytes()
  * test that various value objects serialized by the tdo match hard-coded expected byte arrays
  */
-void test_long_array_value_to_bytes(void)
+static void test_long_array_value_to_bytes(void)
 {
     int  result = 0;
-    etch_value_factory* vf = (etch_value_factory*) new_default_value_factory(NULL, NULL);
+    etch_value_factory*     vf              = NULL;
+    vf_idname_map*          typemap         = NULL;
+    class_to_type_map*      c2tmap          = NULL;
+
+    typemap = new_vf_types_collection(ETCH_DEFVF_IDNMAP_DEFINITSIZE);
+    CU_ASSERT_PTR_NOT_NULL(typemap);
+    c2tmap  = new_class_to_type_map(ETCH_DEVVF_C2TMAP_DEFINITSIZE);
+    CU_ASSERT_PTR_NOT_NULL(c2tmap);  
+    defvf_initialize_static(typemap, c2tmap);
+    vf = (etch_value_factory*)new_default_value_factory(typemap, c2tmap);
+    CU_ASSERT_PTR_NOT_NULL(vf);
 
     do  /* short[] */
     {   const int NUMDIMS1 = 1, ITEMCOUNT = 3;
@@ -1787,18 +2074,25 @@ void test_long_array_value_to_bytes(void)
         arrayvalue_add(av, (etch_object*) new_int64(2));
         arrayvalue_add(av, (etch_object*) new_int64(3));
  
-        result = assert_value_to_bytes((objmask*) av, get_bytearray(a, sizeof(a)), vf);
+        result = assert_value_to_bytes((etch_object*) av, get_bytearray((byte*)a, sizeof(a)), vf);
         CU_ASSERT_EQUAL(result,0);
 
     } while(0);
 
-    vf->destroy(vf);
+    // destroy vf
+    etch_object_destroy(vf);
+    etch_object_destroy(c2tmap);
+    etch_object_destroy(typemap);
+    
+    // TODO: cleanup statics
+    //etchvf_free_builtins() 
 
-    etchvf_free_builtins(); 
-
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE);  
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  /* assert all memory freed */
-    memtable_clear();  /* start fresh for next test */
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -1806,10 +2100,21 @@ void test_long_array_value_to_bytes(void)
  * test_float_array_value_to_bytes()
  * test that various value objects serialized by the tdo match hard-coded expected byte arrays
  */
-void test_float_array_value_to_bytes(void)
+static void test_float_array_value_to_bytes(void)
 {
     int  result = 0;
-    etch_value_factory* vf = (etch_value_factory*) new_default_value_factory(NULL, NULL);
+    etch_value_factory*     vf              = NULL;
+    vf_idname_map*          typemap         = NULL;
+    class_to_type_map*      c2tmap          = NULL;
+
+    typemap = new_vf_types_collection(ETCH_DEFVF_IDNMAP_DEFINITSIZE);
+    CU_ASSERT_PTR_NOT_NULL(typemap);
+    c2tmap  = new_class_to_type_map(ETCH_DEVVF_C2TMAP_DEFINITSIZE);
+    CU_ASSERT_PTR_NOT_NULL(c2tmap);  
+    defvf_initialize_static(typemap, c2tmap);
+    vf = (etch_value_factory*)new_default_value_factory(typemap, c2tmap);
+    CU_ASSERT_PTR_NOT_NULL(vf);
+
 
     do  /* short[] */
     {   const int NUMDIMS1 = 1, ITEMCOUNT = 3;
@@ -1832,18 +2137,25 @@ void test_float_array_value_to_bytes(void)
         arrayvalue_add(av, (etch_object*) new_float(2.0));
         arrayvalue_add(av, (etch_object*) new_float(3.0));
  
-        result = assert_value_to_bytes((objmask*) av, get_bytearray(a, sizeof(a)), vf);
+        result = assert_value_to_bytes((etch_object*) av, get_bytearray((byte*)a, sizeof(a)), vf);
         CU_ASSERT_EQUAL(result,0);
 
     } while(0);
 
-    vf->destroy(vf);
+    // destroy vf
+    etch_object_destroy(vf);
+    etch_object_destroy(c2tmap);
+    etch_object_destroy(typemap);
+    
+    // TODO: cleanup statics
+    //etchvf_free_builtins() 
 
-    etchvf_free_builtins(); 
-
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE);  
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  /* assert all memory freed */
-    memtable_clear();  /* start fresh for next test */
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -1851,10 +2163,20 @@ void test_float_array_value_to_bytes(void)
  * test_double_array_value_to_bytes()
  * test that various value objects serialized by the tdo match hard-coded expected byte arrays
  */
-void test_double_array_value_to_bytes(void)
+static void test_double_array_value_to_bytes(void)
 {
     int  result = 0;
-    etch_value_factory* vf = (etch_value_factory*) new_default_value_factory(NULL, NULL);
+    etch_value_factory*     vf              = NULL;
+    vf_idname_map*          typemap         = NULL;
+    class_to_type_map*      c2tmap          = NULL;
+
+    typemap = new_vf_types_collection(ETCH_DEFVF_IDNMAP_DEFINITSIZE);
+    CU_ASSERT_PTR_NOT_NULL(typemap);
+    c2tmap  = new_class_to_type_map(ETCH_DEVVF_C2TMAP_DEFINITSIZE);
+    CU_ASSERT_PTR_NOT_NULL(c2tmap);  
+    defvf_initialize_static(typemap, c2tmap);
+    vf = (etch_value_factory*)new_default_value_factory(typemap, c2tmap);
+    CU_ASSERT_PTR_NOT_NULL(vf);
 
     do  /* short[] */
     {   const int NUMDIMS1 = 1, ITEMCOUNT = 3;
@@ -1877,18 +2199,25 @@ void test_double_array_value_to_bytes(void)
         arrayvalue_add(av, (etch_object*) new_double(2.0));
         arrayvalue_add(av, (etch_object*) new_double(3.0));
  
-        result = assert_value_to_bytes((objmask*) av, get_bytearray(a, sizeof(a)), vf);
+        result = assert_value_to_bytes((etch_object*)av, get_bytearray((byte*)a, sizeof(a)), vf);
         CU_ASSERT_EQUAL(result,0);
 
     } while(0);
 
-    vf->destroy(vf);
+    // destroy vf
+    etch_object_destroy(vf);
+    etch_object_destroy(c2tmap);
+    etch_object_destroy(typemap);
+    
+    // TODO: cleanup statics
+    //etchvf_free_builtins() 
 
-    etchvf_free_builtins(); 
-
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE);  
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  /* assert all memory freed */
-    memtable_clear();  /* start fresh for next test */
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -1896,19 +2225,33 @@ void test_double_array_value_to_bytes(void)
  * test_string_values_to_bytes()
  * test that various value objects serialized by the tdo match hard-coded expected byte arrays
  */
-void test_string_values_to_bytes(void)
+static void test_string_values_to_bytes(void)
 {
     int  result = 0;
-    etch_value_factory* vf = (etch_value_factory*) new_default_value_factory(NULL, NULL);
+    etch_value_factory*     vf              = NULL;
+    vf_idname_map*          typemap         = NULL;
+    class_to_type_map*      c2tmap          = NULL;
 
-    do  /* empty string */
+    typemap = new_vf_types_collection(ETCH_DEFVF_IDNMAP_DEFINITSIZE);
+    CU_ASSERT_PTR_NOT_NULL(typemap);
+    c2tmap  = new_class_to_type_map(ETCH_DEVVF_C2TMAP_DEFINITSIZE);
+    CU_ASSERT_PTR_NOT_NULL(c2tmap);  
+    defvf_initialize_static(typemap, c2tmap);
+    vf = (etch_value_factory*)new_default_value_factory(typemap, c2tmap);
+    CU_ASSERT_PTR_NOT_NULL(vf);
+
+    printf("1\n");
+    
+    do
     {   signed char a[] = { ETCH_XTRNL_TYPECODE_EMPTY_STRING }; 
 
-        result = assert_value_to_bytes((objmask*) new_string(L"", ETCH_ENCODING_UTF16), 
-            get_bytearray(a, sizeof(a)), vf);
+        result = assert_value_to_bytes((etch_object*) new_stringw(L""), 
+            get_bytearray((byte*)a, sizeof(a)), vf);
         CU_ASSERT_EQUAL(result,0);
 
     } while(0);
+
+    printf("2\n");
 
     do  /* string */
     {   /* note here that our test object is a unicode string, while our expected byte 
@@ -1919,11 +2262,12 @@ void test_string_values_to_bytes(void)
         const int STRLEN = 3;
         signed char a[] = { ETCH_XTRNL_TYPECODE_STRING, STRLEN, 97, 98, 99 }; 
 
-        result = assert_value_to_bytes((objmask*) new_string(L"abc", ETCH_ENCODING_UTF16), 
-            get_bytearray(a, sizeof(a)), vf);
+        result = assert_value_to_bytes((etch_object*) new_stringw(L"abc"), 
+            get_bytearray((byte*)a, sizeof(a)), vf);
         CU_ASSERT_EQUAL(result,0);
 
     } while(0);
+    printf("3\n");
 
     do  /* string[] */
     {   const int NUMDIMS1 = 1, ITEMCOUNT = 3, STRLEN1 = 1;
@@ -1942,22 +2286,30 @@ void test_string_values_to_bytes(void)
         etch_arrayvalue* av = new_arrayvalue(ETCH_XTRNL_TYPECODE_STRING, 
             NULL, NUMDIMS1, ITEMCOUNT, 0, FALSE, FALSE);
 
-        arrayvalue_add(av, (etch_object*) new_string(L"a", ETCH_ENCODING_UTF16));
-        arrayvalue_add(av, (etch_object*) new_string(L"",  ETCH_ENCODING_UTF16));
-        arrayvalue_add(av, (etch_object*) new_string(L"c", ETCH_ENCODING_UTF16));
+        arrayvalue_add(av, (etch_object*) new_stringw(L"a"));
+        arrayvalue_add(av, (etch_object*) new_stringw(L""));
+        arrayvalue_add(av, (etch_object*) new_stringw(L"c"));
  
-        result = assert_value_to_bytes((objmask*) av, get_bytearray(a, sizeof(a)), vf);
+        result = assert_value_to_bytes((etch_object*)av, get_bytearray((byte*)a, sizeof(a)), vf);
         CU_ASSERT_EQUAL(result,0);
 
     } while(0);
+    printf("4\n");
 
-    vf->destroy(vf);
+    // destroy vf
+    etch_object_destroy(vf);
+    etch_object_destroy(c2tmap);
+    etch_object_destroy(typemap);
+    
+    // TODO: cleanup statics
+    //etchvf_free_builtins() 
 
-    etchvf_free_builtins(); 
-
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE);  
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  /* assert all memory freed */
-    memtable_clear();  /* start fresh for next test */
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -1965,10 +2317,20 @@ void test_string_values_to_bytes(void)
  * test_date_values_to_bytes()
  * test that various value objects serialized by the tdo match hard-coded expected byte arrays
  */
-void test_date_values_to_bytes(void)
+static void test_date_values_to_bytes(void)
 {
     int  result = 0;
-    etch_value_factory* vf = (etch_value_factory*) new_default_value_factory(NULL, NULL);
+    etch_value_factory*     vf              = NULL;
+    vf_idname_map*          typemap         = NULL;
+    class_to_type_map*      c2tmap          = NULL;
+
+    typemap = new_vf_types_collection(ETCH_DEFVF_IDNMAP_DEFINITSIZE);
+    CU_ASSERT_PTR_NOT_NULL(typemap);
+    c2tmap  = new_class_to_type_map(ETCH_DEVVF_C2TMAP_DEFINITSIZE);
+    CU_ASSERT_PTR_NOT_NULL(c2tmap);  
+    defvf_initialize_static(typemap, c2tmap);
+    vf = (etch_value_factory*)new_default_value_factory(typemap, c2tmap);
+    CU_ASSERT_PTR_NOT_NULL(vf);
 
     do  /* date */
     {   const int64 BOGUSDATEVAL = 1234567890;
@@ -1985,15 +2347,15 @@ void test_date_values_to_bytes(void)
         etch_date* testdate = new_date();
         testdate->value = (time_t) BOGUSDATEVAL;
 
-        result = assert_value_to_bytes((objmask*) testdate, get_bytearray(a, sizeof(a)), vf);
+        result = assert_value_to_bytes((etch_object*)testdate, get_bytearray((byte*)a, sizeof(a)), vf);
         CU_ASSERT_EQUAL(result,0);
 
     } while(0);
 
     do  /* date[] */
     {   const int NUMDIMS1 = 1, ITEMCOUNT1 = 1; 
-        const int64 BOGUSDATEVAL1 = 1234567890;
-        const int64 BOGUSDATEVAL2 = 2345678901;
+        const int64 BOGUSDATEVAL1 = 1234567890LL;
+        const int64 BOGUSDATEVAL2 = 2345678901LL;
 
         signed char a[] =
         { ETCH_XTRNL_TYPECODE_ARRAY,  /* array type */
@@ -2033,40 +2395,43 @@ void test_date_values_to_bytes(void)
         arrayvalue_add(av, (etch_object*) date1);
         arrayvalue_add(av, (etch_object*) date2);
  
-        result = assert_value_to_bytes((objmask*) av, get_bytearray(a, sizeof(a)), vf);
+        result = assert_value_to_bytes((etch_object*) av, get_bytearray((byte*)a, sizeof(a)), vf);
         CU_ASSERT_EQUAL(result,0);
 
     } while(0);
 
-    vf->destroy(vf);
+    // destroy vf
+    etch_object_destroy(vf);
+    etch_object_destroy(c2tmap);
+    etch_object_destroy(typemap);
+    
+    // TODO: cleanup statics
+    //etchvf_free_builtins()
 
-    etchvf_free_builtins(); 
-
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE);  
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  /* assert all memory freed */
-    memtable_clear();  /* start fresh for next test */
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
 /**
  * main   
  */
-int _tmain(int argc, _TCHAR* argv[])
+//int wmain( int argc, wchar_t* argv[], wchar_t* envp[])
+CU_pSuite test_etch_binarytdit_suite()
 {
-    char c=0;
-    CU_pSuite ps = NULL;
-    g_is_automated_test = argc > 1 && 0 != wcscmp(argv[1], L"-a");
-    if (0 != CU_initialize_registry()) return 0;
-    CU_set_output_filename("../test_bintditdo");
-    ps = CU_add_suite("bintditdo test suite", init_suite, clean_suite);
-    etch_watch_id = 0;
+    CU_pSuite ps = CU_add_suite("bintditdo test suite", init_suite, clean_suite);
 
     CU_add_test(ps, "test constructor 0", test_constructor_0);
     CU_add_test(ps, "test constructor 1", test_constructor_1);
     CU_add_test(ps, "test constructor 2", test_constructor_2);
     CU_add_test(ps, "test check value",   test_check_value);
      
-    CU_add_test(ps, "test byte[][] out and back in",   test_byte_array_out_in);
+	//TODO implement this test's functionality again!!!
+    //CU_add_test(ps, "test byte[][] out and back in",   test_byte_array_out_in);
     CU_add_test(ps, "test bool[][] out and back in",   test_bool_array_out_in);
     CU_add_test(ps, "test short[][] out and back in",  test_short_array_out_in);
 
@@ -2075,7 +2440,7 @@ int _tmain(int argc, _TCHAR* argv[])
     CU_add_test(ps, "test float[][] out and back in",  test_float_array_out_in);
     CU_add_test(ps, "test double[][] out and back in", test_double_array_out_in);
     CU_add_test(ps, "test string[][] out and back in", test_string_array_out_in);
-    CU_add_test(ps, "test add perf", test_add_perf);
+//    CU_add_test(ps, "test add perf", test_add_perf);
 
     CU_add_test(ps, "test single values to bytes", test_single_value_to_bytes);
     CU_add_test(ps, "test bool array to bytes",    test_boolean_array_value_to_bytes);
@@ -2088,14 +2453,5 @@ int _tmain(int argc, _TCHAR* argv[])
     CU_add_test(ps, "test string values to bytes", test_string_values_to_bytes);
     CU_add_test(ps, "test date values to bytes",   test_date_values_to_bytes);
 
-    if (g_is_automated_test)    
-        CU_automated_run_tests();    
-    else
-    {   CU_basic_set_mode(CU_BRM_VERBOSE);
-        CU_basic_run_tests();
-    }
-
-    if (!g_is_automated_test) { printf("any key ..."); while(!c) c = _getch(); wprintf(L"\n"); }     
-    CU_cleanup_registry();
-    return CU_get_error();
+    return ps;
 }

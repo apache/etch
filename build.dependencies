@@ -19,27 +19,22 @@
 ## Core Dependencies .. these must be set
 ##
 
-javacc.home=${env.TOOLS_DIR}/javacc/4.0
-junit.lib=${env.TOOLS_DIR}/junit/4.3.1
-velocity.lib=${env.TOOLS_DIR}/velocity/1.5
+javacc.home=${env.ETCH_EXTERNAL_DEPENDS}/javacc/4.0
+junit.lib=${env.ETCH_EXTERNAL_DEPENDS}/junit/4.3.1
+velocity.lib=${env.ETCH_EXTERNAL_DEPENDS}/velocity/1.5
 
 ##
 ## Optional Dependencies
 ##
 
 ## NSIS
-nsis.home=${env.NSIS_HOME}
+nsis.home=${env.ETCH_EXTERNAL_DEPENDS}/nsis/2.23
 
 ## Clover
-clover.home=${env.CLOVER_HOME}
+clover.home=${env.ETCH_EXTERNAL_DEPENDS}/clover-ant/2.3.2
 
-## Csharp support
-ant-dotnet.lib=${env.TOOLS_DIR}/apache-ant-dotnet/1.0
-nunit.home=${env.NUNIT_HOME}
+## Csharp ANT support
+ant-dotnet.lib=${env.ETCH_EXTERNAL_DEPENDS}/apache-ant-dotnet/1.0
 
-# Set to the .NET 2.0 framework install
-dotnet.home=${env.windir}/Microsoft.NET/Framework/v2.0.50727
-
-# MONO support still a bit flakey
-mono.home=${env.MONO_HOME}
-
+## CMake ANT support
+ant-cmake.lib=${env.ETCH_EXTERNAL_DEPENDS}/apache-ant-cmake/1.0

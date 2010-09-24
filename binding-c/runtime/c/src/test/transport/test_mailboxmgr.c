@@ -19,103 +19,48 @@
 /*
  * test_mailboxmgr.c 
  */
-
-#include "apr_time.h" /* some apr must be included first */
-#include "etch_plainmailbox.h"  
-#include "etch_plainmboxmgr.h"
-#include "etch_transportmsg.h"
-
-#include <tchar.h>
-#include <stdio.h>
-#include <conio.h>
-
-#include "cunit.h"
-#include "basic.h"
-#include "automated.h"
-
-#include "etchthread.h"
-#include "etch_global.h"
-#include "etch_defvalufact.h"
-#include "etchmap.h"
-#include "etchlog.h"
-#include "etch_syncobj.h"
-#include "etchexcp.h"
+#include "etch_runtime.h"
+#include "etch_plain_mailbox.h"  
+#include "etch_plain_mailbox_manager.h"
+#include "etch_transport_message.h"
+#include "etch_default_value_factory.h"
+#include "etch_map.h"
+#include "etch_log.h"
+#include "etch_exception.h"
 #include "etch_simpletimer.h"
+#include "etch_objecttypes.h"
+#include "etch_general.h"
+#include "etch_object.h"
 
-int apr_setup(void);
-int apr_teardown(void);
-int this_setup();
-int this_teardown();
-apr_pool_t* g_apr_mempool;
-const char* pooltag = "etchpool";
-
-int g_is_automated_test, g_bytes_allocated;
+#include <stdio.h>
+#include "CUnit.h"
 
 #define IS_DEBUG_CONSOLE FALSE
 
+// extern types
+extern apr_pool_t* g_etch_main_pool;
 
 /* - - - - - - - - - - - - - - 
  * unit test infrastructure
  * - - - - - - - - - - - - - -
  */
 
-int init_suite(void)
+static int init_suite(void)
 {
-    apr_setup();
-    etch_runtime_init(TRUE);
-    config.is_log_to_console = IS_DEBUG_CONSOLE;
-    return this_setup();
-}
+    etch_status_t etch_status = ETCH_SUCCESS;
 
-int clean_suite(void)
-{
-    this_teardown();
-    etch_runtime_cleanup(0,0); /* free memtable and cache etc */
-    apr_teardown();
-    return 0;
-}
-
-/*
- * apr_setup()
- * establish apache portable runtime environment
- */
-int apr_setup(void)
-{
-    int result = apr_initialize();
-    if (result == 0)
-    {   result = etch_apr_init();
-        g_apr_mempool = etch_apr_mempool;
+    etch_status = etch_runtime_initialize(NULL);
+    if(etch_status != NULL) {
+        // error
     }
-    if (g_apr_mempool)
-        apr_pool_tag(g_apr_mempool, pooltag);
-    else result = -1;
-    return result;
+    return 0;
 }
 
-/*
- * apr_teardown()
- * free apache portable runtime environment
- */
-int apr_teardown(void)
+static int clean_suite(void)
 {
-    if (g_apr_mempool)
-        apr_pool_destroy(g_apr_mempool);
-    g_apr_mempool = NULL;
-    apr_terminate();
+    etch_runtime_shutdown();
     return 0;
 }
-
-int this_setup()
-{
-    etch_apr_mempool = g_apr_mempool;
-    return 0;
-}
-
-int this_teardown()
-{    
-    return 0;
-}
-
 
 /* - - - - - - - - - - - - - - 
  * unit test support
@@ -130,49 +75,40 @@ typedef enum etch_what
 } etch_what;
 
 
-etch_plainmailboxmgr*  g_manager;
-i_sessionmessage*      g_my_session;
-i_transportmessage*    g_my_transport; 
-etch_who*              g_who1;
-etch_type*             g_type1;
-etchmutex*             g_rwlock;
-default_value_factory* g_vf; 
-int g_is_unregistered;  
-int g_mailbox_status;
-int g_mailbox_isclosed;
-int g_wakeupreason;
-i_mailbox*   g_mailbox;
-void*        g_wakeupdata;
-etch_object* g_mailbox_state;
-etch_destructor g_list_stockdtor;
+static etch_plainmailboxmgr*  g_manager;
+static i_sessionmessage*      g_my_session;
+static i_transportmessage*    g_my_transport; 
+static etch_who*              g_who1;
+static etch_type*             g_type1;
+static etch_mutex*            g_rwlock;
+static default_value_factory* g_vf;
+static vf_idname_map*         g_typemap;
+static class_to_type_map*     g_c2tmap;
 
-unsigned short CLASSID_MY_VF;
-unsigned short CLASSID_MY_VF_VTAB;
-unsigned short CLASSID_MY_VF_IMPL;
-unsigned short CLASSID_MY_IMPL_TP;
-unsigned short CLASSID_MY_IMPL_SM;
+static int g_is_unregistered;  
+static int g_mailbox_status;
+
+static unsigned short CLASSID_MY_IMPL_TP;
+static unsigned short CLASSID_MY_IMPL_SM;
 #define OBJTYPE_MY_IMPL_TM 0x5170
 #define OBJTYPE_MY_IMPL_SM 0x5171
 
-#define is_my_impl_tm(x) (x && ((objmask*)x)->obj_type == OBJTYPE_MY_IMPL_TM) 
-#define is_my_impl_sm(x) (x && ((objmask*)x)->obj_type == OBJTYPE_MY_IMPL_SM) 
+#define is_my_impl_tm(x) (x && ((etch_object*)x)->obj_type == OBJTYPE_MY_IMPL_TM) 
+#define is_my_impl_sm(x) (x && ((etch_object*)x)->obj_type == OBJTYPE_MY_IMPL_SM) 
 
 typedef struct my_impl_transportmessage my_impl_transportmessage;
 typedef struct my_impl_sessionmessage   my_impl_sessionmessage;
 
-my_impl_transportmessage* new_my_impl_transportmessage();
-my_impl_sessionmessage*   new_my_impl_sessionmessage();
-
-int mymboxmgr_unregister(i_mailbox_manager*, i_mailbox*);
-int mymboxmgr_redeliver (i_mailbox_manager*, etch_who*, etch_message*);
-int my_mailbox_notify   (etch_plainmailbox*, i_mailbox*, etch_object*, const int); 
+static my_impl_transportmessage* new_my_impl_transportmessage();
+static my_impl_sessionmessage*   new_my_impl_sessionmessage();
 
 
+#if 0
 /**
  * mymboxmgr_unregister()
  * override for mailbox manager unregister
  */
-int mymboxmgr_unregister (i_mailbox_manager* imgr, i_mailbox* mbox)
+static int mymboxmgr_unregister (i_mailbox_manager* imgr, i_mailbox* mbox)
 {
     g_is_unregistered = TRUE;
     return 0;
@@ -183,7 +119,7 @@ int mymboxmgr_unregister (i_mailbox_manager* imgr, i_mailbox* mbox)
  * mymboxmgr_redeliver()
  * override for mailbox manager redeliver
  */
-int mymboxmgr_redeliver (i_mailbox_manager* imgr, etch_who* whofrom, etch_message* msg)
+static int mymboxmgr_redeliver (i_mailbox_manager* imgr, etch_who* whofrom, etch_message* msg)
 {
     return 0;
 } 
@@ -193,7 +129,7 @@ int mymboxmgr_redeliver (i_mailbox_manager* imgr, etch_who* whofrom, etch_messag
  * my_mailbox_notify()
  * override for mailbox notify
  */
-int my_mailbox_notify (etch_plainmailbox* mbox, i_mailbox* mb, etch_object* state, const int is_closed) 
+static int my_mailbox_notify (etch_plainmailbox* mbox, i_mailbox* mb, etch_object* state, const int is_closed) 
 {
     g_mailbox = mb;
     g_mailbox_state = state;
@@ -202,25 +138,25 @@ int my_mailbox_notify (etch_plainmailbox* mbox, i_mailbox* mb, etch_object* stat
     return 0;
 }
 
-
-int is_equal_who(etch_who* who1, etch_who* who2)
+static int is_equal_who(etch_who* who1, etch_who* who2)
 {
     int n1 = 0, n2 = 0;
     if (!who1 || !who2) return FALSE;
-    if (who1->class_id != CLASSID_WHO || who2->class_id != CLASSID_WHO) return FALSE;
+    if (((etch_object*)who1)->class_id != CLASSID_WHO || ((etch_object*)who2)->class_id != CLASSID_WHO) return FALSE;
     if (!who1->value  || !who2->value) return FALSE;
     if (!is_etch_int32(who1->value) || !is_etch_int32(who2->value)) return FALSE;
     n1 = ((etch_int32*)who1->value)->value;
     n2 = ((etch_int32*)who2->value)->value;
     return n1 == n2;
 }
+#endif
 
 
 /**
  * new_add_message
  * convenience method to create a message of type "add"
  */
-etch_message* new_add_message()
+static etch_message* new_add_message()
 {
     /* this call gets the "add" type from the value factory's types map.  
      * if the type is not present, one is created and added to the map. the vf's 
@@ -234,7 +170,7 @@ etch_message* new_add_message()
      */
     etch_type* mt_add = etchtypemap_get_by_name(g_vf->types, L"add");
     etch_message* newmsg = new_message(mt_add, ETCH_DEFSIZE, (etch_value_factory*) g_vf);
-    etchtype_put_validator(mt_add, clone_field(builtins._mf__message_id), (objmask*) etchvtor_int64_get(0)); 
+    etchtype_put_validator(mt_add, clone_field(builtins._mf__message_id), (etch_object*) etchvtor_int64_get(0)); 
     return newmsg;
 }
 
@@ -242,11 +178,11 @@ etch_message* new_add_message()
 /**
  * get_add_result_type
  */
-etch_type* get_add_result_type()
+static etch_type* get_add_result_type()
 {
     etch_type* mt_add_result = etchtypemap_get_by_name(g_vf->types, L"add_result");
-    etchtype_put_validator(mt_add_result, clone_field(builtins._mf__message_id), (objmask*) etchvtor_int64_get(0)); 
-    etchtype_put_validator(mt_add_result, clone_field(builtins._mf__in_reply_to),(objmask*) etchvtor_int64_get(0));  
+    etchtype_put_validator(mt_add_result, clone_field(builtins._mf__message_id), (etch_object*) etchvtor_int64_get(0)); 
+    etchtype_put_validator(mt_add_result, clone_field(builtins._mf__in_reply_to),(etch_object*) etchvtor_int64_get(0));  
     return mt_add_result;
 }
 
@@ -255,7 +191,7 @@ etch_type* get_add_result_type()
  * new_add_result_message
  * convenience method to create a message of type "add_result"
  */
-etch_message* new_add_result_message()
+static etch_message* new_add_result_message()
 {
     /* this call gets the "add_result" type from the value factory's types map.  
      * if the type is not present, one is created and added to the map. the vf's 
@@ -282,16 +218,17 @@ etch_message* new_add_result_message()
  * my_impl_transportmessage
  * test object implementing i_transportmessage
  */
-typedef struct my_impl_transportmessage
+//typedef struct my_impl_transportmessage
+struct my_impl_transportmessage
 {
-    unsigned int    hashkey;  
+    unsigned int hashkey;  
     unsigned short  obj_type; 
     unsigned short  class_id;
-    struct objmask* vtab;  
+    struct etch_object* vtab;  
     int  (*destroy)(void*);
     void*(*clone)  (void*); 
     obj_gethashkey  get_hashkey;
-    struct objmask* parent;
+    struct etch_object* parent;
     etchresult*     result;
     unsigned int    refcount;
     unsigned int    length;
@@ -312,7 +249,7 @@ typedef struct my_impl_transportmessage
      * invoke the interface's original destructor when destroying the interface.
      */
     i_transportmessage* ixm;       /* owned */ 
-    objdtor destroy_transportmessage;  /* i_transportmessage original destructor */
+    etch_object_destructor destroy_transportmessage;  /* i_transportmessage original destructor */
     etch_transport_message transport_message;   /* transport_message() */
 
     i_sessionmessage* session;    /* not owned */
@@ -327,18 +264,17 @@ typedef struct my_impl_transportmessage
     etch_object*    control;      /* owned */
     etch_object*    value;        /* owned */
     etch_object*    eventx;       /* owned */
-
-} my_impl_transportmessage;
+};
+//} my_impl_transportmessage;
 
 
 /**
  * destroy_my_impl_transportmessage()
  * my_impl_transportmessage destructor
  */
-int destroy_my_impl_transportmessage (my_impl_transportmessage* thisx)
+static int destroy_my_impl_transportmessage (void* data)
 {
-    if (thisx->refcount > 0 && --thisx->refcount > 0) return -1;  
-
+  my_impl_transportmessage* thisx = (my_impl_transportmessage*)data;
     if (!is_etchobj_static_content(thisx))
     {       /* invoke original i_transportmessage destructor */
         if (thisx->ixm && thisx->destroy_transportmessage)   
@@ -347,23 +283,15 @@ int destroy_my_impl_transportmessage (my_impl_transportmessage* thisx)
         if (thisx->buf)
             etch_free(thisx->buf);
 
-        if (thisx->query)
-            thisx->query->destroy(thisx->query);
-
-        if (thisx->query_result)
-            thisx->query_result->destroy(thisx->query_result);
-
-        if (thisx->control)
-            thisx->control->destroy(thisx->control);
-
-        if (thisx->value)
-            thisx->value->destroy(thisx->value);
-
-        if (thisx->eventx)
-            thisx->eventx->destroy(thisx->eventx);
+        
+        etch_object_destroy(thisx->query);
+        etch_object_destroy(thisx->query_result);
+        etch_object_destroy(thisx->control);
+        etch_object_destroy(thisx->value);
+        etch_object_destroy(thisx->eventx);
     }
 
-   return destroy_objectex((objmask*) thisx);
+   return destroy_objectex((etch_object*) thisx);
 }
 
 
@@ -373,10 +301,14 @@ int destroy_my_impl_transportmessage (my_impl_transportmessage* thisx)
  * @param whoto caller retains, can be null
  * @param fbuf caller retains
  */
-int impl_transport_message (my_impl_transportmessage* mytm, etch_who* whoto, etch_message* msg)
+static int impl_transport_message (void* data, void* who, void* messageData)
 {
+    my_impl_transportmessage* mytm = (my_impl_transportmessage*)data;
+    etch_who* whoto = (etch_who*)who;
+    etch_message* msg = (etch_message*)messageData;
+
     CU_ASSERT_FATAL(is_my_impl_tm(mytm));
-    mytm->what = TRANSPORT_MESSAGE;  
+    mytm->what = TRANSPORT_MESSAGE;
     mytm->recipient = whoto;
     mytm->msg = msg;
     return 0;
@@ -387,7 +319,7 @@ int impl_transport_message (my_impl_transportmessage* mytm, etch_who* whoto, etc
  * my_transport_control()
  * my_impl_transportmessage::itransport::transport_control 
  */
-int my_transport_control (my_impl_transportmessage* mytm, etch_object* control, etch_object* value)
+static int my_transport_control (my_impl_transportmessage* mytm, etch_object* control, etch_object* value)
 {
     CU_ASSERT_FATAL(is_my_impl_tm(mytm));
     mytm->what    = TRANSPORT_CONTROL;
@@ -401,7 +333,7 @@ int my_transport_control (my_impl_transportmessage* mytm, etch_object* control, 
  * my_transport_notify()
  * my_impl_transportmessage::itransport::transport_notify 
  */
-int my_transport_notify (my_impl_transportmessage* mytm, etch_object* evt)
+static int my_transport_notify (my_impl_transportmessage* mytm, etch_object* evt)
 {
     CU_ASSERT_FATAL(is_my_impl_tm(mytm));
     mytm->what   = TRANSPORT_NOTIFY;
@@ -414,7 +346,7 @@ int my_transport_notify (my_impl_transportmessage* mytm, etch_object* evt)
  * my_transport_query()
  * my_impl_transportmessage::itransport::transport_query 
  */
-objmask* my_transport_query (my_impl_transportmessage* mytm, etch_object* query) 
+static etch_object* my_transport_query (my_impl_transportmessage* mytm, etch_object* query) 
 {
     etch_object* resultobj = NULL;
     CU_ASSERT_FATAL(is_my_impl_tm(mytm));
@@ -422,7 +354,7 @@ objmask* my_transport_query (my_impl_transportmessage* mytm, etch_object* query)
     mytm->what  = TRANSPORT_QUERY;
     mytm->query = query;
     mytm->query_result = NULL;
-    return (objmask*) resultobj;  /* caller owns */
+    return (etch_object*) resultobj;  /* caller owns */
 }
 
 
@@ -430,7 +362,7 @@ objmask* my_transport_query (my_impl_transportmessage* mytm, etch_object* query)
  * my_transport_get_session()
  * my_impl_transportmessage::itransport::get_session 
  */
-i_sessionmessage* my_transport_get_session(my_impl_transportmessage* mytm)
+static i_sessionmessage* my_transport_get_session(my_impl_transportmessage* mytm)
 {
     CU_ASSERT_FATAL(is_my_impl_tm(mytm));
     return mytm->session;
@@ -441,7 +373,7 @@ i_sessionmessage* my_transport_get_session(my_impl_transportmessage* mytm)
  * my_transport_set_session()
  * my_impl_transportmessage::itransport::set_session
  */
-void my_transport_set_session (my_impl_transportmessage* mytm, i_sessionmessage* session)
+static void my_transport_set_session (my_impl_transportmessage* mytm, i_sessionmessage* session)
 {   
     CU_ASSERT_FATAL(is_my_impl_tm(mytm));
     mytm->session = session;
@@ -454,14 +386,15 @@ void my_transport_set_session (my_impl_transportmessage* mytm, i_sessionmessage*
  * this destructor will destroy its parent (my_impl_transportmessage), 
  * which will in turn destroy this object.
  */
-int destroy_my_transportmessage (i_transportmessage* itm)
+static int destroy_my_transportmessage (void* data)
 {
+  i_transportmessage* itm = (i_transportmessage*)data;
     my_impl_transportmessage* mytp = NULL;
     if (NULL == itm) return -1;
 
     mytp = itm->thisx;  
 
-    mytp->destroy(mytp);
+    etch_object_destroy(mytp);
 
     return 0;
 }
@@ -471,13 +404,12 @@ int destroy_my_transportmessage (i_transportmessage* itm)
  * new_my_impl_transportmessage()
  * my_impl_transportmessage constructor
  */
-my_impl_transportmessage* new_my_impl_transportmessage()
+static my_impl_transportmessage* new_my_impl_transportmessage()
 {
     i_transportmessage* itp  = NULL;
     i_transport* itransport = NULL;
     /* this is a model for dynamic class ID assigment */
-    unsigned short class_id = CLASSID_MY_IMPL_TP? CLASSID_MY_IMPL_TP: 
-        (CLASSID_MY_IMPL_TP = get_dynamic_classid());
+    unsigned short class_id = CLASSID_MY_IMPL_TP? CLASSID_MY_IMPL_TP: (CLASSID_MY_IMPL_TP = get_dynamic_classid());
 
     my_impl_transportmessage* mytp = (my_impl_transportmessage*) new_object
         (sizeof(my_impl_transportmessage), OBJTYPE_MY_IMPL_TM, class_id);
@@ -494,10 +426,10 @@ my_impl_transportmessage* new_my_impl_transportmessage()
     itp = new_transportmsg_interface(mytp, impl_transport_message, itransport);
 
     /* save off i_transportmessage destructor */
-    mytp->destroy_transportmessage = itp->destroy;
+    mytp->destroy_transportmessage = ((etch_object*)itp)->destroy;
 
     /* replace i_transportmessage destructor with one which will destroy this object */
-    itp->destroy = destroy_my_transportmessage;
+    ((etch_object*)itp)->destroy = destroy_my_transportmessage;
 
     /* g_my_transport is set to this interface */
     mytp->ixm = itp;  
@@ -515,23 +447,9 @@ my_impl_transportmessage* new_my_impl_transportmessage()
  * my_impl_sessionmessage
  * test object implementing i_sessionmessage
  */
-typedef struct my_impl_sessionmessage
+struct my_impl_sessionmessage
 {
-    unsigned int    hashkey;  
-    unsigned short  obj_type; 
-    unsigned short  class_id;
-    struct objmask* vtab;  
-    int  (*destroy)(void*);
-    void*(*clone)  (void*); 
-    obj_gethashkey  get_hashkey;
-    struct objmask* parent;
-    etchresult*     result;
-    unsigned int    refcount;
-    unsigned int    length;
-    unsigned char   is_null;
-    unsigned char   is_copy;
-    unsigned char   is_static;
-    unsigned char   reserved;
+    etch_object object;
 
     /*
      * i_sessionmessage interface and methods, plus original destructor
@@ -546,7 +464,7 @@ typedef struct my_impl_sessionmessage
      * invoke the interface's original destructor when destroying the interface.
      */
     i_sessionmessage* ism;          /* owned */
-    objdtor destroy_sessionmessage; /* i_sessionmessage original destructor */
+    etch_object_destructor destroy_sessionmessage; /* i_sessionmessage original destructor */
     etch_session_message session_message;  /* session_message() method */
 
     etch_what       what;
@@ -558,8 +476,8 @@ typedef struct my_impl_sessionmessage
     etch_object*    control;        /* owned */
     etch_object*    value;          /* owned */
     etch_object*    eventx;         /* owned */
-
-} my_impl_sessionmessage;
+};
+//} my_impl_sessionmessage;
 
 
 
@@ -567,10 +485,9 @@ typedef struct my_impl_sessionmessage
  * destroy_my_impl_sessionmessage()
  * my_impl_sessionmessage destructor
  */
-int destroy_my_impl_sessionmessage(my_impl_sessionmessage* thisx)
+static int destroy_my_impl_sessionmessage(void* data)
 {
-    if (thisx->refcount > 0 && --thisx->refcount > 0) return -1;  
-
+  my_impl_sessionmessage* thisx = (my_impl_sessionmessage*)data;
     if (!is_etchobj_static_content(thisx))
     {       /* invoke original i_sessionmessage destructor */
         if (thisx->ism && thisx->destroy_sessionmessage)
@@ -578,26 +495,20 @@ int destroy_my_impl_sessionmessage(my_impl_sessionmessage* thisx)
 
         /* these are objects which would be destroyed in the binding 
          * by the last method to touch them */
-        if (thisx->msg)
-            thisx->msg->destroy(thisx->msg);
+        etch_object_destroy(thisx->msg);
 
-        if (thisx->query)
-            thisx->query->destroy(thisx->query);
+        etch_object_destroy(thisx->query);
 
-        if (thisx->query_result)
-            thisx->query_result->destroy(thisx->query_result);
+        etch_object_destroy(thisx->query_result);
 
-        if (thisx->control)
-            thisx->control->destroy(thisx->control);
+        etch_object_destroy(thisx->control);
 
-        if (thisx->value)
-            thisx->value->destroy(thisx->value);
+        etch_object_destroy(thisx->value);
 
-        if (thisx->eventx)
-            thisx->eventx->destroy(thisx->eventx);
+        etch_object_destroy(thisx->eventx);
     }
 
-   return destroy_objectex((objmask*) thisx);
+   return destroy_objectex((etch_object*) thisx);
 }
 
 
@@ -607,8 +518,10 @@ int destroy_my_impl_sessionmessage(my_impl_sessionmessage* thisx)
  * @param whofrom caller retains, can be null.
  * @param msg caller abandons
  */
-int impl_session_message (my_impl_sessionmessage* mysm, etch_who* whofrom, etch_message* msg)
+static int impl_session_message (void* data, etch_who* whofrom, etch_message* msg)
 {
+    my_impl_sessionmessage* mysm = (my_impl_sessionmessage*)data;
+
     CU_ASSERT_FATAL(is_my_impl_sm(mysm));
     mysm->what = SESSION_MESSAGE;
 
@@ -640,7 +553,7 @@ int impl_session_message (my_impl_sessionmessage* mysm, etch_who* whofrom, etch_
  * my_impl_sessionmessage::ism::isession::session_control 
  * control and value are always abandoned by caller so mysm must clean them up.
  */
-int my_session_control (my_impl_sessionmessage* mysm, etch_object* control, etch_object* value)
+static int my_session_control (my_impl_sessionmessage* mysm, etch_object* control, etch_object* value)
 {
     CU_ASSERT_FATAL(is_my_impl_sm(mysm));
     mysm->what    = SESSION_CONTROL;
@@ -655,7 +568,7 @@ int my_session_control (my_impl_sessionmessage* mysm, etch_object* control, etch
  * my_impl_sessionmessage::ism::isession::session_notify 
  * evt is always abandoned by caller so mysm must clean it up.
  */
-int my_session_notify (my_impl_sessionmessage* mysm, etch_object* evt)
+static int my_session_notify (my_impl_sessionmessage* mysm, etch_object* evt)
 {
     CU_ASSERT_FATAL(is_my_impl_sm(mysm));
     mysm->what   = SESSION_NOTIFY;
@@ -669,7 +582,7 @@ int my_session_notify (my_impl_sessionmessage* mysm, etch_object* evt)
  * my_impl_sessionmessage::ism::isession::session_query 
  * query is always abandoned by caller so mysm must clean it up.
  */
-objmask* my_session_query (my_impl_sessionmessage* mysm, etch_object* query) 
+static etch_object* my_session_query (my_impl_sessionmessage* mysm, etch_object* query) 
 {
     etch_object* resultobj = NULL;
     CU_ASSERT_FATAL(is_my_impl_sm(mysm));
@@ -677,7 +590,7 @@ objmask* my_session_query (my_impl_sessionmessage* mysm, etch_object* query)
     mysm->what  = SESSION_QUERY;
     mysm->query = query;
     mysm->query_result = NULL;
-    return (objmask*) resultobj; /* caller owns */
+    return (etch_object*) resultobj; /* caller owns */
 }
 
 
@@ -687,14 +600,15 @@ objmask* my_session_query (my_impl_sessionmessage* mysm, etch_object* query)
  * this destructor will destroy its parent (my_impl_sessionmessage), 
  * which will in turn destroy this object.
  */
-int destroy_my_sessionmessage(i_sessionmessage* ism)
+static int destroy_my_sessionmessage(void* data)
 {
+  i_sessionmessage* ism = (i_sessionmessage*)data;
     my_impl_sessionmessage* mysm = NULL;
     if (NULL == ism) return -1;
 
     mysm = ism->thisx;  
 
-    mysm->destroy(mysm);
+    etch_object_destroy(mysm);
 
     return 0;
 }
@@ -704,7 +618,7 @@ int destroy_my_sessionmessage(i_sessionmessage* ism)
  * new_my_impl_sessionmessage()
  * my_impl_sessionmessage constructor
  */
-my_impl_sessionmessage* new_my_impl_sessionmessage()
+static my_impl_sessionmessage* new_my_impl_sessionmessage()
 {
     i_sessionmessage* ism  = NULL;
     i_session* isession = NULL;
@@ -715,7 +629,7 @@ my_impl_sessionmessage* new_my_impl_sessionmessage()
     my_impl_sessionmessage* mysm = (my_impl_sessionmessage*) new_object
       (sizeof(my_impl_sessionmessage), OBJTYPE_MY_IMPL_SM, class_id);
 
-    mysm->destroy = destroy_my_impl_sessionmessage;
+    ((etch_object*)mysm)->destroy = destroy_my_impl_sessionmessage;
 
     isession = new_session_interface(mysm,
         (etch_session_control)     my_session_control, 
@@ -725,10 +639,10 @@ my_impl_sessionmessage* new_my_impl_sessionmessage()
     ism = new_sessionmsg_interface(mysm, impl_session_message, isession);
 
     /* save off i_sessionmessage destructor */
-    mysm->destroy_sessionmessage = ism->destroy;
+    mysm->destroy_sessionmessage = ((etch_object*)ism)->destroy;
 
     /* custom destructor will destroy the my_impl_sessionmessage */
-    ism->destroy = destroy_my_sessionmessage;
+    ((etch_object*)ism)->destroy = destroy_my_sessionmessage;
 
     /* g_my_session will get set to this interface */
     mysm->ism = ism;  
@@ -746,17 +660,26 @@ my_impl_sessionmessage* new_my_impl_sessionmessage()
  * setup_this_test()
  * set up an individual unit test
  */
-int setup_this_test()
+static int setup_this_test()
 {
     my_impl_transportmessage* mytm_impl = NULL;
     my_impl_sessionmessage*   mysm_impl = NULL;
 
-    g_who1   = new_who(new_int32(1), TRUE);
+    g_who1   = new_who(new_int32(1));
     g_type1  = new_type(L"type1");
-    g_vf     = new_default_value_factory(NULL, NULL);
-    g_rwlock = new_mutex(etch_apr_mempool, ETCHMUTEX_UNNESTED);
 
-    etchtype_put_validator(g_type1, clone_field(builtins._mf__message_id), (objmask*) etchvtor_int64_get(0));
+    g_typemap = new_vf_types_collection(ETCH_DEFVF_IDNMAP_DEFINITSIZE);
+    CU_ASSERT_PTR_NOT_NULL(g_typemap);
+    g_c2tmap  = new_class_to_type_map(ETCH_DEVVF_C2TMAP_DEFINITSIZE);
+    CU_ASSERT_PTR_NOT_NULL(g_c2tmap);  
+    defvf_initialize_static(g_typemap, g_c2tmap);
+    g_vf = new_default_value_factory(g_typemap, g_c2tmap);
+    CU_ASSERT_PTR_NOT_NULL(g_vf);
+
+    // TODO: pool
+    etch_mutex_create(&g_rwlock, ETCH_MUTEX_UNNESTED, NULL);
+
+    etchtype_put_validator(g_type1, clone_field(builtins._mf__message_id), (etch_object*) etchvtor_int64_get(0));
 
     /* we instantiate a wrapper x which implements and instantiates i_transportmessage.
      * the instantiation of i_transportmessage will contain a pointer to x.
@@ -783,15 +706,38 @@ int setup_this_test()
  * teardown_this_test()
  * tear down an individual unit test
  */
-void teardown_this_test()
+static void teardown_this_test()
 {
-    ETCHOBJ_DESTROY(g_who1);
-    ETCHOBJ_DESTROY(g_type1);
-    ETCHOBJ_DESTROY(g_vf);
-    ETCHOBJ_DESTROY(g_manager);
-    ETCHOBJ_DESTROY(g_rwlock);
-    ETCHOBJ_DESTROY(g_my_transport);
-    ETCHOBJ_DESTROY(g_my_session);
+    etch_object_destroy(g_who1);
+    g_who1 = NULL;
+
+    etch_object_destroy(g_type1);
+    g_type1 = NULL;
+
+    etch_object_destroy(g_vf);
+    g_vf = NULL;
+
+    etch_object_destroy(g_c2tmap);
+    g_c2tmap = NULL;
+
+    etch_object_destroy(g_typemap);
+    g_typemap = NULL;
+
+    // TODO: cleanup statics
+    //etchvf_free_builtins()
+
+    etch_object_destroy(g_manager);
+    g_manager = NULL;
+
+    etch_mutex_destroy(g_rwlock);
+    g_rwlock = NULL;
+
+    etch_object_destroy(g_my_transport);
+    g_my_transport = NULL;
+
+    etch_object_destroy(g_my_session);
+    g_my_session = NULL;
+
     g_is_unregistered = g_mailbox_status = 0;
     etchvf_free_builtins(); 
 }
@@ -806,31 +752,33 @@ void teardown_this_test()
  * test_test_setup()
  * run test setup and teardown and verify all memory accounted for.
  */
-void test_test_setup(void)
+static void test_test_setup(void)
 {
     int result = setup_this_test();
     CU_ASSERT_EQUAL_FATAL(result,0);
-
     teardown_this_test();
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
 /**
  * test_constructor()
  */
-void test_constructor(void)
+static void test_constructor(void)
 {
     setup_this_test();
 
     do
-    {  objmask* session = 0;
+    {  etch_object* session = 0;
        CU_ASSERT_PTR_NOT_NULL_FATAL(g_my_transport);  /* g_my_transport->thisx = my_impl_transportmessage */
       
-       session = g_my_transport->get_session (g_my_transport->thisx);
+       session = (etch_object*)g_my_transport->get_session (g_my_transport->thisx);
        CU_ASSERT(is_etch_sessionmsg(session));
        CU_ASSERT(is_etch_sessionmsg(g_manager->session));
        /* used to work, no longer is the case, why are these no longer the same? */
@@ -845,9 +793,12 @@ void test_constructor(void)
     
     teardown_this_test();
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -855,50 +806,53 @@ void test_constructor(void)
 /**
  * test_session_query
  */
-void test_session_query(void)
+static void test_session_query(void)
 {
     setup_this_test();
 
     do
     {   const int MY_QUERY_CLASSID = 0x111, MY_RESULT_CLASSID = 0x112;
-        etch_object* myqueryobj = new_etch_object(MY_QUERY_CLASSID, NULL);
-        etch_object* myresultob = new_etch_object(MY_RESULT_CLASSID, NULL);
+        etch_object* myqueryobj = new_object(sizeof(etch_object),ETCHTYPEB_ETCHOBJECT, MY_QUERY_CLASSID);
+        etch_object* myresultob = new_object(sizeof(etch_object),ETCHTYPEB_ETCHOBJECT, MY_RESULT_CLASSID);
         etch_object* query_result = NULL;
         my_impl_sessionmessage* my_sessionimpl = g_my_session->thisx;  
         my_sessionimpl->query_result = myresultob;
 
-        query_result = g_manager->session_query(g_manager, myqueryobj);
+        query_result = g_manager->session_query(g_manager, (etch_query*)myqueryobj);
 
         CU_ASSERT_PTR_NOT_NULL_FATAL(query_result);
         CU_ASSERT_EQUAL(my_sessionimpl->what, SESSION_QUERY);
         CU_ASSERT_PTR_EQUAL(my_sessionimpl->query, myqueryobj);
         CU_ASSERT_PTR_EQUAL(myresultob, query_result);
-        myresultob->destroy(myresultob);
+        etch_object_destroy(myresultob);
 
     } while(0);
     
     teardown_this_test();
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
 /**
  * test_session_control
  */
-void test_session_control(void)
+static void test_session_control(void)
 {
     setup_this_test();
 
     do
     {   int result = 0, MY_CONTROL_CLASSID = 0x111, MY_VALUE_CLASSID = 0x112;
-        etch_object* mycontrolobj = new_etch_object(MY_CONTROL_CLASSID, NULL);
-        etch_object* myvalueobj = new_etch_object(MY_VALUE_CLASSID, NULL);
+        etch_object* mycontrolobj = new_object(sizeof(etch_object),ETCHTYPEB_ETCHOBJECT, MY_CONTROL_CLASSID);
+        etch_object* myvalueobj = new_object(sizeof(etch_object),ETCHTYPEB_ETCHOBJECT, MY_VALUE_CLASSID);
         my_impl_sessionmessage* my_sessionimpl = g_my_session->thisx;  
 
-        result = g_manager->session_control(g_manager, mycontrolobj, myvalueobj);
+        result = g_manager->session_control(g_manager, (etch_event*)mycontrolobj, myvalueobj);
 
         CU_ASSERT_EQUAL(result,0);
         CU_ASSERT_EQUAL(my_sessionimpl->what, SESSION_CONTROL);
@@ -909,25 +863,28 @@ void test_session_control(void)
     
     teardown_this_test();
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
 /**
  * test_session_notify
  */
-void test_session_notify(void)
+static void test_session_notify(void)
 {
     setup_this_test();
 
     do
     {   int result = 0, MY_EVENT_CLASSID = 0x111;
-        etch_object* myeventobj = new_etch_object(MY_EVENT_CLASSID, NULL);
+        etch_object* myeventobj = new_object(sizeof(etch_object),ETCHTYPEB_ETCHOBJECT, MY_EVENT_CLASSID);
         my_impl_sessionmessage* my_sessionimpl = g_my_session->thisx;  
 
-        result = g_manager->session_notify(g_manager, myeventobj);
+        result = g_manager->session_notify(g_manager, (etch_event*)myeventobj);
 
         CU_ASSERT_EQUAL(result,0);
         CU_ASSERT_EQUAL(my_sessionimpl->what, SESSION_NOTIFY);
@@ -937,59 +894,65 @@ void test_session_notify(void)
     
     teardown_this_test();
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
 /**
  * test_transport_query
  */
-void test_transport_query(void)
+static void test_transport_query(void)
 {
     setup_this_test();
 
     do
     {   const int MY_QUERY_CLASSID = 0x111, MY_RESULT_CLASSID = 0x112;
-        etch_object* myqueryobj = new_etch_object(MY_QUERY_CLASSID, NULL);
-        etch_object* myresultob = new_etch_object(MY_RESULT_CLASSID, NULL);
+        etch_object* myqueryobj = new_object(sizeof(etch_object),ETCHTYPEB_ETCHOBJECT, MY_QUERY_CLASSID);
+        etch_object* myresultob = new_object(sizeof(etch_object),ETCHTYPEB_ETCHOBJECT, MY_RESULT_CLASSID);
         etch_object* query_result = NULL;
         my_impl_transportmessage* my_transportimpl = g_my_transport->thisx;  
         my_transportimpl->query_result = myresultob;
 
-        query_result = g_manager->transport_query(g_manager, myqueryobj);
+        query_result = g_manager->transport_query(g_manager, (etch_query*)myqueryobj);
 
         CU_ASSERT_PTR_NOT_NULL_FATAL(query_result);
         CU_ASSERT_EQUAL(my_transportimpl->what, TRANSPORT_QUERY);
         CU_ASSERT_PTR_EQUAL(my_transportimpl->query, myqueryobj);
         CU_ASSERT_PTR_EQUAL(myresultob, query_result);
-        myresultob->destroy(myresultob);
+        etch_object_destroy(myresultob);
 
     } while(0);
     
     teardown_this_test();
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
 /**
  * test_transport_control
  */
-void test_transport_control(void)
+static void test_transport_control(void)
 {
     setup_this_test();
 
     do
     {   int result = 0, MY_CONTROL_CLASSID = 0x111, MY_VALUE_CLASSID = 0x112;
-        etch_object* mycontrolobj = new_etch_object(MY_CONTROL_CLASSID, NULL);
-        etch_object* myvalueobj = new_etch_object(MY_VALUE_CLASSID, NULL);
+        etch_object* mycontrolobj = new_object(sizeof(etch_object),ETCHTYPEB_ETCHOBJECT, MY_CONTROL_CLASSID);
+        etch_object* myvalueobj = new_object(sizeof(etch_object),ETCHTYPEB_ETCHOBJECT, MY_VALUE_CLASSID);
         my_impl_transportmessage* my_transportimpl = g_my_transport->thisx;  
 
-        result = g_manager->transport_control(g_manager, mycontrolobj, myvalueobj);
+        result = g_manager->transport_control(g_manager, (etch_event*)mycontrolobj, myvalueobj);
         CU_ASSERT_EQUAL(result,0);
         CU_ASSERT_EQUAL(my_transportimpl->what, TRANSPORT_CONTROL);
         CU_ASSERT_PTR_EQUAL(my_transportimpl->control, mycontrolobj);
@@ -999,25 +962,28 @@ void test_transport_control(void)
     
     teardown_this_test();
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
 /**
  * test_transport_notify
  */
-void test_transport_notify(void)
+static void test_transport_notify(void)
 {
     setup_this_test();
 
     do
     {   int result = 0, MY_EVENT_CLASSID = 0x111;
-        etch_object* myeventobj = new_etch_object(MY_EVENT_CLASSID, NULL);
+        etch_object* myeventobj = new_object(sizeof(etch_object),ETCHTYPEB_ETCHOBJECT, MY_EVENT_CLASSID);
         my_impl_transportmessage* my_transportimpl = g_my_transport->thisx;  
 
-        result = g_manager->transport_notify(g_manager, myeventobj);
+        result = g_manager->transport_notify(g_manager, (etch_event*)myeventobj);
         CU_ASSERT_EQUAL(result,0);
         CU_ASSERT_EQUAL(my_transportimpl->what, TRANSPORT_NOTIFY);
         CU_ASSERT_PTR_EQUAL(my_transportimpl->eventx, myeventobj);
@@ -1026,16 +992,19 @@ void test_transport_notify(void)
     
     teardown_this_test();
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
 /**
  * test_transport_message_1()
  */
-void test_transport_message_1(void)
+static void test_transport_message_1(void)
 {
     setup_this_test();
 
@@ -1080,22 +1049,25 @@ void test_transport_message_1(void)
          * we can destroy the message in the my_impl_transportmessage destructor,
          * modeling the real world passing on of the message by the transport.
          */
-        addmsg->destroy(addmsg);
+        etch_object_destroy(addmsg);
 
     } while(0);
     
     teardown_this_test();
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
 /**
  * test_transport_message_2()
  */
-void test_transport_message_2(void)
+static void test_transport_message_2(void)
 {
     setup_this_test();
 
@@ -1146,15 +1118,18 @@ void test_transport_message_2(void)
          * we can destroy the message in the my_impl_transportmessage destructor,
          * modeling the real world passing on of the message by the transport.
          */
-        add_resultmsg->destroy(add_resultmsg);
+        etch_object_destroy(add_resultmsg);
 
     } while(0);
     
     teardown_this_test();
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
  
@@ -1162,14 +1137,13 @@ void test_transport_message_2(void)
  * test_transport_message_3()
  * test attempt to send message that has already been sent
  */
-void test_transport_message_3(void)
+static void test_transport_message_3(void)
 {
     setup_this_test();
 
     do
     {   int  result = 0;
         const int THISTESTID = 1;
-        i_mailbox* mailbox = NULL;
         etch_message* addmsg = NULL;
         etch_int64* addmsg_id = NULL;
 
@@ -1192,15 +1166,18 @@ void test_transport_message_3(void)
         result = g_manager->transport_message(g_manager, g_who1, addmsg);
         CU_ASSERT_EQUAL(result, -1); /* should fail as already sent */
 
-        addmsg->destroy(addmsg);
+        etch_object_destroy(addmsg);
 
     } while(0);
     
     teardown_this_test();
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -1208,7 +1185,7 @@ void test_transport_message_3(void)
  * test_transport_call_1()
  * test sending a call message, then close mailbox for read
  */
-void test_transport_call_1(void)
+static void test_transport_call_1(void)
 {
     setup_this_test();
 
@@ -1260,20 +1237,23 @@ void test_transport_call_1(void)
         CU_ASSERT_PTR_NULL(got_mailbox);
 
         /* in practice the last entity to handle the message would destroy it */
-        addmsg->destroy(addmsg);
+        etch_object_destroy(addmsg);
 
         /* it is not yet determined whether the mailbox manager should destroy an
          * unregistered mailbox - for now it does not, so we destroy it now. */
         my_mbox_impl = mailbox->thisx;  /* get implementation from interface */
-        my_mbox_impl->destroy(my_mbox_impl);
+        etch_object_destroy(my_mbox_impl);
 
     } while(0);
     
     teardown_this_test();
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -1281,7 +1261,7 @@ void test_transport_call_1(void)
  * test_transport_call_2()
  * test sending a call message, then close mailbox for delivery
  */
-void test_transport_call_2(void)
+static void test_transport_call_2(void)
 {
     setup_this_test();
 
@@ -1332,20 +1312,23 @@ void test_transport_call_2(void)
         CU_ASSERT_PTR_NULL(got_mailbox);
 
         /* in practice the last entity to handle the message would destroy it */
-        addmsg->destroy(addmsg);
+        etch_object_destroy(addmsg);
 
         /* it is not yet determined whether the mailbox manager should destroy an
          * unregistered mailbox - for now it does not, so we destroy it now. */
         my_mbox_impl = mailbox->thisx;  /* get implementation from interface */
-        my_mbox_impl->destroy(my_mbox_impl);
+        etch_object_destroy(my_mbox_impl);
 
     } while(0);
     
     teardown_this_test();
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
    
@@ -1353,7 +1336,7 @@ void test_transport_call_2(void)
  * test_transport_call_3()
  * test attempt to send a call message that has already been sent
  */
-void test_transport_call_3(void)
+static void test_transport_call_3(void)
 {
     setup_this_test();
 
@@ -1379,15 +1362,18 @@ void test_transport_call_3(void)
         mailbox = pmboxmgr_get_mailbox(g_manager, addmsg_id);
         CU_ASSERT_PTR_NULL(mailbox); /* no mailbox should have been created */
 
-        addmsg->destroy(addmsg);
+        etch_object_destroy(addmsg);
 
     } while(0);
     
     teardown_this_test();
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
     
@@ -1395,7 +1381,7 @@ void test_transport_call_3(void)
  * test_transport_call_4()
  * test attempt to send a call message that is marked as a reply message
  */
-void test_transport_call_4(void)
+static void test_transport_call_4(void)
 {
     setup_this_test();
 
@@ -1412,15 +1398,18 @@ void test_transport_call_4(void)
         result = pmboxmgr_size(g_manager); /* no mailbox should have been created */
         CU_ASSERT_EQUAL(result, 0);
 
-        addresultmsg->destroy(addresultmsg);
+        etch_object_destroy(addresultmsg);
 
     } while(0);
     
     teardown_this_test();
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
   
@@ -1462,9 +1451,12 @@ void test_session_message_1(void)
     
     teardown_this_test();
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -1472,7 +1464,7 @@ void test_session_message_1(void)
  * test_session_message_2
  * test reply to a message without a reply to ID
  */
-void test_session_message_2(void)
+static void test_session_message_2(void)
 {
     setup_this_test();
 
@@ -1498,7 +1490,7 @@ void test_session_message_2(void)
 
         CU_ASSERT_NOT_EQUAL_FATAL(result, 0);  /* result should indicate message not handled */
 
-        addmsg->destroy(addmsg); /* since session error we still own the message */
+        etch_object_destroy(addmsg); /* since session error we still own the message */
 
         CU_ASSERT_EQUAL(my_sessionimpl->what, SESSION_MESSAGE);
         CU_ASSERT_PTR_NULL(my_sessionimpl->sender);
@@ -1508,9 +1500,12 @@ void test_session_message_2(void)
     
     teardown_this_test();
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -1518,7 +1513,7 @@ void test_session_message_2(void)
  * test_session_message_3
  * test message having reply to ID not matching any mailbox
  */
-void test_session_message_3(void)
+static void test_session_message_3(void)
 {
     setup_this_test();
 
@@ -1537,7 +1532,7 @@ void test_session_message_3(void)
         result = g_manager->session_message(g_manager, g_who1, addresultmsg);
         CU_ASSERT_NOT_EQUAL_FATAL(result, 0);  /* result should indicate message not handled */
 
-        addresultmsg->destroy(addresultmsg); /* since session error we still own the message */
+        etch_object_destroy(addresultmsg); /* since session error we still own the message */
 
         CU_ASSERT_EQUAL(my_sessionimpl->what, 0);
         CU_ASSERT_PTR_NULL(my_sessionimpl->sender);
@@ -1547,9 +1542,12 @@ void test_session_message_3(void)
     
     teardown_this_test();
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -1557,7 +1555,7 @@ void test_session_message_3(void)
  * test_session_message_5
  * test message having reply to ID matching an open mailbox
  */
-void test_session_message_5(void)
+static void test_session_message_5(void)
 {
     setup_this_test();
 
@@ -1599,7 +1597,7 @@ void test_session_message_5(void)
 
         /* construct a reply message */
         replymsg = message_reply(addmsg, mt_add_result);
-        result = is_exception(replymsg);
+        result = is_etch_exception(replymsg);
         CU_ASSERT_EQUAL_FATAL(result, FALSE);
         my_sessionimpl->what = WHAT_NONE;
 
@@ -1618,7 +1616,7 @@ void test_session_message_5(void)
         CU_ASSERT_EQUAL_FATAL(result, 0);   
         CU_ASSERT_PTR_EQUAL(thiselt->whofrom, g_who1);
         CU_ASSERT_PTR_EQUAL(thiselt->msg, replymsg);
-        thiselt->destroy(thiselt);   /* we read it, we own it */
+        etch_object_destroy(thiselt);   /* we read it, we own it */
         replymsg = NULL;  /* thiselt destructor destroyed replymsg */
 
         result = pmboxmgr_size(g_manager);
@@ -1631,20 +1629,23 @@ void test_session_message_5(void)
         CU_ASSERT_EQUAL(result, 0);
 
         /* in practice the last entity to handle the message would destroy it */
-        addmsg->destroy(addmsg);
+        etch_object_destroy(addmsg);
 
         /* it is not yet determined whether the mailbox manager should destroy an
          * unregistered mailbox - for now it does not, so we destroy it now. */
         my_mbox_impl = mailbox->thisx;  /* get implementation from interface */
-        my_mbox_impl->destroy(my_mbox_impl);    
+        etch_object_destroy(my_mbox_impl);    
 
     } while(0);
     
     teardown_this_test();
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -1652,7 +1653,7 @@ void test_session_message_5(void)
  * test_session_message_6
  * reply via closed mailbox
  */
-void test_session_message_6(void)
+static void test_session_message_6(void)
 {
     setup_this_test();
 
@@ -1660,7 +1661,6 @@ void test_session_message_6(void)
     {   int result = 0;
         etch_int64* msgid = NULL;
         etch_type* mt_add_result = NULL;
-        etch_mailbox_element* thiselt = NULL;
         etch_plainmailbox* my_mbox_impl = NULL;
         i_mailbox* mailbox = NULL, *got_mailbox = NULL;
         my_impl_sessionmessage* my_sessionimpl = g_my_session->thisx;  
@@ -1697,7 +1697,7 @@ void test_session_message_6(void)
         /* construct a reply message */
         mt_add_result = get_add_result_type();
         replymsg = message_reply(addmsg, mt_add_result);
-        result = is_exception(replymsg);
+        result = is_etch_exception(replymsg);
         CU_ASSERT_EQUAL_FATAL(result, FALSE);
         my_sessionimpl->what = WHAT_NONE;
 
@@ -1705,42 +1705,40 @@ void test_session_message_6(void)
         /* on failure we retain ownership of the reply message */                        
         result = g_manager->session_message(g_manager, g_who1, replymsg);
         CU_ASSERT_NOT_EQUAL_FATAL(result, 0);  /* result should indicate message not handled */
-        replymsg->destroy(replymsg); replymsg = NULL;
+        etch_object_destroy(replymsg); replymsg = NULL;
 
         CU_ASSERT_EQUAL(my_sessionimpl->what, WHAT_NONE);
         CU_ASSERT_PTR_NULL(my_sessionimpl->sender);
         CU_ASSERT_PTR_NULL(my_sessionimpl->msg);
 
         /* in practice the last entity to handle the message would destroy it */
-        addmsg->destroy(addmsg);
+        etch_object_destroy(addmsg);
 
         /* it is not yet determined whether the mailbox manager should destroy an
          * unregistered mailbox - for now it does not, so we destroy it now. */
         my_mbox_impl = mailbox->thisx;  /* get implementation from interface */
-        my_mbox_impl->destroy(my_mbox_impl);    
+        etch_object_destroy(my_mbox_impl);    
 
     } while(0);
     
     teardown_this_test();
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
 /**
  * main   
  */
-int _tmain(int argc, _TCHAR* argv[])
+//int wmain( int argc, wchar_t* argv[], wchar_t* envp[])
+CU_pSuite test_etch_mailboxmgr_suite()
 {    
-    char c=0;
-    CU_pSuite pSuite = NULL;
-    g_is_automated_test = argc > 1 && 0 != wcscmp(argv[1], L"-a");
-    if (CUE_SUCCESS != CU_initialize_registry()) return 0;
-    pSuite = CU_add_suite("mailbox manager test suite", init_suite, clean_suite);
-    CU_set_output_filename("../test_mboxmgr");
-    etch_watch_id = 0;  
+    CU_pSuite pSuite = CU_add_suite("mailbox manager test suite", init_suite, clean_suite);
 
     CU_add_test(pSuite, "test test setup",  test_test_setup); 
     CU_add_test(pSuite, "test constructor", test_constructor);
@@ -1768,14 +1766,5 @@ int _tmain(int argc, _TCHAR* argv[])
     CU_add_test(pSuite, "test session message 5", test_session_message_5);
     CU_add_test(pSuite, "test session message 6", test_session_message_6);
 
-    if (g_is_automated_test)    
-        CU_automated_run_tests();    
-    else
-    {   CU_basic_set_mode(CU_BRM_VERBOSE);
-        CU_basic_run_tests();
-    }
-
-    if (!g_is_automated_test) { printf("any key ..."); while(!c) c = _getch(); printf("\n"); }     
-    CU_cleanup_registry();
-    return CU_get_error(); 
+    return pSuite;
 }

@@ -52,24 +52,26 @@
         <copy file="${Etch.basedir}/DISCLAIMER.txt" tofile="${Etch.dist}/DISCLAIMER.txt" />
         <copy file="${Etch.basedir}/RELEASE_NOTES.txt" tofile="${Etch.dist}/RELEASE_NOTES.txt" />
         <copy file="${Etch.basedir}/NOTICE.txt" tofile="${Etch.dist}/NOTICE.txt" />
-        <copy file="${proj}/etch-maven-install.bat" todir="${Etch.dist}/maven" >
+        <copy file="${Etch.basedir}/NOTICE_THIRD_PARTY.txt" tofile="${Etch.dist}/NOTICE_THIRD_PARTY.txt" />
+        <copy file="${Etch.basedir}/LICENSE_THIRD_PARTY.txt" tofile="${Etch.dist}/LICENSE_THIRD_PARTY.txt" />
+        <copy file="${proj}/etch-maven-install.bat" todir="${Etch.dist}/bin" >
             <filterset refid="Etch.buildTokens" />
         </copy>
     </target>
 
     <target name="do-zips" >
         <!-- create zipped binary distribution -->
-        <zip destfile="${target}/${packageName}.zip" >
+        <zip destfile="${target}/${packageName}-${Etch.property.osVersion}-${Etch.property.platformVersion}-bin.zip" >
             <zipfileset dir="${Etch.dist}" prefix="${packageName}/" >
                 <exclude name="bin/etch" />
             </zipfileset>
             <zipfileset dir="${Etch.dist}" prefix="${packageName}/" filemode="755" >
                 <include name="bin/etch" />
-            </zipfileset>                
+            </zipfileset>
         </zip>
 
         <!-- create tar-gzip binary distribution -->
-        <tar destfile="${target}/${packageName}.tar.gz" compression="gzip" >
+        <tar destfile="${target}/${packageName}-${Etch.property.osVersion}-${Etch.property.platformVersion}-bin.tar.gz" compression="gzip" >
             <tarfileset dir="${Etch.dist}" prefix="${packageName}/">
                 <exclude name="bin/etch" />
             </tarfileset>
@@ -80,14 +82,14 @@
     </target>
 
     <target name="do-nsis" if="NSIS.enabled" >
-        <makensis destfile="${target}/${packageName}-setup.exe" root="${Etch.basedir}" dir="installers" script="etch-full-installer" />        
+        <makensis destfile="${target}/${packageName}-${Etch.property.osVersion}-${Etch.property.platformVersion}-setup.exe" root="${Etch.basedir}" dir="installers" script="etch-full-installer" />
     </target>
 
     <target name="do-build" depends="do-txts,do-nsis,do-zips" />
 
     <!-- TEST TARGET -->
     <target name="do-test">
-		<available property="build.tests.fail" file="${Etch.runtime.tests.fail}"/>
+        <available property="build.tests.fail" file="${Etch.runtime.tests.fail}"/>
     </target>
 
     <!-- POSTBUILD TARGET -->

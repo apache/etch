@@ -19,96 +19,43 @@
 /*
  * test_packetizer.c
  */
-
-#include "apr_time.h" /* some apr must be included first */
-#include "etch_packetizer.h"  /* must be included second */
-
-#include <tchar.h>
-#include <stdio.h>
-#include <conio.h>
-
-#include "cunit.h"
-#include "basic.h"
-#include "automated.h"
-
+#include "etch_runtime.h"
+#include "etch_packetizer.h"
 #include "etch_connection.h"
-#include "etch_global.h"
+#include "etch_nativearray.h"
 #include "etch_encoding.h"
-#include "etchthread.h"
-#include "etchlog.h"
+#include "etch_thread.h"
+#include "etch_objecttypes.h"
+#include "etch_general.h"
+#include "etch_log.h"
+#include "etch_mem.h"
 
+#include <stdio.h>
+#include "CUnit.h"
 
-int apr_setup(void);
-int apr_teardown(void);
-int this_setup();
-int this_teardown();
-apr_pool_t* g_apr_mempool;
-const char* pooltag = "etchpool";
+#define IS_DEBUG_CONSOLE FALSE
 
+// extern types
+extern apr_pool_t* g_etch_main_pool;
 
 /* - - - - - - - - - - - - - - 
  * unit test infrastructure
  * - - - - - - - - - - - - - -
  */
-
-int init_suite(void)
+static int init_suite(void)
 {
-    apr_setup();
-    etch_runtime_init(TRUE);
-    return this_setup();
-}
+    etch_status_t etch_status = ETCH_SUCCESS;
 
-int clean_suite(void)
-{
-    this_teardown();
-    etch_runtime_cleanup(0,0); /* free memtable and cache etc */
-    apr_teardown();
-    return 0;
-}
-
-int g_is_automated_test, g_bytes_allocated;
-
-#define IS_DEBUG_CONSOLE FALSE
-
-/*
- * apr_setup()
- * establish apache portable runtime environment
- */
-int apr_setup(void)
-{
-    int result = apr_initialize();
-    if (result == 0)
-    {   result = etch_apr_init();
-        g_apr_mempool = etch_apr_mempool;
+    etch_status = etch_runtime_initialize(NULL);
+    if(etch_status != NULL) {
+        // error
     }
-    if (g_apr_mempool)
-        apr_pool_tag(g_apr_mempool, pooltag);
-    else result = -1;
-    return result;
-}
-
-/*
- * apr_teardown()
- * free apache portable runtime environment
- */
-int apr_teardown(void)
-{
-    if (g_apr_mempool)
-        apr_pool_destroy(g_apr_mempool);
-    g_apr_mempool = NULL;
-    apr_terminate();
     return 0;
 }
 
-
-int this_setup()
+static int clean_suite(void)
 {
-    etch_apr_mempool = g_apr_mempool;
-    return 0;
-}
-
-int this_teardown()
-{    
+    etch_runtime_shutdown();
     return 0;
 }
 
@@ -117,27 +64,27 @@ int this_teardown()
  * - - - - - - - - - - - - - -
  */
 
-etch_packetizer*        g_my_packetizer;
-i_sessionpacket*        g_my_sessionpacket;
-i_transportdata*        g_my_transportdata; 
-etch_flexbuffer*        g_mybuf;
-etch_who*               g_who;
+static etch_packetizer*        g_my_packetizer;
+static i_sessionpacket*        g_my_sessionpacket;
+static i_transportdata*        g_my_transportdata; 
+static etch_flexbuffer*        g_mybuf;
+static etch_who*               g_who;
 
 #define THISTEST_WHO_VALUE 0x5151
-unsigned short CLASSID_MY_IMPL_SP;
-unsigned short CLASSID_MY_IMPL_TD;
+static unsigned short CLASSID_MY_IMPL_SP;
+static unsigned short CLASSID_MY_IMPL_TD;
 
 #define is_my_impl_transportdata(x) \
- (x && ((objmask*)x)->obj_type == ETCHTYPEB_TRANSPORTDATA && ((objmask*)x)->class_id == CLASSID_MY_IMPL_TD)
+ (x && ((etch_object*)x)->obj_type == ETCHTYPEB_TRANSPORTDATA && ((etch_object*)x)->class_id == CLASSID_MY_IMPL_TD)
 
 #define is_my_impl_sessionpkt(x) \
- (x && ((objmask*)x)->obj_type == ETCHTYPEB_SESSIONPKT&& ((objmask*)x)->class_id == CLASSID_MY_IMPL_SP)
+ (x && ((etch_object*)x)->obj_type == ETCHTYPEB_SESSIONPKT&& ((etch_object*)x)->class_id == CLASSID_MY_IMPL_SP)
 
-int check_packetizer_results(i_transportdata*, etch_nativearray*);
-int check_packetizer_resultx(i_sessionpacket*, etch_nativearray*);
-int check_packetized_results (etch_arraylist*, etch_nativearray*);
-int check_packetized_result  (byte* v1, size_t c1, byte* v2, size_t c2);
-etch_arraylist* new_packetizertest_list();
+static int check_packetizer_results(i_transportdata*, etch_nativearray*);
+static int check_packetizer_resultx(i_sessionpacket*, etch_nativearray*);
+static int check_packetized_results (etch_arraylist*, etch_nativearray*);
+static int check_packetized_result  (byte* v1, size_t c1, byte* v2, size_t c2);
+static etch_arraylist* new_packetizertest_list();
 
 
 typedef enum etch_what
@@ -147,11 +94,11 @@ typedef enum etch_what
 } etch_what;
 
 
-int is_equal_who(etch_who* who1, etch_who* who2)
+static int is_equal_who(etch_who* who1, etch_who* who2)
 {
     int n1 = 0, n2 = 0;
     if (!who1 || !who2) return FALSE;
-    if (who1->class_id != CLASSID_WHO || who2->class_id != CLASSID_WHO) return FALSE;
+    if (((etch_object*)who1)->class_id != CLASSID_WHO || ((etch_object*)who2)->class_id != CLASSID_WHO) return FALSE;
     if (!who1->value  || !who2->value) return FALSE;
     if (!is_etch_int32(who1->value) || !is_etch_int32(who2->value)) return FALSE;
     n1 = ((etch_int32*)who1->value)->value;
@@ -171,21 +118,7 @@ int is_equal_who(etch_who* who1, etch_who* who2)
  */
 typedef struct my_impl_transportdata
 {
-    unsigned int    hashkey;  
-    unsigned short  obj_type; 
-    unsigned short  class_id;
-    struct objmask* vtab;  
-    int  (*destroy)(void*);
-    void*(*clone)  (void*); 
-    obj_gethashkey  get_hashkey;
-    struct objmask* parent;
-    etchresult*     result;
-    unsigned int    refcount;
-    unsigned int    length;
-    unsigned char   is_null;
-    unsigned char   is_copy;
-    unsigned char   is_static;
-    unsigned char   reserved;
+    etch_object object;
 
     /* i_transportdata interface and methods, plus original destructor
      * which becomes replaced with a custom destructor to destroy this
@@ -199,7 +132,7 @@ typedef struct my_impl_transportdata
      * invoke the interface's original destructor when destroying the interface.
      */
     i_transportdata* itd;         /* owned */ 
-    objdtor destroy_transportdata;     /* i_transportdata original destructor */
+    etch_object_destructor destroy_transportdata;     /* i_transportdata original destructor */
     etch_transport_data transport_data;  /* i_transportdata::transport_data() */
 
     i_sessiondata*  session;      /* not owned */
@@ -220,35 +153,29 @@ typedef struct my_impl_transportdata
  * destroy_my_impl_transportdata()
  * my_impl_transportdata destructor
  */
-int destroy_my_impl_transportdata (my_impl_transportdata* thisx)
+static int destroy_my_impl_transportdata (void* data)
 {
-    if (thisx->refcount > 0 && --thisx->refcount > 0) return -1;  
 
+  my_impl_transportdata* thisx = (my_impl_transportdata*)data;
     if (!is_etchobj_static_content(thisx))
     {       /* invoke original i_transportdata destructor */
-        if (thisx->itd && thisx->destroy_transportdata)   
+        if (thisx->itd && thisx->destroy_transportdata)
             thisx->destroy_transportdata(thisx->itd);
 
-       if (thisx->list)
-            thisx->list->destroy(thisx->list);
+       etch_object_destroy(thisx->list);
 
-        if (thisx->query)
-            thisx->query->destroy(thisx->query);
+        etch_object_destroy(thisx->query);
 
-        if (thisx->query_result)
-            thisx->query_result->destroy(thisx->query_result);
+        etch_object_destroy(thisx->query_result);
 
-        if (thisx->control)
-            thisx->control->destroy(thisx->control);
+        etch_object_destroy(thisx->control);
 
-        if (thisx->value)
-            thisx->value->destroy(thisx->value);
+        etch_object_destroy(thisx->value);
 
-        if (thisx->eventx)
-            thisx->eventx->destroy(thisx->eventx);
+        etch_object_destroy(thisx->eventx);
     }
 
-   return destroy_objectex((objmask*) thisx);
+   return destroy_objectex((etch_object*) thisx);
 }
 
 
@@ -259,8 +186,12 @@ int destroy_my_impl_transportdata (my_impl_transportdata* thisx)
  * @param whoto caller retains, can be null
  * @param fbuf caller retains
  */
-int impl_transport_data (my_impl_transportdata* mytd, etch_who* whoto, etch_flexbuffer* fbuf)
+static int impl_transport_data (void* data, void* who, void* buffer)
 {
+    my_impl_transportdata* mytd = (my_impl_transportdata*)data;
+    etch_who* whoto = (etch_who*)who;
+    etch_flexbuffer* fbuf = (etch_flexbuffer*)buffer;
+
     etch_nativearray* wrapped_array = NULL;
     byte* newbuf = NULL;
     size_t bytecount = 0;
@@ -275,13 +206,13 @@ int impl_transport_data (my_impl_transportdata* mytd, etch_who* whoto, etch_flex
     newbuf = etch_flexbuf_get_all (fbuf, &bytecount);
 
     /* wrap the packet bytes in an etch_nativearray object */
-    wrapped_array = new_nativearray_from (newbuf,
+    wrapped_array = new_etch_nativearray_from (newbuf,
         CLASSID_ARRAY_BYTE, sizeof(byte), 1, (int) bytecount, 0, 0); 
 
     /* we want wrapped array to own new packet bytes memory */
     wrapped_array->is_content_owned = TRUE;
 
-    return arraylist_add (mytd->list, wrapped_array);
+    return etch_arraylist_add (mytd->list, wrapped_array);
 }
 
 
@@ -289,7 +220,7 @@ int impl_transport_data (my_impl_transportdata* mytd, etch_who* whoto, etch_flex
  * my_transport_control()
  * my_impl_transportdata::itransport::transport_control 
  */
-int my_transport_control (my_impl_transportdata* mytd, etch_object* control, etch_object* value)
+static int my_transport_control (my_impl_transportdata* mytd, etch_object* control, etch_object* value)
 {
     /* changed parameter from i_transportdata* to my_impl_transportdata to correspond to change  
      * in etch_pktizer_transport_control to pass pzr->transport->thisx rather than pzr->transport.
@@ -306,7 +237,7 @@ int my_transport_control (my_impl_transportdata* mytd, etch_object* control, etc
  * my_transport_notify()
  * my_impl_transportdata::itransport::transport_notify 
  */
-int my_transport_notify (my_impl_transportdata* mytd, etch_object* evt)
+static int my_transport_notify (my_impl_transportdata* mytd, etch_object* evt)
 {
     CU_ASSERT_FATAL(is_my_impl_transportdata(mytd));
     mytd->what   = TRANSPORT_NOTIFY;
@@ -319,7 +250,7 @@ int my_transport_notify (my_impl_transportdata* mytd, etch_object* evt)
  * my_transport_query()
  * my_impl_transportdata::itransport::transport_query 
  */
-objmask* my_transport_query (my_impl_transportdata* mytd, etch_object* query) 
+static etch_object* my_transport_query (my_impl_transportdata* mytd, etch_object* query) 
 {
     etch_object* resultobj = NULL;
     CU_ASSERT_FATAL(is_my_impl_transportdata(mytd));
@@ -327,7 +258,7 @@ objmask* my_transport_query (my_impl_transportdata* mytd, etch_object* query)
     mytd->what  = TRANSPORT_QUERY;
     mytd->query = query;
     mytd->query_result = NULL;
-    return (objmask*) resultobj;  /* caller owns */
+    return (etch_object*) resultobj;  /* caller owns */
 }
 
 
@@ -335,7 +266,7 @@ objmask* my_transport_query (my_impl_transportdata* mytd, etch_object* query)
  * my_transport_get_session()
  * my_impl_transportdata::itransport::get_session 
  */
-i_sessiondata* my_transport_get_session (my_impl_transportdata* mytd)
+static i_sessiondata* my_transport_get_session (my_impl_transportdata* mytd)
 {
     ETCH_ASSERT(is_etch_transportdata(mytd));
     return mytd->session;
@@ -346,7 +277,7 @@ i_sessiondata* my_transport_get_session (my_impl_transportdata* mytd)
  * my_transport_set_session()
  * my_impl_transportdata::itransport::set_session
  */
-void my_transport_set_session (my_impl_transportdata* mytd, i_sessiondata* newsession)
+static void my_transport_set_session (my_impl_transportdata* mytd, i_sessiondata* newsession)
 {   
     ETCH_ASSERT(is_etch_transportdata(mytd));
     ETCH_ASSERT(is_etch_sessiondata(newsession));
@@ -360,14 +291,15 @@ void my_transport_set_session (my_impl_transportdata* mytd, i_sessiondata* newse
  * this destructor will destroy its parent (my_impl_transportdata), 
  * which will in turn destroy this object.
  */
-int destroy_my_transportdata(i_transportdata* itd)
+static int destroy_my_transportdata(void* data)
 {
+    i_transportdata* itd = (i_transportdata*)data;
     my_impl_transportdata* mytd = NULL;
     if (NULL == itd) return -1;
 
     mytd = itd->thisx;  
 
-    mytd->destroy(mytd);
+    etch_object_destroy(mytd);
 
     return 0;
 }
@@ -377,18 +309,17 @@ int destroy_my_transportdata(i_transportdata* itd)
  * new_my_impl_transportdata()
  * my_impl_transportdata constructor
  */
-my_impl_transportdata* new_my_impl_transportdata()
+static my_impl_transportdata* new_my_impl_transportdata()
 {
     i_transportdata* itd  = NULL;
     i_transport* itransport = NULL;
     /* this is a model for dynamic class ID assigment */
-    unsigned short class_id = CLASSID_MY_IMPL_TD? CLASSID_MY_IMPL_TD: 
-        (CLASSID_MY_IMPL_TD = get_dynamic_classid());
+    unsigned short class_id = CLASSID_MY_IMPL_TD? CLASSID_MY_IMPL_TD: (CLASSID_MY_IMPL_TD = get_dynamic_classid());
 
     my_impl_transportdata* mytd = (my_impl_transportdata*) new_object
       (sizeof(my_impl_transportdata), ETCHTYPEB_TRANSPORTDATA, class_id);
 
-    mytd->destroy = destroy_my_impl_transportdata;
+    ((etch_object*)mytd)->destroy = destroy_my_impl_transportdata;
 
     itransport = new_transport_interface_ex (mytd,
         (etch_transport_control)     my_transport_control, 
@@ -400,10 +331,10 @@ my_impl_transportdata* new_my_impl_transportdata()
     itd = new_transportdata_interface(mytd, impl_transport_data, itransport);
 
     /* save off i_transportdata destructor */
-    mytd->destroy_transportdata = itd->destroy;   
+    mytd->destroy_transportdata = ((etch_object*)itd)->destroy;   
 
     /* replace i_transportdata destructor with one which will destroy this object */
-    itd->destroy = destroy_my_transportdata;
+    ((etch_object*)itd)->destroy = destroy_my_transportdata;
 
     mytd->list = new_packetizertest_list();
 
@@ -425,21 +356,7 @@ my_impl_transportdata* new_my_impl_transportdata()
  */
 typedef struct my_impl_sessionpacket
 {
-    unsigned int    hashkey;  
-    unsigned short  obj_type; 
-    unsigned short  class_id;
-    struct objmask* vtab;  
-    int  (*destroy)(void*);
-    void*(*clone)  (void*); 
-    obj_gethashkey  get_hashkey;
-    struct objmask* parent;
-    etchresult*     result;
-    unsigned int    refcount;
-    unsigned int    length;
-    unsigned char   is_null;
-    unsigned char   is_copy;
-    unsigned char   is_static;
-    unsigned char   reserved;
+    etch_object object;
 
     /* i_sessionpacket interface and methods, plus original destructor
      * which becomes replaced with a custom destructor to destroy this
@@ -454,7 +371,7 @@ typedef struct my_impl_sessionpacket
      */
     i_sessionpacket* isp;          /* owned */
 
-    objdtor destroy_sessionpacket; /* i_sessionpacket original destructor */
+    etch_object_destructor destroy_sessionpacket; /* i_sessionpacket original destructor */
     etch_session_packet session_packet;  /* session_packet() */
 
     etch_what       what;          
@@ -473,35 +390,29 @@ typedef struct my_impl_sessionpacket
  * destroy_my_impl_sessionpacket()
  * my_impl_sessionpacket destructor
  */
-int destroy_my_impl_sessionpacket(my_impl_sessionpacket* thisx)
+static int destroy_my_impl_sessionpacket(void* data)
 {
-    if (thisx->refcount > 0 && --thisx->refcount > 0) return -1;  
 
+    my_impl_sessionpacket* thisx = (my_impl_sessionpacket*)data;
     if (!is_etchobj_static_content(thisx))
     {       /* invoke original i_sessionpacket destructor */
         if (thisx->isp && thisx->destroy_sessionpacket)   
             thisx->destroy_sessionpacket(thisx->isp);
   
-        if (thisx->list)
-            thisx->list->destroy(thisx->list);
+        etch_object_destroy(thisx->list);
 
-        if (thisx->query)
-            thisx->query->destroy(thisx->query);
+        etch_object_destroy(thisx->query);
 
-        if (thisx->query_result)
-            thisx->query_result->destroy(thisx->query_result);
+        etch_object_destroy(thisx->query_result);
 
-        if (thisx->control)
-            thisx->control->destroy(thisx->control);
+        etch_object_destroy(thisx->control);
 
-        if (thisx->value)
-            thisx->value->destroy(thisx->value);
+        etch_object_destroy(thisx->value);
 
-        if (thisx->eventx)
-            thisx->eventx->destroy(thisx->eventx);
+        etch_object_destroy(thisx->eventx);
     }
 
-   return destroy_objectex((objmask*) thisx);
+   return destroy_objectex((etch_object*) thisx);
 }
 
 
@@ -511,8 +422,12 @@ int destroy_my_impl_sessionpacket(my_impl_sessionpacket* thisx)
  * @param whofrom caller retains, can be null
  * @param fbuf caller retains
  */
-int impl_session_packet (my_impl_sessionpacket* mysp, etch_who* whofrom, etch_flexbuffer* fbuf)
+static int impl_session_packet (void* data, void* who, void* buffer)
 {
+    my_impl_sessionpacket* mysp = (my_impl_sessionpacket*)data;
+    etch_who* whofrom = (etch_who*)who;
+    etch_flexbuffer* fbuf = (etch_flexbuffer*)buffer;
+
     etch_nativearray* wrapped_array = NULL;
     byte* newbuf = NULL;
     size_t bytecount = 0;
@@ -524,13 +439,13 @@ int impl_session_packet (my_impl_sessionpacket* mysp, etch_who* whofrom, etch_fl
     newbuf = etch_flexbuf_get_all(fbuf, &bytecount);
 
     /* wrap the packet bytes in an etch_nativearray object */
-    wrapped_array = new_nativearray_from(newbuf,
+    wrapped_array = new_etch_nativearray_from(newbuf,
         CLASSID_ARRAY_BYTE, sizeof(byte), 1, (int) bytecount, 0, 0); 
 
     /* we want wrapped array to own new packet bytes memory */
     wrapped_array->is_content_owned = TRUE;
 
-    return arraylist_add(mysp->list, wrapped_array);
+    return etch_arraylist_add(mysp->list, wrapped_array);
 }
 
 
@@ -538,7 +453,7 @@ int impl_session_packet (my_impl_sessionpacket* mysp, etch_who* whofrom, etch_fl
  * my_session_control()
  * my_impl_sessionpacket::isession::session_control 
  */
-int my_session_control (my_impl_sessionpacket* mysp, etch_object* control, etch_object* value)
+static int my_session_control (my_impl_sessionpacket* mysp, etch_object* control, etch_object* value)
 {
     CU_ASSERT_FATAL(is_my_impl_sessionpkt(mysp));
     mysp->what    = SESSION_CONTROL;
@@ -552,7 +467,7 @@ int my_session_control (my_impl_sessionpacket* mysp, etch_object* control, etch_
  * my_session_notify()
  * my_impl_sessionpacket::isession::session_notify 
  */
-int my_session_notify (my_impl_sessionpacket* mysp, etch_object* evt)
+static int my_session_notify (my_impl_sessionpacket* mysp, etch_object* evt)
 {
     CU_ASSERT_FATAL(is_my_impl_sessionpkt(mysp));
     mysp->what   = SESSION_NOTIFY;
@@ -565,7 +480,7 @@ int my_session_notify (my_impl_sessionpacket* mysp, etch_object* evt)
  * my_session_query()
  * my_impl_sessionpacket::isession::session_query 
  */
-objmask* my_session_query (my_impl_sessionpacket* mysp, etch_object* query) 
+static etch_object* my_session_query (my_impl_sessionpacket* mysp, etch_object* query) 
 {
     etch_object* resultobj = NULL;
     CU_ASSERT_FATAL(is_my_impl_sessionpkt(mysp));
@@ -573,7 +488,7 @@ objmask* my_session_query (my_impl_sessionpacket* mysp, etch_object* query)
     mysp->what  = SESSION_QUERY;
     mysp->query = query;
     mysp->query_result = NULL;
-    return (objmask*) resultobj;  /* caller owns */
+    return (etch_object*) resultobj;  /* caller owns */
 }
 
 
@@ -582,9 +497,9 @@ objmask* my_session_query (my_impl_sessionpacket* mysp, etch_object* query)
  * constructor for a list which owns content memory and where content is etch_object derived.
  * content will be etch_nativearray objects
  */
-etch_arraylist* new_packetizertest_list()
+static etch_arraylist* new_packetizertest_list()
 {
-    etch_arraylist* list = new_arraylist(32,0);
+    etch_arraylist* list = new_etch_arraylist(32,0);
     list->content_type = ETCHARRAYLIST_CONTENT_OBJECT; /* list can call destroy() on list item */
     list->is_readonly  = FALSE;
     return list;
@@ -597,14 +512,15 @@ etch_arraylist* new_packetizertest_list()
  * this destructor will destroy its parent (my_impl_sessionpacket), 
  * which will in turn destroy this object.
  */
-int destroy_my_sessionpacket(i_sessionpacket* itp)
+static int destroy_my_sessionpacket(void* data)
 {
+    i_sessionpacket* itp = (i_sessionpacket*)data;
     my_impl_sessionpacket* mytp = NULL;
     if (NULL == itp) return -1;
 
     mytp = itp->thisx;  
 
-    mytp->destroy(mytp);
+    etch_object_destroy(mytp);
 
     return 0;
 }
@@ -614,7 +530,7 @@ int destroy_my_sessionpacket(i_sessionpacket* itp)
  * new_my_impl_sessionpacket()
  * my_impl_sessionpacket constructor
  */
-my_impl_sessionpacket* new_my_impl_sessionpacket()
+static my_impl_sessionpacket* new_my_impl_sessionpacket()
 {
     i_sessionpacket* isessionpkt  = NULL;
     i_session* isession = NULL;
@@ -625,7 +541,7 @@ my_impl_sessionpacket* new_my_impl_sessionpacket()
     my_impl_sessionpacket* mysessionpkt = (my_impl_sessionpacket*) new_object
       (sizeof(my_impl_sessionpacket), ETCHTYPEB_SESSIONPKT, class_id);
 
-    mysessionpkt->destroy = destroy_my_impl_sessionpacket;
+    ((etch_object*)mysessionpkt)->destroy = destroy_my_impl_sessionpacket;
 
     mysessionpkt->list = new_packetizertest_list();
 
@@ -637,10 +553,10 @@ my_impl_sessionpacket* new_my_impl_sessionpacket()
     isessionpkt = new_sessionpkt_interface(mysessionpkt, impl_session_packet, isession);
 
     /* save off i_sessionpacket destructor */
-    mysessionpkt->destroy_sessionpacket = isessionpkt->destroy;
+    mysessionpkt->destroy_sessionpacket = ((etch_object*)isessionpkt)->destroy;
 
     /* replace i_sessionpacket destructor with one which will destroy this object */
-    isessionpkt->destroy = destroy_my_sessionpacket;
+    ((etch_object*)isessionpkt)->destroy = destroy_my_sessionpacket;
 
     /* g_my_sessionpacket will get set to this interface */
     mysessionpkt->isp = isessionpkt;  
@@ -663,7 +579,7 @@ my_impl_sessionpacket* new_my_impl_sessionpacket()
  * control arrays are passed as an etch_nativearray of two dimensions, created 
  * from a static 2-dimensional array.
  */
-int check_packetizer_results(i_transportdata* itd, etch_nativearray* expected_array)
+static int check_packetizer_results(i_transportdata* itd, etch_nativearray* expected_array)
 {   
     my_impl_transportdata*  mytd = (my_impl_transportdata*) itd->thisx;
     const int packetcount = mytd->list->count; /* # of result arrays in list */
@@ -690,7 +606,7 @@ int check_packetizer_results(i_transportdata* itd, etch_nativearray* expected_ar
  * control arrays are passed as an etch_nativearray of two dimensions, created 
  * from a static 2-dimensional array.
  */
-int check_packetizer_resultx(i_sessionpacket* isp, etch_nativearray* expected_array)
+static int check_packetizer_resultx(i_sessionpacket* isp, etch_nativearray* expected_array)
 {   
     my_impl_sessionpacket*  mysp = (my_impl_sessionpacket*) isp->thisx;
     const int packetcount = mysp->list->count; /* # of result arrays in list */
@@ -711,7 +627,7 @@ int check_packetizer_resultx(i_sessionpacket* isp, etch_nativearray* expected_ar
 /**
  * check_packetized_results()
  */
-int check_packetized_results(etch_arraylist* list, etch_nativearray* expected_array)
+static int check_packetized_results(etch_arraylist* list, etch_nativearray* expected_array)
 {
     etch_iterator iterator;
     int result = 0, errors = 0, i = 0;
@@ -720,7 +636,7 @@ int check_packetized_results(etch_arraylist* list, etch_nativearray* expected_ar
     while(iterator.has_next(&iterator))
     {   
         /* get result (one-dimension byte array) out of list */
-        etch_nativearray* resultobj = arraylist_get(list, i);
+        etch_nativearray* resultobj = etch_arraylist_get(list, i);
         byte*  packetizedbytes = resultobj->values;   
         size_t packetizedbytecount = resultobj->dimension[0];
 
@@ -749,7 +665,7 @@ int check_packetized_results(etch_arraylist* list, etch_nativearray* expected_ar
  * each represented as a byte vector. the array can be a packet, or a packet payload,
  * depending on tested direction of the packetizer call.
  */
-int check_packetized_result (byte* v1, size_t c1, byte* v2, size_t c2)
+static int check_packetized_result (byte* v1, size_t c1, byte* v2, size_t c2)
 {   
     byte  *p = 0, *q = 0;
     size_t i = 0, errors = 0;
@@ -774,7 +690,7 @@ int check_packetized_result (byte* v1, size_t c1, byte* v2, size_t c2)
 /**
  * setup_this_test()
  */
-int setup_this_test()
+static int setup_this_test()
 {
     my_impl_transportdata* mytd_impl = NULL;
     my_impl_sessionpacket* mysp_impl = NULL;
@@ -802,7 +718,7 @@ int setup_this_test()
     mysp_impl = new_my_impl_sessionpacket();
     g_my_sessionpacket = mysp_impl->isp;
     
-    g_who = new_who(new_int32(THISTEST_WHO_VALUE), TRUE);
+    g_who = new_who(new_int32(THISTEST_WHO_VALUE));
 
     /* finally instantiate the test packetizer */
     g_my_packetizer = new_packetizer(g_my_transportdata, L"tcp", NULL);
@@ -816,18 +732,17 @@ int setup_this_test()
 /**
  * teardown_this_test()
  */
-int teardown_this_test()
+static int teardown_this_test()
 {
-    g_my_packetizer->destroy(g_my_packetizer);
+    etch_object_destroy(g_my_packetizer);
 
-    g_my_sessionpacket->destroy(g_my_sessionpacket);  // destroy() is now 0xfeeefeee
+    etch_object_destroy(g_my_sessionpacket);  // destroy() is now 0xfeeefeee
 
-    g_my_transportdata->destroy(g_my_transportdata);
+    etch_object_destroy(g_my_transportdata);
 
-    g_who->destroy(g_who);
+    etch_object_destroy(g_who);
 
-    if (g_mybuf)
-        g_mybuf->destroy(g_mybuf);
+    etch_object_destroy(g_mybuf);
 
     g_my_packetizer = NULL;
     g_my_sessionpacket = NULL; 
@@ -847,7 +762,7 @@ int teardown_this_test()
 /**
  * test_sessionpacket_constructor()
  */
-void test_sessionpacket_constructor(void)
+static void test_sessionpacket_constructor(void)
 {
     my_impl_sessionpacket* mysp_impl = new_my_impl_sessionpacket();
     CU_ASSERT_PTR_NOT_NULL_FATAL(mysp_impl);
@@ -857,20 +772,23 @@ void test_sessionpacket_constructor(void)
      */
     do 
     {   i_sessionpacket* isp = mysp_impl->isp;
-        isp->destroy(isp);
+        etch_object_destroy(isp);
 
     } while(0);
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
 /**
  * test_transportdata_constructor()
  */
-void test_transportdata_constructor(void)
+static void test_transportdata_constructor(void)
 {
     my_impl_transportdata* mytd_impl = new_my_impl_transportdata();
     CU_ASSERT_PTR_NOT_NULL_FATAL(mytd_impl);
@@ -880,20 +798,23 @@ void test_transportdata_constructor(void)
      */
     do 
     {   i_transportdata* itd = mytd_impl->itd;
-        itd->destroy(itd);
+        etch_object_destroy(itd);
 
     } while(0);
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
 /**
  * test_packetizer_constructor()
  */
-void test_packetizer_constructor(void)
+static void test_packetizer_constructor(void)
 {
     etch_packetizer* pzr = NULL;
     i_transportdata* itd = NULL;
@@ -906,17 +827,22 @@ void test_packetizer_constructor(void)
     CU_ASSERT_PTR_NOT_NULL_FATAL(itd);
 
     /* packetizer does not own i_transportdata* itd */
-    pzr = new_packetizer(itd, L"tcp", NULL);
+	pzr = new_packetizer(itd, L"tcp://127.0.0.1:4001?Packetizer.maxPktSize=110480", NULL);
+	CU_ASSERT_TRUE(pzr->maxpacketsize == 110480);
+
     CU_ASSERT_PTR_NOT_NULL_FATAL(pzr);
 
-    pzr->destroy(pzr);
+    etch_object_destroy(pzr);
 
     /* i_transportdata.destroy() will destroy my_impl_transportdata */
-    itd->destroy(itd);
+    etch_object_destroy(itd);
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -926,7 +852,7 @@ void test_packetizer_constructor(void)
  * if this test fails, all subsequent tests would also fail.
  * all subsequent tests should include this skeleton code.
  */
-void test_test_setup(void)
+static void test_test_setup(void)
 {
     int result = setup_this_test();
 
@@ -938,9 +864,12 @@ void test_test_setup(void)
 
     teardown_this_test();
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE);  
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -948,12 +877,13 @@ void test_test_setup(void)
  * test_to_source_packet1()
  * test 1 for packets delivered to packet source
  */
-void test_to_source_packet1(void)
+static void test_to_source_packet1(void)
 {
     setup_this_test();
 
     do          
-    {   int result = 0;
+    {
+        int result = 0;
         byte* disposable_packet = NULL;
         #define EXPECTED_HEADERSIZE 8
         etch_nativearray* expected_result_array = NULL;
@@ -970,13 +900,13 @@ void test_to_source_packet1(void)
 
         CU_ASSERT_EQUAL_FATAL(g_my_packetizer->headersize, EXPECTED_HEADERSIZE);
 
-        expected_result_array = new_nativearray_from
+        expected_result_array = new_etch_nativearray_from
           (&expected_result, CLASSID_ARRAY_BYTE, sizeof(byte), 2, EXPECTED_HEADERSIZE, 1, 0);
       
         disposable_packet = etch_malloc(sizeof(empty_packet), ETCHTYPEB_BYTES);
         memcpy(disposable_packet, empty_packet, sizeof(empty_packet));
        
-        g_mybuf = new_flexbuffer_from(disposable_packet, sizeof(empty_packet), 1024, 0);
+        g_mybuf = new_flexbuffer_from(disposable_packet, sizeof(empty_packet), 8, 0);
         CU_ASSERT_PTR_NOT_NULL_FATAL(g_mybuf);
 
         result = g_my_packetizer->transport_packet(g_my_packetizer, g_who, g_mybuf);
@@ -989,15 +919,18 @@ void test_to_source_packet1(void)
         result = is_equal_who(mytransport->recipient, g_who);
         CU_ASSERT_EQUAL(result, TRUE);
 
-        expected_result_array->destroy(expected_result_array);
+        etch_object_destroy(expected_result_array);
 
      } while(0);
 
     teardown_this_test();
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE);  
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -1005,7 +938,7 @@ void test_to_source_packet1(void)
  * test_to_source_packet2()
  * test 2 for packets delivered to packet source
  */
-void test_to_source_packet2(void)
+static void test_to_source_packet2(void)
 {
    setup_this_test();
 
@@ -1027,13 +960,13 @@ void test_to_source_packet2(void)
 
         CU_ASSERT_EQUAL_FATAL(g_my_packetizer->headersize, EXPECTED_HEADERSIZE);
 
-        expected_result_array = new_nativearray_from
+        expected_result_array = new_etch_nativearray_from
           (&expected_result, CLASSID_ARRAY_BYTE, sizeof(byte), 2, TTSP2BYTECOUNT, 1, 0);
       
         disposable_packet = etch_malloc(sizeof(test_packet), ETCHTYPEB_BYTES);
         memcpy(disposable_packet, test_packet, sizeof(test_packet));
        
-        g_mybuf = new_flexbuffer_from(disposable_packet, sizeof(test_packet), 64, 0);
+        g_mybuf = new_flexbuffer_from(disposable_packet, sizeof(test_packet), 9, 0);
         CU_ASSERT_PTR_NOT_NULL_FATAL(g_mybuf);
 
         result = g_my_packetizer->transport_packet(g_my_packetizer, g_who, g_mybuf);
@@ -1046,15 +979,18 @@ void test_to_source_packet2(void)
         result = is_equal_who(mytransport->recipient, g_who);
         CU_ASSERT_EQUAL(result, TRUE);
 
-        expected_result_array->destroy(expected_result_array);
+        etch_object_destroy(expected_result_array);
 
     } while(0);
 
     teardown_this_test();
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE);  
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -1062,7 +998,7 @@ void test_to_source_packet2(void)
  * test_to_source_packet3()
  * test 3 for packets delivered to packet source
  */
-void test_to_source_packet3(void)
+static void test_to_source_packet3(void)
 {
     setup_this_test();
 
@@ -1084,13 +1020,13 @@ void test_to_source_packet3(void)
 
         CU_ASSERT_EQUAL_FATAL(g_my_packetizer->headersize, EXPECTED_HEADERSIZE);
 
-        expected_result_array = new_nativearray_from
+        expected_result_array = new_etch_nativearray_from
           (&expected_result, CLASSID_ARRAY_BYTE, sizeof(byte), 2, TTSP3BYTECOUNT, 1, 0);
       
         disposable_packet = etch_malloc(sizeof(test_packet), ETCHTYPEB_BYTES);
         memcpy(disposable_packet, test_packet, sizeof(test_packet));
        
-        g_mybuf = new_flexbuffer_from(disposable_packet, sizeof(test_packet), 64, 0);
+        g_mybuf = new_flexbuffer_from(disposable_packet, sizeof(test_packet), 10, 0);
         CU_ASSERT_PTR_NOT_NULL_FATAL(g_mybuf);
 
         result = g_my_packetizer->transport_packet(g_my_packetizer, g_who, g_mybuf);
@@ -1103,15 +1039,18 @@ void test_to_source_packet3(void)
         result = is_equal_who(mytransport->recipient, g_who);
         CU_ASSERT_EQUAL(result, TRUE);
 
-        expected_result_array->destroy(expected_result_array);
+        etch_object_destroy(expected_result_array);
 
     } while(0);
 
     teardown_this_test();
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE);  
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -1119,7 +1058,7 @@ void test_to_source_packet3(void)
  * test_to_source_badpacket1()
  * test 4 for packets delivered to packet source
  */
-void test_to_source_badpacket1(void)
+static void test_to_source_badpacket1(void)
 {
     setup_this_test();
 
@@ -1127,8 +1066,6 @@ void test_to_source_badpacket1(void)
     {   int result = 0;
         #define TTSP4BYTECOUNT 7
         byte* disposable_packet = NULL;
-        etch_nativearray* expected_result_array = NULL;
-        my_impl_transportdata* mytransport = g_my_transportdata->thisx; 
 
         byte test_packet[TTSP4BYTECOUNT] = { 0,0,0,0, 0,0,0 }; /* too short */
       
@@ -1145,9 +1082,12 @@ void test_to_source_badpacket1(void)
 
     teardown_this_test();
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE);  
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -1155,7 +1095,7 @@ void test_to_source_badpacket1(void)
  * test_badpacket1()
  * test 1 for bad packet data
  */
-void test_badpacket1(void)
+static void test_badpacket1(void)
 {
    setup_this_test();
 
@@ -1177,7 +1117,7 @@ void test_badpacket1(void)
         result = g_my_packetizer->session_data(g_my_packetizer, g_who, g_mybuf);
         CU_ASSERT_EQUAL(result, -1);
 
-        g_mybuf->destroy(g_mybuf); g_mybuf = NULL;
+        etch_object_destroy(g_mybuf); g_mybuf = NULL;
 
         /* bad signature 2 */
         disposable_packet = etch_malloc(sizeof(test_packet_2), ETCHTYPEB_BYTES);
@@ -1189,7 +1129,7 @@ void test_badpacket1(void)
         result = g_my_packetizer->session_data(g_my_packetizer, g_who, g_mybuf);
         CU_ASSERT_EQUAL(result, -1);
 
-        g_mybuf->destroy(g_mybuf); g_mybuf = NULL; 
+        etch_object_destroy(g_mybuf); g_mybuf = NULL; 
 
         /* bad data length (65536) */
         disposable_packet = etch_malloc(sizeof(test_packet_3), ETCHTYPEB_BYTES);
@@ -1201,15 +1141,18 @@ void test_badpacket1(void)
         result = g_my_packetizer->session_data(g_my_packetizer, g_who, g_mybuf);
         CU_ASSERT_EQUAL(result, -1);
 
-        g_mybuf->destroy(g_mybuf); g_mybuf = NULL; 
+        etch_object_destroy(g_mybuf); g_mybuf = NULL; 
 
     } while(0);
 
     teardown_this_test();
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE);  
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -1217,7 +1160,7 @@ void test_badpacket1(void)
  * test_single_single_data()
  * 3 tests for single packet in a single buffer
  */
-void test_single_single_data(void)
+static void test_single_single_data(void)
 {
     setup_this_test();
 
@@ -1269,20 +1212,20 @@ void test_single_single_data(void)
         CU_ASSERT_EQUAL(mysessionpkt->what, WHAT_NONE);
         CU_ASSERT_PTR_NULL(mysessionpkt->sender);
 
-        g_mybuf->destroy(g_mybuf); g_mybuf = NULL;
+        etch_object_destroy(g_mybuf); g_mybuf = NULL;
 
         /* test 2 */ 
         disposable_packet = etch_malloc(sizeof(test_packet_2), ETCHTYPEB_BYTES);
         memcpy(disposable_packet, test_packet_2, sizeof(test_packet_2));
        
-        g_mybuf = new_flexbuffer_from(disposable_packet, sizeof(test_packet_2), 64, 0);
+        g_mybuf = new_flexbuffer_from(disposable_packet, sizeof(test_packet_2), 9, 0);
         CU_ASSERT_PTR_NOT_NULL_FATAL(g_mybuf);
         CU_ASSERT_EQUAL(g_mybuf->datalen, sizeof(test_packet_2));
 
         result = g_my_packetizer->session_data (g_my_packetizer, g_who, g_mybuf);
         CU_ASSERT_EQUAL(result,0);
 
-        expected_result_2_array = new_nativearray_from
+        expected_result_2_array = new_etch_nativearray_from
          (&expected_result_2, CLASSID_ARRAY_BYTE, sizeof(byte), 2, TSPSB2RESULTBYTECOUNT, 1, 0);
 
         result = check_packetizer_resultx (g_my_sessionpacket, expected_result_2_array);
@@ -1292,22 +1235,22 @@ void test_single_single_data(void)
         result = is_equal_who(mysessionpkt->sender, g_who);
         CU_ASSERT_EQUAL(result, TRUE);
 
-        expected_result_2_array->destroy(expected_result_2_array);
-        g_mybuf->destroy(g_mybuf); g_mybuf = NULL; 
-        arraylist_clear (mysessionpkt->list, TRUE);
+        etch_object_destroy(expected_result_2_array);
+        etch_object_destroy(g_mybuf); g_mybuf = NULL; 
+        etch_arraylist_clear (mysessionpkt->list, TRUE);
 
         /* test 3 */
         disposable_packet = etch_malloc(sizeof(test_packet_3), ETCHTYPEB_BYTES);
         memcpy(disposable_packet, test_packet_3, sizeof(test_packet_3));
        
-        g_mybuf = new_flexbuffer_from(disposable_packet, sizeof(test_packet_3), 64, 0);
+        g_mybuf = new_flexbuffer_from(disposable_packet, sizeof(test_packet_3), 10, 0);
         CU_ASSERT_PTR_NOT_NULL_FATAL(g_mybuf);
         CU_ASSERT_EQUAL(g_mybuf->datalen, sizeof(test_packet_3));
 
         result = g_my_packetizer->session_data (g_my_packetizer, g_who, g_mybuf);
         CU_ASSERT_EQUAL(result,0);
 
-        expected_result_3_array = new_nativearray_from
+        expected_result_3_array = new_etch_nativearray_from
           (&expected_result_3, CLASSID_ARRAY_BYTE, sizeof(byte), 2, TSPSB3RESULTBYTECOUNT, 1, 0);
         
         result = check_packetizer_resultx (g_my_sessionpacket, expected_result_3_array);
@@ -1317,16 +1260,19 @@ void test_single_single_data(void)
         result = is_equal_who(mysessionpkt->sender, g_who);
         CU_ASSERT_EQUAL(result, TRUE);
 
-        expected_result_3_array->destroy(expected_result_3_array);
-        g_mybuf->destroy(g_mybuf); g_mybuf = NULL; 
+        etch_object_destroy(expected_result_3_array);
+        etch_object_destroy(g_mybuf); g_mybuf = NULL; 
 
     } while(0);
 
     teardown_this_test();
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE);  
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -1334,7 +1280,7 @@ void test_single_single_data(void)
  * test_two_in_one_buffer_data_1()
  * test two packets in a single buffer
  */
-void test_two_in_one_buffer_data_1(void)
+static void test_two_in_one_buffer_data_1(void)
 {
     setup_this_test();
 
@@ -1364,15 +1310,18 @@ void test_two_in_one_buffer_data_1(void)
         CU_ASSERT_EQUAL(mysessionpkt->what, WHAT_NONE);
         CU_ASSERT_PTR_NULL(mysessionpkt->sender);
 
-        g_mybuf->destroy(g_mybuf); g_mybuf = NULL;
+        etch_object_destroy(g_mybuf); g_mybuf = NULL;
 
     } while(0);
 
     teardown_this_test();
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE);  
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -1380,7 +1329,7 @@ void test_two_in_one_buffer_data_1(void)
  * test_two_in_one_buffer_data_2()
  * test two packets in a single buffer - 2
  */
-void test_two_in_one_buffer_data_2(void)
+static void test_two_in_one_buffer_data_2(void)
 {
     setup_this_test();
 
@@ -1404,14 +1353,14 @@ void test_two_in_one_buffer_data_2(void)
 
         my_impl_sessionpacket* mysessionpkt = g_my_sessionpacket->thisx; 
 
-        etch_nativearray* expected_result_array = new_nativearray_from
+        etch_nativearray* expected_result_array = new_etch_nativearray_from
           (&expected_result, CLASSID_ARRAY_BYTE, sizeof(byte), 2, 
             TWOIN1_2_RESULT_BYTECOUNT, 1, 0);
 
         disposable_packet = etch_malloc(sizeof(test_packet), ETCHTYPEB_BYTES);
         memcpy(disposable_packet, test_packet, sizeof(test_packet));
        
-        g_mybuf = new_flexbuffer_from(disposable_packet, sizeof(test_packet), 64, 0);
+        g_mybuf = new_flexbuffer_from(disposable_packet, sizeof(test_packet), 17, 0);
         CU_ASSERT_PTR_NOT_NULL_FATAL(g_mybuf);
         CU_ASSERT_EQUAL(g_mybuf->datalen, sizeof(test_packet));
 
@@ -1425,16 +1374,19 @@ void test_two_in_one_buffer_data_2(void)
         result = is_equal_who(mysessionpkt->sender, g_who);
         CU_ASSERT_EQUAL(result, TRUE);
        
-        g_mybuf->destroy(g_mybuf); g_mybuf = NULL;
-        expected_result_array->destroy(expected_result_array);
+        etch_object_destroy(g_mybuf); g_mybuf = NULL;
+        etch_object_destroy(expected_result_array);
 
     } while(0);
 
     teardown_this_test();
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE);  
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -1442,7 +1394,7 @@ void test_two_in_one_buffer_data_2(void)
  * test_two_in_one_buffer_data_3()
  * test two packets in a single buffer - 3
  */
-void test_two_in_one_buffer_data_3(void)
+static void test_two_in_one_buffer_data_3(void)
 {
     setup_this_test();
 
@@ -1466,14 +1418,14 @@ void test_two_in_one_buffer_data_3(void)
 
         my_impl_sessionpacket* mysessionpkt = g_my_sessionpacket->thisx; 
 
-        etch_nativearray* expected_result_array = new_nativearray_from
+        etch_nativearray* expected_result_array = new_etch_nativearray_from
           (&expected_result, CLASSID_ARRAY_BYTE, sizeof(byte), 2, 
             TWOIN1_3_RESULT_BYTECOUNT, 1, 0);
 
         disposable_packet = etch_malloc(sizeof(test_packet), ETCHTYPEB_BYTES);
         memcpy(disposable_packet, test_packet, sizeof(test_packet));
        
-        g_mybuf = new_flexbuffer_from(disposable_packet, sizeof(test_packet), 64, 0);
+        g_mybuf = new_flexbuffer_from(disposable_packet, sizeof(test_packet), 17, 0);
         CU_ASSERT_PTR_NOT_NULL_FATAL(g_mybuf);
         CU_ASSERT_EQUAL(g_mybuf->datalen, sizeof(test_packet));
 
@@ -1487,16 +1439,19 @@ void test_two_in_one_buffer_data_3(void)
         result = is_equal_who(mysessionpkt->sender, g_who);
         CU_ASSERT_EQUAL(result, TRUE);
 
-        g_mybuf->destroy(g_mybuf); g_mybuf = NULL;
-        expected_result_array->destroy(expected_result_array);
+        etch_object_destroy(g_mybuf); g_mybuf = NULL;
+        etch_object_destroy(expected_result_array);
 
     } while(0);
 
     teardown_this_test();
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE);  
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -1504,7 +1459,7 @@ void test_two_in_one_buffer_data_3(void)
  * test_two_in_one_buffer_data_4()
  * test two packets in a single buffer - 4
  */
-void test_two_in_one_buffer_data_4(void)
+static void test_two_in_one_buffer_data_4(void)
 {
     setup_this_test();
 
@@ -1535,7 +1490,7 @@ void test_two_in_one_buffer_data_4(void)
 
         my_impl_sessionpacket* mysessionpkt = g_my_sessionpacket->thisx; 
 
-        etch_nativearray* expected_result_array = new_nativearray_from
+        etch_nativearray* expected_result_array = new_etch_nativearray_from
           (&expected_result, CLASSID_ARRAY_BYTE, 
                 sizeof(byte), /* size of an array item is 1 */
                 2,            /* count of dimensions [2][1] */
@@ -1560,16 +1515,19 @@ void test_two_in_one_buffer_data_4(void)
         result = is_equal_who(mysessionpkt->sender, g_who);
         CU_ASSERT_EQUAL(result, TRUE);
 
-        g_mybuf->destroy(g_mybuf); g_mybuf = NULL;
-        expected_result_array->destroy(expected_result_array);
+        etch_object_destroy(g_mybuf); g_mybuf = NULL;
+        etch_object_destroy(expected_result_array);
 
     } while(0);
 
     teardown_this_test();
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE);  
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -1577,7 +1535,7 @@ void test_two_in_one_buffer_data_4(void)
  * test_two_in_one_buffer_data_5()
  * test two packets in a single buffer - 5
  */
-void test_two_in_one_buffer_data_5(void)
+static void test_two_in_one_buffer_data_5(void)
 {
     setup_this_test();
 
@@ -1608,7 +1566,7 @@ void test_two_in_one_buffer_data_5(void)
 
         my_impl_sessionpacket* mysessionpkt = g_my_sessionpacket->thisx; 
 
-        etch_nativearray* expected_result_array = new_nativearray_from
+        etch_nativearray* expected_result_array = new_etch_nativearray_from
           (&expected_result, CLASSID_ARRAY_BYTE, 
                 sizeof(byte), /* size of an array item is 1 */
                 2,            /* count of dimensions [2][2] */
@@ -1633,16 +1591,19 @@ void test_two_in_one_buffer_data_5(void)
         result = is_equal_who(mysessionpkt->sender, g_who);
         CU_ASSERT_EQUAL(result, TRUE);
 
-        g_mybuf->destroy(g_mybuf); g_mybuf = NULL;
-        expected_result_array->destroy(expected_result_array);
+        etch_object_destroy(g_mybuf); g_mybuf = NULL;
+        etch_object_destroy(expected_result_array);
 
     } while(0);
 
     teardown_this_test();
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE);  
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -1651,7 +1612,7 @@ void test_two_in_one_buffer_data_5(void)
  * test two packets in two buffers with header split across buffers
  * packets are empty in this test
  */
-void test_two_in_two_buffers_data_1(void)
+static void test_two_in_two_buffers_data_1(void)
 {
     setup_this_test();
 
@@ -1702,16 +1663,19 @@ void test_two_in_two_buffers_data_1(void)
         CU_ASSERT_PTR_NULL(mysessionpkt->sender);
 
         /* done - free memory */
-        g_mybuf->destroy(g_mybuf); g_mybuf = NULL;
-        mybuf2 ->destroy(mybuf2);    
+        etch_object_destroy(g_mybuf); g_mybuf = NULL;
+        etch_object_destroy(mybuf2);    
 
     } while(0);
 
     teardown_this_test();
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE);  
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -1720,7 +1684,7 @@ void test_two_in_two_buffers_data_1(void)
  * test two packets in two buffers with header split across buffers
  * packets include bodies in this test
  */
-void test_two_in_two_buffers_data_2(void)
+static void test_two_in_two_buffers_data_2(void)
 {
     setup_this_test();
 
@@ -1756,7 +1720,7 @@ void test_two_in_two_buffers_data_2(void)
 
         my_impl_sessionpacket* mysessionpkt = g_my_sessionpacket->thisx; 
 
-        etch_nativearray* expected_result_array = new_nativearray_from
+        etch_nativearray* expected_result_array = new_etch_nativearray_from
           (&expected_result, CLASSID_ARRAY_BYTE, 
                 sizeof(byte), /* size of an array item is 1 */
                 2,            /* count of dimensions [2][2] */
@@ -1798,17 +1762,20 @@ void test_two_in_two_buffers_data_2(void)
         CU_ASSERT_EQUAL(result, TRUE);
       
         /* done - free memory */
-        expected_result_array->destroy(expected_result_array);
-        g_mybuf->destroy(g_mybuf); g_mybuf = NULL;
-        mybuf2 ->destroy(mybuf2);    
+        etch_object_destroy(expected_result_array);
+        etch_object_destroy(g_mybuf); g_mybuf = NULL;
+        etch_object_destroy(mybuf2);    
 
     } while(0);
 
     teardown_this_test();
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE);  
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -1816,11 +1783,11 @@ void test_two_in_two_buffers_data_2(void)
  * test_two_in_two_buffers_data_3()
  * test two packets in two buffers with body split across buffers
  */
-void test_two_in_two_buffers_data_3(void)
+static void test_two_in_two_buffers_data_3(void)
 {
     setup_this_test();
 
-    do          
+    do
     {   int result = 0; 
         #define TWOIN2_3_BUF1_BYTECOUNT (8 + 1)     /* header1 + body1 1 of 2 */
         #define TWOIN2_3_BUF2_BYTECOUNT (1 + 8 + 2) /* body1 2 of 2 + header2 + body2 */
@@ -1852,7 +1819,7 @@ void test_two_in_two_buffers_data_3(void)
 
         my_impl_sessionpacket* mysessionpkt = g_my_sessionpacket->thisx; 
 
-        etch_nativearray* expected_result_array = new_nativearray_from
+        etch_nativearray* expected_result_array = new_etch_nativearray_from
           (&expected_result, CLASSID_ARRAY_BYTE, 
                 sizeof(byte), /* size of an array item is 1 */
                 2,            /* count of dimensions [2][2] */
@@ -1894,17 +1861,20 @@ void test_two_in_two_buffers_data_3(void)
         CU_ASSERT_EQUAL(result, TRUE);
 
         /* done - free memory */
-        expected_result_array->destroy(expected_result_array);
-        g_mybuf->destroy(g_mybuf); g_mybuf = NULL;
-        mybuf2 ->destroy(mybuf2);    
+        etch_object_destroy(expected_result_array);
+        etch_object_destroy(g_mybuf); g_mybuf = NULL;
+        etch_object_destroy(mybuf2);    
 
     } while(0);
 
     teardown_this_test();
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE);  
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -1912,7 +1882,7 @@ void test_two_in_two_buffers_data_3(void)
  * test_two_in_two_buffers_data_4()
  * test two packets in two buffers with body split across buffers
  */
-void test_two_in_two_buffers_data_4(void)
+static void test_two_in_two_buffers_data_4(void)
 {
     setup_this_test();
 
@@ -1946,7 +1916,7 @@ void test_two_in_two_buffers_data_4(void)
             },
         };
 
-        etch_nativearray* expected_result_array = new_nativearray_from
+        etch_nativearray* expected_result_array = new_etch_nativearray_from
           (&expected_result, CLASSID_ARRAY_BYTE, 
                 sizeof(byte), /* size of an array item is 1 */
                 2,            /* count of dimensions [2][2] */
@@ -1961,7 +1931,7 @@ void test_two_in_two_buffers_data_4(void)
         disposable_packet = etch_malloc(sizeof(buf1_data), ETCHTYPEB_BYTES);
         memcpy(disposable_packet, buf1_data, sizeof(buf1_data));
        
-        g_mybuf = new_flexbuffer_from(disposable_packet, sizeof(buf1_data), 0, 0);
+        g_mybuf = new_flexbuffer_from(disposable_packet, sizeof(buf1_data), 10, 0);
         CU_ASSERT_PTR_NOT_NULL_FATAL(g_mybuf);
         CU_ASSERT_EQUAL(g_mybuf->datalen, sizeof(buf1_data));
 
@@ -1989,17 +1959,20 @@ void test_two_in_two_buffers_data_4(void)
         result = is_equal_who(mysessionpkt->sender, g_who);
         CU_ASSERT_EQUAL(result, TRUE);
         /* done - free memory */
-        expected_result_array->destroy(expected_result_array);
-        g_mybuf->destroy(g_mybuf); g_mybuf = NULL;
-        mybuf2 ->destroy(mybuf2);    
+        etch_object_destroy(expected_result_array);
+        etch_object_destroy(g_mybuf); g_mybuf = NULL;
+        etch_object_destroy(mybuf2);    
 
    } while(0);
 
     teardown_this_test();
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE);  
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -2007,15 +1980,15 @@ void test_two_in_two_buffers_data_4(void)
  * test_session_control
  * test the session control notification plumbing
  */
-void test_session_control(void)
+static void test_session_control(void)
 {
     setup_this_test();
 
     do          
-    {   int result = 0;
+    {   
         const int MY_CONTROL_CLASSID = 0x5200, MY_VALUE_CLASSID = 0x5201;
-        etch_object* mycontrolobj = new_etch_object(MY_CONTROL_CLASSID, NULL);
-        etch_object* myvalueobj   = new_etch_object(MY_VALUE_CLASSID, NULL);
+        etch_object* mycontrolobj = new_object(sizeof(etch_object),ETCHTYPEB_ETCHOBJECT, MY_CONTROL_CLASSID);
+        etch_object* myvalueobj   = new_object(sizeof(etch_object),ETCHTYPEB_ETCHOBJECT, MY_VALUE_CLASSID);
 
         /* g_my_sessionpacket is the i_sessionpacket interface    
          * my_impl_sessionpacket is the implementing test class */
@@ -2028,20 +2001,23 @@ void test_session_control(void)
         /* we relinquish memory for mycontrolobj and myvalueobj here. 
          * the session_control terminal destination must destroy them, which here
          * is handled by our session object destructor when we teardown_this_test() */
-        g_my_packetizer->session_control (g_my_packetizer, mycontrolobj, myvalueobj);
+        g_my_packetizer->session_control (g_my_packetizer, (void*)mycontrolobj, myvalueobj);
 
         CU_ASSERT_EQUAL(my_session->what, SESSION_CONTROL);
         CU_ASSERT_PTR_NOT_NULL_FATAL(my_session->control);
-        CU_ASSERT_EQUAL(my_session->control->class_id, MY_CONTROL_CLASSID);
-        CU_ASSERT_EQUAL(my_session->value->class_id,   MY_VALUE_CLASSID);
+        CU_ASSERT_EQUAL(((etch_object*)my_session->control)->class_id, MY_CONTROL_CLASSID);
+        CU_ASSERT_EQUAL(((etch_object*)my_session->value)->class_id,   MY_VALUE_CLASSID);
 
     } while(0);
 
     teardown_this_test();
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -2049,14 +2025,14 @@ void test_session_control(void)
  * test_session_notify
  * test the session notify notification plumbing
  */
-void test_session_notify(void)
+static void test_session_notify(void)
 {
     setup_this_test();
 
     do          
-    {   int result = 0;
+    {   
         const int MY_EVENT_CLASSID = 0x5202;
-        etch_object* myeventobj = new_etch_object(MY_EVENT_CLASSID, NULL);
+        etch_object* myeventobj = new_object(sizeof(etch_object),ETCHTYPEB_ETCHOBJECT, MY_EVENT_CLASSID);
 
         /* g_my_sessionpacket is the i_sessionpacket interface    
          * my_impl_sessionpacket is the implementing test class */
@@ -2068,19 +2044,22 @@ void test_session_notify(void)
         /* we relinquish memory for myeventobj here. 
          * the session_control terminal destination must destroy it, which here
          * is handled by our session object destructor when we teardown_this_test() */
-        g_my_packetizer->session_notify(g_my_packetizer, myeventobj);
+        g_my_packetizer->session_notify(g_my_packetizer, (void*)myeventobj);
 
         CU_ASSERT_EQUAL(my_session->what, SESSION_NOTIFY);
         CU_ASSERT_PTR_NOT_NULL_FATAL(my_session->eventx);
-        CU_ASSERT_EQUAL(my_session->eventx->class_id, MY_EVENT_CLASSID);
+        CU_ASSERT_EQUAL(((etch_object*)my_session->eventx)->class_id, MY_EVENT_CLASSID);
 
     } while(0);
 
     teardown_this_test();
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -2088,15 +2067,15 @@ void test_session_notify(void)
  * test_session_query
  * test the session query notification plumbing
  */
-void test_session_query(void)
+static void test_session_query(void)
 {
     setup_this_test();
 
     do          
-    {   int result = 0;
+    {   
         const int MY_QUERY_CLASSID = 0x5203, MY_RESULT_CLASSID = 0x5204;
-        etch_object* myqueryobj  = new_etch_object(MY_QUERY_CLASSID, NULL);
-        etch_object* myresultobj = new_etch_object(MY_RESULT_CLASSID, NULL);
+        etch_object* myqueryobj  = new_object(sizeof(etch_object),ETCHTYPEB_ETCHOBJECT, MY_QUERY_CLASSID);
+        etch_object* myresultobj = new_object(sizeof(etch_object),ETCHTYPEB_ETCHOBJECT, MY_RESULT_CLASSID);
         etch_object* queryresult = NULL;
 
         /* g_my_sessionpacket is the i_sessionpacket interface    
@@ -2112,22 +2091,25 @@ void test_session_query(void)
         /* we relinquish memory for myqueryobj here and assume queryresult. 
          * the session_control terminal destination must destroy it, which here
          * is handled by our session object destructor when we teardown_this_test() */
-        queryresult = g_my_packetizer->session_query(g_my_packetizer, myqueryobj);
+        queryresult = g_my_packetizer->session_query(g_my_packetizer, (etch_query*)myqueryobj);
 
         CU_ASSERT_EQUAL(my_session->what, SESSION_QUERY);
         CU_ASSERT_PTR_NOT_NULL_FATAL(my_session->query);
-        CU_ASSERT_EQUAL(my_session->query->class_id, MY_QUERY_CLASSID);
+        CU_ASSERT_EQUAL(((etch_object*)my_session->query)->class_id, MY_QUERY_CLASSID);
         CU_ASSERT_PTR_NOT_NULL_FATAL(queryresult);
-        CU_ASSERT_EQUAL(queryresult->class_id, MY_RESULT_CLASSID);
-        queryresult->destroy(queryresult);
+        CU_ASSERT_EQUAL(((etch_object*)queryresult)->class_id, MY_RESULT_CLASSID);
+        etch_object_destroy(queryresult);
 
     } while(0);
 
     teardown_this_test();
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -2135,15 +2117,15 @@ void test_session_query(void)
  * test_transport_control
  * test the transport control notification plumbing
  */
-void test_transport_control(void)
+static void test_transport_control(void)
 {
     setup_this_test();
 
     do          
-    {   int result = 0;
+    {   
         const int MY_CONTROL_CLASSID = 0x5200, MY_VALUE_CLASSID = 0x5201;
-        etch_object* mycontrolobj = new_etch_object(MY_CONTROL_CLASSID, NULL);
-        etch_object* myvalueobj   = new_etch_object(MY_VALUE_CLASSID, NULL);
+        etch_object* mycontrolobj = new_object(sizeof(etch_object),ETCHTYPEB_ETCHOBJECT, MY_CONTROL_CLASSID);
+        etch_object* myvalueobj   = new_object(sizeof(etch_object),ETCHTYPEB_ETCHOBJECT, MY_VALUE_CLASSID);
 
         /* g_my_transportdata is the i_transportdata interface    
          * my_impl_transportdata is the implementing test class */
@@ -2156,20 +2138,23 @@ void test_transport_control(void)
         /* we relinquish memory for mycontrolobj and myvalueobj here. 
          * the transport_control terminal destination must destroy them, which here
          * is handled by our transport object destructor when we teardown_this_test() */
-        g_my_packetizer->transport_control(g_my_packetizer, mycontrolobj, myvalueobj);
+        g_my_packetizer->transport_control(g_my_packetizer, (etch_event*)mycontrolobj, myvalueobj);
 
         CU_ASSERT_EQUAL(my_transport->what, TRANSPORT_CONTROL);
         CU_ASSERT_PTR_NOT_NULL_FATAL(my_transport->control);
-        CU_ASSERT_EQUAL(my_transport->control->class_id, MY_CONTROL_CLASSID);
-        CU_ASSERT_EQUAL(my_transport->value->class_id,   MY_VALUE_CLASSID);
+        CU_ASSERT_EQUAL(((etch_object*)my_transport->control)->class_id, MY_CONTROL_CLASSID);
+        CU_ASSERT_EQUAL(((etch_object*)my_transport->value)->class_id,   MY_VALUE_CLASSID);
 
     } while(0);
 
     teardown_this_test();
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -2177,14 +2162,14 @@ void test_transport_control(void)
  * test_transport_notify
  * test the transport notify notification plumbing
  */
-void test_transport_notify(void)
+static void test_transport_notify(void)
 {
     setup_this_test();
 
     do          
-    {   int result = 0;
+    {   
         const int MY_EVENT_CLASSID = 0x5202;
-        etch_object* myeventobj = new_etch_object(MY_EVENT_CLASSID, NULL);
+        etch_object* myeventobj = new_object(sizeof(etch_object),ETCHTYPEB_ETCHOBJECT, MY_EVENT_CLASSID);
 
         /* g_my_transportdata is the i_transportdata interface    
          * my_impl_transportdata is the implementing test class */
@@ -2197,19 +2182,22 @@ void test_transport_notify(void)
         /* we relinquish memory for myeventobj here. 
          * the transport_control terminal destination must destroy it, which here
          * is handled by our transport object destructor when we teardown_this_test() */
-        g_my_packetizer->transport_notify(g_my_packetizer, myeventobj);
+        g_my_packetizer->transport_notify(g_my_packetizer, (etch_event*)myeventobj);
 
         CU_ASSERT_EQUAL(my_transport->what, TRANSPORT_NOTIFY);
         CU_ASSERT_PTR_NOT_NULL_FATAL(my_transport->eventx);
-        CU_ASSERT_EQUAL(my_transport->eventx->class_id, MY_EVENT_CLASSID);
+        CU_ASSERT_EQUAL(((etch_object*)my_transport->eventx)->class_id, MY_EVENT_CLASSID);
 
     } while(0);
 
     teardown_this_test();
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -2217,15 +2205,15 @@ void test_transport_notify(void)
  * test_transport_query
  * test the transport query notification plumbing
  */
-void test_transport_query(void)
+static void test_transport_query(void)
 {
     setup_this_test();
 
     do          
-    {   int result = 0;
+    {   
         const int MY_QUERY_CLASSID = 0x5203, MY_RESULT_CLASSID = 0x5204;
-        etch_object* myqueryobj  = new_etch_object(MY_QUERY_CLASSID, NULL);
-        etch_object* myresultobj = new_etch_object(MY_RESULT_CLASSID, NULL);
+        etch_object* myqueryobj  = new_object(sizeof(etch_object),ETCHTYPEB_ETCHOBJECT, MY_QUERY_CLASSID);
+        etch_object* myresultobj = new_object(sizeof(etch_object),ETCHTYPEB_ETCHOBJECT, MY_RESULT_CLASSID);
         etch_object* queryresult = NULL;
 
         /* g_my_transportdata is the i_transportdata interface    
@@ -2241,37 +2229,35 @@ void test_transport_query(void)
         /* we relinquish memory for myqueryobj here and assume queryresult. 
          * the transport_control terminal destination must destroy it, which here
          * is handled by our transport object destructor when we teardown_this_test() */
-        queryresult = g_my_packetizer->transport_query(g_my_packetizer, myqueryobj);
+        queryresult = g_my_packetizer->transport_query(g_my_packetizer, (etch_query*)myqueryobj);
 
         CU_ASSERT_EQUAL(my_transport->what, TRANSPORT_QUERY);
         CU_ASSERT_PTR_NOT_NULL_FATAL(my_transport->query);
-        CU_ASSERT_EQUAL(my_transport->query->class_id, MY_QUERY_CLASSID);
+        CU_ASSERT_EQUAL(((etch_object*)my_transport->query)->class_id, MY_QUERY_CLASSID);
         CU_ASSERT_PTR_NOT_NULL_FATAL(queryresult);
-        CU_ASSERT_EQUAL(queryresult->class_id, MY_RESULT_CLASSID);
-        queryresult->destroy(queryresult);
+        CU_ASSERT_EQUAL(((etch_object*)queryresult)->class_id, MY_RESULT_CLASSID);
+        etch_object_destroy(queryresult);
 
     } while(0);
 
     teardown_this_test();
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
 /**
  * main   
  */
-int _tmain(int argc, _TCHAR* argv[])
+//int wmain( int argc, wchar_t* argv[], wchar_t* envp[])
+CU_pSuite test_etch_packetizer_suite()
 {
-    char c=0;
-    CU_pSuite ps = NULL;
-    g_is_automated_test = argc > 1 && 0 != wcscmp(argv[1], L"-a");
-    if (CUE_SUCCESS != CU_initialize_registry()) return 0;
-    CU_set_output_filename("../test_packetizer");
-    ps = CU_add_suite("suite_packetizer", init_suite, clean_suite);
-    etch_watch_id = 0; 
+    CU_pSuite ps = CU_add_suite("suite_packetizer", init_suite, clean_suite);
 
     CU_add_test(ps, "test sessionpacket ctor/dtor", test_sessionpacket_constructor);
     CU_add_test(ps, "test transportdata ctor/dtor", test_transportdata_constructor);
@@ -2301,14 +2287,5 @@ int _tmain(int argc, _TCHAR* argv[])
     CU_add_test(ps, "test transport notify",  test_transport_notify); 
     CU_add_test(ps, "test transport query",  test_transport_query); 
 
-    if (g_is_automated_test)    
-        CU_automated_run_tests();    
-    else
-    {   CU_basic_set_mode(CU_BRM_VERBOSE);
-        CU_basic_run_tests();
-    }
-
-    if (!g_is_automated_test) { printf("any key ..."); while(!c) c = _getch(); wprintf(L"\n"); }     
-    CU_cleanup_registry();
-    return CU_get_error();
+    return ps;
 }

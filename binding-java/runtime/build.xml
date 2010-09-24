@@ -80,12 +80,12 @@
     <macrodef name="bundle-jars" >
         <attribute name="dist" default="${Etch.dist}" />
         <sequential>
-            <mkdir dir="@{dist}/lib" />
+            <mkdir dir="@{dist}/binding-java/lib" />
 
             <!-- CREATE jars -->
 
             <!-- Package up etch-java-runtime jar -->
-            <jar jarfile="@{dist}/lib/${etch-java-runtime.jar}" >
+            <jar jarfile="@{dist}/binding-java/lib/${etch-java-runtime.jar}" >
                 <manifest>
                     <attribute name="Copyright"    value="${Etch.copyrightNotice}" />
                     <attribute name="Version"      value="${Etch.version}" />
@@ -113,7 +113,7 @@
             <!-- CREATE source archives -->
 
             <!-- package up etch-java-runtime src -->
-            <zip destfile="@{dist}/lib/${etch-java-runtime-src.zip}" >
+            <zip destfile="@{dist}/binding-java/${etch-java-runtime-src.zip}" >
                 <fileset dir="${src}/main/java" >
                     <include name="org/apache/etch/bindings/**/*.java" />
                 </fileset>
@@ -131,26 +131,26 @@
         <attribute name="support" default="${Etch.support}" />
         <sequential>
             <!-- repackage .jar -->
-            <mkdir dir="@{dist}/lib" />
+            <mkdir dir="@{dist}/binding-java/lib" />
             <delete dir="${target}/tmp-runtime"  quiet="true" />
             <mkdir dir="${target}/tmp-runtime" />
 
             <unjar src="@{support}/lib/${etch-util.jar}"     dest="${target}/tmp-runtime" />
-            <unjar src="@{support}/lib/${etch-java-runtime.jar}" dest="${target}/tmp-runtime" />
+            <unjar src="@{support}/binding-java/lib/${etch-java-runtime.jar}" dest="${target}/tmp-runtime" />
 
-            <jar jarfile="@{dist}/lib/${etch-java-runtime.jar}" update="true" filesetmanifest="merge" >
-                <fileset dir="${target}/tmp-runtime"  />
+            <jar jarfile="@{dist}/binding-java/lib/${etch-java-runtime.jar}" update="true" filesetmanifest="merge" >
+                <fileset dir="${target}/tmp-runtime" />
             </jar>
             
             <!-- repackage .zip src -->
-            <mkdir dir="@{dist}/lib" />
+            <mkdir dir="@{dist}/binding-java" />
             <delete dir="${target}/tmp-runtime-src"  quiet="true" />
             <mkdir dir="${target}/tmp-runtime-src" />
             
             <unzip src="@{support}/lib/${etch-util-src.zip}" dest="${target}/tmp-runtime-src" />
-            <unzip src="@{support}/lib/${etch-java-runtime-src.zip}" dest="${target}/tmp-runtime-src" />
+            <unzip src="@{support}/binding-java/${etch-java-runtime-src.zip}" dest="${target}/tmp-runtime-src" />
             
-            <zip destfile="@{dist}/lib/${etch-java-runtime-src.zip}" >
+            <zip destfile="@{dist}/binding-java/${etch-java-runtime-src.zip}" >
                 <fileset dir="${target}/tmp-runtime-src" />
             </zip>
             
@@ -200,11 +200,11 @@
         <!-- initialize-clover -->
         <initialize-clover suffix="etchjavabinding" >
             <fileset dir="${src}/main/java">
-                <exclude name="**/.svn/**" />                
+                <exclude name="**/.svn/**" />
                 <include name="**/*.java" />
             </fileset>
             <testsources dir="${src}/test/java">
-                <exclude name="**/.svn/**" />                
+                <exclude name="**/.svn/**" />
                 <include name="**/*.java" />
             </testsources>
         </initialize-clover>
@@ -226,8 +226,7 @@
     <target name="do-build" depends="generate-sources,compile-for-dist,compile-for-clover" />
 
     <!-- TEST TARGET -->
-    <target name="do-test">
-
+    <target name="do-test" unless="build.skip.tests">
         <!-- Run Unit Tests -->
         <junit printsummary="yes" haltonfailure="no" dir="${classesDirectory}"
             errorProperty="build.tests.fail" failureProperty="build.tests.fail">
@@ -242,7 +241,7 @@
             <formatter type="xml"/>
             <batchtest fork="true" todir="${testResultsDirectory}">
                 <fileset dir="${src}/test/java">
-                    <exclude name="**/.svn/**" />                    
+                    <exclude name="**/.svn/**" />
                     <include name="**/*.java" />
                 </fileset>
             </batchtest>

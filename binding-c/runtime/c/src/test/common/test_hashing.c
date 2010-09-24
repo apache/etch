@@ -20,110 +20,57 @@
  * test_hashing.c 
  * test hashing of various complex items and associated memory management 
  */
-#include "apr_time.h" /* some apr must be included first */
+
+#include "etch_runtime.h"
 #include "etch_binary_tdi.h"  /* must be included second */
 #include "etch_binary_tdo.h"
-
-#include <tchar.h>
-#include <stdio.h>
-#include <conio.h>
-
-#include "cunit.h"
-#include "basic.h"
-#include "automated.h"
-
 #include "etch_connection.h"
-#include "etch_global.h"
 #include "etch_id_name.h"
 #include "etch_field.h"
 #include "etch_type.h"
-#include "etchlog.h"
+#include "etch_log.h"
+#include "etch_mem.h"
 
-int apr_setup(void);
-int apr_teardown(void);
-int this_setup();
-int this_teardown();
-apr_pool_t* g_apr_mempool;
-const char* pooltag = "etchpool";
+#include <stdio.h>
+#include "CUnit.h"
+
 #define IS_DEBUG_CONSOLE FALSE
 
+// extern types
+extern apr_pool_t* g_etch_main_pool;
 
-int init_suite(void)
-{
-    apr_setup();
-    etch_runtime_init(TRUE);
-    return this_setup();
-}
+// intern types
+static int g_is_automated_test;
 
-int clean_suite(void)
-{
-    this_teardown();
-    etch_runtime_cleanup(0,0); /* free memtable and cache etc */
-    apr_teardown();
-    return 0;
-}
-
-
-/*
- * apr_setup()
- * establish apache portable runtime environment
+/* - - - - - - - - - - - - - - 
+ * unit test infrastructure
+ * - - - - - - - - - - - - - -
  */
-int apr_setup(void)
+
+static int init_suite(void)
 {
-    int result = apr_initialize();
-    if (result == 0)
-    {   result = etch_apr_init();
-        g_apr_mempool = etch_apr_mempool;
+    etch_status_t etch_status = ETCH_SUCCESS;
+
+    etch_status = etch_runtime_initialize(NULL);
+    if(etch_status != NULL) {
+        // error
     }
-    if (g_apr_mempool)
-        apr_pool_tag(g_apr_mempool, pooltag);
-    else result = -1;
-    return result;
+    return 0;
 }
 
-/*
- * apr_teardown()
- * free apache portable runtime environment
- */
-int apr_teardown(void)
+static int clean_suite(void)
 {
-    if (g_apr_mempool)
-        apr_pool_destroy(g_apr_mempool);
-    g_apr_mempool = NULL;
-    apr_terminate();
+    //this_teardown();
+    etch_runtime_shutdown();
     return 0;
 }
-
-
-/* - - - - - - - - - - - - - - - - - - - - - - 
- * local declarations 
- * - - - - - - - - - - - - - - - - - - - - - -
- */
-
-
-/* - - - - - - - - - - - - - - - - - - - - - - 
- * local setup and teardown
- * - - - - - - - - - - - - - - - - - - - - - -
- */
-
-int this_setup()
-{
-    etch_apr_mempool = g_apr_mempool;
-    return 0;
-}
-
-int this_teardown()
-{    
-    return 0;
-}
-
 
 /* - - - - - - - - - - - - - - - - - - - - - - 
  * individual setup and teardown
  * - - - - - - - - - - - - - - - - - - - - - -
  */
 
-int this_test_setup()
+static int this_test_setup()
 {
     int result = -1;
 
@@ -135,24 +82,21 @@ int this_test_setup()
     return result;
 }
 
-int this_test_teardown()
+static int this_test_teardown()
 {    
 
     return 0;
 }
-
-int g_is_automated_test, g_bytes_allocated;
-
 
 /**
  * destroy_content_id_name()
  * passed a content pointer out of the hashtable, interprets pointer as etch_id_name,
  * frees the name string, and frees the etch_id_name shell.
  */
-int destroy_content_id_name(void* content)
+static int destroy_content_id_name(void* content)
 {
     etch_id_name*  idname = (etch_id_name*) content;
-    return idname? idname->destroy(idname): -1;
+    return idname? etch_object_destroy(idname): -1;
     return 0;
 }
 
@@ -160,20 +104,20 @@ int destroy_content_id_name(void* content)
 /**
  * destroy_content_field()
  */
-int destroy_content_field(void* content)
+static int destroy_content_field(void* content)
 {
     etch_field* field = (etch_field*) content;
-    return field? field->destroy(field): -1;
+    return field? etch_object_destroy(field): -1;
 }
 
 
 /**
  * destroy_content_type()
  */
-int destroy_content_type(void* content)
+static int destroy_content_type(void* content)
 {
     etch_type* type = (etch_type*) content;
-    return type? type->destroy(type): -1;
+    return type? etch_object_destroy(type): -1;
 }
 
 
@@ -183,7 +127,7 @@ int destroy_content_type(void* content)
  * are etch_id_name typedefs), as hashkeys, and subsequently acccess the original
  * objects, individually clean up the keys, and ask hashtable to clean up the values.
  */
-void test_idname_as_key_hashclean_values(void)
+static void test_idname_as_key_hashclean_values(void)
 {
     etch_field*   my_field  = NULL;
     etch_type*    my_type   = NULL;
@@ -214,12 +158,13 @@ void test_idname_as_key_hashclean_values(void)
     int result = 0, result1 = 0, result2 = 0, result3 = 0;
     unsigned bytes_allocated = 0;
 
-    value1 = etch_malloc(numBytes1 + 2, 0);   
-    value2 = etch_malloc(numBytes2 + 2, 0);  
-    value3 = etch_malloc(numBytes3 + 2, 0);  
-    wcscpy_s(value1, numElements1+1, name1);   
-    wcscpy_s(value2, numElements2+1, name2);   
-    wcscpy_s(value3, numElements3+1, name3);   
+    value1 = etch_malloc(numBytes1 + sizeof(wchar_t), 0);
+    value2 = etch_malloc(numBytes2 + sizeof(wchar_t), 0);
+    value3 = etch_malloc(numBytes3 + sizeof(wchar_t), 0);
+
+    wcscpy(value1, name1);
+    wcscpy(value2, name2);
+    wcscpy(value3, name3);
 
     myhashtab = new_hashtable(16);  
     myhashtab->is_readonly_keys   = TRUE;  /* keys will NOT be freed on destroy */
@@ -235,53 +180,50 @@ void test_idname_as_key_hashclean_values(void)
     CU_ASSERT_PTR_NOT_NULL_FATAL(my_type);
 
     /* ensure constructors populated the hash key */
-    CU_ASSERT_NOT_EQUAL_FATAL(my_idname->hashkey,0);
-    CU_ASSERT_NOT_EQUAL_FATAL(my_field->hashkey,0);
-    CU_ASSERT_NOT_EQUAL_FATAL(my_type->hashkey,0);
+    CU_ASSERT_NOT_EQUAL_FATAL(((etch_object*)my_idname)->get_hashkey(my_idname),0);
+    CU_ASSERT_NOT_EQUAL_FATAL(((etch_object*)my_field)->get_hashkey(my_field),0);
+    CU_ASSERT_NOT_EQUAL_FATAL(((etch_object*)my_type)->get_hashkey(my_type),0);
 
     /* ensure constructors populated the wire id */
     CU_ASSERT_NOT_EQUAL_FATAL(my_idname->id,0);
     CU_ASSERT_NOT_EQUAL_FATAL(my_field->id,0);
     CU_ASSERT_NOT_EQUAL_FATAL(my_type->id,0);
 
-    result = myhashtab->vtab->inserth(myhashtab->realtable, my_idname, value1, 0, 0);
+    result = ((struct i_hashtable*)((etch_object*)myhashtab)->vtab)->inserth(myhashtab->realtable, my_idname, value1, 0, 0);
     CU_ASSERT_EQUAL_FATAL(result,0);
 
-    result = myhashtab->vtab->inserth(myhashtab->realtable, my_field, value2, 0, 0);
+    result = ((struct i_hashtable*)((etch_object*)myhashtab)->vtab)->inserth(myhashtab->realtable, my_field, value2, 0, 0);
     CU_ASSERT_EQUAL_FATAL(result,0);
 
-    result = myhashtab->vtab->inserth(myhashtab->realtable, my_type, value3, 0, 0);
+    result = ((struct i_hashtable*)((etch_object*)myhashtab)->vtab)->inserth(myhashtab->realtable, my_type, value3, 0, 0);
     CU_ASSERT_EQUAL_FATAL(result,0);
 
-    result = myhashtab->vtab->findh(myhashtab->realtable, my_idname->hashkey, myhashtab, &myentry);
+    result = ((struct i_hashtable*)((etch_object*)myhashtab)->vtab)->findh(myhashtab->realtable, ((etch_object*)my_idname)->get_hashkey(my_idname), myhashtab, &myentry);
     CU_ASSERT_EQUAL(result,0);
     CU_ASSERT_PTR_NOT_NULL(myentry->key);
     CU_ASSERT_PTR_NOT_NULL(myentry->value);
     result = destroy_content_id_name(myentry->key);
-    CU_ASSERT_EQUAL(result,0);    
+    CU_ASSERT_EQUAL(result,0);
 
-    result = myhashtab->vtab->findh(myhashtab->realtable, my_field->hashkey, myhashtab, &myentry);
+    result = ((struct i_hashtable*)((etch_object*)myhashtab)->vtab)->findh(myhashtab->realtable, ((etch_object*)my_field)->hashkey, myhashtab, &myentry);
     CU_ASSERT_EQUAL(result,0);
     CU_ASSERT_PTR_NOT_NULL(myentry->key);
     CU_ASSERT_PTR_NOT_NULL(myentry->value);
     result = destroy_content_field(myentry->key);
-    CU_ASSERT_EQUAL(result,0);   
+    CU_ASSERT_EQUAL(result,0);
 
-    result = myhashtab->vtab->findh(myhashtab->realtable, my_type->hashkey, myhashtab, &myentry);
+    result = ((struct i_hashtable*)((etch_object*)myhashtab)->vtab)->findh(myhashtab->realtable, ((etch_object*)my_type)->hashkey, myhashtab, &myentry);
     CU_ASSERT_EQUAL(result,0);
     CU_ASSERT_PTR_NOT_NULL(myentry->key);
     CU_ASSERT_PTR_NOT_NULL(myentry->value);
     result = destroy_content_type(myentry->key);
-    CU_ASSERT_EQUAL(result,0);  
+    CU_ASSERT_EQUAL(result,0);
 
     /** above we looked up each item and freed memory for the id_name, field, and type keys,
      * but not for their values. when we created the map we specified is_readonly_keys, so the
      * map destructor will free memory for the value content, but not for the key content. */
-    myhashtab->destroy(myhashtab);
+    etch_object_destroy(myhashtab);
 
-    bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE);  /* verify all memory freed */
-    CU_ASSERT_EQUAL(bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */   
 }
 
 
@@ -291,7 +233,7 @@ void test_idname_as_key_hashclean_values(void)
  * are etch_id_name typedefs), as hashkeys, and subsequently acccess the original
  * objects and clean up both the keys and values.
  */
-void test_idname_as_key_hashclean_none(void)
+static void test_idname_as_key_hashclean_none(void)
 {
     etch_field*   my_field  = NULL;
     etch_type*    my_type   = NULL;
@@ -325,9 +267,15 @@ void test_idname_as_key_hashclean_none(void)
     value1 = etch_malloc(numBytes1 + 2, 0);   
     value2 = etch_malloc(numBytes2 + 2, 0);  
     value3 = etch_malloc(numBytes3 + 2, 0);  
-    wcscpy_s(value1, numElements1+1, name1);   
-    wcscpy_s(value2, numElements2+1, name2);   
-    wcscpy_s(value3, numElements3+1, name3);   
+    
+//	wcscpy_s(value1, numElements1+1, name1);   
+//    wcscpy_s(value2, numElements2+1, name2);   
+//    wcscpy_s(value3, numElements3+1, name3);   
+
+	wcscpy(value1, name1);   
+    wcscpy(value2, name2);   
+    wcscpy(value3, name3);   
+
 
     actlen1 = wcslen(name1);  actlen2 = wcslen(name2); actlen3 = wcslen(name3);
 
@@ -353,25 +301,25 @@ void test_idname_as_key_hashclean_none(void)
     CU_ASSERT_PTR_NOT_NULL_FATAL(my_type);
 
    /* ensure constructors populated the hash key */
-    CU_ASSERT_NOT_EQUAL_FATAL(my_idname->hashkey,0);
-    CU_ASSERT_NOT_EQUAL_FATAL(my_field->hashkey,0);
-    CU_ASSERT_NOT_EQUAL_FATAL(my_type->hashkey,0);
+    CU_ASSERT_NOT_EQUAL_FATAL(((etch_object*)my_idname)->hashkey,0);
+    CU_ASSERT_NOT_EQUAL_FATAL(((etch_object*)my_field)->hashkey,0);
+    CU_ASSERT_NOT_EQUAL_FATAL(((etch_object*)my_type)->hashkey,0);
 
     /* ensure constructors populated the id (hash of name) */
     CU_ASSERT_NOT_EQUAL_FATAL(my_idname->id,0);
     CU_ASSERT_NOT_EQUAL_FATAL(my_field->id,0);
     CU_ASSERT_NOT_EQUAL_FATAL(my_type->id,0);
 
-    result = myhashtab->vtab->inserth(myhashtab->realtable, my_idname, value1, 0, 0);
+    result = ((struct i_hashtable*)((etch_object*)myhashtab)->vtab)->inserth(myhashtab->realtable, my_idname, value1, 0, 0);
     CU_ASSERT_EQUAL_FATAL(result,0);
 
-    result = myhashtab->vtab->inserth(myhashtab->realtable, my_field, value2, 0, 0);
+    result = ((struct i_hashtable*)((etch_object*)myhashtab)->vtab)->inserth(myhashtab->realtable, my_field, value2, 0, 0);
     CU_ASSERT_EQUAL_FATAL(result,0);
 
-    result = myhashtab->vtab->inserth(myhashtab->realtable, my_type, value3, 0, 0);
+    result = ((struct i_hashtable*)((etch_object*)myhashtab)->vtab)->inserth(myhashtab->realtable, my_type, value3, 0, 0);
     CU_ASSERT_EQUAL_FATAL(result,0);
 
-    result = myhashtab->vtab->findh(myhashtab->realtable, my_idname->hashkey, myhashtab, &myentry);
+    result = ((struct i_hashtable*)((etch_object*)myhashtab)->vtab)->findh(myhashtab->realtable, ((etch_object*)my_idname)->hashkey, myhashtab, &myentry);
     CU_ASSERT_EQUAL(result,0);
     CU_ASSERT_PTR_NOT_NULL(myentry->key);
     CU_ASSERT_PTR_NOT_NULL(myentry->value);
@@ -379,7 +327,7 @@ void test_idname_as_key_hashclean_none(void)
     CU_ASSERT_EQUAL(result,0);  
     etch_free(myentry->value); 
 
-    result = myhashtab->vtab->findh(myhashtab->realtable, my_field->hashkey, myhashtab, &myentry);
+    result = ((struct i_hashtable*)((etch_object*)myhashtab)->vtab)->findh(myhashtab->realtable, ((etch_object*)my_field)->hashkey, myhashtab, &myentry);
     CU_ASSERT_EQUAL(result,0);
     CU_ASSERT_PTR_NOT_NULL(myentry->key);
     CU_ASSERT_PTR_NOT_NULL(myentry->value);
@@ -387,7 +335,7 @@ void test_idname_as_key_hashclean_none(void)
     CU_ASSERT_EQUAL(result,0); 
     etch_free(myentry->value);  
 
-    result = myhashtab->vtab->findh(myhashtab->realtable, my_type->hashkey, myhashtab, &myentry);
+    result = ((struct i_hashtable*)((etch_object*)myhashtab)->vtab)->findh(myhashtab->realtable, ((etch_object*)my_type)->hashkey, myhashtab, &myentry);
     CU_ASSERT_EQUAL(result,0);
     CU_ASSERT_PTR_NOT_NULL(myentry->key);
     CU_ASSERT_PTR_NOT_NULL(myentry->value);
@@ -395,36 +343,23 @@ void test_idname_as_key_hashclean_none(void)
     CU_ASSERT_EQUAL(result,0); 
     etch_free(myentry->value);  
 
-    myhashtab->destroy(myhashtab);  /* hashtable was asked to not free any content */
+    etch_object_destroy(myhashtab);  /* hashtable was asked to not free any content */
 
-    bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE);  /* verify all memory freed */
-    CU_ASSERT_EQUAL(bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */ 
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
-
-
-int _tmain(int argc, _TCHAR* argv[])
+//int wmain( int argc, wchar_t* argv[], wchar_t* envp[])
+CU_pSuite test_etch_hashing_suite()
 {
-    CU_pSuite pSuite = 0; char c=0; 
-    if (CUE_SUCCESS != CU_initialize_registry()) return -1;
-    g_is_automated_test = argc > 1 && 0 != wcscmp(argv[1], L"-a");
-    pSuite = CU_add_suite("suite_hashing", init_suite, clean_suite);
-    CU_set_output_filename("../test_hashing");
-    etch_watch_id = 0; 
+    CU_pSuite ps = CU_add_suite("suite_hashing", init_suite, clean_suite);
 
-    CU_add_test(pSuite, "test hash id_name etc - auto-cleanup values", test_idname_as_key_hashclean_values);
-    CU_add_test(pSuite, "test hash id_name etc - no auto-cleanup", test_idname_as_key_hashclean_none);
+    CU_add_test(ps, "test hash id_name etc - auto-cleanup values", test_idname_as_key_hashclean_values);
+    CU_add_test(ps, "test hash id_name etc - no auto-cleanup", test_idname_as_key_hashclean_none);
 
-    if (g_is_automated_test)    
-        CU_automated_run_tests();    
-    else
-    {   CU_basic_set_mode(CU_BRM_VERBOSE);
-        CU_basic_run_tests();
-    }
-
-    if (!g_is_automated_test) { printf("any key ..."); while(!c) c = _getch(); wprintf(L"\n"); }     
-    CU_cleanup_registry();
-    return CU_get_error(); 
+    return ps;
 }
-

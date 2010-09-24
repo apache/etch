@@ -21,109 +21,70 @@
  * test etch_type
  */
 
-#include "apr_time.h" /* some apr must be included first */
-#include "etchthread.h"
-#include <stdio.h>
-#include <conio.h>
-#include "cunit.h"
-#include "basic.h"
-#include "automated.h"
+#include "etch_runtime.h"
 #include "etch_type.h"
-#include "etch_global.h"
 #include "etch_validator.h"
 #include "etch_field.h"
+#include "etch_objecttypes.h"
+#include "etch_serializer.h"
+#include "etch_arraylist.h"
 
-int apr_setup(void);
-int apr_teardown(void);
-int this_setup();
-int this_teardown();
-apr_pool_t* g_apr_mempool;
-const char* pooltag = "etchpool";
-
-
-int init_suite(void)
-{
-    apr_setup();
-    etch_runtime_init(TRUE);
-    return this_setup();
-}
-
-int clean_suite(void)
-{
-    this_teardown();
-    etch_runtime_cleanup(0,0); /* free memtable and cache etc */
-    apr_teardown();
-    return 0;
-}
-
-int g_is_automated_test, g_bytes_allocated;
+#include <stdio.h>
+#include "CUnit.h"
+#include "Basic.h"
+#include "Automated.h"
+#include <wchar.h>
 
 #define IS_DEBUG_CONSOLE FALSE
 
-/*
- * apr_setup()
- * establish apache portable runtime environment
- */
-int apr_setup(void)
-{
-    int result = apr_initialize();
-    if (result == 0)
-    {   result = etch_apr_init();
-        g_apr_mempool = etch_apr_mempool;
-    }
-    if (g_apr_mempool)
-        apr_pool_tag(g_apr_mempool, pooltag);
-    else result = -1;
-    return result;
-}
+// extern types
+extern apr_pool_t* g_etch_main_pool;
 
-/*
- * apr_teardown()
- * free apache portable runtime environment
- */
-int apr_teardown(void)
+static int init_suite(void)
 {
-    if (g_apr_mempool)
-        apr_pool_destroy(g_apr_mempool);
-    g_apr_mempool = NULL;
-    apr_terminate();
+    etch_status_t etch_status = ETCH_SUCCESS;
+
+    etch_status = etch_runtime_initialize(NULL);
+    if(etch_status != NULL) {
+        // error
+    }
     return 0;
 }
 
+static int clean_suite(void)
+{
+    //this_teardown();
+    etch_runtime_shutdown();
+    return 0;
+}
 
 int this_setup()
 {
-    etch_apr_mempool = g_apr_mempool;
     return 0;
 }
 
-int this_teardown()
-{    
-    return 0;
-}
-
-
-/**
+/*
  * test_type
  */
-void test_type(void)
+static void test_type(void)
 {
-    int alloc_a = 0, alloc_b = 0, result = 0;
+    int result = 0;
     etch_type *type1 = NULL, *type2 = NULL;
 
     const wchar_t* nametext1 = L"abracadabra";
-    const size_t   numelts1  = wcslen(nametext1);
-    const size_t   numbytes1 = sizeof(wchar_t) * numelts1;
 
     const wchar_t* nametext2 = L"gilgamesh";
-    const size_t   numelts2  = wcslen(nametext2);
-    const size_t   numbytes2 = sizeof(wchar_t) * numelts2;
     
+#ifdef ETCH_DEBUGALLOC
     alloc_a = etch_showmem(0, FALSE);
+#endif
     type1   = new_type(NULL);
-    alloc_b = etch_showmem(0, FALSE);
     CU_ASSERT_PTR_NULL(type1);
+
+#ifdef ETCH_DEBUGALLOC
+    alloc_b = etch_showmem(0, FALSE);
     CU_ASSERT_EQUAL(alloc_a, alloc_b); 
+#endif
 
     type1   = new_type(nametext1);
     CU_ASSERT_PTR_NOT_NULL_FATAL(type1);
@@ -134,23 +95,28 @@ void test_type(void)
     result = memcmp(type1->name, type2->name, type1->namebytelen);
     CU_ASSERT_EQUAL(result,0);
 
-    destroy_type(type1);
-    destroy_type(type2);
+    etch_object_destroy(type1);
+    etch_object_destroy(type2);
 
+#ifdef ETCH_DEBUGALLOC
     alloc_a = etch_showmem(0, FALSE);
     CU_ASSERT_EQUAL(alloc_a, alloc_b); 
+#endif
 
     type1 = new_type(nametext1);
     type2 = new_type(nametext2);
 
     CU_ASSERT_FALSE(is_equal_types(type1, type2));
 
-    destroy_type(type1);
-    destroy_type(type2);
+    etch_object_destroy(type1);
+    etch_object_destroy(type2);
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -158,9 +124,8 @@ void test_type(void)
  * test_type_hashfunc
  * test wire hashing function
  */
-void test_type_hashfunc(void)
+static void test_type_hashfunc(void)
 {
-    int alloc_a = 0, alloc_b = 0, result = 0;
     unsigned hash1 = 0, hash2 = 0;
     etch_type *type1 = NULL, *type2 = NULL;
 
@@ -184,19 +149,22 @@ void test_type_hashfunc(void)
     CU_ASSERT_EQUAL(type1->id, hash1);
     CU_ASSERT_EQUAL(type2->id, hash2);
 
-    destroy_type(type1);
-    destroy_type(type2);
+    etch_object_destroy(type1);
+    etch_object_destroy(type2);
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */       
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
 /*
  * function pointers used by test_getset()
  */
-int bogus_stubhelper (void* stub, void* delsvc, void* obj, void* whofrom, void* msg) { return 0; }
+static int bogus_stubhelper (void* stub, void* delsvc, void* obj, void* whofrom, void* msg) { return 0; }
 
 
 
@@ -204,7 +172,7 @@ int bogus_stubhelper (void* stub, void* delsvc, void* obj, void* whofrom, void* 
  * test_getset
  * test mutators
  */
-void test_getset(void)
+static void test_getset(void)
 {
     unsigned int this_class  = 0, old_class = 0;
     unsigned char   cur_flag = 0, old_flag = 0;
@@ -214,7 +182,7 @@ void test_getset(void)
     etch_type *type1 = new_type(L"abracadabra");
     etch_type *type2 = new_type(L"gilgamesh"), *cur_type = NULL, *old_type  = NULL;
     etch_field *fld1 = new_field(L"field1"),  *cur_field = NULL, *old_field = NULL;
-    etch_serializer* impxhelp1 = (etch_serializer*) new_etch_object(CLASSID_NONE, NULL);
+    etch_serializer* impxhelp1 = (etch_serializer*) new_object(sizeof(etch_object), ETCHTYPEB_ETCHOBJECT, CLASSID_NONE);
     const unsigned int TEST_CLASS = (ETCHTYPEB_PRIMITIVE << 16) | CLASSID_PRIMITIVE_INT32;
 
     /* component type */
@@ -322,14 +290,17 @@ void test_getset(void)
     CU_ASSERT_PTR_EQUAL(old_impexphelper, impxhelp1);
 
 
-    fld1->destroy(fld1);
-    type2->destroy(type2);
-    type1->destroy(type1);
-    impxhelp1->destroy(impxhelp1);
+    etch_object_destroy(fld1);
+    etch_object_destroy(type2);
+    etch_object_destroy(type1);
+    etch_object_destroy(impxhelp1);
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */       
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -337,13 +308,13 @@ void test_getset(void)
  * test_assignable()
  * test is_assignable_from()
  */
-void test_assignable(void)
+static void test_assignable(void)
 {
     int result = 0;
     const unsigned short TEST_SUPERCLASS_ID = 0xffff;
     etch_type* type1 = new_type(L"type1");
     etch_type* type2 = new_type(L"type2");
-    type1->class_id  = TEST_SUPERCLASS_ID;
+    ((etch_object*)type1)->class_id  = TEST_SUPERCLASS_ID;
     etchtype_set_super_type(type2, type1);
 
     result = etchtype_is_assignable_from(type1, type2);
@@ -358,12 +329,15 @@ void test_assignable(void)
     result = etchtype_is_assignable_from(NULL, type1);
     CU_ASSERT_EQUAL(result, FALSE); 
 
-    type1->destroy(type1);
-    type2->destroy(type2);
+    etch_object_destroy(type1);
+    etch_object_destroy(type2);
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */  
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -371,7 +345,7 @@ void test_assignable(void)
  * test_validators_access
  * test put and get validators
  */
-void test_validators_access(void)
+static void test_validators_access(void)
 {
     etch_iterator iterator;
     etch_field* vtor1_key = new_field(L"vtor1");
@@ -383,7 +357,7 @@ void test_validators_access(void)
     etch_validator* vtor2 = etchvtor_struct_get(typev, 0);
     etch_validator* vtor_return = NULL;
 
-    int result = etchtype_put_validator(type1, vtor1_key->clone(vtor1_key), (objmask*) vtor1);
+    int result = etchtype_put_validator(type1, (etch_field*)etch_object_clone_func(vtor1_key), (etch_object*) vtor1);
     CU_ASSERT_EQUAL(result, 0);
 
     vtor_return = (etch_validator*) etchtype_get_validator_by_name(type1, vtor1_key->name);
@@ -394,7 +368,7 @@ void test_validators_access(void)
     CU_ASSERT_PTR_NOT_NULL(vtor_return);
     CU_ASSERT_PTR_EQUAL(vtor_return, vtor1);
 
-    result = etchtype_put_validator(type1, vtor2_key->clone(vtor2_key), (objmask*) vtor2);
+    result = etchtype_put_validator(type1, (etch_field*)etch_object_clone_func(vtor2_key), (etch_object*) vtor2);
     CU_ASSERT_EQUAL(result, 0);
 
     result = etchtype_validators_count(type1);
@@ -448,9 +422,9 @@ void test_validators_access(void)
      * keys, which were freed during etchtype_clear_validators. this is the model
      * to use in the binding, i.e. clone a static etch_field for put_validator().
      */
-    vtor1_key->destroy(vtor1_key);
-    vtor2_key->destroy(vtor2_key);
-    bogus_key->destroy(bogus_key);
+    etch_object_destroy(vtor1_key);
+    etch_object_destroy(vtor2_key);
+    etch_object_destroy(bogus_key);
 
     /* vtor1 will not have been freed during etchtype_clear_validators(), 
      * since it is a cached validator. likewise, calling its destructor  
@@ -462,20 +436,23 @@ void test_validators_access(void)
      * are cached and which are not, since etchtype_clear_validators() will
      * free the uncached ones, and etchvtor_clear_cache() the cached ones.
      */ 
-    typev->destroy(typev);
-    type1->destroy(type1);
+    etch_object_destroy(typev);
+    etch_object_destroy(type1);
     etchvtor_clear_cache(); /* destroy cached validators (vtor1 in this case) */
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */       
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
 /**
  * test_fields_access
  */
-void test_fields_access(void)
+static void test_fields_access(void)
 {
     etch_iterator iterator;
     etch_field* field1 = new_field(L"field1");
@@ -489,23 +466,26 @@ void test_fields_access(void)
     const int EXPECTED_FIELDS_COUNT = 3;
     int result = 0, newfield_id = 0;
 
-    field_return = etchtype_add_field(type1, field_clone = field1->clone(field1));
+    field_clone = (etch_field*)etch_object_clone_func(field1);
+    field_return = etchtype_add_field(type1, field_clone);
     CU_ASSERT_PTR_NOT_NULL(field_return);
     CU_ASSERT_PTR_EQUAL(field_return, field_clone);
 
     /* ensure that trying to add a duplicate field returns the existing field.
      * note that the new clone is destroyed by etchtype_add_field when it 
      * determines that the supplied field can't be added */
-    field_return = etchtype_add_field(type1, field1->clone(field1));
+    field_return = etchtype_add_field(type1, (etch_field*)etch_object_clone_func(field1));
     CU_ASSERT_PTR_NOT_NULL(field_return);
     CU_ASSERT_PTR_EQUAL(field_return, field_clone);
 
     /* add a couple more fields */
-    field_return = etchtype_add_field(type1, field_clone = field2->clone(field2));
+    field_clone = (etch_field*)etch_object_clone_func(field2);
+    field_return = etchtype_add_field(type1, field_clone);
     CU_ASSERT_PTR_NOT_NULL(field_return);
     CU_ASSERT_PTR_EQUAL(field_return, field_clone);
 
-    field_return = etchtype_add_field(type1, field_clone = field3->clone(field3));
+    field_clone = (etch_field*)etch_object_clone_func(field3);
+    field_return = etchtype_add_field(type1, field_clone);
     CU_ASSERT_PTR_NOT_NULL(field_return);
     CU_ASSERT_PTR_EQUAL(field_return, field_clone);
 
@@ -603,16 +583,19 @@ void test_fields_access(void)
         iterator.next(&iterator);
     }
 
-    list_return->destroy(list_return);
-    field1->destroy(field1);
-    field2->destroy(field2);
-    field3->destroy(field3);
-    fieldx->destroy(fieldx);
-    type1->destroy(type1);
+    etch_object_destroy(list_return);
+    etch_object_destroy(field1);
+    etch_object_destroy(field2);
+    etch_object_destroy(field3);
+    etch_object_destroy(fieldx);
+    etch_object_destroy(type1);
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */       
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -620,7 +603,7 @@ void test_fields_access(void)
  * test_validators_chained
  * test memory mangement of chained validators
  */
-void test_validators_chained(void)
+static void test_validators_chained(void)
 {
     etch_field* vtor1_key = new_field(L"vtor1");
     etch_field* vtor2_key = new_field(L"vtor2");
@@ -634,17 +617,16 @@ void test_validators_chained(void)
     etch_validator* vtor7 = etchvtor_struct_get(structtype, 0);
     etch_validator* vtor8 = etchvtor_string_get(0);
     etch_type *type1 = new_type(L"abracadabra");
-    etch_validator* vtor_return = NULL;
 
     /* test 3 validators with the same key. when a validator is put to a type
      * and the type already has one or more validators with the specified key, 
      * the new validator is chained to the existing validator */
-    int result = etchtype_put_validator(type1, vtor1_key->clone(vtor1_key), (objmask*) vtor1);
+    int result = etchtype_put_validator(type1, (etch_field*)etch_object_clone_func(vtor1_key), (etch_object*) vtor1);
     CU_ASSERT_EQUAL(result, 0);
 
-    result = etchtype_put_validator(type1, vtor1_key->clone(vtor1_key), (objmask*) vtor2);
+    result = etchtype_put_validator(type1, (etch_field*)etch_object_clone_func(vtor1_key), (etch_object*) vtor2);
 
-    result = etchtype_put_validator(type1, vtor1_key->clone(vtor1_key), (objmask*) vtor3);
+    result = etchtype_put_validator(type1, (etch_field*)etch_object_clone_func(vtor1_key), (etch_object*) vtor3);
 
     /* etchtype_clear_validators is needed here, since we want to begin 
      * a new test with the type emptied of validators.
@@ -656,12 +638,12 @@ void test_validators_chained(void)
       * when we add a validator to a type, even though the get will return the 
       * same object when the validator type we get is cached. */
 
-     result = etchtype_put_validator(type1, vtor1_key->clone(vtor1_key), (objmask*) vtor4);
-     result = etchtype_put_validator(type1, vtor1_key->clone(vtor1_key), (objmask*) vtor5);
-     result = etchtype_put_validator(type1, vtor1_key->clone(vtor1_key), (objmask*) vtor6);
+     result = etchtype_put_validator(type1, (etch_field*)etch_object_clone_func(vtor1_key), (etch_object*) vtor4);
+     result = etchtype_put_validator(type1, (etch_field*)etch_object_clone_func(vtor1_key), (etch_object*) vtor5);
+     result = etchtype_put_validator(type1, (etch_field*)etch_object_clone_func(vtor1_key), (etch_object*) vtor6);
 
-     result = etchtype_put_validator(type1, vtor2_key->clone(vtor2_key), (objmask*) vtor7);
-     result = etchtype_put_validator(type1, vtor2_key->clone(vtor2_key), (objmask*) vtor8);
+     result = etchtype_put_validator(type1, (etch_field*)etch_object_clone_func(vtor2_key), (etch_object*) vtor7);
+     result = etchtype_put_validator(type1, (etch_field*)etch_object_clone_func(vtor2_key), (etch_object*) vtor8);
 
     /* etchtype_clear_validators is superfluous here, so we test not doing it. 
      * when we destroy type1 below, the destructor for the type's instance data 
@@ -674,21 +656,24 @@ void test_validators_chained(void)
      * keys, which were freed during etchtype_clear_validators. this is the model
      * to use in the binding, i.e. clone a static etch_field for put_validator().
      */
-    vtor1_key->destroy(vtor1_key);
-    vtor2_key->destroy(vtor2_key);
+    etch_object_destroy(vtor1_key);
+    etch_object_destroy(vtor2_key);
 
-    structtype->destroy(structtype); 
+    etch_object_destroy(structtype); 
 
     /* the destroy() of type1 clears the type's fields and validators maps,
      * which causes the fields, validator field keys, and non-cached validators,
      * to be destroyed.
      */
-    type1->destroy(type1);
+    etch_object_destroy(type1);
     etchvtor_clear_cache(); /* destroy any singleton cached validators */
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */       
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -696,15 +681,10 @@ void test_validators_chained(void)
 /**
  * main   
  */
-int _tmain(int argc, _TCHAR* argv[])
+//int wmain( int argc, wchar_t* argv[], wchar_t* envp[])
+CU_pSuite test_etch_type_suite()
 {    
-    char c=0;
-    CU_pSuite ps = NULL;
-    g_is_automated_test = argc > 1 && 0 != wcscmp(argv[1], L"-a");
-    if (0 != CU_initialize_registry()) return 0;
-    CU_set_output_filename("../test_type");
-    ps = CU_add_suite("type test suite", init_suite, clean_suite);
-    etch_watch_id = 0; 
+    CU_pSuite ps = CU_add_suite("type test suite", init_suite, clean_suite);
 
     CU_add_test(ps, "test etch_type constructors/destructors", test_type);  
     CU_add_test(ps, "test etch_type hashing", test_type_hashfunc); 
@@ -714,14 +694,5 @@ int _tmain(int argc, _TCHAR* argv[])
     CU_add_test(ps, "test fields access", test_fields_access);  
     CU_add_test(ps, "test chained validators", test_validators_chained);
 
-    if (g_is_automated_test)    
-        CU_automated_run_tests();    
-    else
-    {   CU_basic_set_mode(CU_BRM_VERBOSE);
-        CU_basic_run_tests();
-    }
-
-    if (!g_is_automated_test) { printf("any key ..."); while(!c) c = _getch(); printf("\n"); }     
-    CU_cleanup_registry();
-    return CU_get_error(); 
+    return ps;
 }

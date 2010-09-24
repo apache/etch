@@ -4,10 +4,11 @@ us here:
 Project info:
 
     http://incubator.apache.org/projects/etch.html
+    http://incubator.apache.org/etch
 
 Documentation info:
 
-    http://cwiki.apache.org/ETCH/
+    http://incubator.apache.org/etch
 
 Issues:
 
@@ -16,6 +17,10 @@ Issues:
 SVN:
 
     http://svn.apache.org/repos/asf/incubator/etch/
+
+Continous Integration Server (Hudson):
+
+    https://hudson.apache.org/hudson/view/etch
 
 Mailing lists:
 
@@ -27,20 +32,24 @@ Subscribing to the mailing lists:
     mailto:etch-dev-subscribe@incubator.apache.org (etch developers)
     mailto:etch-user-subscribe@incubator.apache.org (etch users)
 
-This release of Apache Etch resolves issues related to our new home at Apache.
-One Apache requirement is that the java (and csharp) name spaces look something
+This release is the first fully ASF compliant release of Apache Etch.
+
+The release consists of the three stable language bindings of Etch
+- Java
+- C#
+- C
+
+One Apache requirement is that the java, csharp and c name spaces look something
 like org.apache.etch... These changes have been made, however, they will break
 existing users of etch. All that need be done for java is to correct the package
 names from etch.* to org.apache.etch.*. For C#, the namespace has changed from
 Etch.* to Org.Apache.Etch.*. In both cases, you will need to re-etch your *.etch
 source files.
 
-There are also some new components in this release, the biggest of which are the
-contribution of the python and c bindings from Cisco. There is also an
-interoperability testing framework, also from Cisco. While these components are
-not yet fully functional, getting them here is an important milestone. There is
-still some work to be done, interested parties should send inquiries to
-etch-dev@incubator.apache.org.
+There are also some new components in this release, the biggest of which is the
+contribution of the python and c bindings from Cisco and the stabilization of the C binding. 
+For the python binding, there is still some work to be done, interested parties should 
+send inquiries to etch-dev@incubator.apache.org. 
 
 There are a few bugs fixed in this release, too, as detailed below. Some of
 these fixes are compiler changes. Please be sure to recompile all your etch
@@ -48,43 +57,87 @@ source files.
 
 Here are the issues resolved in this release:
 
-Key         Summary
----         -------
-** Bug
-    * [ETCH-56] - UnwantedMessage.ToString method attempts to format using the
-                  java style formatting instead of csharp style
-    * [ETCH-57] - Sometimes closing a TlsConnection normally will result in an
-                  IOException with Socket is closed.
-    * [ETCH-69] - Compiler throws URISyntaxException if there are spaces in the
-                  classpath
-    * [ETCH-76] - Build problems if Etch source is downloaded to a path with
-                  spaces
-    * [ETCH-77] - Incompatibility in the READMEs for the bundled examples
+Sub-task
 
-** Improvement
-    * [ETCH-54] - TransportFactory.newTransport returns stack topped by
-                  DeliveryService which makes it hard to implement meta transports
-    * [ETCH-59] - Listener stack is built 1/2 upside down and strange inhibiting
-                  name service and other transport filters
+    * [ETCH-33] - create directory structure for c binding
+    * [ETCH-34] - import the c binding code into the new directory structure
+    * [ETCH-36] - create the directory structure for the python binding
+    * [ETCH-37] - import the python binding into the new directory structure
+    * [ETCH-39] - create directory structure for interoperability tester
+    * [ETCH-40] - import the code for the interoperability tester
+    * [ETCH-41] - import the java example test
+    * [ETCH-42] - create a csharp example test
+    * [ETCH-43] - create a interoptest script which combines java and csharp
+    * [ETCH-45] - put java header comments in order per apache standard
+    * [ETCH-46] - put csharp header comments in order per apache standard
+    * [ETCH-47] - put python header comments in order per apache standard
+    * [ETCH-48] - put c header comments in order per apache standard
+    * [ETCH-50] - merge changes from 1.0.2 branch to trunk - 738635 update version string
+    * [ETCH-51] - merge changes from 1.0.2 branch to trunk - 738652 make examples more tolerant
+    * [ETCH-52] - merge changes from 1.0.2 branch to trunk - 739277 update eclipse build
+    * [ETCH-53] - merge changes from 1.0.2 branch to trunk - 739282 updates to unit tests
+    * [ETCH-55] - merge changes from 1.0.2 branch to trunk - 739287 fix for selector under linux
+
+Bug
+
+    * [ETCH-56] - UnwantedMessage.ToString method attempts to format using the java style formatting instead of csharp style
+    * [ETCH-57] - Sometimes closing a TlsConnection normally will result in an IOException with Socket is closed.
+    * [ETCH-69] - Compiler throws URISyntaxException if there are spaces in the classpath
+    * [ETCH-76] - Build problems if Etch source is downloaded to a path with spaces
+    * [ETCH-77] - Incompatibility in the READMEs for the bundled examples
+    * [ETCH-80] - Windows 7 / .NET 3.5 SP1 runtime setsockopt error
+
+Improvement
+
+    * [ETCH-54] - TransportFactory.newTransport returns stack topped by DeliveryService which makes it hard to implement meta transports
+    * [ETCH-59] - Listener stack is built 1/2 upside down and strange inhibiting name service and other transport filters
     * [ETCH-63] - Change maven groupId to "org.apache.etch" from "etch.etch"
 
-** New Feature
-    * [ETCH-15] - design and implement a framework for interoperability testing,
-                  plus a simple demonstration test
+New Feature
 
-** Task
+    * [ETCH-15] - design and implement a framework for interoperability testing, plus a simple demonstration test
+    * [ETCH-64] - Implement the compiler portion of the c-binding, to generate code for the etch c runtime
+    * [ETCH-65] - Integrate the c-binding into the windows build.
+    * [ETCH-66] - Port the c-binding to linux, resolve differences between windows and linux.
+    * [ETCH-79] - Implementation of Etch C Binding (Runtime + Compiler)
+
+Task
+
+    * [ETCH-4] - Map http://cwiki.apache.org/ETCH to http://incubator.apache.org/etch
     * [ETCH-22] - Change Java (and C#) package names to org.apache.etch
     * [ETCH-32] - import the c binding
     * [ETCH-35] - import the python binding
     * [ETCH-38] - import interoperability tester
     * [ETCH-44] - put header comments in order per apache standard
     * [ETCH-49] - merge changes from 1.0.2 branch to trunk
-    * [ETCH-70] - Rename jar file build products to include incubating in the
-                  name.
+    * [ETCH-70] - Rename jar file build products to include incubating in the name.
     * [ETCH-71] - repair license header in c binding
     * [ETCH-72] - repair license header in interop tester
     * [ETCH-73] - repair license header in tests
     * [ETCH-74] - repair license header in scripts
+    * [ETCH-81] - Setup CMake based build environment for C binding
+    * [ETCH-82] - Merge etch-c into trunk
+    * [ETCH-83] - Setup Hudson Build Configuration for continous Etch builds
+    * [ETCH-84] - Provide getting started Setup documentation
+    * [ETCH-85] - Provide Documentation for Examples
+    * [ETCH-86] - Provide 1.1. release package
+    * [ETCH-87] - Provide 1.1. release package for Win32 + Installer
+    * [ETCH-88] - Provide 1.1. release package for Linux
+    * [ETCH-89] - Extend C# and Java Compilers to generate Wireshark keyfiles
+    * [ETCH-90] - Ant Build using ETCH_EXTERNAL_DEPENDS
+    * [ETCH-91] - Clean up / re-create examples/HelloWorld for all bindings
+    * [ETCH-92] - Integrate C binding to NSIS installer and packaging
+    * [ETCH-94] - Provide Documentation for Etch's binary protocol
+    * [ETCH-97] - Add public PGP KEY (CODE SIGNING KEY) to etch KEYS (fitzner)
+    * [ETCH-98] - Add CMake makefiles to exambles for binding-c
+    * [ETCH-100] - update BUILD.txt on top level
+    * [ETCH-101] - Integrate HelloWorld C Binding example into top level ant build
+    * [ETCH-103] - Add documentation regarding APR_ICONV_PATH to documentation
+    * [ETCH-104] - Create NOTICE_THIRD_PARTY.txt and LICENSE_THIRD_PARTY.txt
+
+Test
+
+    * [ETCH-96] - Change CWiki etch confluence template
 
 Here are the outstanding bugs in this release:
 

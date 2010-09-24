@@ -14,37 +14,17 @@
 @rem  KIND, either express or implied.  See the License for the    *
 @rem  specific language governing permissions and limitations      *
 @rem  under the License.                                           *
+@echo off
 
-rem -- java builds --
+IF "%ETCH_EXTERNAL_DEPENDS%" == "" (
+set ETCH_EXTERNAL_DEPENDS=C:\etch\external
+)
 
-set TOOLS_DIR=C:\wks\tools
-set ANT_HOME=%TOOLS_DIR%\apache-ant\1.7.0
-rem set JAVA_HOME=C:\Program Files\Java\jdk1.6.0_06
-rem optional
-rem set CLOVER_HOME=%TOOLS_DIR%\clover-ant\2.3.2
-rem /optional
-PATH %ANT_HOME%\bin;%JAVA_HOME%\bin;%PATH%
+set ANT_HOME=%ETCH_EXTERNAL_DEPENDS%\apache-ant\1.7.0
+set JAVA_HOME=c:\Program Files (x86)\Java\jdk1.6.0_18\
+set NUNIT_HOME=%ETCH_EXTERNAL_DEPENDS%\NUnit\2.4.7
 
-rem -- dotnet builds --
-
-rem optional
+rem uncomment this line / unset this variable if you don't want to build csharp
 set DOTNET_HOME=C:\WINDOWS\Microsoft.NET\Framework\v2.0.50727
-set NUNIT_HOME=%TOOLS_DIR%\NUnit\2.4.7
-PATH %DOTNET_HOME%;%NUNIT_HOME%\bin;%PATH%
-rem /optional
 
-rem -- mono builds --
-
-rem optional
-rem set MONO_HOME=...
-rem /optional
-
-rem -- installer builds --
-
-rem optional
-set NSIS_HOME=%TOOLS_DIR%\nsis\2.23
-rem /optional
-
-rem -- standalone example builds --
-
-rem set ETCH_HOME=...
+set PATH=%ANT_HOME%\bin;%JAVA_HOME%\bin;%DOTNET_HOME%;%NUNIT_HOME%\bin;%PATH%

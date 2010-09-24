@@ -19,99 +19,45 @@
 /*
  * test_messagizer.c 
  */
-
-#include "apr_time.h" /* some apr must be included first */
+#include "etch_runtime.h"
 #include "etch_messagizer.h"  
-#include "etch_defvalufact.h"
+#include "etch_default_value_factory.h"
+#include "etch_thread.h"
+#include "etch_map.h"
+#include "etch_log.h"
+#include "etch_exception.h"
+#include "etch_objecttypes.h"
+#include "etch_general.h"
+#include "etch_mem.h"
 
-#include <tchar.h>
 #include <stdio.h>
-#include <conio.h>
+#include "CUnit.h"
 
-#include "cunit.h"
-#include "basic.h"
-#include "automated.h"
+#define IS_DEBUG_CONSOLE FALSE
 
-#include "etchthread.h"
-#include "etch_global.h"
-#include "etchmap.h"
-#include "etchlog.h"
-#include "etch_syncobj.h"
-#include "etchexcp.h"
-
-int apr_setup(void);
-int apr_teardown(void);
-int this_setup();
-int this_teardown();
-apr_pool_t* g_apr_mempool;
-const char* pooltag = "etchpool";
-
+// extern types
+extern apr_pool_t* g_etch_main_pool;
 
 /* - - - - - - - - - - - - - - 
  * unit test infrastructure
  * - - - - - - - - - - - - - -
  */
-
-int init_suite(void)
+static int init_suite(void)
 {
-    apr_setup();
-    etch_runtime_init(TRUE);
-    return this_setup();
-}
+    etch_status_t etch_status = ETCH_SUCCESS;
 
-int clean_suite(void)
-{
-    this_teardown();
-    etch_runtime_cleanup(0,0); /* free memtable and cache etc */
-    apr_teardown();
-    return 0;
-}
-
-int g_is_automated_test, g_bytes_allocated;
-
-#define IS_DEBUG_CONSOLE FALSE
-
-/*
- * apr_setup()
- * establish apache portable runtime environment
- */
-int apr_setup(void)
-{
-    int result = apr_initialize();
-    if (result == 0)
-    {   result = etch_apr_init();
-        g_apr_mempool = etch_apr_mempool;
+    etch_status = etch_runtime_initialize(NULL);
+    if(etch_status != NULL) {
+        // error
     }
-    if (g_apr_mempool)
-        apr_pool_tag(g_apr_mempool, pooltag);
-    else result = -1;
-    return result;
+    return 0;
 }
 
-/*
- * apr_teardown()
- * free apache portable runtime environment
- */
-int apr_teardown(void)
+static int clean_suite(void)
 {
-    if (g_apr_mempool)
-        apr_pool_destroy(g_apr_mempool);
-    g_apr_mempool = NULL;
-    apr_terminate();
+    etch_runtime_shutdown();
     return 0;
 }
-
-int this_setup()
-{
-    etch_apr_mempool = g_apr_mempool;
-    return 0;
-}
-
-int this_teardown()
-{    
-    return 0;
-}
-
 
 /* - - - - - - - - - - - - - - 
  * unit test support
@@ -119,28 +65,28 @@ int this_teardown()
  */
 typedef struct test_value_factory test_value_factory;
 
-etch_messagizer*        g_my_messagizer;
-i_transportpacket*      g_my_transportpacket;
-i_sessionmessage*       g_my_sessionmessage; 
-etch_flexbuffer*        g_flexbuffer;                  
-etch_resources*         g_my_resources;
-vf_idname_map*          g_type_map;
-class_to_type_map*      g_class_to_type_map;
-etch_who*               g_who;
-default_value_factory*  g_my_vf;
-test_value_factory*     g_my_test_vf;
-int g_which_valuefactory;
+static etch_messagizer*        g_my_messagizer;
+static i_transportpacket*      g_my_transportpacket;
+static i_sessionmessage*       g_my_sessionmessage; 
+static etch_flexbuffer*        g_flexbuffer;
+static etch_resources*         g_my_resources;
+static vf_idname_map*          g_type_map;
+static class_to_type_map*      g_class_to_type_map;
+static etch_who*               g_who;
+static default_value_factory*  g_my_vf;
+static test_value_factory*     g_my_test_vf;
+static int g_which_valuefactory;
 
-unsigned short CLASSID_MY_VF;
-unsigned short CLASSID_MY_VF_VTAB;
-unsigned short CLASSID_MY_VF_IMPL;
-unsigned short CLASSID_MY_IMPL_TP;
-unsigned short CLASSID_MY_IMPL_SM;
+static unsigned short CLASSID_MY_VF;
+static unsigned short CLASSID_MY_VF_VTAB;
+static unsigned short CLASSID_MY_VF_IMPL;
+static unsigned short CLASSID_MY_IMPL_TP;
+static unsigned short CLASSID_MY_IMPL_SM;
 #define OBJTYPE_MY_IMPL_TP 0x5170
 #define OBJTYPE_MY_IMPL_SM 0x5171
 
-#define is_my_impl_tp(x) (x && ((objmask*)x)->obj_type == OBJTYPE_MY_IMPL_TP) 
-#define is_my_impl_sm(x) (x && ((objmask*)x)->obj_type == OBJTYPE_MY_IMPL_SM) 
+#define is_my_impl_tp(x) (x && ((etch_object*)x)->obj_type == OBJTYPE_MY_IMPL_TP) 
+#define is_my_impl_sm(x) (x && ((etch_object*)x)->obj_type == OBJTYPE_MY_IMPL_SM) 
 
 #define THISTEST_HEADERSIZE 8
 #define TAGDATA_VERSION     3
@@ -154,9 +100,9 @@ unsigned short CLASSID_MY_IMPL_SM;
 #define FAKEID_FIELD_Y          4
 #define FAKEID_FIELD_RESULT     5
 
-default_value_factory* get_current_valuefactory()
+static default_value_factory* get_current_valuefactory()
 {
-    if (g_my_test_vf) return (default_value_factory*) g_my_test_vf;   
+    if (g_my_test_vf) return (default_value_factory*) g_my_test_vf;
     if (g_my_vf)      return g_my_vf;  
     return NULL; 
 }
@@ -168,11 +114,11 @@ typedef enum etch_what
 } etch_what;
 
 
-int is_equal_who(etch_who* who1, etch_who* who2)
+static int is_equal_who(etch_who* who1, etch_who* who2)
 {
     int n1 = 0, n2 = 0;
     if (!who1 || !who2) return FALSE;
-    if (who1->class_id != CLASSID_WHO || who2->class_id != CLASSID_WHO) return FALSE;
+    if (((etch_object*)who1)->class_id != CLASSID_WHO || ((etch_object*)who2)->class_id != CLASSID_WHO) return FALSE;
     if (!who1->value  || !who2->value) return FALSE;
     if (!is_etch_int32(who1->value) || !is_etch_int32(who2->value)) return FALSE;
     n1 = ((etch_int32*)who1->value)->value;
@@ -192,21 +138,7 @@ int is_equal_who(etch_who* who1, etch_who* who2)
  */
 typedef struct my_impl_transportpacket
 {
-    unsigned int    hashkey;  
-    unsigned short  obj_type; 
-    unsigned short  class_id;
-    struct objmask* vtab;  
-    int  (*destroy)(void*);
-    void*(*clone)  (void*); 
-    obj_gethashkey  get_hashkey;
-    struct objmask* parent;
-    etchresult*     result;
-    unsigned int    refcount;
-    unsigned int    length;
-    unsigned char   is_null;
-    unsigned char   is_copy;
-    unsigned char   is_static;
-    unsigned char   reserved;
+    etch_object object;
 
     /* i_transportpacket interface and methods, plus original destructor
      * which becomes replaced with a custom destructor to destroy this
@@ -220,7 +152,7 @@ typedef struct my_impl_transportpacket
      * invoke the interface's original destructor when destroying the interface.
      */
     i_transportpacket* ixp;       /* owned */ 
-    objdtor destroy_transportpacket;  /* i_transportpacket original destructor */
+    etch_object_destructor destroy_transportpacket;  /* i_transportpacket original destructor */
     etch_transport_packet transport_packet;        /* transport_packet() */
     etch_transport_packet_headersize  header_size; /* header_size() */
 
@@ -243,10 +175,10 @@ typedef struct my_impl_transportpacket
  * destroy_my_impl_transportpacket()
  * my_impl_transportpacket destructor
  */
-int destroy_my_impl_transportpacket(my_impl_transportpacket* thisx)
+static int destroy_my_impl_transportpacket(void* data)
 {
+    my_impl_transportpacket* thisx = (my_impl_transportpacket*)data;
     assert(is_my_impl_tp(thisx));
-    if (thisx->refcount > 0 && --thisx->refcount > 0) return -1;  
 
     if (!is_etchobj_static_content(thisx))
     {       /* invoke original i_transportpacket destructor */
@@ -256,23 +188,15 @@ int destroy_my_impl_transportpacket(my_impl_transportpacket* thisx)
         if (thisx->buf)
             etch_free(thisx->buf);
 
-        if (thisx->query)
-            thisx->query->destroy(thisx->query);
-
-        if (thisx->query_result)
-            thisx->query_result->destroy(thisx->query_result);
-
-        if (thisx->control)
-            thisx->control->destroy(thisx->control);
-
-        if (thisx->value)
-            thisx->value->destroy(thisx->value);
-
-        if (thisx->eventx)
-            thisx->eventx->destroy(thisx->eventx);
+        
+        etch_object_destroy(thisx->query);
+        etch_object_destroy(thisx->query_result);
+        etch_object_destroy(thisx->control);
+        etch_object_destroy(thisx->value);
+        etch_object_destroy(thisx->eventx);
     }
 
-   return destroy_objectex((objmask*) thisx);
+   return destroy_objectex((etch_object*) thisx);
 }
 
 
@@ -282,13 +206,13 @@ int destroy_my_impl_transportpacket(my_impl_transportpacket* thisx)
  * @param whoto caller retains, can be null
  * @param fbuf caller retains
  */
-int impl_transport_packet (my_impl_transportpacket* mytp, etch_who* whoto, etch_flexbuffer* fbuf)
+static int impl_transport_packet (my_impl_transportpacket* mytp, etch_who* whoto, etch_flexbuffer* fbuf)
 {
     CU_ASSERT_FATAL(is_my_impl_tp(mytp));
     mytp->what      = TRANSPORT_PACKET;
     mytp->recipient = whoto;   
     /* retrieve the packet data. don't skip over header (0 is skip bytes) */
-    mytp->buf = etch_flexbuf_get_allfrom(fbuf, 0, &mytp->bufcount); 
+    mytp->buf = (char*)etch_flexbuf_get_allfrom(fbuf, 0, &mytp->bufcount); 
     return 0;
 }
 
@@ -297,7 +221,7 @@ int impl_transport_packet (my_impl_transportpacket* mytp, etch_who* whoto, etch_
  * my_transport_control()
  * my_impl_transportpacket::itransport::transport_control 
  */
-int my_transport_control (my_impl_transportpacket* mytp, etch_object* control, etch_object* value)
+static int my_transport_control (my_impl_transportpacket* mytp, etch_object* control, etch_object* value)
 {
     CU_ASSERT_FATAL(is_my_impl_tp(mytp));
     mytp->what    = TRANSPORT_CONTROL;
@@ -311,7 +235,7 @@ int my_transport_control (my_impl_transportpacket* mytp, etch_object* control, e
  * my_transport_notify()
  * my_impl_transportpacket::itransport::transport_notify 
  */
-int my_transport_notify (my_impl_transportpacket* mytp, etch_object* evt)
+static int my_transport_notify (my_impl_transportpacket* mytp, etch_object* evt)
 {
     CU_ASSERT_FATAL(is_my_impl_tp(mytp)); 
     mytp->what   = TRANSPORT_NOTIFY;
@@ -324,7 +248,7 @@ int my_transport_notify (my_impl_transportpacket* mytp, etch_object* evt)
  * my_transport_query()
  * my_impl_transportpacket::itransport::transport_query 
  */
-objmask* my_transport_query (my_impl_transportpacket* mytp, etch_object* query) 
+static etch_object* my_transport_query (my_impl_transportpacket* mytp, etch_object* query) 
 {
     etch_object* resultobj = NULL;
     CU_ASSERT_FATAL(is_my_impl_tp(mytp));
@@ -332,7 +256,7 @@ objmask* my_transport_query (my_impl_transportpacket* mytp, etch_object* query)
     mytp->what  = TRANSPORT_QUERY;
     mytp->query = query;
     mytp->query_result = NULL;
-    return (objmask*) resultobj;  /* caller owns */
+    return (etch_object*) resultobj;  /* caller owns */
 }
 
 
@@ -340,7 +264,7 @@ objmask* my_transport_query (my_impl_transportpacket* mytp, etch_object* query)
  * my_transport_get_session()
  * my_impl_transportpacket::itransport::get_session 
  */
-i_sessionpacket* my_transport_get_session(my_impl_transportpacket* mytp)
+static i_sessionpacket* my_transport_get_session(my_impl_transportpacket* mytp)
 {
     CU_ASSERT_FATAL(is_my_impl_tp(mytp));
     return mytp->session;
@@ -351,7 +275,7 @@ i_sessionpacket* my_transport_get_session(my_impl_transportpacket* mytp)
  * my_transport_set_session()
  * my_impl_transportpacket::itransport::set_session
  */
-void my_transport_set_session(my_impl_transportpacket* mytp, i_sessionpacket* session)
+static void my_transport_set_session(my_impl_transportpacket* mytp, i_sessionpacket* session)
 {   
     CU_ASSERT_FATAL(is_my_impl_tp(mytp));
     CU_ASSERT_FATAL(is_etch_sessionpacket(session));
@@ -365,15 +289,16 @@ void my_transport_set_session(my_impl_transportpacket* mytp, i_sessionpacket* se
  * this destructor will destroy its parent (my_impl_transportpacket), 
  * which will in turn destroy this object.
  */
-int destroy_my_transportpacket(i_transportpacket* itp)
+static int destroy_my_transportpacket(void* data)
 {
+    i_transportpacket* itp = (i_transportpacket*)data;
     my_impl_transportpacket* mytp = NULL;
     assert(is_etch_transportpkt(itp));
 
     mytp = itp->thisx;  
     assert(is_my_impl_tp(mytp));
 
-    mytp->destroy(mytp);
+    etch_object_destroy(mytp);
 
     return 0;
 }
@@ -383,7 +308,7 @@ int destroy_my_transportpacket(i_transportpacket* itp)
  * new_my_impl_transportpacket()
  * my_impl_transportpacket constructor
  */
-my_impl_transportpacket* new_my_impl_transportpacket()
+static my_impl_transportpacket* new_my_impl_transportpacket()
 {
     i_transportpacket* itp  = NULL;
     i_transport* itransport = NULL;
@@ -393,7 +318,7 @@ my_impl_transportpacket* new_my_impl_transportpacket()
     my_impl_transportpacket* mytp = (my_impl_transportpacket*) new_object
       (sizeof(my_impl_transportpacket), OBJTYPE_MY_IMPL_TP, class_id);
 
-    mytp->destroy = destroy_my_impl_transportpacket;
+    ((etch_object*)mytp)->destroy = destroy_my_impl_transportpacket;
 
     itransport = new_transport_interface_ex(mytp,
         (etch_transport_control)     my_transport_control, 
@@ -402,16 +327,16 @@ my_impl_transportpacket* new_my_impl_transportpacket()
         (etch_transport_get_session) my_transport_get_session, 
         (etch_transport_set_session) my_transport_set_session);
 
-    itp = new_transportpkt_interface(mytp, impl_transport_packet, itransport);
+    itp = new_transportpkt_interface(mytp, (void*)impl_transport_packet, itransport);
 
     /* default header_size() will return this value so no need to override */
     itp->header_size = THISTEST_HEADERSIZE; 
 
     /* save off i_transportpacket destructor */
-    mytp->destroy_transportpacket = itp->destroy;
+    mytp->destroy_transportpacket = ((etch_object*)itp)->destroy;
 
     /* replace i_transportpacket destructor with one which will destroy this object */
-    itp->destroy = destroy_my_transportpacket;
+    ((etch_object*)itp)->destroy = destroy_my_transportpacket;
 
     /* g_my_transportpacket will get set to this interface */
     mytp->ixp = itp;  
@@ -431,22 +356,7 @@ my_impl_transportpacket* new_my_impl_transportpacket()
  */
 typedef struct my_impl_sessionmessage
 {
-    unsigned int    hashkey;  
-    unsigned short  obj_type; 
-    unsigned short  class_id;
-    struct objmask* vtab;  
-    int  (*destroy)(void*);
-    void*(*clone)  (void*); 
-    obj_gethashkey  get_hashkey;
-    struct objmask* parent;
-    etchresult*     result;
-    unsigned int    refcount;
-    unsigned int    length;
-    unsigned char   is_null;
-    unsigned char   is_copy;
-    unsigned char   is_static;
-    unsigned char   reserved;
-
+    etch_object object;
     /*
      * i_sessionmessage interface and methods, plus original destructor
      * which becomes replaced with a custom destructor to destroy this
@@ -460,7 +370,7 @@ typedef struct my_impl_sessionmessage
      * invoke the interface's original destructor when destroying the interface.
      */
     i_sessionmessage* ism;          /* owned */
-    objdtor destroy_sessionmessage; /* i_sessionmessage original destructor */
+    etch_object_destructor destroy_sessionmessage; /* i_sessionmessage original destructor */
     etch_session_message session_message;  /* session_message() method */
 
     etch_what       what;
@@ -483,10 +393,10 @@ typedef struct my_impl_sessionmessage
  * destroy_my_impl_sessionmessage()
  * my_impl_sessionmessage destructor
  */
-int destroy_my_impl_sessionmessage(my_impl_sessionmessage* thisx)
+static int destroy_my_impl_sessionmessage(void* data)
 {
-    if (thisx->refcount > 0 && --thisx->refcount > 0) return -1;  
-
+    
+    my_impl_sessionmessage* thisx = (my_impl_sessionmessage*)data;
     if (!is_etchobj_static_content(thisx))
     {       /* invoke original i_sessionmessage destructor */
         if (thisx->ism && thisx->destroy_sessionmessage)
@@ -494,26 +404,20 @@ int destroy_my_impl_sessionmessage(my_impl_sessionmessage* thisx)
 
         /* these are objects which would be destroyed in the binding 
          * by the last method to touch them */
-        if (thisx->msg)
-            thisx->msg->destroy(thisx->msg);
+        etch_object_destroy(thisx->msg);
 
-        if (thisx->query)
-            thisx->query->destroy(thisx->query);
+        etch_object_destroy(thisx->query);
 
-        if (thisx->query_result)
-            thisx->query_result->destroy(thisx->query_result);
+        etch_object_destroy(thisx->query_result);
 
-        if (thisx->control)
-            thisx->control->destroy(thisx->control);
+        etch_object_destroy(thisx->control);
 
-        if (thisx->value)
-            thisx->value->destroy(thisx->value);
+        etch_object_destroy(thisx->value);
 
-        if (thisx->eventx)
-            thisx->eventx->destroy(thisx->eventx);
+        etch_object_destroy(thisx->eventx);
     }
 
-   return destroy_objectex((objmask*) thisx);
+   return destroy_objectex((etch_object*) thisx);
 }
 
 
@@ -523,7 +427,7 @@ int destroy_my_impl_sessionmessage(my_impl_sessionmessage* thisx)
  * @param whofrom caller retains, can be null.
  * @param msg caller abandons
  */
-int impl_session_message (my_impl_sessionmessage* mysm, etch_who* whofrom, etch_message* msg)
+static int impl_session_message (my_impl_sessionmessage* mysm, etch_who* whofrom, etch_message* msg)
 {
     CU_ASSERT_FATAL(is_my_impl_sm(mysm));
     mysm->what = SESSION_MESSAGE;
@@ -556,7 +460,7 @@ int impl_session_message (my_impl_sessionmessage* mysm, etch_who* whofrom, etch_
  * my_impl_sessionmessage::ism::isession::session_control 
  * control and value are always abandoned by caller so mysm must clean them up.
  */
-int my_session_control (my_impl_sessionmessage* mysm, etch_object* control, etch_object* value)
+static int my_session_control (my_impl_sessionmessage* mysm, etch_object* control, etch_object* value)
 {
     CU_ASSERT_FATAL(is_my_impl_sm(mysm));
     mysm->what    = SESSION_CONTROL;
@@ -571,7 +475,7 @@ int my_session_control (my_impl_sessionmessage* mysm, etch_object* control, etch
  * my_impl_sessionmessage::ism::isession::session_notify 
  * evt is always abandoned by caller so mysm must clean it up.
  */
-int my_session_notify (my_impl_sessionmessage* mysm, etch_object* evt)
+static int my_session_notify (my_impl_sessionmessage* mysm, etch_object* evt)
 {
     CU_ASSERT_FATAL(is_my_impl_sm(mysm));
     mysm->what   = SESSION_NOTIFY;
@@ -585,7 +489,7 @@ int my_session_notify (my_impl_sessionmessage* mysm, etch_object* evt)
  * my_impl_sessionmessage::ism::isession::session_query 
  * query is always abandoned by caller so mysm must clean it up.
  */
-objmask* my_session_query (my_impl_sessionmessage* mysm, etch_object* query) 
+static etch_object* my_session_query (my_impl_sessionmessage* mysm, etch_object* query) 
 {
     etch_object* resultobj = NULL;
     CU_ASSERT_FATAL(is_my_impl_sm(mysm));
@@ -593,7 +497,7 @@ objmask* my_session_query (my_impl_sessionmessage* mysm, etch_object* query)
     mysm->what  = SESSION_QUERY;
     mysm->query = query;
     mysm->query_result = NULL;
-    return (objmask*) resultobj; /* caller owns */
+    return (etch_object*) resultobj; /* caller owns */
 }
 
 
@@ -603,14 +507,15 @@ objmask* my_session_query (my_impl_sessionmessage* mysm, etch_object* query)
  * this destructor will destroy its parent (my_impl_sessionmessage), 
  * which will in turn destroy this object.
  */
-int destroy_my_sessionmessage(i_sessionmessage* ism)
+static int destroy_my_sessionmessage(void* data)
 {
+    i_sessionmessage* ism = (i_sessionmessage*)data;
     my_impl_sessionmessage* mysm = NULL;
     if (NULL == ism) return -1;
 
     mysm = ism->thisx;  
 
-    mysm->destroy(mysm);
+    etch_object_destroy(mysm);
 
     return 0;
 }
@@ -620,7 +525,7 @@ int destroy_my_sessionmessage(i_sessionmessage* ism)
  * new_my_impl_sessionmessage()
  * my_impl_sessionmessage constructor
  */
-my_impl_sessionmessage* new_my_impl_sessionmessage()
+static my_impl_sessionmessage* new_my_impl_sessionmessage()
 {
     i_sessionmessage* ism  = NULL;
     i_session* isession = NULL;
@@ -631,20 +536,20 @@ my_impl_sessionmessage* new_my_impl_sessionmessage()
     my_impl_sessionmessage* mysm = (my_impl_sessionmessage*) new_object
       (sizeof(my_impl_sessionmessage), OBJTYPE_MY_IMPL_SM, class_id);
 
-    mysm->destroy = destroy_my_impl_sessionmessage;
+    ((etch_object*)mysm)->destroy = destroy_my_impl_sessionmessage;
 
     isession = new_session_interface(mysm,
         (etch_session_control)     my_session_control, 
         (etch_session_notify)      my_session_notify, 
         (etch_session_query)       my_session_query);
 
-    ism = new_sessionmsg_interface(mysm, impl_session_message, isession);
+    ism = new_sessionmsg_interface(mysm, (void*)impl_session_message, isession);
 
     /* save off i_sessionmessage destructor */
-    mysm->destroy_sessionmessage = ism->destroy;
+    mysm->destroy_sessionmessage = ((etch_object*)ism)->destroy;
 
     /* custom destructor will destroy the my_impl_sessionmessage */
-    ism->destroy = destroy_my_sessionmessage;
+    ((etch_object*)ism)->destroy = destroy_my_sessionmessage;
 
     /* g_my_sessionmessage will get set to this interface */
     mysm->ism = ism;  
@@ -664,29 +569,15 @@ my_impl_sessionmessage* new_my_impl_sessionmessage()
  * this version uses inherited data coded into the object, as opposed to 
  * instantiating an impl object to contain inherited data and methods.
  */
-typedef struct test_value_factory
+//typedef struct test_value_factory
+struct test_value_factory
 {
-    unsigned int     hashkey;  
-    unsigned short   obj_type; 
-    unsigned short   class_id;
-    i_value_factory* vtab;  
-    int  (*destroy) (void*);
-    void*(*clone)   (void*); 
-    obj_gethashkey   get_hashkey;
-    struct objmask*  parent;
-    etchresult*      result;
-    unsigned int     refcount;
-    unsigned int     length;
-    unsigned char    is_null;
-    unsigned char    is_copy;
-    unsigned char    is_static;
-    unsigned char    reserved;
-
+    etch_object object;
     /* - - - - - - - - - - - - - 
      * default value factory  
      * - - - - - - - - - - - - - 
      */
-    objmask* impl;
+    etch_object* impl;
 
     class_to_type_map* class_to_type;
     vf_idname_map*  types;  
@@ -704,22 +595,18 @@ typedef struct test_value_factory
     etch_field*   mf_x;
     etch_field*   mf_y;
     etch_field*   mf_result;
-
-} test_value_factory;
+};
+//} test_value_factory;
 
 
 /**
  * destroy_test_value_factory()
  * destructor for value factory version 1 
  */
-int destroy_test_value_factory(test_value_factory* vf)
+static int destroy_test_value_factory(void* data)
 {
+    test_value_factory* vf = (test_value_factory*)data;
     if (NULL == vf) return -1;
-    if (vf->refcount > 0)
-        if (vf->refcount != 1)  /* if refcount is 1 */
-        {   vf->refcount--;     /* parent dtor will decrement */
-            return -1;
-        }
 
     if (!is_etchobj_static_content(vf))
     {
@@ -738,19 +625,10 @@ int destroy_test_value_factory(test_value_factory* vf)
  * new_test_valuefactory()
  * constructor for value factory version 1 inheriting from default_value_factory
  */
-test_value_factory* new_test_valuefactory()
+static test_value_factory* new_test_valuefactory()
 {
     etchparentinfo* inheritlist = NULL;
     test_value_factory* vf = NULL;
-
-    /* establish global dynamic class IDs for the custom vf. 
-     * these global objects are generated by the etch compiler.
-     */
-    const unsigned short class_id_vf = CLASSID_MY_VF? CLASSID_MY_VF: 
-         (CLASSID_MY_VF = get_dynamic_classid());
-
-    const unsigned short class_id_vf_vtab = CLASSID_MY_VF_VTAB? CLASSID_MY_VF_VTAB: 
-         (CLASSID_MY_VF_VTAB = get_dynamic_classid());
 
     g_type_map = new_vf_types_collection(ETCH_DEFSIZE);
     /* since we explicitly instantiate a type map, and since we explicitly destroy
@@ -764,20 +642,21 @@ test_value_factory* new_test_valuefactory()
      * this vf does NOT own its type maps since we supply them here. 
      * however if we wanted to abandon ownership, we could set the   
      * vf.is_own_types and vf.is_own_class_to_type flags here.
-     */    
-    vf = (test_value_factory*) new_default_value_factory_a
-        (sizeof(test_value_factory), g_type_map, g_class_to_type_map);
+     */
+    // init typemap and class to type map
+    defvf_initialize_static(g_type_map, g_class_to_type_map);
+    vf = (test_value_factory*) new_default_value_factory_ex(sizeof(test_value_factory), g_type_map, g_class_to_type_map);
 
-    vf->destroy = destroy_test_value_factory;
+    ((etch_object*)vf)->destroy = destroy_test_value_factory;
 
    /* ensure parent type keys exist in the (one-based) inheritance list. 
     * parent class of our custom vf is default_value_factory.
     * inheritance list is used by validators and object assignment logic.
     */
-    inheritlist = get_vtab_inheritance_list((objmask*)vf, 2, 1, CLASSID_MY_VF_VTAB);
-    inheritlist[1].obj_type = ETCHTYPEB_VALUEFACTORY;  
-    inheritlist[1].class_id = CLASSID_VALUEFACTORY;  /* parent class */
-    vf->class_id = CLASSID_MY_VF;  /* our class */
+    inheritlist = get_vtab_inheritance_list((etch_object*)vf, 2, 1, CLASSID_MY_VF_VTAB);
+    inheritlist[1].o.obj_type = ETCHTYPEB_VALUEFACTORY;  
+    inheritlist[1].c.class_id = CLASSID_VALUEFACTORY;  /* parent class */
+    ((etch_object*)vf)->class_id = CLASSID_MY_VF;  /* our class */
 
     /* instantiate the custom vf's instance data and assign it to the vf. 
      */  
@@ -794,22 +673,22 @@ test_value_factory* new_test_valuefactory()
     vf->mf_y->id          = FAKEID_FIELD_Y;
     vf->mf_result->id     = FAKEID_FIELD_RESULT;
 
-    vf->vtab->add_type(vf, vf->mt_add);
-    vf->vtab->add_type(vf, vf->mt_add_result);
+    ((struct i_value_factory*)((etch_object*)vf)->vtab)->add_type(vf, vf->mt_add);
+    ((struct i_value_factory*)((etch_object*)vf)->vtab)->add_type(vf, vf->mt_add_result);
 
     etchtype_put_validator(vf->mt_add, clone_field(vf->mf_x), 
-        (objmask*) etchvtor_int32_get(0));
+        (etch_object*) etchvtor_int32_get(0));
     etchtype_put_validator(vf->mt_add, clone_field(vf->mf_y), 
-        (objmask*) etchvtor_int32_get(0));
+        (etch_object*) etchvtor_int32_get(0));
     etchtype_put_validator(vf->mt_add, clone_field(builtins._mf__message_id), 
-        (objmask*) etchvtor_int64_get(0));
+        (etch_object*) etchvtor_int64_get(0));
 
     etchtype_put_validator(vf->mt_add_result, clone_field(vf->mf_result), 
-        (objmask*) etchvtor_int32_get(0));
+        (etch_object*) etchvtor_int32_get(0));
     etchtype_put_validator(vf->mt_add_result, clone_field(builtins._mf__message_id), 
-        (objmask*) etchvtor_int64_get(0));
+        (etch_object*) etchvtor_int64_get(0));
     etchtype_put_validator(vf->mt_add_result, clone_field(builtins._mf__in_reply_to), 
-        (objmask*) etchvtor_int64_get(0));
+        (etch_object*) etchvtor_int64_get(0));
 
     g_my_test_vf = vf;
     return g_my_test_vf;
@@ -822,21 +701,7 @@ test_value_factory* new_test_valuefactory()
  */
 typedef struct my_valufactory_impl
 {
-    unsigned int    hashkey;  
-    unsigned short  obj_type; 
-    unsigned short  class_id;
-    struct objmask* vtab;  
-    int  (*destroy)(void*);
-    void*(*clone)  (void*); 
-    obj_gethashkey  get_hashkey;
-    struct objmask* parent;
-    etchresult*     result;
-    unsigned int    refcount;
-    unsigned int    length;
-    unsigned char   is_null;
-    unsigned char   is_copy;
-    unsigned char   is_static;
-    unsigned char   reserved;
+    etch_object object;
 
     etch_type*      mt_add;
     etch_type*      mt_add_result;
@@ -851,10 +716,10 @@ typedef struct my_valufactory_impl
  * destroy_my_valufactory_impl()
  * destructor for inheriting value factory version 2 instance data
  */
-int destroy_my_valufactory_impl(my_valufactory_impl* impl)
+static int destroy_my_valufactory_impl(void* data)
 {
+    my_valufactory_impl* impl = (my_valufactory_impl*)data;
     if (NULL == impl) return -1;
-    if (impl->refcount > 0 && --impl->refcount > 0) return -1;  
 
     if (!is_etchobj_static_content(impl))
     {
@@ -865,7 +730,7 @@ int destroy_my_valufactory_impl(my_valufactory_impl* impl)
         destroy_static_field(impl->mf_result);  
     }
 
-    return destroy_objectex((objmask*) impl);
+    return destroy_objectex((etch_object*) impl);
 }
 
 
@@ -873,7 +738,7 @@ int destroy_my_valufactory_impl(my_valufactory_impl* impl)
  * new_my_valufactory_impl()
  * constructor for inheriting value factory version 2 instance data
  */
-my_valufactory_impl* new_my_valufactory_impl()
+static my_valufactory_impl* new_my_valufactory_impl()
 {
     unsigned short class_id = CLASSID_MY_VF_IMPL? CLASSID_MY_VF_IMPL: 
         (CLASSID_MY_VF_IMPL = get_dynamic_classid());
@@ -881,7 +746,7 @@ my_valufactory_impl* new_my_valufactory_impl()
     my_valufactory_impl* impl = (my_valufactory_impl*) new_object
         (sizeof(my_valufactory_impl), ETCHTYPEB_VALUEFACTIMP, class_id);
 
-    impl->destroy = destroy_my_valufactory_impl;
+    ((etch_object*)impl)->destroy = destroy_my_valufactory_impl;
 
     impl->mt_add = new_static_type(L"add");
     impl->mt_add_result = new_static_type(L"add_result");
@@ -897,18 +762,18 @@ my_valufactory_impl* new_my_valufactory_impl()
     impl->mf_result->id     = FAKEID_FIELD_RESULT;
 
     etchtype_put_validator(impl->mt_add, clone_field(impl->mf_x), 
-        (objmask*) etchvtor_int32_get(0));
+        (etch_object*) etchvtor_int32_get(0));
     etchtype_put_validator(impl->mt_add, clone_field(impl->mf_y), 
-        (objmask*) etchvtor_int32_get(0));
+        (etch_object*) etchvtor_int32_get(0));
     etchtype_put_validator(impl->mt_add, clone_field(builtins._mf__message_id), 
-        (objmask*) etchvtor_int64_get(0));
+        (etch_object*) etchvtor_int64_get(0));
 
     etchtype_put_validator(impl->mt_add_result, clone_field(impl->mf_result), 
-        (objmask*) etchvtor_int32_get(0));
+        (etch_object*) etchvtor_int32_get(0));
     etchtype_put_validator(impl->mt_add_result, clone_field(builtins._mf__message_id), 
-        (objmask*) etchvtor_int64_get(0));
+        (etch_object*) etchvtor_int64_get(0));
     etchtype_put_validator(impl->mt_add_result, clone_field(builtins._mf__in_reply_to), 
-        (objmask*) etchvtor_int64_get(0));
+        (etch_object*) etchvtor_int64_get(0));
 
     return impl;
 }
@@ -918,26 +783,18 @@ my_valufactory_impl* new_my_valufactory_impl()
  * new_bogus_valuefactory()
  * constructor for value factory version 2 inheriting from default_value_factory
  */
-default_value_factory* new_bogus_valuefactory()
+static default_value_factory* new_bogus_valuefactory()
 {
     etchparentinfo* inheritlist = NULL;
     my_valufactory_impl* impl = NULL;
 
-    /* establish global dynamic class IDs for the custom vf. 
-     * these global objects are generated by the etch compiler.
-     */
-    const unsigned short class_id_vf = CLASSID_MY_VF? CLASSID_MY_VF: 
-         (CLASSID_MY_VF = get_dynamic_classid());
-
-    const unsigned short class_id_vf_vtab = CLASSID_MY_VF_VTAB? CLASSID_MY_VF_VTAB: 
-         (CLASSID_MY_VF_VTAB = get_dynamic_classid());
 
     g_type_map = new_vf_types_collection(ETCH_DEFSIZE);
     /* since we explicitly instantiate a type map, and since we explicitly destroy
      * the test's custom types, we want the type maps destructor to not destroy
      * the map content. overriding the map's content clear callback is one way 
      * to do this. */
-    g_type_map->freehook = etch_noop_clear_handler;  
+    g_type_map->freehook = etch_noop_clear_handler;
     g_class_to_type_map  = new_class_to_type_map(ETCH_DEFSIZE);
 
     /* instantiate the new value factory.  
@@ -945,16 +802,17 @@ default_value_factory* new_bogus_valuefactory()
      * however if we wanted to abandon ownership, we could clear the   
      * vf.is_own_types and vf.is_own_class_to_type flags here.
      */    
+    defvf_initialize_static(g_type_map, g_class_to_type_map);
     g_my_vf = new_default_value_factory(g_type_map, g_class_to_type_map);
 
    /* ensure parent type keys exist in the (one-based) inheritance list. 
     * parent class of our custom vf is default_value_factory.
     * inheritance list is used by validators and object assignment logic.
     */
-    inheritlist = get_vtab_inheritance_list((objmask*)g_my_vf, 2, 1, CLASSID_MY_VF_VTAB);
-    inheritlist[1].obj_type = ETCHTYPEB_VALUEFACTORY;  
-    inheritlist[1].class_id = CLASSID_VALUEFACTORY;  /* parent class */
-    g_my_vf->class_id = CLASSID_MY_VF;  /* our class */
+    inheritlist = get_vtab_inheritance_list((etch_object*)g_my_vf, 2, 1, CLASSID_MY_VF_VTAB);
+    inheritlist[1].o.obj_type = ETCHTYPEB_VALUEFACTORY;  
+    inheritlist[1].c.class_id = CLASSID_VALUEFACTORY;  /* parent class */
+    ((etch_object*)g_my_vf)->class_id = CLASSID_MY_VF;  /* our class */
 
     /* instantiate the custom vf's instance data and assign it to the vf. 
      * the impl comprises all data specific to the inheriting class, including 
@@ -962,10 +820,10 @@ default_value_factory* new_bogus_valuefactory()
      * the destructor on the vf's impl object.
      */  
     impl = new_my_valufactory_impl();
-    g_my_vf->impl = (objmask*) impl;
+    g_my_vf->impl = (etch_object*) impl;
 
-    g_my_vf->vtab->add_type(g_my_vf, impl->mt_add);
-    g_my_vf->vtab->add_type(g_my_vf, impl->mt_add_result);
+    ((struct i_value_factory*)((etch_object*)g_my_vf)->vtab)->add_type(g_my_vf, impl->mt_add);
+    ((struct i_value_factory*)((etch_object*)g_my_vf)->vtab)->add_type(g_my_vf, impl->mt_add_result);
 
     return g_my_vf;
 }
@@ -975,7 +833,7 @@ default_value_factory* new_bogus_valuefactory()
  * get_vftype()
  * return a type depending on which version of value factory is instantiated
  */
-etch_type* get_vftype(const int typeid)
+static etch_type* get_vftype(const int typeid)
 {
     etch_type* type = NULL;
 
@@ -1011,7 +869,7 @@ etch_type* get_vftype(const int typeid)
 /**
  * new_bogus_messagizer()
  */
-etch_messagizer* new_bogus_messagizer(i_transportpacket* transport)
+static etch_messagizer* new_bogus_messagizer(i_transportpacket* transport)
 {
     g_my_messagizer = new_messagizer(transport, L"foo:?Messagizer.format=binary", g_my_resources);
     return g_my_messagizer;
@@ -1026,7 +884,7 @@ etch_messagizer* new_bogus_messagizer(i_transportpacket* transport)
 /**
  * setup_this_test()
  */
-int setup_this_test(const int which_valuefactory)
+static int setup_this_test(const int which_valuefactory)
 {
     my_impl_transportpacket* mytp_impl = NULL;
     my_impl_sessionmessage*  mysm_impl = NULL;
@@ -1039,12 +897,13 @@ int setup_this_test(const int which_valuefactory)
         set_etchobj_static_all(g_my_test_vf);  /* so resources will not destroy */
     }
     else 
-    {   thisvf = new_bogus_valuefactory();     /* vf version 2 impl object inheritance */
+    {   
+        thisvf = new_bogus_valuefactory();     /* vf version 2 impl object inheritance */
         set_etchobj_static_all(g_my_vf);       /* so resources will not destroy */
     }
 
     g_my_resources = new_etch_resources(ETCH_DEFSIZE);
-    etch_resources_add(g_my_resources, ETCH_RESXKEY_MSGIZER_VALUFACT, (objmask*) thisvf); 
+    etch_resources_add(g_my_resources, ETCH_RESXKEY_MSGIZER_VALUFACT, (etch_object*) thisvf); 
 
     /* we instantiate a wrapper x which implements and instantiates i_transportpacket.
      * the instantiation of i_transportpacket will contain a pointer to x.
@@ -1068,7 +927,7 @@ int setup_this_test(const int which_valuefactory)
     mysm_impl = new_my_impl_sessionmessage();
     g_my_sessionmessage = mysm_impl->ism;
     
-    g_who = new_who(new_int32(THISTEST_WHO_VALUE), TRUE);
+    g_who = new_who(new_int32(THISTEST_WHO_VALUE));
 
     /* finally instantiate the test messagizer */
     new_bogus_messagizer(g_my_transportpacket);
@@ -1082,33 +941,33 @@ int setup_this_test(const int which_valuefactory)
 /**
  * teardown_this_test()
  */
-int teardown_this_test()
+static int teardown_this_test()
 {
-    g_my_messagizer->destroy(g_my_messagizer);
+    etch_object_destroy(g_my_messagizer);
 
-    g_my_transportpacket->destroy(g_my_transportpacket);
+    etch_object_destroy(g_my_transportpacket);
 
-    g_my_sessionmessage->destroy(g_my_sessionmessage);
+    etch_object_destroy(g_my_sessionmessage);
 
-    g_my_resources->destroy(g_my_resources);
+    etch_object_destroy(g_my_resources);
 
     if (g_my_vf)
     {   clear_etchobj_static_all(g_my_vf);
-        g_my_vf->destroy(g_my_vf);
+        etch_object_destroy(g_my_vf);
     }
     else  /* can only instantiate one or the other */ 
     if (g_my_test_vf)
     {   clear_etchobj_static_all(g_my_test_vf);
-        g_my_test_vf->destroy(g_my_test_vf);
+        etch_object_destroy(g_my_test_vf);
     }
    
-    g_who->destroy(g_who);
+    etch_object_destroy(g_who);
 
-    g_type_map->destroy(g_type_map);    // ************************************************
-    g_class_to_type_map->destroy(g_class_to_type_map);
+    etch_object_destroy(g_type_map);    // ************************************************
+    etch_object_destroy(g_class_to_type_map);
 
     if (g_flexbuffer)
-        g_flexbuffer->destroy(g_flexbuffer);
+        etch_object_destroy(g_flexbuffer);
 
     g_my_transportpacket = NULL;
     g_my_sessionmessage = NULL; 
@@ -1135,7 +994,7 @@ int teardown_this_test()
 /**
  * test_transportpacket_constructor()
  */
-void test_transportpacket_constructor(void)
+static void test_transportpacket_constructor(void)
 {
     my_impl_transportpacket* mytp_impl = new_my_impl_transportpacket();
     CU_ASSERT_PTR_NOT_NULL_FATAL(mytp_impl);
@@ -1145,20 +1004,23 @@ void test_transportpacket_constructor(void)
      */
     do 
     {   i_transportpacket* itp = mytp_impl->ixp;
-        itp->destroy(itp);
+        etch_object_destroy(itp);
 
     } while(0);
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
 /**
  * test_sessionmessage_constructor()
  */
-void test_sessionmessage_constructor(void)
+static void test_sessionmessage_constructor(void)
 {
     my_impl_sessionmessage* mysm_impl = new_my_impl_sessionmessage();
     CU_ASSERT_PTR_NOT_NULL_FATAL(mysm_impl);
@@ -1168,34 +1030,49 @@ void test_sessionmessage_constructor(void)
      */
     do 
     {   i_sessionmessage* ism = mysm_impl->ism;
-        ism->destroy(ism);
+        etch_object_destroy(ism);
 
     } while(0);
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
 /**
  * test_messagizer_constructor()
  */
-void test_messagizer_constructor(void)
+static void test_messagizer_constructor(void)
 {
     etch_messagizer* mzr = NULL;
     i_transportpacket* itp = NULL;
     etch_resources* resxmap = NULL;
-    default_value_factory* vf = NULL;
+    default_value_factory*  vf      = NULL;
+    vf_idname_map*          typemap = NULL;
+    class_to_type_map*      c2tmap  = NULL;
     my_impl_transportpacket* mytp_impl = NULL;
 
-    vf = new_default_value_factory(NULL, NULL);
+    typemap = new_vf_types_collection(ETCH_DEFVF_IDNMAP_DEFINITSIZE);
+    CU_ASSERT_PTR_NOT_NULL(typemap);
+    c2tmap  = new_class_to_type_map(ETCH_DEVVF_C2TMAP_DEFINITSIZE);
+    CU_ASSERT_PTR_NOT_NULL(c2tmap);
+    defvf_initialize_static(typemap, c2tmap);
+    vf = new_default_value_factory(typemap, c2tmap);
+    CU_ASSERT_PTR_NOT_NULL(vf);
+
+    mytp_impl = NULL;
+
+    vf = new_default_value_factory(typemap, c2tmap);
     CU_ASSERT_PTR_NOT_NULL_FATAL(vf);
     set_etchobj_static_all(vf); /* so resources will not destroy */
 
     resxmap = new_etch_resources(ETCH_DEFSIZE);
     CU_ASSERT_PTR_NOT_NULL_FATAL(resxmap);
-    etch_resources_add(resxmap, ETCH_RESXKEY_MSGIZER_VALUFACT, (objmask*) vf); 
+    etch_resources_add(resxmap, ETCH_RESXKEY_MSGIZER_VALUFACT, (etch_object*) vf); 
 
     mytp_impl = new_my_impl_transportpacket();   
     CU_ASSERT_PTR_NOT_NULL_FATAL(mytp_impl);
@@ -1207,47 +1084,61 @@ void test_messagizer_constructor(void)
     mzr = new_messagizer(itp, L"foo:?Messagizer.format=binary", resxmap);
     CU_ASSERT_PTR_NOT_NULL_FATAL(mzr);
 
-    mzr->destroy(mzr);    
+    etch_object_destroy(mzr);    
 
     /* i_transportpacket.destroy() will destroy my_impl_transportpacket */
-    itp->destroy(itp);    
+    etch_object_destroy(itp);    
 
-    resxmap->destroy(resxmap);
+    etch_object_destroy(resxmap);
     clear_etchobj_static_all(vf);  /* so we can destroy it now */
-    vf->destroy(vf);
-    etchvf_free_builtins(); 
+    
+    etch_object_destroy(vf);
+    etch_object_destroy(c2tmap);
+    etch_object_destroy(typemap);
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */   
+    // TODO: cleanup statics
+    //etchvf_free_builtins();
+
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
 /**
  * test_testsetup_teardown_a
  */
-void test_testsetup_teardown_a(void)
+static void test_testsetup_teardown_a(void)
 {
     setup_this_test(WHICHVF_TESTVF);
     teardown_this_test();
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
 /**
  * test_testsetup_teardown_b
  */
-void test_testsetup_teardown_b(void)
+static void test_testsetup_teardown_b(void)
 {
     setup_this_test(WHICHVF_MYVF);
     teardown_this_test();
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -1255,14 +1146,13 @@ void test_testsetup_teardown_b(void)
  * test_packet_1
  * mimics the transport messagizing a packet and delivering the message to the session
  */
-void test_packet_1(void)
+static void test_packet_1(void)
 {
     setup_this_test(WHICHVF_TESTVF);
 
     do          
     {   int result = 0;
         etch_type* msgtype = NULL;
-        etch_flexbuffer* fbuf = NULL;
         const int THISTEST_BUFSIZE = 4;
         char* buf = etch_malloc(THISTEST_BUFSIZE, ETCHTYPEB_BYTES);
 
@@ -1296,9 +1186,12 @@ void test_packet_1(void)
 
     teardown_this_test();
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -1307,14 +1200,13 @@ void test_packet_1(void)
  * mimics the transport messagizing a packet and delivering the message to the session
  * which rejects the message and forwards the message as rejected.
  */
-void test_packet_2(void)
+static void test_packet_2(void)
 {
     setup_this_test(WHICHVF_TESTVF);
 
     do          
     {   int result = 0;
         etch_type* msgtype = NULL;
-        etch_flexbuffer* fbuf = NULL;
         const int THISTEST_BUFSIZE = 4;
         etch_message* thismessage = NULL;
         etch_unwanted_message* uwmsg = NULL;
@@ -1339,8 +1231,8 @@ void test_packet_2(void)
 
         /* messagize the packet and deliver the message to the session */
         result = g_my_messagizer->session_packet (g_my_messagizer, g_who, g_flexbuffer);
-        CU_ASSERT_EQUAL(result, 0); 
-        if (0 != result) break;
+        CU_ASSERT_EQUAL(result, -1); 
+        if (-1 != result) break;
 
         CU_ASSERT_EQUAL(my_session->what, SESSION_NOTIFY); 
         CU_ASSERT_EQUAL(message_size(my_session->msg), 0);      
@@ -1348,7 +1240,7 @@ void test_packet_2(void)
         CU_ASSERT_PTR_NOT_NULL_FATAL(my_session->eventx);
 
         uwmsg = (etch_unwanted_message*) my_session->eventx; 
-        CU_ASSERT_EQUAL_FATAL(uwmsg->class_id, CLASSID_EVENT_UNWANTMSG); 
+        CU_ASSERT_EQUAL_FATAL(((etch_object*)uwmsg)->class_id, CLASSID_EVENT_UNWANTMSG); 
 
         /* find the message and who in the "unwanted message" wrapper */
         result = is_equal_who(uwmsg->whofrom, g_who);
@@ -1366,9 +1258,12 @@ void test_packet_2(void)
 
     teardown_this_test();
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -1376,17 +1271,14 @@ void test_packet_2(void)
  * test_packet_3
  * mimics the transport messagizing a packet and delivering the message to the session
  */
-void test_packet_3(void)
+static void test_packet_3(void)
 {
     setup_this_test(WHICHVF_TESTVF);
 
     do          
     {   int result = 0;
         etch_type* msgtype = NULL;
-        etch_flexbuffer* fbuf = NULL;
         const int THISTEST_BUFSIZE = 4;
-        etch_message* thismessage = NULL;
-        etch_unwanted_message* uwmsg = NULL;
         char* buf = etch_malloc(THISTEST_BUFSIZE, ETCHTYPEB_BYTES);
 
         /* g_my_sessionmessage is the i_sessionmessage interface    
@@ -1423,9 +1315,12 @@ void test_packet_3(void)
 
     teardown_this_test();
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -1433,7 +1328,7 @@ void test_packet_3(void)
  * test_message_1
  * mimics the session buffering a message and delivering it to the transport
  */
-void test_message_1(void)
+static void test_message_1(void)
 {
     setup_this_test(WHICHVF_TESTVF);
 
@@ -1471,15 +1366,18 @@ void test_message_1(void)
         CU_ASSERT_EQUAL(my_transport->buf[0], TAGDATA_VERSION); 
         CU_ASSERT_EQUAL(my_transport->buf[1], FAKEID_TYPE_ADD); 
         CU_ASSERT_EQUAL(my_transport->buf[2], 0); 
-        CU_ASSERT_EQUAL(my_transport->buf[3], TYPECODE_EOD_MARK);         
+        CU_ASSERT_EQUAL(my_transport->buf[3], TYPECODE_EOD_MARK);
 
     } while(0);
 
     teardown_this_test();
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -1487,7 +1385,7 @@ void test_message_1(void)
  * test_message_2
  * mimics the session buffering a message and delivering it to the transport
  */
-void test_message_2(void)
+static void test_message_2(void)
 {
     setup_this_test(WHICHVF_TESTVF);
 
@@ -1533,9 +1431,12 @@ void test_message_2(void)
 
     teardown_this_test();
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -1543,15 +1444,15 @@ void test_message_2(void)
  * test_session_control
  * test the session control notification plumbing
  */
-void test_session_control(void)
+static void test_session_control(void)
 {
     setup_this_test(WHICHVF_TESTVF);
 
     do          
-    {   int result = 0;
+    {
         const int MY_CONTROL_CLASSID = 0x5200, MY_VALUE_CLASSID = 0x5201;
-        etch_object* mycontrolobj = new_etch_object(MY_CONTROL_CLASSID, NULL);
-        etch_object* myvalueobj   = new_etch_object(MY_VALUE_CLASSID, NULL);
+        etch_object* mycontrolobj = new_object(sizeof(etch_object),ETCHTYPEB_ETCHOBJECT, MY_CONTROL_CLASSID);
+        etch_object* myvalueobj   = new_object(sizeof(etch_object),ETCHTYPEB_ETCHOBJECT, MY_VALUE_CLASSID);
 
         /* g_my_sessionmessage is the i_sessionmessage interface    
          * my_impl_sessionmessage is the implementing test class */
@@ -1564,20 +1465,23 @@ void test_session_control(void)
         /* we relinquish memory for mycontrolobj and myvalueobj here. 
          * the session_control terminal destination must destroy them, which here
          * is handled by our session object destructor when we teardown_this_test() */
-        g_my_messagizer->session_control(g_my_messagizer, mycontrolobj, myvalueobj);
+        g_my_messagizer->session_control(g_my_messagizer, (etch_event*)mycontrolobj, myvalueobj);
 
         CU_ASSERT_EQUAL(my_session->what, SESSION_CONTROL);
         CU_ASSERT_PTR_NOT_NULL_FATAL(my_session->control);
-        CU_ASSERT_EQUAL(my_session->control->class_id, MY_CONTROL_CLASSID);
-        CU_ASSERT_EQUAL(my_session->value->class_id,   MY_VALUE_CLASSID);
+        CU_ASSERT_EQUAL(((etch_object*)my_session->control)->class_id, MY_CONTROL_CLASSID);
+        CU_ASSERT_EQUAL(((etch_object*)my_session->value)->class_id,   MY_VALUE_CLASSID);
 
     } while(0);
 
     teardown_this_test();
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -1585,14 +1489,14 @@ void test_session_control(void)
  * test_session_notify
  * test the session notify notification plumbing
  */
-void test_session_notify(void)
+static void test_session_notify(void)
 {
     setup_this_test(WHICHVF_TESTVF);
 
     do          
-    {   int result = 0;
+    {
         const int MY_EVENT_CLASSID = 0x5202;
-        etch_object* myeventobj = new_etch_object(MY_EVENT_CLASSID, NULL);
+        etch_object* myeventobj = new_object(sizeof(etch_object),ETCHTYPEB_ETCHOBJECT, MY_EVENT_CLASSID);
 
         /* g_my_sessionmessage is the i_sessionmessage interface    
          * my_impl_sessionmessage is the implementing test class */
@@ -1604,19 +1508,22 @@ void test_session_notify(void)
         /* we relinquish memory for myeventobj here. 
          * the session_control terminal destination must destroy it, which here
          * is handled by our session object destructor when we teardown_this_test() */
-        g_my_messagizer->session_notify(g_my_messagizer, myeventobj);
+        g_my_messagizer->session_notify(g_my_messagizer, (etch_event*)myeventobj);
 
         CU_ASSERT_EQUAL(my_session->what, SESSION_NOTIFY);
         CU_ASSERT_PTR_NOT_NULL_FATAL(my_session->eventx);
-        CU_ASSERT_EQUAL(my_session->eventx->class_id, MY_EVENT_CLASSID);
+        CU_ASSERT_EQUAL(((etch_object*)my_session->eventx)->class_id, MY_EVENT_CLASSID);
 
     } while(0);
 
     teardown_this_test();
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -1624,15 +1531,15 @@ void test_session_notify(void)
  * test_session_query
  * test the session query notification plumbing
  */
-void test_session_query(void)
+static void test_session_query(void)
 {
     setup_this_test(WHICHVF_TESTVF);
 
     do          
-    {   int result = 0;
+    {
         const int MY_QUERY_CLASSID = 0x5203, MY_RESULT_CLASSID = 0x5204;
-        etch_object* myqueryobj  = new_etch_object(MY_QUERY_CLASSID, NULL);
-        etch_object* myresultobj = new_etch_object(MY_RESULT_CLASSID, NULL);
+        etch_object* myqueryobj  = new_object(sizeof(etch_object),ETCHTYPEB_ETCHOBJECT, MY_QUERY_CLASSID);
+        etch_object* myresultobj = new_object(sizeof(etch_object),ETCHTYPEB_ETCHOBJECT, MY_RESULT_CLASSID);
         etch_object* queryresult = NULL;
 
         /* g_my_sessionmessage is the i_sessionmessage interface    
@@ -1648,22 +1555,25 @@ void test_session_query(void)
         /* we relinquish memory for myqueryobj here and assume queryresult. 
          * the session_control terminal destination must destroy it, which here
          * is handled by our session object destructor when we teardown_this_test() */
-        queryresult = g_my_messagizer->session_query (g_my_messagizer, myqueryobj);
+        queryresult = g_my_messagizer->session_query (g_my_messagizer, (etch_query*)myqueryobj);
 
         CU_ASSERT_EQUAL(my_session->what, SESSION_QUERY);
         CU_ASSERT_PTR_NOT_NULL_FATAL(my_session->query);
-        CU_ASSERT_EQUAL(my_session->query->class_id, MY_QUERY_CLASSID);
+        CU_ASSERT_EQUAL(((etch_object*)my_session->query)->class_id, MY_QUERY_CLASSID);
         CU_ASSERT_PTR_NOT_NULL_FATAL(queryresult);
-        CU_ASSERT_EQUAL(queryresult->class_id, MY_RESULT_CLASSID);
-        queryresult->destroy(queryresult);
+        CU_ASSERT_EQUAL(((etch_object*)queryresult)->class_id, MY_RESULT_CLASSID);
+        etch_object_destroy(queryresult);
 
     } while(0);
 
     teardown_this_test();
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -1671,16 +1581,16 @@ void test_session_query(void)
  * test_transport_control
  * test the transport control notification plumbing
  */
-void test_transport_control(void)
+static void test_transport_control(void)
 {
     setup_this_test(WHICHVF_TESTVF);
 
     do          
-    {   int result = 0;
+    {
         my_impl_transportpacket* my_transport = NULL;
         const int MY_CONTROL_CLASSID = 0x5200, MY_VALUE_CLASSID = 0x5201;
-        etch_object* mycontrolobj = new_etch_object(MY_CONTROL_CLASSID, NULL);
-        etch_object* myvalueobj   = new_etch_object(MY_VALUE_CLASSID, NULL);
+        etch_object* mycontrolobj = new_object(sizeof(etch_object),ETCHTYPEB_ETCHOBJECT, MY_CONTROL_CLASSID);
+        etch_object* myvalueobj   = new_object(sizeof(etch_object),ETCHTYPEB_ETCHOBJECT, MY_VALUE_CLASSID);
 
         /* g_my_transportpacket    is the i_transportpacket interface    
          * my_impl_transportpacket is the implementing test class 
@@ -1697,20 +1607,23 @@ void test_transport_control(void)
          * the transport_control terminal destination must destroy them, which here
          * is handled by our transport object destructor when we teardown_this_test() 
          */
-        g_my_messagizer->transport_control (g_my_messagizer, mycontrolobj, myvalueobj);
+        g_my_messagizer->transport_control (g_my_messagizer, (etch_event*)mycontrolobj, myvalueobj);
 
         CU_ASSERT_EQUAL(my_transport->what, TRANSPORT_CONTROL);
         CU_ASSERT_PTR_NOT_NULL_FATAL(my_transport->control);
-        CU_ASSERT_EQUAL(my_transport->control->class_id, MY_CONTROL_CLASSID);
-        CU_ASSERT_EQUAL(my_transport->value->class_id,   MY_VALUE_CLASSID);
+        CU_ASSERT_EQUAL(((etch_object*)my_transport->control)->class_id, MY_CONTROL_CLASSID);
+        CU_ASSERT_EQUAL(((etch_object*)my_transport->value)->class_id,   MY_VALUE_CLASSID);
 
     } while(0);
 
     teardown_this_test();
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -1718,15 +1631,15 @@ void test_transport_control(void)
  * test_transport_notify
  * test the transport notify notification plumbing
  */
-void test_transport_notify(void)
+static void test_transport_notify(void)
 {
     setup_this_test(WHICHVF_TESTVF);
 
     do          
-    {   int result = 0;
+    {
         my_impl_transportpacket* my_transport = NULL;
         const int MY_EVENT_CLASSID = 0x5202;
-        etch_object* myeventobj = new_etch_object(MY_EVENT_CLASSID, NULL);
+        etch_object* myeventobj = new_object(sizeof(etch_object),ETCHTYPEB_ETCHOBJECT, MY_EVENT_CLASSID);
 
         /* g_my_transportpacket    is the i_transportpacket interface    
          * my_impl_transportpacket is the implementing test class 
@@ -1743,19 +1656,22 @@ void test_transport_notify(void)
         /* we relinquish memory for myeventobj here. 
          * the transport_control terminal destination must destroy it, which here
          * is handled by our transport object destructor when we teardown_this_test() */
-        g_my_messagizer->transport_notify (g_my_messagizer, myeventobj);
+        g_my_messagizer->transport_notify (g_my_messagizer, (etch_event*)myeventobj);
 
         CU_ASSERT_EQUAL(my_transport->what, TRANSPORT_NOTIFY);
         CU_ASSERT_PTR_NOT_NULL_FATAL(my_transport->eventx);
-        CU_ASSERT_EQUAL(my_transport->eventx->class_id, MY_EVENT_CLASSID);
+        CU_ASSERT_EQUAL(((etch_object*)my_transport->eventx)->class_id, MY_EVENT_CLASSID);
 
     } while(0);
 
     teardown_this_test();
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -1763,16 +1679,16 @@ void test_transport_notify(void)
  * test_transport_query
  * test the transport query notification plumbing
  */
-void test_transport_query(void)
+static void test_transport_query(void)
 {
     setup_this_test(WHICHVF_TESTVF);
 
     do          
-    {   int result = 0;
+    {
         my_impl_transportpacket* my_transport = NULL;
         const int MY_QUERY_CLASSID = 0x5203, MY_RESULT_CLASSID = 0x5204;
-        etch_object* myqueryobj  = new_etch_object(MY_QUERY_CLASSID, NULL);
-        etch_object* myresultobj = new_etch_object(MY_RESULT_CLASSID, NULL);
+        etch_object* myqueryobj  = new_object(sizeof(etch_object),ETCHTYPEB_ETCHOBJECT, MY_QUERY_CLASSID);
+        etch_object* myresultobj = new_object(sizeof(etch_object),ETCHTYPEB_ETCHOBJECT, MY_RESULT_CLASSID);
         etch_object* queryresult = NULL;
 
         /* g_my_transportpacket    is the i_transportpacket interface    
@@ -1793,37 +1709,35 @@ void test_transport_query(void)
         /* we relinquish memory for myqueryobj here and assume queryresult. 
          * the transport_control terminal destination must destroy it, which here
          * is handled by our transport object destructor when we teardown_this_test() */
-        queryresult = g_my_messagizer->transport_query (g_my_messagizer, myqueryobj);
+        queryresult = g_my_messagizer->transport_query (g_my_messagizer, (etch_query*)myqueryobj);
 
         CU_ASSERT_EQUAL(my_transport->what, TRANSPORT_QUERY);
         CU_ASSERT_PTR_NOT_NULL_FATAL(my_transport->query);
-        CU_ASSERT_EQUAL(my_transport->query->class_id, MY_QUERY_CLASSID);
+        CU_ASSERT_EQUAL(((etch_object*)my_transport->query)->class_id, MY_QUERY_CLASSID);
         CU_ASSERT_PTR_NOT_NULL_FATAL(queryresult);
-        CU_ASSERT_EQUAL(queryresult->class_id, MY_RESULT_CLASSID);
-        queryresult->destroy(queryresult);
+        CU_ASSERT_EQUAL(((etch_object*)queryresult)->class_id, MY_RESULT_CLASSID);
+        etch_object_destroy(queryresult);
 
     } while(0);
 
     teardown_this_test();
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
 /**
  * main   
  */
-int _tmain(int argc, _TCHAR* argv[])
+//int wmain( int argc, wchar_t* argv[], wchar_t* envp[])
+CU_pSuite test_etch_messagizer_suite()
 {    
-    char c=0;
-    CU_pSuite pSuite = NULL;
-    g_is_automated_test = argc > 1 && 0 != wcscmp(argv[1], L"-a");
-    if (CUE_SUCCESS != CU_initialize_registry()) return 0;
-    pSuite = CU_add_suite("suite messagizer", init_suite, clean_suite);
-    CU_set_output_filename("../test_messagizer");
-    etch_watch_id = 0; 
+    CU_pSuite pSuite = CU_add_suite("suite messagizer", init_suite, clean_suite);
 
     CU_add_test(pSuite, "test transportpacket impl constructor", test_transportpacket_constructor); 
     CU_add_test(pSuite, "test sessionmessage impl constructor",  test_sessionmessage_constructor); 
@@ -1833,7 +1747,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
     CU_add_test(pSuite, "test packet 1",  test_packet_1); 
     CU_add_test(pSuite, "test packet 2",  test_packet_2); 
-    CU_add_test(pSuite, "test packet 3",  test_packet_2); 
+    CU_add_test(pSuite, "test packet 3",  test_packet_3); 
     CU_add_test(pSuite, "test message 1", test_message_1); 
     CU_add_test(pSuite, "test message 2", test_message_2); 
 
@@ -1843,15 +1757,6 @@ int _tmain(int argc, _TCHAR* argv[])
     CU_add_test(pSuite, "test transport control",test_transport_control); 
     CU_add_test(pSuite, "test transport notify", test_transport_notify); 
     CU_add_test(pSuite, "test transport query",  test_transport_query); 
-     
-    if (g_is_automated_test)    
-        CU_automated_run_tests();    
-    else
-    {   CU_basic_set_mode(CU_BRM_VERBOSE);
-        CU_basic_run_tests();
-    }
 
-    if (!g_is_automated_test) { printf("any key ..."); while(!c) c = _getch(); printf("\n"); }     
-    CU_cleanup_registry();
-    return CU_get_error(); 
+    return pSuite;
 }

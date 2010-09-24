@@ -39,6 +39,7 @@ import org.apache.etch.compiler.Output;
 import org.apache.etch.compiler.ParseException;
 import org.apache.etch.compiler.Token;
 import org.apache.etch.compiler.Version;
+import org.apache.etch.compiler.Backend.Gen;
 import org.apache.etch.compiler.ast.Builtin;
 import org.apache.etch.compiler.ast.Except;
 import org.apache.etch.compiler.ast.Item;
@@ -60,6 +61,7 @@ import org.apache.etch.compiler.opt.ToString.FieldItem;
 import org.apache.etch.compiler.opt.ToString.FmtItem;
 import org.apache.etch.compiler.opt.ToString.StringItem;
 import org.apache.etch.util.Assertion;
+import org.apache.etch.util.Hash;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
@@ -105,6 +107,7 @@ public class Compiler extends Backend
 		impl_vm = getTemplate( path, "impl.vm" );
 
 		local_kwd = getPath( path, "csharpKeywords.kwd" );
+		etch_wireshark_vm = getTemplate(path, "etch_wireshark.vm");
 	}
 
 	private final Template vf_vm;
@@ -314,6 +317,8 @@ public class Compiler extends Backend
 			// Generate readme file.
 			
 			generateReadme( intf, dir, msgDir );
+			
+			generateKeywordList(intf, dir, msgDir, MessageDirection.BOTH, true);
 		}
 
 		// Generate main template file.
@@ -363,6 +368,42 @@ public class Compiler extends Backend
 		} );
 	}
 
+
+	private final Template etch_wireshark_vm;
+	
+	private void generateKeywordList(final Service intf, Output dir,
+			final MessageDirection what, final MessageDirection mc,
+			final boolean hasBaseClass) throws Exception {
+		doFile(dir, getKeywordFilename(intf), lh,
+				new Gen() {
+					public void run(PrintWriter pw) throws Exception {
+						generateKeywords(pw, intf, mc, hasBaseClass);
+					}
+				});
+	}
+	
+	void generateKeywords(PrintWriter pw, Service intf, MessageDirection mc,
+			boolean hasBaseClass) throws Exception {
+		VelocityContext context = new VelocityContext();
+		context.put("now", new Date());
+		context.put("version", VERSION);
+		context.put("helper", this);
+		context.put("intf", intf);
+		context.put("mc", mc);
+		context.put("suffix", MsgDirHelper.getSuffix(mc).toLowerCase());
+		context.put("hasBaseClass", hasBaseClass);
+		etch_wireshark_vm.merge(context, pw);
+	}
+	
+	public String getKeywordForWireshark(String fieldname) {
+		int hash = Hash.hash(fieldname);
+		return String.format("0x%08x", hash) + "," + fieldname;
+	}
+	
+	public String getKeywordFilename(Service intf) {
+		return intf.name().name().toLowerCase() + "_wireshark.ewh";
+	}
+	
 	private void generateMain( final Service intf, Output dir,
 		MessageDirection msgDir ) throws Exception
 	{

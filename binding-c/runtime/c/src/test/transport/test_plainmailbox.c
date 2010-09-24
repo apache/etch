@@ -19,187 +19,74 @@
 /*
  * test_plainmailbox.c 
  */
-
-#include "apr_time.h" /* some apr must be included first */
-#include "etch_plainmailbox.h"  
-#include "etch_plainmboxmgr.h"
-
-#include <tchar.h>
-#include <stdio.h>
-#include <conio.h>
-
-#include "cunit.h"
-#include "basic.h"
-#include "automated.h"
-
-#include "etchthread.h"
-#include "etch_global.h"
-#include "etch_defvalufact.h"
-#include "etchmap.h"
-#include "etchlog.h"
-#include "etch_syncobj.h"
-#include "etchexcp.h"
+#include "etch_runtime.h"
+#include "etch_plain_mailbox.h"
+#include "etch_plain_mailbox_manager.h"
+#include "etch_default_value_factory.h"
+#include "etch_map.h"
+#include "etch_log.h"
+#include "etch_exception.h"
+#include "etch_objecttypes.h"
 #include "etch_simpletimer.h"
+#include "etch_mem.h"
 
-int apr_setup(void);
-int apr_teardown(void);
-int this_setup();
-int this_teardown();
-apr_pool_t* g_apr_mempool;
-const char* pooltag = "etchpool";
+#include <stdio.h>
+#include "CUnit.h"
 
+#define IS_DEBUG_CONSOLE FALSE
+
+// extern types
+extern apr_pool_t* g_etch_main_pool;
 
 /* - - - - - - - - - - - - - - 
  * unit test infrastructure
  * - - - - - - - - - - - - - -
  */
 
-int g_is_automated_test, g_bytes_allocated;
-
-#define IS_DEBUG_CONSOLE FALSE
-
-int init_suite(void)
+static int init_suite(void)
 {
-    apr_setup();
-    etch_runtime_init(TRUE);
-    config.is_log_to_console = IS_DEBUG_CONSOLE;
-    return this_setup();
+    etch_status_t etch_status = ETCH_SUCCESS;
+
+    etch_status = etch_runtime_initialize(NULL);
+    if(etch_status != NULL) {
+        // error
+    }
+    return 0;
 }
 
 int clean_suite(void)
 {
-    this_teardown();
-    debug_showmem(FALSE, TRUE); /* if leaks, display byte count */
-    etch_runtime_cleanup(0,0);  /* free memtable and cache etc */
-    apr_teardown();
+    etch_runtime_shutdown();
     return 0;
 }
-
-/*
- * apr_setup()
- * establish apache portable runtime environment
- */
-int apr_setup(void)
-{
-    int result = 0;
-    result = apr_initialize();
-    if (result == 0)
-    {   result = etch_apr_init();
-        g_apr_mempool = etch_apr_mempool;
-    }
-    if (g_apr_mempool)
-        apr_pool_tag(g_apr_mempool, pooltag);
-    else result = -1;
-    return result;
-}
-
-/*
- * apr_teardown()
- * free apache portable runtime environment
- */
-int apr_teardown(void)
-{
-    if (g_apr_mempool)
-        apr_pool_destroy(g_apr_mempool);
-    g_apr_mempool = NULL;
-    apr_terminate();
-    return 0;
-}
-
-int this_setup()
-{
-    etch_apr_mempool = g_apr_mempool;
-    return 0;
-}
-
-int this_teardown()
-{    
-    return 0;
-}
-
 
 /* - - - - - - - - - - - - - - 
  * unit test support
  * - - - - - - - - - - - - - -
  */
 
-etch_plainmailboxmgr*  g_manager;
-etch_arraylist*        g_list;
-etch_who*              g_who1;
-etch_who*              g_who2;
-etch_type*             g_type1;
-etch_type*             g_type2;
-etchmutex*             g_rwlock;
-default_value_factory* g_vf; 
-int g_is_unregistered;  
-int g_mailbox_status;
-int g_mailbox_isclosed;
-int g_wakeupreason;
-i_mailbox*   g_mailbox;
-void*        g_wakeupdata;
-etch_object* g_mailbox_state;
-etch_destructor g_list_stockdtor;
+static etch_plainmailboxmgr*  g_manager;
+static etch_arraylist*        g_list;
+static etch_who*              g_who1;
+static etch_who*              g_who2;
+static etch_type*             g_type1;
+static etch_type*             g_type2;
+static etch_mutex*            g_rwlock;
+static default_value_factory* g_vf;
+static vf_idname_map*         g_typemap;
+static class_to_type_map*     g_c2tmap;
+
+
+static int g_is_unregistered;  
+static int g_mailbox_status;
+static int g_mailbox_isclosed;
+static int g_wakeupreason;
+static i_mailbox*   g_mailbox;
+static void*        g_wakeupdata;
+static etch_object* g_mailbox_state;
+static etch_object_destructor g_list_stockdtor;
 #define CLASSID_MYSTATE 0xf0
 #define MYSTATE_VALUE 12345
-
-int my_redelivery_list_destructor(etch_arraylist*);
-int mymboxmgr_unregister(etch_plainmailboxmgr*, i_mailbox*);
-int mymboxmgr_redeliver (etch_plainmailboxmgr*, etch_who*, etch_message*);
-int my_mailbox_notify   (etch_plainmailbox*, i_mailbox*, etch_object*, const int); 
-
-
-/**
- * setup_this_test()
- * set up an individual unit test
- */
-int setup_this_test()
-{
-    g_rwlock  = new_mutex (etch_apr_mempool, ETCHMUTEX_NESTED);
-    g_manager = new_plain_mailbox_manager (NULL, NULL, NULL, g_rwlock); 
-    if (NULL == g_manager) return -1;
-    g_manager->unregister = g_manager->imanager->unregister = mymboxmgr_unregister;
-    g_manager->redeliver  = g_manager->imanager->redeliver  = mymboxmgr_redeliver;
-
-    /* message redelivery sink */
-    g_list = new_arraylist(0, 0);
-    g_list->content_type = ETCHARRAYLIST_CONTENT_OBJECT;
-    g_list->is_readonly  = TRUE;  
-    g_list_stockdtor = g_list->destroy; /* custom destructor will destroy list content */
-    g_list->destroy  = my_redelivery_list_destructor;
-
-    g_who1  = new_who(new_int32(1), TRUE);
-    g_who2  = new_who(new_int32(2), TRUE);
-    g_type1 = new_type(L"type1");
-    g_type2 = new_type(L"type2");
-    g_vf    = new_default_value_factory(NULL, NULL);
-
-    etchtype_put_validator(g_type1, clone_field(builtins._mf__message_id), (objmask*) etchvtor_int64_get(0));
-    etchtype_put_validator(g_type2, clone_field(builtins._mf__message_id), (objmask*) etchvtor_int64_get(0));
-
-    return g_manager? 0: -1;
-}
-
-
-/**
- * teardown_this_test()
- * tear down an individual unit test
- */
-void teardown_this_test()
-{
-    ETCHOBJ_DESTROY(g_manager);
-    ETCHOBJ_DESTROY(g_rwlock);
-    ETCHOBJ_DESTROY(g_list);
-    ETCHOBJ_DESTROY(g_who1);
-    ETCHOBJ_DESTROY(g_who2);
-    ETCHOBJ_DESTROY(g_type1);
-    ETCHOBJ_DESTROY(g_type2);
-    ETCHOBJ_DESTROY(g_vf);
-    g_is_unregistered = g_mailbox_status = g_mailbox_isclosed = g_wakeupreason = 0;
-    g_mailbox = NULL;
-    g_mailbox_state = NULL;
-    g_wakeupdata = NULL;
-    etchvf_free_builtins(); 
-}
 
 
 /**
@@ -207,21 +94,20 @@ void teardown_this_test()
  * custom dtor for message redelivery sink.
  * logs and destroys redelivered messages.
  */
-int my_redelivery_list_destructor(etch_arraylist* list)
+static int my_redelivery_list_destructor(void* data)
 {
+    etch_arraylist* list = (etch_arraylist*)data;
     etch_iterator iterator;
     set_iterator(&iterator, list, &list->iterable);
 
     while(iterator.has_next(&iterator))
     {
         etch_mailbox_element* listitem = iterator.current_value;
-        etch_int64* msgidobj = message_get_id(listitem->msg);
-        int64 msgid = msgidobj? msgidobj->value: 0;
         #if IS_DEBUG_CONSOLE
-        etchlog("TEST", ETCHLOG_INFO, "destroying message %d from redelivery sink\n", msgid);
+        ETCH_LOG("TEST", ETCH_LOG_INFO, "destroying message %d from redelivery sink\n", msgid);
         #endif
 
-        listitem->destroy(listitem);  /* destroy message and element wrapper */
+        etch_object_destroy(listitem);  /* destroy message and element wrapper */
         
         iterator.next(&iterator);
     }
@@ -229,12 +115,11 @@ int my_redelivery_list_destructor(etch_arraylist* list)
     return g_list_stockdtor(list);    /* invoke original list destructor */
 }
 
-
 /**
  * mymboxmgr_unregister()
  * override for mailbox manager unregister
  */
-int mymboxmgr_unregister (etch_plainmailboxmgr* mgr, i_mailbox* mbox)
+static int mymboxmgr_unregister (void* mgr, i_mailbox* mbox)
 {
     g_is_unregistered = TRUE;
     return 0;
@@ -245,19 +130,19 @@ int mymboxmgr_unregister (etch_plainmailboxmgr* mgr, i_mailbox* mbox)
  * mymboxmgr_redeliver()
  * override for mailbox manager redeliver
  */
-int mymboxmgr_redeliver (etch_plainmailboxmgr* mgr, etch_who* whofrom, etch_message* msg)
+static int mymboxmgr_redeliver (void* mgr, etch_who* whofrom, etch_message* msg)
 {
-    arraylist_add(g_list, new_mailbox_element(msg, whofrom));
+    etch_arraylist_add(g_list, new_mailbox_element(msg, whofrom));
     return 0;
 } 
-
 
 /**
  * mymboxmgr_redeliver()
  * override for mailbox notify
  */
-int my_mailbox_notify (etch_plainmailbox* mbox, i_mailbox* mb, etch_object* state, const int is_closed) 
+static int my_mailbox_notify (void* data, i_mailbox* mb, void* stateData, const int is_closed) 
 {
+    etch_object* state = (etch_object*)stateData;
     g_mailbox = mb;
     g_mailbox_state = state;
     g_mailbox_status = TRUE;
@@ -266,7 +151,99 @@ int my_mailbox_notify (etch_plainmailbox* mbox, i_mailbox* mb, etch_object* stat
 }
 
 
-void check_mailbox_status(const int expected_status,  i_mailbox* expected_mbox, 
+/**
+ * setup_this_test()
+ * set up an individual unit test
+ */
+static int setup_this_test()
+{
+    // TODO: pool
+    etch_mutex_create(&g_rwlock, ETCH_MUTEX_NESTED, NULL);
+
+    g_manager = new_plain_mailbox_manager (NULL, NULL, NULL, g_rwlock); 
+    if (NULL == g_manager) return -1;
+    g_manager->unregister = g_manager->imanager->unregister = mymboxmgr_unregister;
+    g_manager->redeliver  = g_manager->imanager->redeliver  = mymboxmgr_redeliver;
+
+    /* message redelivery sink */
+    g_list = new_etch_arraylist(0, 0);
+    g_list->content_type = ETCHARRAYLIST_CONTENT_OBJECT;
+    g_list->is_readonly  = TRUE;  
+    g_list_stockdtor = ((etch_object*)g_list)->destroy; /* custom destructor will destroy list content */
+    ((etch_object*)g_list)->destroy  = my_redelivery_list_destructor;
+
+    g_who1  = new_who(new_int32(1));
+    g_who2  = new_who(new_int32(2));
+    g_type1 = new_type(L"type1");
+    g_type2 = new_type(L"type2");
+
+    g_typemap = new_vf_types_collection(ETCH_DEFVF_IDNMAP_DEFINITSIZE);
+    CU_ASSERT_PTR_NOT_NULL(g_typemap);
+    g_c2tmap  = new_class_to_type_map(ETCH_DEVVF_C2TMAP_DEFINITSIZE);
+    CU_ASSERT_PTR_NOT_NULL(g_c2tmap);  
+    defvf_initialize_static(g_typemap, g_c2tmap);
+    g_vf = new_default_value_factory(g_typemap, g_c2tmap);
+    CU_ASSERT_PTR_NOT_NULL(g_vf);
+
+    etchtype_put_validator(g_type1, clone_field(builtins._mf__message_id), (etch_object*) etchvtor_int64_get(0));
+    etchtype_put_validator(g_type2, clone_field(builtins._mf__message_id), (etch_object*) etchvtor_int64_get(0));
+
+    return g_manager? 0: -1;
+}
+
+
+/**
+ * teardown_this_test()
+ * tear down an individual unit test
+ */
+static void teardown_this_test()
+{
+    etch_object_destroy(g_manager);
+    g_manager = NULL;
+
+    etch_mutex_destroy(g_rwlock);
+    g_rwlock = NULL;
+
+    etch_object_destroy(g_list);
+    g_list = NULL;
+
+    etch_object_destroy(g_who1);
+    g_who1 = NULL;
+
+    etch_object_destroy(g_who2);
+    g_who2 = NULL;
+
+    etch_object_destroy(g_type1);
+    g_type1 = NULL;
+
+    etch_object_destroy(g_type2);
+    g_type2 = NULL;
+
+    etch_object_destroy(g_vf);
+    g_vf = NULL;
+
+    etch_object_destroy(g_c2tmap);
+    g_c2tmap = NULL;
+
+    etch_object_destroy(g_typemap);
+    g_typemap = NULL;
+
+    // TODO: cleanup statics
+    //etchvf_free_builtins()
+
+    g_is_unregistered = g_mailbox_status = g_mailbox_isclosed = g_wakeupreason = 0;
+    g_mailbox = NULL;
+    g_mailbox_state = NULL;
+    g_wakeupdata = NULL;
+    etchvf_free_builtins(); 
+}
+
+
+
+
+
+
+static void check_mailbox_status(const int expected_status,  i_mailbox* expected_mbox, 
     etch_object* expected_state, const int expected_isclosed)
 {
     CU_ASSERT_EQUAL(g_mailbox_status,   expected_status);
@@ -276,7 +253,7 @@ void check_mailbox_status(const int expected_status,  i_mailbox* expected_mbox,
 }
 
 
-void check_mailbox(etch_plainmailbox* mbox, const int is_expected_empty, 
+static void check_mailbox(etch_plainmailbox* mbox, const int is_expected_empty, 
     const int is_expected_full, const int is_expected_closed, 
     const int is_expected_unregistered, const int expected_size) 
 {
@@ -292,7 +269,7 @@ void check_mailbox(etch_plainmailbox* mbox, const int is_expected_empty,
 }
 
 
-void check_deliver(etch_plainmailbox* mbox, const int expected_ishandled, 
+static void check_deliver(etch_plainmailbox* mbox, const int expected_ishandled, 
     etch_who* who, etch_message* msg)
 {
     int actual_result;
@@ -311,34 +288,34 @@ void check_deliver(etch_plainmailbox* mbox, const int expected_ishandled,
 
     if (0 != delivery_result) /* caller retains message memory on failure */
         if  (delivery_result != ETCH_MAILBOX_DUPLICATE)
-             msg->destroy(msg);
+             etch_object_destroy(msg);
 }
 
 
-void check_redelivered(etch_plainmailbox* mbox, const int index, etch_message* msg) 
+static void check_redelivered(etch_plainmailbox* mbox, const int index, etch_message* msg) 
 {
-    etch_mailbox_element* entry = arraylist_get(g_list, index);
+    etch_mailbox_element* entry = etch_arraylist_get(g_list, index);
     CU_ASSERT_PTR_NOT_NULL(entry);
     if (NULL == entry) return;
     CU_ASSERT_PTR_EQUAL(entry->msg, msg);
 }
 
 
-void check_close_delivery(etch_plainmailbox* mbox, const int expected_is_closed) 
+static void check_close_delivery(etch_plainmailbox* mbox, const int expected_is_closed) 
 {
     const int did_close = 0 == mbox->close_delivery(mbox->imailbox);
     CU_ASSERT_EQUAL(did_close, expected_is_closed);
 }
 
 
-void check_close_read(etch_plainmailbox* mbox, const int expected_is_closed) 
+static void check_close_read(etch_plainmailbox* mbox, const int expected_is_closed) 
 {
     const int did_close = 0 == mbox->close_read(mbox->imailbox);
     CU_ASSERT_EQUAL(did_close, expected_is_closed);
 }
 
 
-void check_element(etch_mailbox_element* elt, etch_who* who, etch_message* msg)
+static void check_element(etch_mailbox_element* elt, etch_who* who, etch_message* msg)
 {
     CU_ASSERT_PTR_NOT_NULL(elt);
     if (NULL == elt) return;
@@ -347,49 +324,46 @@ void check_element(etch_mailbox_element* elt, etch_who* who, etch_message* msg)
 }
 
 
-void check_read(etch_plainmailbox* mbox, const int expected_to_be_present, 
+static void check_read(etch_plainmailbox* mbox, const int expected_to_be_present, 
     etch_who* who, etch_message* msg) 
 {
     etch_mailbox_element* thiselt = NULL;
 
-    int result = mbox->read(mbox->imailbox, &thiselt); 
+    mbox->read(mbox->imailbox, &thiselt); 
 
     if (expected_to_be_present)
         check_element(thiselt, who, msg);
-    else { CU_ASSERT(is_exception(thiselt)); }
+    else { CU_ASSERT(is_etch_exception(thiselt)); }
 
     /* message is "processed", end of the line for the message */ 
-    if (thiselt)   /* element destructor destroys the message */
-        thiselt->destroy(thiselt);
+    etch_object_destroy(thiselt);
 }
 
 
-void check_read_withwait(etch_plainmailbox* mbox, const int maxdelay, 
+static void check_read_withwait(etch_plainmailbox* mbox, const int maxdelay, 
     const int expected_to_be_present, etch_who* who, etch_message* msg) 
 {
     etch_mailbox_element* thiselt = NULL;
 
-    const int result = mbox->read_withwait(mbox->imailbox, maxdelay, &thiselt); 
+    mbox->read_withwait(mbox->imailbox, maxdelay, &thiselt); 
 
     if (expected_to_be_present)
         check_element(thiselt, who, msg);
-     else { CU_ASSERT(is_exception(thiselt)); }
+     else { CU_ASSERT(is_etch_exception(thiselt)); }
 
     /* message is "processed", end of the line for the message */ 
-    if (thiselt)   /* element destructor destroys the message */
-        thiselt->destroy(thiselt);
+    etch_object_destroy(thiselt);
 }
 
 
 /**
  * my_alarm_wakeup()
  */
-int my_alarm_wakeup (void* passthrudata, const int wakeupreason) 
+static void my_alarm_wakeup (void* passthrudata, const int wakeupreason) 
 {
     etch_plainmailbox* thisx = (etch_plainmailbox*) passthrudata;
     g_wakeupdata = thisx;
     g_wakeupreason = wakeupreason; 
-    return 0;
 }
 
 
@@ -403,10 +377,11 @@ int my_alarm_wakeup (void* passthrudata, const int wakeupreason)
  * test hashtable configured as for mapping id object to mailbox object,
  * insert, locate, remove, destroy, verify all memory accounted for.
  */
-void test_mailboxes_map(void)
+static void test_mailboxes_map(void)
 {
     int result = 0;
-    const int64 val1 = 1234567890, val2 = 9876543210;
+    const int64 val1 = 1234567890LL;
+    const int64 val2 = 9876543210LL;
     etch_hashtable* map = new_pmboxmgr_mailboxmap();
     etch_hashitem hi, *thisitem = &hi; 
     i_mailbox*  mbox1  = new_default_mailbox_interface(NULL); 
@@ -416,35 +391,38 @@ void test_mailboxes_map(void)
     etch_int64* foundkey = NULL;
     const unsigned expecthash1 = etchhash(&val1, 8, 0);
     const unsigned expecthash2 = etchhash(&val2, 8, 0);
-    CU_ASSERT_EQUAL(msgid1->hashkey, expecthash1);
-    CU_ASSERT_EQUAL(msgid2->hashkey, expecthash2);
+    CU_ASSERT_EQUAL(((etch_object*)msgid1)->get_hashkey(msgid1), expecthash1);
+    CU_ASSERT_EQUAL(((etch_object*)msgid2)->get_hashkey(msgid2), expecthash2);
 
-    result = map->vtab->inserth(map->realtable, msgid1, mbox1, map, 0); 
+    result = ((struct i_hashtable*)((etch_object*)map)->vtab)->inserth(map->realtable, msgid1, mbox1, map, 0); 
     CU_ASSERT_EQUAL(result,0); 
-    result = map->vtab->inserth(map->realtable, msgid2, mbox2, map, 0); 
+    result = ((struct i_hashtable*)((etch_object*)map)->vtab)->inserth(map->realtable, msgid2, mbox2, map, 0); 
     CU_ASSERT_EQUAL(result,0);
 
-    result = map->vtab->findh(map->realtable, msgid1->hashkey, map, &thisitem);
+    result = ((struct i_hashtable*)((etch_object*)map)->vtab)->findh(map->realtable, ((etch_object*)msgid1)->hashkey, map, (void*)&thisitem);
     CU_ASSERT_EQUAL(result,0);
-    result = map->vtab->findh(map->realtable, msgid2->hashkey, map, &thisitem);
+    result = ((struct i_hashtable*)((etch_object*)map)->vtab)->findh(map->realtable, ((etch_object*)msgid2)->hashkey, map, (void*)&thisitem);
     CU_ASSERT_EQUAL(result,0);
 
-    result = map->vtab->removeh(map->realtable, msgid1->hashkey, map, &thisitem);
+    result = ((struct i_hashtable*)((etch_object*)map)->vtab)->removeh(map->realtable, ((etch_object*)msgid1)->hashkey, map, (void*)&thisitem);
     CU_ASSERT_EQUAL_FATAL(result,0);
     foundkey = (etch_int64*) thisitem->key;
     CU_ASSERT_EQUAL_FATAL(is_etch_int64(foundkey), TRUE);
     CU_ASSERT_EQUAL(foundkey->value, msgid1->value);
     etch_free(foundkey);   
 
-    map->destroy(map);
+    etch_object_destroy(map);
 
     /* map owns its keys and does not own its values */
     etch_free(mbox1);
     etch_free(mbox2);
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -454,7 +432,7 @@ void test_mailboxes_map(void)
  * passing this test ensures that any leaks that might show up in subsequeuent 
  * tests are specific to the test, not the common test data.
  */
-void test_setup_teardown(void)
+static void test_setup_teardown(void)
 {
     etch_message* test_message;
 
@@ -464,13 +442,16 @@ void test_setup_teardown(void)
     /* test that messages added to the global list are destroyed at teardown */
     test_message = new_message(g_type1, 0, (etch_value_factory*) g_vf);
     CU_ASSERT_PTR_NOT_NULL_FATAL(test_message); 
-    arraylist_add(g_list, new_mailbox_element(test_message, g_who1));
+    etch_arraylist_add(g_list, new_mailbox_element(test_message, g_who1));
 
     teardown_this_test();
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -478,13 +459,13 @@ void test_setup_teardown(void)
  * test_constructor()
  * test the plain mailbox constructor
  */
-void test_constructor(void)
+static void test_constructor(void)
 {
     setup_this_test();
 
     do
     {   etch_plainmailbox* mbox = NULL;
-        const int64 THISMSGID = 9876543210;     
+        const int64 THISMSGID = 9876543210LL;
         const int   QUEUEDELAY_1SEC = 1000, LIFETIME_TWO_MINUTES = 120000;
         const int   MAXMSGS_ONE = 1, QUEUEEWAITFOREVER = 0, QUEUENODELAY = -1;
         printf("\n");
@@ -497,32 +478,35 @@ void test_constructor(void)
         CU_ASSERT_EQUAL(QUEUEDELAY_1SEC, mbox->max_message_delay);  
         CU_ASSERT_EQUAL(MBOX_LIFETIME_UNTIL_CLOSE, mbox->lifetime);  
         CU_ASSERT_EQUAL(MAXMSGS_ONE,  mbox->max_messages);  
-        mbox->destroy(mbox);
+        etch_object_destroy(mbox);
 
         mbox = new_mailbox (g_manager->imanager, THISMSGID, 
             QUEUENODELAY, MBOX_LIFETIME_UNTIL_CLOSE, MAXMSGS_ONE);
         CU_ASSERT_PTR_NOT_NULL_FATAL(mbox);
-        mbox->destroy(mbox);
+        etch_object_destroy(mbox);
 
         mbox = new_mailbox (g_manager->imanager, THISMSGID, 
             QUEUEDELAY_1SEC, MBOX_LIFETIME_UNTIL_CLOSE, MAXMSGS_ONE);
         CU_ASSERT_PTR_NOT_NULL_FATAL(mbox);
-        mbox->destroy(mbox);
+        etch_object_destroy(mbox);
 
         /* testing with a nonzero lifetime here, this is atypical */
         mbox = new_mailbox (g_manager->imanager, THISMSGID, 
             QUEUEEWAITFOREVER, LIFETIME_TWO_MINUTES, MAXMSGS_ONE);
 
         CU_ASSERT_PTR_NOT_NULL_FATAL(mbox);
-        mbox->destroy(mbox);
+        etch_object_destroy(mbox);
 
     } while(0);
     
     teardown_this_test();
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -530,7 +514,7 @@ void test_constructor(void)
  * test_deliver()
  * test message deliver
  */
-void test_deliver(void)
+static void test_deliver(void)
 {
     setup_this_test();
 
@@ -544,15 +528,18 @@ void test_deliver(void)
         check_deliver(mbox, FALSE, g_who1, new_message(g_type1, 0, (etch_value_factory*) g_vf));
         check_mailbox(mbox, TRUE, FALSE, TRUE, TRUE, 0);
 
-        mbox->destroy(mbox);
+        etch_object_destroy(mbox);
 
     } while(0);
     
     teardown_this_test();
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -560,7 +547,7 @@ void test_deliver(void)
  * test_close_delivery1()
  * open box and close it for delivery while empty
  */
-void test_closedelivery1(void)
+static void test_closedelivery1(void)
 {
     setup_this_test();
 
@@ -568,15 +555,18 @@ void test_closedelivery1(void)
     {   etch_plainmailbox* mbox = new_mailbox (g_manager->imanager, 1, -1, 0, 2);
         check_close_delivery(mbox, TRUE);   
         check_mailbox(mbox, TRUE, FALSE, TRUE, TRUE, 0);  
-        mbox->destroy(mbox);
+        etch_object_destroy(mbox);
 
     } while(0);
     
     teardown_this_test();
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -584,7 +574,7 @@ void test_closedelivery1(void)
  * test_close_delivery2()
  * open box and close it for delivery while non-empty
  */
-void test_closedelivery2(void)
+static void test_closedelivery2(void)
 {
     setup_this_test();
 
@@ -599,15 +589,18 @@ void test_closedelivery2(void)
         check_close_delivery(mbox, TRUE);
         check_mailbox(mbox, FALSE, FALSE, TRUE, TRUE, 0);  
 
-        mbox->destroy(mbox);
+        etch_object_destroy(mbox);
 
     } while(0);
     
     teardown_this_test();
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -615,7 +608,7 @@ void test_closedelivery2(void)
  * test_close_delivery3()
  * open box and close it for delivery twice
  */
-void test_closedelivery3(void)
+static void test_closedelivery3(void)
 {
     setup_this_test();
 
@@ -628,15 +621,18 @@ void test_closedelivery3(void)
         check_close_delivery(mbox, FALSE);
         check_mailbox(mbox, TRUE, FALSE, TRUE, TRUE, 0);  
 
-        mbox->destroy(mbox);
+        etch_object_destroy(mbox);
 
     } while(0);
     
     teardown_this_test();
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -644,7 +640,7 @@ void test_closedelivery3(void)
  * test_notify1()
  * test message notify
  */
-void test_notify1(void)
+static void test_notify1(void)
 {
     setup_this_test();
 
@@ -654,7 +650,8 @@ void test_notify1(void)
         etch_plainmailbox* mbox = new_mailbox (g_manager->imanager, 1, -1, 0, 2);
         i_mailbox* ibox = mbox->imailbox;
         check_mailbox_status(FALSE, NULL, NULL, FALSE);
-        mystateobj = new_etch_object(CLASSID_MYSTATE, new_int32(MYSTATE_VALUE));
+
+        mystateobj = (etch_object*)new_int32(MYSTATE_VALUE);
 
         result = mbox->register_notify(ibox, my_mailbox_notify, mystateobj, ETCH_INFWAIT);
 
@@ -664,15 +661,18 @@ void test_notify1(void)
         check_close_delivery(mbox, TRUE);
         check_mailbox_status(TRUE, ibox, mystateobj, TRUE); 
 
-        mbox->destroy(mbox);
+        etch_object_destroy(mbox);
 
     } while(0);
     
     teardown_this_test();
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -680,7 +680,7 @@ void test_notify1(void)
  * test_timer()
  * test current implementation of timer
  */
-void test_timer(void)
+static void test_timer(void)
 {
     setup_this_test();
 
@@ -691,18 +691,17 @@ void test_timer(void)
       * be able to detect and avoid such problems.
       */
     do
-    {   const int ONE_SECOND = 1000, TWO_SECONDS = 2000, THREE_SECONDS = 3000, TEN_SECONDS = 10000;
+    {   const int ONE_SECOND = 1000, TWO_SECONDS = 2000, TEN_SECONDS = 10000;
         etch_plainmailbox* mbox = new_mailbox (g_manager->imanager, 1, -1, 0, 2);
         etch_timer* timer;
         int result = 0;
 
-        timer  = new_timer(ONE_SECOND, mbox, my_alarm_wakeup);  
- 
+        timer  = new_timer(ONE_SECOND, mbox, my_alarm_wakeup);
         result = etch_timer_start(timer);
         etch_sleep(TWO_SECONDS);
         CU_ASSERT_PTR_EQUAL(g_wakeupdata, mbox);
         CU_ASSERT_EQUAL(g_wakeupreason, ETCH_TIMER_REASON_TIMEOUT);
-        timer->destroy(timer);
+        etch_object_destroy(timer);
 
         g_wakeupdata = NULL;
         timer  = new_timer(TEN_SECONDS, mbox, my_alarm_wakeup);  
@@ -710,18 +709,21 @@ void test_timer(void)
         etch_sleep(TWO_SECONDS);
         etch_timer_stop(timer);
         CU_ASSERT_PTR_EQUAL(g_wakeupdata, mbox);
-        CU_ASSERT_NOT_EQUAL(g_wakeupreason, ETCH_TIMER_REASON_TIMEOUT);
-        timer->destroy(timer);
+        CU_ASSERT_EQUAL(g_wakeupreason, ETCH_TIMER_REASON_INTERRUPTED);
+        etch_object_destroy(timer);
 
-        mbox->destroy(mbox);
+        etch_object_destroy(mbox);
 
     } while(0);
     
     teardown_this_test();
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -729,7 +731,7 @@ void test_timer(void)
  * test_notify2()
  * test message notify with mailbox expiration
  */
-void test_notify2(void)
+static void test_notify2(void)
 {
     setup_this_test();
 
@@ -740,7 +742,7 @@ void test_notify2(void)
         etch_plainmailbox* mbox = new_mailbox (g_manager->imanager, 1, -1, 0, 2);
         i_mailbox* ibox  = mbox->imailbox;
         check_mailbox_status(FALSE, NULL, NULL, FALSE);
-        mystateobj = new_etch_object(CLASSID_MYSTATE, new_int32(MYSTATE_VALUE));
+        mystateobj = (etch_object*)new_int32(MYSTATE_VALUE);
 
         result = mbox->register_notify(ibox, my_mailbox_notify, mystateobj, LIFETIME_ONE_SECOND);
 
@@ -750,15 +752,18 @@ void test_notify2(void)
         etch_sleep(TWO_SECONDS);
         check_mailbox_status(TRUE, ibox, mystateobj, TRUE); 
 
-        mbox->destroy(mbox);
+        etch_object_destroy(mbox);
 
     } while(0);
     
     teardown_this_test();
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -766,7 +771,7 @@ void test_notify2(void)
  * test_notify3()
  * test message notify 
  */
-void test_notify3(void)
+static void test_notify3(void)
 {
     setup_this_test();
 
@@ -776,7 +781,7 @@ void test_notify3(void)
         const int LIFETIME_FOREVER = 0, TWO_SECONDS = 2000;
         etch_plainmailbox* mbox = new_mailbox (g_manager->imanager, 1, -1, 0, 2);
         check_mailbox_status(FALSE, NULL, NULL, FALSE);
-        mystateobj = new_etch_object(CLASSID_MYSTATE, new_int32(MYSTATE_VALUE));
+        mystateobj = (etch_object*)new_int32(MYSTATE_VALUE);
 
         result = mbox->register_notify(mbox->imailbox, my_mailbox_notify, mystateobj, LIFETIME_FOREVER);
 
@@ -786,15 +791,18 @@ void test_notify3(void)
         etch_sleep(TWO_SECONDS);
         check_mailbox_status(FALSE, NULL, NULL, FALSE); 
 
-        mbox->destroy(mbox);
+        etch_object_destroy(mbox);
 
     } while(0);
     
     teardown_this_test();
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -804,7 +812,7 @@ void test_notify3(void)
  * test that notify callback receives expected results on a successful queue of
  * a message to a mailbox. 
  */
-void test_notify4(void)
+static void test_notify4(void)
 {
     setup_this_test();
 
@@ -816,7 +824,7 @@ void test_notify4(void)
         etch_plainmailbox* mbox = new_mailbox (g_manager->imanager, 1, -1, 0, 2);
         i_mailbox* ibox = mbox->imailbox;
         check_mailbox_status(FALSE, NULL, NULL, FALSE);
-        mystateobj = new_etch_object(CLASSID_MYSTATE, new_int32(MYSTATE_VALUE));
+        mystateobj = (etch_object*)new_int32(MYSTATE_VALUE);
 
         result = mbox->register_notify(ibox, my_mailbox_notify, mystateobj, LIFETIME_FOREVER);
 
@@ -834,7 +842,7 @@ void test_notify4(void)
 
         CU_ASSERT_EQUAL(result, 0);
         if (0 != result)
-            mymessage->destroy(mymessage);
+            etch_object_destroy(mymessage);
 
         check_mailbox_status(TRUE, ibox, mystateobj, FALSE); 
 
@@ -842,15 +850,18 @@ void test_notify4(void)
          * our redelivery override causes that message to arrive in our redelivery list.
          * that list and its message content is destroyed at teardown_this_test(). 
          */
-        mbox->destroy(mbox); 
+        etch_object_destroy(mbox); 
 
     } while(0);
     
     teardown_this_test();
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -858,12 +869,12 @@ void test_notify4(void)
  * test_read1()
  * test read message from mailbox and close box
  */
-void test_read1(void)
+static void test_read1(void)
 {
     setup_this_test();
 
     do
-    {   int result = 0, MYMSGID = 1337;
+    {   int MYMSGID = 1337;
         etch_message* mymessage = NULL;
         etch_plainmailbox* mbox = new_mailbox (g_manager->imanager, 1, -1, 0, 2);
         check_mailbox(mbox, TRUE, FALSE, FALSE, FALSE, 0);
@@ -879,15 +890,18 @@ void test_read1(void)
         check_close_delivery(mbox, TRUE);
         check_mailbox(mbox, TRUE, FALSE, TRUE, TRUE, 0);
 
-        mbox->destroy(mbox);
+        etch_object_destroy(mbox);
 
     } while(0);
     
     teardown_this_test();
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -895,12 +909,12 @@ void test_read1(void)
  * test_read2()
  * test close delivery before read message from mailbox 
  */
-void test_read2(void)
+static void test_read2(void)
 {
     setup_this_test();
 
     do
-    {   int result = 0, MYMSGID = 1337;
+    {   int MYMSGID = 1337;
         etch_message* mymessage = NULL;
         etch_plainmailbox* mbox = new_mailbox (g_manager->imanager, 1, -1, 0, 2);
         check_mailbox(mbox, TRUE, FALSE, FALSE, FALSE, 0);
@@ -920,27 +934,30 @@ void test_read2(void)
         check_mailbox(mbox, FALSE, FALSE, TRUE, TRUE, 0);
 
         /* mymessage remains queued in the mailbox. destroying the mailbox destroys the message  */
-        mbox->destroy(mbox);
+        etch_object_destroy(mbox);
 
     } while(0);
     
     teardown_this_test();
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
 /**
  * test_read4()
  */
-void test_read4(void)
+static void test_read4(void)
 {
     setup_this_test();
 
     do
-    {   int result = 0;
+    {   
         etch_plainmailbox* mbox = new_mailbox (g_manager->imanager, 1, -1, 0, 2);
 
         check_close_delivery(mbox, TRUE);
@@ -949,22 +966,25 @@ void test_read4(void)
         check_read(mbox, FALSE, NULL, NULL);
         check_mailbox(mbox, TRUE, FALSE, TRUE, TRUE, 0);
 
-        mbox->destroy(mbox);
+        etch_object_destroy(mbox);
 
     } while(0);
     
     teardown_this_test();
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
 /**
  * test_read6()
  */
-void test_read6(void)
+static void test_read6(void)
 {
     setup_this_test();
 
@@ -980,22 +1000,25 @@ void test_read6(void)
         check_read(mbox, FALSE, NULL, NULL);
         check_mailbox(mbox, TRUE, FALSE, TRUE, TRUE, 0);
 
-        mbox->destroy(mbox);
+        etch_object_destroy(mbox);
 
     } while(0);
     
     teardown_this_test();
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
 /**
  * test_read7()
  */
-void test_read7(void)
+static void test_read7(void)
 {
     setup_this_test();
 
@@ -1005,22 +1028,25 @@ void test_read7(void)
         check_read_withwait(mbox, ETCH_NOWAIT, FALSE, NULL, NULL);
         check_mailbox(mbox, TRUE, FALSE, FALSE, FALSE, 0);
 
-        mbox->destroy(mbox);
+        etch_object_destroy(mbox);
 
     } while(0);
     
     teardown_this_test();
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
 /**
  * test_read8()
  */
-void test_read8(void)
+static void test_read8(void)
 {
     setup_this_test();
 
@@ -1031,15 +1057,18 @@ void test_read8(void)
         check_read_withwait(mbox, MAXDELAY_1MS, FALSE, NULL, NULL);
         check_mailbox(mbox, TRUE, FALSE, FALSE, FALSE, 0);
 
-        mbox->destroy(mbox);
+        etch_object_destroy(mbox);
 
     } while(0);
     
     teardown_this_test();
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -1047,7 +1076,7 @@ void test_read8(void)
  * test_closeread1()
  * open box and close it for read while empty
  */
-void test_closeread1(void)
+static void test_closeread1(void)
 {
     setup_this_test();
 
@@ -1055,15 +1084,18 @@ void test_closeread1(void)
     {   etch_plainmailbox* mbox = new_mailbox (g_manager->imanager, 1, -1, 0, 2);
         check_close_read(mbox, TRUE);   
         check_mailbox(mbox, TRUE, FALSE, TRUE, TRUE, 0);  
-        mbox->destroy(mbox);
+        etch_object_destroy(mbox);
 
     } while(0);
     
     teardown_this_test();
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -1071,7 +1103,7 @@ void test_closeread1(void)
  * test_closeread2()
  * open box and close it for delivery while non-empty
  */
-void test_closeread2(void)
+static void test_closeread2(void)
 {
     setup_this_test();
 
@@ -1090,15 +1122,18 @@ void test_closeread2(void)
         check_mailbox(mbox, TRUE, FALSE, TRUE, TRUE, 1);  
         check_redelivered(mbox, 0, mymessage1);
 
-        mbox->destroy(mbox);
+        etch_object_destroy(mbox);
 
     } while(0);
     
     teardown_this_test();
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -1106,7 +1141,7 @@ void test_closeread2(void)
  * test_closeread3()
  * open box and close it for read twice while empty
  */
-void test_closeread3(void)
+static void test_closeread3(void)
 {
     setup_this_test();
 
@@ -1119,15 +1154,18 @@ void test_closeread3(void)
         // before mailbox state is set to either closed for read or shutdown.
         // check_close_read(mbox, FALSE); // test disabled due to situation commented above 
         check_mailbox(mbox, TRUE, FALSE, TRUE, TRUE, 0);  
-        mbox->destroy(mbox);
+        etch_object_destroy(mbox);
 
     } while(0);
     
     teardown_this_test();
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -1135,7 +1173,7 @@ void test_closeread3(void)
  * test_closeread4()
  * open box and close it for delivery twice while non-empty
  */
-void test_closeread4(void)
+static void test_closeread4(void)
 {
     setup_this_test();
 
@@ -1158,22 +1196,25 @@ void test_closeread4(void)
         check_mailbox(mbox, TRUE, FALSE, TRUE, TRUE, 1);  
         check_redelivered(mbox, 0, mymessage1);
 
-        mbox->destroy(mbox);
+        etch_object_destroy(mbox);
 
     } while(0);
     
     teardown_this_test();
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
 /**
  * test_full1()
  */
-void test_full1(void)
+static void test_full1(void)
 {
     setup_this_test();
 
@@ -1196,22 +1237,25 @@ void test_full1(void)
         check_deliver(mbox, TRUE, g_who2, mymessage2);
         check_mailbox(mbox, FALSE, TRUE, FALSE, FALSE, 0);  /* should be full */
 
-        mbox->destroy(mbox);
+        etch_object_destroy(mbox);
 
     } while(0);
     
     teardown_this_test();
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
 /**
  * test_full2()
  */
-void test_full2(void)
+static void test_full2(void)
 {
     setup_this_test();
 
@@ -1235,31 +1279,29 @@ void test_full2(void)
         check_deliver(mbox, FALSE, g_who1, mymessage2);     /* deliver should fail */
         check_mailbox(mbox, FALSE, TRUE, FALSE, FALSE, 0);  /* box should still be full */
 
-        mbox->destroy(mbox);
+        etch_object_destroy(mbox);
 
     } while(0);
     
     teardown_this_test();
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
 /**
  * main   
  */
-int _tmain(int argc, _TCHAR* argv[])
+//int wmain( int argc, wchar_t* argv[], wchar_t* envp[])
+CU_pSuite test_etch_plainmailbox_suite()
 {    
-    char c=0;
-    CU_pSuite pSuite = NULL;
-    g_is_automated_test = argc > 1 && 0 != wcscmp(argv[1], L"-a");
-    if (CUE_SUCCESS != CU_initialize_registry()) return 0;
-    pSuite = CU_add_suite("plain mailbox test suite", init_suite, clean_suite);
-    CU_set_output_filename("../test_plainmbox");
-    etch_watch_id = 0;  
-
+    CU_pSuite pSuite = CU_add_suite("plain mailbox test suite", init_suite, clean_suite);
+    
     CU_add_test(pSuite, "test mailbox map", test_mailboxes_map); 
     CU_add_test(pSuite, "test setup teardown", test_setup_teardown); 
     CU_add_test(pSuite, "test constructor", test_constructor); 
@@ -1291,15 +1333,6 @@ int _tmain(int argc, _TCHAR* argv[])
 
     CU_add_test(pSuite, "test full 1", test_full1);
     CU_add_test(pSuite, "test full 2", test_full2);
-              
-    if (g_is_automated_test)    
-        CU_automated_run_tests();    
-    else
-    {   CU_basic_set_mode(CU_BRM_VERBOSE);
-        CU_basic_run_tests();
-    }
 
-    if (!g_is_automated_test) { printf("any key ..."); while(!c) c = _getch(); printf("\n"); }     
-    CU_cleanup_registry();
-    return CU_get_error(); 
+    return pSuite;
 }

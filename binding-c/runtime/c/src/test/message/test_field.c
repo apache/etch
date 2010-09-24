@@ -20,87 +20,38 @@
  * test_field.c 
  * tests the C implementation of the etch_field object.
  */
-#include "apr_time.h" /* some apr must be included first */
-#include "etchthread.h"
-#include <stdio.h>
-#include <conio.h>
-#include "cunit.h"
-#include "basic.h"
-#include "automated.h"
+#include "etch_runtime.h"
 #include "etch_field.h"
-#include "etch_global.h"
 
+#include <stdio.h>
+#include "CUnit.h"
+#include <wchar.h>
 
-int apr_setup(void);
-int apr_teardown(void);
-int this_setup();
-int this_teardown();
-apr_pool_t* g_apr_mempool;
-const char* pooltag = "etchpool";
+#define IS_DEBUG_CONSOLE FALSE
 
+// extern types
+extern apr_pool_t* g_etch_main_pool;
 
 /* - - - - - - - - - - - - - - 
  * unit test infrastructure
  * - - - - - - - - - - - - - -
  */
 
-int init_suite(void)
+static int init_suite(void)
 {
-    apr_setup();
-    etch_runtime_init(TRUE);
-    return this_setup();
-}
+    etch_status_t etch_status = ETCH_SUCCESS;
 
-int clean_suite(void)
-{
-    this_teardown();
-    etch_runtime_cleanup(0,0); /* free memtable and cache etc */
-    apr_teardown();
-    return 0;
-}
-
-int g_is_automated_test, g_bytes_allocated;
-
-#define IS_DEBUG_CONSOLE FALSE
-
-/*
- * apr_setup()
- * establish apache portable runtime environment
- */
-int apr_setup(void)
-{
-    int result = apr_initialize();
-    if (result == 0)
-    {   result = etch_apr_init();
-        g_apr_mempool = etch_apr_mempool;
+    etch_status = etch_runtime_initialize(NULL);
+    if(etch_status != NULL) {
+        // error
     }
-    if (g_apr_mempool)
-        apr_pool_tag(g_apr_mempool, pooltag);
-    else result = -1;
-    return result;
-}
-
-/*
- * apr_teardown()
- * free apache portable runtime environment
- */
-int apr_teardown(void)
-{
-    if (g_apr_mempool)
-        apr_pool_destroy(g_apr_mempool);
-    g_apr_mempool = NULL;
-    apr_terminate();
     return 0;
 }
 
-int this_setup()
+static int clean_suite(void)
 {
-    etch_apr_mempool = g_apr_mempool;
-    return 0;
-}
-
-int this_teardown()
-{    
+    //this_teardown();
+    etch_runtime_shutdown();
     return 0;
 }
 
@@ -108,22 +59,24 @@ int this_teardown()
 /**
  * test_field
  */
-void test_field(void)
+static void test_field(void)
 {
     int alloc_a = 0, alloc_b = 0, result = 0;
     etch_field *field1 = NULL, *field2 = NULL;
 
     const wchar_t* nametext1 = L"abracadabra";
-    const size_t   numelts1  = wcslen(nametext1);
-    const size_t   numbytes1 = sizeof(wchar_t) * numelts1;
 
     const wchar_t* nametext2 = L"gilgamesh";
-    const size_t   numelts2  = wcslen(nametext2);
-    const size_t   numbytes2 = sizeof(wchar_t) * numelts2;
-    
+
+#ifdef ETCH_DEBUGALLOC
     alloc_a  = etch_showmem(0, FALSE);
+#endif
     field1 = new_field(NULL);
-    alloc_b  = etch_showmem(0, FALSE);
+    
+#ifdef ETCH_DEBUGALLOC
+   alloc_b  = etch_showmem(0, FALSE);
+#endif
+
     CU_ASSERT_PTR_NULL(field1);
     CU_ASSERT_EQUAL(alloc_a, alloc_b); 
 
@@ -139,8 +92,10 @@ void test_field(void)
     destroy_field(field1);
     destroy_field(field2);
 
+#ifdef ETCH_DEBUGALLOC
     alloc_a = etch_showmem(0, FALSE);
     CU_ASSERT_EQUAL(alloc_a, alloc_b); 
+#endif
 
     field1 = new_field(nametext1);
     field2 = new_field(nametext2);
@@ -150,9 +105,12 @@ void test_field(void)
     destroy_field(field1);
     destroy_field(field2);
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -160,7 +118,7 @@ void test_field(void)
  * test_inheritance
  * test that etch_field's inheritance list is as expected
  */
-void test_inheritance(void)
+static void test_inheritance(void)
 {
     int  ndx = 0, parentcount = 0;
     etchparentinfo* parentinfo = NULL;
@@ -170,11 +128,11 @@ void test_inheritance(void)
     CU_ASSERT_PTR_NOT_NULL_FATAL(field1);
 
     while(1)
-    { parentinfo = get_next_etch_parent((objmask*)field1, ndx++);
+    { parentinfo = get_next_etch_parent((etch_object*)field1, ndx++);
       if (NULL == parentinfo) break;
       parentcount++; 
       #if IS_DEBUG_CONSOLE 
-      printf("parent %d type %d class %d\n", parentcount, parentinfo->obj_type, parentinfo->class_id);
+      printf("parent %d type %d class %d\n", parentcount, ((etch_object*)parentinfo)->obj_type, ((etch_object*)parentinfo)->class_id);
       #endif
     }  
 
@@ -182,9 +140,12 @@ void test_inheritance(void)
 
     destroy_field(field1);
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -192,9 +153,8 @@ void test_inheritance(void)
  * test_field_hashfunc
  * Unit test field_hashfunc
  */
-void test_field_hashfunc(void)
+static void test_field_hashfunc(void)
 {
-    int alloc_a = 0, alloc_b = 0, result = 0;
     unsigned hash1 = 0, hash2 = 0;
     etch_field *field1 = NULL, *field2 = NULL;
 
@@ -221,36 +181,27 @@ void test_field_hashfunc(void)
     destroy_field(field1);
     destroy_field(field2);
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */       
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
 /**
  * main   
  */
-int _tmain(int argc, _TCHAR* argv[])
+//int wmain( int argc, wchar_t* argv[], wchar_t* envp[])
+CU_pSuite test_etch_field_suite()
+//int main(int argc, char** argv[])
 {    
-    char c=0;
-    CU_pSuite pSuite = NULL;
-    g_is_automated_test = argc > 1 && 0 != wcscmp(argv[1], L"-a");
-    if (CUE_SUCCESS != CU_initialize_registry()) return 0;
-    pSuite = CU_add_suite("etch_field tests", init_suite, clean_suite);
-    CU_set_output_filename("../test_field");
+    CU_pSuite pSuite = CU_add_suite("etch_field tests", init_suite, clean_suite);
 
     CU_add_test(pSuite, "test etch_field constructors/destructors", test_field);  
     CU_add_test(pSuite, "test etch_field hashing", test_field_hashfunc); 
     CU_add_test(pSuite, "test etch_field inheritance", test_inheritance);   
 
-    if (g_is_automated_test)    
-        CU_automated_run_tests();    
-    else
-    {   CU_basic_set_mode(CU_BRM_VERBOSE);
-        CU_basic_run_tests();
-    }
-
-    if (!g_is_automated_test) { printf("any key ..."); while(!c) c = _getch(); wprintf(L"\n"); }     
-    CU_cleanup_registry();
-    return CU_get_error(); 
+    return pSuite;
 }

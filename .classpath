@@ -23,6 +23,9 @@
 	<classpathentry kind="src" path="tests/src/main/resources"/>
 	<classpathentry kind="src" path="tests/target/generated-sources/main/etch/java"/>
 	<classpathentry kind="src" path="tests/src/test/java"/>
+	<classpathentry kind="src" path="examples/helloworld/src/main/java"/>
+	<classpathentry kind="src" path="examples/helloworld/src/test/java"/>
+	<classpathentry kind="src" path="examples/helloworld/target/generated-sources/main/etch/java"/>
 	<classpathentry kind="src" path="examples/chat/src/main/java"/>
 	<classpathentry kind="src" path="examples/chat/target/generated-sources/main/etch/java"/>
 	<classpathentry kind="src" path="examples/chat/src/test/java"/>
@@ -39,10 +42,6 @@
 	<classpathentry kind="src" path="binding-c/compiler/src/main/resources"/>
 	<classpathentry excluding="org/apache/etch/bindings/python/compiler/Compiler.java" kind="src" path="binding-python/compiler/src/main/java"/>
 	<classpathentry kind="src" path="binding-python/compiler/src/main/resources"/>
-	<classpathentry kind="src" path="interoptester/src/main/java"/>
-	<classpathentry kind="src" path="interoptester/src/test/java"/>
-	<classpathentry kind="src" path="interoptester/example/src/main/java"/>
-	<classpathentry kind="src" path="interoptester/example/target/generated-sources/main/etch/java"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/ETCH_DEPENDENT_JARS"/>
 	<classpathentry kind="output" path="bin"/>

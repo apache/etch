@@ -17,17 +17,26 @@
  * specific language governing permissions and limitations      *
  * under the License.                                           *
  -->
-<project name="etch.common" basedir="." >
+    <project name="etch.common" basedir="." >
 
     <!-- Static properties -->
-    <property name="Etch.copyrightNotice"
-		value="Copyright © Apache Software Foundation 2009" />
+    <property name="Etch.copyrightNotice" value="Copyright © Apache Software Foundation 2009" />
+
+    <!-- Compute top of tree -->
+    <condition property="Etch.basedir" value="${basedir}" >
+        <not><isset property="Etch.basedir" /></not>
+    </condition>
+    <property name="Etch.runtime.workspace" value="${Etch.basedir}" />
 
     <!-- Load Environment -->
     <property environment="env" />
     <property file="${Etch.basedir}/build.dependencies" prefix="file" />
-    
+
     <!-- Pull properties from commandline -->
+    <condition property="build.skip.tests" value="${skip.tests}">
+        <isset property="skip.tests" />
+    </condition>
+
     <condition property="build.javacc.home" value="${javacc.home}" >
         <isset property="javacc.home" />
     </condition>
@@ -39,21 +48,23 @@
     <condition property="build.velocity.lib" value="${velocity.lib}" >
         <isset property="velocity.lib" />
     </condition>
-    
-    <property file="${Etch.basedir}/build.dependencies" prefix="build" />
-    
-    
-    <!-- Validate properties -->
-    
-    <!-- Compute top of tree -->
-    <condition property="Etch.basedir" value="${basedir}" >
-        <not><isset property="Etch.basedir" /></not>
+
+    <condition property="build.nsis.home" value="${nsis.home}" >
+        <isset property="nsis.home" />
     </condition>
-    <property name="Etch.runtime.workspace" value="${Etch.basedir}" />
+
+    <condition property="build.ant-dotnet.lib" value="${ant-dotnet.lib}" >
+        <isset property="ant-dotnet.lib" />
+    </condition>
+
+    <condition property="build.ant-cmake.lib" value="${ant-cmake.lib}" >
+        <isset property="ant-cmake.lib" />
+    </condition>
+
+    <property file="${Etch.basedir}/build.dependencies" prefix="build" />
 
     <!-- load runtime properties -->
     <property prefix="Etch.property."      file="${Etch.basedir}/etch.properties" />
-    <property prefix="Etch.runtime."       file="${Etch.basedir}/bamboo.properties" />
     
     <!-- Compute version numbers -->
     <condition property="Etch.property.majorVersion" value="0">
@@ -64,6 +75,12 @@
     </condition>
     <condition property="Etch.property.patchVersion" value="0" >
         <not><isset property="Etch.property.patchVersion" /></not>
+    </condition>
+    <condition property="Etch.property.osVersion" value="unknown" >
+        <not><isset property="Etch.property.osVersion" /></not>
+    </condition>
+    <condition property="Etch.property.platformVersion" value="unknown" >
+        <not><isset property="Etch.property.platformVersion" /></not>
     </condition>
     <condition property="Etch.runtime.buildKey" value="LOCAL" >
         <not><isset property="Etch.runtime.buildKey" /></not>
@@ -102,8 +119,8 @@
     <property name="etch-compiler-src.zip"        value="apache-etch-compiler-${Etch.longversion}-src.zip" />
     <property name="etch-java-compiler.jar"       value="apache-etch-java-compiler-${Etch.longversion}.jar" />
     <property name="etch-java-compiler-src.zip"   value="apache-etch-java-compiler-${Etch.longversion}-src.zip" />
-    <property name="etch-java-runtime.jar"        value="apache-etch-java-runtime-${Etch.longversion}.jar" />
-    <property name="etch-java-runtime-src.zip"    value="apache-etch-java-runtime-${Etch.longversion}-src.zip" />
+    <property name="etch-c-compiler.jar"          value="apache-etch-c-compiler-${Etch.longversion}.jar" />
+    <property name="etch-c-compiler-src.zip"      value="apache-etch-c-compiler-${Etch.longversion}-src.zip" />
     <property name="etch-csharp-compiler.jar"     value="apache-etch-csharp-compiler-${Etch.longversion}.jar" />
     <property name="etch-csharp-compiler-src.zip" value="apache-etch-csharp-compiler-${Etch.longversion}-src.zip" />
     <property name="etch-xml-compiler.jar"        value="apache-etch-xml-compiler-${Etch.longversion}.jar" />
@@ -113,10 +130,21 @@
     <property name="etch-ant-task.jar"            value="apache-etch-ant-plugin-${Etch.longversion}.jar" />
     <property name="etch-ant-task-src.zip"        value="apache-etch-ant-plugin-${Etch.longversion}-src.zip" />
 
-	<property name="etch-csharp-runtime.dll"      value="ApacheEtchCsharpIncubating.dll" />
-	<property name="etch-csharp-runtime.pdb"      value="ApacheEtchCsharpIncubating.pdb" />
-	<property name="etch-csharp-runtime-src.zip"  value="ApacheEtchCsharpIncubatingSrc.zip" />
-	
+    <!-- java-runtime -->
+    <property name="etch-java-runtime.jar"        value="apache-etch-java-runtime-${Etch.longversion}.jar" />
+    <property name="etch-java-runtime.zip"        value="apache-etch-java-runtime-${Etch.longversion}.zip" />
+    <property name="etch-java-runtime-src.zip"    value="apache-etch-java-runtime-${Etch.longversion}-src.zip" />
+    <!-- csharp-runtime -->
+    <property name="etch-csharp-runtime.dll"      value="ApacheEtchCsharpIncubating.dll" />
+    <property name="etch-csharp-runtime.pdb"      value="ApacheEtchCsharpIncubating.pdb" />
+    <property name="etch-csharp-runtime.zip"      value="apache-etch-csharp-runtime-${Etch.longversion}.zip" />
+    <property name="etch-csharp-runtime-src.zip"  value="apache-etch-csharp-runtime-${Etch.longversion}-src.zip" />
+    <!-- c-runtime -->
+    <property name="etch-c-runtime.dll"           value="etch.dll" />
+    <property name="etch-c-runtime.pdb"           value="etch.pdb" />
+    <property name="etch-c-runtime.zip"           value="apache-etch-c-runtime-${Etch.longversion}.zip" />
+    <property name="etch-c-runtime-src.zip"       value="apache-etch-c-runtime-${Etch.longversion}-src.zip" />
+
     <!-- Define filterset for build-time substitutions -->
     <filterset id="Etch.buildTokens" >
         <filter token="EtchVersion"               value="${Etch.version}" />
@@ -150,12 +178,15 @@
     <property   name="Etch.dependency.velocity.jar" value="${build.velocity.lib}/velocity-1.5.jar" />
     <property   name="Etch.dependency.velocity-dep.jar" value="${build.velocity.lib}/velocity-dep-1.5.jar" />
     <property   name="Etch.dependency.ant-dotnet-1.0.jar" value="${build.ant-dotnet.lib}/ant-dotnet-1.0.jar" />
+    <property   name="Etch.dependency.ant-cmake.jar" value="${build.ant-cmake.lib}/cmakeant.jar" />
 
     <!-- Csharp Support -->
     <condition property="USE.dotnet">
         <and>
             <os family="windows" />
-            <available file="${build.dotnet.home}/msbuild.exe" />
+            <available file="${env.DOTNET_HOME}/msbuild.exe" />
+            <available file="${build.ant-dotnet.lib}/ant-dotnet-1.0.jar" />
+            <available file="${env.NUNIT_HOME}/bin/nunit.exe" />
         </and>
     </condition>
     <condition property="USE.mono">
@@ -173,6 +204,11 @@
         </or>
     </condition>
     <property name="tool.mdtool" value="${build.mono.home}/bin/mdtool" />
+
+    <!-- CMake ANT Support -->
+    <condition property="USE.cmake" value="true" >
+        <available file="${Etch.dependency.ant-cmake.jar}" />
+    </condition>
 
     <!-- clover support -->
     <!-- TODO: make this toggle-able -->
@@ -209,9 +245,12 @@
     <property name="EXAMPLE.etch.version" value="${Etch.version}" />
     <property name="EXAMPLE.etch.longversion" value="${Etch.longversion}" />
     <property name="EXAMPLE.ant.dotnet.jar" value="${Etch.dependency.ant-dotnet-1.0.jar}" />
-    
-    <!-- csharp support -->
+
+    <!-- csharp ANT support -->
     <taskdef onerror="report" resource="org/apache/ant/dotnet/antlib.xml" classpath="${Etch.dependency.ant-dotnet-1.0.jar}" />
+
+    <!-- CMake ANT support -->
+    <taskdef onerror="report" name="cmake" classname="org.iainhull.ant.CmakeBuilder" classpath="${Etch.dependency.ant-cmake.jar}"/>
 
     <!-- dependencies -->
     <!-- TODO: remove clover reference if clover-disabled -->

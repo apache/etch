@@ -20,148 +20,72 @@
  * test_structvalue.c -- test etch_structvalue object
  */
 
-#include "apr_time.h" /* some apr must be included first */
-#include <tchar.h>
-#include <stdio.h>
-#include <conio.h>
-
-#include "cunit.h"
-#include "basic.h"
-#include "automated.h"
-
+#include "etch_runtime.h"
 #include "etch_connection.h"
-#include "etch_global.h"
 #include "etch_encoding.h"
-#include "etchthread.h"
-#include "etchlog.h"
+#include "etch_log.h"
 #include "etch_structval.h"
-#include "etchexcp.h"
+#include "etch_nativearray.h"
+#include "etch_objecttypes.h"
+#include "etch_exception.h"
 
-int apr_setup(void);
-int apr_teardown(void);
-int this_setup();
-int this_teardown();
-apr_pool_t* g_apr_mempool;
-const char* pooltag = "etchpool";
-
-
-int init_suite(void)
-{
-    apr_setup();
-    etch_runtime_init(TRUE);
-    return this_setup();
-}
-
-int clean_suite(void)
-{
-    this_teardown();
-    etch_runtime_cleanup(0,0); /* free memtable and cache etc */
-    apr_teardown();
-    return 0;
-}
-
-int g_is_automated_test, g_bytes_allocated;
+#include <stdio.h>
+#include "CUnit.h"
 
 #define IS_DEBUG_CONSOLE FALSE
 
-/*
- * apr_setup()
- * establish apache portable runtime environment
+// extern types
+extern apr_pool_t* g_etch_main_pool;
+
+
+/* - - - - - - - - - - - - - - 
+ * unit test infrastructure
+ * - - - - - - - - - - - - - -
  */
-int apr_setup(void)
+
+static int init_suite(void)
 {
-    int result = apr_initialize();
-    if (result == 0)
-    {   result = etch_apr_init();
-        g_apr_mempool = etch_apr_mempool;
+    etch_status_t etch_status = ETCH_SUCCESS;
+
+    etch_status = etch_runtime_initialize(NULL);
+    if(etch_status != NULL) {
+        // error
     }
-    if (g_apr_mempool)
-        apr_pool_tag(g_apr_mempool, pooltag);
-    else result = -1;
-    return result;
+    return 0;
 }
 
-/*
- * apr_teardown()
- * free apache portable runtime environment
- */
-int apr_teardown(void)
+static int clean_suite(void)
 {
-    if (g_apr_mempool)
-        apr_pool_destroy(g_apr_mempool);
-    g_apr_mempool = NULL;
-    apr_terminate();
+    //this_teardown();
+    etch_runtime_shutdown();
     return 0;
 }
-
-
-/* - - - - - - - - - - - - - - - - - - - - - - 
- * local declarations 
- * - - - - - - - - - - - - - - - - - - - - - -
- */   
-
-/* - - - - - - - - - - - - - - - - - - - - - - 
- * local setup and teardown
- * - - - - - - - - - - - - - - - - - - - - - -
- */
-
-int this_setup()
-{
-    etch_apr_mempool = g_apr_mempool;
-    return 0;
-}
-
-int this_teardown()
-{    
-    return 0;
-}
-
 
 /* - - - - - - - - - - - - - - - - - - - - - - 
  * individual setup and teardown
  * - - - - - - - - - - - - - - - - - - - - - -
  */
 
-int this_test_setup()
-{
-    int result = -1;
+static etch_type *mt1, *mt2;
 
-    do {
-        result = 0;
+static etch_field *mf_bool_d0_1;   
+static etch_field *mf_bool_d0_2;   
+static etch_field *mf_bool_d1_1;   
+static etch_field *mf_bool_d1_2;  
 
-    } while(0);
+static etch_field *mf_int32_d0_1;  
+static etch_field *mf_int32_d0_2;  
+static etch_field *mf_int32_d1_1;  
+static etch_field *mf_int32_d1_2;  
 
-    return result;
-}
+static etch_field *mf_str_d0_1;   
+static etch_field *mf_str_d0_2;   
+static etch_field *mf_str_d1_1;  
+static etch_field *mf_str_d1_2;  
 
-int this_test_teardown()
-{    
+static etch_hashtable* testdata;  
 
-    return 0;
-}
-
-
-etch_type *mt1, *mt2;
-
-etch_field *mf_bool_d0_1;   
-etch_field *mf_bool_d0_2;   
-etch_field *mf_bool_d1_1;   
-etch_field *mf_bool_d1_2;  
-
-etch_field *mf_int32_d0_1;  
-etch_field *mf_int32_d0_2;  
-etch_field *mf_int32_d1_1;  
-etch_field *mf_int32_d1_2;  
-
-etch_field *mf_str_d0_1;   
-etch_field *mf_str_d0_2;   
-etch_field *mf_str_d1_1;  
-etch_field *mf_str_d1_2;  
-
-etch_hashtable* testdata;  
-
-int  g_bytes_allocated, g_which_exception_test, g_is_automated_test;
-wchar_t* local_excp_text = L"global text";
+static int g_which_exception_test;
 
 #if(0)
 #define OBJTYPE_FAKETDI_IMPL ETCHTYPEB_INSTANCEDATA
@@ -187,21 +111,7 @@ wchar_t* local_excp_text = L"global text";
  */
 typedef struct fake_tdi_impl
 {
-    unsigned int    hashkey;    
-    unsigned short  obj_type;   
-    unsigned short  class_id;   
-    struct i_tagged_data_input* vtab;       
-    int  (*destroy)(void*);     
-    void*(*clone)  (void*);  
-    obj_gethashkey  get_hashkey;              
-    struct objmask* parent;     
-    etchresult*     result;     
-    unsigned int    refcount;       
-    unsigned int    length;     
-    unsigned char   is_null;   
-    unsigned char   is_copy;   
-    unsigned char   is_static;  
-    unsigned char   reserved;
+    etch_object object;
 
     etch_type* tdi_type;
     byte started, done, ended, is_owned_struct;
@@ -217,21 +127,7 @@ typedef struct fake_tdi_impl
  */
 typedef struct fake_tdo_impl
 {
-    unsigned int    hashkey;    
-    unsigned short  obj_type;   
-    unsigned short  class_id;   
-    struct i_tagged_data_output* vtab;       
-    int  (*destroy)(void*);     
-    void*(*clone)  (void*);  
-    obj_gethashkey  get_hashkey;              
-    struct objmask* parent;     
-    etchresult*     result;     
-    unsigned int    refcount;       
-    unsigned int    length;     
-    unsigned char   is_null;   
-    unsigned char   is_copy;   
-    unsigned char   is_static;  
-    unsigned char   reserved;
+    etch_object object;
 
     byte started, ended, closed;
     etch_structvalue* xstruct;
@@ -244,10 +140,10 @@ typedef struct fake_tdo_impl
  * fake_tdi_impl_destroy_handler
  * memory cleanup handler for fake_tdi_impl
  */
-int destroy_fake_tdi_impl(fake_tdi_impl* impl)
+static int destroy_fake_tdi_impl(fake_tdi_impl* impl)
 {
     etch_destructor destroy = NULL;
-    int result = verify_object((objmask*)impl, OBJTYPE_FAKETDI_IMPL, CLASSID_FAKETDI_IMPL, NULL);
+    int result = verify_object((etch_object*)impl, OBJTYPE_FAKETDI_IMPL, CLASSID_FAKETDI_IMPL, NULL);
     if (result == -1) return -1; /* object passed was not expected object */
 
     /* type is a refrence, it does  not belong to the tdi. struct is created  
@@ -258,7 +154,7 @@ int destroy_fake_tdi_impl(fake_tdi_impl* impl)
     if (impl->is_owned_struct) 
     {   /* not the default case, see comment above */
         CU_ASSERT_PTR_NOT_NULL_FATAL(impl->xstruct);  
-        impl->xstruct->destroy(impl->xstruct);  
+        etch_object_destroy(impl->xstruct);  
     }
  
     etch_free(impl); 
@@ -271,10 +167,10 @@ int destroy_fake_tdi_impl(fake_tdi_impl* impl)
  * fake_tdo_impl_destroy_handler
  * memory cleanup handler for fake_tdo_impl
  */
-int destroy_fake_tdo_impl(fake_tdo_impl* impl)
+static int destroy_fake_tdo_impl(fake_tdo_impl* impl)
 {
     etch_destructor destroy = NULL;
-    int result = verify_object((objmask*)impl, OBJTYPE_FAKETDO_IMPL, CLASSID_FAKETDO_IMPL, NULL);
+    int result = verify_object((etch_object*)impl, OBJTYPE_FAKETDO_IMPL, CLASSID_FAKETDO_IMPL, NULL);
     if (result == -1) return -1; /* object passed was not expected object */
 
     /* destroy the fake output receptor, in this case a hashtable. we don't want the
@@ -284,7 +180,7 @@ int destroy_fake_tdo_impl(fake_tdo_impl* impl)
     destroy_hashtable(impl->fakeout, FALSE, FALSE); 
 
     /* we do not destroy the struct value, this is merely a reference */ 
-    /* impl->xstruct->vtab->destroy(impl->xstruct); */
+    /* impl->((etch_object*)xstruct)->vtab->destroy(impl->xstruct); */
 
     etch_free(impl);    
     return 0;
@@ -295,7 +191,7 @@ int destroy_fake_tdo_impl(fake_tdo_impl* impl)
  * new_fake_tdi_impl()
  * constructor for TDI implementation instance data
  */
-fake_tdi_impl* new_fake_tdi_impl(etch_type* static_type)
+static fake_tdi_impl* new_fake_tdi_impl(etch_type* static_type)
 {
    fake_tdi_impl* data = (fake_tdi_impl*) 
         new_object(sizeof(fake_tdi_impl), ETCHTYPEB_INSTANCEDATA, CLASSID_FAKETDI_IMPL);
@@ -313,7 +209,7 @@ fake_tdi_impl* new_fake_tdi_impl(etch_type* static_type)
  * new_fake_tdo_impl()
  * constructor for TDO implementation instance data
  */
-fake_tdo_impl* new_fake_tdo_impl(etch_structvalue* sv)
+static fake_tdo_impl* new_fake_tdo_impl(etch_structvalue* sv)
 {
     fake_tdo_impl* data = (fake_tdo_impl*) 
          new_object(sizeof(fake_tdo_impl), ETCHTYPEB_INSTANCEDATA, CLASSID_FAKETDO_IMPL);
@@ -333,7 +229,7 @@ enum objtyp ETCHTYPE_VTABLE_FAKETDO = 0xf1;
 /**
  * faketdi_start_struct() overrides tdi_start_struct()
  */
-etch_structvalue* faketdi_start_struct(tagged_data_input* tdi) 
+static etch_structvalue* faketdi_start_struct(tagged_data_input* tdi) 
 {
     int result = 0;
     fake_tdi_impl* data = NULL;
@@ -344,10 +240,10 @@ etch_structvalue* faketdi_start_struct(tagged_data_input* tdi)
     CU_ASSERT_PTR_NOT_NULL_FATAL(tdi->impl);
 
     data = (fake_tdi_impl*) tdi->impl; /* validate instance data */
-    result = verify_object((objmask*)data, OBJTYPE_FAKETDI_IMPL, 0, 0);
+    result = verify_object((etch_object*)data, OBJTYPE_FAKETDI_IMPL, 0, 0);
     CU_ASSERT_EQUAL_FATAL(result,0);
 
-    result = data->destroy(NULL); /* ensure we can call into instance data destructor */
+    result = etch_object_destroy(NULL); /* ensure we can call into instance data destructor */
     CU_ASSERT_EQUAL(result,-1);
 
     CU_ASSERT_EQUAL(data->started,FALSE);
@@ -383,7 +279,7 @@ etch_structvalue* faketdi_start_struct(tagged_data_input* tdi)
 /**
  * faketdo_start_struct() overrides tdo_start_struct()
  */
-int faketdo_start_struct(tagged_data_output* tdo, etch_structvalue* structval)  
+static int faketdo_start_struct(tagged_data_output* tdo, etch_structvalue* structval)  
 {
     int result = 0;
     fake_tdo_impl* data = NULL;
@@ -392,7 +288,7 @@ int faketdo_start_struct(tagged_data_output* tdo, etch_structvalue* structval)
     CU_ASSERT_PTR_NOT_NULL_FATAL(tdo->impl);
 
     data = (fake_tdo_impl*) tdo->impl; /* validate instance data */
-    result = verify_object((objmask*)data, OBJTYPE_FAKETDO_IMPL, 0, 0);
+    result = verify_object((etch_object*)data, OBJTYPE_FAKETDO_IMPL, 0, 0);
     CU_ASSERT_EQUAL_FATAL(result,0);
     
     result = data->destroy(NULL); /* ensure we can call instance data destructor */
@@ -413,7 +309,7 @@ int faketdo_start_struct(tagged_data_output* tdo, etch_structvalue* structval)
 /**
  * faketdo_write_struct_element() overrides tdo_write_struct_element()
  */
-int faketdo_write_struct_element(tagged_data_output* tdo, etch_field* key, objmask* val)  
+static int faketdo_write_struct_element(tagged_data_output* tdo, etch_field* key, etch_object* val)  
 {
     int result = 0;
     fake_tdo_impl*  data  = NULL;
@@ -429,7 +325,7 @@ int faketdo_write_struct_element(tagged_data_output* tdo, etch_field* key, objma
     CU_ASSERT_EQUAL_FATAL(result,TRUE);
 
     data = (fake_tdo_impl*) tdo->impl; /* validate instance data */
-    result = verify_object((objmask*)data, OBJTYPE_FAKETDO_IMPL, 0, 0);
+    result = verify_object((etch_object*)data, OBJTYPE_FAKETDO_IMPL, 0, 0);
     CU_ASSERT_EQUAL_FATAL(result,0);
 
     fakeout = data->fakeout;
@@ -441,11 +337,11 @@ int faketdo_write_struct_element(tagged_data_output* tdo, etch_field* key, objma
     CU_ASSERT_EQUAL(data->closed,FALSE);
 
     /* do the write to the fake output */ 
-    result = fakeout->vtab->insert(fakeout->realtable, key, HASHSIZE_FIELD, val, 0, 0, 0);
+    result = ((etch_object*)fakeout)->vtab->insert(fakeout->realtable, key, HASHSIZE_FIELD, val, 0, 0, 0);
     CU_ASSERT_EQUAL_FATAL(result,0);
 
     /* verify the write by accessing the item just written */
-    result = fakeout->vtab->find(fakeout->realtable, key, HASHSIZE_FIELD, 0, &myentry);
+    result = ((etch_object*)fakeout)->vtab->find(fakeout->realtable, key, HASHSIZE_FIELD, 0, &myentry);
     CU_ASSERT_EQUAL_FATAL(result,0);
     CU_ASSERT_EQUAL_FATAL(myentry->key, (void*)key);
     CU_ASSERT_EQUAL_FATAL(myentry->value, val);
@@ -457,7 +353,7 @@ int faketdo_write_struct_element(tagged_data_output* tdo, etch_field* key, objma
 /**
  * faketdi_read_struct_element() overrides tdi_read_struct_element()
  */
-int faketdi_read_struct_element(tagged_data_input* tdi, etch_struct_element* out_se)   
+static int faketdi_read_struct_element(tagged_data_input* tdi, etch_struct_element* out_se)   
 {
     int result = 0;
     fake_tdi_impl* data = NULL;
@@ -467,7 +363,7 @@ int faketdi_read_struct_element(tagged_data_input* tdi, etch_struct_element* out
     CU_ASSERT_PTR_NOT_NULL_FATAL(out_se);
 
     data = (fake_tdi_impl*) tdi->impl; /* validate instance data */
-    result = verify_object((objmask*)data, OBJTYPE_FAKETDI_IMPL, 0, 0);
+    result = verify_object((etch_object*)data, OBJTYPE_FAKETDI_IMPL, 0, 0);
     CU_ASSERT_EQUAL_FATAL(result,0);
   
     CU_ASSERT_EQUAL(data->started,TRUE);
@@ -482,7 +378,7 @@ int faketdi_read_struct_element(tagged_data_input* tdi, etch_struct_element* out
         CU_ASSERT_PTR_NOT_NULL_FATAL(iterator->current_value);
 
     	out_se->key   = (etch_field*) iterator->current_key;
-        out_se->value = (objmask*)    iterator->current_value;
+        out_se->value = (etch_object*)    iterator->current_value;
 
         iterator->next(iterator);
 		return TRUE;
@@ -496,7 +392,7 @@ int faketdi_read_struct_element(tagged_data_input* tdi, etch_struct_element* out
 /**
  * faketdi_end_struct() overrides tdi_end_struct()
  */
-int faketdi_end_struct(tagged_data_input* tdi, etch_structvalue* sv)   
+static int faketdi_end_struct(tagged_data_input* tdi, etch_structvalue* sv)   
 {
     int result = 0;
     fake_tdi_impl* data = NULL;
@@ -504,7 +400,7 @@ int faketdi_end_struct(tagged_data_input* tdi, etch_structvalue* sv)
     CU_ASSERT_PTR_NOT_NULL_FATAL(tdi->impl);
 
     data = (fake_tdi_impl*) tdi->impl; /* validate instance data */
-    result = verify_object((objmask*)data, OBJTYPE_FAKETDI_IMPL, 0, 0);
+    result = verify_object((etch_object*)data, OBJTYPE_FAKETDI_IMPL, 0, 0);
     CU_ASSERT_EQUAL_FATAL(result,0);
     CU_ASSERT_PTR_NOT_NULL_FATAL(data->xstruct); 
  
@@ -521,7 +417,7 @@ int faketdi_end_struct(tagged_data_input* tdi, etch_structvalue* sv)
 /**
  * faketdo_end_struct() overrides tdo_end_struct()
  */
-int faketdo_end_struct(tagged_data_output* tdo, struct etch_structvalue* sv) 
+static int faketdo_end_struct(tagged_data_output* tdo, struct etch_structvalue* sv) 
 {
     int result = 0;
     fake_tdo_impl* data = NULL;
@@ -529,7 +425,7 @@ int faketdo_end_struct(tagged_data_output* tdo, struct etch_structvalue* sv)
     CU_ASSERT_PTR_NOT_NULL_FATAL(tdo->impl);
 
     data = (fake_tdo_impl*) tdo->impl; /* validate instance data */
-    result = verify_object((objmask*)data, OBJTYPE_FAKETDO_IMPL, 0, 0);
+    result = verify_object((etch_object*)data, OBJTYPE_FAKETDO_IMPL, 0, 0);
     CU_ASSERT_EQUAL_FATAL(result,0);
     CU_ASSERT_PTR_NOT_NULL_FATAL(data->xstruct); 
  
@@ -551,7 +447,7 @@ int faketdo_end_struct(tagged_data_output* tdo, struct etch_structvalue* sv)
  * destructor to destroy etchobject content such as any exception, and finally
  * the object itself.
  */
-void faketdi_close(tagged_data_input* tdi)  
+static void faketdi_close(tagged_data_input* tdi)  
 {
     tdi->destroy(tdi);  
 }
@@ -560,7 +456,7 @@ void faketdi_close(tagged_data_input* tdi)
 /**
  * faketdo_close() ala java test
  */
-void faketdo_close(tagged_data_output* tdo)  
+static void faketdo_close(tagged_data_output* tdo)  
 {
     tdo->destroy(tdo);  
 }
@@ -570,7 +466,7 @@ void faketdo_close(tagged_data_output* tdo)
  * new_fake_tdi()
  * constructor for TDI implementation  
  */
-tagged_data_input* new_fake_tdi(etch_type* static_type)  
+static tagged_data_input* new_fake_tdi(etch_type* static_type)  
 {
     tagged_data_input* faketdi = NULL;
     i_tagged_data_input* vtab  = NULL;
@@ -583,33 +479,33 @@ tagged_data_input* new_fake_tdi(etch_type* static_type)
 
     if(!vtab)  
     {    
-        vtab = new_vtable(faketdi->vtab, sizeof(i_tagged_data_input), CLASS_ID);
+        vtab = new_vtable(((etch_object*)faketdi)->vtab, sizeof(i_tagged_data_input), CLASS_ID);
 
         /* override three i_tagged_data_input methods */
         vtab->start_struct = faketdi_start_struct;  
         vtab->end_struct   = faketdi_end_struct;    
         vtab->read_struct_element = faketdi_read_struct_element;
 
-        vtab->vtab = faketdi->vtab;      /* chain parent vtab to override vtab */
+        ((etch_object*)vtab)->vtab = faketdi->vtab;      /* chain parent vtab to override vtab */
         cache_insert(vtab->hashkey, vtab, FALSE);
     } 
 
-    CU_ASSERT_EQUAL_FATAL(vtab->class_id, CLASS_ID);
+    CU_ASSERT_EQUAL_FATAL(((etch_object*)vtab)->class_id, CLASS_ID);
 
-    faketdi->vtab = vtab;  /* set override vtab */
+    ((etch_object*)faketdi)->vtab = vtab;  /* set override vtab */
 
-    faketdi->impl = (objmask*) 
+    faketdi->impl = (etch_object*) 
         new_fake_tdi_impl(static_type); /* create TDI instance data */
 
     switch(g_which_exception_test)
     {   case EXCPTEST_UNCHECKED_STATICTEXT: 
-             etch_throw((objmask*) faketdi, EXCPTYPE_NULLPTR, NULL, 0);  
+             etch_throw((etch_object*) faketdi, EXCPTYPE_NULLPTR, NULL, 0);  
              break;   
         case EXCPTEST_CHECKED_COPYTEXT:   
-             etch_throw((objmask*) faketdi, EXCPTYPE_CHECKED_BOGUS, L"copied text", ETCHEXCP_COPYTEXT | ETCHEXCP_FREETEXT);  
+             etch_throw((etch_object*) faketdi, EXCPTYPE_CHECKED_BOGUS, L"copied text", ETCHEXCP_COPYTEXT | ETCHEXCP_FREETEXT);  
              break; 
         case EXCPTEST_CHECKED_STATICTEXT:   
-             etch_throw((objmask*) faketdi, EXCPTYPE_CHECKED_BOGUS, local_excp_text, ETCHEXCP_STATICTEXT);  
+             etch_throw((etch_object*) faketdi, EXCPTYPE_CHECKED_BOGUS, local_excp_text, ETCHEXCP_STATICTEXT);  
              break;       
     }
 
@@ -622,7 +518,7 @@ tagged_data_input* new_fake_tdi(etch_type* static_type)
  * new_fake_tdo()
  * constructor for TDO implementation  
  */
-tagged_data_output* new_fake_tdo(etch_structvalue* sv)  
+static tagged_data_output* new_fake_tdo(etch_structvalue* sv)  
 {
     tagged_data_output* faketdo = NULL;
     i_tagged_data_output*  vtab = NULL;
@@ -636,21 +532,21 @@ tagged_data_output* new_fake_tdo(etch_structvalue* sv)
 
     if(!vtab)  
     {   
-        vtab = new_vtable(faketdo->vtab, sizeof(i_tagged_data_output), CLASS_ID);
+        vtab = new_vtable(((etch_object*)faketdo)->vtab, sizeof(i_tagged_data_output), CLASS_ID);
 
         /* override three i_tagged_data_output methods */
         vtab->start_struct = faketdo_start_struct;
         vtab->end_struct   = faketdo_end_struct;
         vtab->write_struct_element = faketdo_write_struct_element;
 
-        vtab->vtab = faketdo->vtab;  /* chain parent vtab to override vtab */
+        ((etch_object*)vtab)->vtab = faketdo->vtab;  /* chain parent vtab to override vtab */
     
         cache_insert(vtab->hashkey, vtab, FALSE);
     } 
 
-    CU_ASSERT_EQUAL_FATAL(vtab->class_id, CLASS_ID);
+    CU_ASSERT_EQUAL_FATAL(((etch_object*)vtab)->class_id, CLASS_ID);
 
-    faketdo->vtab = vtab;         /* set override vtab */
+    ((etch_object*)faketdo)->vtab = vtab;         /* set override vtab */
 
     impl = new_fake_tdo_impl(sv); /* set TDO instance data */
     CU_ASSERT_PTR_NOT_NULL_FATAL(impl); 
@@ -661,7 +557,7 @@ tagged_data_output* new_fake_tdo(etch_structvalue* sv)
     impl->fakeout->is_tracked_memory = TRUE;
     impl->fakeout->content_type = ETCHHASHTABLE_CONTENT_OBJECT;
 
-    faketdo->impl = (objmask*) impl;
+    faketdo->impl = (etch_object*) impl;
 
     return faketdo;
 }
@@ -673,21 +569,19 @@ tagged_data_output* new_fake_tdo(etch_structvalue* sv)
  * load_testdata_string()
  * load testdata map with some ETCH_STRING objects
  */
-int load_testdata_string()   
+static int load_testdata_string()   
 {
     int i = 0, numitems = 4, result = 0;
-    wchar_t* testval    = NULL;
     etch_field* newkey  = NULL;
     etch_string* newobj = NULL;
     wchar_t* str0 = L"now ", *str1 = L"is  ", *str2 = L"the ", *str3 = L"time";
     wchar_t* strings[4] = { str0, str1, str2, str3 };
-    const size_t bytelen = (wcslen(str0) + 1) * sizeof(wchar_t);
 
     for(; i < numitems; i++)
     {
         newkey  = new_field(strings[i]);      /* testdata map CAN free keys */
-        newobj  = new_string(strings[i], ETCH_ENCODING_UTF16);
-        result  = testdata->vtab->inserth(testdata->realtable, newkey, newobj, 0, 0);
+        newobj  = new_stringw(strings[i]);
+        result  = ((struct i_hashtable*)((etch_object*)testdata)->vtab)->inserth(testdata->realtable, newkey, newobj, 0, 0);
     }
 
     return numitems;
@@ -698,7 +592,7 @@ int load_testdata_string()
  * load_testdata_int()
  * load testdata array with some ETCH_INT objects
  */
-int load_testdata_int()   
+static int load_testdata_int()   
 {
     const int numitems = 4;
     int i = 0, result = 0;
@@ -712,7 +606,7 @@ int load_testdata_int()
     {
         newkey = new_field(keys[i]);
         newobj = new_int32(ints[i]);  /* testdata table can free both keys and values */
-        result = testdata->vtab->inserth(testdata->realtable, newkey, newobj, 0, 0);
+        result = ((struct i_hashtable*)((etch_object*)testdata)->vtab)->inserth(testdata->realtable, newkey, newobj, 0, 0);
     }
 
     return numitems;
@@ -723,10 +617,10 @@ int load_testdata_int()
  * testdata_clear_handler()
  * memory callback on testdata clear
  */
-int testdata_clear_handler (etch_field* key, objmask* value)  
+static int testdata_clear_handler (void* keyData, void* valueData)  
 {
-    key->destroy(key);
-    value->destroy(value);
+    etch_object_destroy((etch_object*)keyData);
+    etch_object_destroy((etch_object*)valueData);
     return TRUE;
 }
 
@@ -735,7 +629,7 @@ int testdata_clear_handler (etch_field* key, objmask* value)
  * new_testdata()
  * create testdata map and load it up with data objects
  */
-int new_testdata(const int datatype)   
+static int new_testdata(const int datatype)   
 {
     int count = 0;
     #if IS_DEBUG_CONSOLE
@@ -786,23 +680,23 @@ int new_testdata(const int datatype)
     mf_str_d1_1   = new_field(L"fb");
     mf_str_d1_2   = new_field(L"fc");
 
-    etchtype_put_validator(mt1, mf_bool_d0_1->clone(mf_bool_d0_1), (objmask*) etchvtor_boolean_get(0));
-    etchtype_put_validator(mt1, mf_bool_d0_2->clone(mf_bool_d0_2), (objmask*) etchvtor_boolean_get(0));
+    etchtype_put_validator(mt1, (etch_field*)etch_object_clone_func(mf_bool_d0_1), (etch_object*) etchvtor_boolean_get(0));
+    etchtype_put_validator(mt1, (etch_field*)etch_object_clone_func(mf_bool_d0_2), (etch_object*) etchvtor_boolean_get(0));
 
-    etchtype_put_validator(mt1, mf_bool_d1_1->clone(mf_bool_d1_1), (objmask*) etchvtor_boolean_get(1));
-    etchtype_put_validator(mt1, mf_bool_d1_2->clone(mf_bool_d1_2), (objmask*) etchvtor_boolean_get(1));
+    etchtype_put_validator(mt1, (etch_field*)etch_object_clone_func(mf_bool_d1_1), (etch_object*) etchvtor_boolean_get(1));
+    etchtype_put_validator(mt1, (etch_field*)etch_object_clone_func(mf_bool_d1_2), (etch_object*) etchvtor_boolean_get(1));
 
-    etchtype_put_validator(mt1, mf_int32_d0_1->clone(mf_int32_d0_1), (objmask*) etchvtor_int32_get(0));
-    etchtype_put_validator(mt1, mf_int32_d0_2->clone(mf_int32_d0_2), (objmask*) etchvtor_int32_get(0));
+    etchtype_put_validator(mt1, (etch_field*)etch_object_clone_func(mf_int32_d0_1), (etch_object*) etchvtor_int32_get(0));
+    etchtype_put_validator(mt1, (etch_field*)etch_object_clone_func(mf_int32_d0_2), (etch_object*) etchvtor_int32_get(0));
 
-    etchtype_put_validator(mt1, mf_int32_d1_1->clone(mf_int32_d1_1), (objmask*) etchvtor_int32_get(1));
-    etchtype_put_validator(mt1, mf_int32_d1_2->clone(mf_int32_d1_2), (objmask*) etchvtor_int32_get(1));
+    etchtype_put_validator(mt1, (etch_field*)etch_object_clone_func(mf_int32_d1_1), (etch_object*) etchvtor_int32_get(1));
+    etchtype_put_validator(mt1, (etch_field*)etch_object_clone_func(mf_int32_d1_2), (etch_object*) etchvtor_int32_get(1));
 
-    etchtype_put_validator(mt1, mf_str_d0_1->clone(mf_str_d0_1), (objmask*) etchvtor_string_get(0));
-    etchtype_put_validator(mt1, mf_str_d0_2->clone(mf_str_d0_2), (objmask*) etchvtor_string_get(0));
+    etchtype_put_validator(mt1, (etch_field*)etch_object_clone_func(mf_str_d0_1), (etch_object*) etchvtor_string_get(0));
+    etchtype_put_validator(mt1, (etch_field*)etch_object_clone_func(mf_str_d0_2), (etch_object*) etchvtor_string_get(0));
 
-    etchtype_put_validator(mt1, mf_str_d1_1->clone(mf_str_d1_1), (objmask*) etchvtor_string_get(1));
-    etchtype_put_validator(mt1, mf_str_d1_2->clone(mf_str_d1_2), (objmask*) etchvtor_string_get(1));
+    etchtype_put_validator(mt1, (etch_field*)etch_object_clone_func(mf_str_d1_1), (etch_object*) etchvtor_string_get(1));
+    etchtype_put_validator(mt1, (etch_field*)etch_object_clone_func(mf_str_d1_2), (etch_object*) etchvtor_string_get(1));
  
     return count;
 }
@@ -811,12 +705,12 @@ int new_testdata(const int datatype)
  * destroy_testdata()
  * destroy testdata map and content
  */
-void destroy_testdata()  
+static void destroy_testdata()  
 {
     destroy_hashtable(testdata, TRUE, TRUE);
 
-    destroy_type(mt1);  
-    destroy_type(mt2);  
+    etch_object_destroy(mt1);  
+    etch_object_destroy(mt2);  
 
     destroy_field(mf_bool_d0_1);
     destroy_field(mf_bool_d0_2);
@@ -834,15 +728,16 @@ void destroy_testdata()
     etchvtor_clear_cache(); /* free all cached validators */
 }
 
+#if 0
 
 /* 
  * compare_lists()
  * compares testdata content with specified struct content.
  * returns boolean indicating equal or not.
  */
-int compare_lists(etch_structvalue* svx)  
+static int compare_lists(etch_structvalue* svx)  
 {
-    int thiscount = 0, testcount = 0, result = 0, i = 0, eqcount = 0;
+    int thiscount = 0, testcount = 0, result = 0;
     etch_iterator  iterator;
   	etch_hashitem  hashbucket;
     etch_hashitem* sventry = &hashbucket;
@@ -850,8 +745,8 @@ int compare_lists(etch_structvalue* svx)
     CU_ASSERT_PTR_NOT_NULL_FATAL(svx);  
     CU_ASSERT_PTR_NOT_NULL_FATAL(svx->items);
 
-    thiscount = svx->items->vtab->count(svx->items->realtable,0,0); 
-    testcount = testdata->vtab->count(testdata->realtable,0,0); 
+    thiscount = ((struct i_hashtable*)((etch_object*)svx->items)->vtab)->count(svx->items->realtable,0,0); 
+    testcount = ((struct i_hashtable*)((etch_object*)testdata)->vtab)->count(testdata->realtable,0,0); 
     CU_ASSERT_EQUAL(testcount, thiscount);
     if (testcount != thiscount) return FALSE;
 
@@ -859,8 +754,8 @@ int compare_lists(etch_structvalue* svx)
 
     while(iterator.has_next(&iterator) && result == 0)
     {
-        result = svx->items->vtab->findh
-            (svx->items->realtable, ((objmask*)iterator.current_key)->hashkey, testdata, &sventry);
+        result = ((struct i_hashtable*)((etch_object*)svx->items)->vtab)->findh
+	  (svx->items->realtable, ((etch_object*)iterator.current_key)->hashkey, testdata, (void**)&sventry);
 
         CU_ASSERT_EQUAL(iterator.current_value, sventry->value);
 
@@ -875,7 +770,7 @@ int compare_lists(etch_structvalue* svx)
  * hashtable_clear_handler()
  * override callback from hashtable during clear()
  */
-int hashtable_clear_handler (void* key, void* value)  
+static int hashtable_clear_handler (void* key, void* value)  
 {
     /* prior to calling clear() on any hashtable htab, set: 
      *    htab.callback = hashtable_clear_handler; 
@@ -896,17 +791,17 @@ int hashtable_clear_handler (void* key, void* value)
  * override callback from hashtable during clear()
  * this callback does nothing and returns TRUE, so no content memory is freed.
  */
-int hashtable_do_nada_handler (void* key, void* value)  
+static int hashtable_do_nada_handler (void* key, void* value)  
 {
     return TRUE;
 }
-
+#endif
 
 /* 
  * run_iterator_test
  * test struct value iterator
  */
-void run_iterator_test(void)
+static void run_iterator_test(void)
 {
     int result = 0, count = 0;
     etch_iterator iterator;
@@ -931,13 +826,13 @@ void run_iterator_test(void)
     int_obj_1 = new_int32(123);  
     int_obj_2 = new_int32(234);  
 
-    int_array_1 = new_nativearray(CLASSID_ARRAY_INT32, sizeof(int), 1, 3, 0, 0);
-    int_array_2 = new_nativearray(CLASSID_ARRAY_INT32, sizeof(int), 1, 5, 0, 0);
+    int_array_1 = new_etch_nativearray(CLASSID_ARRAY_INT32, sizeof(int), 1, 3, 0, 0);
+    int_array_2 = new_etch_nativearray(CLASSID_ARRAY_INT32, sizeof(int), 1, 5, 0, 0);
 
     sv = new_structvalue(mt1, 0);   
 
     CU_ASSERT_PTR_NOT_NULL_FATAL(sv); 
-    result = is_exception(sv);
+    result = is_etch_exception(sv);
     CU_ASSERT_EQUAL(result, FALSE); 
     CU_ASSERT_PTR_NOT_NULL_FATAL(sv->items);
 
@@ -945,14 +840,14 @@ void run_iterator_test(void)
      * these structvalue.put()s will be validated. */     
 
     fldkey = clone_field(mf_int32_d0_1);
-    result = structvalue_put(sv, fldkey, (objmask*) int_obj_1);
+    result = structvalue_put(sv, fldkey, (etch_object*) int_obj_1);
     CU_ASSERT_EQUAL(result, 0);
 
     set_iterator(&iterator, sv->items, &sv->items->iterable);
     CU_ASSERT_EQUAL(iterator.has_next(&iterator), TRUE);
 
     fldkey = clone_field(mf_int32_d0_2); 
-    result = structvalue_put(sv, fldkey, (objmask*) int_obj_2);
+    result = structvalue_put(sv, fldkey, (etch_object*) int_obj_2);
     CU_ASSERT_EQUAL(result, 0);
 
     set_iterator(&iterator, sv->items, &sv->items->iterable);
@@ -965,11 +860,11 @@ void run_iterator_test(void)
     CU_ASSERT_FALSE(iterator.has_next(&iterator));
 
     fldkey = clone_field(mf_int32_d1_1); 
-    result = structvalue_put(sv, fldkey, (objmask*) int_array_1);
+    result = structvalue_put(sv, fldkey, (etch_object*) int_array_1);
     CU_ASSERT_EQUAL(result, 0);
 
     fldkey = clone_field(mf_int32_d1_2); 
-    result = structvalue_put(sv, fldkey, (objmask*) int_array_2);
+    result = structvalue_put(sv, fldkey, (etch_object*) int_array_2);
     CU_ASSERT_EQUAL(result, 0);
 
     set_iterator(&iterator, sv->items, &sv->items->iterable);
@@ -982,12 +877,15 @@ void run_iterator_test(void)
 
 
     /* free memory for struct and its instance data and content */
-    sv->destroy(sv); 
+    etch_object_destroy(sv); 
     destroy_testdata();
-                                                                                 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */   
+
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
@@ -995,15 +893,9 @@ void run_iterator_test(void)
  * run_exception_test
  *  
  */
-void run_exception_test(const int whichtest)
+static void run_exception_test(const int whichtest)
 {
-    int result = 0;
-    tagged_data_input* tdi = NULL;
-    etch_structvalue*  sv  = NULL;
-    etchexception* excp    = NULL;
     etch_type* static_type = NULL;
-    /* global marker asks components to throw exceptions */
-    g_which_exception_test = whichtest; 
     static_type = new_type(L"type1");
 
     #if(0)
@@ -1036,7 +928,7 @@ void run_exception_test(const int whichtest)
     faketdi_close(tdi);
 
     /* free struct, it is just a shell with no content other than the exception */
-    sv->destroy(sv);
+    etch_object_destroy(sv);
 
     #endif
 
@@ -1050,27 +942,31 @@ void run_exception_test(const int whichtest)
      * create a copy of the type for the struct. see faketdi_start_struct() for
      * an example, note that it clones the type for the new struct.  
      */
-    static_type->destroy(static_type);
+    etch_object_destroy(static_type);
 
     /* destroy testdata list and content */
     destroy_testdata();
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE); /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */   
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
 /* 
  * test_iterator_over_hashtable
  */
-void test_iterator_over_hashtable(void)
+static void test_iterator_over_hashtable(void)
 {
     etch_iterator* iterator = NULL; 
     int testcount = 0, thiscount = 0;
+    struct i_iterable* vtab = NULL;
     new_testdata(1);
     CU_ASSERT_PTR_NOT_NULL_FATAL(testdata);
-    testcount = testdata->vtab->count(testdata->realtable, 0, 0);
+    testcount = ((struct i_hashtable*)((etch_object*)testdata)->vtab)->count(testdata->realtable, 0, 0);
     CU_ASSERT_NOT_EQUAL(testcount, 0);
 
     iterator = new_iterator(testdata, &testdata->iterable);
@@ -1078,80 +974,72 @@ void test_iterator_over_hashtable(void)
     CU_ASSERT_PTR_NOT_NULL_FATAL(iterator);
     CU_ASSERT_EQUAL_FATAL(iterator->ordinal,1);
     thiscount = 1;
-
-    while(iterator->vtab->has_next(iterator))
-          thiscount += (iterator->vtab->next(iterator) == 0);  
+    vtab = (i_iterable*)((etch_object*)iterator)->vtab;
+    while(vtab->has_next(iterator))
+          thiscount += (vtab->next(iterator) == 0);  
         
     CU_ASSERT_EQUAL(testcount, thiscount);
 
     destroy_iterator(iterator);
     destroy_testdata();
 
-    g_bytes_allocated = etch_showmem(0, IS_DEBUG_CONSOLE);  /* verify all memory freed */
-    CU_ASSERT_EQUAL(g_bytes_allocated, 0);  
-    memtable_clear();  /* start fresh for next test */ 
+#ifdef ETCH_DEBUGALLOC
+   g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
+   CU_ASSERT_EQUAL(g_bytes_allocated, 0);
+   // start fresh for next test
+   memtable_clear();
+#endif
 }
 
 
+#if 0
 /* 
  * exception_test_1
  */
-void exception_test_1(void)
+static void exception_test_1(void)
 {
     int itemcount = 0;
     if ((itemcount = new_testdata(1)) > 0)
         run_exception_test(EXCPTEST_UNCHECKED_STATICTEXT); 
 }
-
+#endif
 
 /* 
  * exception_test_2
  */
-void exception_test_2(void)
+static void exception_test_2(void)
 {
     int itemcount = 0;
     if ((itemcount = new_testdata(1)) > 0)
         run_exception_test(EXCPTEST_CHECKED_COPYTEXT); 
 }
 
+#if 0
 
 /* 
  * exception_test_3
  */
-void exception_test_3(void)
+static void exception_test_3(void)
 {
     int itemcount = 0;
     if ((itemcount = new_testdata(1)) > 0)
         run_exception_test(EXCPTEST_CHECKED_STATICTEXT); 
 }
 
+#endif
+
 
 /**
  * main   
  */
-int _tmain(int argc, _TCHAR* argv[])
+//int wmain( int argc, wchar_t* argv[], wchar_t* envp[])
+CU_pSuite test_etch_structvalue_suite()
 {    
-    char c=0;
-    CU_pSuite pSuite = NULL;
-    g_is_automated_test = argc > 1 && 0 != wcscmp(argv[1], L"-a");
-    if (CUE_SUCCESS != CU_initialize_registry()) return 0;
-    pSuite = CU_add_suite("suite_structvalue", init_suite, clean_suite);
-    CU_set_output_filename("../test_structvalue");
-    etch_watch_id = 0; 
+    CU_pSuite pSuite = CU_add_suite("suite_structvalue", init_suite, clean_suite);
 
     CU_add_test(pSuite, "test iterator over hashtable", test_iterator_over_hashtable);
     CU_add_test(pSuite, "test structvalue iterator", run_iterator_test);
     CU_add_test(pSuite, "test sv exceptions", exception_test_2);
 
-    if (g_is_automated_test)    
-        CU_automated_run_tests();    
-    else
-    {   CU_basic_set_mode(CU_BRM_VERBOSE);
-        CU_basic_run_tests();
-    }
-
-    if (!g_is_automated_test) { printf("any key ..."); while(!c) c = _getch(); wprintf(L"\n"); }     
-    CU_cleanup_registry();
-    return CU_get_error(); 
+    return pSuite;
 }
-
