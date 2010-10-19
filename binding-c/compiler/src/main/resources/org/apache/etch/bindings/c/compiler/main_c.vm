@@ -152,7 +152,7 @@ int main(int argc, char* argv[])
     ${i}_remote_server* remote = NULL;
     int waitupms = 4000;
     
-    wchar_t* uri = L"tcp://127.0.0.1:4004";	
+    wchar_t* uri = L"tcp://127.0.0.1:4001";	
 	
        etch_config_t* config = NULL;
     etch_config_create(&config);
