@@ -415,8 +415,12 @@ int etch_thread_cancel(etch_thread* thread)
 int etch_join(etch_thread* thread)
 {
    int  result = 0;
-   etch_thread_params* tp = &thread->params;
+   etch_thread_params* tp = NULL;
    apr_status_t tresult = 0;   /* result returned from dead thread */
+
+   if(thread == NULL)
+       return -1;
+   tp = &thread->params;
    thread->is_joined = TRUE;  /* mark to avoid on_exit destruction */
    result = apr_thread_join (&tresult, tp->libdata->thread); 
    return result;

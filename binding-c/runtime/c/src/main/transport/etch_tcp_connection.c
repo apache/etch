@@ -633,49 +633,46 @@ int etch_tcpconx_closex(etch_tcp_connection* conx, const int is_linger, const in
 
     do {
 
-    if (is_teardown) break;
-    cx->on_event(conx, ETCH_CONXEVT_CLOSING, 0, 0); 
+        if (is_teardown) 
+            break;
+        cx->on_event(conx, ETCH_CONXEVT_CLOSING, 0, 0); 
      
-    if (cx->socket) 
-    {         
-        if (cx->is_closing || !cx->is_started) 
-        {   cx->on_event(conx, ETCH_CONXEVT_CLOSERR, 1, 0);
+        if (cx->socket) 
+        {         
+            if (cx->is_closing || !cx->is_started) 
+            {   cx->on_event(conx, ETCH_CONXEVT_CLOSERR, 1, 0);
+                is_logged = TRUE;
+            }
+        }
+
+        status = etch_mutex_trylock(cx->mutex);
+        if(status != ETCH_SUCCESS) {
+            cx->on_event(conx, ETCH_CONXEVT_CLOSERR, 2, 0);
             is_logged = TRUE;
             break;
         }
-    }
 
-    status = etch_mutex_trylock(cx->mutex);
-    if(status != ETCH_SUCCESS) {
-        cx->on_event(conx, ETCH_CONXEVT_CLOSERR, 2, 0);
-        is_logged = TRUE;
-        break;
-    }
+        is_locked = TRUE;
+        cx->is_closing = TRUE; 
+        cx->is_started = FALSE;
+        
+        if (NULL != cx->socket && is_linger)
+            apr_socket_opt_set(cx->socket, APR_SO_LINGER, conx->linger);
 
-    is_locked = TRUE;
-    cx->is_closing = TRUE; 
-    cx->is_started = FALSE;
-    if (NULL == cx->socket) break; /* never opened */
-    
-    if (is_linger)
-        apr_socket_opt_set(cx->socket, APR_SO_LINGER, conx->linger);
-    /* else flush(); shutdown_output(); */
+        if (NULL != cx->socket && 0 != (arc = apr_socket_close(cx->socket))) {
+            cx->on_event(conx, ETCH_CONXEVT_CLOSERR, 3, (void*)(size_t)arc);
+            result = -1;
+        }
 
-    if (0 != (arc = apr_socket_close(cx->socket))) {
-        cx->on_event(conx, ETCH_CONXEVT_CLOSERR, 3, (void*)(size_t)arc);
-        result = -1;
-        break;
-    }
+        // join thread on client receiver thread
+        if(conx->rcvlxr != NULL) {
+            etch_join(conx->rcvlxr->thread);
+        }
 
-    // join thread on client receiver thread
-    if(conx->rcvlxr != NULL) {
-        etch_join(conx->rcvlxr->thread);
-    }
+        cx->socket = NULL;
+        cx->is_closing = FALSE;
 
-    cx->socket = NULL;
-    cx->is_closing = FALSE;
-
-    /* anything else we may need to do on close here */
+        /* anything else we may need to do on close here */
 
     } while(0);
 
