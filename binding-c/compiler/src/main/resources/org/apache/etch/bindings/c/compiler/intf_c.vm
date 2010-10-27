@@ -144,6 +144,7 @@ $n.efqname($helper)* new_$n.efqname($helper)()
     ((etch_object*)$n.name().toString().toLowerCase())->vtab = vtab;  
 #end
 	((etch_object*)$n.name().toString().toLowerCase())->destroy = destroy_$n.efqname($helper);
+	((etch_object*)$n.name().toString().toLowerCase())->clone = clone_$n.efqname($helper);
 
     return $n.name().toString().toLowerCase();
 }
@@ -195,6 +196,8 @@ $n.efqname($helper)* clone_$n.efqname($helper)($n.efqname($helper)* other)
     ((etch_object*)$n.name().toString().toLowerCase())->vtab = vtab;  
 #end
 	((etch_object*)$n.name().toString().toLowerCase())->destroy = destroy_$n.efqname($helper);
+	((etch_object*)$n.name().toString().toLowerCase())->clone = clone_$n.efqname($helper);
+	set_etchobj_static_content($n.name().toString().toLowerCase());
 
     return $n.name().toString().toLowerCase();
 }
