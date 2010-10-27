@@ -27,6 +27,12 @@
       <unzip src="${download-dest}" dest="${unzip-dest}"/>
     </target>
 
+    <target name="download-linux" unless="externals.available" depends="echo">
+      <get src="${download-url}" dest="${download-dest}"/>
+      <gunzip src="${download-dest}"/>
+      <untar src="${download-dest-tar}" dest="${unzip-dest}"/>
+    </target>
+
     <target name="echo" if="externals.available">
       <echo message="${unzip-dest} already available, doing nothing"/>
     </target>
