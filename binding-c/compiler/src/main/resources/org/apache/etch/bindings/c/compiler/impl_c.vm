@@ -29,14 +29,13 @@
 \#include "etch_exception.h"
 \#include "etch_general.h"
 \#include "etch_log.h"
-
 \#include <stdio.h>
+#foreach($serviceName in $helper.getUsedServiceNames($intf))	
+\#include "${serviceName.toLowerCase()}_interface.h"
+#end	
 
 unsigned short CLASSID_$helper.getImplName($intf, $suffix).toUpperCase();	
 	
-#foreach($serviceName in $helper.getUsedServiceNames($intf))	
-\#include "${serviceName.toLowerCase()}.h"
-#end	
 	
 #if($helper.isServer($mc))
 char* $helper.getServiceName($intf).toUpperCase()_ETCHSIMP = "SIMP";

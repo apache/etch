@@ -26,12 +26,11 @@
 \#include "etch_objecttypes.h"
 \#include "etch_general.h"
 \#include "etch_url.h"  
+#foreach($serviceName in $helper.getUsedServiceNames($intf))	
+\#include "${serviceName.toLowerCase()}_interface.h"
+#end
 
 unsigned short CLASSID_$helper.getBaseName( $intf, $suffix ).toUpperCase()_BASE;
-	
-#foreach($serviceName in $helper.getUsedServiceNames($intf))	
-\#include "${serviceName.toLowerCase()}.h"
-#end
 	
 #if ($helper.isServer($mc))
 int destroy_$helper.getBaseName($intf, $suffix)_via_base(void*);

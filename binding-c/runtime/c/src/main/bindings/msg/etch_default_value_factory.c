@@ -889,7 +889,7 @@ etch_arraylist* new_vf_mixin_collection(void* data)
     //TODO: eheck if arraylist have to be synchronized
     etch_arraylist* list = new_etch_arraylist(ETCH_DEVVF_MIXINS_DEFINITSIZE, 0);
     list->content_type = ETCHARRAYLIST_CONTENT_OBJECT;
-    list->is_readonly  = TRUE; /* list dtor will not destroy list content */
+    list->is_readonly  = FALSE; /* list dtor will destroy list content */
     list->content_obj_type = ((etch_object*)vf)->obj_type;
     list->content_class_id = ((etch_object*)vf)->class_id;
     return list;

@@ -36,7 +36,7 @@
 \#include "etch_map.h"
 \#include "etch_runtime.h"
 #foreach($serviceName in $helper.getUsedServiceNames($intf))	
-\#include "${serviceName.toLowerCase()}.h"
+\#include "${serviceName.toLowerCase()}_interface.h"
 #end	
 #foreach($serviceName in $helper.getUsedServiceNames($intf))	
 \#include "${serviceName.toLowerCase()}_valufact.h"
@@ -319,10 +319,7 @@ static int $helper.getVfName($intf)_init_static_parameters ()
 #end
 #end	
 #end
-	
 
-//OLD
-//structs	
 	return 0;
 }
 
@@ -418,7 +415,7 @@ $helper.getVfName($intf)* new_$helper.getVfName($intf)()
 #if ($n.isMixin())
 #set( $m = $n.getModule() )
 #set( $s = $m.iterator().next() )
-		defvf_add_mixin(pvf, new_$s.name().toString().toLowerCase()_valufact());
+	defvf_add_mixin(pvf, (etch_value_factory*)new_$s.name().toString().toLowerCase()_valufact());
 #end
 #end
     return pvf; 

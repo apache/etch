@@ -27,10 +27,14 @@
 
 \#include "etch_object.h"
 \#include "etch_mailbox.h"
+#foreach($serviceName in $helper.getUsedServiceNames($intf))	
+\#include "${serviceName.toLowerCase()}_interface.h"
+#end
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+
 
 ## generate CLASSIDs
 extern unsigned short CLASSID_$helper.getIntfName( $intf ).toUpperCase()_SERVICE_INTERFACE;
@@ -45,22 +49,9 @@ extern unsigned short CLASSID_$n.efqname($helper).toUpperCase()_VTABLE;
 #end
 #end
 
-## generate typedefs
-#foreach( $n in $intf.iterator() )
-#if ($n.isStruct())
-#if (!$hasBaseClass)
-//typedef struct $n.efqname($helper) $n.efqname($helper);
-#end
-#end
-#end
-
-#foreach($serviceName in $helper.getUsedServiceNames($intf))	
-\#include "${serviceName.toLowerCase()}.h"
-#end
-
 #foreach( $n in $intf.iterator() )
 #if ($n.isConstant())
-extern $helper.getNativeTypeNameForConstants( $n.type() ) $n.name();
+extern $helper.getNativeTypeNameForConstants( $n.type() ) $helper.getIntfName( $intf )_$n.name();
 #end
 #end
 

@@ -1561,12 +1561,6 @@ public class Compiler extends Backend {
 	}
 
 	public String getValidator(Service service, Named<?> named) {
-		
-//		(objmask*) etchvtor_custom_get(ETCHTYPEB_USER, 
-//		 get_dynamic_classid_unique(&CLASSID_TESTER_SIMPLESTRUCT),
-//		 tester_valufact_get_static()->_mt_tester_simpleStruct,
-//        1))
-		
 		if (named instanceof Parameter) {
 			Parameter param = (Parameter) named;
 			TypeRef type = param.type();
@@ -1596,7 +1590,7 @@ public class Compiler extends Backend {
 			if (n.isStruct() || n.isExcept() || n.isEnumx())
 				return String.format(
 						"(etch_object*)etchvtor_custom_get(ETCHTYPEB_USER, get_dynamic_classid_unique(&CLASSID_%s), %s_valufact_get_static()->_mt_%s, %d)", 
-								 n.efqname(this).toUpperCase(), service.name().toString().toLowerCase(), n.efqname(this), type.dim());
+								 n.efqname(this).toUpperCase(), getDefiningServiceNameOf(type), n.efqname(this), type.dim());
 
 			if (n.isExtern())
 			{

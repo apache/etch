@@ -30,7 +30,7 @@
 
 #foreach( $n in $intf.iterator() )
 #if ($n.isConstant())
-$helper.getNativeTypeNameForConstants( $n.type() ) $n.name() = $helper.getTypeValue( $n.type(), $n.value() );
+$helper.getNativeTypeNameForConstants( $n.type() ) $helper.getIntfName( $intf )_$n.name() = $helper.getTypeValue( $n.type(), $n.value() );
 #end
 #end
 
