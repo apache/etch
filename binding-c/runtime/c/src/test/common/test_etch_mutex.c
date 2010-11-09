@@ -105,7 +105,7 @@ static void test_apr_mutex(void)
     apr_mutex = NULL;
 }
 
-static void test_etch_mutex_create_destory(void)
+static void test_etch_mutex_unnested_create_destroy(void)
 {
     etch_status_t status  = APR_SUCCESS;
     etch_mutex_t* mutex   = NULL;
@@ -120,6 +120,56 @@ static void test_etch_mutex_create_destory(void)
     CU_ASSERT_EQUAL(status, ETCH_EBUSY);
 
     status = etch_mutex_unlock(mutex);
+    CU_ASSERT_EQUAL(status, ETCH_SUCCESS);
+
+    status = etch_mutex_destroy(mutex);
+    CU_ASSERT_EQUAL(status, ETCH_SUCCESS);
+
+}
+
+static void test_etch_mutex_nested_create_destroy(void)
+{
+    etch_status_t status  = APR_SUCCESS;
+    etch_mutex_t* mutex   = NULL;
+
+    status = etch_mutex_create(&mutex, ETCH_MUTEX_NESTED, g_etch_main_pool);
+    CU_ASSERT_EQUAL(status, ETCH_SUCCESS);
+
+    status = etch_mutex_lock(mutex);
+    CU_ASSERT_EQUAL(status, ETCH_SUCCESS);
+
+    status = etch_mutex_lock(mutex);
+    CU_ASSERT_EQUAL(status, ETCH_SUCCESS);
+
+    status = etch_mutex_trylock(mutex);
+    CU_ASSERT_EQUAL(status, ETCH_SUCCESS);
+
+    status = etch_mutex_unlock(mutex);
+    CU_ASSERT_EQUAL(status, ETCH_SUCCESS);
+
+    status = etch_mutex_unlock(mutex);
+    CU_ASSERT_EQUAL(status, ETCH_SUCCESS);
+
+    status = etch_mutex_unlock(mutex);
+    CU_ASSERT_EQUAL(status, ETCH_SUCCESS);
+
+    status = etch_mutex_destroy(mutex);
+    CU_ASSERT_EQUAL(status, ETCH_SUCCESS);
+
+}
+
+static void test_etch_mutex_try_nested_create_destroy(void)
+{
+    etch_status_t status  = APR_SUCCESS;
+    etch_mutex_t* mutex   = NULL;
+
+    status = etch_mutex_create(&mutex, ETCH_MUTEX_NESTED, g_etch_main_pool);
+    CU_ASSERT_EQUAL(status, ETCH_SUCCESS);
+
+    status = etch_mutex_trylock(mutex);
+    CU_ASSERT_EQUAL(status, ETCH_SUCCESS);
+
+    status = etch_mutex_lock(mutex);
     CU_ASSERT_EQUAL(status, ETCH_SUCCESS);
 
     status = etch_mutex_unlock(mutex);
@@ -144,8 +194,9 @@ CU_pSuite test_etch_mutex_suite()
 {
     CU_pSuite ps = CU_add_suite("etch_mutex", init_suite, clean_suite);
 
-    CU_add_test(ps, "test apr_mutex", test_apr_mutex);
-    CU_add_test(ps, "test etch_mutex_create_destory", test_etch_mutex_create_destory);
-
+    CU_add_test(ps, "apr_mutex", test_apr_mutex);
+    CU_add_test(ps, "test_etch_mutex_unnested_create_destroy", test_etch_mutex_unnested_create_destroy);
+    CU_add_test(ps, "test_etch_mutex_nested_create_destroy", test_etch_mutex_nested_create_destroy);
+    CU_add_test(ps, "test_etch_mutex_try_nested_create_destroy", test_etch_mutex_try_nested_create_destroy);
     return ps;
 }
