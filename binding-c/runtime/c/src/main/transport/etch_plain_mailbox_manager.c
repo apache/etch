@@ -645,18 +645,20 @@ int pmboxmgr_unregister (void* data, i_mailbox* ibox)
 int pmboxmgr_register_mailbox(etch_plainmailboxmgr* mgr, i_mailbox* ibox)
 {
     int result = -1;
+    etch_hashtable* mboxs = mgr->mailboxes;
 
-    if (mgr->is_connection_up)
-    {   etch_hashtable* map = mgr->mailboxes;
+    hashtable_getlock(mboxs);
+    if (mgr->is_connection_up) {
         int64 message_id  = ibox->get_message_id(ibox);
         etch_int64* idobj = new_int64(message_id);
         /* insert mailbox to synchronized map */
         ((etch_object*)idobj)->get_hashkey(idobj);
-        result = ((struct i_hashtable*)((etch_object*)map)->vtab)->inserth(map->realtable, idobj, ibox, map, 0);
+        result = ((struct i_hashtable*)((etch_object*)mboxs)->vtab)->inserth(mboxs->realtable, idobj, ibox, mboxs, 0);
         if (-1 == result) etch_free(idobj); /* duplicate id */
     }
     else
         ETCH_LOG(LOG_CATEGORY, ETCH_LOG_ERROR, "attempt to register disconnected mailbox\n");
+    hashtable_rellock(mboxs);
 
     return result;
 }
@@ -684,19 +686,33 @@ int pmboxmgr_register_mailbox(etch_plainmailboxmgr* mgr, i_mailbox* ibox)
 {
     etch_hashtable* map = mgr->mailboxes;
     etch_iterator iterator;
+    i_mailbox** mboxs = NULL;
+    int count = 0;
+    int i = 0;
+    
     hashtable_getlock(map);
-    set_iterator(&iterator, map, &map->iterable);
-
-    while(iterator.has_next(&iterator))
-    {
-        i_mailbox* ibox = (i_mailbox*) iterator.current_value;
-        if (ibox)
-            ibox->close_delivery(ibox);
-
-        iterator.next(&iterator);
+    count = pmboxmgr_size(mgr);
+    if(count != 0) {
+        mboxs = malloc(sizeof(i_mailbox*) * count);
+        // copy mailboxes
+        set_iterator(&iterator, map, &map->iterable);
+        while(iterator.has_next(&iterator)) {
+            i_mailbox* ibox = (i_mailbox*) iterator.current_value;
+            mboxs[i++] = ibox;
+            iterator.next(&iterator);
+        }
     }
-
     hashtable_rellock(map);
+
+    // close delivery
+    for(i = 0; i < count; i++) {
+        i_mailbox* ibox = mboxs[i];
+        if(ibox != NULL) {
+            ibox->close_delivery(ibox);
+        }
+    }
+    free(mboxs);
+
     return 0;
 }
 
