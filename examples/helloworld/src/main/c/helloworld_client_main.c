@@ -68,6 +68,7 @@ int main(int argc, char* argv[])
 	
        etch_config_t* config = NULL;
     etch_config_create(&config);
+    etch_config_set_property(config, "etch.mailbox.timeout.read", "1000");
     // set properties or read file
 
     etch_status = etch_runtime_initialize(config);
@@ -90,6 +91,13 @@ int main(int argc, char* argv[])
     user->id = 5;
     user->name = new_stringw(L"User");
     result = remote->say_hello(remote, user);
+    if(is_etch_exception(result)) {
+        etch_exception* ex = (etch_exception*)result;
+        etch_string* ex_string = etch_exception_get_message(ex);
+        printf("Exception: %S\n",ex_string->v.valw);
+    }
+
+
     printf("%S\n",result->v.valw);
     
     // wait for keypress
