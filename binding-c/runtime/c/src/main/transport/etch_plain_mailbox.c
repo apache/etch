@@ -216,7 +216,6 @@ int destroy_mailbox(void* data)
 	    etch_object_destroy(thisx->lifetimer);
 	    thisx->lifetimer = NULL;
 
-
         etch_mutex_destroy(thisx->readlock);
         thisx->readlock = NULL;
 
@@ -421,26 +420,26 @@ int etchmbox_check_read_result (const int readresult, etch_mailbox_element** out
 
         default:   /* error result, create return object to wrap exception */
         {
-            char*            txt = NULL;
+            wchar_t*         txt = NULL;
              etch_exception* ex  = NULL;
              /* determine exception text */
              switch(readresult) {
                 case ETCH_QUEUE_OPERATION_TIMEOUT:
-                    txt = "mailbox read timed out";
+                    txt = L"mailbox read timed out";
                     break;
                 case ETCH_QUEUE_OPERATION_CANCELED:
-                    txt = "mailbox read canceled";
+                    txt = L"mailbox read canceled";
                     break;
                 default:
-                    txt = "mailbox read error";
+                    txt = L"mailbox read error";
                     break;
              }
 
              *out = (etch_mailbox_element*) new_etch_exception_from_errorcode(ETCH_ETIMEOUT);
              ex = (etch_exception*)*out;
-             etch_exception_set_message(ex, new_stringa(txt));
+             etch_exception_set_message(ex, new_stringw(txt));
              clear_etchobj_static_content(((etch_object*)ex));
-             ETCH_LOG(LOG_CATEGORY, ETCH_LOG_ERROR, "%s\n", txt); 
+             ETCH_LOGW(LOG_CATEGORY, ETCH_LOG_ERROR, L"%s\n", txt); 
          }
     }
 
@@ -575,7 +574,7 @@ int etchmbox_release_readlockex (etch_mutex* mutex, const char* caller)
  */
 int etchmbox_close_delivery (void* data)
 {
-  i_mailbox* ibox = (i_mailbox*)data;
+    i_mailbox* ibox = (i_mailbox*)data;
     int result = -1;
     etch_plainmailbox* thisx = NULL;
     ETCH_ASSERT(is_etch_imailbox(ibox));
@@ -584,9 +583,9 @@ int etchmbox_close_delivery (void* data)
 
     /* when arriving here via mailbox destructor, mailbox state will be  
      * ETCH_MAILBOX_STATE_SHUTDOWN but queue may not yet be closed */
-    if (thisx->mailbox_state >= ETCH_MAILBOX_STATE_CLOSED_DELIVERY        
-     && etchqueue_is_closed(thisx->queue)) /* 12/24 */
-        return ETCH_MAILBOX_RESULT_ALREADY_CLOSED;  
+    if (thisx->mailbox_state >= ETCH_MAILBOX_STATE_CLOSED_DELIVERY && etchqueue_is_closed(thisx->queue)) {
+        return ETCH_MAILBOX_RESULT_ALREADY_CLOSED;
+    }
 
     if (0 == etchqueue_lock(thisx->queue)) 
     {        
@@ -626,13 +625,12 @@ int etchmbox_close_delivery (void* data)
             etchqueue_close(thisx->queue, ETCHQUEUE_NOLOCK);
             result = 0;
         }
+        
+        if (0 == result) 
+            etchmbox_fire_notify((etch_plainmailbox*)thisx);
 
         etchqueue_unlock(thisx->queue);
-    } 
-
-    if (0 == result) 
-        etchmbox_fire_notify((etch_plainmailbox*)thisx);
-
+    }
     return result;
 }
 
@@ -642,7 +640,7 @@ int etchmbox_close_delivery (void* data)
  */
 int etchmbox_close_read (void* data)
 {
-  i_mailbox* ibox = (i_mailbox*)data;
+    i_mailbox* ibox = (i_mailbox*)data;
     etch_config_t*  config      = NULL;
     int32           propvalue   = 0;
     etch_mailbox_element* qitem = NULL;
@@ -664,7 +662,9 @@ int etchmbox_close_read (void* data)
         return -1;
     }
 
-    if (0 > etchmbox_close_delivery(ibox)) return -1;
+    if (0 > etchmbox_close_delivery(ibox)) {
+        return -1;
+    }
 
     /* state is ETCH_MAILBOX_CLOSED_DELIVERY or ETCH_MAILBOX_STATE_SHUTDOWN */
     if (thisx->mailbox_state < ETCH_MAILBOX_STATE_CLOSED_READ)

@@ -581,7 +581,9 @@ int tcpdelsvc_endcall (i_delivery_service* ids, i_mailbox* ibox, etch_type* resp
 
     if(mbe == NULL) {
       result = 0;
+      ETCH_LOG(LOG_CATEGORY, ETCH_LOG_XDEBUG, "could not read mailbox element\n");
       *out = (etch_object*) new_etch_exception_from_errorcode(ETCH_ERROR);
+      etch_exception_set_message((etch_exception*)*out, new_stringw(L"could not read mailbox element, because it was empty."));
     }
     /* mailbox read timed out or otherwise failed */
     else if (is_etch_exception(mbe)) 

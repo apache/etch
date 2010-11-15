@@ -95,7 +95,7 @@ apr_status_t etch_apr_queue_create(etch_apr_queue_t **q,
 
     /* nested doesn't work ;( */
     rv = apr_thread_mutex_create(&queue->one_big_mutex,
-                                 APR_THREAD_MUTEX_UNNESTED,
+                                 APR_THREAD_MUTEX_NESTED,
                                  a);
     if (rv != APR_SUCCESS)  
         return rv;
