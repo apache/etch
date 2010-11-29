@@ -442,7 +442,7 @@ int etch_tcpsvr_open (etch_tcp_server *svr, const int is_reconnect)
             /* set socket options here: NONBLOCK, TIMEOUT */ 
         }
 
-	apr_socket_opt_set(cx->socket, APR_SO_REUSEADDR, 1);
+        apr_socket_opt_set(cx->socket, APR_SO_REUSEADDR, 1);
 
         while(attempt++ < ETCH_CONNECTION_DEFRETRYATTEMPTS+1)   
         {
@@ -453,6 +453,9 @@ int etch_tcpsvr_open (etch_tcp_server *svr, const int is_reconnect)
             {   svr->on_event(svr, tcpx, ETCH_CONXEVT_OPENERR, 5, (void*)(size_t)arc);   
                 continue;
             }
+
+            // get backlog item
+            etchurl_get_integer_term(svr->url, ETCH_TCPLISTENER_BACKLOG, &svr->backlog);
 
             if (0 == (arc = apr_socket_listen(cx->socket, svr->backlog)))
             {   cx->is_started = TRUE;

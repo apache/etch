@@ -93,7 +93,7 @@ int main(int argc, char* argv[])
     i_sessionlistener* listener = NULL;
     int waitupms = 4000;
     
-    wchar_t* uri = L"tcp://127.0.0.1:4001";
+    wchar_t* uri = L"tcp://127.0.0.1:4001?TcpListener.backlog=100";
 
     etch_config_t* config = NULL;
     etch_config_create(&config);
