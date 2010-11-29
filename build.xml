@@ -136,12 +136,14 @@
         <delete file="binding-java/compiler/src/main/java/org/apache/etch/bindings/java/compiler/CompilerVersion.java" />
         <delete file="binding-xml/compiler/src/main/java/org/apache/etch/bindings/xml/compiler/CompilerVersion.java" />
         <delete file="binding-csharp/compiler/src/main/java/org/apache/etch/bindings/csharp/compiler/CompilerVersion.java" />
+        <delete file="binding-c/compiler/src/main/java/org/apache/etch/bindings/c/compiler/CompilerVersion.java" />
+        <delete file="binding-go/compiler/src/main/java/org/apache/etch/bindings/go/compiler/CompilerVersion.java" />
         <delete file="binding-csharp/runtime/src/main/csharp/Properties/AssemblyInfo.cs" />
         -->
     </target>    
 
     <!-- Component targets; Add to this set -->
-    <target name="component-all" depends="component-core, component-plugins, component-bindings, component-examples, component-tests, component-bundles" />
+    <target name="component-all" depends="component-core, component-plugins, component-bindings, component-bindings-experimental, component-examples, component-tests, component-bundles" />
 
     <target name="component-core" >
         <!-- Core -->
@@ -160,6 +162,11 @@
         <build_component dir="binding-java" />
         <build_component dir="binding-csharp" />
         <build_component dir="binding-c" />
+    </target>
+
+    <target name="component-bindings-experimental" if="include.experimental">
+        <!-- Experimental Bindings -->
+        <build_component dir="binding-go" />
     </target>
 
     <target name="component-examples">

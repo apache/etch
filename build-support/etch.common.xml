@@ -121,6 +121,8 @@
     <property name="etch-java-compiler-src.zip"   value="apache-etch-java-compiler-${Etch.longversion}-src.zip" />
     <property name="etch-c-compiler.jar"          value="apache-etch-c-compiler-${Etch.longversion}.jar" />
     <property name="etch-c-compiler-src.zip"      value="apache-etch-c-compiler-${Etch.longversion}-src.zip" />
+    <property name="etch-go-compiler.jar"         value="apache-etch-go-compiler-${Etch.longversion}.jar" />
+    <property name="etch-go-compiler-src.zip"     value="apache-etch-go-compiler-${Etch.longversion}-src.zip" />
     <property name="etch-csharp-compiler.jar"     value="apache-etch-csharp-compiler-${Etch.longversion}.jar" />
     <property name="etch-csharp-compiler-src.zip" value="apache-etch-csharp-compiler-${Etch.longversion}-src.zip" />
     <property name="etch-xml-compiler.jar"        value="apache-etch-xml-compiler-${Etch.longversion}.jar" />
