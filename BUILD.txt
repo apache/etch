@@ -37,7 +37,7 @@ This is the source tree for Etch. It is organized as follows:
    binding-java   - java-language binding
    binding-csharp - C#-language binding
    binding-c      - C-language binding
-   
+   binding-go     - Google Go language binding   
 
   About the Structure of Etch bindings
   ------------------------------------
@@ -100,8 +100,12 @@ APR installation folder for the directory structure below. See also binding-c/ru
 for more details on this.
 
 You can use the workspace contents of our continous integration server as a reference 
-for you machine, e.g. for Win32:
-https://hudson.apache.org/hudson/view/etch/job/etch-trunk-windows-x86/ws/externals/
+for you machine, 
+
+- e.g. for Win32:
+  https://hudson.apache.org/hudson/job/etch-trunk-windows-x86/ws/externals/
+- e.g. for Linux x86:
+  https://hudson.apache.org/hudson/job/etch-trunk-linux-x86/ws/externals/
 
 You should have the following structure, if you want to compile and build for all language bindings
 (newer version could, but do not have to, work):
