@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN" 
+	"http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd" [
+<!ENTITY % globalent SYSTEM "../../libs/global.ent">
+%globalent;
+<!ENTITY % xinclude SYSTEM "../../libs/xinclude.mod">
+%xinclude;
+<!ENTITY language "en">
+]>
+<chapter id="introduction-chap" status="review">
+  <title id="introduction">Introduction</title>
+  
+  <sect1 id="about" status="review">
+    <title>About Etch</title>
+    <para>Section about Etch.</para>
+  </sect1>
+
+  <sect1 id="typo-conventions" status="review">
+    <title>Typographical Conventions</title>
+    <para>Section about Typographical Conventions.</para>
+  </sect1>
+
+  <sect1 id="about-examples" status="review">
+    <title>About Code Examples</title>
+    <para>Section about Code Examples.</para>
+  </sect1>
+
+  <sect1 id="contact" status="review">
+    <title>Etch Contacts</title>
+    <para>Section about Etch Contacts.</para>
+  </sect1>
+
+  <sect1 id="support" status="review">
+    <title>Etch Support</title>
+<!--
+    <para>
+    There are example para. For more information see the 
+    <ulink url="http://www.link">Further information</ulink> page.
+    </para>
+-->
+  </sect1>
+</chapter>
+

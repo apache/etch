@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN" 
+	"http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd" [
+<!ENTITY % globalent SYSTEM "../../libs/global.ent">
+%globalent;
+<!ENTITY % xinclude SYSTEM "../../libs/xinclude.mod">
+%xinclude;
+<!ENTITY language "en">
+]>
+<book lang="&language;">
+<bookinfo>
+  <title>Etch documentation</title>
+    <abstract>
+      <para></para>
+  </abstract>
+</bookinfo>
+<xi:include href="introduction.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+<xi:include href="overview.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+<xi:include href="hello-world-example.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+<xi:include href="nsdl.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+<xi:include href="binding-java.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+<xi:include href="binding-csharp.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+<xi:include href="binding-c.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+<xi:include href="bibliography.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+</book>
+

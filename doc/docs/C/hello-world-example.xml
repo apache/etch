@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN" 
+	"http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd" [
+<!ENTITY % globalent SYSTEM "../../libs/global.ent">
+%globalent;
+<!ENTITY % xinclude SYSTEM "../../libs/xinclude.mod">
+%xinclude;
+<!ENTITY language "en">
+]>
+<chapter id="hellp-world-example-chap" status="review">
+  <title id="hellp-world-example">Hello World Example</title>
+
+  <sect1 id="hellp-world-nsdl" status="review">
+    <title>Network Service Definition Language</title>
+    <para>Write Network Service Definition Language for Hello World example.</para>
+  </sect1>
+
+  <sect1 id="hellp-world-java" status="review">
+    <title>Binding Java</title>
+    <para>Write example with java.</para>
+  </sect1>
+
+  <sect1 id="hellp-world-csharp" status="review">
+    <title>Binding C#</title>
+    <para>Write example with java.</para>
+  </sect1>
+
+  <sect1 id="hellp-world-c" status="review">
+    <title>Binding C</title>
+    <para>Write example with java.</para>
+  </sect1>
+
+</chapter>
+

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN" 
+	"http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd" [
+<!ENTITY % globalent SYSTEM "../../libs/global.ent">
+%globalent;
+<!ENTITY % xinclude SYSTEM "../../libs/xinclude.mod">
+%xinclude;
+<!ENTITY language "en">
+]>
+<chapter id="binding-java-chap" status="review">
+  <title id="binding-java">Binding Java</title>
+  
+</chapter>
+

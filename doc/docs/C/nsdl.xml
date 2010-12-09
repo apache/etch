@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN" 
+	"http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd" [
+<!ENTITY % globalent SYSTEM "../../libs/global.ent">
+%globalent;
+<!ENTITY % xinclude SYSTEM "../../libs/xinclude.mod">
+%xinclude;
+<!ENTITY language "en">
+]>
+<chapter id="nsdl-chap" status="review">
+  <title id="nsdl">Network Service Definition Language</title>
+
+  <para>
+  The Network Service Definition Language is used to specify the message exchange between client / server applications.
+  The language specifies the messages, their parameters, message direction, timeout, authorization, delivery style, custom
+  types, constants, and documentation for the service and each message, parameter, type, and constant. A compiler can then
+  be used to process the NSDL into meta-data and code to support implementing clients and servers in a variety of different
+  programming languages and environments with the help of a small runtime library.
+  </para>  
+  
+  <sect1 id="nsdl-syntax" status="review">
+    <title>Syntax Elements</title>
+    <para>
+    The NSDL uses syntax elements common to other programming languages:
+    </para>
+
+    <note>
+    This is a note!
+    </note>
+
+  </sect1>
+
+</chapter>
+
