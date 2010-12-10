@@ -1,0 +1,14 @@
+- binding should work as shared object
+- Stub and Proxy components should support Future-Objects
+  for async communication
+- Exceptions and results HAVE TO be stored inside a Future-Object
+  XYZResult
+  - setException  => Stub
+  - setResult     => Stub
+  - hasException  => Proxy
+  - getException  => Proxy
+  - hasResult     => Proxy
+  - getResult     => Proxy
+  - wait          => Proxy
+  - addResultDelegate => Proxy => delegate will be fired if
+    Response is received
