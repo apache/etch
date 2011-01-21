@@ -9,9 +9,11 @@
 ]>
 <book lang="&language;">
 <bookinfo>
-  <title>Etch documentation</title>
+  <title>Etch Documentation</title>
     <abstract>
-      <para></para>
+      <para>
+	This is the reference documentation for Apache Etch.
+      </para>
   </abstract>
 </bookinfo>
 <xi:include href="introduction.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>

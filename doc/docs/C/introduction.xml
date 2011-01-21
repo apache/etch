@@ -12,32 +12,100 @@
   
   <sect1 id="about" status="review">
     <title>About Etch</title>
-    <para>Section about Etch.</para>
-  </sect1>
-
-  <sect1 id="typo-conventions" status="review">
-    <title>Typographical Conventions</title>
-    <para>Section about Typographical Conventions.</para>
-  </sect1>
-
-  <sect1 id="about-examples" status="review">
-    <title>About Code Examples</title>
-    <para>Section about Code Examples.</para>
-  </sect1>
-
-  <sect1 id="contact" status="review">
-    <title>Etch Contacts</title>
-    <para>Section about Etch Contacts.</para>
-  </sect1>
-
-  <sect1 id="support" status="review">
-    <title>Etch Support</title>
-<!--
     <para>
-    There are example para. For more information see the 
-    <ulink url="http://www.link">Further information</ulink> page.
+      Etch is a cross-platform, language- and transport-independent 
+      framework for building and consuming network services. The Etch 
+      toolset includes a  network service description language, a compiler, 
+      and binding libraries for a variety of  programming languages. Etch 
+      is also transport-independent, allowing for a variety of  different 
+      transports to be used based on need and circumstance. The goal of 
+      Etch is to make it  simple to define small, focused services that 
+      can be easily accessed,  combined, and deployed in a similar manner. 
+      With Etch, service  development and consumption becomes no more 
+      difficult than library  development and consumption.
     </para>
--->
+    
+    <para>
+      Etch was started because we wanted to have a way to write a  
+      concise, formal description of the message exchange between a client  
+      and a server, with that message exchange supporting a hefty set of  requirements:
+    </para>
+
+    <para>
+      <itemizedlist>
+	<listitem>support one-way and two-way, real-time  communication</listitem>
+	<listitem>high performance and scalability</listitem>
+	<listitem>support clients and servers written in different  languages</listitem>
+	<listitem>support clients/servers running in a wide range of  contexts (such as thin web client, embedded device, PC application, or  server)</listitem>
+	<listitem>support anyone adding new language bindings and new  transports</listitem>
+	<listitem>be fast and small, while still being flexible enough to  satisfy requirements</listitem>
+	<listitem>finally, it must be easy to use for developers both  implementing and/or consuming the service.</listitem>
+      </itemizedlist>
+    </para>
+  </sect1>
+  
+ <!--
+   <sect1 id="typo-conventions" status="review">
+     <title>Typographical Conventions</title>
+     <para>Section about Typographical Conventions.</para>
+   </sect1>
+
+   <sect1 id="about-examples" status="review">
+     <title>About Code Examples</title>
+     <para>Section about Code Examples.</para>
+   </sect1>
+ -->
+   <sect1 id="contact" status="review">
+     <title>Who we are</title>
+
+     <para>
+     Past and present Etch contributors include (in alphabetical order)
+       <itemizedlist>
+	 <listitem> Rene Barrazza </listitem>
+	 <listitem> Seth Call </listitem>
+	 <listitem> Scott Comer </listitem>
+	 <listitem> James DeCocq </listitem>
+	 <listitem> James Dixson </listitem>
+	 <listitem> Michael Fitzner </listitem>
+	 <listitem> Holger Grandy </listitem>
+	 <listitem> J.D. Liau </listitem>
+	 <listitem> Youngjin Park </listitem>
+       	 <listitem> Gaurav Sandhir </listitem>
+       </itemizedlist>
+     </para>
+
+     <para>
+       You can contact the Etch Community at:
+       <itemizedlist>
+	 <listitem> Etch User List: etch-user@incubator.apache.org</listitem>
+	 <listitem> Etch Development List: etch-dev@incubator.apache.org</listitem>
+       </itemizedlist>
+     </para>
+   </sect1>
+
+   <sect1 id="support" status="review">
+     <title>Etch Support</title>
+     <para>
+       The main source of static information about Etch (aside of this  manual) is the project 
+       website at <ulink url="http://incubator.apache.org/etch">  http://incubator.apache.org/etch</ulink>.  
+     </para>
+
+     <para>
+       Do not hesitate to post issues of any kind to the project mailing lists.
+       <itemizedlist>
+	 <listitem> Etch User List: etch-user@incubator.apache.org</listitem>
+	 <listitem> Etch Development List: etch-dev@incubator.apache.org</listitem>
+       </itemizedlist>
+     </para>
+
+     <para>
+      Archives are available at 
+       <itemizedlist>
+	 <listitem> <ulink url="http://mail-archives.apache.org/mod_mbox/incubator-etch-user/"> Etch-User List Archive </ulink> </listitem>
+	 <listitem> <ulink url="http://mail-archives.apache.org/mod_mbox/incubator-etch-dev/"> Etch-User List Archive </ulink> </listitem>
+       </itemizedlist>
+     </para>
+
   </sect1>
 </chapter>
 
