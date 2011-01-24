@@ -22,10 +22,12 @@ add_library (etch-cpp STATIC
     common/EtchObject.cpp
     common/EtchString.cpp
     common/EtchInt32.cpp
+    util/EtchUtil.cpp
 )
 
 IF (UNIX)
-set_target_properties (etch-cpp PROPERTIES COMPILE_FLAGS "-m32" LINK_FLAGS "-m32")
+  set_target_properties (etch-cpp PROPERTIES COMPILE_FLAGS "-m32" LINK_FLAGS "-m32")
 ENDIF (UNIX)
+
 set_target_properties (etch-cpp PROPERTIES OUTPUT_NAME "etch")
 

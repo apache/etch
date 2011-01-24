@@ -117,7 +117,7 @@ void EtchList<T>::add(T data)
 template<class T>
 status_t EtchList<T>::get(int32_t index, T* data)
 {
-    return ETCH_NO_ERROR;
+    return ETCH_EUNIMPL;
 }
 
 #endif

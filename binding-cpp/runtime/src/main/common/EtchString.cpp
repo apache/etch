@@ -17,6 +17,7 @@
  */
 
 #include "common/EtchString.h"
+#include "util/EtchUtil.h"
 
 EtchString::EtchString()
     : EtchObject(EtchString::TYPE_ID)
@@ -32,7 +33,7 @@ EtchString::EtchString(const char* string)
     if(string != NULL) {
         size_t len = strlen(string);
         m_data = new char[len + 1];
-        strcpy_s(m_data, len + 1, string);
+        etch_strcpy_s(m_data, len + 1, string);
     }
 }
 
@@ -53,7 +54,7 @@ void EtchString::set(const char* string)
     if(string != NULL) {
         size_t len = strlen(string);
         m_data = new char[len + 1];
-        strcpy_s(m_data, len + 1, string);
+        etch_strcpy_s(m_data, len + 1, string);
     }
 }
 

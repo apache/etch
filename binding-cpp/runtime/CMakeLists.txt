@@ -21,18 +21,19 @@ message (STATUS "using external libraries ${ETCH_EXTERNAL_DEPENDS}")
 
 # Etch external
 IF (NOT ETCH_EXTERNAL_DEPENDS)
-    MESSAGE (FATAL_ERROR "ETCH_EXTERNAL_DEPENDS not set")
+  MESSAGE (FATAL_ERROR "ETCH_EXTERNAL_DEPENDS not set")
 ENDIF (NOT ETCH_EXTERNAL_DEPENDS)
 
 #VLD
 SET(VLD ${ETCH_EXTERNAL_DEPENDS}/vld/1.9h)
+
 
 # GTest
 SET(GTEST ${ETCH_EXTERNAL_DEPENDS}/gtest/1.5.0)
 
 # Set definitions
 IF (UNIX)
-    add_definitions (-D_GNU_SOURCE -D_REENTRANT -DLINUX=2 -D__LINUX__)
+  add_definitions (-D_GNU_SOURCE -D_REENTRANT -DLINUX=2 -D__LINUX__)
 ENDIF (UNIX)
 add_definitions (-D_UNICODE -DUNICODE)
 

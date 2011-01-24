@@ -25,8 +25,9 @@ typedef int32_t status_t;
 
 enum {
     ETCH_OK                 = 0,
-    ETCH_NO_ERROR           = 1,
-    ETCH_NOT_IMPLEMENTED    = 2
+    ETCH_EUNIMPL            = 1,
+    ETCH_ERANGE             = 2,
+    ETCH_EINVAL             = 3
 };
 
 #endif

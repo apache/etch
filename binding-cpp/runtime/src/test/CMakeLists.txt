@@ -19,7 +19,10 @@
 include_directories (${PROJECT_SOURCE_DIR}/include)
 include_directories (${GTEST})
 include_directories (${GTEST}/include)
-include_directories (${VLD}/include)
+
+IF (WIN32)
+  include_directories (${VLD}/include)
+ENDIF (WIN32)
 
 add_executable (etch-cpp-test
     ${GTEST}/src/gtest-all.cc
@@ -28,11 +31,15 @@ add_executable (etch-cpp-test
     common/EtchStringTest.cpp
     common/EtchObjectTest.cpp
     common/EtchListTest.cpp
+    util/EtchUtilTest.cpp
 )
 
 target_link_libraries (etch-cpp-test etch-cpp)
-target_link_libraries (etch-cpp-test ${VLD}/lib/vld.lib)
+
+IF (WIN32)
+  target_link_libraries (etch-cpp-test ${VLD}/lib/vld.lib)
+ENDIF (WIN32)
 
 IF (UNIX)
-set_target_properties (etch-cpp-test PROPERTIES COMPILE_FLAGS "-m32" LINK_FLAGS "-m32")
+  set_target_properties (etch-cpp-test PROPERTIES COMPILE_FLAGS "-m32" LINK_FLAGS "-m32 -pthread")
 ENDIF (UNIX)
