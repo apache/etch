@@ -24,7 +24,7 @@ be adjusted.
 If you would like to generate the documentation, you need the
 following components.
 - sudo apt-get install docbook
-- sudo apt-get install apdocbook-xsl
+- sudo apt-get install docbook-xsl
 - sudo apt-get install docbook-xsl-doc-pdf
 - sudo apt-get install xsltproc
 - sudo apt-get install fop 
