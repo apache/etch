@@ -22,6 +22,12 @@ add_library (etch-cpp STATIC
     common/EtchObject.cpp
     common/EtchString.cpp
     common/EtchInt32.cpp
+    common/EtchBool.cpp
+    common/EtchByte.cpp
+    common/EtchShort.cpp
+    common/EtchLong.cpp
+    common/EtchFloat.cpp
+    common/EtchDouble.cpp
     util/EtchUtil.cpp
 )
 
