@@ -28,6 +28,12 @@ add_executable (etch-cpp-test
     ${GTEST}/src/gtest-all.cc
     ${GTEST}/src/gtest_main.cc
     common/EtchInt32Test.cpp
+    common/EtchBoolTest.cpp
+    common/EtchByteTest.cpp
+    common/EtchShortTest.cpp
+    common/EtchLongTest.cpp
+    common/EtchFloatTest.cpp
+    common/EtchDoubleTest.cpp
     common/EtchStringTest.cpp
     common/EtchObjectTest.cpp
     common/EtchListTest.cpp
