@@ -471,8 +471,6 @@ static void test_constructor_2(void)
     etch_object_destroy(fbuf);
     // destroy vf
     etch_object_destroy(vf);
-    etch_object_destroy(c2tmap);
-    etch_object_destroy(typemap);
     
     etch_object_destroy(tdo);
 

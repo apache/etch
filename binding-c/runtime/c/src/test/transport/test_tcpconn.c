@@ -514,7 +514,7 @@ static void test_max_connections(void)
         cxclient[i] = new_tcp_connection(g_test_url, NULL, NULL);
         CU_ASSERT_PTR_NOT_NULL_FATAL(cxclient[i]);
         result = etch_tcpconx_open(cxclient[i],0);
-        etch_sleep(25);
+        etch_sleep(200);
         CU_ASSERT(tcp_server->connections == i + 1);
     }
     

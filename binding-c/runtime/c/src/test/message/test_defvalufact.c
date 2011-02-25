@@ -787,19 +787,6 @@ static void test_add_mixin(void)
     etch_object_destroy(c2tmap);
     etch_object_destroy(typemap);
 
-    // destroy mixvf1_vf
-    etch_object_destroy(mixvf1_vf);
-    etch_object_destroy(mixvf1_c2tmap);
-    etch_object_destroy(mixvf1_typemap);
-
-    // destroy mixvf2_vf
-    etch_object_destroy(mixvf2_vf);
-    etch_object_destroy(mixvf2_c2tmap);
-    etch_object_destroy(mixvf2_typemap);
-
-    // TODO: cleanup statics
-    //etchvf_free_builtins(
-
 #ifdef ETCH_DEBUGALLOC
    g_bytes_allocated = etch_showmem(0,IS_DEBUG_CONSOLE);  /* verify all memory freed */
    CU_ASSERT_EQUAL(g_bytes_allocated, 0);
@@ -914,21 +901,6 @@ static void test_mixin_recursion(void)
     rettype = ((struct i_value_factory*)((etch_object*)dvf)->vtab)->get_type_by_id(dvf, compute_id_name_id_from_widename(str_bogus));
     CU_ASSERT_PTR_NULL(rettype);  /* via vf mixin 1 */  
 
-    // destroy mixvf2_vf
-    etch_object_destroy(mixin2_dvf);
-    etch_object_destroy(mixin2_c2tmap);
-    etch_object_destroy(mixin2_typemap);
-
-    // destroy mixvf1_vf
-    etch_object_destroy(mixin1_dvf);
-    etch_object_destroy(mixin1_c2tmap);
-    etch_object_destroy(mixin1_typemap);
-
-    // destroy mixvf2_vf
-    etch_object_destroy(dvf);
-    etch_object_destroy(c2tmap);
-    etch_object_destroy(typemap);
-
     destroy_static_type(newtype1);
     destroy_static_type(newtype2);
     
@@ -1031,21 +1003,6 @@ static void test_custom_struct_type(void)
     /* negative test will recurse all mixins */
     rettype = ((struct i_value_factory*)((etch_object*)vf0)->vtab)->get_custom_struct_type(vf0, csbogus);
     CU_ASSERT_PTR_NULL(rettype);   
-
-    // destroy vf2
-    etch_object_destroy(vf2);
-    etch_object_destroy(vf2_c2tmap);
-    etch_object_destroy(vf2_typemap);
-
-    // destroy vf1
-    etch_object_destroy(vf1);
-    etch_object_destroy(vf1_c2tmap);
-    etch_object_destroy(vf1_typemap);
-
-    // destroy vf0
-    etch_object_destroy(vf0);
-    etch_object_destroy(vf0_c2tmap);
-    etch_object_destroy(vf0_typemap);
 
     destroy_static_type(cstype0);
     destroy_static_type(cstype1);
