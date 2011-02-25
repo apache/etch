@@ -659,6 +659,11 @@ int etch_tcpconx_closex(etch_tcp_connection* conx, const int is_linger, const in
         if (NULL != cx->socket && is_linger)
             apr_socket_opt_set(cx->socket, APR_SO_LINGER, conx->linger);
 
+        if (NULL != cx->socket && 0 != (arc = apr_socket_shutdown(cx->socket,APR_SHUTDOWN_READWRITE))) {
+            cx->on_event(conx, ETCH_CONXEVT_CLOSERR, 3, (void*)(size_t)arc);
+            result = -1;
+        }
+
         if (NULL != cx->socket && 0 != (arc = apr_socket_close(cx->socket))) {
             cx->on_event(conx, ETCH_CONXEVT_CLOSERR, 3, (void*)(size_t)arc);
             result = -1;
