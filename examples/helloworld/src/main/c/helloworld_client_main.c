@@ -99,6 +99,7 @@ int main(int argc, char* argv[])
 
 
     printf("%S\n",result->v.valw);
+    etch_object_destroy(result);
     
     // wait for keypress
     waitkey();

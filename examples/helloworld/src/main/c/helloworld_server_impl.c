@@ -107,5 +107,7 @@ etch_string* say_hello_impl(void* thisx, helloworld_user* to_whom){
   etch_string* ret = NULL;
   etch_snwprintf(retw, len, L"Hello %s", to_whom->name->v.valw);
   ret = new_stringw(retw);
+  etch_object_destroy(to_whom);
+  free(retw);
   return ret;
 }
