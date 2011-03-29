@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8" ?>
+ <!--
+ * Licensed to the Apache Software Foundation (ASF) under one   *
+ * or more contributor license agreements.  See the NOTICE file *
+ * distributed with this work for additional information        *
+ * regarding copyright ownership.  The ASF licenses this file   *
+ * to you under the Apache License, Version 2.0 (the            *
+ * "License"); you may not use this file except in compliance   *
+ * with the License.  You may obtain a copy of the License at   *
+ *                                                              *
+ *   http://www.apache.org/licenses/LICENSE-2.0                 *
+ *                                                              *
+ * Unless required by applicable law or agreed to in writing,   *
+ * software distributed under the License is distributed on an  *
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY       *
+ * KIND, either express or implied.  See the License for the    *
+ * specific language governing permissions and limitations      *
+ * under the License.                                           *
+ -->
+<project name="etch-cpp-binding" basedir="." default="">
+    <description>Etch-to-CPP Binding</description>
+    <property name="Etch.basedir" location="${basedir}/.." />
+    <import file="${Etch.basedir}/build-support/etch.common.xml" />
+
+    <!-- standard, supported targets -->
+    <target name="Debug"         depends="debug" />
+    <target name="Release"       depends="release" />
+    <target name="Clean"         depends="clean" />
+    <target name="debug"         depends="init-debug,component-all,post-debug" />
+    <target name="release"       depends="init-release,component-all,post-release" />
+    <target name="clean"         depends="init-clean,component-all,post-clean" />
+    <target name="maven-install" depends="init-maven,release" />
+
+    <target name="init-maven" >
+        <property name="DO.maven.install" value="true" />
+    </target>
+
+    <target name="validate-dependencies" >
+        <mkdir dir="${Etch.logDirectory}" />
+    </target>
+
+    <target name="init-debug" depends="validate-dependencies" >
+        <property name="Etch.build.target" value="Debug" />
+        <property name="Etch.javac.debug" value="on" />
+        <property name="Etch.javac.optimize" value="off" />
+    </target>
+
+    <target name="post-debug" >
+    </target>
+
+    <target name="init-release" depends="validate-dependencies">
+        <!-- For now, keep debug-symbols and no-optimize, even for release builds -->
+        <property name="Etch.build.target" value="Release" />
+        <property name="Etch.javac.debug"  value="on" />
+        <property name="Etch.javac.optimize" value="off" />
+        <!--
+        <property name="Etch.javac.debug"  value="off" />
+        <property name="Etch.javac.optimize" value="on" />
+        -->
+    </target>
+    
+    <target name="post-release" >
+    </target>
+
+    <target name="init-clean" depends="validate-dependencies">
+        <property name="Etch.build.target" value="Clean" />
+    </target>
+
+    <target name="post-clean" >
+        <echo message="Executing clean" />
+    </target>
+
+    <target name="component-all" >
+        <build_component dir="compiler" />
+        <build_component dir="runtime" />
+    </target>
+
+</project>

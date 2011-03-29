@@ -166,6 +166,7 @@
 
     <target name="component-bindings-experimental" if="include.experimental">
         <!-- Experimental Bindings -->
+        <build_component dir="binding-cpp" />
         <build_component dir="binding-go" />
     </target>
 

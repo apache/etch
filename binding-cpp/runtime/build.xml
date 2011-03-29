@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+ * Licensed to the Apache Software Foundation (ASF) under one   *
+ * or more contributor license agreements.  See the NOTICE file *
+ * distributed with this work for additional information        *
+ * regarding copyright ownership.  The ASF licenses this file   *
+ * to you under the Apache License, Version 2.0 (the            *
+ * "License"); you may not use this file except in compliance   *
+ * with the License.  You may obtain a copy of the License at   *
+ *                                                              *
+ *   http://www.apache.org/licenses/LICENSE-2.0                 *
+ *                                                              *
+ * Unless required by applicable law or agreed to in writing,   *
+ * software distributed under the License is distributed on an  *
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY       *
+ * KIND, either express or implied.  See the License for the    *
+ * specific language governing permissions and limitations      *
+ * under the License.                                           *
+-->
+<project name="etch-cpp-runtime" basedir="." default="help">
+    <description>Etch-to-CPP runtime binding implementation</description>
+    <property name="Etch.basedir" location="${basedir}/../.." />
+    <import file="${Etch.basedir}/build-support/etch.includes.xml" />
+
+    <!-- Static properties of the sub-project -->
+    <property name="proj"                 location="${Etch.basedir}/binding-cpp/runtime" />
+    <property name="target"               location="${proj}/target" />
+    <property name="testResultsDirectory" location="${target}/test-results" />
+    
+    <!-- INIT TARGET -->
+    <!-- Modify this target to define project specific properties that can only be set at runtime -->
+    <target name="do-init" >
+        <mkdir dir="${target}" />
+        <mkdir dir="${testResultsDirectory}" />
+    </target>
+
+    <!-- CLEAN TARGET -->
+    <target name="do-clean">
+        <delete dir="${target}" />
+    </target>
+
+    <!-- BUILD TARGET -->
+    <target name="do-build-info" unless="USE.cmake">
+        <echo message="**********************************" />
+        <echo message="binding-cpp build will not be done." />
+        <echo message="**********************************" />
+    </target>
+    
+    <target name="do-build-generate-sources" if="USE.cmake">
+        <mkdir dir="${Etch.dist}/binding-cpp" />
+        <!-- package up etch-java-runtime src -->
+        <zip destfile="${Etch.dist}/binding-cpp/${etch-cpp-runtime-src.zip}">
+            <fileset dir="${proj}">
+                <exclude name="target/" />
+                <exclude name="doc/" />
+                <exclude name="**/.svn" />
+            </fileset>
+        </zip>
+    </target>
+
+    <target name="do-build-main" if="USE.cmake">
+        <cmake srcdir="${basedir}" bindir="${basedir}/target" buildtype="Debug" >
+            <variable name="ETCH_EXTERNAL_DEPENDS" type="PATH" value="${env.ETCH_EXTERNAL_DEPENDS}" />
+        </cmake>
+    </target>
+
+    <target name="do-build" depends="do-build-info,do-build-generate-sources,do-build-main" if="USE.cmake">
+
+        <mkdir dir="${Etch.dist}/binding-cpp/bin" />
+        <mkdir dir="${Etch.dist}/binding-cpp/include" />
+        <mkdir dir="${Etch.dist}/binding-cpp/lib" />
+
+        <!-- copy etch library to dist folder -->
+        <copy todir="${Etch.dist}/binding-cpp/include">
+            <fileset dir="${proj}/include">
+                <exclude name="**/.svn" />
+            </fileset>
+        </copy>
+
+        <copy todir="${Etch.dist}/binding-cpp/lib" flatten="true">
+            <fileset dir="${target}/src/main">
+            </fileset>
+        </copy>
+
+    </target>
+
+    <!-- TEST TARGET -->
+    <target name="do-test" unless="build.skip.tests">
+        <!-- Run Unit Tests -->
+        <exec executable="${target}/src/test/debug/etch-cpp-test">
+            <arg value="--gtest_output=xml:${testResultsDirectory}/"/>
+        </exec>
+    </target>
+
+    <!-- POSTBUILD TARGET -->
+    <target name="do-postbuild">
+    </target>
+
+    <target name="do-publish" if="build.tests.fail">
+        <!-- Set flag file if any tests failed -->
+        <touch file="${Etch.runtime.tests.fail}"/>
+    </target>
+
+</project>
