@@ -86,7 +86,7 @@ int is_$n.efqname($helper)(void* obj);
 #end
 #end
 
-## generate stucts
+## generate structs
 #foreach( $n in $intf.iterator() )
 #if ($n.isStruct()  || $n.isExcept())
 #if (!$hasBaseClass)
@@ -120,7 +120,7 @@ int is_$n.efqname($helper)(void* obj);
 #end
 
 
-##generate general typdefs
+##generate general typedefs
 #foreach( $n in $intf.iterator() )
 #if ($n.isMessage())
 #if (!$n.isHidden())
@@ -134,8 +134,6 @@ $sb
 #end
 #end
 
-## generate mailbox typedef
-//typedef struct i_mailbox i_mailbox;
 
 ## generate async begin typedefs
 #foreach( $n in $intf.iterator() )
@@ -168,32 +166,6 @@ $sb
 typedef struct i_$helper.getIntfName( $intf )
 {
     etch_object object;
-
-    /* - - - - - - - - - - -
-     * service virtuals
-     * - - - - - - - - - - -
-     */
-## generate service virtuals
-#foreach( $n in $intf.iterator() )
-#if ($n.isMessage())
-#if (!$n.isHidden())
-    $helper.getServiceName($intf)_$n.name() $n.name();
-#end
-#end
-#end
-     
-    /* - - - - - - - - - - -
-     * service data
-     * - - - - - - - - - - -
-     */
-#foreach( $n in $intf.iterator() )
-#if ($n.isStruct()  || $n.isExcept())
-#if (!$n.isHidden())
-    $n.efqname($helper)* $n.name().toString();
-#end
-#end
-#end
-
 } i_$helper.getIntfName($intf);
 
 #if ($intf.hasDescr())
@@ -204,6 +176,20 @@ typedef struct i_$helper.getIntfName( $intf )
  */
 #end
 i_$helper.getIntfName( $intf )* new_$helper.getIntfName($intf)_service_interface();
+
+// generate defaults
+#foreach( $n in $intf.iterator() )
+#if ($n.isMessage())
+#if (!$n.isHidden())
+#set ($sb = "$helper.getPointerTypeName($n.type()) $helper.getServiceName($intf)_def_$n.name()(void* thisx")
+#foreach( $p in $n.iterator() )
+#set ( $sb = "$sb, $helper.getTypeName($p.type()) $p.name()")
+#end
+#set ($sb = "$sb);")
+$sb
+#end
+#end
+#end
 
 #ifdef __cplusplus
 } //extern "C"

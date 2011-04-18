@@ -75,26 +75,6 @@ typedef struct $helper.getRemoteName($intf, "")
     etch_transport_set_session set_session; 
 
     /* - - - - - - - - - - -
-     * service virtuals
-     * - - - - - - - - - - -
-     */
-#foreach( $n in $intf.iterator() )
-#if ($n.isMessage())
-#if (!$n.isHidden())
-    $helper.getIntfName( $intf )_$n.name() $n.name();
-#end
-#end
-#end
-
-#foreach( $n in $intf.iterator() )
-#if ($n.isStruct())
-#if (!$n.isHidden())
-    $n.efqname($helper)* $n.name().toString();
-#end
-#end
-#end
-
-    /* - - - - - - - - - - -
      * private instance data
      * - - - - - - - - - - -
      */    

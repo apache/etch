@@ -32,6 +32,11 @@ extern "C" {
 #endif
 
 extern unsigned short CLASSID_$helper.getStubName($intf, $suffix).toUpperCase();
+#if($helper.isServer($mc))
+void $helper.getIntfName($intf)_server_set_stub_helpers();
+#else
+void $helper.getIntfName($intf)_client_set_stub_helpers();
+#end
 
 /**
  * $helper.getStubName($intf, $suffix)
@@ -49,24 +54,6 @@ typedef struct $helper.getStubName($intf, $suffix)
     int  session_id;           /* client session to which stub belongs */
 #end    
     int (*destroyex) (void*);  /* user memory destructor */
-
-    /* - - - - - - - - - - - - - - - - -
-     * $mc.toString().toLowerCase()_directed service virtuals
-     * - - - - - - - - - - - - - - - - -
-     */
-     
-#foreach( $n in $intf.iterator() )
-#if ($n.isMessage())
-#if ($n.isMsgDir($mc) || $n.isMsgDirBoth())
-#if (!$n.isHidden())
-##   add server direction here
-#end
-#end
-#end
-#end
-#if (!$intf.hasMessageDirection($mc) && $helper.hasMessageDirectionBoth( $intf ))
-    /* no $mc.toString().toLowerCase()-directed items defined */
-#end
 
     /* - - - - - - - - - - - - - - - - -
      * service-specific allocations

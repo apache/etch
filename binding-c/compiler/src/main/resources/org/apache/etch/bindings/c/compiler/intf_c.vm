@@ -49,19 +49,6 @@ unsigned short CLASSID_$n.efqname($helper).toUpperCase()_VTABLE;
 #end
 	
 	
-#foreach( $n in $intf.iterator() )
-#if ($n.isMessage())
-#if (!$n.isHidden())
-#set ($sb = "$helper.getPointerTypeName($n.type()) $helper.getServiceName($intf)_def_$n.name()(void* thisx")
-#foreach( $p in $n.iterator() )
-#set ( $sb = "$sb, $helper.getTypeName($p.type()) $p.name()")
-#end
-#set ($sb = "$sb);")
-$sb
-#end
-#end
-#end
-
 int destroy_$helper.getIntfName( $intf )_service_interface (void*);
 
 
@@ -225,22 +212,6 @@ i_$helper.getServiceName( $intf )* new_$helper.getServiceName( $intf )_service_i
 
     ((etch_object*)isvc)->destroy = destroy_$helper.getServiceName( $intf )_service_interface;
 
-#foreach($n in $intf.iterator())
-#if ($n.isMessage())
-#if (!$n.isHidden())
-    isvc->$n.name() = $helper.getServiceName( $intf )_def_$n.name();
-#end
-#end
-#end
-
-#foreach( $n in $intf.iterator() )
-#if ($n.isStruct())
-#if (!$n.isHidden())
-    isvc->$n.name().toString() = new_$n.efqname($helper)();
-#end
-#end
-#end
-
     return isvc;
 }
 
@@ -255,13 +226,7 @@ int destroy_$helper.getServiceName($intf)_service_interface (void* data)
 
     if (!is_etchobj_static_content(isvc))
     {    
-#foreach( $n in $intf.iterator() )
-#if ($n.isStruct())
-#if (!$n.isHidden())
-        etch_object_destroy(isvc->$n.name().toString());
-#end
-#end
-#end
+    	//nothing to do    
     }
     
     return destroy_objectex((etch_object*)isvc);
@@ -288,7 +253,7 @@ $sb
 	etch_object_destroy($p.name());
 	$p.name() = NULL;
 #else
-    etch_free($p.name());
+   etch_object_destroy($p.name());
 #end
 #end
     return NULL;

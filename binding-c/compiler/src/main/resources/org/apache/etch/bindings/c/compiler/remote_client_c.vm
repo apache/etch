@@ -27,6 +27,14 @@
  */
 
 \#include "$helper.getRemoteFileNameH($intf, $suffix)"
+#foreach( $x in $intf.iterator() )
+#if( $x.isMixin() )
+#set( $m = $x.getModule() )
+#foreach( $z in $m.iterator() )
+\#include "$helper.getRemoteFileNameH($z, $suffix)"
+#end
+#end
+#end
 \#include "$helper.getVfFileNameH($intf)"
 \#include "etch_url.h"
 \#include "etch_log.h"
@@ -36,15 +44,15 @@
 static const char* LOG_CATEGORY = "$helper.getRemoteName($intf, $suffix)";
 
 unsigned short CLASSID_$helper.getRemoteName($intf, $suffix).toUpperCase();
-	
+
 char* $helper.getServiceName($intf).toUpperCase()_ETCHREMC = "REMC";
 
 ## generate async begin typedefs
 #foreach( $n in $intf.iterator() )
 #if ($n.isMessage())
 #if (!$n.isHidden())
-#if ($n.isMsgDir($mc) || $n.isMsgDirBoth())	
-	
+#if ($n.isMsgDir($mc) || $n.isMsgDirBoth())
+
 #set ($sb = "$helper.getPointerTypeName($n.type()) $helper.getRemoteName($intf, '')_client_$n.name() (void*")
 #foreach( $p in $n.iterator() )
 #set ( $sb = "$sb, $helper.getTypeName($p.type()) $p.name()")
@@ -102,24 +110,14 @@ $helper.getRemoteName($intf, $suffix)* new_$helper.getServiceName($intf)_remote_
     rc->client_base = new_$helper.getBaseName($intf, $suffix)_base (thisx);
     rc->session_id = session->session_id;
 
-	rc->vf = ($helper.getVfName($intf)*) rc->remote_base->vf;
-	
-    /* override client-directed virtuals with implementations here */
+    rc->vf = ($helper.getVfName($intf)*) rc->remote_base->vf;
+
 #foreach( $n in $intf.iterator() )
 #if ($n.isMessage())
 #if (!$n.isHidden())
 #if ($n.isMsgDir($mc) || $n.isMsgDirBoth())
     rc->$n.name() = $helper.getRemoteName($intf, '')_client_$n.name();
-#end
-#end
-#end
-#end
-
-#foreach( $n in $intf.iterator() )
-#if ($n.isMessage())
-#if (!$n.isHidden())
 #if (!$n.isOneway())
-#if ($n.isMsgDir($mc) || $n.isMsgDirBoth())	
     rc->async_begin_$n.name() = $helper.getRemoteName($intf, '')_begin_client_$n.name();
     rc->async_end_$n.name() = $helper.getRemoteName($intf, '')_end_client_$n.name();
 #end	
@@ -127,6 +125,26 @@ $helper.getRemoteName($intf, $suffix)* new_$helper.getServiceName($intf)_remote_
 #end
 #end
 #end
+
+#foreach( $x in $intf.iterator() )
+#if( $x.isMixin() )
+#set( $m = $x.getModule() )
+#foreach( $z in $m.iterator() )
+#foreach( $n in $z.messages( true ) )
+#if (!$n.isHidden())
+#if ($n.isMsgDir($mc) || $n.isMsgDirBoth())	
+    rc->$n.name() = $helper.getRemoteName($z, '')_client_$n.name();
+#if (!$n.isOneway())
+    rc->async_begin_$n.name() = $helper.getRemoteName($z, '')_begin_client_$n.name();
+    rc->async_end_$n.name() = $helper.getRemoteName($z, '')_end_client_$n.name();
+#end	
+#end
+#end
+#end
+#end
+#end
+#end
+
     return rc;
 }
 
@@ -440,7 +458,7 @@ $sb
  * $helper.getRemoteName($intf, '')_end_$n.name()()
  * async result handler not used since $helper.getIntfName($intf).$n.name() is a one-way send-and-forget method.
  */
-void* $helper.getRemoteName($intf, '')_end_client_$n.name() ($helper.getRemoteName($intf, $suffix)* thisx, i_mailbox* mbox)
+void* $helper.getRemoteName($intf, '')_end_client_$n.name() (void* thisx, i_mailbox* mbox)
 {
     return NULL;
 }

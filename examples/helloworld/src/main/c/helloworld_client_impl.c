@@ -60,7 +60,7 @@ helloworld_client_impl* new_helloworld_client_impl(struct helloworld_remote_serv
     helloworld_client_impl* pclient  /* allocate object and assign default virtuals */
         = init_helloworld_client_impl(server, destroy_helloworld_client_implx);	
     /* add virtual method overrides, if any, here */
-    //pclient->xxx = implementation
+    //etchmap_insertxw(pclient_base->virtuals, example_valufact_get_static()->str_example_xxx, implementation, FALSE);
 
     return pclient;
 }
@@ -78,8 +78,6 @@ int destroy_helloworld_client_implx(void* data)
     /*
       helloworld_client_impl* thisx = (helloworld_client_impl*)data;
      */
-    /* * *  add custom destruction here  * * */
-    /* etch_free(thisx->exampleobj); */
 
     return 0;
 }

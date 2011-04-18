@@ -34,11 +34,22 @@
 \#include "etch_objecttypes.h"
 \#include "etch_svcobj_masks.h"
 \#include "etch_general.h"
+\#include "etch_map.h"
 
 #if($helper.isServer($mc))
 \#include "etch_exception.h"
 \#include "etch_log.h"
+\#include "$helper.getIntfFileNameH( $intf )"
 #end
+
+#foreach( $n in $intf.iterator() )
+#if( $n.isMixin() )
+#set( $m = $n.getModule() )
+#set( $z = $m.iterator().next() )
+\#include "$helper.getStubFileNameH($z, $suffix)"
+#end
+#end
+
 
 unsigned short CLASSID_$helper.getStubName($intf, $suffix).toUpperCase();	
 	
@@ -104,6 +115,7 @@ int $helper.getStubName($intf, $suffix)_run_nothing_ (etch_stub* stub, i_deliver
 int $helper.getStubName($intf, '')_run_$helper.getDirectionName($mc)_$n.name()(etch_stub* stub, i_delivery_service* dsvc, void* obj, etch_who* whofrom, etch_message* msg)
 {
     i_$helper.getBaseName($intf, $suffix)* $suffix = (i_$helper.getBaseName($intf, $suffix)*)obj;
+    $helper.getServiceName($intf)_$n.name() func;
 	int returnCode = 0;
     $helper.getVfName($intf)_impl* pvfi = NULL;
     $helper.getVfName($intf)* pvf = NULL;
@@ -145,11 +157,24 @@ int $helper.getStubName($intf, '')_run_$helper.getDirectionName($mc)_$n.name()(e
 ##end
     
     /* execute the service method */
+    func = ($helper.getServiceName($intf)_$n.name()) etchmap_findxw(${suffix}->virtuals, $helper.getVfName($intf)_get_static()->str_$helper.getIntfName($intf)_$n.name(), NULL);
+    if (func)
 #set($sb = '')
 #if($n.hasReturn() || $n.hasThrown())
 	#set ( $sb = "resultobj = ")
 #end
-#set ($sb = "$sb ${suffix}->$n.name() (impl")
+#set ($sb = "$sb func (impl")
+#foreach( $p in $n.iterator() )
+#set ( $sb = "$sb, val_$p.name()")
+#end
+#set ($sb = "$sb);")
+        $sb
+    else
+#set($sb = '')
+#if($n.hasReturn() || $n.hasThrown())
+	#set ( $sb = "resultobj = ")
+#end
+#set ($sb = "$sb $helper.getServiceName($intf)_def_$n.name() (impl")
 #foreach( $p in $n.iterator() )
 #set ( $sb = "$sb, val_$p.name()")
 #end
@@ -184,8 +209,27 @@ int $helper.getStubName($intf, '')_run_$helper.getDirectionName($mc)_$n.name()(e
  * constructors 
  * - - - - - - - - - 
  */
-
 #if($helper.isServer($mc))
+
+void $helper.getIntfName($intf)_server_set_stub_helpers() {
+	/* set stub helper methods */
+#foreach( $n in $intf.iterator())
+#if ($n.isMessage())
+#if ($n.isMsgDir($mc) || $n.isMsgDirBoth())
+#if (!$n.isHidden())
+    etchtype_set_type_stubhelper($helper.getVfName($intf)_get_static()->_mt_$helper.getServiceName($intf)_$n.name(), $helper.getStubName($intf, '')_run_$helper.getDirectionName($mc)_$n.name());
+#end	
+#end
+#end
+#end
+#foreach( $n in $intf.iterator() )
+#if( $n.isMixin() )
+#set( $m = $n.getModule() )
+#set( $z = $m.iterator().next() )
+	$helper.getIntfName($z)_server_set_stub_helpers();
+#end
+#end
+}
 /**
  * new_$helper.getStubName($intf, $suffix)()
  * @param p serv factory parameter bundle, caller retains. 
@@ -207,13 +251,15 @@ $helper.getStubName($intf, $suffix)* new_$helper.getStubName($intf, $suffix)(etc
 
     ((etch_object*)mystub)->class_id   = get_dynamic_classid_unique(&CLASSID_$helper.getStubName($intf, $suffix).toUpperCase());
     mystub->session_id = session->session_id;  
+	$helper.getIntfName($intf)_server_set_stub_helpers();
 
-    /* initialize service-specific methods and data here. this facility may
-     * likely prove unecessary, as this is generated code, in which case we 
-     * can remove any associated comments from code and headers. */
-    //mystub->my_example_obj = etch_malloc(128, 0); /* example custom alloc */
+    return mystub;
+}
+#end
+#if($helper.isClient($mc))
 
-    /* set stub "helper" methods (run() procedures for each message type) */
+void $helper.getIntfName($intf)_client_set_stub_helpers() {
+	/* set stub helper methods */
 #foreach( $n in $intf.iterator())
 #if ($n.isMessage())
 #if ($n.isMsgDir($mc) || $n.isMsgDirBoth())
@@ -223,11 +269,15 @@ $helper.getStubName($intf, $suffix)* new_$helper.getStubName($intf, $suffix)(etc
 #end
 #end
 #end
-
-    return mystub;
-}
+#foreach( $n in $intf.iterator() )
+#if( $n.isMixin() )
+#set( $m = $n.getModule() )
+#set( $z = $m.iterator().next() )
+	$helper.getIntfName($z)_client_set_stub_helpers();
 #end
-#if($helper.isClient($mc))
+#end
+}
+
 /**
  * new_$helper.getStubName($intf, $suffix).
  * called from $helper.getRemoteName($intf, $helper.getRemoteDirection($mc))* perfhelper.new_remote_$helper.getRemoteDirection($mc)().
@@ -249,19 +299,7 @@ $helper.getStubName($intf, $suffix)* new_$helper.getStubName($intf, $suffix) (et
     ((etch_object*)mystub)->class_id  = get_dynamic_classid_unique(&CLASSID_$helper.getStubName($intf, $suffix).toUpperCase());
     mystub->server_id = p->server_id;  
 
-    /* initialize custom methods and data here */
-
-    /* set stub helper methods */
-#foreach( $n in $intf.iterator())
-#if ($n.isMessage())
-#if ($n.isMsgDir($mc) || $n.isMsgDirBoth())
-#if (!$n.isHidden())
-    etchtype_set_type_stubhelper($helper.getVfName($intf)_get_static()->_mt_$helper.getServiceName($intf)_$n.name(), $helper.getStubName($intf, '')_run_$helper.getDirectionName($mc)_$n.name());
-#end	
-#end
-#end
-#end 
-
+	$helper.getIntfName($intf)_client_set_stub_helpers();
     return mystub;
 }
 #end

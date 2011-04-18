@@ -64,15 +64,6 @@ typedef struct helloworld_client_impl
     etch_session_notify  _session_notify;
     etch_session_query   _session_query;
 
-    /* - - - - - - - - - - - -
-     * base service virtuals
-     * - - - - - - - - - - - -
-     */
-    helloworld_say_hello say_hello;
-
-    void* context;
-
-
 } helloworld_client_impl;
 
 /* constructor */

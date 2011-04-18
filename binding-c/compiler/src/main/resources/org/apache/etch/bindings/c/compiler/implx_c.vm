@@ -42,8 +42,7 @@ int destroy_$helper.getImplName($intf, $suffix)(void*);
 
 /**
  * init_$helper.getImplName($intf, $suffix)()
- * called by $helper.getImplName($intf, $suffix) constructor to instantiate server implementation 
- * object and initialize with default virtuals.
+ * called by $helper.getImplName($intf, $suffix) constructor to instantiate server implementation object
  * @param client the remote client, not owned.
  * @param usermem_dtor destructor for any custom memory allocations.
  */
@@ -63,7 +62,7 @@ $helper.getImplName($intf, $suffix)* init_$helper.getImplName($intf, $suffix)($h
     ((etch_object*)p${suffix})->destroy = destroy_$helper.getImplName($intf, $suffix);  /* private destructor */
     p${suffix}->destroyex = usermem_dtor;  /* user memory destructor */
 
-    /* instantiate base and copy virtuals, if any, to this object */
+    /* instantiate base */
 #if ($helper.isServer($mc))
     p${suffix}->$helper.getBaseName($intf, $suffix)_base = new_$helper.getBaseName($intf, $suffix)_base(p${suffix}, NULL); /* owned */
 #end
@@ -72,18 +71,6 @@ $helper.getImplName($intf, $suffix)* init_$helper.getImplName($intf, $suffix)($h
 #end
 
     p${suffix}->i$helper.getIntfName($intf) = p${suffix}->$helper.getBaseName($intf, $suffix)_base->i$helper.getIntfName($intf);
-
-
-#foreach($n in $intf.iterator())	
-#if($n.isMessage())
-#if(!$n.isHidden())
-#if($n.isMsgDir($mc) || $n.isMsgDirBoth())
-    p${suffix}->$n.name() = p${suffix}->$helper.getBaseName($intf, $suffix)_base->$n.name();
-#end
-#end
-#end
-#end
-
 
 #if ($helper.isServer($mc))
     p${suffix}->iobjsession = p${suffix}->$helper.getBaseName($intf, $suffix)_base->iobjsession;

@@ -38,6 +38,32 @@ extern "C" {
 
 extern unsigned short CLASSID_$helper.getRemoteName($intf, $suffix).toUpperCase();
 
+#foreach( $n in $intf.iterator() )
+#if ($n.isMessage())
+#if (!$n.isHidden())
+#if ($n.isMsgDir($mc) || $n.isMsgDirBoth())
+#if (!$n.isOneway())
+#set ($sb = "i_mailbox* $helper.getRemoteName($intf, '')_begin_client_$n.name()(void* thisAsVoid")
+#else
+#set ($sb = "$helper.getPointerTypeName($n.type()) $helper.getRemoteName($intf, '')_begin_client_$n.name()(void* thisAsVoid")
+#end
+#foreach( $p in $n.iterator() )
+#set ( $sb = "$sb, $helper.getTypeName($p.type()) $p.name()")
+#end
+#set ($sb = "$sb)")
+$sb;
+$helper.getPointerTypeName($n.type()) $helper.getRemoteName($intf, "")_end_client_$n.name() (void* thisAsVoid, i_mailbox* ibox);
+#set ($sb = "$helper.getPointerTypeName($n.type()) $helper.getRemoteName($intf, '')_client_$n.name()(void* thisAsVoid")
+#foreach( $p in $n.iterator() )
+#set ( $sb = "$sb, $helper.getTypeName($p.type()) $p.name()")
+#end
+#set ($sb = "$sb)")
+$sb;
+#end
+#end
+#end
+#end
+
 /**
  * $helper.getRemoteName($intf, $suffix)
  */
@@ -60,15 +86,22 @@ typedef struct $helper.getRemoteName($intf, $suffix)
 #end
 #end
 #end
-/*
-#foreach( $n in $intf.iterator() )
-#if ($n.isStruct())
+
+
+#foreach( $x in $intf.iterator() )
+#if( $x.isMixin() )
+#set( $m = $x.getModule() )
+#foreach( $z in $m.iterator() )
+#foreach( $n in $z.messages( true ) )
 #if (!$n.isHidden())
-    $n.efqname($helper)* $n.name().toString().toLowerCase();
+#if ($n.isMsgDir($mc) || $n.isMsgDirBoth())
+    $helper.getServiceName($z).toLowerCase()_$n.name() $n.name();
 #end
 #end
 #end
-*/
+#end
+#end
+#end
 
 
     /* private, generally. since unit tests invoke async begin and end,
@@ -100,6 +133,12 @@ typedef struct $helper.getRemoteName($intf, $suffix)
 
 /* constructor */
 $helper.getRemoteName($intf, $suffix)* new_$helper.getServiceName($intf)_remote_client (void*, etch_session*, etch_value_factory*);
+
+/* convenience methods to override client's session interface methods */
+etch_stub* $helper.getRemoteName($intf, "")_${suffix}_get_stubbase ($helper.getRemoteName($intf, $suffix)*);
+etch_session_notify $helper.getRemoteName($intf, "")_${suffix}_set_session_notify($helper.getRemoteName($intf, $suffix)*, etch_session_notify);
+etch_session_control $helper.getRemoteName($intf, "")_${suffix}_set_session_control($helper.getRemoteName($intf, $suffix)*, etch_session_control);
+etch_session_query $helper.getRemoteName($intf, "")_${suffix}_set_session_query($helper.getRemoteName($intf, $suffix)*, etch_session_query);
 
 #ifdef __cplusplus
 } //extern "C"

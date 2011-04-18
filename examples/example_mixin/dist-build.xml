@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8"?>
+ <!--
+ * Licensed to the Apache Software Foundation (ASF) under one   *
+ * or more contributor license agreements.  See the NOTICE file *
+ * distributed with this work for additional information        *
+ * regarding copyright ownership.  The ASF licenses this file   *
+ * to you under the Apache License, Version 2.0 (the            *
+ * "License"); you may not use this file except in compliance   *
+ * with the License.  You may obtain a copy of the License at   *
+ *                                                              *
+ *   http://www.apache.org/licenses/LICENSE-2.0                 *
+ *                                                              *
+ * Unless required by applicable law or agreed to in writing,   *
+ * software distributed under the License is distributed on an  *
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY       *
+ * KIND, either express or implied.  See the License for the    *
+ * specific language governing permissions and limitations      *
+ * under the License.                                           *
+ -->
+<project name="etch-Mixin-example" basedir="." default="build">
+    <description>Mixin Example</description>
+
+    <property name="etch.home" location="${basedir}/../.."/>
+    <property name="etch.version" value="@EtchVersion@"/>
+    <property name="etch.longversion" value="@EtchLongVersion@"/>
+    <!-- todo clean up variables etch-java-runtime.jar, etch-csharp-runtime.dll -->
+    <property name="etch-java-runtime-name" value="apache-etch-java-runtime-${etch.longversion}.jar"/>
+    <property name="etch-csharp-runtime-name" value="ApacheEtchCsharpIncubating.dll"/>
+
+    <property name="etch-ant-plugin.jar"     location="${etch.home}/lib/apache-etch-ant-plugin-${etch.longversion}.jar"/>
+    <property name="etch-java-runtime.jar"   location="${etch.home}/binding-java/lib/${etch-java-runtime-name}"/>
+    <property name="etch-csharp-runtime.dll" location="${etch.home}/binding-csharp/lib/${etch-csharp-runtime-name}"/>
+
+    <property name="src"               location="${basedir}/src"/>
+    <property name="src-main-etch"     location="${src}/main/etch"/>
+    <property name="src-main-java"     location="${src}/main/java"/>
+    <property name="src-main-csharp"   location="${src}/main/csharp"/>
+    <property name="target"            location="${basedir}/target"/>
+    <property name="generated-sources" location="${target}/generated-sources"/>
+    <property name="gensrc-main-etch-java" location="${generated-sources}/main/etch/java"/>
+    <property name="gensrc-main-etch-csharp" location="${generated-sources}/main/etch/csharp"/>
+    <property name="gensrc-main-etch-c" location="${generated-sources}/main/etch/c"/>
+    <property name="classes"           location="${target}/classes"/>
+    <property name="bin"               location="${target}/bin"/>
+    
+    <condition property="BUILD.csharp" >
+        <os family="windows" />
+    </condition>    
+
+    <taskdef resource="org/apache/etch/tools/ant/etch.xml" classpath="${etch-ant-plugin.jar}"/>
+
+    <target name="build" depends="build-java, build-csharp, build-c, done"/>
+
+    <target name="build-java" depends="gensrc-java">
+        <javac destdir="${classes}" source="1.5" debug="true">
+            <classpath>
+                <pathelement location="${etch-java-runtime.jar}"/>
+            </classpath>
+            <src path="${src-main-java}"/>
+            <src path="${gensrc-main-etch-java}"/>
+        </javac>
+
+        <jar jarfile="${bin}/examplemixin.jar">
+            <manifest>
+                <attribute name="Class-Path" value="${etch-java-runtime-name}"/>
+            </manifest>
+            <fileset dir="${classes}"/>
+        </jar>
+
+        <copy todir="${bin}" file="${etch-java-runtime.jar}"/>
+    </target>
+
+    <target name="done">
+        <echo>
+
+To run java Mixin example, open a cmd window and run these
+commands:
+
+> cd target\bin
+> start java -cp examplemixin.jar org.apache.etch.examples.mixin.MainExampleListener
+> start java -cp examplemixin.jar org.apache.etch.examples.mixin.MainExampleClient
+
+To run csharp example:
+
+> cd target\bin
+> start ExampleListener.exe
+> start ExampleClient.exe
+
+To run the c example:
+> first build using cmake (see below)
+
+You have to set the following variable in CMake:
+- ETCH_HOME must point to your Etch directory (this is were you installed Etch, or target/Installers/dist if building from trunk)
+
+on the shell, you could do this using:
+
+cd examples/example_mixin/target
+cmake .. -DETCH_HOME:string=[YOUR ETCH INSTALLATION DIR]
+make (or open visual studio on win32...)
+
+You also have to set the following environment variable:
+- APR_ICONV_PATH to [YOUR ETCH INSTALLATION DIR]/binding-c/extern/apr/iconv/
+
+To run c example:
+
+> cd target\bin
+> start example-server.exe
+> start example-client.exe
+
+
+You can mix and match the various clients and listeners.
+
+        </echo>
+    </target>
+
+    <target name="build-csharp" depends="gensrc-csharp" if="BUILD.csharp" >
+        <csc
+                debug="true"
+                warnLevel="1"
+                unsafe="false"
+                targetType="exe"
+                incremental="false"
+                mainClass = "org.apache.etch.examples.mixin.MainExampleClient"
+                destFile="${bin}/ExampleClient.exe">
+            <src dir="${src-main-csharp}/ExampleClientProj" includes="**/*.cs"/>
+            <src dir="${src-main-csharp}/org.apache.etch.examples.mixin" includes="**/*.cs"/>
+            <src dir="${gensrc-main-etch-csharp}" includes="**/*.cs"/>
+            <reference file="${etch-csharp-runtime.dll}"/>
+        </csc>
+
+        <csc
+                debug="true"
+                warnLevel="1"
+                unsafe="false"
+                targetType="exe"
+                incremental="false"
+                mainClass = "org.apache.etch.examples.mixin.MainExampleListener"
+                destFile="${bin}/ExampleListener.exe">
+            <src dir="${src-main-csharp}/ExampleListenerProj" includes="**/*.cs"/>
+            <src dir="${src-main-csharp}/org.apache.etch.examples.mixin" includes="**/*.cs"/>
+            <src dir="${gensrc-main-etch-csharp}" includes="**/*.cs"/>
+            <reference file="${etch-csharp-runtime.dll}"/>
+        </csc>
+
+        <copy todir="${bin}" file="${etch-csharp-runtime.dll}"/>
+    </target>
+
+    <target name="build-c" depends="gensrc-c">
+       <echo message="c binding sources can be built with cmake!"/>
+    </target>
+
+    <target name="gensrc-java" depends="init">
+        <etch
+            home="${etch.home}"
+            binding="java"
+            quiet="true"
+            outputDir="${gensrc-main-etch-java}"
+            file="${src-main-etch}/Example.etch"/>
+    </target>
+
+    <target name="gensrc-csharp" depends="init">
+        <etch
+            home="${etch.home}"
+            binding="csharp"
+            quiet="true"
+            outputDir="${gensrc-main-etch-csharp}"
+            file="${src-main-etch}/Example.etch"/>
+    </target>
+
+    <target name="gensrc-c" depends="init">
+        <etch
+            home="${etch.home}"
+            binding="c"
+            quiet="true"
+            outputDir="${gensrc-main-etch-c}"
+            file="${src-main-etch}/Example.etch"/>
+    </target>
+
+    <target name="init">
+        <mkdir dir="${target}"/>
+        <mkdir dir="${generated-sources}"/>
+        <mkdir dir="${gensrc-main-etch-java}"/>
+        <mkdir dir="${gensrc-main-etch-csharp}"/>
+        <mkdir dir="${gensrc-main-etch-c}"/>
+        <mkdir dir="${classes}"/>
+        <mkdir dir="${bin}"/>
+    </target>
+
+    <target name="clean">
+        <delete dir="${target}"/>
+    </target>
+</project>

@@ -117,6 +117,8 @@ int main(int argc, char* argv[])
 
     etch_config_t* config = NULL;
     etch_config_create(&config);
+	// set properties or read file, e.g.
+    //etch_config_set_property(config, "etch.log", "xdebug, consoleappender");
 	
     etch_status = etch_runtime_initialize(config);
     if(etch_status != ETCH_SUCCESS) {
@@ -157,7 +159,8 @@ int main(int argc, char* argv[])
 	
        etch_config_t* config = NULL;
     etch_config_create(&config);
-    // set properties or read file
+    // set properties or read file, e.g.
+    //etch_config_set_property(config, "etch.log", "xdebug, consoleappender");
 
     etch_status = etch_runtime_initialize(config);
     if(etch_status != ETCH_SUCCESS) {
@@ -189,6 +192,12 @@ int main(int argc, char* argv[])
     if(etch_status != ETCH_SUCCESS) {
         // error
     }
+
+	etch_status = etch_runtime_shutdown();
+    if(etch_status != ETCH_SUCCESS) {
+        // error
+    }
+
 	etch_config_destroy(config);
 	return 0;
 #end

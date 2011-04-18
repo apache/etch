@@ -76,21 +76,8 @@ i_$helper.getBaseName( $intf, $suffix )* new_$helper.getBaseName( $intf, $suffix
         ips->is_service_interface_owned = TRUE;
     }
 
-#foreach( $n in $intf.iterator() )
-#if ($n.isMessage())
-#if (!$n.isHidden())
-    ips->$n.name() = ips->i$helper.getIntfName( $intf )->$n.name();
-#end
-#end
-#end
-
-#foreach( $n in $intf.iterator() )
-#if ($n.isStruct())
-#if (!$n.isHidden())
-    ips->$n.name().toString() = ips->i$helper.getIntfName($intf)->$n.name().toString();
-#end
-#end
-#end
+    ips->virtuals = new_hashtable(ETCH_DEFAULT_HASHTABLE_SIZE);
+    ips->virtuals->is_readonly_keys = FALSE;
 
     ips->iobjsession = new_default_objsession_interface (ips);
     ips->_session_control = ips->iobjsession->_session_control; 
@@ -140,6 +127,7 @@ int destroy_$helper.getBaseName( $intf, $suffix )_base (void* data)
         etch_free(ips->iobjsession);
     }
             
+    destroy_hashtable(ips->virtuals, TRUE, FALSE);	
     return destroy_objectex((etch_object*)ips);
 }
 
@@ -185,21 +173,8 @@ i_$helper.getBaseName($intf, $suffix)* new_$helper.getBaseName($intf, $suffix)_b
 
     ipc->i$helper.getIntfName( $intf ) = new_$helper.getIntfName( $intf )_service_interface();
 
-#foreach( $n in $intf.iterator() )
-#if ($n.isMessage())
-#if (!$n.isHidden())
-    ipc->$n.name() = ipc->i$helper.getIntfName($intf)->$n.name();
-#end
-#end
-#end
-
-#foreach( $n in $intf.iterator() )
-#if ($n.isStruct())
-#if (!$n.isHidden())
-    ipc->$n.name().toString() = ipc->i$helper.getIntfName($intf)->$n.name().toString();
-#end
-#end
-#end
+    ipc->virtuals = new_hashtable(ETCH_DEFAULT_HASHTABLE_SIZE);
+    ipc->virtuals->is_readonly_keys = FALSE; 
  
     return ipc;
 }
@@ -218,30 +193,21 @@ int destroy_$helper.getBaseName( $intf, $suffix )_base (void* data)
         if (ipc->thisx)  /* thisx is null on server (i.e. this is a remote client) */
         {   /* destroy the $helper.getBaseName( $intf, $suffix )_impl object */
             ETCH_ASSERT(is_etch_client_impl((etch_object*)ipc->thisx));
-            //ETCHOBJ_DESTROY();
 			if(((etch_object*)ipc->thisx)){
 				etch_object_destroy(((etch_object*)ipc->thisx));
 			}
 			ipc->thisx = NULL;
         }
 
-        //ETCHOBJ_DESTROY(ipc->i$helper.getIntfName( $intf ));
 		if(ipc->i$helper.getIntfName( $intf )){
 			etch_object_destroy(ipc->i$helper.getIntfName( $intf ));
 		}
 		ipc->i$helper.getIntfName( $intf ) = NULL;
-
         etch_free(ipc->iobjsession);
     }
             
+    destroy_hashtable(ipc->virtuals, TRUE, FALSE);
     return destroy_objectex((etch_object*)ipc);
 }
-
-/* - - - - - - - - - - - - - -  
- * client base methods
- * - - - - - - - - - - - - - -  
- */
-
-/* nothing to do - service defines no client-directed items */
 
 #end

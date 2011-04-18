@@ -28,6 +28,14 @@
  */
 
 \#include "$helper.getRemoteFileNameH($intf, $suffix)"
+#foreach( $x in $intf.iterator() )
+#if( $x.isMixin() )
+#set( $m = $x.getModule() )
+#foreach( $z in $m.iterator() )
+\#include "$helper.getRemoteFileNameH($z, $suffix)"
+#end
+#end
+#end
 \#include "etch_plain_mailbox_manager.h"
 \#include "etch_svcobj_masks.h"
 \#include "etch_objecttypes.h"
@@ -102,18 +110,28 @@ $helper.getRemoteName($intf, $suffix)* new_$helper.getRemoteName($intf, $suffix)
 #if (!$n.isHidden())
 #if ($n.isMsgDir($mc) || $n.isMsgDirBoth())	
     rs->$n.name() = $helper.getRemoteName($intf, '')_server_$n.name();
+#if (!$n.isOneway())
+    rs->async_begin_$n.name() = $helper.getRemoteName($intf, '')_begin_server_$n.name();
+    rs->async_end_$n.name() = $helper.getRemoteName($intf, '')_end_server_$n.name();
+#end	
 #end
 #end
 #end
 #end
 
-#foreach( $n in $intf.iterator() )
-#if ($n.isMessage())
+#foreach( $x in $intf.iterator() )
+#if( $x.isMixin() )
+#set( $m = $x.getModule() )
+#foreach( $z in $m.iterator() )
+#foreach( $n in $z.messages( true ) )
 #if (!$n.isHidden())
+#if ($n.isMsgDir($mc) || $n.isMsgDirBoth())
+    rs->$n.name() = $helper.getRemoteName($z, '')_server_$n.name();
 #if (!$n.isOneway())
-#if ($n.isMsgDir($mc) || $n.isMsgDirBoth())	
-    rs->async_begin_$n.name() = $helper.getRemoteName($intf, '')_begin_server_$n.name();
-    rs->async_end_$n.name() = $helper.getRemoteName($intf, '')_end_server_$n.name();
+    rs->async_begin_$n.name() = $helper.getRemoteName($z, '')_begin_server_$n.name();
+    rs->async_end_$n.name() = $helper.getRemoteName($z, '')_end_server_$n.name();
+#end
+#end
 #end	
 #end
 #end

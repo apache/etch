@@ -26,22 +26,20 @@
 // This file is automatically created and should not be edited!
 
 #include "helloworld_server_impl.h"
+#include "helloworld_valufact.h"
 #include "etch_url.h"
 #include "etch_arrayval.h"
 #include "etch_binary_tdo.h"
 #include "etch_exception.h"
 #include "etch_general.h"
 #include "etch_log.h"
-
+#include "etch_map.h"
 #include <stdio.h>
 
-unsigned short CLASSID_HELLOWORLD_SERVER_IMPL;	
-	
-	
+unsigned short CLASSID_HELLOWORLD_SERVER_IMPL;
+
+
 char* HELLOWORLD_ETCHSIMP = "SIMP";
-
-
-etch_string* say_hello_impl(void* thisx, helloworld_user* to_whom);
 
 /* generated signatures */
 int destroy_helloworld_server_implx(void*);
@@ -52,6 +50,8 @@ helloworld_server_impl* init_helloworld_server_impl(struct helloworld_remote_cli
  * instantiation
  * - - - - - - - -   
  */
+etch_string* say_hello_impl(void* thisx, helloworld_user* to_whom);
+
 
 /**
  * new_helloworld_server_impl()
@@ -63,12 +63,10 @@ helloworld_server_impl* new_helloworld_server_impl(struct helloworld_remote_clie
     helloworld_server_impl* pserver  /* allocate object and assign default virtuals */
         = init_helloworld_server_impl(client, destroy_helloworld_server_implx);	
     i_helloworld_server* pserver_base = pserver->helloworld_server_base;
-    
     ((etch_object*)pserver_base)->class_id = get_dynamic_classid_unique(&CLASSID_HELLOWORLD_SERVER_IMPL);
-    
-    /* add virtual method overrides, if any, here */
-    pserver->say_hello = pserver_base->say_hello = say_hello_impl;
 
+    etchmap_insertxw(pserver_base->virtuals, helloworld_valufact_get_static()->str_helloworld_say_hello, say_hello_impl, FALSE);
+    
     return pserver;
 }
 
@@ -85,9 +83,6 @@ int destroy_helloworld_server_implx(void* data)
     /*
       helloworld_server_impl* thisx = (helloworld_server_impl*)data;
      */
-    /* * *  add custom destruction here  * * */
-    /* etch_free(thisx->exampleobj); */
-
     return 0;
 }
 

@@ -30,17 +30,6 @@
 unsigned short CLASSID_$helper.getRemoteName($intf, "").toUpperCase();
 
 int destroy_$helper.getRemoteName($intf, '') (void*);
-\#if(0)
-etch_message* etchremote_new_message($helper.getRemoteName($intf, '')*, etch_type*);
-int etchremote_send($helper.getRemoteName($intf, '')*, etch_message*);
-int etchremote_begincall($helper.getRemoteName($intf, '')*, etch_message*, void**);
-int etchremote_endcall  ($helper.getRemoteName($intf, '')*, i_mailbox*, etch_type*, void**);
-int etchremote_transport_control ($helper.getRemoteName($intf, '')*, etch_event*, etch_int32*);
-int etchremote_transport_notify  ($helper.getRemoteName($intf, '')*, etch_event*);
-etch_object* etchremote_transport_query ($helper.getRemoteName($intf, '')*, etch_object*); 
-int etchremote_start_waitup  ($helper.getRemoteName($intf, '')*, const int);
-int etchremote_stop_waitdown ($helper.getRemoteName($intf, '')*, const int);
-#endif
 
 
 /* - - - - - - - - - - - - - -  
@@ -87,26 +76,9 @@ $helper.getRemoteName($intf, '')* new_$helper.getRemoteName($intf, '') (void* th
     {   remote->i$helper.getIntfName($intf) = new_$intf.name().name().toLowerCase()_service_interface();
         remote->is_service_interface_owned = TRUE;
     }
-#foreach( $n in $intf.iterator() )
-#if ($n.isMessage())
-#if (!$n.isHidden())
-    remote->$n.name() = remote->i$helper.getIntfName($intf)->$n.name().toString();
-#end
-#end
-#end
-
-#foreach( $n in $intf.iterator() )
-#if ($n.isStruct())
-#if (!$n.isHidden())
-    remote->$n.name().toString() = remote->i$helper.getIntfName($intf)->$n.name();
-#end
-#end
-#end
 
     return remote;
 }
-
-
 /**
  * destroy_$helper.getRemoteName($intf, '')()
  * $helper.getRemoteName($intf, '') destructor.
@@ -126,153 +98,3 @@ int destroy_$helper.getRemoteName($intf, '') (void* data)
 }
 
 
-/* - - - - - - - - - - - - - -  
- * remote methods
- * - - - - - - - - - - - - - -  
- */
-
-/**
- * etchremote_new_message()
- * instantiates a message to be sent via this.send() or this.begin_call().
- * @param thisx this remote object.
- * @param message_type type of message, caller retains.
- * @return message object, which could wrap an exception.
- */
-\#if(0)
-etch_message* etchremote_new_message ($helper.getRemoteName($intf, $mc)* thisx, etch_type* message_type)
-{
-    etch_message* msg = new_message(message_type, ETCH_DEFSIZE, thisx->vf);
-    return msg;
-}
-#endif
-
-
-/**
- * etchremote_send()
- * sends message to recipient without waiting for a response.
- * @param thisx this remote object.
- * @param msg message, caller relinquishes.
- * @return 0 success, -1 failure.
- */
-\#if(0)
-int etchremote_send ($helper.getRemoteName($intf, $mc)* thisx, etch_message* msg)
-{
-    const int result = thisx->dsvc->itm->transport_message(thisx->dsvc, NULL, msg);
-    return result;
-}
-#endif
-
-
-/**
- * etchremote_begincall()
- * sends message beginning a call sequence.
- * @param thisx this remote object.
- * @param msg message, caller relinquishes.
- * @return in out parameter, a mailbox which can be used to retrieve the response.
- * @return 0 success, -1 failure.
- */
-
-\#if(0)
-int etchremote_begincall ($helper.getRemoteName($intf, $mc)* thisx, etch_message* msg, i_mailbox** out)
-{
-    const int result = thisx->dsvc->begin_call(thisx->dsvc, msg, out);
-    return result;
-}
-#endif
-
-
-/**
- * etchremote_endcall()
- * finishes a call sequence by waiting for a response message.
- * @param thisx this remote object.
- * @param mbox a mailbox which will be used to read an expected message response.
- * @param response_type the message type of the expected response.
- * @return in out parameter, on success, the response.
- * @return 0 success, -1 failure.
- */
-\#if(0)
-int etchremote_endcall ($helper.getRemoteName($intf, $mc)* thisx, i_mailbox* mbox, etch_type* response_type, etch_object** out)
-{
-    const int result = thisx->dsvc->end_call(thisx->dsvc, mbox, response_type, out);
-    return result;
-}
-#endif
-
-
-/**
- * etchremote_transport_control()
- * @param evt caller relinquishes
- * @param value caller relinquishes
- * @return 0 success, -1 failure.
- */
-\#if(0)
-int etchremote_transport_control ($helper.getRemoteName($intf, $mc)* thisx, etch_event* evt, etch_int32* value)
-{
-    const int result = thisx->dsvc->itm->transport_control(thisx->dsvc, evt, value);
-    return result;
-}
-#endif
-
-
-/**
- * etchremote_transport_notify()
- * @param evt caller relinquishes
- * @return 0 success, -1 failure.
- */
-\#if(0)
-int etchremote_transport_notify  ($helper.getRemoteName($intf, $mc)* thisx, etch_event* evt)
-{
-    const int result = thisx->dsvc->itm->transport_notify(thisx->dsvc, evt);
-    return result;
-}
-#endif
-
-
-/**
- * etchremote_transport_query()
- * @param query caller relinquishes
- * @return 0 success, -1 failure.
- */
-\#if(0)
-etch_object* etchremote_transport_query ($helper.getRemoteName($intf, $mc)* thisx, etch_object* query) 
-{
-    etch_object* resultobj = thisx->dsvc->itm->transport_query(thisx->dsvc, query);
-    return resultobj;
-}
-#endif
-
-
-/**
- * etchremote_start_waitup()
- * start the transport and wait for it to come up.
- * @param thisx this remote object.
- * @param waitms how long to wait, in milliseconds.
- * @return 0 success, -1 failure.
- */
-\#if(0)
-int etchremote_start_waitup ($helper.getRemoteName($intf, $mc)* thisx, const int waitms)
-{
-    const int result = thisx->transport_control(thisx, 
-        new_etch_event(CLASSID_CONTROL_START_WAITUP, waitms), NULL);
-
-    return result;
-}
-#endif
-
-
-/**
- * etchremote_stop_waitdown()
- * stop the transport and wait for it to go down.
- * @param thisx this remote object.
- * @param waitms how long to wait, in milliseconds.
- * @return 0 success, -1 failure.
- */
-\#if(0)
-int etchremote_stop_waitdown ($helper.getRemoteName($intf, $mc)* thisx, const int waitms)
-{
-    const int result = thisx->transport_control(thisx, 
-        new_etch_event(CLASSID_CONTROL_STOP_WAITDOWN, waitms), NULL);
-
-    return result;
-}
-#endif

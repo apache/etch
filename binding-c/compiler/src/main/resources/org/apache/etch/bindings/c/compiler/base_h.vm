@@ -53,7 +53,6 @@ typedef struct i_$helper.getBaseName( $intf, $suffix )
 	struct $helper.getImplName( $intf, $suffix )* thisx;
     i_$helper.getServiceName( $intf )*  i$helper.getServiceName( $intf );
     
-    
 #if ($helper.isServer($mc))
     int session_id;
     unsigned char is_service_interface_owned;
@@ -73,39 +72,7 @@ typedef struct i_$helper.getBaseName( $intf, $suffix )
      * service virtuals
      * - - - - - - - - - - -
      */
-## generate service virtuals
-#foreach( $n in $intf.iterator() )
-#if ($n.isMessage())
-#if (!$n.isHidden())
-    $helper.getServiceName( $intf )_$n.name() $n.name();
-#end
-#end
-#end
-
-#foreach( $n in $intf.iterator() )
-#if ($n.isMessage())
-#if ($n.isMsgDir($mc) || $n.isMsgDirBoth())
-#if (!$n.isHidden())
-    $helper.getServiceName( $intf )_$n.name() async_$n.name();
-#end
-#end
-#end
-#end
-#if (!$intf.hasMessageDirection($mc) && $helper.hasMessageDirectionBoth( $intf ))
-    /* no $mc.toString().toLowerCase()-directed items defined */
-#end
-
-    /* - - - - - - - - - - -
-    * service data
-    * - - - - - - - - - - -
-    */
-#foreach( $n in $intf.iterator() )
-#if ($n.isStruct())
-#if (!$n.isHidden())
-    $n.efqname($helper)* $n.name().toString();
-#end
-#end
-#end
+    etch_hashtable *virtuals;
 
      /* - - - - - - - - - - -
      * private instance data
@@ -121,7 +88,6 @@ i_$helper.getBaseName( $intf, $suffix )* new_$helper.getRemoteName( $intf, $suff
 int destroy_$helper.getBaseName( $intf, $suffix )_base (void*);
 #end
 #if($helper.isClient( $mc ))
-//i_$helper.getBaseName($intf, $suffix)* new_$helper.getBaseName($intf, $suffix)_base($helper.getImplName($intf, $suffix)* implobj);
 i_$helper.getBaseName($intf, $suffix)* new_$helper.getBaseName($intf, $suffix)_base();
 #end
 

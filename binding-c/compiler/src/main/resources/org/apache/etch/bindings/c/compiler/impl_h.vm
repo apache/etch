@@ -61,22 +61,6 @@ typedef struct $helper.getImplName($intf, $suffix)
     etch_session_notify  _session_notify;
     etch_session_query   _session_query;
 
-    /* - - - - - - - - - - - -
-     * base service virtuals
-     * - - - - - - - - - - - -
-     */
-## generate service virtuals
-#foreach( $n in $intf.iterator() )
-#if ($n.isMessage())
-#if (!$n.isHidden())
-    $helper.getServiceName($intf).toLowerCase()_$n.name() $n.name();
-#end
-#end
-#end
-
-    void* context;
-
-
 } $helper.getImplName($intf, $suffix);
 
 /* constructor */

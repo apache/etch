@@ -65,9 +65,6 @@ helloworld_client_impl* init_helloworld_client_impl(helloworld_remote_server* se
 
     pclient->ihelloworld = pclient->helloworld_client_base->ihelloworld;
 
-
-
-
     pclient->iobjsession = server->server_base->iobjsession;
     pclient->iobjsession->thisx = pclient;  /* set implementor reference */
     pclient->_session_control = pclient->helloworld_client_base->_session_control;

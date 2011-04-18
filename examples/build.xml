@@ -28,6 +28,7 @@
         <build_example dir="chat" logdir="${basedir}/target/logs" />
         <build_example dir="distmap" logdir="${basedir}/target/logs" />
         <build_example dir="example" logdir="${basedir}/target/logs" />
+        <build_example dir="example_mixin" logdir="${basedir}/target/logs" />
         <build_example dir="perf" logdir="${basedir}/target/logs" />
         <build_example dir="helloworld" logdir="${basedir}/target/logs" />
         <delete dir="${target}" failonerror="false" quiet="true" />
@@ -42,6 +43,7 @@
         <build_example dir="chat" logdir="${basedir}/target/logs" />
         <build_example dir="distmap" logdir="${basedir}/target/logs" />
         <build_example dir="example" logdir="${basedir}/target/logs" />
+        <build_example dir="example_mixin" logdir="${basedir}/target/logs" />
         <build_example dir="perf" logdir="${basedir}/target/logs" />
         <build_example dir="helloworld" logdir="${basedir}/target/logs" />
     </target>

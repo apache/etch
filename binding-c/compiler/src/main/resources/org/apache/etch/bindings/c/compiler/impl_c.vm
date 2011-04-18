@@ -23,16 +23,19 @@
 // This file is automatically created and should not be edited!
 
 \#include "$helper.getImplFileNameH($intf, $suffix)"
+\#include "$helper.getVfFileNameH($intf)"
+#foreach($serviceName in $helper.getUsedServiceNames($intf))	
+\#include "${serviceName.toLowerCase()}_interface.h"
+\#include "${serviceName.toLowerCase()}_valufact.h"
+#end
 \#include "etch_url.h"
 \#include "etch_arrayval.h"
 \#include "etch_binary_tdo.h"
 \#include "etch_exception.h"
 \#include "etch_general.h"
 \#include "etch_log.h"
+\#include "etch_map.h"
 \#include <stdio.h>
-#foreach($serviceName in $helper.getUsedServiceNames($intf))	
-\#include "${serviceName.toLowerCase()}_interface.h"
-#end	
 
 unsigned short CLASSID_$helper.getImplName($intf, $suffix).toUpperCase();	
 	
@@ -62,15 +65,14 @@ $helper.getImplName($intf, $suffix)* init_$helper.getImplName($intf, $suffix)(st
  */
 $helper.getImplName($intf, $suffix)* new_$helper.getImplName($intf, $suffix)(struct $helper.getRemoteName($intf, $helper.getRemoteDirectionName($mc))* $helper.getRemoteDirectionName($mc)) 
 {
-    $helper.getImplName($intf, $suffix)* p$suffix  /* allocate object and assign default virtuals */
+    $helper.getImplName($intf, $suffix)* p$suffix  /* allocate object */
         = init_$helper.getImplName($intf, $suffix)($helper.getRemoteDirectionName($mc), destroy_${helper.getImplName($intf, $suffix)}x);	
-#if($helper.isServer($mc))
     i_$helper.getBaseName($intf, $suffix)* p${suffix}_base = p${suffix}->$helper.getBaseName($intf, $suffix)_base;
-    
+#if($helper.isServer($mc))
     ((etch_object*)p${suffix}_base)->class_id = get_dynamic_classid_unique(&CLASSID_$helper.getImplName($intf, $suffix).toUpperCase());
 #end
     /* add virtual method overrides, if any, here */
-    //p${suffix}->xxx = implementation
+    //etchmap_insertxw(p${suffix}_base->virtuals, $helper.getVfName($intf)_get_static()->str_$helper.getIntfName($intf)_xxx, implementation, FALSE);
 
     return p$suffix;
 }
@@ -88,8 +90,6 @@ int destroy_${helper.getImplName($intf, $suffix)}x(void* data)
     /*
       $helper.getImplName($intf, $suffix)* thisx = ($helper.getImplName($intf, $suffix)*)data;
      */
-    /* * *  add custom destruction here  * * */
-    /* etch_free(thisx->exampleobj); */
 
     return 0;
 }

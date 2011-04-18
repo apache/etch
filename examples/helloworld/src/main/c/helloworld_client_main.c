@@ -113,7 +113,13 @@ int main(int argc, char* argv[])
     if(etch_status != ETCH_SUCCESS) {
         // error
     }
-	etch_config_destroy(config);
-	return 0;
+
+    etch_status = etch_runtime_shutdown();
+    if(etch_status != ETCH_SUCCESS) {
+        // error
+    }
+
+    etch_config_destroy(config);
+    return 0;
 }
 
