@@ -669,11 +669,6 @@ int etch_tcpconx_closex(etch_tcp_connection* conx, const int is_linger, const in
             result = -1;
         }
 
-        // join thread on client receiver thread
-        if(conx->rcvlxr != NULL) {
-            etch_join(conx->rcvlxr->thread);
-        }
-
         cx->socket = NULL;
         cx->is_closing = FALSE;
 
@@ -683,6 +678,11 @@ int etch_tcpconx_closex(etch_tcp_connection* conx, const int is_linger, const in
 
     if (is_locked) {
         etch_mutex_unlock(cx->mutex);
+    }
+
+    // join thread on client receiver thread
+    if(conx->rcvlxr != NULL) {
+        etch_join(conx->rcvlxr->thread);
     }
 
     if (!is_teardown && !is_logged)
