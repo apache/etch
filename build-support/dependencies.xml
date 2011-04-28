@@ -103,7 +103,7 @@
              <or>
                 <not><available file="${build.ant-dotnet.lib}/ant-dotnet-1.0.jar" /></not>
                 <not><available file="${env.DOTNET_HOME}/msbuild.exe" /></not>
-                <not><available file="${env.NUNIT_HOME}/bin/nunit.exe" /></not>
+                <not><available file="${env.NUNIT_HOME}/bin/net-2.0/nunit.exe" /></not>
              </or>
              </and>
             </condition>

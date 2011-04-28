@@ -41,3 +41,9 @@ ant-cmake.lib=${env.ETCH_EXTERNAL_DEPENDS}/apache-ant-cmake/1.0
 
 ## include experimental bindings in build? (comment this to exclude)
 #include.experimental=true
+
+## skip tests build? (comment this to exclude)
+#skip.tests=true
+
+## skip example build? (comment this to exclude)
+#skip.examples=true

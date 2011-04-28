@@ -72,9 +72,9 @@ you need the following:
 To compile the C# bindings and examples:
 
  * Apache Ant DotNet 1.0
- * .NET Framework 2.0 (Visual Studio 2005)
+ * .NET Framework 4.0 (Visual Studio 2005 and upper)
  ** (Mono 1.9 support is experimental)
- * NUnit 2.4.7
+ * NUnit 2.5.9.10348
  
 To compile NSIS installers:
 

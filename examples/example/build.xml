@@ -54,7 +54,7 @@
             <os family="windows" />
             <available file="${env.DOTNET_HOME}/msbuild.exe" />
             <available file="${build.ant-dotnet.lib}/ant-dotnet-1.0.jar" />
-            <available file="${env.NUNIT_HOME}/bin/nunit.exe" />
+            <available file="${env.NUNIT_HOME}/bin/net-2.0/nunit.exe" />
         </and>
     </condition>
     <condition property="USE.mono" >

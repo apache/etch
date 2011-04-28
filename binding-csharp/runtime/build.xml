@@ -66,11 +66,12 @@
     </target>
 
     <target name="build-main-with-mono" if="USE.mono" >
-        <echo message="TODO: build w/ mono" />
+        <echo message="build with mono" />
         <mdtool dir="${src}/main/csharp" project="EtchProj.csproj" />
     </target>
 
     <target name="build-main-with-dotnet" if="USE.dotnet" >
+        <echo message="build with dotnet" />
         <!-- Build runtime -->
         <msbuild buildfile="${src}/main/csharp/EtchProj.csproj">
             <property name="Configuration" value="${Etch.build.target}" />
