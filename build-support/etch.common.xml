@@ -37,6 +37,10 @@
         <isset property="skip.tests" />
     </condition>
 
+    <condition property="build.skip.examples" value="${skip.examples}">
+        <isset property="skip.examples" />
+    </condition>
+
     <condition property="build.javacc.home" value="${javacc.home}" >
         <isset property="javacc.home" />
     </condition>

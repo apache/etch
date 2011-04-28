@@ -170,7 +170,7 @@
         <build_component dir="binding-go" />
     </target>
 
-    <target name="component-examples">
+    <target name="component-examples" unless="build.skip.examples">
         <!-- Examples -->
         <build_component dir="examples" />
     </target>
