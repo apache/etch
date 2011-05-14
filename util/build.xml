@@ -100,12 +100,6 @@
                 </fileset>
             </jar>
 
-            <!-- placeholder -->
-            <jar jarfile="@{dist}/lib/${etch-compiler.jar}" update="true" filesetmanifest="merge">
-               <manifest>
-                  <attribute name="Version" value="${Etch.version}" />
-               </manifest>   
-            </jar>
             <jar jarfile="@{dist}/binding-java/lib/${etch-java-runtime.jar}" update="true" filesetmanifest="merge">
                <manifest>
                   <attribute name="Version" value="${Etch.version}" />
@@ -130,53 +124,6 @@
         </sequential>
     </macrodef>
 
-    <!-- MACRO: update-jars -->
-    <macrodef name="update-jars" >
-        <attribute name="dist" default="${Etch.dist}" />
-        <attribute name="support" default="${Etch.support}" />
-        <sequential>
-            <!-- repackage .jar -->
-            <mkdir dir="@{dist}/lib" />
-            <mkdir dir="@{dist}/binding-java/lib" />
-            <delete dir="${target}/tmp-compiler" quiet="true" />
-            <mkdir dir="${target}/tmp-compiler" />
-            <delete dir="${target}/tmp-runtime"  quiet="true" />
-            <mkdir dir="${target}/tmp-runtime" />
-
-            <unjar src="@{support}/lib/${etch-util.jar}"     dest="${target}/tmp-compiler" />
-            <unjar src="@{support}/lib/${etch-compiler.jar}" dest="${target}/tmp-compiler" />
-            <unjar src="@{support}/lib/${etch-util.jar}"     dest="${target}/tmp-runtime" />
-            <unjar src="@{support}/binding-java/lib/${etch-java-runtime.jar}" dest="${target}/tmp-runtime" />
-
-            <jar jarfile="@{dist}/lib/${etch-compiler.jar}" update="true" filesetmanifest="merge" >
-                <fileset dir="${target}/tmp-compiler" />
-            </jar>    
-            <jar jarfile="@{dist}/binding-java/lib/${etch-java-runtime.jar}" update="true" filesetmanifest="merge" >
-                <fileset dir="${target}/tmp-runtime" />
-            </jar>
-            
-            <!-- repackage .zip src -->
-            <mkdir dir="@{dist}/lib" />
-            <mkdir dir="@{dist}/binding-java/lib" />
-            <delete dir="${target}/tmp-compiler-src" quiet="true" />
-            <mkdir dir="${target}/tmp-compiler-src" />
-            <delete dir="${target}/tmp-runtime-src"  quiet="true" />
-            <mkdir dir="${target}/tmp-runtime-src" />
-            
-            <unzip src="@{support}/lib/${etch-util-src.zip}" dest="${target}/tmp-compiler-src" />
-            <unzip src="@{support}/lib/${etch-compiler-src.zip}" dest="${target}/tmp-compiler-src" />
-            <unzip src="@{support}/lib/${etch-util-src.zip}" dest="${target}/tmp-runtime-src" />
-            <unzip src="@{support}/binding-java/${etch-java-runtime-src.zip}" dest="${target}/tmp-runtime-src" />
-            
-            <zip destfile="@{dist}/lib/${etch-compiler-src.zip}" >
-                <fileset dir="${target}/tmp-compiler-src" />
-            </zip>
-            <zip destfile="@{dist}/binding-java/${etch-java-runtime-src.zip}" >
-                <fileset dir="${target}/tmp-runtime-src" />
-            </zip>
-            
-        </sequential>
-    </macrodef>
     
     <!-- INIT TARGET -->
     <!-- Modify this target to define project specific properties that can only be set at runtime -->
@@ -210,8 +157,6 @@
         <!-- Bundle Jars -->
         <bundle-jars dist="${Etch.support}" />
 
-        <!-- Update Jars -->
-        <update-jars dist="${Etch.dist}" support="${Etch.support}" />
     </target>
     
     <target name="compile-for-clover" if="Clover.enabled" >
@@ -236,9 +181,6 @@
         
         <!-- Bundle Jars -->
         <bundle-jars dist="${Etch.clover-support}" />
-
-        <!-- Update Jars -->
-        <update-jars dist="${Etch.clover-dist}" support="${Etch.clover-support}" />
 
     </target>
     

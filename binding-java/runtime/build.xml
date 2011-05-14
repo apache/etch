@@ -103,13 +103,6 @@
                 </fileset>
             </jar>
 
-            <!-- placeholder -->
-            <jar jarfile="@{dist}/lib/${etch-util.jar}" update="true" filesetmanifest="merge">
-               <manifest>
-                  <attribute name="Version" value="${Etch.version}" />
-               </manifest>   
-            </jar>
-
             <!-- CREATE source archives -->
 
             <!-- package up etch-java-runtime src -->
