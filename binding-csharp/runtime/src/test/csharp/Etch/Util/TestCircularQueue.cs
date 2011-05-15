@@ -36,16 +36,14 @@ namespace Org.Apache.Etch.Bindings.Csharp.Util
             Console.Write("TestCircularQueue");
         }
 
-        
-        [Test]
-       [ExpectedException( typeof( ArgumentOutOfRangeException ) )]
-	    public void construct1() 
-	    {
-		    new CircularQueue<int?>( 0 );
-	    }
+    [Test]
+    [ExpectedException( typeof( ArgumentOutOfRangeException ) )]
+    public void construct1() 
+    {
+        new CircularQueue<int?>( 0 );
+    }
 
-        
-	[Test]
+    [Test]
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
 	public void construct2() 
 	{
@@ -311,400 +309,390 @@ namespace Org.Apache.Etch.Bindings.Csharp.Util
 	}
 	
 	
-	[Test]
-	public void stress1() 
-	{
-		 CircularQueue<int?> queue = new CircularQueue<int?>( 1 );
-		 int n = 10000;
+    [Test]
+    public void stress1() 
+    {
+         CircularQueue<int?> queue = new CircularQueue<int?>( 1 );
+         int n = 10000;
 
          Thread t = new Thread(
              delegate()
              {
                 for (int i = 0; i < n; i++)
-				{
-					try
-					{
-						queue.Put( i );
-					}
-					catch ( ThreadInterruptedException e )
-					{
-						Console.WriteLine(e);
-					}
-				}  
-             }
-        );
-		
-		t.Start();
-		
-		for (int i = 0; i < n; i++)
-			Assert.AreEqual( i, queue.Get() );
-	}
-	
-	
-	[Test]
-	public void stress2() 
-	{
-		CircularQueue<int?> queue = new CircularQueue<int?>( 1 );
-		 int n = 1000;
-
-         Thread t = new Thread(
-             delegate()
-             {
-                for (int i = 0; i < n; i++)
-				{
-					try
-					{
-						Thread.Sleep( 5 );
+                {
+                    try
+                    {
                         queue.Put( i );
-					}
-					catch ( ThreadInterruptedException e )
-					{
-						Console.WriteLine(e);
-					}
-				}  
+                    }
+                    catch ( ThreadInterruptedException e )
+                    {
+                        Console.WriteLine(e);
+                    }
+                }  
              }
         );
-		
-		t.Start();
-     
-		for (int i = 0; i < n; i++)
-			Assert.AreEqual( i, queue.Get() );
-	}
-	
-	
-	[Test]
-	public void stress3() 
-	{
-		
-        CircularQueue<int?> queue = new CircularQueue<int?>( 1 );
-		 int n = 1000;
 
-         Thread t = new Thread(
-             delegate()
-             {
+        t.Start();
+
+        for (int i = 0; i < n; i++)
+            Assert.AreEqual(i, queue.Get());
+    }
+
+    [Test]
+    public void stress2()
+    {
+        CircularQueue<int?> queue = new CircularQueue<int?>(1);
+        int n = 1000;
+
+        Thread t = new Thread(
+            delegate()
+            {
                 for (int i = 0; i < n; i++)
-				{
-					try
-					{
-						
-                        queue.Put( i );
-					}
-					catch ( ThreadInterruptedException e )
-					{
-						Console.WriteLine(e);
-					}
-				}  
-             }
+                {
+                    try
+                    {
+                        Thread.Sleep(5);
+                        queue.Put(i);
+                    }
+                    catch (ThreadInterruptedException e)
+                    {
+                        Console.WriteLine(e);
+                    }
+                }
+            }
+       );
+
+        t.Start();
+
+        for (int i = 0; i < n; i++)
+            Assert.AreEqual(i, queue.Get());
+    }
+
+
+    [Test]
+    public void stress3()
+    {
+
+        CircularQueue<int?> queue = new CircularQueue<int?>(1);
+        int n = 1000;
+
+        Thread t = new Thread(
+            delegate()
+            {
+                for (int i = 0; i < n; i++)
+                {
+                    try
+                    {
+
+                        queue.Put(i);
+                    }
+                    catch (ThreadInterruptedException e)
+                    {
+                        Console.WriteLine(e);
+                    }
+                }
+            }
+       );
+
+        t.Start();
+
+
+
+        for (int i = 0; i < n; i++)
+        {
+            Thread.Sleep(5);
+            Assert.AreEqual(i, queue.Get());
+        }
+    }
+
+    [Test]
+    public void stress4() 
+    {
+         CircularQueue<int?> queue = new CircularQueue<int?>();
+		
+        // we will setup two threads waiting to get and
+        // then in a single synchronized step put two
+        // items in the queue. the first thread will be
+        // woken to get, and once done the second thread
+        // should be woken by the first.
+		
+        Thread t1 = new Thread( 
+            delegate()
+            {			
+                try
+                {
+                    Assert.IsNotNull( queue.Get() );
+                }
+                catch ( ThreadInterruptedException e )
+                {
+                    Console.WriteLine(e);
+                }
+            }
         );
-		
-		t.Start();
-        
-        
-		
-		for (int i = 0; i < n; i++)
-		{
-			Thread.Sleep( 5 );
-			Assert.AreEqual( i, queue.Get() );
-		}
-	}
-	
-	
-	[Test]
-	public void stress4() 
-	{
-		 CircularQueue<int?> queue = new CircularQueue<int?>();
-		
-		// we will setup two threads waiting to get and
-		// then in a single synchronized step put two
-		// items in the queue. the first thread will be
-		// woken to get, and once done the second thread
-		// should be woken by the first.
-		
-		Thread t1 = new Thread( 
+
+        Thread t2 = new Thread(
             delegate()
-		    {			
-				try
-				{
-					Assert.IsNotNull( queue.Get() );
-				}
-				catch ( ThreadInterruptedException e )
-				{
-					Console.WriteLine(e);
-				}
-			}
-		);
-		
-		Thread t2 = new Thread( 
-            delegate()
-		    {
-				try
-				{
-					Assert.IsNotNull( queue.Get() );
-				}
-				catch ( ThreadInterruptedException e )
-				{
+            {
+                try
+                {
+                    Assert.IsNotNull(queue.Get());
+                }
+                catch (ThreadInterruptedException e)
+                {
                     Console.WriteLine(e);
-				}
-		    }
+                }
+            }
         );
 
-		t1.Start();
-		t2.Start();
-		
-		// wait until both threads are waiting on queue...
-		
-		Thread.Sleep( 100 );
-		
-		lock(queue)
-		{
-			queue.Put( 1 );
-			queue.Put( 2 );
-		}
+        t1.Start();
+        t2.Start();
 
-		harvest( t1 );
-		harvest( t2 );
-	}
-	
-	
-	[Test]
-	public void stress5() 
-	{
-		 CircularQueue<int?> queue = new CircularQueue<int?>( 3 );
-		
-		// we will setup two threads waiting to put to the queue,
-		// then in a single synchronized step, read two items from
-		// the queue. the first thread will be woken to put, and
-		// once done the second thread should be woken by the first.
-		
-		queue.Put( 0 );
-		queue.Put( 1 );
-		queue.Put( 2 );
-		Assert.IsTrue( queue.IsFull() );
-		
-		Thread t1 = new Thread( 
-            delegate()
-		    {
-			
-				try
-				{
-					Assert.IsTrue( queue.Put( 3 ) );
-				}
-				catch ( ThreadInterruptedException e )
-				{
-                    Console.WriteLine(e);
-				}
-			}
-		 );
-		
-		Thread t2 = new Thread(
-            delegate()
-		    {
-				try
-				{
-					Assert.IsTrue( queue.Put( 4 ) );
-				}
-				catch ( ThreadInterruptedException e )
-				{
-                    Console.WriteLine(e);
-				}
-			}
-		);
-		
-		t1.Start();
-		t2.Start();
-		
-		// wait until both threads are waiting on queue...
-		
-		Thread.Sleep( 100 );
-		
-		lock(queue)
-		{
-			Assert.IsNotNull( queue.Get() );
-			Assert.IsNotNull( queue.Get() );
-		}
+        // wait until both threads are waiting on queue...
 
-		harvest( t1 );
-		harvest( t2 );
-	}
-	
-	
-	[Test]
-	public void stress6() 
-	{
-		CircularQueue<int?> queue = new CircularQueue<int?>( 5 );
-		
-		// start two getters and two putters and let 'em duke it out...
-		
-		Thread t1 = new Thread( 
-            delegate()
-		    {
-				try
-				{
-					for (int i = 0; i < 100; i++)
-						Assert.IsTrue( queue.Put( i ) );
-				}
-				catch ( ThreadInterruptedException e )
-				{
-                    Console.WriteLine(e);
-				}
-			}
-		);
-		
-		Thread t2 = new Thread(
-            delegate()
-		    {
-				try
-				{
-					for (int i = 0; i < 100; i++)
-						Assert.IsTrue( queue.Put( i ) );
-				}
-				catch ( ThreadInterruptedException e )
-				{
-                    Console.WriteLine(e);
-				}
-			}
-		);
-		
-		Thread t3 = new Thread(
-            delegate()
-		    {
-				try
-				{
-					for (int i = 0; i < 100; i++)
-						Assert.IsNotNull( queue.Get() );
-				}
-				catch ( ThreadInterruptedException e )
-				{
-                    Console.WriteLine(e);
-				}
-			}
-		);
-		
-		Thread t4 = new Thread(
-            delegate()
-		    {
-				try
-				{
-					for (int i = 0; i < 100; i++)
-						Assert.IsNotNull( queue.Get() );
-				}
-				catch ( ThreadInterruptedException e )
-				{
-                    Console.WriteLine(e);
-				}
-			}
-		);
-		
-		t1.Start();
-		t2.Start();
-		t3.Start();
-		t4.Start();
+        Thread.Sleep(100);
 
-		harvest( t1 );
-		harvest( t2 );
-		harvest( t3 );
-		harvest( t4 );
-	}
-	
-	
-	[Test]
-	public void harvest1() 
-	{
-		Thread t = new Thread(
+        lock (queue)
+        {
+            queue.Put(1);
+            queue.Put(2);
+        }
+
+        harvest(t1);
+        harvest(t2);
+    }
+
+
+    [Test]
+    public void stress5() 
+    {
+         CircularQueue<int?> queue = new CircularQueue<int?>( 3 );
+
+        // we will setup two threads waiting to put to the queue,
+        // then in a single synchronized step, read two items from
+        // the queue. the first thread will be woken to put, and
+        // once done the second thread should be woken by the first.
+
+        queue.Put( 0 );
+        queue.Put( 1 );
+        queue.Put( 2 );
+        Assert.IsTrue( queue.IsFull() );
+
+        Thread t1 = new Thread( 
+            delegate()
+            {
+                try
+                {
+                    Assert.IsTrue( queue.Put( 3 ) );
+                }
+                catch ( ThreadInterruptedException e )
+                {
+                    Console.WriteLine(e);
+                }
+            }
+         );
+
+        Thread t2 = new Thread(
+            delegate()
+            {
+                try
+                {
+                    Assert.IsTrue( queue.Put( 4 ) );
+                }
+                catch ( ThreadInterruptedException e )
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        );
+
+        t1.Start();
+        t2.Start();
+
+        // wait until both threads are waiting on queue...
+
+        Thread.Sleep(100);
+
+        lock (queue)
+        {
+            Assert.IsNotNull(queue.Get());
+            Assert.IsNotNull(queue.Get());
+        }
+
+        harvest(t1);
+        harvest(t2);
+    }
+
+    [Test]
+    public void stress6()
+    {
+        CircularQueue<int?> queue = new CircularQueue<int?>(5);
+
+        // start two getters and two putters and let 'em duke it out...
+
+        Thread t1 = new Thread(
+            delegate()
+            {
+                try
+                {
+                    for (int i = 0; i < 100; i++)
+                        Assert.IsTrue(queue.Put(i));
+                }
+                catch (ThreadInterruptedException e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        );
+
+        Thread t2 = new Thread(
+            delegate()
+            {
+                try
+                {
+                    for (int i = 0; i < 100; i++)
+                        Assert.IsTrue(queue.Put(i));
+                }
+                catch (ThreadInterruptedException e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        );
+
+        Thread t3 = new Thread(
+            delegate()
+            {
+                try
+                {
+                    for (int i = 0; i < 100; i++)
+                        Assert.IsNotNull(queue.Get());
+                }
+                catch (ThreadInterruptedException e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        );
+
+        Thread t4 = new Thread(
+            delegate()
+            {
+                try
+                {
+                    for (int i = 0; i < 100; i++)
+                        Assert.IsNotNull(queue.Get());
+                }
+                catch (ThreadInterruptedException e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        );
+
+        t1.Start();
+        t2.Start();
+        t3.Start();
+        t4.Start();
+
+        harvest(t1);
+        harvest(t2);
+        harvest(t3);
+        harvest(t4);
+    }
+
+    [Test]
+    public void harvest1()
+    {
+        Thread t = new Thread(
             delegate()
             {
             }
         );
-		t.Start();
-		harvest( t );
-	}
-	
-	
-	[Test]
-    [ExpectedException( typeof( TimeoutException ) )]
-	public void harvest2() 
-	{
-		Thread t = new Thread( 
-            delegate() 
-		    {
-				try
-				{
-					Thread.Sleep( 10000 );
-				}
-				catch ( ThreadInterruptedException e )
-				{
+        t.Start();
+        harvest(t);
+    }
+
+    [Test]
+    [ExpectedException(typeof(TimeoutException))]
+    public void harvest2()
+    {
+        Thread t = new Thread(
+            delegate()
+            {
+                try
+                {
+                    Thread.Sleep(10000);
+                }
+                catch (ThreadInterruptedException e)
+                {
                     Console.WriteLine(e);
-				}
-			}
-		);
-		t.Start();
-		harvest( t );
-	} 
-	
-	private void harvest( Thread t ) 
-	{
-		t.Join( 1000 );
-		if (t.IsAlive)
-		{
-			t.Interrupt();
-			throw new TimeoutException( t.Name+" is stuck" );
-		}
-	}
-	
-	
-	[Test]
-	public void testRelError1() 
-	{
-		assertRelError( 10, 9, .11 );
-		assertRelError( 10, 11, .14 );
-		assertRelError( 20, 19, .07 );
-		assertRelError( 19, 23, .22 );
-	}
-	
-	
-	[Test]
-     [ExpectedException( typeof(AssertionException ) )]
-	public void testRelError2() 
-	{
-		assertRelError( 9, 8, .1 );
-	}
-	
-	
-	[Test]
-    [ExpectedException( typeof(AssertionException ) )]
-	public void testRelError3() 
-	{
-		assertRelError( 9, 10, .1 );
-	}
-	
-	
-	[Test]
-	public void testAbsError1() 
-	{
-		AssertAbsError( 11, 15, 4 );
-		AssertAbsError( 15, 10, 5 );
-		AssertAbsError( 5, 3, 2 );
-		AssertAbsError( 4, 7, 3 );
-	}
-	
-	
-	[Test]
-    [ExpectedException( typeof(AssertionException ) )]
-	public void testAbsError2() 
-	{
-		AssertAbsError( 11, 15, 3 );
-	}
-	
-	
-	[Test]
+                }
+            }
+        );
+        t.Start();
+        harvest(t);
+    } 
+
+    private void harvest(Thread t)
+    {
+        t.Join(1000);
+        if (t.IsAlive)
+        {
+            t.Interrupt();
+            throw new TimeoutException(t.Name + " is stuck");
+        }
+    }
+
+
+    [Test]
+    public void testRelError1()
+    {
+        assertRelError(10, 9, .11);
+        assertRelError(10, 11, .14);
+        assertRelError(20, 19, .07);
+        assertRelError(19, 23, .22);
+    }
+
+
+    [Test]
     [ExpectedException(typeof(AssertionException))]
-	public void testAbsError3() 
-	{
-		AssertAbsError( 19, 15, 3 );
-	} 
-	
-	private void Delay(  int delay, run del )
-	{
+    public void testRelError2()
+    {
+        assertRelError(9, 8, .1);
+    }
+
+    [Test]
+    [ExpectedException(typeof(AssertionException))]
+    public void testRelError3()
+    {
+        assertRelError(9, 10, .1);
+    }
+
+    [Test]
+    public void testAbsError1()
+    {
+        AssertAbsError(11, 15, 4);
+        AssertAbsError(15, 10, 5);
+        AssertAbsError(5, 3, 2);
+        AssertAbsError(4, 7, 3);
+    }
+
+    [Test]
+    [ExpectedException(typeof(AssertionException))]
+    public void testAbsError2()
+    {
+        AssertAbsError(11, 15, 3);
+    }
+
+    [Test]
+    [ExpectedException(typeof(AssertionException))]
+    public void testAbsError3()
+    {
+        AssertAbsError(19, 15, 3);
+    } 
+
+    private void Delay(  int delay, run del )
+    {
 
         Thread t = new Thread(delegate()
                                   {
@@ -719,11 +707,7 @@ namespace Org.Apache.Etch.Bindings.Csharp.Util
                                       }
                                   });
         t.Start();
-
-      
-	}
-	
-	
+    }
 
 	private void assertRelError( double expected, double actual, double error )
 	{

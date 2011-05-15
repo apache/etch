@@ -40,7 +40,7 @@ namespace Org.Apache.Etch.Bindings.Csharp.Util
         [Test]
         public void TestImport()
         {
-            DateTime date = new DateTime();
+            DateTime date = new DateTime().ToLocalTime();
             TestDate( date );
         }
 

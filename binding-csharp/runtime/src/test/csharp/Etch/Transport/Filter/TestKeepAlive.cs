@@ -111,7 +111,9 @@ namespace Org.Apache.Etch.Bindings.Csharp.Transport.Filter
             Assert.AreEqual("_Etch_KeepAliveReq", msg.GetXType.Name);
             Assert.AreEqual(4, msg.Get(new Field("count")));
             Assert.AreEqual(3, msg.Get(new Field("delay")));
-        }
+            filter.SessionNotify(SessionConsts.DOWN);
+            Assert.IsFalse(session.up);
+}
 
         [Test]
         public void clientup1()
@@ -129,6 +131,8 @@ namespace Org.Apache.Etch.Bindings.Csharp.Transport.Filter
             Assert.AreEqual("_Etch_KeepAliveReq", msg.GetXType.Name);
             Assert.AreEqual(4, msg.Get(new Field("count")));
             Assert.AreEqual(2, msg.Get(new Field("delay")));
+            filter.SessionNotify(SessionConsts.DOWN);
+            Assert.IsFalse(session.up);
         }
 
         [Test]
@@ -155,6 +159,9 @@ namespace Org.Apache.Etch.Bindings.Csharp.Transport.Filter
             filter.SessionMessage(null, req);
 
             Assert.AreEqual(req.Reply().ToString(), transport.msg.ToString());
+
+            filter.SessionNotify(SessionConsts.DOWN);
+            Assert.IsFalse(session.up);
         }
 
         [Test]

@@ -19,6 +19,7 @@
 // 
 using System;
 using System.Threading;
+using System.Globalization;
 using Etch4.Util.Test;
 using NUnit.Framework;
 
@@ -27,8 +28,23 @@ namespace Org.Apache.Etch.Bindings.Csharp.Util
     [TestFixture]
     public class TestMonitor
     {
-        private const double REL_ERROR = 100000;
-	
+
+    private const double REL_ERROR = 100000;
+    private CultureInfo savedCulture;
+
+    [SetUp]
+    public void SetUp()
+    {
+        savedCulture = Thread.CurrentThread.CurrentCulture;
+        Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+    }
+
+    [TearDown]
+    public void TearDown()
+    {
+        Thread.CurrentThread.CurrentCulture = savedCulture;
+    }
+
 	/** @ */
 	[Test]
 	public void construct1() 

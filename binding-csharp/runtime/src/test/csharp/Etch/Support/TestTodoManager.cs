@@ -91,8 +91,7 @@ namespace Org.Apache.Etch.Bindings.Csharp.Support
             // test if all todo's were executed. 
             Assert.AreEqual( 0, mgr.NumEntries() );
 
-            TodoManager.ShutDown();
-            
+            TodoManager.ShutDown(mgr);
         }
 
         //[Test]

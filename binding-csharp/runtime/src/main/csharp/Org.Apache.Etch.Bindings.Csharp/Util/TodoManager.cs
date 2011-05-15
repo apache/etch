@@ -83,7 +83,7 @@ namespace Org.Apache.Etch.Bindings.Csharp.Util
         {
             // nothing to do
         }
-     
+
         protected override void Stop0()
         {
             lock (this)
@@ -362,7 +362,18 @@ namespace Org.Apache.Etch.Bindings.Csharp.Util
                 oldTodoManager.Stop();
         }
 
-        private static TodoManager todomanager; 
+        /// <summary>
+        /// Shuts down the given todo manager if any.
+        /// </summary>
+        /// Exception:
+        ///     throws Exception
+        public static void ShutDown(TodoManager toDoManager)
+        {
+            if ( toDoManager != null )
+                toDoManager.Stop();
+        }
+
+        private static TodoManager todomanager;
 
         /// <summary>
         /// Since C# doesn't allow locking on an entire class, the substitute 

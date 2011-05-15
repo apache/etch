@@ -28,7 +28,7 @@ namespace Org.Apache.Etch.Bindings.Csharp.Transport.Fmt.Binary
     /// <summary>
     /// Test binary input and output.
     /// </summary>
-     [TestFixture]
+    [TestFixture]
     public class TestBinaryTaggedDataInOut
     {
 

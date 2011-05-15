@@ -18,6 +18,8 @@
 // under the License.
 // 
 using System;
+using System.Threading;
+using System.Globalization;
 using NUnit.Framework;
 
 // s is scheme:[//[user[:password]@]host[:port]/]uri[;params][?terms][#fragment]
@@ -27,6 +29,21 @@ namespace Org.Apache.Etch.Bindings.Csharp.Util
     [TestFixture]
     public class TestURL
     {
+
+        private CultureInfo savedCulture;
+
+        [SetUp]
+        public void SetUp()
+        {
+            savedCulture = Thread.CurrentThread.CurrentCulture;
+            Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+        }
+
+        [TearDown]
+        public void TearDown()
+        {
+            Thread.CurrentThread.CurrentCulture = savedCulture;
+        }
 
         [TestFixtureSetUp]
         public void First()

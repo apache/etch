@@ -352,7 +352,7 @@ namespace Org.Apache.Etch.Bindings.Csharp.Transport
         #endregion
         
         // Cause BuildServer to hang, hence ignored
-       [Ignore]
+        [Ignore]
 	    [Test]
 	    public void restart1() 
 	    {
