@@ -27,188 +27,233 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.net.SocketException;
+import java.util.concurrent.BlockingQueue;
 
 import org.apache.etch.util.FlexBuffer;
-import org.apache.etch.util.Resources;
 import org.apache.etch.util.URL;
 import org.apache.etch.util.core.Who;
 
-
-/**
- * Implementation of connection which handles a udp connection.
- */
-public class UdpConnection extends Connection<SessionPacket>
-	implements TransportPacket
+public class UdpConnection extends Connection<SessionPacket> implements TransportPacket
 {
-	/**
-	 * Term on the uri which specifies the default traffic class.
-	 * @see #setDefaultTrafficClass(int)
-	 */
-	private static final String TRAFFIC_CLASS = "UdpConnection.trafficClass";
-	
-	/**
-	 * Constructs the Connection from a uri.
-	 * @param uri
-	 * @param resources
-	 * @throws Exception
-	 */
-	public UdpConnection( String uri, Resources resources )
-		throws Exception
-	{
-		URL u = new URL( uri );
-		
-		listen = u.getBooleanTerm( "listen", false );
-		
-		host = translateHost( u.getHost() );
-		if (!listen && host == null)
-			throw new IllegalArgumentException( "host == null" );
-		
-		port = u.getPort();
-		if (port == null)
-			throw new IllegalArgumentException( "port == null" );
-		
-		if (port <= 0 || port > 65535)
-			throw new IllegalArgumentException( "port <= 0 || port > 65535" );
-		
-		setDefaultTrafficClass( u.getIntegerTerm( TRAFFIC_CLASS, 0 ) );
-		
-		// there are three ways to do this:
-		// 1. bound socket, unconnected (listening to anyone on well-known host/port
-		// 2. bound socket, connected (listening to someone on well-known host/port)
-		// 3. unbound socket, connected (listening to someone on assigned host/port)
-	}
-	
+	public final static String BROADCAST = "UdpConnection.broadcast";
+
+	private SocketAddress remoteAddress;
+	private final UdpListener listener;
+	private BlockingQueue<DatagramPacket> readQueue;
+
+	private final int delay;
+	private final boolean enableBroadcast;
 	private final String host;
-	
-	private final Integer port;
-	
-	private final boolean listen;
-	
-	private DatagramSocket socket;
-	
-	// TODO assign defaultRecipient a value somehow
-	private Who defaultRecipient;
-	
-	/**
-	 * Sets the default value for the traffic class (or type of service
-	 * or dscp). For example, call signaling traffic is classified as
-	 * DSCP CS3 (011000) with resulting traffic class value of 01100000,
-	 * 0x60, or 96. For more on DSCP see RFC 2474 (supercedes TOS defined
-	 * in RFC 791)
-	 * @param trafficClass traffic class or type of service or dscp. The
-	 * default is 0, which implies normal handling.
-	 */
-	public void setDefaultTrafficClass( int trafficClass )
+	private final int port;
+
+	private DatagramSocket socket = null;
+	private InetWho lastWho = null;
+	private DatagramPacket sendDatagramPacket = new DatagramPacket( new byte[0], 0 );
+
+	public UdpConnection(SocketAddress remoteAddress, UdpListener listener)
 	{
-		this.trafficClass = trafficClass;
+		this.remoteAddress = remoteAddress;
+		this.listener = listener;
+
+		readQueue = listener.allocReadQueue( remoteAddress );
+
+		delay = 0;
+		enableBroadcast = false;
+		host = null;
+		port = 0;
 	}
-	
-	private int trafficClass = 0;
+
+	public UdpConnection(String uri)
+	{
+		this( new URL( uri ) );
+	}
+
+	public UdpConnection(URL uri)
+	{
+		this( translateHost( uri.getHost() ), uri.getPort(), uri.getBooleanTerm( BROADCAST, false ), 0 );
+	}
+
+	public UdpConnection(String host, Integer port, boolean enableBroadcast, int delay)
+	{
+		if (host == null)
+			throw new IllegalArgumentException( "host is missing" );
+		else if (host.equals( "255.255.255.255" ))
+			enableBroadcast = true;
+
+		if (port == null)
+			throw new IllegalArgumentException( "port" );
+		else if (port <= 0 || port >= 65536)
+			throw new IllegalArgumentException( "port <= 0 || port >= 65536" );
+
+		this.host = host;
+		this.port = port;
+		this.enableBroadcast = enableBroadcast;
+		this.delay = delay;
+
+		listener = null;
+	}
+
+	private Who getWho( InetAddress address, int port )
+	{
+		if (lastWho == null || !lastWho.matches( address, port ))
+			lastWho = new InetWho( address, port );
+
+		return lastWho;
+	}
 
 	@Override
 	protected synchronized boolean openSocket( boolean reconnect ) throws Exception
 	{
-		if (socket != null)
-			socket.close();
-		
-		socket = new DatagramSocket();
-		
-		if (listen)
-			socket.bind( host != null ? new InetSocketAddress( host, port ) : new InetSocketAddress( port ) );
-		else
-			socket.connect( new InetSocketAddress( host, port ) );
-		
-		if (!reconnect && socket != null)
-			return true;
-		
+		// if a one time connection from a server socket listener, just
+		// return the existing socket. Bail if this is a reconnect.
+		if (listener != null)
+		{
+			if (!reconnect && readQueue == null)
+				readQueue = listener.allocReadQueue( remoteAddress );
+
+			return !reconnect;
+		}
+
+		// if a reconnect but no retries allowed, then bail.
+		if (reconnect && delay == 0)
+			return false;
+
+		// ok, we don't have an existing socket, and this is either the first
+		// connection attempt or a reconnect with delay > 0.
+		boolean first = true;
+
+		while (isStarted())
+		{
+			// if reconnect is false and first is true, this is our
+			// very first attempt to connect. otherwise, we are trying
+			// to reconnect a broken link or establish a link where we
+			// have already failed at least once.
+			if (reconnect || !first)
+			{
+				if (delay == 0)
+					return false;
+
+				wait( delay );
+
+				if (!isStarted())
+					break;
+			}
+
+			// try to open a socket.
+			try
+			{
+				remoteAddress = new InetSocketAddress( host, port );
+				socket = new DatagramSocket();
+				socket.connect(remoteAddress);
+				return true;
+			}
+			catch (Exception e)
+			{
+				if (first)
+				{
+					first = false;
+					fireException( "open", e );
+				}
+			}
+		}
+
 		return false;
 	}
 
 	@Override
 	protected void setupSocket() throws Exception
 	{
-		DatagramSocket s = checkSocket();
-		
-		s.setTrafficClass( trafficClass );
+		if (socket != null)
+			socket.setBroadcast( enableBroadcast );
 	}
 
 	@Override
 	protected void readSocket() throws Exception
 	{
-		final DatagramSocket s = checkSocket();
-		// TODO allow buffer size to be specified.
-		final FlexBuffer buf = new FlexBuffer( new byte[8192] );
-		final DatagramPacket p = new DatagramPacket( new byte[0], 0 );
-		
+		FlexBuffer flexBuffer = null;
+		DatagramPacket datagramPacket = null;
+
+		if (socket != null)
+		{
+			// TODO allow buffer size to be specified.
+			final byte[] buf = new byte[8192];
+			datagramPacket = new DatagramPacket( buf, buf.length );
+			flexBuffer = new FlexBuffer( datagramPacket.getData() );
+		}
+
 		try
 		{
 			while (isStarted())
 			{
-				p.setData( buf.getBuf() );
-				
-				s.receive( p );
-				
-				buf.setIndex( 0 );
-				buf.setLength( p.getLength() );
-				
-				if (s.isConnected())
-					session.sessionPacket( null, buf );
-				else
-					session.sessionPacket( getWho( p.getAddress(), p.getPort() ), buf );
+				if (readQueue != null)
+				{
+					datagramPacket = readQueue.take();
+					if (datagramPacket == UdpListener.READ_QUEUE_SENTINEL)
+						break;
+
+					flexBuffer = new FlexBuffer( datagramPacket.getData() );
+				}
+				else {
+					socket.receive( datagramPacket );
+
+					flexBuffer.setIndex( 0 );
+					flexBuffer.setLength( datagramPacket.getLength() );
+				}
+
+				Who sender = getWho( datagramPacket.getAddress(), datagramPacket.getPort() );
+
+				session.sessionPacket( sender, flexBuffer );
 			}
 		}
-		catch ( SocketException e )
+		catch (SocketException e)
 		{
-			if ("socket closed".equalsIgnoreCase( e.getMessage()))
+			String msg = e.getMessage();
+			if (msg == null)
+				throw e;
+
+			msg = msg.toLowerCase();
+
+			if (msg.indexOf( "socket closed" ) >= 0)
 				return;
+
+			if (msg.indexOf( "recv failed" ) >= 0)
+				return;
+
+			if (msg.indexOf( "connection reset" ) >= 0)
+				return;
+
 			throw e;
 		}
 	}
 
-	private DatagramSocket checkSocket() throws IOException
+	@Override
+	protected void stop0() throws Exception
 	{
-		DatagramSocket s = socket;
-		if (s == null || s.isClosed())
-			throw new SocketException( "socket closed" );
-		return s;
+		try
+		{
+			close( false );
+		}
+		catch ( Exception e )
+		{
+			// ignore
+		}
+		super.stop0();
 	}
-	
-	private Who getWho( InetAddress address, int port )
-	{
-		if (lastWho == null || !lastWho.matches( address, port ))
-			lastWho = new InetWho( address, port );
-		return lastWho;
-	}
-	
-	private InetWho lastWho;
-	
-	private final DatagramPacket outp = new DatagramPacket( new byte[0], 0 );
 
-	public void transportPacket( Who recipient, FlexBuffer buf ) throws IOException
+	@Override
+	public void close( boolean reset )
 	{
-//		System.out.printf( "packet( %s, buf( %d, %d ))", recipient, buf.index(), buf.avail() );
-		if (socket.isConnected())
-		{
-			outp.setData( buf.getBuf(), buf.index(), buf.avail() );
-			socket.send( outp );
-			return;
+		if (listener != null) {
+			listener.releaseReadQueue( remoteAddress );
+			readQueue = null;
 		}
-		
-		if (recipient == null)
-			recipient = defaultRecipient;
-		
-		if (recipient != null)
+
+		DatagramSocket s = socket;
+		if (socket != null)
 		{
-			InetWho iw = (InetWho) recipient;
-			outp.setData( buf.getBuf(), buf.index(), buf.avail() );
-			outp.setAddress( iw.getInetAddress() );
-			outp.setPort( iw.getPort() );
-			socket.send( outp );
-			
-			return;
+			socket = null;
+			s.close();
 		}
-		
-		throw new IllegalArgumentException( "no recipient" );
 	}
 
 	public int headerSize()
@@ -216,26 +261,68 @@ public class UdpConnection extends Connection<SessionPacket>
 		return 0;
 	}
 
-	@Override
-	public void close( boolean reset )
+	public void transportPacket( Who recipient, FlexBuffer buf ) throws IOException
 	{
-		DatagramSocket s = socket;
-		if (s != null)
-		{
-			socket = null;
-			s.close();
+		SocketAddress recipientAddress = remoteAddress;
+		
+		if (recipient != null && recipient instanceof InetWho) {
+			InetWho inetWho = (InetWho)recipient;
+
+			recipientAddress = new InetSocketAddress( inetWho.getInetAddress(), inetWho.getPort() );
 		}
+
+		sendDatagramPacket.setData( buf.getBuf(), buf.index(), buf.avail() );
+		sendDatagramPacket.setSocketAddress( recipientAddress );
+
+		if (listener != null)
+			listener.Send(sendDatagramPacket);
+		else
+			socket.send(sendDatagramPacket);
 	}
 
 	@Override
-	public SocketAddress localAddress()
+	public String toString()
 	{
+		DatagramSocket s = socket;
+
+		if (listener != null || s != null)
+			try
+			{
+				InetSocketAddress localAddress = (InetSocketAddress) localAddress();
+				InetSocketAddress remoteAddress = (InetSocketAddress) remoteAddress();
+				String state = "up";
+				
+				if (listener != null && readQueue == null)
+					state = "down";
+
+				return String.format( "UdpConnection(%s, %s:%d, %s:%d)",
+					state,
+					localAddress.getAddress(), localAddress.getPort(),
+					remoteAddress.getAddress(), remoteAddress.getPort() );
+			}
+			catch (IOException e)
+			{
+				// nothing to do
+			}
+
+		return String.format( "UdpConnection(down, %s:%d)", host, port );
+	}
+
+	@Override
+	public SocketAddress localAddress() throws IOException
+	{
+		if (listener != null)
+			return listener.localAddress();
+
 		return socket.getLocalSocketAddress();
 	}
 
 	@Override
-	public SocketAddress remoteAddress()
+	public SocketAddress remoteAddress() throws IOException
 	{
+		if (listener != null)
+			return remoteAddress;
+
 		return socket.getRemoteSocketAddress();
 	}
 }

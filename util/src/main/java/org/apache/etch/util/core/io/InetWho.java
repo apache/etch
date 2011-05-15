@@ -68,6 +68,6 @@ public class InetWho implements Who
 	 */
 	public boolean matches( InetAddress addr, int port )
 	{
-		return addr.equals( addr ) && port == port;
+		return this.addr.equals( addr ) && this.port == port;
 	}
 }

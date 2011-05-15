@@ -31,6 +31,7 @@ import java.util.StringTokenizer;
 import org.apache.etch.bindings.java.transport.SessionMessage;
 import org.apache.etch.bindings.java.transport.TcpTransportFactory;
 import org.apache.etch.bindings.java.transport.TransportMessage;
+import org.apache.etch.bindings.java.transport.UdpTransportFactory;
 import org.apache.etch.util.Resources;
 import org.apache.etch.util.URL;
 import org.apache.etch.util.core.io.Transport;
@@ -299,5 +300,6 @@ abstract public class TransportFactory
 	{
 		define( "tcp", new TcpTransportFactory( false ) );
 		define( "tls", new TcpTransportFactory( true ) );
+		define( "udp", new UdpTransportFactory( ) );
 	}
 }

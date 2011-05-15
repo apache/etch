@@ -42,14 +42,14 @@ public class TestUdpConnection
 	public void init() throws Exception
 	{
 		aph = new MyPacketHandler();
-		ac = new UdpConnection( "udp://localhost:4011", null );
+		ac = new UdpConnection( "udp://localhost:4011" );
 		ac.setSession( aph );
 		ac.start();
 		ac.waitUp( 4000 );
 		System.out.println( "ac up" );
 		
 		bph = new MyPacketHandler();
-		bc = new UdpConnection( "udp://localhost:4010", null );
+		bc = new UdpConnection( "udp://localhost:4010" );
 		bc.setSession( bph );
 		bc.start();
 		bc.waitUp( 4000 );

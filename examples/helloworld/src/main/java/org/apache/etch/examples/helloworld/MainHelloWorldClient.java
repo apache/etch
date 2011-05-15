@@ -45,6 +45,7 @@ public class MainHelloWorldClient implements HelloWorldHelper.HelloWorldClientFa
 	public static void main( String[] args ) throws Exception
 	{
 		// TODO Change to correct URI
+		//String uri = "udp://127.0.0.1:4001";
 		String uri = "tcp://127.0.0.1:4001";
 		
 		RemoteHelloWorldServer server = HelloWorldHelper.newServer( uri, null,

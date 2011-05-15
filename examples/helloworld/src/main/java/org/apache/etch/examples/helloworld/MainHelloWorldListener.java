@@ -46,6 +46,7 @@ public class MainHelloWorldListener implements HelloWorldHelper.HelloWorldServer
 	public static void main( String[] args ) throws Exception
 	{
 		// TODO Change to correct URI
+		//String uri = "udp://127.0.0.1:4001";
 		String uri = "tcp://127.0.0.1:4001";
 		
 		ServerFactory listener = HelloWorldHelper.newListener( uri, null,
