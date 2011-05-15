@@ -32,6 +32,7 @@ namespace org.apache.etch.examples.helloworld
 		public static void Main(String[] args)
 		{
 			// TODO: Change to correct URI
+			//string uri = "udp://127.0.0.1:4001";
 			string uri = "tcp://127.0.0.1:4001";
 			
 			ServerFactory listener = HelloWorldHelper.NewListener( uri, null, new MainHelloWorldListener());

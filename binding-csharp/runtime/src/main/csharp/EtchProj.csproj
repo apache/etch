@@ -127,6 +127,7 @@
     <Compile Include="Org.Apache.Etch.Bindings.Csharp\Transport\TaggedDataOutput.cs" />
     <Compile Include="Org.Apache.Etch.Bindings.Csharp\Transport\TcpTransportFactory.cs" />
     <Compile Include="Org.Apache.Etch.Bindings.Csharp\Transport\TransportMessage.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Transport\UdpTransportFactory.cs" />
     <Compile Include="Org.Apache.Etch.Bindings.Csharp\Transport\UnwantedMessage.cs" />
     <Compile Include="Org.Apache.Etch.Bindings.Csharp\Util\AbstractStartable.cs" />
     <Compile Include="Org.Apache.Etch.Bindings.Csharp\Util\AlarmListener.cs" />
@@ -180,6 +181,9 @@
     <Compile Include="Org.Apache.Etch.Bindings.Csharp\Util\TransportConsts.cs" />
     <Compile Include="Org.Apache.Etch.Bindings.Csharp\Util\TransportData.cs" />
     <Compile Include="Org.Apache.Etch.Bindings.Csharp\Util\TransportPacket.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Util\UdpConnection.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Util\UdpListener.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Util\UdpPacket.cs" />
     <Compile Include="Org.Apache.Etch.Bindings.Csharp\Util\URL.cs" />
     <Compile Include="Org.Apache.Etch.Bindings.Csharp\Util\URLSerializer.cs" />
     <Compile Include="Org.Apache.Etch.Bindings.Csharp\Util\Who.cs" />

@@ -226,6 +226,7 @@ namespace Org.Apache.Etch.Bindings.Csharp.Support
         {
             Define("tcp", new TcpTransportFactory(false));
             Define("tls", new TcpTransportFactory(true));
+            Define("udp", new UdpTransportFactory());
 
             DefineFilter("KeepAlive", "Org.Apache.Etch.Bindings.Csharp.Transport.Filter.KeepAlive");
             DefineFilter("PwAuth", "Org.Apache.Etch.Bindings.Csharp.Transport.Filter.PwAuth");
