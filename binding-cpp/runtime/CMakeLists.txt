@@ -29,7 +29,7 @@ SET(VLD ${ETCH_EXTERNAL_DEPENDS}/vld/1.9h)
 
 
 # GTest
-SET(GTEST ${ETCH_EXTERNAL_DEPENDS}/gtest/1.5.0)
+SET(GTEST ${ETCH_EXTERNAL_DEPENDS}/gtest/1.6.0)
 
 # Set definitions
 IF (UNIX)
