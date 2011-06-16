@@ -14,7 +14,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
- */ 
+ */
 
 /*
  * etch_message.c
@@ -66,7 +66,7 @@ int destroy_message (void* data)
     }
 
     destroy_objectex((etch_object*)msg);
-    return result;    
+    return result;
 }
 
 /**
@@ -87,23 +87,18 @@ etch_message* new_message_init(etch_type* type, const int initialsize)
     return newmsg;
 }
 
-
-
-
 /**
- * message_remove()
+ * etch_message_remove()
  * removes an element from the message struct, returning the element.
  * if the element is found, its key is destroyed, and the object is returned.
  * caller owns returned object.
- */ 
-etch_object* message_remove(etch_message* msg, etch_field* key)
-{
-    return structvalue_remove(msg->sv, key);
+ */
+etch_object* etch_message_remove(etch_message* msg, etch_field* key) {
+	return structvalue_remove(msg->sv, key);
 }
 
-
 /**
- * message_put()
+ * etch_message_put()
  * insert key/value pair
  *
  * @param key an etch_field whose destructor will be invoked when the struct is
@@ -120,23 +115,21 @@ etch_object* message_remove(etch_message* msg, etch_field* key)
  * relinquishes ownership of parameters (other than this of course), regardless
  * of outcome. should caller wish to retain ownership on failure, the parameter
  * object could be marked such that the destructor invoked here becomes benign.
- */ 
-int message_put(etch_message* msg, etch_field* key, etch_object* value) 
-{ 
-    /* on success, struct owns key and value */
-    if (0 == structvalue_put(msg->sv, key, value))
-        return 0;
+ */
+int etch_message_put(etch_message* msg, etch_field* key, etch_object* value) {
+	/* on success, struct owns key and value */
+	if (0 == structvalue_put(msg->sv, key, value))
+		return 0;
 
-    etch_object_destroy(value);
-    value = NULL;
+	etch_object_destroy(value);
+	value = NULL;
 
-    destroy_field(key); /* note we are often passed protected vf keys */
-    return -1; 
+	destroy_field(key); /* note we are often passed protected vf keys */
+	return -1;
 }
 
-
 /**
- * message_putc()
+ * etch_message_putc()
  * insert key/value pair and clear value reference
  *
  * @param key an etch_field whose destructor will be invoked when the struct is
@@ -154,10 +147,9 @@ int message_put(etch_message* msg, etch_field* key, etch_object* value)
  * relinquishes ownership of parameters (other than this of course), regardless
  * of outcome. should caller wish to retain ownership on failure, the parameter
  * object could be marked such that the destructor invoked here becomes benign.
- */ 
-int message_putc(etch_message* msg, etch_field* key, void** valref) 
-{ 
-    etch_object* value = NULL;
+ */
+int etch_message_putc(etch_message* msg, etch_field* key, void** valref) {
+	etch_object* value = NULL;
 
     if (valref)
     {   value = (etch_object*) *valref;
@@ -168,91 +160,89 @@ int message_putc(etch_message* msg, etch_field* key, void** valref)
         if (0 == structvalue_put (msg->sv, key, value)){
             return 0;
 		}
-	}	
+	}
 
-    /* a struct put was not successful so destroy parameter objects */
-    etch_object_destroy(value);
-    value = NULL;
+	/* a struct put was not successful so destroy parameter objects */
+	etch_object_destroy(value);
+	value = NULL;
 
-    destroy_field(key);  /* note we are often passed protected vf keys */
-    return -1; 
+	destroy_field(key); /* note we are often passed protected vf keys */
+	return -1;
 }
 
-
 /**
- * message_get()
+ * etch_message_get()
  * fetch value for key.
  * @return a non-disposable reference to the value, not a copy, or null.
  */
-etch_object* message_get(etch_message* msg, etch_field* key)
+etch_object* etch_message_get(etch_message* msg, etch_field* key)
 {
-    etch_object* retobj = NULL;
+	etch_object* retobj = NULL;
 
-    if (msg && key && msg->sv)
-        retobj = structvalue_get(msg->sv, key); 
+	if (msg && key && msg->sv)
+		retobj = structvalue_get(msg->sv, key);
 
-    #if(0)
-    if (NULL == msg || NULL == key || NULL == msg->sv) 
-        return throw_from(EXCPTYPE_ILLEGALARG, ETCHTYPEB_UNDEFINED, 0, 0); 
-    retobj = structvalue_get(msg->sv, key); 
-    #endif
-     
-    return retobj; 
+#if(0)
+	if (NULL == msg || NULL == key || NULL == msg->sv)
+	return throw_from(EXCPTYPE_ILLEGALARG, ETCHTYPEB_UNDEFINED, 0, 0);
+	retobj = structvalue_get(msg->sv, key);
+#endif
+
+	return retobj;
 }
 
-
 /**
- * message_type()
+ * etch_message_type()
  * return etch type of specified message
  */
-etch_type* message_type(etch_message* msg)
+etch_type* etch_message_type(etch_message* msg)
 {
-    return msg && msg->sv? msg->sv->struct_type: NULL;
+	return msg && msg->sv ? msg->sv->struct_type : NULL;
 }
 
-
 /**
- * message_aname()
+ * etch_message_aname()
  * return name of specified message in 8-bit encoding.
  * @return a reference to the message name, caller does not own it.
  */
-char* message_aname (etch_message* msg)
+char* etch_message_aname(etch_message* msg)
 {
-    etch_type* msgtype = message_type(msg);
-    char*  msgname = msgtype && msgtype->aname? msgtype->aname: "";
-    return msgname;
+	etch_type* msgtype = etch_message_type(msg);
+	char* msgname = msgtype && msgtype->aname ? msgtype->aname : "";
+	return msgname;
 }
 
-
 /**
- * message_reply()
+ * etch_message_reply()
  * creates a message which is a reply to the current message.
  * the current message's value factory is copied to the new message. 
  * message id of the current message (if any) is copied into the 
  * in-reply-to field of the new message.
  * @param newtype the type of the reply. caller retains ownership.
  * @return a reply message, which will contain exception if error.
- */ 
-etch_message* message_reply (etch_message* msg, etch_type* newtype)  
+ */
+etch_message* etch_message_reply(etch_message* msg, etch_type* newtype)
 {
-    int result = -1;
-    etch_int64*   msgid  = NULL;
-    etch_message* newmsg = NULL;
+	int result = -1;
+	etch_int64* msgid = NULL;
+	etch_message* newmsg = NULL;
 
-    if (NULL == msg) return NULL;
+	if (NULL == msg)
+		return NULL;
 
-    if (NULL == newtype) /* use message type's result type */
-        newtype = etchtype_get_result_type (msg->sv->struct_type);
+	if (NULL == newtype) /* use message type's result type */
+		newtype = etchtype_get_result_type(msg->sv->struct_type);
 
-    if (NULL == newtype) return NULL;
+	if (NULL == newtype)
+		return NULL;
 
-    /* construct message. caller retains ownership of type */
-    newmsg = new_message (newtype, 0, msg->vf);  
+	/* construct message. caller retains ownership of type */
+	newmsg = new_message(newtype, 0, msg->vf);
 
-    msgid  = message_get_id (msg); /* get back a ref to ID or null */
+	msgid = etch_message_get_id(msg); /* get back a ref to ID or null */
 
     if (msgid)  
-        result = message_set_in_reply_to (newmsg, ((etch_object*)msgid)->clone(msgid));
+        result = etch_message_set_in_reply_to (newmsg, ((etch_object*)msgid)->clone(msgid));
     
     if (0 != result)
     {      
@@ -263,37 +253,35 @@ etch_message* message_reply (etch_message* msg, etch_type* newtype)
     return newmsg;
 }
 
-
 /**
- * message_set_id()
+ * etch_message_set_id()
  * sets the message-id field of this message.
  * @param id a *disposable* long object wrapping the connection specific 
  * unique identifier of this message, or NULL if the message has not yet
  * been sent. NOTE that the send process overwrites any value which might 
  * otherwise be set here.
- */ 
-int message_set_id(etch_message* msg, etch_int64* id)
+ */
+int etch_message_set_id(etch_message* msg, etch_int64* id)
 {
-    int  result = 0;
-    if (!id) return -1;       
+	int result = 0;
+	if (!id)
+		return -1;
 
     /* id object ownership is relinquished here even if the call fails */
     result = ((struct i_value_factory*)((etch_object*)msg->vf)->vtab)->set_message_id(msg->vf, msg, id);
     return result;
 }
 
-
 /**
- * message_get_id()
+ * etch_message_get_id()
  * @return a non-disposable reference to the connection specific unique  
  * identifier of this message, or null if there was no such identifier. 
- */ 
-etch_int64* message_get_id(etch_message* msg)
-{
-    etch_int64* id = ((struct i_value_factory*)((etch_object*)msg->vf)->vtab)->get_message_id(msg->vf, msg);
-    return id;
+ */
+etch_int64* etch_message_get_id(etch_message* msg) {
+	etch_int64* id = NULL;
+	id = ((struct i_value_factory*) ((etch_object*) msg->vf)->vtab)->get_message_id(msg->vf, msg);
+	return id;
 }
-
 
 /**
  * message_get_in_reply_to()
@@ -301,40 +289,41 @@ etch_int64* message_get_id(etch_message* msg)
  * this message is a response to, or null if this is an original message 
  * or if the original message did not have a message-id. 
  * caller does not own the returned object.
- */ 
-etch_int64* message_get_in_reply_to(etch_message* msg)
-{
-    /* vf returns to us a reference to its value */
-    etch_int64* id = ((struct i_value_factory*)((etch_object*)msg->vf)->vtab)->get_in_reply_to(msg->vf, msg);
-    return id;
+ */
+etch_int64* etch_message_get_in_reply_to(etch_message* msg) {
+	/* vf returns to us a reference to its value */
+	etch_int64
+			* id =
+					((struct i_value_factory*) ((etch_object*) msg->vf)->vtab)->get_in_reply_to(
+							msg->vf, msg);
+	return id;
 }
 
-
 /**
- * message_set_in_reply_to()
+ * etch_message_set_in_reply_to()
  * sets the in-reply-to field of this message.
  * @param msgid a *disposable* long object wrapping the message-id of the 
  * message that this message is a response to. note that caller must clone 
  * or otherwise supply a disposable object as this parameter.  
- */ 
-int message_set_in_reply_to(etch_message* msg, etch_int64* msgid)
-{
-    int result = 0;
-    if (!msgid) return -1;       
+ */
+int etch_message_set_in_reply_to(etch_message* msg, etch_int64* msgid) {
+	int result = 0;
+	if (!msgid)
+		return -1;
 
-    /* msgid ownership is relinquished here even if the call fails */
-    result = ((struct i_value_factory*)((etch_object*)msg->vf)->vtab)->set_in_reply_to(msg->vf, msg, msgid);
-    return result;
+	/* msgid ownership is relinquished here even if the call fails */
+	result
+			= ((struct i_value_factory*) ((etch_object*) msg->vf)->vtab)->set_in_reply_to(
+					msg->vf, msg, msgid);
+	return result;
 }
 
-
 /**
- * message_size()
- */ 
+ * etch_message_size()
+ */
 
-int message_size (etch_message* msg) 
-{
-    return msg? structvalue_count(msg->sv): 0;
+int etch_message_size(etch_message* msg) {
+	return msg ? structvalue_count(msg->sv) : 0;
 }
 
 

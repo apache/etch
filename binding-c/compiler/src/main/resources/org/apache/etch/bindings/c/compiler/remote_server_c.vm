@@ -297,7 +297,7 @@ $sb
         if (!_msg) break;
 
 #foreach( $p in $n.iterator() )
-        _result = message_putc (_msg, $helper.getVfName($intf)_get_static()->_mf_$helper.getIntfName($intf)_$p.name(), (void**)&$p.name());
+        _result = etch_message_putc (_msg, $helper.getVfName($intf)_get_static()->_mf_$helper.getIntfName($intf)_$p.name(), (void**)&$p.name());
 		if ($p.name() != NULL && 0 != _result) break; 
 #end
 
@@ -401,7 +401,7 @@ $sb
  * leaking the un-put parameters, since prior to exit we can destroy each 
  * parameter which remains non-null.
  * @remarks note also that we don't bother to clone the value keys, since they  
- * are protected objects, and while message_put will appear to destroy them,
+ * are protected objects, and while etch_message_put will appear to destroy them,
  * this will have no effect.
  */
 #set ($sb = "$helper.getPointerTypeName($n.type()) $helper.getRemoteName($intf, '')_begin_server_$n.name()(void* thisAsVoid")
@@ -428,7 +428,7 @@ $sb
         if (!_msg) break;
 
 #foreach( $p in $n.iterator() )
-        _result = message_putc (_msg, $helper.getVfName($intf)_get_static()->_mf_$helper.getIntfName($intf)_$p.name(), (void**)&$p.name());
+        _result = etch_message_putc (_msg, $helper.getVfName($intf)_get_static()->_mf_$helper.getIntfName($intf)_$p.name(), (void**)&$p.name());
         if ($p.name() != NULL && 0 != _result) break;
 #end
 

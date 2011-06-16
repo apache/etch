@@ -208,7 +208,7 @@ static etch_int64* fvf_get_message_id (void* vfData, etch_message* msg)
     etch_int64* id = NULL;
     fake_vf_impl* data = (fake_vf_impl*) vf->impl;
 
-    id = (etch_int64*) message_get(msg, data->mf_message_id);
+    id = (etch_int64*) etch_message_get(msg, data->mf_message_id);
 
     /* return (etch_int64*) verifyx((etch_object*) id, 0, 
        CLASSID_PRIMITIVE_INT64, EXCPTYPE_INTERNALERR); */
@@ -226,7 +226,7 @@ static int fvf_set_message_id (void* vfData, etch_message* msg, etch_int64* id)
     fake_vf_impl* data  = (fake_vf_impl*) vf->impl;
     etch_field* keycopy = (etch_field*)etch_object_clone_func(data->mf_message_id);
 
-    const int result = message_put(msg, keycopy, (etch_object*) id);  
+    const int result = etch_message_put(msg, keycopy, (etch_object*) id);
     return result;
 }
 
@@ -240,7 +240,7 @@ static etch_int64* fvf_get_in_reply_to (void* vfData, etch_message* msg)
     etch_int64* id = NULL;
     fake_vf_impl* data = (fake_vf_impl*) vf->impl;
 
-    id = (etch_int64*) message_get(msg, data->mf_in_reply_to);
+    id = (etch_int64*) etch_message_get(msg, data->mf_in_reply_to);
 
     return id;
 }
@@ -258,7 +258,7 @@ static int fvf_set_in_reply_to (void* vfData, etch_message* msg, etch_int64* id)
     /* FYI this copy of the key is put to etch_message* sent message, and gets   
      * freed in msg.destroy(), message owns memory other than vf and type 
      */
-    return message_put(msg, keycopy, (etch_object*) id);  
+    return etch_message_put(msg, keycopy, (etch_object*) id);
 }
 
 /*  
@@ -1017,7 +1017,7 @@ static int run_iterator_test(etch_message* msg, testitems* data)
     {
         testcount++;
 
-        result = message_put(msg, iterator->current_key, iterator->current_value);
+        result = etch_message_put(msg, iterator->current_key, iterator->current_value);
 
         CU_ASSERT_EQUAL(result,0);
         
@@ -1125,12 +1125,12 @@ static void reply_test(void)
     
     msg = new_message (data->mt1, 0, vf);  /* message owns neither arg */
 
-    result = message_set_id(msg, (etch_int64*)etch_object_clone_func(id_original));  
+    result = etch_message_set_id(msg, (etch_int64*)etch_object_clone_func(id_original));
     CU_ASSERT_EQUAL_FATAL(result,0);
 
     replytype = data->rmt;    /* again, a message does not own a type */ 
 
-    newmsg = message_reply (msg, replytype);
+    newmsg = etch_message_reply (msg, replytype);
 
     CU_ASSERT_PTR_NOT_NULL_FATAL(newmsg);
     CU_ASSERT_FALSE_FATAL(is_etch_exception(newmsg));
@@ -1139,7 +1139,7 @@ static void reply_test(void)
     CU_ASSERT_TRUE(result);
     CU_ASSERT_EQUAL(vf, newmsg->vf);
 
-    id_replied_to = message_get_in_reply_to(newmsg);
+    id_replied_to = etch_message_get_in_reply_to(newmsg);
 
     CU_ASSERT_PTR_NOT_NULL_FATAL(id_replied_to);
     CU_ASSERT_FALSE_FATAL(is_etch_exception(id_replied_to));
@@ -1192,7 +1192,7 @@ static void run_exception_test(const int whichtest)
         }
     }
 
-    msg = message_read(NULL); /* pass NULL for TDI */
+    msg = etch_message_read(NULL); /* pass NULL for TDI */
     CU_ASSERT_PTR_NOT_NULL_FATAL(msg);
     CU_ASSERT_TRUE(is_exception(msg));
     excp = get_exception(msg);

@@ -581,7 +581,7 @@ static void test_closedelivery2(void)
     do
     {   etch_plainmailbox* mbox  = new_mailbox (g_manager->imanager, 1, -1, 0, 2);
         etch_message *mymessage1 = new_message(g_type1, 0, (etch_value_factory*) g_vf);
-        message_set_id(mymessage1, new_int64(1)); 
+        etch_message_set_id(mymessage1, new_int64(1));
        
         check_deliver(mbox, TRUE, g_who1, mymessage1);
         check_mailbox(mbox, FALSE, FALSE, FALSE, FALSE, 0);  
@@ -832,7 +832,7 @@ static void test_notify4(void)
         check_mailbox_status(FALSE, NULL, NULL, FALSE); 
 
         mymessage = new_message(g_type1, 0, (etch_value_factory*) g_vf);
-        message_set_id(mymessage, new_int64(MYMSGID));
+        etch_message_set_id(mymessage, new_int64(MYMSGID));
         printf("\n");
 
         /* relinquish message on successful queue of message to mailbox, retain message
@@ -879,7 +879,7 @@ static void test_read1(void)
         etch_plainmailbox* mbox = new_mailbox (g_manager->imanager, 1, -1, 0, 2);
         check_mailbox(mbox, TRUE, FALSE, FALSE, FALSE, 0);
         mymessage = new_message(g_type1, 0, (etch_value_factory*) g_vf);
-        message_set_id(mymessage, new_int64(MYMSGID));
+        etch_message_set_id(mymessage, new_int64(MYMSGID));
 
         check_deliver(mbox, TRUE, g_who2, mymessage);
         check_mailbox(mbox, FALSE, FALSE, FALSE, FALSE, 0);
@@ -919,7 +919,7 @@ static void test_read2(void)
         etch_plainmailbox* mbox = new_mailbox (g_manager->imanager, 1, -1, 0, 2);
         check_mailbox(mbox, TRUE, FALSE, FALSE, FALSE, 0);
         mymessage = new_message(g_type1, 0, (etch_value_factory*) g_vf);
-        message_set_id(mymessage, new_int64(MYMSGID));
+        etch_message_set_id(mymessage, new_int64(MYMSGID));
 
         check_deliver(mbox, TRUE, g_who2, mymessage);
         check_mailbox(mbox, FALSE, FALSE, FALSE, FALSE, 0);
@@ -1110,7 +1110,7 @@ static void test_closeread2(void)
     do
     {   etch_plainmailbox* mbox  = new_mailbox (g_manager->imanager, 1, -1, 0, 2);
         etch_message *mymessage1 = new_message(g_type1, 0, (etch_value_factory*) g_vf);
-        message_set_id(mymessage1, new_int64(1)); 
+        etch_message_set_id(mymessage1, new_int64(1));
         #if IS_DEBUG_CONSOLE
         printf("\n");
         #endif
@@ -1180,7 +1180,7 @@ static void test_closeread4(void)
     do
     {   etch_plainmailbox* mbox  = new_mailbox (g_manager->imanager, 1, -1, 0, 2);
         etch_message *mymessage1 = new_message(g_type1, 0, (etch_value_factory*) g_vf);
-        message_set_id(mymessage1, new_int64(1)); 
+        etch_message_set_id(mymessage1, new_int64(1));
         #if IS_DEBUG_CONSOLE
         printf("\n");
         #endif
@@ -1223,8 +1223,8 @@ static void test_full1(void)
         etch_plainmailbox* mbox  = new_mailbox (g_manager->imanager, 1, -1, 0, CAPACITY_2);
         etch_message *mymessage1 = new_message(g_type1, 0, (etch_value_factory*) g_vf);
         etch_message *mymessage2 = new_message(g_type2, 0, (etch_value_factory*) g_vf);
-        message_set_id(mymessage1, new_int64(1)); 
-        message_set_id(mymessage2, new_int64(2));
+        etch_message_set_id(mymessage1, new_int64(1));
+        etch_message_set_id(mymessage2, new_int64(2));
         #if IS_DEBUG_CONSOLE
         printf("\n");
         #endif
@@ -1264,8 +1264,8 @@ static void test_full2(void)
         etch_plainmailbox* mbox  = new_mailbox (g_manager->imanager, 1, -1, 0, CAPACITY_2);
         etch_message *mymessage1 = new_message(g_type1, 0, (etch_value_factory*) g_vf);
         etch_message *mymessage2 = new_message(g_type2, 0, (etch_value_factory*) g_vf);
-        message_set_id(mymessage1, new_int64(1)); 
-        message_set_id(mymessage2, new_int64(2));
+        etch_message_set_id(mymessage1, new_int64(1));
+        etch_message_set_id(mymessage2, new_int64(2));
         #if IS_DEBUG_CONSOLE
         printf("\n");
         #endif

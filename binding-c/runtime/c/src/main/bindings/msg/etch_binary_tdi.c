@@ -265,21 +265,21 @@ int bintdi_end_message(tagged_data_input* tdi, etch_message* msg)
      * message result object both exists and reflects that exception.
      */
 
-    if (message_get_in_reply_to (msg))  
+    if (etch_message_get_in_reply_to (msg))
     {
         etch_field* xkey = builtins._mf_msg;
         /* look for an exception in the newly-deserialized message */
-        etch_exception* excpobj = (etch_exception*) message_get (msg, xkey);
+        etch_exception* excpobj = (etch_exception*) etch_message_get (msg, xkey);
 
         if (is_etch_exception(excpobj))
         {   /* look for a result object in the message */
             etch_field* resobj_key = builtins._mf_result;
-            etch_object* resobj = message_get (msg, resobj_key);
+            etch_object* resobj = etch_message_get (msg, resobj_key);
             ETCH_LOG(LOG_CATEGORY, ETCH_LOG_DEBUG, "exception found in message\n"); 
             //replace result with exception object
             //TODO memory leak here? (resobj not destroyed, should we?)
             resobj = ((etch_object*)excpobj)->clone(excpobj);
-            result = message_put (msg, resobj_key, resobj); 
+            result = etch_message_put (msg, resobj_key, resobj);
         }
     }
 

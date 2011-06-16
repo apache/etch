@@ -118,10 +118,10 @@ for apr-iconv.
 
 A much more easy way to build apr is to use our apr-install.sh script (). For build the apr libraries,
 follow the next steps:
-1. create a new folder beside your <ETCH_EXTERNAL_DEPENDS> etc. home/user/projects/etch/external_sources
+1. create a new folder beside your <ETCH_EXTERNAL_DEPENDS> e.g. home/user/projects/etch/external_sources
 2. edit apr-install.sh script and set INSTALL_PREFIX to your <ETCH_EXTERNAL_DEPENDS> folde. You can also
    set this variables as environment variable.
-3. enter to build folder (etc, ../etch/external_sources, see 1.) and execute the following
+3. enter to build folder (e.g., ../etch/external_sources, see 1.) and execute the following
    commands:
    - apr-install.sh (downloading apr sources, build apr libraries, install libraries)
  

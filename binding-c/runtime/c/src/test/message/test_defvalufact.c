@@ -76,7 +76,7 @@ static int do_test_type_field(default_value_factory* vf, etch_type* type, etch_f
 {
     etch_message* msg = new_message(type, 1, (etch_value_factory*)vf);
 
-    const int result = message_put(msg, key, value);
+    const int result = etch_message_put(msg, key, value);
 
     etch_object_destroy(msg);
 

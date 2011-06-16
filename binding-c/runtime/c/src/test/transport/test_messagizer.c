@@ -1175,10 +1175,10 @@ static void test_packet_1(void)
         CU_ASSERT_EQUAL(my_session->what, SESSION_MESSAGE); 
         result = is_equal_who(my_session->sender, g_who);
         CU_ASSERT_EQUAL(result, TRUE);
-        CU_ASSERT_EQUAL(message_size(my_session->msg), 0);
+        CU_ASSERT_EQUAL(etch_message_size(my_session->msg), 0);
         CU_ASSERT_PTR_NULL(my_session->eventx);
         /* assert that message type is "add" (since we buffered FAKEID_TYPE_ADD above) */
-        msgtype = message_type(my_session->msg); 
+        msgtype = etch_message_type(my_session->msg);
         CU_ASSERT_PTR_NOT_NULL_FATAL(msgtype);
         CU_ASSERT_EQUAL(msgtype->id, FAKEID_TYPE_ADD);
 
@@ -1235,7 +1235,7 @@ static void test_packet_2(void)
         if (-1 != result) break;
 
         CU_ASSERT_EQUAL(my_session->what, SESSION_NOTIFY); 
-        CU_ASSERT_EQUAL(message_size(my_session->msg), 0);      
+        CU_ASSERT_EQUAL(etch_message_size(my_session->msg), 0);
 
         CU_ASSERT_PTR_NOT_NULL_FATAL(my_session->eventx);
 
@@ -1250,7 +1250,7 @@ static void test_packet_2(void)
         CU_ASSERT_PTR_NOT_NULL_FATAL(thismessage);
 
         /* assert that message type is "add" (since we buffered FAKEID_TYPE_ADD above) */
-        msgtype = message_type(thismessage); 
+        msgtype = etch_message_type(thismessage);
         CU_ASSERT_PTR_NOT_NULL_FATAL(msgtype);
         CU_ASSERT_EQUAL(msgtype->id, FAKEID_TYPE_ADD);
 
@@ -1303,11 +1303,11 @@ static void test_packet_3(void)
         if (0 != result) break;
 
         CU_ASSERT_EQUAL(my_session->what, SESSION_MESSAGE); 
-        CU_ASSERT_EQUAL(message_size(my_session->msg), 0);      
+        CU_ASSERT_EQUAL(etch_message_size(my_session->msg), 0);
 
         /* assert that message type is "add_result" (since we buffered FAKEID_TYPE_ADD_RESULT above) */
         CU_ASSERT_PTR_NOT_NULL_FATAL(my_session->msg);
-        msgtype = message_type(my_session->msg); 
+        msgtype = etch_message_type(my_session->msg);
         CU_ASSERT_PTR_NOT_NULL_FATAL(msgtype);
         CU_ASSERT_EQUAL(msgtype->id, FAKEID_TYPE_ADD_RESULT);
 

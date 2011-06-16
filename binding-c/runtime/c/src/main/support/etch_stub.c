@@ -278,10 +278,10 @@ int etchstub_put_resultobj (etch_stub* stub, etch_message* replymsg, etch_object
     etch_field* key_result = builtins._mf_result;
 
     /* check if the message already has a result object, i.e., an exception */
-    if (message_get (replymsg, key_result))
+    if (etch_message_get (replymsg, key_result))
         etch_object_destroy(resultobj);  /* if so, discard the passed result */
     else  /* resultobj is relinquished here regardless of result */
-        result = message_put (replymsg, clone_field(key_result), (etch_object*) resultobj); 
+        result = etch_message_put (replymsg, clone_field(key_result), (etch_object*) resultobj);
 
     return result;
 }
@@ -305,20 +305,20 @@ int etchstub_send_reply (etch_stub* stub, i_delivery_service* dsvc, etch_who* wh
      * exception was thrown by the implementation, and the exception is 
      * therefore to be the reply. in such a case, the etch compiler generates
      * a message type as newtype above, which is the second parameter to 
-     * message_reply(), in order that in_reply_to can be instantiated. 
+     * etch_message_reply(), in order that in_reply_to can be instantiated.
      * (our example below makes newtype the 1-way exception reply type in  
      * this case). for two-way messages, newtype, and thus the second parameter
-     * to message_reply() is null.  
+     * to etch_message_reply() is null.
      */
-    etch_message* replymsg = message_reply (msg, newtype);
+    etch_message* replymsg = etch_message_reply (msg, newtype);
 
     if (NULL == replymsg && is_exception_resobj)
     {   newtype  = builtins._mt__exception;
-        replymsg = message_reply (msg, newtype);
+        replymsg = etch_message_reply (msg, newtype);
     }
 
     if (NULL == replymsg) {
-        etch_type* replytype = newtype? newtype: message_type(msg);
+        etch_type* replytype = newtype? newtype: etch_message_type(msg);
         char* logmask = "could not create reply message for type %s\n";
         ETCH_LOG(LOG_CATEGORY, ETCH_LOG_ERROR, logmask, replytype->aname);
         return -1;
@@ -589,7 +589,7 @@ int etchstub_session_message (void* data, etch_who* whofrom, etch_message* msg)
     unsigned char async_mode = 0;
 
     /* get the message type object associated with this message */
-    etch_type*  thistype = message_type(msg);
+    etch_type*  thistype = etch_message_type(msg);
     ETCH_ASSERT(thistype);
     ETCH_ASSERT(is_etch_stub(stubimpl));
 

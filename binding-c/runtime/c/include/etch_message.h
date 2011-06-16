@@ -65,18 +65,18 @@ etch_unwanted_message* new_unwanted_message(etch_who* whofrom, etch_message* msg
 
 etch_message* new_message (etch_type*, const int, etch_value_factory*);  
 
-etch_object*  message_get   (etch_message*, etch_field* key);
-etch_object*  message_remove(etch_message*, etch_field* key); 
-int           message_put   (etch_message*, etch_field* key, etch_object* value);
-int           message_putc  (etch_message*, etch_field* key, void** valref);
-etch_message* message_reply (etch_message*, etch_type* type);
-etch_type*    message_type  (etch_message*);
-char*         message_aname (etch_message*);
-etch_int64*   message_get_id(etch_message*);
-etch_int64*   message_get_in_reply_to(etch_message*);
-int           message_set_in_reply_to(etch_message*, etch_int64* id);
-int           message_set_id(etch_message*, etch_int64* id);
-int           message_size  (etch_message*);
+etch_object*  etch_message_get   (etch_message*, etch_field* key);
+etch_object*  etch_message_remove(etch_message*, etch_field* key);
+int           etch_message_put   (etch_message*, etch_field* key, etch_object* value);
+int           etch_message_putc  (etch_message*, etch_field* key, void** valref);
+etch_message* etch_message_reply (etch_message*, etch_type* type);
+etch_type*    etch_message_type  (etch_message*);
+char*         etch_message_aname (etch_message*);
+etch_int64*   etch_message_get_id(etch_message*);
+etch_int64*   etch_message_get_in_reply_to(etch_message*);
+int           etch_message_set_in_reply_to(etch_message*, etch_int64* id);
+int           etch_message_set_id(etch_message*, etch_int64* id);
+int           etch_message_size  (etch_message*);
 
 #ifdef __cplusplus
 }

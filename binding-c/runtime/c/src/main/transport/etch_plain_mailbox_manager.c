@@ -116,11 +116,11 @@ int pmboxmgr_transport_message (void* data, void* whoData, void* messageData)
     etch_message* msg = (etch_message*)messageData;
     int result = 0;
 
-    etch_int64* msgid = message_get_id(msg);  /* expect NULL (not yet sent) */
+    etch_int64* msgid = etch_message_get_id(msg);  /* expect NULL (not yet sent) */
     if (NULL != msgid) return -1;  /* already sent */
 
     msgid  = new_int64(etch_plain_mailbox_manager_generate_message_id()); /* assign ID to message */
-    result = message_set_id(msg, msgid);  /* relinquish msgid object */
+    result = etch_message_set_id(msg, msgid);  /* relinquish msgid object */
 
     if (0 == result)  
         result = mgr->transport->transport_message (mgr->transport->thisx, whoto, msg);
@@ -364,7 +364,7 @@ int pmboxmgr_session_message (void* data, etch_who* whofrom, etch_message* msg)
         return -1;
     }
 
-    if (NULL == (msgid = message_get_in_reply_to (msg)))  /* msgid not ours */
+    if (NULL == (msgid = etch_message_get_in_reply_to (msg)))  /* msgid not ours */
         return session->session_message (session->thisx, whofrom, msg);  
 
     /* fyi no mailbox will exist for a one-way message */
@@ -531,13 +531,13 @@ i_session* pmboxmgr_get_session (void* data)
     mgr = imgr->thisx;
     ETCH_ASSERT(is_etch_mailboxmgr(mgr));
 
-    msgid     = message_get_id(msg);   /* expect NULL (not yet sent) */
-    inreplyto = message_get_in_reply_to(msg);
+    msgid     = etch_message_get_id(msg);   /* expect NULL (not yet sent) */
+    inreplyto = etch_message_get_in_reply_to(msg);
     if (NULL != msgid)     return -1;  /* already sent */
     if (NULL != inreplyto) return -1;  /* marked as reply */
 
     msgid  = new_int64(etch_plain_mailbox_manager_generate_message_id());
-    result = message_set_id(msg, msgid);  /* assign ID to message */
+    result = etch_message_set_id(msg, msgid);  /* assign ID to message */
     if (0 != result) return -1;
 
     mbox = new_mailbox (imgr, msgid->value, mgr->max_delay, lifetime, MAXMESSAGES_ONE);

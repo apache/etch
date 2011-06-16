@@ -100,7 +100,7 @@ etch_string* say_hello_impl(void* thisx, helloworld_user* to_whom){
   int len = (6 + wcslen(to_whom->name->v.valw) + 1);
   wchar_t* retw = (wchar_t*) malloc(len * sizeof(wchar_t));
   etch_string* ret = NULL;
-  etch_snwprintf(retw, len, L"Hello %s", to_whom->name->v.valw);
+  etch_snwprintf(retw, len, L"Hello %S\n", to_whom->name->v.valw);
   ret = new_stringw(retw);
   etch_object_destroy(to_whom);
   free(retw);

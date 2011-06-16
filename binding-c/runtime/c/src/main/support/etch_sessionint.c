@@ -135,14 +135,14 @@ void etchsession_get_objinfo (etch_objsession_objinfo* p, void* evt)
     if (is_etch_message (p->msg))
     {   
         p->is_message = TRUE; 
-        p->msg_aname  = message_aname ((etch_message*) p->msg);
+        p->msg_aname  = etch_message_aname ((etch_message*) p->msg);
 
         if (is_etch_exception(p->msg))
         {   p->is_exception = TRUE;
             p->exception = ((etch_exception*) p->msg);
         }
         else
-        {   p->resobj = message_get ((etch_message*) p->msg, builtins._mf_result);
+        {   p->resobj = etch_message_get ((etch_message*) p->msg, builtins._mf_result);
             if (is_etch_exception(p->resobj))
             {   p->is_exception = TRUE;
                 p->exception = (etch_exception*) p->resobj;

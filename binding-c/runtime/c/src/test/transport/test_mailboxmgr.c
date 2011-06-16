@@ -1023,9 +1023,9 @@ static void test_transport_message_1(void)
         addmsg = new_add_message();
         CU_ASSERT_PTR_NOT_NULL_FATAL(addmsg);
         
-        addmsg_id = message_get_id(addmsg);
+        addmsg_id =  etch_message_get_id(addmsg);
         CU_ASSERT_PTR_NULL(addmsg_id);
-        addmsg_inreplyto = message_get_in_reply_to(addmsg);
+        addmsg_inreplyto = etch_message_get_in_reply_to(addmsg);
         CU_ASSERT_PTR_NULL(addmsg_inreplyto);
 
         result = g_manager->transport_message(g_manager, g_who1, addmsg);
@@ -1035,9 +1035,9 @@ static void test_transport_message_1(void)
         CU_ASSERT_EQUAL(my_transport_impl->recipient, g_who1);
         CU_ASSERT_PTR_EQUAL(my_transport_impl->msg, addmsg);
 
-        addmsg_id = message_get_id(addmsg);
+        addmsg_id = etch_message_get_id(addmsg);
         CU_ASSERT_PTR_NOT_NULL(addmsg_id);
-        addmsg_inreplyto = message_get_in_reply_to(addmsg);
+        addmsg_inreplyto = etch_message_get_in_reply_to(addmsg);
         CU_ASSERT_PTR_NULL(addmsg_inreplyto);
 
         mailbox = pmboxmgr_get_mailbox(g_manager, addmsg_id);
@@ -1087,12 +1087,12 @@ static void test_transport_message_2(void)
         add_resultmsg = new_add_result_message();
         CU_ASSERT_PTR_NOT_NULL_FATAL(add_resultmsg);
         
-        add_resultmsg_id = message_get_id(add_resultmsg);
+        add_resultmsg_id = etch_message_get_id(add_resultmsg);
         CU_ASSERT_PTR_NULL(add_resultmsg_id);
-        add_resultmsg_inreplyto = message_get_in_reply_to(add_resultmsg);
+        add_resultmsg_inreplyto = etch_message_get_in_reply_to(add_resultmsg);
         CU_ASSERT_PTR_NULL(add_resultmsg_inreplyto);
 
-        result = message_set_in_reply_to(add_resultmsg, new_int64(THISTESTID));
+        result = etch_message_set_in_reply_to(add_resultmsg, new_int64(THISTESTID));
         CU_ASSERT_EQUAL(result, 0);
 
         result = g_manager->transport_message(g_manager, g_who1, add_resultmsg);
@@ -1101,9 +1101,9 @@ static void test_transport_message_2(void)
         CU_ASSERT_EQUAL(my_transport_impl->recipient, g_who1);
         CU_ASSERT_PTR_EQUAL(my_transport_impl->msg, add_resultmsg);
 
-        add_resultmsg_id = message_get_id(add_resultmsg);
+        add_resultmsg_id = etch_message_get_id(add_resultmsg);
         CU_ASSERT_PTR_NOT_NULL(add_resultmsg_id);
-        add_resultmsg_inreplyto = message_get_in_reply_to(add_resultmsg);
+        add_resultmsg_inreplyto = etch_message_get_in_reply_to(add_resultmsg);
         CU_ASSERT_PTR_NOT_NULL(add_resultmsg_inreplyto);
         if (add_resultmsg_inreplyto)
         {   CU_ASSERT_EQUAL(add_resultmsg_inreplyto->value, THISTESTID);
@@ -1156,11 +1156,11 @@ static void test_transport_message_3(void)
         addmsg = new_add_message();
         CU_ASSERT_PTR_NOT_NULL_FATAL(addmsg);
         
-        addmsg_id = message_get_id(addmsg);
+        addmsg_id = etch_message_get_id(addmsg);
         CU_ASSERT_PTR_NULL(addmsg_id);
-        result = message_set_id(addmsg, new_int64(THISTESTID));
+        result = etch_message_set_id(addmsg, new_int64(THISTESTID));
         CU_ASSERT_EQUAL(result, 0);
-        addmsg_id = message_get_id(addmsg);
+        addmsg_id = etch_message_get_id(addmsg);
         CU_ASSERT_PTR_NOT_NULL_FATAL(addmsg_id);
 
         result = g_manager->transport_message(g_manager, g_who1, addmsg);
@@ -1219,9 +1219,9 @@ static void test_transport_call_1(void)
         result = pmboxmgr_size(g_manager);
         CU_ASSERT_EQUAL(result, 1);
 
-        addmsg_id = message_get_id(addmsg);
+        addmsg_id = etch_message_get_id(addmsg);
         CU_ASSERT_PTR_NOT_NULL(addmsg_id);
-        addmsg_inreplyto = message_get_in_reply_to(addmsg);
+        addmsg_inreplyto = etch_message_get_in_reply_to(addmsg);
         CU_ASSERT_PTR_NULL(addmsg_inreplyto);
 
         got_mailbox = pmboxmgr_get_mailbox(g_manager, addmsg_id);
@@ -1294,9 +1294,9 @@ static void test_transport_call_2(void)
         result = pmboxmgr_size(g_manager);
         CU_ASSERT_EQUAL(result, 1);
 
-        addmsg_id = message_get_id(addmsg);
+        addmsg_id = etch_message_get_id(addmsg);
         CU_ASSERT_PTR_NOT_NULL(addmsg_id);
-        addmsg_inreplyto = message_get_in_reply_to(addmsg);
+        addmsg_inreplyto = etch_message_get_in_reply_to(addmsg);
         CU_ASSERT_PTR_NULL(addmsg_inreplyto);
 
         got_mailbox = pmboxmgr_get_mailbox(g_manager, addmsg_id);
@@ -1347,7 +1347,7 @@ static void test_transport_call_3(void)
 
         etch_message* addmsg = new_add_message();
         CU_ASSERT_PTR_NOT_NULL_FATAL(addmsg);
-        result = message_set_id(addmsg, new_int64(1));  /* set ID essentially marking message sent */
+        result = etch_message_set_id(addmsg, new_int64(1));  /* set ID essentially marking message sent */
         CU_ASSERT_EQUAL(result, 0);
 
         result = g_manager->transport_call(g_manager->imanager, g_who1, addmsg, &mailbox); 
@@ -1357,7 +1357,7 @@ static void test_transport_call_3(void)
         result = pmboxmgr_size(g_manager);
         CU_ASSERT_EQUAL(result, 0);
 
-        addmsg_id = message_get_id(addmsg);
+        addmsg_id = etch_message_get_id(addmsg);
         CU_ASSERT_PTR_NOT_NULL_FATAL(addmsg_id);
         mailbox = pmboxmgr_get_mailbox(g_manager, addmsg_id);
         CU_ASSERT_PTR_NULL(mailbox); /* no mailbox should have been created */
@@ -1389,7 +1389,7 @@ static void test_transport_call_4(void)
     {   int result = 0;
         etch_message* addresultmsg = new_add_result_message();
         CU_ASSERT_PTR_NOT_NULL_FATAL(addresultmsg);
-        result = message_set_in_reply_to(addresultmsg, new_int64(1));  /* set in reply to ID */
+        result = etch_message_set_in_reply_to(addresultmsg, new_int64(1));  /* set in reply to ID */
         CU_ASSERT_EQUAL(result, 0);
 
         result = g_manager->transport_call(g_manager->imanager, g_who1, addresultmsg, NULL); 
@@ -1523,7 +1523,7 @@ static void test_session_message_3(void)
 
         etch_message* addresultmsg = new_add_result_message();
         /* no mailbox should be found for this reply to ID */
-        message_set_in_reply_to(addresultmsg, new_int64(1));   
+        etch_message_set_in_reply_to(addresultmsg, new_int64(1));
              
         my_sessionimpl->is_msg_handled = TRUE;   
                  
@@ -1586,7 +1586,7 @@ static void test_session_message_5(void)
         result = pmboxmgr_size(g_manager);
         CU_ASSERT_EQUAL(result, 1);
  
-        msgid = message_get_id(addmsg);
+        msgid = etch_message_get_id(addmsg);
         CU_ASSERT_PTR_NOT_NULL_FATAL(msgid);
         got_mailbox = pmboxmgr_get_mailbox(g_manager, msgid);
         CU_ASSERT_PTR_EQUAL(got_mailbox, mailbox);
@@ -1596,7 +1596,7 @@ static void test_session_message_5(void)
         mt_add_result = get_add_result_type();
 
         /* construct a reply message */
-        replymsg = message_reply(addmsg, mt_add_result);
+        replymsg = etch_message_reply(addmsg, mt_add_result);
         result = is_etch_exception(replymsg);
         CU_ASSERT_EQUAL_FATAL(result, FALSE);
         my_sessionimpl->what = WHAT_NONE;
@@ -1683,7 +1683,7 @@ static void test_session_message_6(void)
         result = pmboxmgr_size(g_manager);
         CU_ASSERT_EQUAL(result, 1);
  
-        msgid = message_get_id(addmsg);
+        msgid = etch_message_get_id(addmsg);
         CU_ASSERT_PTR_NOT_NULL_FATAL(msgid);
         got_mailbox = pmboxmgr_get_mailbox(g_manager, msgid);
         CU_ASSERT_PTR_EQUAL(got_mailbox, mailbox);
@@ -1696,7 +1696,7 @@ static void test_session_message_6(void)
 
         /* construct a reply message */
         mt_add_result = get_add_result_type();
-        replymsg = message_reply(addmsg, mt_add_result);
+        replymsg = etch_message_reply(addmsg, mt_add_result);
         result = is_etch_exception(replymsg);
         CU_ASSERT_EQUAL_FATAL(result, FALSE);
         my_sessionimpl->what = WHAT_NONE;

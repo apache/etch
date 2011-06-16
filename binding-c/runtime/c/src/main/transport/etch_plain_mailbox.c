@@ -675,7 +675,7 @@ int etchmbox_close_read (void* data)
         if (0 != etchmbox_read_withwait(ibox, ETCHQUEUE_CLEARING_CLOSED_QUEUE, &qitem))
             break;
 
-        msgidobj = qitem->msg? message_get_id(qitem->msg): NULL;
+        msgidobj = qitem->msg? etch_message_get_id(qitem->msg): NULL;
         msgid = msgidobj? msgidobj->value: 0;
         is_destroyentry = FALSE;
 

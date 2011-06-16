@@ -596,7 +596,7 @@ int tcpdelsvc_endcall (i_delivery_service* ids, i_mailbox* ibox, etch_type* resp
         *out = (etch_object*) mbe;
     }
     /* find the result object expected in the reply message */  
-    else if (NULL == (result_obj = message_get (mbe->msg, typeinfo->response_field)))
+    else if (NULL == (result_obj = etch_message_get (mbe->msg, typeinfo->response_field)))
     {   
         etch_object_destroy(mbe);
         *out = NULL;

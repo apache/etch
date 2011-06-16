@@ -417,7 +417,7 @@ int etch_msgizer_session_packet (void* data, void* whoData, void* bufferData)
      */
     if (!is_message_handled) {
         ETCH_LOG(LOG_CATEGORY, ETCH_LOG_DEBUG, "unable to post message to a mailbox\n");
-        ETCH_LOG(LOG_CATEGORY, ETCH_LOG_DEBUG, "deferring '%s' to session\n", message_aname(msg));
+        ETCH_LOG(LOG_CATEGORY, ETCH_LOG_DEBUG, "deferring '%s' to session\n", etch_message_aname(msg));
         thisx->session->session_notify(thisx->session->thisx, (etch_event*)new_unwanted_message(whofrom, msg));
         //etch_object_destroy(msg);
         return -1;

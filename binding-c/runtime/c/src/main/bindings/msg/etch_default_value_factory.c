@@ -563,7 +563,7 @@ int defvf_add_mixin(default_value_factory* vf, etch_value_factory* mixedin_vf)
  */
 etch_int64* defvf_get_message_id (void* data, etch_message* msg)
 {
-    return (etch_int64*) message_get(msg, builtins._mf__message_id);
+    return (etch_int64*) etch_message_get(msg, builtins._mf__message_id);
 }
 
 
@@ -573,7 +573,7 @@ etch_int64* defvf_get_message_id (void* data, etch_message* msg)
  */
 unsigned message_get_id32 (etch_message* msg)
 {
-    etch_int64* id64 = (etch_int64*) message_get (msg, builtins._mf__message_id);
+    etch_int64* id64 = (etch_int64*) etch_message_get (msg, builtins._mf__message_id);
     const int id32 = id64? (unsigned) id64->value: 0;
     return id32;
 }
@@ -588,7 +588,7 @@ unsigned message_get_id32 (etch_message* msg)
  */
 int defvf_set_message_id (void* data, etch_message* msg, etch_int64* id)
 {
-    return message_put(msg, clone_field(builtins._mf__message_id), (etch_object*) id); 
+    return etch_message_put(msg, clone_field(builtins._mf__message_id), (etch_object*) id);
 }
 
 
@@ -599,7 +599,7 @@ int defvf_set_message_id (void* data, etch_message* msg, etch_int64* id)
  */
 etch_int64* defvf_get_in_reply_to (void* data, etch_message* msg)
 {
-    return (etch_int64*) message_get(msg, builtins._mf__in_reply_to);
+    return (etch_int64*) etch_message_get(msg, builtins._mf__in_reply_to);
 }
 
 
@@ -612,7 +612,7 @@ etch_int64* defvf_get_in_reply_to (void* data, etch_message* msg)
  */
 int defvf_set_in_reply_to (void* data, etch_message* msg, etch_int64* id)
 {
-    return message_put (msg, clone_field(builtins._mf__in_reply_to), (etch_object*) id); 
+    return etch_message_put (msg, clone_field(builtins._mf__in_reply_to), (etch_object*) id);
 }
 
 

@@ -93,8 +93,8 @@ int $helper.getStubName($intf, $suffix)_run_nothing_ (etch_stub* stub, i_deliver
 
     /* nullarg asserts are initial tests only: server impl   
      * will generate exceptions on nullargs in the real world */
-    val_foo = NULL; /* = (etch_int64*)  message_get (msg, key_foo); */
-    val_bar = NULL; /* = (etch_string*) message_get (msg, key_bar); */
+    val_foo = NULL; /* = (etch_int64*)  etch_message_get (msg, key_foo); */
+    val_bar = NULL; /* = (etch_string*) etch_message_get (msg, key_bar); */
     ETCH_ASSERT(val_foo && val_bar); 
 
     /* execute the service method */
@@ -149,7 +149,7 @@ int $helper.getStubName($intf, '')_run_$helper.getDirectionName($mc)_$n.name()(e
 #set($sb = '')
 #foreach($p in $n.iterator())
 ##set($sb = "$sb${op}val_$p.name()")
-    val_$p.name() = ($helper.getPointerTypeName($p.type())) message_remove(msg, key_$p.name());
+    val_$p.name() = ($helper.getPointerTypeName($p.type())) etch_message_remove(msg, key_$p.name());
 ##set($op = ' && ')
 #end
 ##if($sb != '')

@@ -789,7 +789,7 @@ static etch_object* do_tdo_tdi_test(default_value_factory* vf, etch_object* this
 
     thismsg = new_message(mt_footype, ETCH_DEFSIZE, (etch_value_factory*) vf);
 
-    result  = message_put(thismsg, clone_field(mf_fookey), thisobj);
+    result  = etch_message_put(thismsg, clone_field(mf_fookey), thisobj);
     CU_ASSERT_EQUAL_FATAL(result, 0);
 
     /* serialize thismsg. relinquish thismsg, assume msgbytes */
@@ -804,7 +804,7 @@ static etch_object* do_tdo_tdi_test(default_value_factory* vf, etch_object* this
     result = structvalue_is_type(resultmsg->sv, mt_footype);
     CU_ASSERT_EQUAL(result, TRUE);
 
-    result = message_size(resultmsg);
+    result = etch_message_size(resultmsg);
     CU_ASSERT_EQUAL(result, 1);
 
     result = etchmap_map_find(resultmsg->sv->items, (etch_object*) mf_fookey, &thisitem);
@@ -819,7 +819,7 @@ static etch_object* do_tdo_tdi_test(default_value_factory* vf, etch_object* this
      * except for the value object itself, including the key.
      */
     if (result == 0)
-        returnobj = message_remove(resultmsg, mf_fookey);
+        returnobj = etch_message_remove(resultmsg, mf_fookey);
 
     etch_object_destroy(resultmsg);
     clear_etchobj_static_all(thisobj); /* unprotect caller's object protected above */  
@@ -1470,9 +1470,9 @@ static void test_add_perf(void)
 
     msg = new_message(addtype, ETCH_DEFSIZE, (etch_value_factory*) vf);
     CU_ASSERT_PTR_NOT_NULL_FATAL(msg);
-    message_put(msg, clone_field(xfield), (etch_object*) new_int32(1));  /* relinquish all content */
-    message_put(msg, clone_field(yfield), (etch_object*) new_int32(2));
-    message_put(msg, clone_field(builtins._mf__message_id), (etch_object*) new_int64(0x0123456789abcdefLL));   
+    etch_message_put(msg, clone_field(xfield), (etch_object*) new_int32(1));  /* relinquish all content */
+    etch_message_put(msg, clone_field(yfield), (etch_object*) new_int32(2));
+    etch_message_put(msg, clone_field(builtins._mf__message_id), (etch_object*) new_int64(0x0123456789abcdefLL));
 
     /* we relinquish vf to the resources destructor here */
     etch_resources_add(resx, ETCH_RESXKEY_MSGIZER_VALUFACT, (etch_object*) vf); 
