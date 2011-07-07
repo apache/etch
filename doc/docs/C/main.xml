@@ -24,5 +24,6 @@
 <xi:include href="binding-csharp.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
 <xi:include href="binding-c.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
 <xi:include href="bibliography.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+<xi:include href="docbook-intro.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
 </book>
 
