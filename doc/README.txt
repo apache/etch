@@ -17,12 +17,19 @@
 # under the License.
 #
 
-Currently only Linux is supported to generate the documentation
-based on docbook. For doing it with windows the Makefile has to
-be adjusted.
+# General
+
+Etch documentation is based on docbook 4.5. If you would
+like to generate the documentation, Linux is the preferred
+way how to do it at the moment. The Windows documentation
+process is currently under development and will be available
+in the near future.
+
+# Linux setup
 
 If you would like to generate the documentation, you need the
 following components.
+
 - sudo apt-get install docbook
 - sudo apt-get install docbook-xsl
 - sudo apt-get install docbook-xsl-doc-pdf
@@ -39,7 +46,24 @@ information.
 - http://offo.sourceforge.net/hyphenation/fop-stable/installation.html
 - http://xmlgraphics.apache.org/fop/1.0/hyphenation.html 
 
-Getting further information, see here
+# Windows setup
+
+If you would like to generate the documentation, you need the
+following components.
+
+- cygwin installation and the following packages
+-- xslt parser
+-- docbook for version 4.5
+- Apache FOP http://xmlgraphics.apache.org/fop/download.html#binary
+
+- Change still the following files:
+-- Makefile; set the FOP variable to the fop binary etc. FOP=C:/etch/external/fop/1.0/fop.bat
+-- Set the correct docbook import file etc
+   <xsl:import href="/usr/share/sgml/docbook/xsl-ns-stylesheets/fo/docbook.xsl"/>
+
+# Links
+
+Getting further information about docbook, see here
 - http://docbook.org/tdg/en/html/docbook.html
 - http://www.sagehill.net/docbookxsl/preface.html#WhatIsDocbook
 - http://docbook.sourceforge.net/release/xsl/current/doc/html/

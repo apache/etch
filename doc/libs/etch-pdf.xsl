@@ -22,8 +22,10 @@
 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 xmlns:fo="http://www.w3.org/1999/XSL/Format">
 
-<!-- Import the new xsl -->
+<!-- Linux -->
 <xsl:import href="/usr/share/xml/docbook/stylesheet/nwalsh/fo/docbook.xsl"/>
+<!-- Windows -->
+<!-- <xsl:import href="/usr/share/sgml/docbook/xsl-ns-stylesheets/fo/docbook.xsl"/> -->
 
 <!-- ***************************************************  -->
 <!-- ****************  Page Settings  ******************  -->

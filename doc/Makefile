@@ -32,6 +32,10 @@ CP=cp
 # XSL Processors
 XSLTPROC=/usr/bin/xsltproc
 
+# Apache FOP
+# Windows
+#FOP=C:/etch/external/fop/1.0/fop.bat
+# Linux
 FOP=/usr/bin/fop
 
 # IETF language tags
@@ -54,9 +58,7 @@ all: html pdf
 clean:
 	$(RM) -rf $(BASE)
 
-
 html: html-style
-
 	if [ $(LANG) != "C" ]; then \
 		@echo "documents have to translated"; \
 	fi
@@ -71,7 +73,6 @@ html-style:
 
 
 pdf:
-
 	if [ $(LANG) != "C" ]; then \
 		@echo "documents have to translated"; \
 	fi
