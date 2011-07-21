@@ -22,7 +22,16 @@
 //   $now
 // This file is automatically created and should not be edited!
 
+#set($hasSignals = false)
+#if ($intf.signals( false ).hasNext())
+#set($hasSignals = true)
+#end
+#if ($hasSignals && $helper.isServer($mc))
+\#include "$helper.getImplFileNameH($intf, $suffix)"
+\#include "$helper.getRemoteFileNameH($intf, $helper.getRemoteDirectionName($mc))"
+#else
 \#include "$helper.getBaseFileNameH($intf, $suffix)"
+#end
 \#include "etch_objecttypes.h"
 \#include "etch_general.h"
 \#include "etch_url.h"  
@@ -156,6 +165,60 @@ int destroy_$helper.getBaseName( $intf, $suffix )_via_base (void* data)
     return 0;
 }
 
+
+/* - - - - - - - - - - - - - -  
+ * service method stubs
+ * - - - - - - - - - - - - - -  
+ */
+
+#set($whoType = "etch_who*")
+#set($whoName = "sender")
+#foreach( $n in $intf.iterator() )
+#if ($n.isMessage() && $n.hasSignal() && $n.isMsgDirServer())
+#set ($methodReturn = "$helper.getPointerTypeName( $n.type() )")
+#set ($methodName = "$helper.getServiceName($intf)_ex_def_$n.name()")
+#set ($methodParams = "void* thisx")
+#foreach( $p in $n.iterator() )
+#set ($methodParams = "$methodParams, $helper.getTypeName( $p.type() ) $p.name()")
+#end
+#set ($methodParams = "$methodParams, $whoType $whoName")
+$methodReturn $methodName($methodParams)
+{
+	$helper.getImplName($intf, $suffix)* server = ($helper.getImplName($intf, $suffix)*)thisx;
+	etch_exception* exception = NULL;
+	int errorcode;
+
+#foreach( $p in $n.iterator())
+#if($p.type().isBuiltin())
+	etch_object_destroy($p.name());
+	$p.name() = NULL;
+#else
+   etch_object_destroy($p.name());
+#end
+#end
+#set ($subscriptionMethodPrefix = 'remove')
+#if ($n.isSignalSubscribeMessage())
+#set ($subscriptionMethodPrefix = 'add')
+#end
+
+#set ($clientVar = "server->$helper.getDirectionName($helper.getRemoteDirection($mc))")
+#set ($subscriptionMethod = "${subscriptionMethodPrefix}_$n.getMessageSignal().getSignalName()_subscriber")
+	errorcode = ${clientVar}->$subscriptionMethod($clientVar, $whoName);
+	if (errorcode != ETCH_SUCCESS) {
+		exception = new_etch_exception_from_errorcode(errorcode);
+		ETCH_ASSERT(exception != NULL);
+	}
+
+	if (errorcode == ETCH_ENOMEM)
+		etch_exception_set_message(exception, new_stringw(L"out of memory"));
+	else if (errorcode == ETCH_ERROR)
+		etch_exception_set_message(exception, new_stringw(L"unable to $subscriptionMethodPrefix subscriber"));
+
+	return exception;
+}
+
+#end
+#end
 #end
 ## client base
 #if ($helper.isClient($mc))

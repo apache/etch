@@ -116,13 +116,22 @@ int $helper.getStubName($intf, $suffix)_run_nothing_ (etch_stub* stub, i_deliver
 #if ($n.isMessage())
 #if ($n.isMsgDir($mc) || $n.isMsgDirBoth())
 #if (!$n.isHidden())
+#set($isSignalSubscription = false)
+#set($signalMethod = '')
+#set($signalParam = '')
+#if ($n.hasSignal() && $n.isMsgDirServer())
+#set($isSignalSubscription = true)
+#set($signalMethod = '_ex')
+#set($signalParam = ', whofrom')
+#end
+
 /**
  * $helper.getStubName($intf, '')_run_$n.name()
  */
 int $helper.getStubName($intf, '')_run_$helper.getDirectionName($mc)_$n.name()(etch_stub* stub, i_delivery_service* dsvc, void* obj, etch_who* whofrom, etch_message* msg)
 {
     i_$helper.getBaseName($intf, $suffix)* $suffix = (i_$helper.getBaseName($intf, $suffix)*)obj;
-    $helper.getServiceName($intf)_$n.name() func;
+    $helper.getServiceName($intf)${signalMethod}_$n.name() func;
 	int returnCode = 0;
     $helper.getVfName($intf)_impl* pvfi = NULL;
     $helper.getVfName($intf)* pvf = NULL;
@@ -164,34 +173,34 @@ int $helper.getStubName($intf, '')_run_$helper.getDirectionName($mc)_$n.name()(e
 ##end
     
     /* execute the service method */
-    func = ($helper.getServiceName($intf)_$n.name()) etchmap_findxw(${suffix}->virtuals, $helper.getVfName($intf)_get_static()->str_$helper.getIntfName($intf)_$n.name(), NULL);
+    func = ($helper.getServiceName($intf)${signalMethod}_$n.name()) etchmap_findxw(${suffix}->virtuals, $helper.getVfName($intf)_get_static()->str_$helper.getIntfName($intf)_$n.name(), NULL);
     if (func)
 #set($sb = '')
-#if($n.hasReturn() || $n.hasThrown())
+#if($n.hasReturn() || $n.hasThrown() || $isSignalSubscription)
 	#set ( $sb = "resultobj = ")
 #end
 #set ($sb = "$sb func (impl")
 #foreach( $p in $n.iterator() )
 #set ( $sb = "$sb, val_$p.name()")
 #end
-#set ($sb = "$sb);")
+#set ($sb = "$sb$signalParam);")
         $sb
     else
 #set($sb = '')
-#if($n.hasReturn() || $n.hasThrown())
+#if($n.hasReturn() || $n.hasThrown() || $isSignalSubscription)
 	#set ( $sb = "resultobj = ")
 #end
-#set ($sb = "$sb $helper.getServiceName($intf)_def_$n.name() (impl")
+#set ($sb = "$sb $helper.getServiceName($intf)${signalMethod}_def_$n.name() (impl")
 #foreach( $p in $n.iterator() )
 #set ( $sb = "$sb, val_$p.name()")
 #end
-#set ($sb = "$sb);")
+#set ($sb = "$sb$signalParam);")
     $sb
 
-#if(!$n.isOneway() && !$n.hasReturn() && !$n.hasThrown())
+#if(!$n.isOneway() && !$n.hasReturn() && !$n.hasThrown() && !$isSignalSubscription)
     /* transmit reply back to sender */
     returnCode = etchstub_send_reply (stub, dsvc, whofrom, msg, (void*) resultobj, FALSE);
-#elseif(!$n.isOneway() && !$n.hasReturn() && $n.hasThrown())
+#elseif(!$n.isOneway() && !$n.hasReturn() && ($n.hasThrown() || $isSignalSubscription))
     returnCode = etchstub_send_reply (stub, dsvc, whofrom, msg, (void*) resultobj, resultobj != NULL);
 #elseif(!$n.isOneway() && $n.hasReturn() && !$helper.isRefType($n.getResultMessage().getResultParam().type()))
     returnCode = etchstub_send_reply (stub, dsvc, whofrom, msg, (void*) resultobj, TRUE);

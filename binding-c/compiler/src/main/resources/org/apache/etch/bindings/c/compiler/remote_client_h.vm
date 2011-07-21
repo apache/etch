@@ -64,6 +64,22 @@ $sb;
 #end
 #end
 
+##generate typedefs for the client signal methods
+#set($whoType = "etch_who*")
+#set($whoName = "sender")
+#foreach( $n in $intf.iterator() )
+#if ($n.isMessage() && $n.hasSignal() && $n.isMsgDirClient())
+#set ($methodReturn = "$helper.getPointerTypeName( $n.type() )")
+#set ($methodName = "$helper.getServiceName($intf)_ex_$n.name()")
+#set ($methodParams = "void* thisx")
+#foreach( $p in $n.iterator() )
+#set ($methodParams = "$methodParams, $helper.getTypeName( $p.type() ) $p.name()")
+#end
+#set ($methodParams = "$methodParams, $whoType $whoName")
+typedef $methodReturn (*$methodName)($methodParams);
+#end
+#end
+
 /**
  * $helper.getRemoteName($intf, $suffix)
  */
@@ -87,6 +103,12 @@ typedef struct $helper.getRemoteName($intf, $suffix)
 #end
 #end
 
+#foreach( $n in $intf.iterator() )
+#if ($n.isMessage() && $n.hasSignal() && $n.isMsgDirClient())
+    $helper.getServiceName( $intf )_ex_$n.name() _$n.name();
+#end
+#end
+
 
 #foreach( $x in $intf.iterator() )
 #if( $x.isMixin() )
@@ -101,6 +123,13 @@ typedef struct $helper.getRemoteName($intf, $suffix)
 #end
 #end
 #end
+#end
+
+#foreach( $s in $intf.signals( false ) )
+
+	etch_hashtable* $s.getSignalName()_subscribers;
+	int (*add_$s.getSignalName()_subscriber)(void* thisx, $whoType $whoName);
+	int (*remove_$s.getSignalName()_subscriber)(void* thisx, $whoType $whoName);
 #end
 
 

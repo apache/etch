@@ -39,6 +39,23 @@ extern "C" {
 #endif
 
 extern unsigned short CLASSID_$helper.getBaseName( $intf, $suffix ).toUpperCase()_BASE;
+#if($helper.isServer($mc))
+##generate typedefs for the server signal methods
+#set($whoType = "etch_who*")
+#set($whoName = "sender")
+#foreach( $n in $intf.iterator() )
+#if ($n.isMessage() && $n.isMsgDir($mc) && $n.hasSignal() && $n.isMsgDirServer())
+#set ($methodReturn = "$helper.getPointerTypeName( $n.type() )")
+#set ($methodName = "$helper.getServiceName($intf)_ex_$n.name()")
+#set ($methodParams = "void* thisx")
+#foreach( $p in $n.iterator() )
+#set ($methodParams = "$methodParams, $helper.getTypeName( $p.type() ) $p.name()")
+#end
+#set ($methodParams = "$methodParams, $whoType $whoName")
+typedef $methodReturn (*$methodName)($methodParams);
+#end
+#end
+#end
 
 //typedef struct $helper.getImplName( $intf, $suffix ) $helper.getImplName( $intf, $suffix );
 
@@ -86,6 +103,20 @@ typedef struct i_$helper.getBaseName( $intf, $suffix )
 i_$helper.getBaseName( $intf, $suffix )* new_$helper.getBaseName( $intf, $suffix )_base (void* implobj, i_$helper.getIntfName( $intf )*);
 i_$helper.getBaseName( $intf, $suffix )* new_$helper.getRemoteName( $intf, $suffix )_base (void* implobj, i_$helper.getIntfName( $intf )*);
 int destroy_$helper.getBaseName( $intf, $suffix )_base (void*);
+
+##generate method prototypes for the default server signal handlers
+#foreach( $n in $intf.iterator() )
+#if ($n.isMessage() && $n.isMsgDir($mc) && $n.hasSignal() && $n.isMsgDirServer())
+#set ($methodReturn = "$helper.getPointerTypeName( $n.type() )")
+#set ($methodName = "$helper.getServiceName($intf)_ex_def_$n.name()")
+#set ($methodParams = "void* thisx")
+#foreach( $p in $n.iterator() )
+#set ($methodParams = "$methodParams, $helper.getTypeName( $p.type() ) $p.name()")
+#end
+#set ($methodParams = "$methodParams, $whoType $whoName")
+$methodReturn $methodName($methodParams);
+#end
+#end
 #end
 #if($helper.isClient( $mc ))
 i_$helper.getBaseName($intf, $suffix)* new_$helper.getBaseName($intf, $suffix)_base();
