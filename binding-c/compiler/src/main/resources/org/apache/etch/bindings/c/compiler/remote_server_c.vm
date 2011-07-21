@@ -394,6 +394,7 @@ $sb
  * @param thisx this.
  * @param x etch_int32* caller relinquishes.
  * @param y etch_int32* caller relinquishes.
+ * @param whoto recipient, caller owns it.
  * @return mailbox to receive async result. caller owns it. it may be null.
  * @remarks note that we use the putc version of message.put(), wherein we pass
  * a *reference* to the value object's pointer, and message.putc() nulls out  
@@ -434,7 +435,7 @@ $sb
 
         /* fyi msg memory is relinquished here regardless of result */ 
         /* fyi msg memory is relinquished here regardless of result */ 
-        _resultobj = thisx->remote_base->sendex (thisx->remote_base, _msg);
+        _resultobj = thisx->remote_base->sendex (thisx->remote_base, _msg, NULL);
         _msg = NULL;
 
     } while(0);

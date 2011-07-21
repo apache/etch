@@ -137,8 +137,8 @@ typedef struct xxxx_remote
     unsigned short unused;      /* alignment */
 
     etch_message* (*new_message) (void*, etch_type*);
-    int   (*send)   (void*, etch_message*);
-    void* (*sendex) (void*, etch_message*);
+    int   (*send)   (void*, etch_message*, etch_who*);
+    void* (*sendex) (void*, etch_message*, etch_who*);
     etch_delivsvc_begincall begin_call;  /* i_mailbox** out */
     etch_delvisvc_endcall   end_call;    /* etch_object** out */
 

@@ -405,6 +405,7 @@ $sb
  * @param thisx this.
  * @param x etch_int32* caller relinquishes.
  * @param y etch_int32* caller relinquishes.
+ * @param whoto recipient, caller owns it.
  * @return mailbox to receive async result. caller owns it. it may be null.
  * @remarks note that we use the putc version of message.put(), wherein we pass
  * a *reference* to the value object's pointer, and message.putc() nulls out  
@@ -419,7 +420,7 @@ $sb
 #foreach( $p in $n.iterator() )
 #set ( $sb = "$sb, $helper.getTypeName($p.type()) $p.name()")
 #end
-#set ($sb = "$sb)")
+#set ($sb = "$sb, etch_who* whoto)")
 $sb
 {
     $helper.getRemoteName($intf, $suffix)* remote = ($helper.getRemoteName($intf, $suffix)*)thisx;
@@ -439,7 +440,7 @@ $sb
 #end
 
         /* fyi msg memory is relinquished here regardless of result */ 
-        _resultobj = remote->remote_base->sendex (remote->remote_base, _msg);
+        _resultobj = remote->remote_base->sendex (remote->remote_base, _msg, whoto);
         _msg = NULL;
 
     } while(0);
@@ -485,7 +486,7 @@ $sb
 #foreach( $p in $n.iterator() )
 #set ( $sb = "$sb, $p.name()")
 #end
-#set ($sb = "$sb);")
+#set ($sb = "$sb, NULL);")
     $sb
 
     return _resultobj;

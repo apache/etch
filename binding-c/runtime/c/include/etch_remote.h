@@ -50,8 +50,8 @@ int etchremote_transport_control (void* data, etch_event* evt, etch_object* valu
 int etchremote_transport_notify  (void* data, etch_event* evt);
 etch_object* etchremote_transport_query (void* data, etch_query* query);
 etch_message* etchremote_new_message (void* data, etch_type* message_type);
-int etchremote_send (void* data, etch_message* msg);
-void* etchremote_sendex (void* data, etch_message* msg);
+int etchremote_send (void* data, etch_message* msg, etch_who* whoto);
+void* etchremote_sendex (void* data, etch_message* msg, etch_who* whoto);
 int etchremote_begincall (void* data, etch_message* msg, void** out);
 int etchremote_endcall (void* data, i_mailbox* mbox, etch_type* response_type, void** out);
 

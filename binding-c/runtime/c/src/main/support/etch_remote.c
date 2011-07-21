@@ -72,15 +72,16 @@ etch_message* etchremote_new_message (void* data, etch_type* message_type)
  * sends message to recipient without waiting for a response.
  * @param thisx this remote object.
  * @param msg message, caller relinquishes.
+ * @param whoto message receiver.
  * @return 0 success, -1 failure.
  */
-int etchremote_send (void* data, etch_message* msg)
+int etchremote_send (void* data, etch_message* msg, etch_who* whoto)
 {
     xxxx_remote* thisx = (xxxx_remote*)data;
     int result = 0;
     ETCH_ASSERT(is_etch_remote(thisx));
     
-    result = thisx->dsvc->itm->transport_message(thisx->dsvc, NULL, msg);
+    result = thisx->dsvc->itm->transport_message(thisx->dsvc, whoto, msg);
 
     if (0 != result)
         ETCH_LOG(LOG_CATEGORY, ETCH_LOG_ERROR, "remote server send failed for msg %x\n", msg);
@@ -94,14 +95,15 @@ int etchremote_send (void* data, etch_message* msg)
  * sends message to recipient without waiting for a response.
  * @param thisx this remote object.
  * @param msg message, caller relinquishes.
+ * @param whoto message receiver.
  * @return NULL or exception
  */
-void* etchremote_sendex (void* data, etch_message* msg)
+void* etchremote_sendex (void* data, etch_message* msg, etch_who* whoto)
 {
     xxxx_remote* thisx = (xxxx_remote*)data;
     etch_object* resultobj = NULL;
 
-    if (0 != etchremote_send (thisx, msg)){
+    if (0 != etchremote_send (thisx, msg, whoto)){
         etch_object_destroy(resultobj);
         resultobj = (etch_object*)new_etch_exception_from_errorcode(ETCH_EIO);
 
