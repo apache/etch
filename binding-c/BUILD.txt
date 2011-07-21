@@ -1,0 +1,13 @@
+Building the C-binding
+------------------------
+The Etch runtime developed in this branch contains a transport mechanisms which relies on broadcast messages. 
+In order to enable this feature in the C-binding, a patched version of the Apache APR library is needed.
+
+Build on Linux:
+- The execution of the apr-install.sh script (available at ../scripts) should do all the work for you. As this script uses svn checkouts, the subversion package must be installed on your machine.
+
+Build on Windows:
+- Download the Apache APR 1.4.2 and Apache APR iconv 1.2.1 source code
+- Apply the Broadcast patch which is available at https://issues.apache.org/bugzilla/attachment.cgi?id=26781
+- Build APR and APR iconv and store the build result in your external dependencies folder
+

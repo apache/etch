@@ -206,8 +206,8 @@
                     <fileset dir="${basedir}/target/" >
                          <include name="signals-client" />
                          <include name="signals-server" />
-                         <include name="Debug/signals-client.exe" />
-                         <include name="Debug/signals-server.exe" />
+                         <include name="debug/signals-client.exe" />
+                         <include name="debug/signals-server.exe" />
                     </fileset>
                  </copy>
                  <chmod perm="u+x">

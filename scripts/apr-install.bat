@@ -16,8 +16,8 @@
 @rem  under the License.                                           *
 @echo off
 
-REM set INSTALL_PREFIX=C:\Daten\projekte\2010_apache\etch\external
-REM set VC_HOME=C:\Program Files (x86)\Microsoft Visual Studio 8\VC
+set INSTALL_PREFIX=C:\Daten\projekte\2011_apache\etch\external
+set VC_HOME=C:\Program Files (x86)\Microsoft Visual Studio 8\VC
 
 REM check if environment is set
 IF "%INSTALL_PREFIX%" == "" (
@@ -48,6 +48,10 @@ IF "%1%" == "build" (
 call :build
 goto ende
 )
+IF "%1%" == "patch" (
+call :patch
+goto ende
+)
 IF "%1%" == "install" (
 call :install
 goto ende
@@ -66,22 +70,15 @@ mkdir apr
 cd apr
 
 REM apr
-wget http://mirror.serversupportforum.de/apache//apr/apr-1.3.12-win32-src.zip
-unzip apr-1.3.12-win32-src.zip
-mv apr-1.3.12 apr
-rm -rf apr-1.3.12-win32-src.zip
+@echo downloading apr
+svn co http://svn.apache.org/repos/asf/apr/apr/tags/1.4.2/ apr
 
 REM apr-util
-wget http://mirror.serversupportforum.de/apache/apr/apr-util-1.3.9-win32-src.zip
-unzip apr-util-1.3.9-win32-src.zip
-mv apr-util-1.3.9 apr-util
-rm -rf apr-util-1.3.9-win32-src.zip
+svn co http://svn.apache.org/repos/asf/apr/apr-util/tags/1.3.9/ apr-util
 
 REM apr-iconv
-wget http://mirror.serversupportforum.de/apache//apr/apr-iconv-1.2.1-win32-src-r2.zip
-unzip apr-iconv-1.2.1-win32-src-r2.zip
-mv apr-iconv-1.2.1 apr-iconv
-rm -rf apr-iconv-1.2.1-win32-src-r2.zip
+@echo downloading apr-iconv
+svn co http://svn.apache.org/repos/asf/apr/apr-iconv/tags/1.2.1/ apr-iconv
 
 cd ..
 @echo ==================================================
@@ -122,8 +119,22 @@ cd ../..
 
 goto :EOF
 
+:patch
+@echo ==================================================
+@echo Patch APR...
+@echo ==================================================
+
+cd apr/apr
+wget --no-check-certificate -O broadcast_patch.patch https://issues.apache.org/bugzilla/attachment.cgi?id=26781
+patch -p0 -i broadcast_patch.patch
+cd ../..
+
+goto :EOF
+
 :build
 call :build-init
+call :convert
+call :patch
 
 @echo ==================================================
 @echo Building APR...
@@ -144,7 +155,8 @@ cd ../..
 goto :EOF
 
 :install
-set INSTALL_PREFIX_APR=%INSTALL_PREFIX%\apr\1.3.12
+set INSTALL_PREFIX_APR=%INSTALL_PREFIX%\apr\1.4.2-with-broadcast-patch
+echo istall path is %INSTALL_PREFIX_APR%
 mkdir "%INSTALL_PREFIX_APR%\bin"
 mkdir "%INSTALL_PREFIX_APR%\iconv"
 mkdir "%INSTALL_PREFIX_APR%\include\apr-1"
