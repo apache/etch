@@ -235,8 +235,16 @@ public class Service extends Named<Module> implements OptList, Iterable<Named<?>
 			addResultMessage( m );
 		else if (m.hasReturn())
 			throw new ParseException( String.format(
-				"Oneway message cannot have a non-void return type at line %d", n.token.beginLine ) );
-		
+				"Oneway or Signal message cannot have a non-void return type at line %d", n.token.beginLine ) );
+
+		if (m.hasSignal()) {
+			if (!m.isMsgDirClient())
+				throw new ParseException( String.format(
+					"Signal message can only be sent to CLIENT at line %d", n.token.beginLine));
+
+			addSignal( m );
+		}
+
 		return m;
 	}
 	
@@ -266,6 +274,43 @@ public class Service extends Named<Module> implements OptList, Iterable<Named<?>
 		
 		reqMsg.setResultMessage( rm );
 		rm.setRequestMessage( reqMsg );
+	}
+
+	/**
+	 * @param m message with @Signal annotation
+	 * @throws ParseException
+	 * @return signal instance according to the @Signal annotation
+	 */
+	private Signal addSignal( Message m ) throws ParseException {
+		Signal signal;
+		Name n = m.getMessageSignalName();
+		
+		if (nameList.has( n.name )) {
+			if (!nameList.get( n.name ).isSignal())
+				throw new ParseException( String.format(
+						"Invalid signal name: " + n.name));
+			
+			signal = (Signal) nameList.get( n.name );
+		}
+		else
+		{
+			signal = new Signal(this, n);
+			nameList.add(n, signal);			
+
+			Message sm = signal.getSignalSubscribeMessage();
+			nameList.check( sm.name() );
+			nameList.add( sm.name(), sm );
+			addResultMessage( sm );
+
+			sm = signal.getSignalUnsubscribeMessage();
+			nameList.check( sm.name() );
+			nameList.add( sm.name(), sm );
+			addResultMessage( sm );
+		}
+		
+		m.setMessageSignal( signal );
+		
+		return signal;
 	}
 
 	/**
@@ -307,6 +352,28 @@ public class Service extends Named<Module> implements OptList, Iterable<Named<?>
 				list.add( n );
 			else if (recursive && n.isMixin())
 				((Mixin) n).getModule().iterator().next().getMessages( list, recursive );
+		}
+	}
+	
+	/**
+	 * @param recursive if true, recurse into mixed in services, too.
+	 * @return an iterator over all the signals of this service.
+	 */
+	public Iterator<Named<?>> signals( boolean recursive )
+	{
+		List<Named<?>> list = new ArrayList<Named<?>>();
+		getSignals( list, recursive );
+		return list.iterator();
+	}
+	
+	private void getSignals( List<Named<?>> list, boolean recursive )
+	{
+		for (Named<?> n: nameList)
+		{
+			if (n.isSignal())
+				list.add( n );
+			else if (recursive && n.isMixin())
+				((Mixin) n).getModule().iterator().next().getSignals( list, recursive );
 		}
 	}
 

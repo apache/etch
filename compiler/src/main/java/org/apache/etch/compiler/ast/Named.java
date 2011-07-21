@@ -301,6 +301,11 @@ abstract public class Named<P extends Named<?>>
 	public boolean isMessage() { return this instanceof Message; }
 	
 	/**
+	 * @return true if this is a signal.
+	 */
+	public boolean isSignal() { return this instanceof Signal; }
+
+	/**
 	 * @return true if this is a Mixin
 	 */
 	

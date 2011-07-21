@@ -147,7 +147,7 @@ public class Message extends ParamList<Service>
 		Opt o = getOpt( "Direction" );
 
 		if (o == null)
-			return MessageDirection.SERVER;
+			return hasSignal() ? MessageDirection.CLIENT : MessageDirection.SERVER;
 
 		Direction d = (Direction) o;
 		return d.getMessageDirection();
@@ -400,8 +400,69 @@ public class Message extends ParamList<Service>
 	public boolean isOneway()
 	{
 		Oneway oneway = (Oneway) getOpt( "Oneway" );
-		return oneway != null && oneway.isOneway();
+
+		if (oneway != null && oneway.isOneway())
+			return true;
+		
+		return getOpt( "Signal" ) != null;
 	}
+
+	/**
+	 * @return true if this is a signal message which does not wait
+	 * for any response from the other end.
+	 */
+	public boolean hasSignal()
+	{
+		return getOpt( "Signal" ) != null || messageSignal != null;
+	}
+
+	/**
+	 * @return true if this is a signal subscribe message.
+	 */
+	public boolean isSignalSubscribeMessage()
+	{
+		return messageSignal != null && this == messageSignal.getSignalSubscribeMessage();
+	}
+
+	/**
+	 * @return true if this is a signal subscribe message.
+	 */
+	public boolean isSignalUnsubscribeMessage()
+	{
+		return messageSignal != null && this == messageSignal.getSignalUnsubscribeMessage();
+	}
+
+	/**
+	 * @return the message signal per the Signal opt.
+	 */
+	public Name getMessageSignalName()
+	{
+		Name n = null;
+		Opt o = getOpt( "Signal" );
+
+		if (o != null)
+			n = ((org.apache.etch.compiler.opt.Signal) o).getName();
+		
+		return n;
+	}
+	
+	/**
+	 * @return the message signal per the Signal opt.
+	 */
+	public Signal getMessageSignal()
+	{
+		return messageSignal;
+	}
+	
+	/**
+	 * @return the message signal per the Signal opt.
+	 */
+	public void setMessageSignal(Signal messageSignal)
+	{
+		this.messageSignal = messageSignal;
+	}
+	
+	private Signal messageSignal;
 
 	/**
 	 * @return true if this message requires authorization.
