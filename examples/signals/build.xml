@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="utf-8" ?>
+ <!--
+ * Licensed to the Apache Software Foundation (ASF) under one   *
+ * or more contributor license agreements.  See the NOTICE file *
+ * distributed with this work for additional information        *
+ * regarding copyright ownership.  The ASF licenses this file   *
+ * to you under the Apache License, Version 2.0 (the            *
+ * "License"); you may not use this file except in compliance   *
+ * with the License.  You may obtain a copy of the License at   *
+ *                                                              *
+ *   http://www.apache.org/licenses/LICENSE-2.0                 *
+ *                                                              *
+ * Unless required by applicable law or agreed to in writing,   *
+ * software distributed under the License is distributed on an  *
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY       *
+ * KIND, either express or implied.  See the License for the    *
+ * specific language governing permissions and limitations      *
+ * under the License.                                           *
+ -->
+<project name="etch-Signals-example" basedir="." default="help" >
+    <description>Signals Example</description>
+    <property name="Etch.basedir" location="${basedir}/../.." />
+    <import file="${Etch.basedir}/build-support/etch.includes.xml" />
+
+    <!-- TODO better computation of etch.home, etch.version -->
+    <property environment="env" />
+
+    <!-- compute ETCH_HOME -->
+    <property name="build.ETCH_HOME" location="${basedir}/../../target/Installers/dist" />
+    <condition property="etch.home" value="${env.ETCH_HOME}" >
+        <isset property="${env.ETCH_HOME}" />
+    </condition>
+    <condition property="etch.home" value="${build.ETCH_HOME}" >
+        <not><isset property="etch.home" /></not>
+    </condition>
+
+    <property name="Etch.dependency.junit.jar"
+        location="${default.junit.lib}/junit-4.3.1.jar" />
+
+    <property name="Etch.buildSupportDirectory" location="../../build-support" />
+
+    <!-- compute etch.version -->
+    <condition property="etch.version" value="${Etch.version}" >
+        <not><isset property="etch.version" /></not>
+    </condition>
+
+    <condition property="etch.longversion" value="${Etch.longversion}" >
+        <not><isset property="etch.longversion" /></not>
+    </condition>
+
+    <!-- Csharp Support -->
+    <condition property="USE.dotnet" >
+        <and>
+            <os family="windows" />
+            <available file="${env.DOTNET_HOME}/msbuild.exe" />
+            <available file="${build.ant-dotnet.lib}/ant-dotnet-1.0.jar" />
+            <available file="${env.NUNIT_HOME}/bin/net-2.0/nunit.exe" />
+        </and>
+    </condition>
+    <condition property="USE.mono" >
+        <and>
+            <not><os family="windows" /></not>
+            <available file="${build.mono.home}/bin/xbuild" />
+        </and>
+    </condition>
+    <condition property="BUILD.csharp" >
+        <or>
+            <isset property="USE.dotnet" />
+            <isset property="USE.mono" />
+        </or>
+    </condition>
+	<property name="tool.xbuild" value="${build.mono.home}/bin/xbuild" />
+
+    <!-- import etch task -->
+    <taskdef onerror="report" resource="org/apache/etch/tools/ant/etch.xml" classpath="${etch.home}/lib/apache-etch-ant-plugin-${etch.longversion}.jar" />
+
+    <!-- import dotnet task -->
+    <condition property="ant.dotnet.jar" value="ant-dotnet-1.0.jar" >
+        <not><isset property="ant.dotnet.jar" /></not>
+    </condition>
+
+    <taskdef
+        onerror="report"
+        resource="org/apache/ant/dotnet/antlib.xml"
+        classpath="${ant.dotnet.jar}" />
+
+    <macrodef name="xbuild">
+        <attribute name="dir"         default="." />
+        <attribute name="failonerror" default="false" />
+        <attribute name="project"     default="" />
+        <attribute name="target"      default="${build.target}" />
+        <sequential>
+            <exec executable="${tool.xbuild}" dir="@{dir}" failonerror="@{failonerror}" >
+                <arg value="/property:Configuration=@{target}" />
+                <arg value="@{project}" />
+            </exec>
+        </sequential>
+    </macrodef>
+
+    <!-- set properties -->
+    <property name="src"               location="${basedir}/src" />
+    <property name="main-src-java"     location="${src}/main/java" />
+    <property name="target"            location="${basedir}/target" />
+    <property name="dist-src"          location="${target}/dist-src" />
+    <property name="generated-sources" location="${target}/generated-sources" />
+    <property name="gen-src-java"      location="${generated-sources}/main/etch/java" />
+    <property name="gen-src-csharp"    location="${generated-sources}/main/etch/csharp" />
+    <property name="gen-src-c"         location="${generated-sources}/main/etch/c" />
+    <property name="bin"               location="${target}/bin" />
+    <property name="classes"           location="${target}/classes" />
+    <property name="dist"              location="${basedir}/../../target/Installers/dist" />
+
+    <!-- initialize -->
+    <target name="init" >
+        <mkdir dir="${target}" />
+        <mkdir dir="${dist-src}" />
+        <mkdir dir="${generated-sources}" />
+        <mkdir dir="${gen-src-java}" />
+        <mkdir dir="${gen-src-csharp}" />
+        <mkdir dir="${bin}" />
+        <mkdir dir="${classes}" />
+    </target>
+
+    <!-- build the server -->
+    <target name="generate-sources" depends="init" >
+        <!-- generate sources -->
+
+        <etch home="${etch.home}"
+              file="${src}/main/etch/Signals.etch"
+              binding="java"
+              outputDir="${gen-src-java}" />
+
+        <etch home="${etch.home}"
+              file="${src}/main/etch/Signals.etch"
+              binding="csharp"
+              outputDir="${gen-src-csharp}" />
+
+        <etch home="${etch.home}"
+              file="${src}/main/etch/Signals.etch"
+              binding="c"
+              what="INTF,MAIN,IMPL,BOTH"
+              outputDir="${gen-src-c}" />
+    </target>
+
+    <property name="etch-java-runtime-name" value="apache-etch-java-runtime-${etch.longversion}.jar" />
+    <property name="Etch.dependency.java.runtime" location="${etch.home}/binding-java/lib/${etch-java-runtime-name}" />
+
+    <target name="build-java" depends="generate-sources" >
+        <!-- compile sources -->
+
+        <javac target="1.5" destdir="${classes}" >
+            <src path="${gen-src-java}" />
+            <src path="${main-src-java}" />
+            <classpath>
+                <pathelement location="${Etch.dependency.java.runtime}" />
+            </classpath>
+        </javac>
+
+        <!-- Create Jar -->
+        <jar jarfile="${bin}/signals.jar" >
+            <manifest>
+                <attribute name="Class-Path" value="${etch-java-runtime-name}" />
+            </manifest>
+            <fileset dir="${classes}" >
+                <include name="**/*" />
+            </fileset>
+        </jar>
+
+        <!-- copy in dependencies -->
+        <copy todir="${bin}" file="${Etch.dependency.java.runtime}" />
+    </target>
+
+    <target name="build-csharp-with-mono" depends="generate-sources" if="USE.mono" >
+        <xbuild dir="${src}/main/csharp/SignalsClientProj" project="SignalsClientProj.csproj" />
+        <xbuild dir="${src}/main/csharp/SignalsListenerProj" project="SignalsListenerProj.csproj" />
+    </target>
+
+    <target name="build-csharp-with-dotnet" depends="generate-sources" if="USE.dotnet" >
+        <echo>build target: ${build.target}</echo>
+        <msbuild buildfile="${src}/main/csharp/SignalsListenerProj/SignalsListenerProj.csproj" >
+            <property name="Configuration" value="${build.target}" />
+        </msbuild>
+        <msbuild buildfile="${src}/main/csharp/SignalsClientProj/SignalsClientProj.csproj" >
+            <property name="Configuration" value="${build.target}" />
+        </msbuild>
+    </target>
+    
+    <target name="copy-csharp-result" depends="build-csharp-with-mono,build-csharp-with-dotnet" >
+        <copy todir="${bin}" >
+            <fileset dir="${src}/main/csharp/SignalsListenerProj/bin/${build.target}" >
+                <include name="*" />
+            </fileset>
+            <fileset dir="${src}/main/csharp/SignalsClientProj/bin/${build.target}" >
+                <include name="*" />
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="build-csharp" depends="copy-csharp-result"/>
+
+	<target name="build-c" depends="generate-sources" if="USE.cmake">
+		 <cmake srcdir="${basedir}" bindir="${basedir}/target" buildtype="Debug" >
+		           	<variable name="ETCH_HOME" type="PATH" value="${etch.home}" />
+  		 </cmake>
+                 <copy todir="${bin}" flatten="true">
+                    <fileset dir="${basedir}/target/" >
+                         <include name="signals-client" />
+                         <include name="signals-server" />
+                         <include name="Debug/signals-client.exe" />
+                         <include name="Debug/signals-server.exe" />
+                    </fileset>
+                 </copy>
+                 <chmod perm="u+x">
+                     <fileset dir="${bin}" includes="signals-client signals-server"/>
+                 </chmod>
+                 <copy todir="${bin}" flatten="true">
+                    <fileset dir="${etch.home}/binding-c/extern/apr/bin" >
+                         <include name="libapr-1.dll" />
+                         <include name="libapriconv-1.dll" />
+                    </fileset>
+                 </copy>
+                
+	</target>
+	
+    <target name="build" depends="build-java,build-csharp,build-c" />
+
+    <target name="done" depends="build" >
+        <echo>
+
+Build Complete!
+
+To run java Signals example, open a cmd window and run these
+commands:
+
+> cd target\bin
+> start java -cp signals.jar org.apache.etch.examples.signals.MainSignalsListener
+> start java -cp signals.jar org.apache.etch.examples.signals.MainSignalsClient
+
+To run csharp example:
+
+> cd target\bin
+> start SignalsListener.exe
+> start SignalsClient.exe
+
+To run the c example:
+
+> build using cmake (see README.txt) (if you are not building from trunk, 
+  e.g. if you have an official release)
+> cd target\bin
+> start signals-server.exe
+> start signals-client.exe
+
+You can mix and match the various clients and listeners.
+
+        </echo>
+    </target>
+
+    <!-- build everything -->
+    <target name="init-debug" >
+        <property name="build.target" value="Debug" />
+    </target>
+
+    <target name="init-release" >
+        <property name="build.target" value="Release" />
+    </target>
+
+   <target name="dist-src" >
+       <copy file="dist-build.xml" tofile="${dist-src}/build.xml" overwrite="true" >
+           <filterset refid="Etch.buildTokens" />
+       </copy>    
+        <copy file="CMakeLists.txt" tofile="${dist-src}/CMakeLists.txt" overwrite="true" />
+        <copy file="README.txt" tofile="${dist-src}/README.txt" overwrite="true" />
+        
+        <copy todir="${dist-src}/src/main/etch" overwrite="true" >
+            <fileset dir="${src}/main/etch" >
+                <exclude name="**/.svn/**" />
+                <include name="**/*.etch" />
+            </fileset>
+        </copy>
+        
+        <copy todir="${dist-src}/src/main/java" overwrite="true" >
+            <fileset dir="${src}/main/java" >
+                <exclude name="**/.svn/**" />
+                <include name="**/*.java" />
+            </fileset>
+        </copy>
+        
+        <copy todir="${dist-src}/src/main/csharp" overwrite="true" >
+            <fileset dir="${src}/main/csharp" >
+                <exclude name="**/.svn/**" />
+                <include name="**/*.cs" />
+            </fileset>
+        </copy>
+
+        <copy todir="${dist-src}/src/main/c" overwrite="true" >
+            <fileset dir="${src}/main/c" >
+                <exclude name="**/.svn/**" />
+                <include name="**/*.c" />
+                <include name="**/*.h" />
+                <include name="**/CMakeLists.txt" />
+            </fileset>
+        </copy>
+        
+        <copy todir="${dist}/examples/signals" overwrite="true" >
+            <fileset dir="${dist-src}" />
+        </copy>
+    </target>
+
+    <target name="debug" depends="dist-src,init-debug,build,done" />
+    <target name="release" depends="dist-src,init-release,build,done" />
+
+    <!-- clean -->
+    <target name="clean" >
+        <delete dir="${target}" quiet="true" />
+        <delete dir="${src}/main/csharp/SignalsClientProj/bin" quiet="true" />
+        <delete dir="${src}/main/csharp/SignalsClientProj/obj" quiet="true" />
+        <delete dir="${src}/main/csharp/SignalsListenerProj/bin" quiet="true" />
+        <delete dir="${src}/main/csharp/SignalsListenerProj/obj" quiet="true" />
+    </target>
+</project>

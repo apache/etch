@@ -38,6 +38,8 @@
 	<classpathentry kind="src" path="examples/perf/src/main/java"/>
 	<classpathentry kind="src" path="examples/perf/target/generated-sources/main/etch/java"/>
 	<classpathentry kind="src" path="examples/perf/src/test/java"/>
+	<classpathentry kind="src" path="examples/signals/src/main/java"/>
+	<classpathentry kind="src" path="examples/signals/target/generated-sources/main/etch/java"/>
 	<classpathentry kind="src" path="binding-c/compiler/src/main/java"/>
 	<classpathentry kind="src" path="binding-c/compiler/src/main/resources"/>
 	<classpathentry excluding="org/apache/etch/bindings/python/compiler/Compiler.java" kind="src" path="binding-python/compiler/src/main/java"/>

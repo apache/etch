@@ -46,6 +46,7 @@
         <build_example dir="example_mixin" logdir="${basedir}/target/logs" />
         <build_example dir="perf" logdir="${basedir}/target/logs" />
         <build_example dir="helloworld" logdir="${basedir}/target/logs" />
+        <build_example dir="signals" logdir="${basedir}/target/logs" />
     </target>
     
     <target name="do-postbuild">
