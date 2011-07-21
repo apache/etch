@@ -68,10 +68,18 @@
      <property name="Etch.build.target"     value="Clean" />
   </target>
 
+  <target name="info" >
+     <!-- Info about build -->
+     <echo>
+     =====================================
+     Building ${ant.project.name}
+     =====================================
+     </echo>
+  </target>
+
   <target name="property-init" >
      <!-- Initialize target-specific properties --> 
   </target>
-
 
   <target name="init" depends="property-init,do-init">
      <!-- Initialization Target -->
@@ -91,10 +99,10 @@
 
   <target name="posttest" depends="test" if="build.publish">
     <!-- Posttest Target -->
-	<antcall target="do-publish"/>
+    <antcall target="do-publish"/>
   </target>
 
-  <target name="all" depends="test,posttest">
+  <target name="all" depends="info, test,posttest">
      <!-- all target -->
   </target>
 
