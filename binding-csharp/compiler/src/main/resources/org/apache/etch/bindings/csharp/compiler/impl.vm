@@ -32,6 +32,10 @@
 #set($peer = "server")
 #set($peerclass = "Remote${i}Server")
 #end
+#set($hasSignals = false)
+#if ($intf.signals( false ).hasNext())
+#set($hasSignals = true)
+#end
 
 using System;
 
@@ -63,15 +67,22 @@ namespace $intf.parent().name()
 		/// <summary>Constructs the $clname.</summary>
  		/// <param name="$peer">a connection to the $peer session. Use this to
  		/// send a message to the $peer.</param>
+#if ($hasSignals && $helper.isServer($mc))
+		public $clname($peerclass $peer): base($peer)
+		{
+#else
 		public $clname($peerclass $peer)
 		{
 			this.$peer = $peer;
+#end
 		}
+#if (!$hasSignals || !$helper.isServer($mc))
 		
 		/// <summary>A connection to the $peer session. Use this to
  		/// send a message to the $peer.</summary>
 		private readonly $peerclass $peer;
-	
+#end
+		
 		// TODO: Implement delegates or provide implementation of $intfname
 		// messages from the $peer	
 	}

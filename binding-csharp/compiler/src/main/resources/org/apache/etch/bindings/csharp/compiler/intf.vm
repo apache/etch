@@ -55,6 +55,7 @@ namespace $intf.parent().name()
 #if ($n.isMessage())
 #if ($n.isMsgDir($mc))
 #if (!$n.isHidden())
+#if (!$n.hasSignal() || !$n.isMsgDirServer())
 #if ($n.hasDescr())
 		///<summary>
 #foreach($s in $n.descr())
@@ -104,6 +105,7 @@ namespace $intf.parent().name()
 #set( $sep = ", " )
 #end
 			);
+#end
 #end
 #end
 #elseif ($n.isConstant())

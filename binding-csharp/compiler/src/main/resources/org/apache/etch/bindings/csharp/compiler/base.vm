@@ -31,6 +31,12 @@
 #set($peer = "server")
 #set($peerclass = "Remote${i}Server")
 #end
+#set($whoType = "Who")
+#set($whoName = "sender")
+#set($hasSignals = false)
+#if ($intf.signals( false ).hasNext())
+#set($hasSignals = true)
+#end
 
 using System;
 
@@ -42,6 +48,9 @@ using $n.getImport( $helper );
 #end
 #end
 using Org.Apache.Etch.Bindings.Csharp.Support;
+#if ($hasSignals && $helper.isServer($mc))
+using Org.Apache.Etch.Bindings.Csharp.Util;
+#end
 
 /// <summary>
 /// Base Implementation of $intfname, with default method implementations
@@ -71,6 +80,9 @@ namespace $intf.parent().name()
 #foreach( $param in $mthd.iterator() )
 									$sep$helper.getTypeName( $param.type() ) $param.name()
 #set( $sep = ", " )
+#end
+#if ($mthd.hasSignal() && $mthd.isMsgDirServer())
+									$sep$whoType $whoName
 #end
 									);
 		/// <summary>
@@ -136,9 +148,18 @@ namespace $intf.parent().name()
 #end
 
 	
+#if ($hasSignals && $helper.isServer($mc))
+		protected readonly Remote$intf.name()Client client;
+
+		///<summary>Constructs the $clname.</summary>
+		public $clname(Remote$intf.name()Client client)
+		{
+			this.client = client;
+#else
 		///<summary>Constructs the $clname.</summary>
 		public $clname() 
 		{
+#end
 		}
 
 		public virtual object _SessionQuery(Object query)
@@ -169,6 +190,9 @@ namespace $intf.parent().name()
 				$sep$helper.getTypeName( $param.type() ) $param.name()
 #set( $sep = ", " )
 #end
+#if ($mthd.hasSignal() && $mthd.isMsgDirServer())
+				$sep$whoType $whoName
+#end
 		)
 		{
 		if ($delegateVarHeader$mthd.name() != null)
@@ -179,6 +203,9 @@ namespace $intf.parent().name()
 			$sep$param.name()
 		#set( $sep = "," )
 			#end
+#if ($mthd.hasSignal() && $mthd.isMsgDirServer())
+			$sep$whoName
+#end
 			);
 		#else
 				return $delegateVarHeader$mthd.name()( 
@@ -187,10 +214,22 @@ namespace $intf.parent().name()
 			$sep$param.name()
 		#set( $sep = "," )
 			#end
+#if ($mthd.hasSignal() && $mthd.isMsgDirServer())
+			$sep$whoName
+#end
 			);
 		#end
 			else 
+#if ($mthd.hasSignal() && $mthd.isMsgDirServer())
+#set( $subscription = "Add" )
+#if ($mthd.isSignalUnsubscribeMessage())
+#set( $subscription = "Remove" )
+#end
+				if (!client._$subscription$mthd.getMessageSignal().getSignalName()Subscriber( $whoName ))
+					throw new Exception( "$subscription subscriber failed" );
+#else
 				throw new NotSupportedException( "$mthd.name()" );
+#end
 		}
 #end
 #end

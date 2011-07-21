@@ -57,11 +57,10 @@ namespace Org.Apache.Etch.Bindings.Csharp.Support
 	    ///<summary>Sends the message to the recipient, but does not wait for any response.</summary>
 	    ///<param name = msg> the message to send </param>
 	    ///<throws> Exception if there is a problem sending </throws>
-	    public void _Send( Message msg )
+	    public void _Send( Message msg, Who recipient=null )
 	    {
-		    _svc.TransportMessage(null,msg);
+		    _svc.TransportMessage(recipient,msg);
 	    }
-	
 	
         ///<summary>Sends the message which begins a call sequence.</summary>
         ///<param name = msg> the message to send </param>

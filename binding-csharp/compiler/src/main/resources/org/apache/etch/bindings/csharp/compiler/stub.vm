@@ -119,11 +119,18 @@ namespace $intf.parent().name()
 #if ($mthd.hasReturn())
 							Object _result =
 #end
+#if ($mthd.isMsgDirServer() && $mthd.hasSignal())
+								((Base$i$suffix)_obj).$mthd.name()(
+#else
 								(($i$suffix)_obj).$mthd.name()(
+#end
 #set( $sep = "" )
 #foreach ($param in $mthd.iterator())
 								$sep$param.name()
 #set( $sep = ", " )
+#end
+#if ($mthd.isMsgDirServer() && $mthd.hasSignal())
+								${sep}_sender
 #end
 								);
 								

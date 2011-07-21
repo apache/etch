@@ -22,8 +22,22 @@
 #set($vfname = "ValueFactory$i")
 #set($intfname = "$i$suffix")
 #set($clname = "Remote$intfname")
+#set($whoType = "Who")
+#set($whoName = "recipient")
+#set($signalPrefix = "_")
+#set($signalSuffix = "Subscribers")
+#set($hasSignals = false)
+#if ($intf.signals( false ).hasNext())
+#set($hasSignals = true)
+#end
 
 using System;
+#if ($hasSignals && $helper.isClient($mc))
+using System.Collections.Generic;
+using System.Linq;
+using Org.Apache.Etch.Bindings.Csharp.Util;
+#end
+
 
 namespace $intf.parent().name()
 {
@@ -61,6 +75,23 @@ namespace $intf.parent().name()
 		///<summary>Deprecated.</summary>
 		public readonly _Async _inner;
 #end
+#if ($hasSignals && $helper.isClient($mc))
+#foreach( $s in $intf.signals( false ) )
+
+		///<summary>Set holding the clients subscribed for the signal</summary>
+		private readonly ISet<$whoType> $signalPrefix$s.getSignalName()${signalSuffix};
+		public ${whoType}[] $s.getSignalName()${signalSuffix}
+		{
+			get
+			{
+				lock ($signalPrefix$s.getSignalName()${signalSuffix})
+				{
+					return $signalPrefix$s.getSignalName()${signalSuffix}.ToArray();
+				}
+			}
+		}
+#end
+#end
 
 		/// <summary>Constructs the $clname.</summary>
 		/// <param name="svc"></param>
@@ -81,7 +112,41 @@ namespace $intf.parent().name()
 			$v = new ${m.name()}.Remote$z.name()${suffix}( svc, vf );
 #end
 #end
+#if ($hasSignals && $helper.isClient($mc))
+
+#foreach( $s in $intf.signals( false ) )
+			$signalPrefix$s.getSignalName()$signalSuffix = new HashSet<$whoType>();
+#end
+#end
 		}
+#if ($hasSignals && $helper.isClient($mc))
+
+#foreach( $s in $intf.signals( false ) )
+		public bool _Add$s.getSignalName()Subscriber($whoType subscriber)
+		{
+			lock ($signalPrefix$s.getSignalName()${signalSuffix})
+			{
+				return $signalPrefix$s.getSignalName()${signalSuffix}.Add(subscriber);
+			}
+		}
+
+		public bool _Remove$s.getSignalName()Subscriber($whoType subscriber)
+		{
+			lock ($signalPrefix$s.getSignalName()${signalSuffix})
+			{
+				return $signalPrefix$s.getSignalName()${signalSuffix}.Remove(subscriber);
+			}
+		}
+
+		public bool _Is$s.getSignalName()Subscriber($whoType subscriber)
+		{
+			lock ($signalPrefix$s.getSignalName()${signalSuffix})
+			{
+				return $signalPrefix$s.getSignalName()${signalSuffix}.Contains(subscriber);
+			}
+		}
+#end
+#end
 
 #foreach ($n in $intf.iterator())
 #if ($n.isMsgDir($mc))
@@ -139,11 +204,41 @@ namespace $intf.parent().name()
 #end
 #end
 #end
-		public $helper.getTypeName( $n.type() ) $n.name()(
+#if ($n.hasSignal() && $n.isMsgDirClient())
+#set( $mtdPrefix = "_" )
+		public void $n.name()(
 #set( $sep = "" )
 #foreach( $p in $n.iterator() )
 			$sep$helper.getTypeName( $p.type() ) $p.name()
 #set( $sep = ", " )
+#end
+		)
+		{
+			lock( $signalPrefix$n.getMessageSignalName().name()${signalSuffix} )
+			{
+				foreach ( $whoType subscriber in $signalPrefix$n.getMessageSignalName().name()${signalSuffix} )
+					$mtdPrefix$n.name()(
+#set( $sep = "" )
+#foreach( $p in $n.iterator() )
+						$sep$p.name()
+#set( $sep = ", " )
+#end
+						${sep}subscriber
+					);
+			}
+		}
+
+#else
+#set( $mtdPrefix = "" )
+#end
+		public $helper.getTypeName( $n.type() ) $mtdPrefix$n.name()(
+#set( $sep = "" )
+#foreach( $p in $n.iterator() )
+			$sep$helper.getTypeName( $p.type() ) $p.name()
+#set( $sep = ", " )
+#end
+#if ($n.hasSignal() && $n.isMsgDirClient())
+			$sep$whoType $whoName
 #end
 		)
 		{
@@ -153,7 +248,11 @@ namespace $intf.parent().name()
 #end
 			try
 			{
+#if ($n.hasSignal() && $n.isMsgDirClient())
+				_Send( _msg, $whoName );
+#else
 				_Send( _msg );
+#end
 			}
 			catch ( Exception _e )
 			{
