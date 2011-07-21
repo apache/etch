@@ -34,6 +34,7 @@ add_library (etch-c STATIC
     common/etch_general.c
     common/etch_hash.c
     common/etch_hashfunc.c
+    common/etch_inet_who.c
     common/etch_linked_list.c
     common/etch_log.c
     common/etch_map.c

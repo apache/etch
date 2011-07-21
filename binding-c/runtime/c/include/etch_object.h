@@ -509,6 +509,10 @@ typedef union
 
 #define is_etch_connection(cx) (cx && (*(unsigned*)cx) == ETCH_CONX_SIG)
 
+#define is_etch_inet_who(x) (x \
+ && ((etch_object*)x)->obj_type == ETCHTYPEB_INET_WHO \
+ && ((etch_object*)x)->class_id == CLASSID_INET_WHO)
+
 /**
  * macros to interpret state of the object byteflag is_static 
  */

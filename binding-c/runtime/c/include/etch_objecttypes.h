@@ -147,6 +147,7 @@ typedef enum objtype_b
     ETCHTYPEB_CLIENTSTUB      = 0x71,
     ETCHTYPEB_SERVERSTUB      = 0x72,
     ETCHTYPEB_FACTORYPARAMS   = 0x73,
+    ETCHTYPEB_INET_WHO        = ETCHTYPEB_WHO,
 
     ETCHTYPEB_EODMARK         = 0x7f,
 
@@ -322,6 +323,8 @@ typedef enum etch_classid
     CLASSID_QUERY_REMOTEADDR      = 0x112, 
     CLASSID_QUERY_WAITUP          = 0x113, 
     CLASSID_QUERY_WAITDOWN        = 0x114, 
+
+    CLASSID_INET_WHO              = 0x120,
 
     CLASSID_DYNAMIC_START         = 0x400, 
 
