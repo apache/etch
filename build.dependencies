@@ -34,10 +34,13 @@ nsis.home=${env.ETCH_EXTERNAL_DEPENDS}/nsis/2.23
 clover.home=${env.ETCH_EXTERNAL_DEPENDS}/clover-ant/2.3.2
 
 ## Csharp ANT support
-ant-dotnet.lib=${env.ETCH_EXTERNAL_DEPENDS}/apache-ant-dotnet/1.0
+ant-dotnet.lib=${env.ETCH_EXTERNAL_DEPENDS}/apache-ant-dotnet/1.1
 
 ## CMake ANT support
 ant-cmake.lib=${env.ETCH_EXTERNAL_DEPENDS}/apache-ant-cmake/1.0
+
+## Mono Home
+mono.home=${env.ETCH_EXTERNAL_DEPENDS}/mono/2.10.1
 
 ## include experimental bindings in build? (comment this to exclude)
 #include.experimental=true

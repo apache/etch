@@ -175,7 +175,7 @@
         <echo message="TODO: build w/ mono" />
     </target>
 
-    <target name="test-csharp" depends="build-csharp" if="BUILD.csharp" >
+    <target name="test-csharp" depends="build-csharp" if="USE.dotnet" >
         <mkdir dir="${nunit-results}" />
 
         <nunit xmlout="${nunit-results}/NUnitResults.xml">

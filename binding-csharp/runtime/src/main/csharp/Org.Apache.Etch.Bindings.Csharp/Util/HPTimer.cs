@@ -18,41 +18,25 @@
 // under the License.
 // 
 using System;
-using System.Runtime.InteropServices;
+using System.Diagnostics;
 
 namespace Org.Apache.Etch.Bindings.Csharp.Util
 {
 	public abstract class HPTimer
 	{
-		[DllImport("kernel32.dll")]
-		private static extern bool QueryPerformanceCounter(out long x);
+		public const long NS_PER_MICROSECOND = 1000;
+		public const long NS_PER_MILLISECOND = 1000 * NS_PER_MICROSECOND;
+		public const long NS_PER_SECOND = 1000 * NS_PER_MILLISECOND;
 
-		[DllImport("kernel32.dll")]
-		private static extern bool QueryPerformanceFrequency(out long x);
+		private static Stopwatch stopwatch;
 
 		static HPTimer()
 		{
-			long freq = 0;
+			stopwatch = new Stopwatch();
+			stopwatch.Start();
 
-			if (!QueryPerformanceFrequency(out freq))
-				throw new Exception( "QueryPerformanceFrequency not supported" );
-			
-			// freq is ticks / second.
-			// we wanna compute seconds from ticks.
-			// the easy computation is seconds = ticks / freq
-			// to Get ns, we compute ns = ticks * 1,000,000,000 / freq
-			// the problem is ticks * 1,000,000,000 will likely overflow.
-			// what we want to do is precompute nsPerTick = 1,000,000,000 / freq
-			// and then compute ns = ticks * nsPerTick.
-
-			//Console.WriteLine( "HPTimer: freq = "+freq );
-			nsPerTick = ((double) NS_PER_SECOND)/freq;
-			//Console.WriteLine( "HPTimer: nsPerTick = "+nsPerTick );
+			nsPerTick = NS_PER_SECOND / Stopwatch.Frequency;
 		}
-
-        public const long NS_PER_MICROSECOND = 1000;
-        public const long NS_PER_MILLISECOND = 1000 * NS_PER_MICROSECOND;
-        public const double NS_PER_SECOND = 1000.0 * NS_PER_MILLISECOND;
 
 		/// <summary>
 		/// Returns the current high precision timer value in nanos.
@@ -60,12 +44,7 @@ namespace Org.Apache.Etch.Bindings.Csharp.Util
 		/// <returns></returns>
 		public static long Now()
 		{
-			long x = 0;
-			
-			if (!QueryPerformanceCounter(out x))
-				throw new Exception( "QueryPerformanceCounter not supported" );
-
-			return (long) (x * nsPerTick);
+			return stopwatch.ElapsedTicks * nsPerTick;
 		}
 
 		/// <summary>
@@ -87,7 +66,7 @@ namespace Org.Apache.Etch.Bindings.Csharp.Util
 		/// <returns></returns>
 		public static long MillisSince( long y )
 		{
-            return NsSince(y) / NS_PER_MILLISECOND;
+			return NsSince(y) / NS_PER_MILLISECOND;
 		}
 
 		/// <summary>
@@ -98,18 +77,18 @@ namespace Org.Apache.Etch.Bindings.Csharp.Util
 		/// <returns></returns>
 		public static double SecondsSince( long y )
 		{
-            return NsSince(y) / NS_PER_SECOND;
+			return NsSince(y) / NS_PER_SECOND;
 		}
 
 		/// <summary>
 		/// Returns the number of high precision clock ticks per nano.
 		/// </summary>
 		/// <returns></returns>
-		public static double NsPerTick()
+		public static long NsPerTick()
 		{
 			return nsPerTick;
 		}
 
-		private static double nsPerTick;
+		private static long nsPerTick;
 	}
 }

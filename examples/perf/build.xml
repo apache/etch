@@ -60,9 +60,7 @@
     <condition property="USE.mono" >
         <and>
             <not><os family="windows" /></not>
-            <!-- TODO mono support is not fully baked, use -DUSE.mono to test -->
-            <!-- <available file="${env.MONO_HOME}/bin/mdtool" /> -->
-            <isset property="USE.mono" />
+            <available file="${build.mono.home}/bin/xbuild" />
         </and>
     </condition>
     <condition property="BUILD.csharp" >
@@ -71,6 +69,7 @@
             <isset property="USE.mono" />
         </or>
     </condition>
+	<property name="tool.xbuild" value="${build.mono.home}/bin/xbuild" />
 
     <!-- import etch task -->
     <taskdef
@@ -88,15 +87,15 @@
         resource="org/apache/ant/dotnet/antlib.xml"
         classpath="${ant.dotnet.jar}" />
 
-    <macrodef name="mdtool" >
+    <macrodef name="xbuild">
         <attribute name="dir"         default="." />
         <attribute name="failonerror" default="false" />
-        <attribute name="project"     default="project.csproj" />
+        <attribute name="project"     default="" />
         <attribute name="target"      default="${build.target}" />
         <sequential>
-            <exec executable="${env.MONO_HOME}/bin/mdtool" dir="@{dir}" failonerror="@{failonerror}" >
-                <arg value="build" />
-                <arg value="--buildfile:@{project}" />
+            <exec executable="${tool.xbuild}" dir="@{dir}" failonerror="@{failonerror}" >
+                <arg value="/property:Configuration=@{target}" />
+                <arg value="@{project}" />
             </exec>
         </sequential>
     </macrodef>
@@ -188,8 +187,16 @@
     </target>
 
     <target name="build-csharp-with-mono" depends="generate-sources" if="USE.mono" >
-        <mdtool dir="${src}/main/csharp/PerfClientProj" project="PerfClientProj.csproj" />
-        <mdtool dir="${src}/main/csharp/PerfListenerProj" project="PerfListenerProj.csproj" />
+        <xbuild dir="${src}/main/csharp/PerfClientProj" project="PerfClientProj.csproj" />
+        <xbuild dir="${src}/main/csharp/PerfListenerProj" project="PerfListenerProj.csproj" />
+	<copy todir="${bin}" >
+            <fileset dir="${src}/main/csharp/PerfListenerProj/bin/${build.target}" >
+                <include name="*" />
+            </fileset>
+            <fileset dir="${src}/main/csharp/PerfClientProj/bin/${build.target}" >
+                <include name="*" />
+            </fileset>
+        </copy>
     </target>
 
     <target name="build-csharp-with-dotnet" depends="generate-sources" if="USE.dotnet" >
@@ -236,7 +243,7 @@
         </junit>
     </target>
 
-    <target name="test-csharp" depends="build-csharp" if="BUILD.csharp" >
+    <target name="test-csharp" depends="build-csharp" if="USE.dotnet" unless="build.skip.tests">
          <nunit xmlout="${nunit-results}/NUnitResults.xml">
              <testassembly name="${src}/test/csharp/PerfTestProj/bin/${build.target}/PerfTestProj.dll" />
          </nunit>

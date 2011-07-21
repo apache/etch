@@ -66,8 +66,9 @@
     </target>
 
     <target name="build-main-with-mono" if="USE.mono" >
-        <echo message="build with mono" />
-        <mdtool dir="${src}/main/csharp" project="EtchProj.csproj" />
+        <echo message="Experimental: build w/ mono" />
+	<echo message="monohome = ${build.mono.home}"/>
+        <xbuild dir="${src}/main/csharp" project="EtchProj.csproj" />
     </target>
 
     <target name="build-main-with-dotnet" if="USE.dotnet" >
@@ -102,8 +103,8 @@
 
     <!-- TEST TARGET -->
     <target name="build-test-with-mono" if="USE.mono" unless="build.skip.tests">
-        <echo message="TODO: build w/ mono" />
-        <mdtool dir="${src}/test/csharp" project="EtchTestProj.csproj" />
+        <echo message="Experimental: build w/ mono" />
+        <xbuild dir="${src}/test/csharp" project="EtchTestProj.csproj" />
     </target>
 
     <target name="build-test-with-dotnet" if="USE.dotnet" unless="build.skip.tests">

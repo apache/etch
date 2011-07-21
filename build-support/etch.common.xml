@@ -191,7 +191,7 @@
     <property   name="Etch.dependency.junit.jar" location="${build.junit.lib}/junit-4.3.1.jar" />
     <property   name="Etch.dependency.velocity.jar" value="${build.velocity.lib}/velocity-1.5.jar" />
     <property   name="Etch.dependency.velocity-dep.jar" value="${build.velocity.lib}/velocity-dep-1.5.jar" />
-    <property   name="Etch.dependency.ant-dotnet-1.0.jar" value="${build.ant-dotnet.lib}/ant-dotnet-1.0.jar" />
+    <property   name="Etch.dependency.ant-dotnet.jar" value="${build.ant-dotnet.lib}/ant-dotnet-1.1.jar" />
     <property   name="Etch.dependency.ant-cmake.jar" value="${build.ant-cmake.lib}/cmakeant.jar" />
 
     <!-- Csharp Support -->
@@ -206,9 +206,7 @@
     <condition property="USE.mono">
         <and>
             <not><os family="windows" /></not>
-            <!-- TODO mono support is not fully baked, use -DUSE.mono to test -->
-            <!-- <available file="${build.mono.home}/bin/mdtool" /> -->
-            <isset property="USE.mono" />
+            <available file="${build.mono.home}/bin/xbuild" />
         </and>
     </condition>
     <condition property="BUILD.csharp">
@@ -217,7 +215,7 @@
             <isset property="USE.mono" />
         </or>
     </condition>
-    <property name="tool.mdtool" value="${build.mono.home}/bin/mdtool" />
+    <property name="tool.xbuild" value="${build.mono.home}/bin/xbuild" />
 
     <!-- CMake ANT Support -->
     <condition property="USE.cmake" value="true" >
@@ -261,7 +259,7 @@
     <property name="EXAMPLE.ant.dotnet.jar" value="${Etch.dependency.ant-dotnet-1.0.jar}" />
 
     <!-- csharp ANT support -->
-    <taskdef onerror="report" resource="org/apache/ant/dotnet/antlib.xml" classpath="${Etch.dependency.ant-dotnet-1.0.jar}" />
+    <taskdef onerror="report" resource="org/apache/ant/dotnet/antlib.xml" classpath="${Etch.dependency.ant-dotnet.jar}" />
 
     <!-- CMake ANT support -->
     <taskdef onerror="report" name="cmake" classname="org.iainhull.ant.CmakeBuilder" classpath="${Etch.dependency.ant-cmake.jar}"/>
@@ -372,16 +370,18 @@
         </sequential>
     </macrodef>
 
-    <!-- MONO mdtool macro -->
-    <macrodef name="mdtool">
+    <!-- MONO xbuild macro -->
+    <macrodef name="xbuild">
         <attribute name="dir"         default="." />
         <attribute name="failonerror" default="false" />
-        <attribute name="project"     default="project.csproj" />
+        <attribute name="project"     default="" />
         <attribute name="target"      default="${Etch.build.target}" />
         <sequential>
-            <exec executable="${tool.mdtool}" dir="@{dir}" failonerror="@{failonerror}" >
-                <arg value="build" />
-                <arg value="--buildfile:@{project}" />
+
+	<echo message="xbuild tool ${tool.xbuild}"/>
+            <exec executable="${tool.xbuild}" dir="@{dir}" failonerror="@{failonerror}" >
+                <arg value="/property:Configuration=@{target}" />
+                <arg value="@{project}" />
             </exec>
         </sequential>
     </macrodef>
