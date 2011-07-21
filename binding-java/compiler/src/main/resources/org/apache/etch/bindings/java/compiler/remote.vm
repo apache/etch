@@ -22,9 +22,23 @@
 #set($vfname = "ValueFactory$i")
 #set($intfname = "$i$suffix")
 #set($clname = "Remote$intfname")
+#set($whoType = "Who")
+#set($whoName = "recipient")
+#set($signalPrefix = "_")
+#set($signalSuffix = "Subscribers")
+#set($hasSignals = false)
+#if ($intf.signals( false ).hasNext())
+#set($hasSignals = true)
+#end
 
 package $intf.parent().name();
 
+#if ($hasSignals && $helper.isClient($mc))
+import java.util.HashSet;
+import java.util.Set;
+
+import org.apache.etch.util.core.Who;
+#end
 #foreach( $n in $intf.iterator() )
 #if($n.isExtern())
 #if($n.hasImport( $helper ))
@@ -43,6 +57,15 @@ public final class $clname extends Remote$i implements $intfname
 public class $clname extends org.apache.etch.bindings.java.support.RemoteBase implements $intfname
 #end
 {
+#if ($hasSignals && $helper.isClient($mc))
+#foreach( $s in $intf.signals( false ) )
+	/**
+	 * Set holding the clients subscribed for the signal.
+	 */
+	private final Set<$whoType> $signalPrefix$s.getSignalName()${signalSuffix};
+
+#end
+#end
 	/**
 	 * Constructs the $clname.
 	 *
@@ -62,7 +85,49 @@ public class $clname extends org.apache.etch.bindings.java.support.RemoteBase im
 		$v = new ${m.name()}.Remote$z.name()${suffix}( svc, vf );
 #end
 #end
+#if ($hasSignals && $helper.isClient($mc))
+
+#foreach( $s in $intf.signals( false ) )
+		$signalPrefix$s.getSignalName()$signalSuffix = new HashSet<$whoType>();
+#end
+#end
 	}
+#if ($hasSignals && $helper.isClient($mc))
+#foreach( $s in $intf.signals( false ) )
+
+	public boolean _Add$s.getSignalName()Subscriber($whoType subscriber)
+	{
+		synchronized ($signalPrefix$s.getSignalName()${signalSuffix})
+		{
+			return $signalPrefix$s.getSignalName()${signalSuffix}.add(subscriber);
+		}
+	}
+
+	public boolean _Remove$s.getSignalName()Subscriber($whoType subscriber)
+	{
+		synchronized ($signalPrefix$s.getSignalName()${signalSuffix})
+		{
+			return $signalPrefix$s.getSignalName()${signalSuffix}.remove(subscriber);
+		}
+	}
+
+	public boolean _Is$s.getSignalName()Subscriber($whoType subscriber)
+	{
+		synchronized ($signalPrefix$s.getSignalName()${signalSuffix})
+		{
+			return $signalPrefix$s.getSignalName()${signalSuffix}.contains(subscriber);
+		}
+	}
+
+	public Who[] _get$s.getSignalName()Subscribers()
+	{
+		synchronized ($signalPrefix$s.getSignalName()${signalSuffix})
+		{
+			return $signalPrefix$s.getSignalName()${signalSuffix}.toArray(new Who[] {});
+		}
+	}
+#end
+#end
 
 	/**
 	 * {@link _Async} class instance used to hide asynchronous message
@@ -85,12 +150,41 @@ public class $clname extends org.apache.etch.bindings.java.support.RemoteBase im
 #if(!$methodList.contains($n.name().name()))
 #set ( $addMethodListStatus = $methodList.add($n.name().name()))
 #if($n.isOneway())
+#set( $mtdPrefix = "" )
+#if ($n.hasSignal() && $n.isMsgDirClient())
+#set( $mtdPrefix = "_" )
 
-	public final $helper.getTypeName( $n.type() ) $n.name()(
+	public final void $n.name()(
 #set( $sep = "" )
 #foreach( $p in $n.iterator() )
 		$sep$helper.getTypeName( $p.type() ) $p.name()
 #set( $sep = ", " )
+#end
+	)
+	{
+		synchronized( $signalPrefix$n.getMessageSignalName().name()${signalSuffix} )
+		{
+			for ( $whoType subscriber : $signalPrefix$n.getMessageSignalName().name()${signalSuffix} )
+				$mtdPrefix$n.name()(
+#set( $sep = "" )
+#foreach( $p in $n.iterator() )
+					$sep$p.name()
+#set( $sep = ", " )
+#end
+					${sep}subscriber
+				);
+		}
+	}
+#end
+
+	public final $helper.getTypeName( $n.type() ) $mtdPrefix$n.name()(
+#set( $sep = "" )
+#foreach( $p in $n.iterator() )
+		$sep$helper.getTypeName( $p.type() ) $p.name()
+#set( $sep = ", " )
+#end
+#if ($n.hasSignal() && $n.isMsgDirClient())
+		$sep$whoType $whoName
 #end
 	)
 	{
@@ -100,7 +194,11 @@ public class $clname extends org.apache.etch.bindings.java.support.RemoteBase im
 #end
 		try
 		{
+#if ($n.hasSignal() && $n.isMsgDirClient())
+			_send( _msg, $whoName );
+#else
 			_send( _msg );
+#end
 		}
 		catch ( Exception _e )
 		{

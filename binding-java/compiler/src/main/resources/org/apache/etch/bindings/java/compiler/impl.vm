@@ -31,6 +31,10 @@
 #set($peer = "server")
 #set($peerclass = "Remote${i}Server")
 #end
+#set($hasSignals = false)
+#if ($intf.signals( false ).hasNext())
+#set($hasSignals = true)
+#end
 
 package $intf.parent().name();
 
@@ -48,8 +52,13 @@ public class $clname extends $baseclname
 	 */
 	public $clname( $peerclass $peer )
 	{
+#if ($hasSignals && $helper.isServer($mc))
+		super( $peer );
+#else
 		this.$peer = $peer;
+#end
 	}
+#if (!$hasSignals || !$helper.isServer($mc))
 	
 	/**
 	 * A connection to the $peer session. Use this to send a
@@ -57,7 +66,8 @@ public class $clname extends $baseclname
 	 */
 	@SuppressWarnings( "unused" )
 	private final $peerclass $peer;
-
+#end
+	
 	// TODO insert methods here to provide implementations of $intfname
 	// messages from the $peer.
 }

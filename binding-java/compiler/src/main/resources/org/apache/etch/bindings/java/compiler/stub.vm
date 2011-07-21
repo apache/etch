@@ -93,9 +93,13 @@ public class Stub$i$suffix<T extends $i$suffix> extends StubBase<T>
 #foreach( $mthd in $intf.iterator() )
 #if ($mthd.isMsgDir($mc))
 #if (!$mthd.isHidden())
-		ValueFactory$i.${mthd.vname( $helper )}.setStubHelper( new StubHelper<$i$suffix>()
+#set( $signalPrefix = "")
+#if ($mthd.isMsgDirServer() && $mthd.hasSignal())
+#set( $signalPrefix = "Base")
+#end
+		ValueFactory$i.${mthd.vname( $helper )}.setStubHelper( new StubHelper<$signalPrefix$i$suffix>()
 		{
-			public final void run( DeliveryService _svc, $i$suffix _obj, Who _sender, Message _msg ) throws Exception
+			public final void run( DeliveryService _svc, $signalPrefix$i$suffix _obj, Who _sender, Message _msg ) throws Exception
 			{
 #if (!$mthd.isOneway())
 				final Message _rmsg = _msg.reply();
@@ -144,6 +148,9 @@ public class Stub$i$suffix<T extends $i$suffix> extends StubBase<T>
 						${sep}($helper.getTypeName( $param.type() )) _msg.get( ValueFactory$i.$param.vname( $helper ) )
 #end
 #set( $sep = ", " )
+#end
+#if ($mthd.isMsgDirServer() && $mthd.hasSignal())
+						${sep}_sender
 #end
 #if ($mthd.hasReturn())
 					)

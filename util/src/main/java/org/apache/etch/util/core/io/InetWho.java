@@ -70,4 +70,25 @@ public class InetWho implements Who
 	{
 		return this.addr.equals( addr ) && this.port == port;
 	}
+
+	@Override
+	public boolean equals( Object obj ) {
+		if (obj instanceof InetWho) {
+			InetWho whoObj = (InetWho) obj;
+			
+			return matches(whoObj.addr, whoObj.port);
+		}
+
+		return super.equals(obj);
+	}
+
+	@Override
+	public int hashCode() {
+		return addr.hashCode() + port;
+	}
+
+	@Override
+	public String toString() {
+		return "InetWho(" + addr.getHostAddress() + ":" + port + ")";
+	}
 }

@@ -23,6 +23,7 @@ package org.apache.etch.bindings.java.support;
 import org.apache.etch.bindings.java.msg.Message;
 import org.apache.etch.bindings.java.msg.Type;
 import org.apache.etch.bindings.java.msg.ValueFactory;
+import org.apache.etch.util.core.Who;
 import org.apache.etch.util.core.io.Transport;
 import org.apache.etch.util.core.io.Transport.WaitDown;
 import org.apache.etch.util.core.io.Transport.WaitUp;
@@ -77,6 +78,18 @@ public class RemoteBase
 		_svc.transportMessage( null, msg );
 	}
 	
+	/**
+	 * Sends the message to the recipient, but does not wait for any response.
+	 * 
+	 * @param msg the message to send
+	 * @param receiver the message receiver
+	 * @throws Exception if there is a problem sending
+	 */
+	public void _send( Message msg, Who receiver ) throws Exception
+	{
+		_svc.transportMessage( receiver, msg );
+	}
+
 	/**
 	 * Sends the message which begins a call sequence.
 	 * 

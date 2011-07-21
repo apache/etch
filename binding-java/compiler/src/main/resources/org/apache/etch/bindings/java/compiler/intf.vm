@@ -62,6 +62,7 @@ public interface $intf.name()$suffix
 #if ($n.isMessage())
 #if ($n.isMsgDir($mc))
 #if (!$n.isHidden())
+#if (!$n.hasSignal() || !$n.isMsgDirServer())
 	/**
 #foreach( $s in $n.descr() )
 	 * $s
@@ -116,6 +117,7 @@ public interface $intf.name()$suffix
 #end
 #end
 	;
+#end
 #end
 #end
 #elseif ($n.isConstant())
@@ -283,7 +285,7 @@ public interface $intf.name()$suffix
 	}
 
 #end
-#elseif ($n.isBuiltin())
+#elseif ($n.isBuiltin() || $n.isSignal())
 ## nothing to do.
 #else
 	*** intf.vm: don't know what to do with $n ***

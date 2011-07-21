@@ -27,10 +27,19 @@
 #else
 #set($peer = "server")
 #end
+#set($whoType = "Who")
+#set($whoName = "sender")
+#set($hasSignals = false)
+#if ($intf.signals( false ).hasNext())
+#set($hasSignals = true)
+#end
 
 package $intf.parent().name();
 
 import org.apache.etch.bindings.java.support.ObjSession;
+#if ($hasSignals && $helper.isServer($mc))
+import org.apache.etch.util.core.Who;
+#end
 
 #foreach( $n in $intf.iterator() )
 #if ($n.isExtern())
@@ -49,6 +58,18 @@ import $n.getImport( $helper );
  */
 public class $clname implements $intfname, ObjSession
 {
+#if ($hasSignals && $helper.isServer($mc))
+	protected final Remote$intf.name()Client client;
+
+	/**
+	 * Constructs the $clname.
+	 */
+	public $clname(Remote$intf.name()Client client)
+	{
+		this.client = client;
+	}
+
+#end
 	public Object _sessionQuery( Object query ) throws Exception
 	{
 		throw new UnsupportedOperationException( "unknown query: "+query );
@@ -77,17 +98,32 @@ public class $clname implements $intfname, ObjSession
 		$sep$helper.getTypeName( $param.type() ) $param.name()
 #set( $sep = ", " )
 #end
+#if ($mthd.hasSignal() && $mthd.isMsgDirServer())
+		$sep$whoType $whoName
+#end
 	)
-#if($mthd.hasThrown())
+#if($mthd.hasThrown() || ($mthd.hasSignal() && $mthd.isMsgDirServer()))
 	throws
 #set( $sep = "" )
 #foreach($t in $mthd.thrown().iterator())
 		$sep$t.getNamed().fqname()
 #set( $sep = ", " )
 #end
+#if ($mthd.hasSignal() && $mthd.isMsgDirServer())
+		Exception
+#end
 #end
 	{
+#if ($mthd.hasSignal() && $mthd.isMsgDirServer())
+#set( $subscription = "Add" )
+#if ($mthd.isSignalUnsubscribeMessage())
+#set( $subscription = "Remove" )
+#end
+		if (!client._$subscription$mthd.getMessageSignal().getSignalName()Subscriber( $whoName ))
+			throw new Exception( "Unable to $subscription subscriber" );
+#else
 		throw new UnsupportedOperationException( "$mthd.name()" );
+#end
 	}
 #end
 #end
@@ -124,6 +160,9 @@ public class $clname implements $intfname, ObjSession
 		$sep$helper.getTypeName( $p.type() ) $p.name()
 #set( $sep = ", " )
 #end
+#if ($mthd.hasSignal() && $mthd.isMsgDirServer())
+		$sep$whoType $whoName
+#end
 	)
 #if($n.hasThrown())
 	throws
@@ -134,7 +173,15 @@ public class $clname implements $intfname, ObjSession
 #end
 #end
 	{
+#if ($mthd.hasSignal() && $mthd.isMsgDirServer())
+#set( $subscription = "Add" )
+#if ($mthd.isSignalUnsubscribeMessage())
+#set( $subscription = "Remove" )
+#end
+		client._$subscription$mthd.getMessageSignal().getSignalName()Subscriber( $whoName );
+#else
 		throw new UnsupportedOperationException( "$n.name()" );
+#end
 	}
 #end
 #end
