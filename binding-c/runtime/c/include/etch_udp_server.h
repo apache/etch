@@ -17,14 +17,14 @@
  */ 
 
 /*
- * etch_tcp_server.h
+ * etch_udp_server.h
  */
 
-#ifndef ETCHTCPSERVER_H
-#define ETCHTCPSERVER_H
+#ifndef ETCHUDPSERVER_H
+#define ETCHUDPSERVER_H
 
 #include "apr_thread_proc.h"
-#include "etch_tcp_connection.h"
+#include "etch_udp_connection.h"
 #include "etch_resources.h"
 #include "etch_session_listener.h"
 #include "etch_mutex.h"
@@ -35,35 +35,34 @@
 extern "C" {
 #endif
 
-#define ETCH_TCPSERVER_STATE_CLOSED   0
-#define ETCH_TCPSERVER_STATE_CLOSING  1
-#define ETCH_TCPSERVER_STATE_STOPPED  2
-#define ETCH_TCPSERVER_STATE_STOPPING 3
-#define ETCH_TCPSERVER_STATE_STARTING 4
-#define ETCH_TCPSERVER_STATE_STARTED  5
+#define ETCH_UDPSERVER_STATE_CLOSED   0
+#define ETCH_UDPSERVER_STATE_CLOSING  1
+#define ETCH_UDPSERVER_STATE_STOPPED  2
+#define ETCH_UDPSERVER_STATE_STOPPING 3
+#define ETCH_UDPSERVER_STATE_STARTING 4
+#define ETCH_UDPSERVER_STATE_STARTED  5
 
 /**
- * etch_tcp_server 
- * tcp listener class
+ * etch_udp_server 
+ * udp listener class
  */
-typedef struct etch_tcp_server
+typedef struct etch_udp_server
 {
     ETCH_SERVER_COMMON_TYPES;
 
-    etch_tcp_connection* cxlisten; /* owned */
-    int  backlog;
-} etch_tcp_server;
+    etch_udp_connection* cxlisten; /* owned */
+} etch_udp_server;
 
-unsigned tcpserver_id_farm;
+unsigned udpserver_id_farm;
 
-etch_tcp_server* new_tcp_server(etch_url*, etch_threadpool*, etch_threadpool*, etch_resources*, i_sessionlistener*);
-int  etch_tcpsvr_open (etch_tcp_server*, const int is_reconnect);
-int  etch_tcpsvr_start(etch_tcp_server*);
-int  etch_tcpsvr_stop (etch_tcp_server*);
-int  etch_tcpsvr_close(etch_tcp_server*);
+etch_udp_server* new_udp_server(etch_url*, etch_threadpool*, etch_threadpool*, etch_resources*, i_sessionlistener*);
+int  etch_udpsvr_open (etch_udp_server*, const int is_reconnect);
+int  etch_udpsvr_start(etch_udp_server*);
+int  etch_udpsvr_stop (etch_udp_server*);
+int  etch_udpsvr_close(etch_udp_server*);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif  /* ETCHTCPSERVER_H */
+#endif  /* ETCHUDPSERVER_H */

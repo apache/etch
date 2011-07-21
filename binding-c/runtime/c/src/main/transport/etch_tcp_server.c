@@ -17,8 +17,7 @@
  */ 
 
 /*
- * etch_connection.c
- * connection client and server classes - tcp, udp
+ * etch_tcp_server.c
  */
 
 #include "etch_thread.h"
@@ -31,6 +30,7 @@
 #include "etch_mem.h"
 #include "etch_runtime.h"
 #include "etch_config.h"
+#include "etch_connection_event.h"
 
 static const char* LOG_CATEGORY = "etch_tcpserver";
 
@@ -59,17 +59,12 @@ etch_tcp_connection* new_accepted_tcp_connection
     (char* host, const int port, etch_rawsocket*);
 
 int  etch_tcpsvr_dummy_connection(etch_tcp_connection*);
-int  etch_deftcplistener_on_event(etch_tcp_server*, etch_tcp_connection*, const int, int, void*);
 
 /* transport interface */
 int etch_tcpsvr_transport_control(void*, etch_event*, etch_object*);
 int etch_tcpsvr_transport_notify (void*, etch_event*);
 etch_object* etch_tcpsvr_transport_query (void*, etch_query*);
 i_session* etch_tcpsvr_get_session(void*);
-
-/* session listener interface stubs */
-etch_object* etch_tcpsvr_stub_session_query (void*, etch_query*);
-
 
 #if(0)
 
@@ -189,7 +184,7 @@ etch_tcp_connection* new_accepted_tcp_connection(char* host, const int port, etc
     newcon->cx.port = port;       
     newcon->is_nodelay = ETCH_CONNECTION_DEFNODELAY;
     newcon->linger = ETCH_CONNECTION_DEFLINGERTIME;
-    newcon->cx.on_event = etch_tcpconx_on_event;  /* connection state handler */
+    newcon->cx.on_event = etch_def_connection_on_event;  /* connection state handler */
     #ifndef IS_ETCH_NO_SESSIONDATA                /* dead-end data for testing */
     newcon->cx.on_data  = etch_tcpsvr_on_data;    /* received data handler */
     #endif
@@ -213,90 +208,16 @@ etch_tcp_connection* new_accepted_tcp_connection(char* host, const int port, etc
 int destroy_etch_tcp_server (void* data)
 {
     etch_tcp_server* svr = (etch_tcp_server*)data;
-    int result = 0, serverid = 0;
     if (NULL == svr) return -1;
-    serverid = svr->listener_id; 
-    svr->on_event(svr, 0, ETCH_CONXEVT_DESTROYING, 0, 0);               
+    svr->on_event((etch_server *)svr, 0, ETCH_CONXEVT_DESTROYING, 0, 0);               
     
     etch_tcpsvr_close(svr);  /* close if open */
 
     if (!is_etchobj_static_content(svr))
         destroy_etch_tcp_connection(svr->cxlisten);
 
-    if (svr->session && svr->is_session_owned)
-       ((etch_object*)svr->session)->destroy (svr->session);
-
-    if (svr->itransport)
-        etch_free(svr->itransport);
-
-    if (svr->threadpool && svr->is_threadpool_owned)
-        etch_object_destroy(svr->threadpool);
-
-    etch_object_destroy(svr->thread);
-    svr->thread = NULL;
-
-    etch_mutex_destroy(svr->client_connections_mutex);
-    svr->client_connections_mutex = NULL;
-
-    etch_linked_list_destroy(svr->client_connections);
-    svr->client_connections = NULL;
-
-    svr->on_event(svr, 0, ETCH_CONXEVT_DESTROYED, 0, 0);
-
-    result = destroy_objectex((etch_object*)svr);
-    return result;
+    return destroy_etch_server((etch_server *)svr);
 }
-
-
-/**
- * etch_tcpsvr_set_session()
- * i_transport::set_session() override
- * @param session an i_sessionlistener*. caller owns this object.
- */
-void etch_tcpsvr_set_session(void* data, void* sessionData)
-{
-    etch_tcp_server* thisx = (etch_tcp_server*)data;
-    i_sessionlistener* session = (i_sessionlistener*)sessionData;
-    ETCH_ASSERT(is_etch_tcpserver(thisx));
-    ETCH_ASSERT(is_etch_sessionlxr(session));
-
-    thisx->is_session_owned = FALSE;  /* internal caller will re-set */
-
-    if (thisx->session)  /* replacing? */
-    {   ETCH_ASSERT(is_etch_sessionlxr(thisx->session));
-        etch_object_destroy(thisx->session);
-    }
-
-    thisx->session  = session;
-    thisx->isession = session->isession;
-    thisx->session_control = session->session_control;
-    thisx->session_notify  = session->session_notify;
-    thisx->session_query   = session->session_query;
-    thisx->on_session_accepted = session->session_accepted;    
-}
-
-int etch_tcpsvr_stub_session_control (void* obj, etch_event* evt, etch_object* v)
-{
-    return -1;
-}
-
-int etch_tcpsvr_stub_session_notify  (void* obj, etch_event* event)
-{
-    return -1;
-}
-
-/*
- * etch_tcpsvr_stub_on_session_accepted()
- * i_sessionlistener::session_accepted default implementation
- * @param thisx
- * @param socket presumably an etch_socket wrapper. caller relinquishes.
- */
-int etch_tcpsvr_stub_on_session_accepted(void* thisx, void* socket)
-{
-
-    return -1;
-} 
-
 
 /**
  * new_tcp_server()
@@ -320,7 +241,7 @@ etch_tcp_server* new_tcp_server(etch_url* url, etch_threadpool* mp, etch_threadp
 
     ((etch_object*)svr)->destroy     = destroy_etch_tcp_server;
     ((etch_object*)svr)->clone       = clone_null;
-    svr->on_event    = etch_deftcplistener_on_event;
+    svr->on_event    = etch_def_listener_on_event;
     svr->on_data     = etch_defconx_on_data;
     svr->resxmap     = resxmap; /* not owned, can be null */
     svr->threadpool  = mp;  /* currently always passed in */
@@ -346,7 +267,7 @@ etch_tcp_server* new_tcp_server(etch_url* url, etch_threadpool* mp, etch_threadp
     svr->transport_query   = etch_tcpsvr_transport_query;
 
     svr->get_session = etch_tcpsvr_get_session;
-    svr->set_session = etch_tcpsvr_set_session;
+    svr->set_session = etch_server_set_session;
 
           
     /* - - - - - - - - - - - - - - -
@@ -361,12 +282,12 @@ etch_tcp_server* new_tcp_server(etch_url* url, etch_threadpool* mp, etch_threadp
     }
     else
     {   i_session* isession = new_session_interface(svr, 
-            etch_tcpsvr_stub_session_control, 
-            etch_tcpsvr_stub_session_notify, 
-            etch_tcpsvr_stub_session_query);
+            etch_server_stub_session_control, 
+            etch_server_stub_session_notify, 
+            etch_server_stub_session_query);
 
         i_sessionlistener* newsession = new_sessionlistener_interface(svr, 
-            etch_tcpsvr_stub_on_session_accepted,
+            etch_server_stub_on_session_accepted,
             isession);
 
         svr->set_session(svr, newsession);
@@ -385,10 +306,10 @@ etch_tcp_server* new_tcp_server(etch_url* url, etch_threadpool* mp, etch_threadp
     if (svr->cxlisten)
     {
         svr->cxlisten->cx.listener = (etch_object*) svr;
-        svr->on_event(svr, 0, ETCH_CONXEVT_CREATED, 0, 0);
+        svr->on_event((etch_server *)svr, 0, ETCH_CONXEVT_CREATED, 0, 0);
     }
     else
-    {   svr->on_event(svr, 0, ETCH_CONXEVT_CREATERR, 0, 0);
+    {   svr->on_event((etch_server *)svr, 0, ETCH_CONXEVT_CREATERR, 0, 0);
         destroy_etch_tcp_server(svr);
         svr = NULL;
     }
@@ -419,23 +340,23 @@ int etch_tcpsvr_open (etch_tcp_server *svr, const int is_reconnect)
     tcpx = svr->cxlisten;
     cx   = &tcpx->cx;
     if (svr->state != ETCH_TCPSERVER_STATE_CLOSED) return 0;
-    svr->on_event(svr, tcpx, ETCH_CONXEVT_OPENING, 0, 0); 
+    svr->on_event((etch_server *)svr, (etch_transport_connection *)tcpx, ETCH_CONXEVT_OPENING, 0, 0); 
     is_new_socket = cx->socket == NULL;  
 
     if (is_reconnect)
         if (!cx->socket || !cx->hostname || !*cx->hostname || !cx->delay) 
-            return svr->on_event(svr, tcpx, ETCH_CONXEVT_OPENERR, 0, 0);  
+            return svr->on_event((etch_server *)svr, (etch_transport_connection *)tcpx, ETCH_CONXEVT_OPENERR, 0, 0);  
     do 
     {  if (0 != (arc = apr_sockaddr_info_get(&cx->sockdata, cx->hostname, 
             ETCH_DEFAULT_SOCKET_FAMILY, cx->port, 0, cx->aprpool)))
-        {   svr->on_event(svr, tcpx, ETCH_CONXEVT_OPENERR, 4, (void*)(size_t)arc);  
+        {   svr->on_event((etch_server *)svr, (etch_transport_connection *)tcpx, ETCH_CONXEVT_OPENERR, 4, (void*)(size_t)arc);  
             break;
         }
 
         if (is_new_socket) /* not reconnecting, create a socket */
         {
             if (0 != (arc = new_tcpsocket (&cx->socket,cx->aprpool)))
-            {   svr->on_event(svr, tcpx, ETCH_CONXEVT_OPENERR, 3, (void*)(size_t)arc);  
+            {   svr->on_event((etch_server *)svr, (etch_transport_connection *)tcpx, ETCH_CONXEVT_OPENERR, 3, (void*)(size_t)arc);  
                 break;
             }
 
@@ -450,7 +371,7 @@ int etch_tcpsvr_open (etch_tcp_server *svr, const int is_reconnect)
                 etch_sleep(cx->delay);
 
             if (0 != (arc = apr_socket_bind(cx->socket, cx->sockdata)))
-            {   svr->on_event(svr, tcpx, ETCH_CONXEVT_OPENERR, 5, (void*)(size_t)arc);   
+            {   svr->on_event((etch_server *)svr, (etch_transport_connection *)tcpx, ETCH_CONXEVT_OPENERR, 5, (void*)(size_t)arc);   
                 continue;
             }
 
@@ -459,11 +380,11 @@ int etch_tcpsvr_open (etch_tcp_server *svr, const int is_reconnect)
 
             if (0 == (arc = apr_socket_listen(cx->socket, svr->backlog)))
             {   cx->is_started = TRUE;
-                svr->on_event(svr, tcpx, ETCH_CONXEVT_LISTENED, cx->conxid, 0);
+                svr->on_event((etch_server *)svr, (etch_transport_connection *)tcpx, ETCH_CONXEVT_LISTENED, cx->conxid, 0);
                 break;
             } 
      
-            svr->on_event(svr, tcpx, ETCH_CONXEVT_OPENERR, 6, (void*)(size_t)arc);  
+            svr->on_event((etch_server *)svr, (etch_transport_connection *)tcpx, ETCH_CONXEVT_OPENERR, 6, (void*)(size_t)arc);  
         }         
 
     } while(0);
@@ -476,7 +397,7 @@ int etch_tcpsvr_open (etch_tcp_server *svr, const int is_reconnect)
     if (is_new_socket)
         cx->socket = NULL;
 
-    svr->on_event(svr, tcpx, 
+    svr->on_event((etch_server *)svr, (etch_transport_connection *)tcpx, 
         result? ETCH_CONXEVT_OPENERR: ETCH_CONXEVT_OPENED, 0, 0);
 
 	return result;  
@@ -504,12 +425,12 @@ int etch_tcpsvr_close (etch_tcp_server* lxr)
 
     cx = &lxr->cxlisten->cx;
     lxr->state = ETCH_TCPSERVER_STATE_CLOSING;
-    lxr->on_event(lxr, 0, ETCH_CONXEVT_CLOSING, 0, 0); 
+    lxr->on_event((etch_server *)lxr, 0, ETCH_CONXEVT_CLOSING, 0, 0); 
 
     result = etch_tcpconx_close(lxr->cxlisten, 0); /* close listen socket */
 
     lxr->state = ETCH_TCPSERVER_STATE_CLOSED;
-    lxr->on_event(lxr, 0, result? ETCH_CONXEVT_CLOSERR: ETCH_CONXEVT_CLOSED, 0, 0);
+    lxr->on_event((etch_server *)lxr, 0, result? ETCH_CONXEVT_CLOSERR: ETCH_CONXEVT_CLOSED, 0, 0);
 
     if (cx->wait_down) 
     {
@@ -547,10 +468,10 @@ static void etch_tcp_listener_client_connection_proc(void* data)
     const int blen = cx->bufsize? cx->bufsize: ETCH_CONX_DEFAULT_BUFSIZE;
     
     ETCH_ASSERT(is_etch_tcpconnection(accx));
-    cx->on_event = etch_tcpconx_on_event; 
+    cx->on_event = etch_def_connection_on_event; 
 
  
-    svr->on_event(svr, accx, ETCH_CONXEVT_RCVPUMP_START, 0, 0);
+    svr->on_event((etch_server *)svr, (etch_transport_connection *)accx, ETCH_CONXEVT_RCVPUMP_START, 0, 0);
     fbuf = new_flexbuffer(blen);   
     buf  = etch_flexbuf_get_buffer(fbuf);   
   
@@ -565,7 +486,7 @@ static void etch_tcp_listener_client_connection_proc(void* data)
     /* receive pump -- blocking read */
     while (svr->state == ETCH_TCPSERVER_STATE_STARTED && cx->is_started) {
         memset(buf, 0, blen); /* nice for debugging but otherwise unnecessary */
-        svr->on_event(svr, accx, ETCH_CONXEVT_RCVPUMP_RECEIVING, thread_id, 0);
+        svr->on_event((etch_server *)svr, (etch_transport_connection *)accx, ETCH_CONXEVT_RCVPUMP_RECEIVING, thread_id, 0);
 
         /* receive data from tcp socket into buffer owned by flexbuffer.
          * note that if this receive were to stop blocking, for example if the  
@@ -599,7 +520,7 @@ static void etch_tcp_listener_client_connection_proc(void* data)
         }
 
         if (result < 0) /* if socket error, exit */
-        {   svr->on_event(svr, svr->cxlisten, ETCH_CONXEVT_RCVPUMP_ERR, arc, 0);
+        {   svr->on_event((etch_server *)svr, (etch_transport_connection *)svr->cxlisten, ETCH_CONXEVT_RCVPUMP_ERR, arc, 0);
             break;
         }  
 
@@ -620,7 +541,7 @@ static void etch_tcp_listener_client_connection_proc(void* data)
     etch_mutex_unlock(svr->client_connections_mutex);
 
     if (is_this_end_closed || is_other_end_closed || is_shutdown_request) result = 0;
-    svr->on_event(svr, accx, ETCH_CONXEVT_RCVPUMP_STOP, result, (void*)(size_t)thread_id);
+    svr->on_event((etch_server *)svr, (etch_transport_connection *)accx, ETCH_CONXEVT_RCVPUMP_STOP, result, (void*)(size_t)thread_id);
 
     accx->session->session_notify (accx->session->thisx, new_etch_event(0, ETCHEVT_SESSION_DOWN));
 
@@ -686,7 +607,7 @@ static void etch_tcp_listener_accept_proc(void* data)
     ETCH_ASSERT(is_etch_tcpserver(listener));
 
     while (listener->is_started) {
-        listener->on_event(listener, tcpx, ETCH_CONXEVT_ACCEPTING, 0, 0);
+        listener->on_event((etch_server *)listener, (etch_transport_connection *)tcpx, ETCH_CONXEVT_ACCEPTING, 0, 0);
 
         /* each accepted connection gets its own apr subpool, which is freed when 
          * the connection is destroyed. this accounts for apr memory specific to  
@@ -698,7 +619,7 @@ static void etch_tcp_listener_accept_proc(void* data)
 
         /* socket block here for a client connection request */
         if (0 != (arc = apr_socket_accept (&newsock, listensock, temp_pool))) {
-            listener->on_event(listener, tcpx, ETCH_CONXEVT_ACCEPTERR, 0,(void*)(size_t)arc); 
+            listener->on_event((etch_server *)listener, (etch_transport_connection *)tcpx, ETCH_CONXEVT_ACCEPTERR, 0,(void*)(size_t)arc); 
             /* if server shutdown, no error */
             if (listener->is_started) {
                 result = -1; 
@@ -737,7 +658,7 @@ static void etch_tcp_listener_accept_proc(void* data)
         newx->cx.listener   = (etch_object*)listener;
         newx->cx.is_started = TRUE;
         
-        listener->on_event (listener, newx, ETCH_CONXEVT_ACCEPTED, 0, 0);
+        listener->on_event ((etch_server *)listener, (etch_transport_connection *)newx, ETCH_CONXEVT_ACCEPTED, 0, 0);
 
         /* 1/4/09 permit socket data handler to be overridden, e.g. by a unit test */
         if (listener->on_data && listener->on_data != etch_defconx_on_data)
@@ -768,7 +689,7 @@ static void etch_tcp_listener_accept_proc(void* data)
          */
         if (NULL == ( newx->cx.thread = newthread = listener->threadpool->run (listener->subpool, etch_tcp_listener_client_connection_proc, newx))) 
         {
-            listener->on_event (listener, newx, ETCH_CONXEVT_STARTERR, 1, 0);
+            listener->on_event ((etch_server *)listener, (etch_transport_connection *)newx, ETCH_CONXEVT_STARTERR, 1, 0);
             etch_object_destroy(newx); 
             newx = NULL;  /* todo newx should cx.session.destroy() */
             result = -1;
@@ -782,9 +703,9 @@ static void etch_tcp_listener_accept_proc(void* data)
     }
 
     if(0 == result) {
-         listener->on_event(listener, tcpx, ETCH_CONXEVT_ACCEPTPUMPEXIT, thread_id, 0);
+         listener->on_event((etch_server *)listener, (etch_transport_connection *)tcpx, ETCH_CONXEVT_ACCEPTPUMPEXIT, thread_id, 0);
     } else {
-        listener->on_event(listener, tcpx, ETCH_CONXEVT_ACCEPTPUMPEXITERR, 0, 0);
+        listener->on_event((etch_server *)listener, (etch_transport_connection *)tcpx, ETCH_CONXEVT_ACCEPTPUMPEXITERR, 0, 0);
     }
 }
 
@@ -801,7 +722,7 @@ int etch_tcpsvr_start (etch_tcp_server* tcpsvr)
     etch_connection* cx = &tcpx->cx;
 
     if (tcpsvr->state != ETCH_TCPSERVER_STATE_STOPPED) 
-        return tcpsvr->on_event(tcpsvr, tcpx, ETCH_CONXEVT_STARTERR, 0, 0);  
+        return tcpsvr->on_event((etch_server *)tcpsvr, (etch_transport_connection *)tcpx, ETCH_CONXEVT_STARTERR, 0, 0);  
 
     /* the threadpool acts as the server's thread manager. it creates threads
      * on request and destroys them at thread exit. the main pool is always
@@ -818,12 +739,12 @@ int etch_tcpsvr_start (etch_tcp_server* tcpsvr)
 
     tcpsvr->state = ETCH_TCPSERVER_STATE_STARTED;
     tcpsvr->is_started = TRUE;
-    tcpsvr->on_event(tcpsvr, tcpx, ETCH_CONXEVT_STARTING, 0, 0);  
+    tcpsvr->on_event((etch_server *)tcpsvr, (etch_transport_connection *)tcpx, ETCH_CONXEVT_STARTING, 0, 0);  
 
     tcpsvr->thread = new_thread(etch_tcp_listener_accept_proc, tcpsvr);
     if(tcpsvr->thread == NULL) {
         // TODO: error handling thread could not be started
-        tcpsvr->on_event (tcpsvr, tcpx, ETCH_CONXEVT_STARTERR, 1, 0);
+        tcpsvr->on_event ((etch_server *)tcpsvr, (etch_transport_connection *)tcpx, ETCH_CONXEVT_STARTERR, 1, 0);
         result = -1;
     }
     tcpsvr->thread->start(tcpsvr->thread);
@@ -833,11 +754,11 @@ int etch_tcpsvr_start (etch_tcp_server* tcpsvr)
     // TODO: run this as default thread
     //if (NULL == tcpsvr->threadpool->run (tcpsvr->threadpool, etch_tcp_listerner_proc, tcpsvr))
     //{
-    //    tcpsvr->on_event (tcpsvr, tcpx, ETCH_CONXEVT_STARTERR, 1, 0);
+    //    tcpsvr->on_event ((etch_server *)tcpsvr, tcpx, ETCH_CONXEVT_STARTERR, 1, 0);
     //    result = -1;
     //}
      
-    tcpsvr->on_event(tcpsvr, tcpx, result? ETCH_CONXEVT_STARTERR: ETCH_CONXEVT_STARTED, 0, 0);
+    tcpsvr->on_event((etch_server *)tcpsvr, (etch_transport_connection *)tcpx, result? ETCH_CONXEVT_STARTERR: ETCH_CONXEVT_STARTED, 0, 0);
 
     if (cx->wait_up) 
     {
@@ -867,11 +788,11 @@ int etch_tcpsvr_stop (etch_tcp_server* server)
     if (!tcpx) return -1;
 
     if (server->state <  ETCH_TCPSERVER_STATE_STARTED)  
-        return server->on_event(server, tcpx, ETCH_CONXEVT_STOPERR, 0, 0);  
+        return server->on_event((etch_server *)server, (etch_transport_connection *)tcpx, ETCH_CONXEVT_STOPERR, 0, 0);  
  
     server->is_started = FALSE; /* pump threads conditional */
     server->state = ETCH_TCPSERVER_STATE_STOPPING;
-    server->on_event(server, tcpx, ETCH_CONXEVT_STOPPING, 0, 0);
+    server->on_event((etch_server *)server, (etch_transport_connection *)tcpx, ETCH_CONXEVT_STOPPING, 0, 0);
     
     /* unblock the accept thread so it will recognize that it should exit */
     result = etch_tcpsvr_dummy_connection (tcpx);
@@ -895,7 +816,7 @@ int etch_tcpsvr_stop (etch_tcp_server* server)
     result = threadpool_waitfor_all (server->threadpool, TRUE); 
 
     server->state = ETCH_TCPSERVER_STATE_STOPPED;
-    server->on_event(server, tcpx, ETCH_CONXEVT_STOPPED, 0, 0);
+    server->on_event((etch_server *)server, (etch_transport_connection *)tcpx, ETCH_CONXEVT_STOPPED, 0, 0);
     return result;
 }
 
@@ -957,28 +878,6 @@ int etch_tcpsvr_dummy_connection (etch_tcp_connection* tcpx)
         }
     }
     return apr_status ? -1 : 0;
-}
-
-
-/* - - - - - - - - - - - - - - - - - 
- * tcp server :: i_sessionlistener
- * - - - - - - - - - - - - - - - - - 
- */
-
-/*
- * pointers to these funtions are copied from the i_sessionlistener implementation
- * at set_session() time. these stub implementations are provided as placeholders.
- */
-
-
-
-
-
-
-
-etch_object* etch_tcpsvr_stub_session_query (void* obj, etch_query* query) 
-{
-    return NULL;
 }
 
 

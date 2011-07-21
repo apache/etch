@@ -44,20 +44,29 @@ struct etch_config_entry
     char* value;
 };
 
+etch_status_t etch_config_init(etch_config_t** config)
+{
+	etch_config_t* newconfig = NULL;
+
+	if(config == NULL) {
+	    return ETCH_EINVAL;
+	}
+
+	newconfig = etch_malloc(sizeof(etch_config_t), 0);
+	if(newconfig == NULL) {
+	    return ETCH_ENOMEM;
+	}
+	memset(newconfig, 0, sizeof(etch_config_t));
+	*config = newconfig;
+
+	return ETCH_SUCCESS;
+}
+
 etch_status_t etch_config_create(etch_config_t** config)
 {
-    etch_config_t* newconfig = NULL;
-
-    if(config == NULL) {
-        return ETCH_EINVAL;
-    }
-
-    newconfig = etch_malloc(sizeof(etch_config_t), 0);
-    if(newconfig == NULL) {
-        return ETCH_ENOMEM;
-    }
-    memset(newconfig, 0, sizeof(etch_config_t));
-    *config = newconfig;
+	 etch_status_t initStatus = etch_config_init(config);
+	 if (initStatus != ETCH_SUCCESS)
+		 return initStatus;
 
     // default properties
     etch_config_set_property(*config, "etch.validate.write", "1");
@@ -127,7 +136,7 @@ etch_status_t etch_config_open(struct etch_config_t* config, const char* filepat
                 name = strtok(line, "=");
                 name = strtrim(name);
                 if(name != NULL) {
-                    value = strtok(NULL, "=");
+                    value = strtok(NULL, "");
                     value = strtrim(value);
                 }
                 etch_config_set_property(config, name, value);

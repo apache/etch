@@ -65,7 +65,9 @@ add_library (etch-c STATIC
     bindings/msg/etch_tagdata_out.c
     bindings/support/etch_resources.c
     transport/etch_tdformat.c
+		transport/etch_server.c
     transport/etch_tcp_server.c
+		transport/etch_udp_server.c
     transport/etch_mailbox_manager.c
     transport/etch_connection_event.c
     transport/etch_connection.c
@@ -85,6 +87,7 @@ add_library (etch-c STATIC
     transport/etch_session_message.c
     transport/etch_session_packet.c
     transport/etch_tcp_connection.c
+		transport/etch_udp_connection.c
     support/etch_sessionint.c
     support/etch_mailboxint.c
     support/etch_queue_apr.c

@@ -522,11 +522,14 @@ boolean etchurl_get_boolean_term(etch_url* url, const wchar_t* termname, boolean
     int result = 0;
     etch_object* foundobj = etchurl_get_term(url, termname);
      
-    if  (is_etch_boolean(foundobj))
-         if (retval)
-            *retval = ((etch_boolean*) foundobj)->value;
-         else;
-    else result = -1;
+    if  (is_etch_boolean(foundobj)) {
+       if (retval)
+          *retval = ((etch_boolean*) foundobj)->value;
+    } else if (is_etch_string(foundobj) && ((etch_string *)foundobj)->char_count) {
+       if (retval)
+          *retval = wcscmp(L"true", ((etch_string *)foundobj)->v.valw) == 0;
+    } else 
+       result = -1;
 
     return result;
 }

@@ -81,6 +81,7 @@ extern "C" {
 
 //TODO: check, etch_tcpconxn
 #define ETCH_SHUTDOWNSIGNAL "$ETCHQUIT"
+#define ETCH_SHUTDOWNSIGNALSIZE (sizeof(ETCH_SHUTDOWNSIGNAL)-1)
 
 /**
  * common defines

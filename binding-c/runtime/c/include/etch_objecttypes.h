@@ -147,6 +147,8 @@ typedef enum objtype_b
     ETCHTYPEB_CLIENTSTUB      = 0x71,
     ETCHTYPEB_SERVERSTUB      = 0x72,
     ETCHTYPEB_FACTORYPARAMS   = 0x73,
+    ETCHTYPEB_UDPSERVER       = 0x74,
+    ETCHTYPEB_UDPCLIENT       = 0x75,
     ETCHTYPEB_INET_WHO        = ETCHTYPEB_WHO,
 
     ETCHTYPEB_EODMARK         = 0x7f,
@@ -288,6 +290,9 @@ typedef enum etch_classid
     CLASSID_SERIALIZER_MAP     = 0x86,
     CLASSID_SERIALIZER_SET     = 0x87,
     CLASSID_SERIALIZER_DATE    = 0x88,
+    CLASSID_UDP_CONNECTION     = 0x89,
+    CLASSID_UDP_LISTENER       = 0x8a,
+    CLASSID_UDP_CLIENT         = 0x8b,
 
     CLASSID_EVENT_UNWANTMSG    = 0x90,
     CLASSID_MAILBOX            = 0x91,

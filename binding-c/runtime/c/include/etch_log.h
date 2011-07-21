@@ -25,6 +25,7 @@
 
 #include "etch.h"
 #include "etch_config.h"
+#include "etch_encoding.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -35,6 +36,18 @@ extern "C" {
  */
 #define ETCH_LOG(category, level, fmt, ...) etch_log_log(NULL, category, level, __FILE__, __LINE__, fmt, ##__VA_ARGS__)
 #define ETCH_LOGW(category, level, fmt, ...) etch_log_logw(NULL, category, level, __FILE__, __LINE__, fmt, ##__VA_ARGS__)
+#define ETCH_LOG_EXCEPTION(category, level, exception, fmt, ...) \
+   do { \
+      char *message; \
+      if (!IS_ETCH_ENCODING_8BIT(etch_exception_get_message(exception)->encoding)) \
+         etch_encoding_transcode_wchar(&message, ETCH_ENCODING_DEFAULT, etch_exception_get_message(exception)->v.valw, NULL); \
+      else \
+         message = etch_exception_get_message(exception)->v.valc; \
+      ETCH_LOG(category, level, fmt, ##__VA_ARGS__); \
+      ETCH_LOG(category, level, "Exception: %s (error code %d)\n", message, etch_exception_get_errorcode(exception)); \
+      if (!IS_ETCH_ENCODING_8BIT(etch_exception_get_message(exception)->encoding)) \
+         etch_free(message); \
+   } while(0)
 
 /**
  * etch_log_t

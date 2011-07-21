@@ -31,6 +31,8 @@
 #include "etch_messagizer.h"
 #include "etch_tcp_server.h"
 #include "etch_tcp_connection.h"
+#include "etch_udp_server.h"
+#include "etch_udp_connection.h"
 #include "etch_exception.h"
 #include "etch_objecttypes.h"
 #include "etch_log.h"
@@ -43,22 +45,29 @@ extern apr_pool_t* g_etch_main_pool;
 
 typedef etch_plainmailboxmgr etch_mailbox_manager;
 
+etch_delivery_service* get_etch_ds_impl (i_delivery_service*); 
 
-int tcpdelsvc_init (etch_tcp_delivery_service*);
+int delsvc_init (etch_delivery_service*);
 int destroy_delivery_service_interface (void*);
 int destroy_delivery_service_via_interface(void*);
 int destroy_tcp_delivery_service(void*);
-int tcpdelsvc_begincall(i_delivery_service*, etch_message*, i_mailbox**);
-int tcpdelsvc_endcall  (i_delivery_service*, i_mailbox*, etch_type*, etch_object**);
-int tcpdelsvc_session_message (void*, etch_who*, etch_message*);
-int tcpdelsvc_session_control (void*, etch_event*, etch_object*);
-int tcpdelsvc_session_notify  (void*, etch_event*);
-etch_object* tcpdelsvc_session_query (void*, etch_query*);
-i_session* tcpdelsvc_get_session(void*);
-etch_object* tcpdelsvc_transport_query (void*, etch_query*); 
-int tcpdelsvc_transport_control(void*, etch_event*, etch_object*);
-int tcpdelsvc_transport_notify (void*, etch_event*);
+int destroy_udp_delivery_service(void*);
+int delsvc_begincall(i_delivery_service*, etch_message*, i_mailbox**);
+int delsvc_endcall  (i_delivery_service*, i_mailbox*, etch_type*, etch_object**);
+int delsvc_session_message (void*, etch_who*, etch_message*);
+int delsvc_session_control (void*, etch_event*, etch_object*);
+int delsvc_session_notify  (void*, etch_event*);
+etch_object* delsvc_session_query (void*, etch_query*);
+i_session* delsvc_get_session(void*);
 
+int delsvc_transport_control(void*, etch_event*, etch_object*);
+int delsvc_transport_notify(void*, etch_event*);
+etch_object* delsvc_transport_query(void*, etch_query*); 
+
+etch_session* remove_etch_session (etch_server_factory*, const int session_id);
+
+i_delivery_service* new_etch_transport_a(etch_url* url, etch_factory_params*, void* conximpl);
+i_sessionlistener* new_etch_listener_a (etch_url* url, etch_resources* resources, void* factory_thisx, helper_listener_create_func, main_server_create_func, helper_resources_init_func, new_server_func new_server_create);
 
 /* - - - - - - - - - - - - - - - - - - - - - - 
  * delivery service
@@ -101,7 +110,12 @@ i_delivery_service* new_etch_transport_a (etch_url* url, etch_factory_params* pa
 
     if (is_url_scheme_udp(url))
     {    
-        /* not yet implemented */
+        etch_udp_delivery_service* udpds = new_udp_delivery_service (url, params, conximpl);
+
+        if (udpds) {
+            newds = udpds->ids;
+            newds->thisx = udpds;
+        }
     }
     #if(0)
     else   /* handlers for other url schemes follow here eventually */  
@@ -149,7 +163,7 @@ etch_tcp_delivery_service* new_tcp_delivery_service (etch_url* url,
     etch_messagizer* messagizer = NULL;
     etch_mailbox_manager* mboxmgr = NULL;
     etch_tcp_delivery_service* delsvc = NULL;  
-    const int is_tcpconx_owned = tcpconx == NULL;  
+    const int is_connection_owned = tcpconx == NULL;
     ETCH_ASSERT(params && params->in_resx); 
     resources = params->in_resx;
 
@@ -192,9 +206,9 @@ etch_tcp_delivery_service* new_tcp_delivery_service (etch_url* url,
         delsvc->packetizer = packetizer;        /* todo can we lose these refs */
         delsvc->messagizer = messagizer;
         delsvc->resources  = resources;
-        delsvc->is_tcpconx_owned = is_tcpconx_owned;
+        delsvc->is_connection_owned = is_connection_owned;
 
-        tcpdelsvc_init (delsvc);  /* initialize the delivery service interface */
+        delsvc_init ((etch_delivery_service *)delsvc);  /* initialize the delivery service interface */
 
     } while(0);
 
@@ -217,47 +231,121 @@ etch_tcp_delivery_service* new_tcp_delivery_service (etch_url* url,
     return delsvc;
 }
 
+/*
+ * new_udp_delivery_service()
+ * etch_udp_delivery_service constructor 
+ * @param params server parameter bundle, caller retains. 
+ * &param udpx if present, the already accepted client connection. 
+ * if present, caller retains.
+ */
+etch_udp_delivery_service* new_udp_delivery_service (etch_url* url, 
+    etch_factory_params* params, etch_udp_connection* udpconx)
+{
+    etch_resources* resources = NULL;
+    etch_messagizer* messagizer = NULL;
+    etch_mailbox_manager* mboxmgr = NULL;
+    etch_udp_delivery_service* delsvc = NULL;
+    const int is_connection_owned = udpconx == NULL;
+    ETCH_ASSERT(params && params->in_resx);
+    resources = params->in_resx;
+
+    do
+    {   /* as each next higher layer of the delivery service is instantiated, it
+         * is passed passed a transport interface to the previously-instantiated
+         * layer. in each such case, note that the new layer does not own memory
+         * for the passed transport interface.
+         */
+        if (NULL == udpconx)
+            udpconx = new_udp_connection (url, params->in_resx, NULL);
+
+        ETCH_ASSERT(udpconx);
+        if (0 != init_etch_udpconx_interfaces (udpconx)) break;
+
+        messagizer = new_messagizer_a (udpconx->itp, url, resources);
+        if (NULL == messagizer) break;
+
+        mboxmgr = new_plain_mailbox_manager (messagizer->transportmsg,
+            url->raw, resources, params->mblock);
+        if (NULL == mboxmgr) break;
+
+        delsvc = (etch_udp_delivery_service*) new_delivery_service
+          (sizeof(etch_udp_delivery_service), CLASSID_TCP_DELIVERYSVC);
+
+        ((etch_object*)delsvc)->destroy = destroy_udp_delivery_service;
+
+        /* set our transport to that of the next lower layer (mailbox manager) */
+        delsvc->transport  = mboxmgr->transportmsg;
+        delsvc->transportx = mboxmgr->imanager;  /* todo can we lose this ref? */
+
+        delsvc->mailboxmgr = mboxmgr;
+        delsvc->udpconx    = udpconx;
+        delsvc->wait_up    = udpconx->cx.wait_up; /* connection up/down monitor */
+        delsvc->wait_down  = udpconx->cx.wait_down; /* connection up/down monitor */
+        delsvc->rwlock     = params->mblock;     /* not owned */
+        delsvc->messagizer = messagizer;
+        delsvc->resources  = resources;
+        delsvc->is_connection_owned = is_connection_owned;
+
+        delsvc_init ((etch_delivery_service *)delsvc);  /* initialize the delivery service interface */
+
+    } while(0);
+
+    if (NULL == delsvc)
+    {
+      etch_object_destroy(udpconx);
+      udpconx = NULL;
+
+      etch_object_destroy(messagizer);
+      messagizer = NULL;
+
+      etch_object_destroy(mboxmgr);
+      mboxmgr = NULL;
+
+    }
+
+    return delsvc;
+}
+
+
 /**
- * tcpdelsvc_set_session()
+ * delsvc_set_session()
  * @param session the i_sessionmessage interface. caller retains ownership.
  * this is generally called from the stub constructor.
  */
-void tcpdelsvc_set_session (void* data, void* sessionData) 
+void delsvc_set_session (void* data, void* sessionData) 
 {
     i_delivery_service* ids = (i_delivery_service*)data;
     i_sessionmessage* session = (i_sessionmessage*)sessionData;
-    etch_tcp_delivery_service* tcpds = get_etch_ds_impl(ids);
+    etch_delivery_service* ds = get_etch_ds_impl(ids);
     ETCH_ASSERT(is_etch_sessionmsg(session));
     /* set delivery service session to be the passed (stub's) session */
-    tcpds->session = tcpds->ids->ism = session;
+    ds->session = ds->ids->ism = session;
 }
 
 /**
- * tcpdelsvc_transport_message()
+ * delsvc_transport_message()
  * @param whoto recipient - caller retains this memory, can be null.
  * @param message the message
  * caller relinquishes this memory on success, retains on failure.
  * @return 0 success, -1 error.
  */
-int tcpdelsvc_transport_message (void* data, void* whoData, void* messageData)
+int delsvc_transport_message (void* data, void* whoData, void* messageData)
 {
     i_delivery_service* ids = (i_delivery_service*)data;
     etch_who* whoto = (etch_who*)whoData;
     etch_message* msg = (etch_message*)messageData;
-    etch_tcp_delivery_service* tcpds = get_etch_ds_impl(ids);
-    i_transportmessage* dstransport  = tcpds->transport;
+    etch_delivery_service* ds = get_etch_ds_impl(ids);
+    i_transportmessage* dstransport  = ds->transport;
     ETCH_ASSERT(is_etch_transportmsg(dstransport));
 
     return dstransport->transport_message (dstransport->thisx, whoto, msg);
 }
 
-
-
 /**
- * tcpdelsvc_init()
+ * delsvc_init()
  * initialize delivery service interface
  */
-int tcpdelsvc_init (etch_tcp_delivery_service* delsvc)
+int delsvc_init (etch_delivery_service* delsvc)
 {   
     i_session*   isession   = NULL;
     i_transport* itransport = NULL;
@@ -269,8 +357,8 @@ int tcpdelsvc_init (etch_tcp_delivery_service* delsvc)
     ids->transport  = delsvc->transport;
     ids->session    = delsvc->session;
 
-    ids->begin_call = delsvc->begin_call = (etch_delivsvc_begincall)tcpdelsvc_begincall;
-    ids->end_call   = delsvc->end_call   = (etch_delvisvc_endcall)tcpdelsvc_endcall;
+    ids->begin_call = delsvc->begin_call = (etch_delivsvc_begincall)delsvc_begincall;
+    ids->end_call   = delsvc->end_call   = (etch_delvisvc_endcall)delsvc_endcall;
 
 
     /* - - - - - - - - - - - - - - -
@@ -278,16 +366,16 @@ int tcpdelsvc_init (etch_tcp_delivery_service* delsvc)
      * - - - - - - - - - - - - - - -
      */
     itransport = new_transport_interface (ids,
-        tcpdelsvc_transport_control,
-        tcpdelsvc_transport_notify,
-        tcpdelsvc_transport_query);
+        delsvc_transport_control,
+        delsvc_transport_notify,
+        delsvc_transport_query);
 
     delsvc->transportmsg = new_transportmsg_interface (ids, 
-        tcpdelsvc_transport_message, 
+        delsvc_transport_message, 
         itransport); /* transportmsg now owns itransport */
 
-    delsvc->transportmsg->set_session = tcpdelsvc_set_session;
-    delsvc->transportmsg->get_session = tcpdelsvc_get_session;
+    delsvc->transportmsg->set_session = delsvc_set_session;
+    delsvc->transportmsg->get_session = delsvc_get_session;
 
     /* copy native transport back to interface */
     ids->itm = delsvc->transportmsg;
@@ -306,12 +394,12 @@ int tcpdelsvc_init (etch_tcp_delivery_service* delsvc)
      * - - - - - - - - - - - - - - -
      */
     isession = new_session_interface (ids, 
-        tcpdelsvc_session_control,
-        tcpdelsvc_session_notify,
-        tcpdelsvc_session_query);
+        delsvc_session_control,
+        delsvc_session_notify,
+        delsvc_session_query);
 
     delsvc->sessionmsg  = new_sessionmsg_interface (ids, 
-        tcpdelsvc_session_message, 
+        delsvc_session_message, 
         isession); /* sessionmsg now owns isession */
 
     /* copy native session back to interface */
@@ -328,7 +416,6 @@ int tcpdelsvc_init (etch_tcp_delivery_service* delsvc)
 
     return 0;
 }
-
 
 /**
  * new_delivery_service_interface()
@@ -467,10 +554,58 @@ int destroy_tcp_delivery_service (void* data)
 
         /* on server side, listen thread destroys tcpconx on exit. 
          * on client side, tcpconx is destroyed here. */
-        if (thisx->is_tcpconx_owned){
+        if (thisx->is_connection_owned){
 
             etch_object_destroy(thisx->tcpconx);
             thisx->tcpconx = NULL;
+        }
+
+        ETCH_LOG(LOG_CATEGORY, ETCH_LOG_DEBUG, "destroying delivery interface ...\n");
+        destroy_delivery_service_interface(thisx->ids);
+
+        etch_object_destroy(thisx->sessionmsg);
+        thisx->sessionmsg = NULL;
+
+        etch_object_destroy(thisx->transportmsg);
+        thisx->transportmsg = NULL;
+
+    }
+    return destroy_objectex((etch_object*)thisx);
+}
+
+/**
+ * destroy_udp_delivery_service()
+ * etch_udp_delivery_service destructor
+ */
+int destroy_udp_delivery_service (void* data)
+{
+    etch_udp_delivery_service* thisx = (etch_udp_delivery_service*)data;
+    const char* thistext = "delsvc dtor";
+    if (NULL == thisx) return -1;
+
+    if (!is_etchobj_static_content(thisx))
+    {
+        /* ensure any threads referencing mailboxes (see mailbox.message())
+         * have run to completion before we start tearing it down. */
+        etchmbox_get_readlockex (thisx->rwlock, thistext);
+        etchmbox_release_readlockex (thisx->rwlock, thistext);
+
+        ETCH_LOG(LOG_CATEGORY, ETCH_LOG_DEBUG, "destroying messagizer ...\n");
+
+        etch_object_destroy(((etch_messagizer*)thisx->messagizer));
+        thisx->messagizer = NULL;
+
+        ETCH_LOG(LOG_CATEGORY, ETCH_LOG_DEBUG, "destroying mailbox manager ...\n");
+
+        etch_object_destroy(((etch_mailbox_manager*)thisx->mailboxmgr));
+        thisx->mailboxmgr = NULL;
+
+        /* on server side, listen thread destroys udpconx on exit. 
+         * on client side, udpconx is destroyed here. */
+        if (thisx->is_connection_owned){
+
+            etch_object_destroy(thisx->udpconx);
+            thisx->udpconx = NULL;
         }
 
         ETCH_LOG(LOG_CATEGORY, ETCH_LOG_DEBUG, "destroying delivery interface ...\n");
@@ -497,39 +632,39 @@ int destroy_tcp_delivery_service (void* data)
  * convenience method to verify i_delivery_service, and from it, 
  * get, verify, and return the delivery service implementation object.
  */
-etch_tcp_delivery_service* get_etch_ds_impl (i_delivery_service* ids) 
+etch_delivery_service* get_etch_ds_impl (i_delivery_service* ids) 
 {
-    etch_tcp_delivery_service* tcpds = NULL;
+    etch_delivery_service* ds = NULL;
     ETCH_ASSERT(is_etch_ideliverysvc(ids));
-    tcpds = ids->thisx;
-    ETCH_ASSERT(is_etch_deliverysvc(tcpds));
-    return tcpds;
+
+    ds = (etch_delivery_service *) ids->thisx;
+    ETCH_ASSERT(is_etch_deliverysvc(ds));
+    return ds;
 }
 
 
  /**
- * tcpdelsvc_begincall()
+ * delsvc_begincall()
  * i_deliveryservice :: begincall
  * @param msg caller relinquishes on success, retains on failure
  * @param out mailbox interface returned on success
  * @return 0 success, or -1 failure. new mailbox return in out parameter.
  */
-int tcpdelsvc_begincall (i_delivery_service* ids, etch_message* msg, i_mailbox** out)
+int delsvc_begincall (i_delivery_service* ids, etch_message* msg, i_mailbox** out)
 {
     int result = 0;
-    etch_tcp_delivery_service* tcpds = get_etch_ds_impl(ids);
-    i_transportmessage* dstransport  = tcpds->transport;
+    etch_delivery_service* ds = get_etch_ds_impl(ids);
+    i_transportmessage* dstransport  = ds->transport;
     ETCH_ASSERT(is_etch_transportmsg(dstransport));
 
     /* transport is mailbox mgr pmboxmgr_transport_call(imbmgr) */
-    result = tcpds->transportx->transport_call (tcpds->transportx, NULL, msg, out);
+    result = ds->transportx->transport_call (ds->transportx, NULL, msg, out);
 
     return result;
 }
 
-
 /**
- * tcpdelsvc_endcall() 
+ * delsvc_endcall() 
  * read the response message, close its mailbox and return the result object.
  * @param mbox the current mailbox (interface), caller retains.
  * @param response_type type of the response message, caller retains.
@@ -545,7 +680,7 @@ int tcpdelsvc_begincall (i_delivery_service* ids, etch_message* msg, i_mailbox**
  * for example, if the service message is etch_int32* add(etch_int32*, etch_int32*),
  * the result object will be an etch_int32 unless an exception occurred. 
  */
-int tcpdelsvc_endcall (i_delivery_service* ids, i_mailbox* ibox, etch_type* response_type, etch_object** out)
+int delsvc_endcall (i_delivery_service* ids, i_mailbox* ibox, etch_type* response_type, etch_object** out)
 {
     int result  = 0;
     int timeout = 0;
@@ -553,7 +688,7 @@ int tcpdelsvc_endcall (i_delivery_service* ids, i_mailbox* ibox, etch_type* resp
     int32           default_timeout = 0;
     etch_object* result_obj = NULL;
     etch_mailbox_element* mbe = NULL;
-    const char* thistext = "tcpdelsvc_endcall";
+    const char* thistext = "delsvc_endcall";
     /* get the response message type's instance data */
     etch_type_impl* typeinfo = response_type? (etch_type_impl*) response_type->impl: NULL;
     ETCH_ASSERT(typeinfo && out);
@@ -643,7 +778,6 @@ int tcpdelsvc_endcall (i_delivery_service* ids, i_mailbox* ibox, etch_type* resp
     return result;
 }
 
-
 /* - - - - - - - - - - - - - - - - - - - - - - - - - 
  * i_deliveryservice :: i_sessionmessage (i_session)
  * - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -655,58 +789,56 @@ int tcpdelsvc_endcall (i_delivery_service* ids, i_mailbox* ibox, etch_type* resp
  */
 
 /**
- * tcpdelsvc_session_message()
+ * delsvc_session_message()
  * @param whofrom caller retains, can be null.
  * @param msg caller relinquishes
  * @return 0 (message handled), or -1 (error, closed, or timeout)  
  */
-int tcpdelsvc_session_message (void* data, etch_who* whofrom, etch_message* msg)
+int delsvc_session_message (void* data, etch_who* whofrom, etch_message* msg)
 {
     i_delivery_service* ids = (i_delivery_service*)data;
-    etch_tcp_delivery_service* tcpds = get_etch_ds_impl(ids);
-    i_sessionmessage* dssession = tcpds->session;
+    etch_delivery_service* ds = get_etch_ds_impl(ids);
+    i_sessionmessage* dssession = ds->session;
     ETCH_ASSERT(is_etch_sessionmsg(dssession));
 
     return dssession->session_message(dssession->thisx, whofrom, msg);
 }
 
-
 /**
- * tcpdelsvc_session_control()
+ * delsvc_session_control()
  * delivery service interface implementation of i_session_message  
  * @param control event, caller relinquishes.
  * @param value control value, caller relinquishes.
  */
-int tcpdelsvc_session_control (void* data, etch_event* control, etch_object* value)
+int delsvc_session_control (void* data, etch_event* control, etch_object* value)
 {
-  i_delivery_service* ids = (i_delivery_service*)data;
-    etch_tcp_delivery_service* tcpds = get_etch_ds_impl(ids);
-    i_sessionmessage* dssession = tcpds->session;
+    i_delivery_service* ids = (i_delivery_service*)data;
+    etch_delivery_service* ds = get_etch_ds_impl(ids);
+    i_sessionmessage* dssession = ds->session;
     ETCH_ASSERT(is_etch_sessionmsg(dssession));
 
     return dssession->session_control(dssession->thisx, control, value);
 }
 
-
 /**
- * etch_tcpdelsvc_session_notify()
+ * delsvc_session_notify()
  * @param evt event, caller relinquishes.
  */
-int tcpdelsvc_session_notify (void* data, etch_event* evt)
+int delsvc_session_notify (void* data, etch_event* evt)
 {
-  i_delivery_service* ids = (i_delivery_service*)data;
+    i_delivery_service* ids = (i_delivery_service*)data;
     int result = -1, evtype = evt? evt->value: 0;
-    etch_tcp_delivery_service* tcpds = get_etch_ds_impl(ids);
-    i_sessionmessage* dssession = tcpds->session;
+    etch_delivery_service* ds = get_etch_ds_impl(ids);
+    i_sessionmessage* dssession = ds->session;
     ETCH_ASSERT(is_etch_sessionmsg(dssession));
 
     switch(evtype)
     {
         case ETCHEVT_SESSION_UP:
-            etch_wait_set(tcpds->wait_up, evtype);
+            etch_wait_set(ds->wait_up, evtype);
             break;
         case ETCHEVT_SESSION_DOWN:
-            etch_wait_set(tcpds->wait_down, evtype);
+            etch_wait_set(ds->wait_down, evtype);
             break;
     }
 
@@ -715,19 +847,18 @@ int tcpdelsvc_session_notify (void* data, etch_event* evt)
 }
 
 /**
- * etch_tcpdelsvc_session_query()
+ * delsvc_session_query()
  * @param query, caller relinquishes.
  */
-etch_object* tcpdelsvc_session_query (void* data, etch_query* query) 
+etch_object* delsvc_session_query (void* data, etch_query* query) 
 {
     i_delivery_service* ids = (i_delivery_service*)data;
-    etch_tcp_delivery_service* tcpds = get_etch_ds_impl(ids);
-    i_sessionmessage* dssession = tcpds->session;
+    etch_delivery_service* ds = get_etch_ds_impl(ids);
+    i_sessionmessage* dssession = ds->session;
     ETCH_ASSERT(is_etch_sessionmsg(dssession));
 
     return dssession->session_query (dssession->thisx, query);
 }
-
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - -
  * i_deliveryservice :: i_transportmessage (i_transport)
@@ -736,23 +867,20 @@ etch_object* tcpdelsvc_session_query (void* data, etch_query* query)
 
 
 /**
- * tcpdelsvc_get_session()
+ * delsvc_get_session()
  * @return a reference to the delivery service i_sessionmessage interface.
  * caller does not own this object.
  */
-i_session* tcpdelsvc_get_session (void* data) 
+i_session* delsvc_get_session (void* data) 
 {
     i_delivery_service* ids = (i_delivery_service*)data;
-    etch_tcp_delivery_service* tcpds = get_etch_ds_impl(ids);
+    etch_delivery_service* ds = get_etch_ds_impl(ids);
 
-    return (i_session*)tcpds->session;
+    return (i_session*)ds->session;
 }
 
-
-
-
 /**
- * tcpdelsvc_transport_control()
+ * delsvc_transport_control()
  * @param control, caller relinquishes.
  * @param value control value, caller relinquishes.
  * @remarks as it currently stands, the value object passed through these transport
@@ -761,22 +889,22 @@ i_session* tcpdelsvc_get_session (void* data)
  * etch_string, etch_date, etch_event, etch_object, and others); or by virtue of
  * having custom clone() functions assigned to them.
  */
-int tcpdelsvc_transport_control (void* data, etch_event* control, etch_object* valobj)
+int delsvc_transport_control (void* data, etch_event* control, etch_object* valobj)
 {
     i_delivery_service* ids = (i_delivery_service*)data;
     int  result = 0;    
     etch_connection* cx = NULL;
     i_transportmessage* dstransport = NULL;
-    etch_tcp_delivery_service* tcpds = NULL;
+    etch_delivery_service* ds = NULL;
     const int objclass  = control? ((etch_object*)control)->class_id: 0;
     const int timeoutms = control && (is_etch_int32(valobj))? ((etch_int32*)control)->value: 0;
     ETCH_ASSERT(is_etch_ideliverysvc(ids) && objclass);
 
-    tcpds = get_etch_ds_impl(ids);  /* delivery service implementation */
-    ETCH_ASSERT(is_etch_deliverysvc(tcpds));
-    dstransport = tcpds->transport; /* delivery service transport (mailbox mgr) */
+    ds = get_etch_ds_impl(ids);  /* delivery service implementation */
+    ETCH_ASSERT(is_etch_deliverysvc(ds));
+    dstransport = ds->transport; /* delivery service transport (mailbox mgr) */
     ETCH_ASSERT(is_etch_transportmsg(dstransport));
-    cx = &tcpds->tcpconx->cx;       /* underlying connection */
+    cx = &ds->conx->cx;       /* underlying connection */
 
     switch(objclass)  /* forward the transport event */
     {           
@@ -826,26 +954,24 @@ int tcpdelsvc_transport_control (void* data, etch_event* control, etch_object* v
     return result;
 }
 
-
 /**
- * tcpdelsvc_transport_notify()
+ * delsvc_transport_notify()
  * @param evt, caller relinquishes.
  */
-int tcpdelsvc_transport_notify (void* data, etch_event* evt)
+int delsvc_transport_notify (void* data, etch_event* evt)
 {
     i_delivery_service* ids = (i_delivery_service*)data;
-    etch_tcp_delivery_service* tcpds = get_etch_ds_impl(ids);
+    etch_delivery_service* ds = get_etch_ds_impl(ids);
 
-    return tcpds->transport->transport_notify( tcpds->transport->thisx, evt);
+    return ds->transport->transport_notify( ds->transport->thisx, evt);
 }
 
-
 /**
- * tcpdelsvc_transport_query()
+ * delsvc_transport_query()
  * i_transportmessage::transport_query override.
  * @param query, caller relinquishes.
  */
-etch_object* tcpdelsvc_transport_query (void* data, etch_query* query) 
+etch_object* delsvc_transport_query (void* data, etch_query* query) 
 {
     i_delivery_service* ids = (i_delivery_service*)data;
     int result = 0;
@@ -853,9 +979,9 @@ etch_object* tcpdelsvc_transport_query (void* data, etch_query* query)
     etch_connection* cx = NULL;
     const int timeoutms = query? query->value: 0;
     const int objclass  = query? ((etch_object*)query)->class_id: 0;
-    etch_tcp_delivery_service* tcpds = get_etch_ds_impl(ids);
-    i_transportmessage* dstransport  = tcpds->transport;
-    cx = &tcpds->tcpconx->cx;
+    etch_delivery_service* ds = get_etch_ds_impl(ids);
+    i_transportmessage* dstransport  = ds->transport;
+    cx = &ds->conx->cx;
 
     switch(objclass)
     {  
@@ -876,7 +1002,6 @@ etch_object* tcpdelsvc_transport_query (void* data, etch_query* query)
         etch_object_destroy(query);
     return resultobj;
 }
-
 
 /* - - - - - - - - - - - - - - - - - - - - - - 
  * etch_resources
@@ -1210,11 +1335,11 @@ etch_server_factory* new_server_factory (etch_object* session, i_session* isessi
 
 
 /*
- * tcpxfact_get_session()
+ * connection_fact_get_session()
  * return session interface from the server factory bundle.
  * validate and assert the i_sessionlistener object.
  */
-i_session* tcpxfact_get_session (i_sessionlistener* lxr)
+i_session* connection_fact_get_session (i_sessionlistener* lxr)
 {
    i_session* session = NULL;
    etch_server_factory* factory = NULL;
@@ -1226,15 +1351,15 @@ i_session* tcpxfact_get_session (i_sessionlistener* lxr)
 
 
 /*
- * tcpxfact_session_control()
+ * connection_fact_session_control()
  * @param control event, caller relinquishes.
  * @param value control value, caller relinquishes.
  */
-int tcpxfact_session_control (void* data, etch_event* control, etch_object* value)
+int connection_fact_session_control (void* data, etch_event* control, etch_object* value)
 {           
     i_sessionlistener* thisx = (i_sessionlistener*)data;
     int result = -1;
-    i_session* session = tcpxfact_get_session (thisx);
+    i_session* session = connection_fact_get_session (thisx);
 
     if (session && session->session_control)  
         result = session->session_control (session, control, value);
@@ -1249,14 +1374,14 @@ int tcpxfact_session_control (void* data, etch_event* control, etch_object* valu
 
 
 /*
- * tcpxfact_session_notify()
+ * connection_fact_session_notify()
  * @param evt event, caller relinquishes.
  */
-int tcpxfact_session_notify (void* data, etch_event* evt)
+int connection_fact_session_notify (void* data, etch_event* evt)
 {
     i_sessionlistener* thisx = (i_sessionlistener*)data;
     int result = -1;
-    i_session* session = tcpxfact_get_session (thisx);
+    i_session* session = connection_fact_get_session (thisx);
 
     if (session && session->session_notify)  
         result = session->session_notify (session, evt);
@@ -1268,14 +1393,14 @@ int tcpxfact_session_notify (void* data, etch_event* evt)
 
 
 /*
- * tcpxfact_session_query()
+ * connection_fact_session_query()
  * @param query caller relinquishes
  */
-etch_object* tcpxfact_session_query (void* data, etch_query* query)
+etch_object* connection_fact_session_query (void* data, etch_query* query)
 {
     i_sessionlistener* thisx = (i_sessionlistener*)data;
-    void* resultobj = NULL;
-    i_session* session = tcpxfact_get_session (thisx);
+    etch_object* resultobj = NULL;
+    i_session* session = connection_fact_get_session (thisx);
 
     if (session && session->session_query)  
         resultobj = session->session_query (session, query);
@@ -1316,7 +1441,7 @@ int transport_session_count (i_sessionlistener* listener)
 
  
 /*
- * tcpxfact_teardown_client_sessions()
+ * transport_teardown_client_sessions()
  * signal and wait for each session thread to exit, destroying each 
  * thread, connection and session. tearing down the session destroys its
  * delivery service, remote client, and stub. this is intended to be invoked 
@@ -1367,7 +1492,7 @@ int etch_listener_waitfor_exit (i_sessionlistener* thisx)
 
 
 /*
- * tcpxfact_session_accepted()
+ * connection_fact_session_accepted()
  * override for transport factory session_accepted()
  * signature is typedef int (*etch_session_accepted) (void* thisx, void* socket);
  * parallels java TcpTransportFactory.newListener.newSessionListener.sessionAccepted
@@ -1376,19 +1501,18 @@ int etch_listener_waitfor_exit (i_sessionlistener* thisx)
  * in practice this is an apr socket wrapped by etch_socket.
  * @return 0 success, -1 failure.
  */
-int tcpxfact_session_accepted (void* data, void* connectionData)
+int connection_fact_session_accepted (void* data, void* connectionData)
 {
     i_sessionlistener* thisx = (i_sessionlistener*)data;
-    etch_tcp_connection* tcpconx = (etch_tcp_connection*)connectionData;
+    etch_transport_connection* tconx = (etch_transport_connection*)connectionData;
     int result = 0;
     void* newstub = NULL;
     etch_session* newsession = NULL;
     etch_server_factory* params = NULL;
-    etch_connection* cx = &tcpconx->cx;
+    etch_connection* cx = &tconx->cx;
     i_delivery_service* delivery_service = NULL;
     const int session_id = cx->conxid;
     ETCH_ASSERT(is_etch_sessionlxr(thisx));
-    ETCH_ASSERT(is_etch_tcpconnection(tcpconx));
     params = (etch_server_factory*) thisx->server_params;
     ETCH_ASSERT(params && params->helper_new_listener);
 
@@ -1402,7 +1526,7 @@ int tcpxfact_session_accepted (void* data, void* connectionData)
     /* instantiate delivery service */
     ETCH_LOG(LOG_CATEGORY, ETCH_LOG_DEBUG, "creating delivery service ...\n");
 
-    delivery_service = new_etch_transport_a (thisx->url, thisx->server_params, tcpconx);  
+    delivery_service = new_etch_transport_a (thisx->url, thisx->server_params, tconx);  
 
     if (NULL == delivery_service) 
     {   ETCH_LOG(LOG_CATEGORY, ETCH_LOG_DEBUG, "could not create delivery service\n");
@@ -1415,7 +1539,7 @@ int tcpxfact_session_accepted (void* data, void* connectionData)
     newsession = new_etch_clientsession (params, cx);
     newsession->mainlistener = thisx;  /* session points back to accept listener */
     newsession->ds = delivery_service;  
-    newsession->conximpl = (etch_object*) tcpconx;
+    newsession->conximpl = (etch_object*) tconx;
 
      /* CALL BACK to helper.xxx_helper_listener_create to create this 
       * client's server side listener, server implementation, and stub.
@@ -1467,8 +1591,7 @@ int destroy_etch_listener (void* data)
              * have mutual references. we must ensure that if we are to 
              * destroy the etch_tcp_server via the i_sessionlistener, that the
              * etch_tcp_server does not also destroy the i_sessionlistener. */
-            etch_tcp_server* srvobj = (etch_tcp_server*) thisx->thisx;
-            ETCH_ASSERT(is_etch_tcpserver(srvobj));
+            etch_object* srvobj = (etch_object*) thisx->thisx;
             etch_object_destroy(srvobj);
         }
 
@@ -1502,24 +1625,60 @@ i_sessionlistener* new_etch_listener (wchar_t* uri, etch_resources* resx,
     main_server_create_func main_server_create,
     helper_resources_init_func helper_resources_init)
 {
-    etch_tcp_server* tcp_server = NULL;
+    etch_url* url = new_url(uri); 
+
+    i_sessionlistener* newsl = NULL;   
+    
+    if (is_url_scheme_udp(url))
+    {    
+        newsl = new_etch_listener_a (url, resx, factory_thisx, helper_listener_create, main_server_create, helper_resources_init, (new_server_func)new_udp_server);
+    }
+    #if(0)
+    else   /* handlers for other url schemes follow here eventually */  
+    if (is_url_scheme_foo(url))
+    {
+        /* ... */
+    }
+    #endif
+    else
+    {   /* url schemes http, tcp, default */
+        newsl = new_etch_listener_a (url, resx, factory_thisx, helper_listener_create, main_server_create, helper_resources_init, (new_server_func)new_tcp_server);
+    }
+    
+    return newsl;
+}
+
+
+/*
+ * new_etch_listener_a()
+ * constructs a new transport listener used to construct server sessions.
+ * returns a transport interface, whereas c binding will instead extract the 
+ * transport interface from i_sessionlistener.itransport.
+ */
+i_sessionlistener* new_etch_listener_a (etch_url* url, etch_resources* resx, 
+    void* factory_thisx,
+    helper_listener_create_func helper_listener_create,
+    main_server_create_func main_server_create,
+    helper_resources_init_func helper_resources_init,
+    new_server_func new_server_create)
+{
+    etch_server* server = NULL;
     etch_server_factory* params = NULL;
-    etch_url* url = new_url(uri);
      
     /* listener assumes the session interface of the server factory creator.
      * this accomplishes the same thing as the session method implementations 
      * found in java TcpTransportFactory.newListener().
      */
     i_session* isession = new_session_interface (NULL,  
-        tcpxfact_session_control, 
-        tcpxfact_session_notify, 
-        tcpxfact_session_query);
+        connection_fact_session_control, 
+        connection_fact_session_notify, 
+        connection_fact_session_query);
    
     /* create the listener interface, specifying the on_session_accepted
      * callback to be invoked on each successful server accept in order
      * to create a new server. relinquish isession to listener here. */
     i_sessionlistener* listener = new_sessionlistener_interface (NULL, 
-        tcpxfact_session_accepted, isession);
+        connection_fact_session_accepted, isession);
     
     ((etch_object*)listener)->destroy   = destroy_etch_listener;
     listener->wait_exit = etch_listener_waitfor_exit;
@@ -1534,43 +1693,42 @@ i_sessionlistener* new_etch_listener (wchar_t* uri, etch_resources* resx,
     listener->is_resources_owned = TRUE;    
     listener->resources = get_etch_transport_resources (resx);  /* resx null */
     params->in_resx = listener->resources;  
-    params->in_uri  = uri;  
+    params->in_uri  = url->raw;  
     helper_resources_init(params);
     listener->server_params = params;
     /* fyi params delivery service is set later, in svr->on_session_accepted(), 
-       whose implementation is tcpxfact_session_accepted(), in this module */
+       whose implementation is connection_fact_session_accepted(), in this module */
 
     /* create the tcp connection and acceptor SVR BREAK 001 */
-    tcp_server = new_tcp_server (url, params->mainpool, params->subpool, resx, listener);
+    server = new_server_create (url, params->mainpool, params->subpool, resx, listener);
 
-    if (NULL == tcp_server) {   
+    if (NULL == server) {   
         etch_object_destroy(listener);
         return NULL;
     }
 
     /* listener [main] expects that i_sessionlistener.thisx is the server,
      * e.g. an etch_tcp_server* */
-    listener->thisx = tcp_server; 
+    listener->thisx = server; 
     
     /* copy server object's session virtuals to this object */
     /* see java TcpTransportFactory.newListener() for session impls */
-    listener->session  = tcp_server->session;
-    listener->isession = tcp_server->isession;
-    listener->session_control = tcp_server->session_control;
-    listener->session_notify  = tcp_server->session_notify;
-    listener->session_query   = tcp_server->session_query;
+    listener->session  = server->session;
+    listener->isession = server->isession;
+    listener->session_control = server->session_control;
+    listener->session_notify  = server->session_notify;
+    listener->session_query   = server->session_query;
 
     /* set this listener object's transport to be the server connection's transport */
-    ETCH_ASSERT(tcp_server->itransport);
+    ETCH_ASSERT(server->itransport);
     etch_free(listener->itransport);  /* TODO don't instantiate in the first place */
-    listener->itransport = tcp_server->itransport;
-    listener->transport_control = tcp_server->transport_control;
-    listener->transport_notify  = tcp_server->transport_notify;
-    listener->transport_query   = tcp_server->transport_query;
-    listener->set_session = tcp_server->set_session;
-    listener->get_session = tcp_server->get_session;
+    listener->itransport = server->itransport;
+    listener->transport_control = server->transport_control;
+    listener->transport_notify  = server->transport_notify;
+    listener->transport_query   = server->transport_query;
+    listener->set_session = server->set_session;
+    listener->get_session = server->get_session;
     listener->is_transport_owned = FALSE;
  
     return listener;  /* caller owns this object */  
 }
-

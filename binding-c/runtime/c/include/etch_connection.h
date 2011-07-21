@@ -18,7 +18,7 @@
 
 /*
  * etch_connection.h
- * connection client and server classes - tcp, udp
+ * connection client and server classes
  */
 
 #ifndef ETCHCONNECTION_H
@@ -96,7 +96,36 @@ typedef struct etch_connection
 
 } etch_connection;
 
+/* - - - - - - - - - - - - - - - - - - - -
+ * transport connection
+ * - - - - - - - - - - - - - - - - - - - -
+ */
 
+#define ETCH_TRANSPORT_CONNECTION_COMMON_TYPES \
+    etch_object object;                        \
+    etch_connection cx
+
+typedef struct etch_transport_connection
+{
+    ETCH_TRANSPORT_CONNECTION_COMMON_TYPES;
+} etch_transport_connection;
+
+/* - - - - - - - - - - - - - - - - - - - -
+ * client
+ * - - - - - - - - - - - - - - - - - - - -
+ */
+
+#define ETCH_CLIENT_COMMON_TYPES \
+    etch_object object;          \
+    etch_thread* thread;         \
+    unsigned char is_started
+
+typedef struct etch_client
+{
+    ETCH_CLIENT_COMMON_TYPES;
+
+    etch_transport_connection *cxlisten;
+} etch_client;
 
 #define ETCH_DEFAULT_SOCKET_FAMILY  APR_INET
 extern unsigned connection_id_farm;
@@ -113,6 +142,8 @@ extern const wchar_t* ETCH_CONNECTION_LINGERTIME;
 extern const wchar_t* ETCH_CONNECTION_NODELAY;
 extern const wchar_t* ETCH_CONNECTION_TRAFCLASS;
 extern const wchar_t* ETCH_CONNECTION_BUFSIZE;
+extern const wchar_t* ETCH_CONNECTION_REUSE_PORT;
+extern const wchar_t* ETCH_CONNECTION_BROADCAST;
 extern const wchar_t* ETCH_TCPLISTENER_BACKLOG;
 
 #define ETCH_CONXEVT_CREATED            0x1
@@ -160,6 +191,7 @@ extern const wchar_t* ETCH_TCPLISTENER_BACKLOG;
 #define ETCH_CONXEVT_DESTROYING         0x3b 
 #define ETCH_CONXEVT_DESTROYED          0x3c
 
+int is_good_conn_params(etch_url* url, void* resources, etch_rawsocket* socket);
 int etch_init_connection(etch_connection*, etch_rawsocket*, void* owner);
 int etch_destroy_connection(etch_connection*);
 int etchconx_wait_up  (etch_connection*, int timeoutms);

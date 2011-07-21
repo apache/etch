@@ -32,6 +32,12 @@ extern "C" {
 typedef struct etch_config_t etch_config_t;
 
 /**
+ * create a new empty configuration.
+ * @param config that will be created.
+ */
+etch_status_t etch_config_init(etch_config_t** config);
+
+/**
  * create a new configuration.
  * default config properties:
  * TODO: document default properties

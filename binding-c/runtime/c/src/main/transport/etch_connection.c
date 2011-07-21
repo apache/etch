@@ -43,6 +43,8 @@ const wchar_t* ETCH_CONNECTION_LINGERTIME   = L"TcpConnection.lingerTime";
 const wchar_t* ETCH_CONNECTION_NODELAY      = L"TcpConnection.noDelay";
 const wchar_t* ETCH_CONNECTION_TRAFCLASS    = L"TcpConnection.trafficClass";
 const wchar_t* ETCH_CONNECTION_BUFSIZE      = L"TcpConnection.bufferSize";
+const wchar_t* ETCH_CONNECTION_REUSE_PORT   = L"Connection.reusePort";
+const wchar_t* ETCH_CONNECTION_BROADCAST    = L"UdpConnection.broadcast";
 const wchar_t* ETCH_TCPLISTENER_BACKLOG     = L"TcpListener.backlog";
 
 unsigned next_etch_connection_id();
@@ -50,9 +52,9 @@ unsigned next_etch_connection_id();
 unsigned connection_id_farm;
 
 /*
- * is_good_tcp_params()
+ * is_good_conn_params()
  */
-int is_good_tcp_params(etch_url* url, void* resources, etch_rawsocket* socket)
+int is_good_conn_params(etch_url* url, void* resources, etch_rawsocket* socket)
 {
     int whicherr = 0;
 
@@ -239,5 +241,3 @@ int etch_init_connection (etch_connection* cx, etch_rawsocket* socket, void* own
     cx->set_socket_options = etchconx_set_socket_options;
     return 0;
 }
-
-

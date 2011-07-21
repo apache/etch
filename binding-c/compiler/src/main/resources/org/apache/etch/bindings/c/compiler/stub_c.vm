@@ -74,6 +74,7 @@ int $helper.getStubName($intf, $suffix)_run_nothing_ (etch_stub* stub, i_deliver
     void* obj, etch_who* whofrom, etch_message* msg)
 {
     i_$helper.getBaseName($intf, $suffix)* client = (i_$helper.getBaseName($intf, $suffix)*)obj;
+    int returnCode = 0;
     $helper.getVfName($intf)_impl* pvfi = NULL;
     $helper.getVfName($intf)* pvf = NULL;
     struct $helper.getBaseName($intf, $suffix)_impl* impl = NULL;
@@ -102,7 +103,13 @@ int $helper.getStubName($intf, $suffix)_run_nothing_ (etch_stub* stub, i_deliver
     ETCH_ASSERT(resultobj); 
 
     /* transmit reply back to sender */
-    return etchstub_send_reply (stub, dsvc, whofrom, msg, (void*) resultobj, TRUE);
+    returnCode = etchstub_send_reply (stub, dsvc, whofrom, msg, (void*) resultobj, TRUE);
+
+    if (whofrom != NULL) {
+        etch_object_destroy(whofrom);
+    }
+
+    return returnCode;
 }   
 #end
 #foreach( $n in $intf.iterator() )
@@ -195,6 +202,9 @@ int $helper.getStubName($intf, '')_run_$helper.getDirectionName($mc)_$n.name()(e
         returnCode = etchstub_send_reply (stub, dsvc, whofrom, msg, (void*) resultobj, TRUE);
     }
 #end
+    if (whofrom != NULL) {
+        etch_object_destroy(whofrom);
+    }
 	if(!returnCode){
 		etch_object_destroy(msg);
 	}

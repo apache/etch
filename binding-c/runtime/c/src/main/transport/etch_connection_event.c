@@ -22,18 +22,18 @@
  */
 
 #include "etch_thread.h"
-#include "etch_tcp_connection.h"
-#include "etch_tcp_server.h"
+#include "etch_connection.h"
 #include "etch_objecttypes.h"
 #include "etch_log.h"
+#include "etch_connection_event.h"
 
 static const char* LOG_CATEGORY = "etch_connection_event";
 
 /*
- * etch_deftcplistener_on_event()
+ * etch_def_listener_on_event()
  * default handler for listener events
  */
-int etch_deftcplistener_on_event(etch_tcp_server* l, etch_tcp_connection* c, const int e, int p1, void* p2)
+int etch_def_listener_on_event(etch_server* l, etch_transport_connection* c, const int e, int p1, void* p2)
 {
     char cxstr[24], *smask = "server %u";  
        
@@ -76,18 +76,18 @@ int etch_deftcplistener_on_event(etch_tcp_server* l, etch_tcp_connection* c, con
 
 
 /*
- * etch_tcpconx_on_event()
+ * etch_def_connection_on_event()
  * default handler for connection events
  */
-int etch_tcpconx_on_event(void* data, const int e, int p1, void* p2)
+int etch_def_connection_on_event(void* data, const int e, int p1, void* p2)
 {
-    etch_tcp_connection* c = (etch_tcp_connection*)data;
+    etch_transport_connection* c = (etch_transport_connection*)data;
     int result = 0, lid = 0;
     char cxstr[32], estr[128]; 
     char *scmask = "server %u connxn %u", *cmask = "connxn %u";
 
-    if  (is_etch_tcpserver(c->cx.listener))
-         lid = ((etch_tcp_server*)(c->cx.listener))->listener_id;
+    if  (is_etch_tcpserver(c->cx.listener) || is_etch_udpserver(c->cx.listener))
+         lid = ((etch_server*)(c->cx.listener))->listener_id;
     if  (lid)
          sprintf(cxstr, scmask, lid, c->cx.conxid);     
     else sprintf(cxstr, cmask, c->cx.conxid);

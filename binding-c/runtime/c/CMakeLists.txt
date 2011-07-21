@@ -31,7 +31,7 @@ ENDIF (UNIX)
 add_definitions(-D_UNICODE -DUNICODE)
 
 # APR library
-SET(APR ${ETCH_EXTERNAL_DEPENDS}/apr/1.3.12)
+SET(APR ${ETCH_EXTERNAL_DEPENDS}/apr/1.4.2-with-broadcast-patch)
 FIND_PATH(APR_INCLUDE_DIR apr.h ${APR}/include ${APR}/include/apr-1)
 FIND_LIBRARY(APR_LIBRARY NAMES libapr-1.lib libapr-1.so PATHS ${APR}/lib)
 IF (APR_INCLUDE_DIR AND APR_LIBRARY)
@@ -42,7 +42,7 @@ IF (NOT APR_FOUND)
 ENDIF (NOT APR_FOUND)
 
 # APR-ICONV library
-SET(APR ${ETCH_EXTERNAL_DEPENDS}/apr/1.3.12)
+SET(APR ${ETCH_EXTERNAL_DEPENDS}/apr/1.4.2-with-broadcast-patch)
 FIND_PATH(APR-ICONV_INCLUDE_DIR apr_iconv.h ${APR}/include ${APR}/include/apr-1)
 FIND_LIBRARY(APR-ICONV_LIBRARY NAMES libapriconv-1.lib libapriconv-1.so PATHS ${APR}/lib)
 IF (APR-ICONV_INCLUDE_DIR AND APR-ICONV_LIBRARY)

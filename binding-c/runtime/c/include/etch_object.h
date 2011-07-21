@@ -443,6 +443,7 @@ typedef union
 #define is_etch_deliverysvc(x)  (x && ((etch_object*)x)->obj_type == ETCHTYPEB_DELIVERYSVC_IMPL)
 #define is_etch_ideliverysvc(x) (x && ((etch_object*)x)->obj_type == ETCHTYPEB_DELIVERYSVCINT)
 #define is_etch_tcpserver(x)    (x && ((etch_object*)x)->obj_type == ETCHTYPEB_TCPSERVER)
+#define is_etch_udpserver(x)    (x && ((etch_object*)x)->obj_type == ETCHTYPEB_UDPSERVER)
 #define is_etch_sessionlxr(x)   (x && ((etch_object*)x)->obj_type == ETCHTYPEB_SESSIONLXR)
 #define is_etch_sessionpacket(x)(x && ((etch_object*)x)->obj_type == ETCHTYPEB_SESSIONPKT) 
 #define is_etch_transportpkt(x) (x && ((etch_object*)x)->obj_type == ETCHTYPEB_TRANSPORTPKT) 
@@ -479,6 +480,10 @@ typedef union
 #define is_etch_tcpconnection(x) (x \
  && ((etch_object*)x)->obj_type == ETCHTYPEB_CONNECTION \
  && ((etch_object*)x)->class_id == CLASSID_TCP_CONNECTION) 
+
+#define is_etch_udpconnection(x) (x \
+ && ((etch_object*)x)->obj_type == ETCHTYPEB_CONNECTION \
+ && ((etch_object*)x)->class_id == CLASSID_UDP_CONNECTION)
 
 #define is_etch_serverparams(x) (x \
  && ((etch_object*)x)->obj_type == ETCHTYPEB_FACTORYPARAMS \

@@ -18,7 +18,7 @@
 
 /*
  * etch_connection.h
- * connection client and server classes - tcp, udp
+ * connection client and server classes - tcp
  */
 
 #ifndef _ETCH_TCP_CONNECTION_H_
@@ -42,13 +42,10 @@ struct etch_tcp_client;
  */
 typedef struct etch_tcp_connection
 {
-    etch_object object;
+    ETCH_TRANSPORT_CONNECTION_COMMON_TYPES;
 
-    etch_connection  cx;
     struct etch_tcp_client* rcvlxr;  /* owned */
-
     i_transportdata* itd;     /* owned */
-
     i_sessiondata*   session; /* not owned */
 
     int linger;
@@ -62,33 +59,15 @@ typedef struct etch_tcp_connection
 } etch_tcp_connection;
 
 
-/*
- * udp connection
- * placeholder - this will go in etch_udpconxn.h when we implement udp transport
- */
-typedef struct etch_udp_connection
-{
-    etch_object object;
- 
-    etch_connection cx;
-
-    apr_sockaddr_t *last_from;
-
-} etch_udp_connection;
-
-
 /**
  * etch_tcp_client 
  * tcp client listener class
  */
 typedef struct etch_tcp_client
 {
-    etch_object object;
+    ETCH_CLIENT_COMMON_TYPES;
  
     etch_tcp_connection* cxlisten; /* not owned */
-    etch_thread* thread;
-    unsigned char is_started;
-
 } etch_tcp_client;
 
 
@@ -103,7 +82,6 @@ int  etch_tcpclient_start_listener (etch_tcp_connection*);
 int  etch_tcpconx_open (etch_tcp_connection*, const int is_reconnect);
 int  etch_tcpconx_close(etch_tcp_connection*, const int is_linger);
 int  etch_tcpconx_wait_until(etch_tcp_connection*, const int64 waitval, const int timeoutms);
-int  etch_tcpconx_on_event(void*, const int e, int p1, void* p2);
 int  etch_tcpclient_send(etch_tcp_connection *conx, unsigned char* buf, const size_t totallen, int* rc);
 int  etch_tcpclient_sendex (etch_tcp_connection *conx, unsigned char* buf, const size_t totallen, const int timeout_ms, int* rc);
 int  etch_tcpclient_receive (etch_tcp_connection*, unsigned char*, const size_t, int*);

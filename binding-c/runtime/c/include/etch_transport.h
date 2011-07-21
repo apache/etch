@@ -25,6 +25,7 @@
 
 #include "etch_message.h"
 #include "etch_tcp_connection.h"
+#include "etch_udp_connection.h"
 #include "etch_resources.h"
 #include "etch_arraylist.h"
 #include "etch_mailbox_manager.h"
@@ -46,6 +47,10 @@ typedef void* (*helper_listener_create_func)(void* serverargs, void* sessionargs
 typedef int   (*helper_resources_init_func)(void* argstruct);
 typedef void* (*main_server_create_func)(void* factory_thisx, void* client);
 
+/* - - - - - - - - - - - - - - - - - - - -
+ * delivery service
+ * - - - - - - - - - - - - - - - - - - - -
+ */
 /*
  * i_delivery_service
  * the implementor of delivery service will implement i_sessionmessage and
@@ -70,6 +75,56 @@ typedef struct i_delivery_service
 
 } i_delivery_service;
 
+#define ETCH_DELIVERY_SERVICE_COMMON_TYPES \
+    etch_object object;                                                   \
+                                                                          \
+    /* ***** TODO lose i_deliveryservice instantiation and instead mask */\
+    /* ***** all delivery service with i_deliveryservice. ************* */\
+    i_delivery_service*     ids;                                          \
+    etch_delivsvc_begincall begin_call;                                   \
+    etch_delvisvc_endcall   end_call;                                     \
+                                                                          \
+    /* i_transportmessage - owns the delivery service */                  \
+    i_transportmessage*     transport;   /* owned by transportx */        \
+    i_mailbox_manager*      transportx;  /* owned */                      \
+                                                                          \
+    /* external implementation of i_session_message */                    \
+    i_sessionmessage*       session;     /* not owned */                  \
+                                                                          \
+    /* delivery service implementation of i_session_message */            \
+    i_sessionmessage*       sessionmsg;  /* owned */                      \
+    etch_session_message    session_message;                              \
+    etch_session_control    session_control;                              \
+    etch_session_notify     session_notify;                               \
+    etch_session_query      session_query;                                \
+                                                                          \
+    /* delivery service implementation of i_transport_message */          \
+    /* owns the tcp delivery service */                                   \
+    i_transportmessage*     transportmsg;   /* owned */                   \
+    etch_transport_message  transport_message;                            \
+    etch_transport_control  transport_control;                            \
+    etch_transport_notify   transport_notify;                             \
+    etch_transport_query    transport_query;                              \
+    etch_transport_get_session  get_session;                              \
+    etch_transport_set_session  set_session;                              \
+                                                                          \
+    /* private component implementations */                               \
+    etch_resources* resources;    /* not owned */                         \
+    etch_mutex* rwlock; /* not owned */                                   \
+    etch_wait_t* wait_up;   /* owned by connection */                     \
+    etch_wait_t* wait_down; /* owned by connection */                     \
+    void* messagizer;  /* owned */                                        \
+    void* mailboxmgr;  /* owned */                                        \
+                                                                          \
+    unsigned char is_connection_owned;                                    \
+    unsigned char unused[3]
+
+typedef struct etch_delivery_service
+{
+   ETCH_DELIVERY_SERVICE_COMMON_TYPES;
+
+   etch_transport_connection *conx;
+} etch_delivery_service;
 
 /*
  * etch_tcp_delivery_service
@@ -79,52 +134,26 @@ typedef struct i_delivery_service
  */
 typedef struct etch_tcp_delivery_service  
 {
-    etch_object object;
+    ETCH_DELIVERY_SERVICE_COMMON_TYPES;
 
-    // ***** TODO lose i_deliveryservice instantiation and instead mask 
-    // ***** all delivery service with i_deliveryservice. *************
-    i_delivery_service*     ids;
-    etch_delivsvc_begincall begin_call;
-    etch_delvisvc_endcall   end_call;
-
-    /* i_transportmessage - owns the tcp delivery service */
-    i_transportmessage*     transport;   /* owned by transportx */ 
-    i_mailbox_manager*      transportx;  /* owned */ 
-
-    /* external implementation of i_session_message */
-    i_sessionmessage*       session;     /* not owned */
-
-    /* delivery service implementation of i_session_message */
-    i_sessionmessage*       sessionmsg;  /* owned */
-    etch_session_message    session_message;
-    etch_session_control    session_control;
-    etch_session_notify     session_notify;
-    etch_session_query      session_query;
-
-    /* delivery service implementation of i_transport_message */
-    /* owns the tcp delivery service */
-    i_transportmessage*     transportmsg;   /* owned */ 
-    etch_transport_message  transport_message;
-    etch_transport_control  transport_control;  
-    etch_transport_notify   transport_notify;   
-    etch_transport_query    transport_query;   
-    etch_transport_get_session  get_session;   
-    etch_transport_set_session  set_session;  
-
-    /* private component implementations */
-    etch_resources* resources;    /* not owned */
+    /* tcp implementation */
     etch_tcp_connection* tcpconx; /* not owned on server - destroyed on listener exit */
-    etch_mutex* rwlock; /* not owned */
-    etch_wait_t* wait_up;   /* owned by tcpconx */
-    etch_wait_t* wait_down; /* owned by tcpconx */
     void* packetizer;  /* owned */
-    void* messagizer;  /* owned */
-    void* mailboxmgr;  /* owned */
-
-    unsigned char is_tcpconx_owned;
-    unsigned char unused[3];
-
 } etch_tcp_delivery_service;
+
+/*
+ * etch_udp_delivery_service
+ * java binding does not have one of these, it constructs and returns a  
+ * DeliveryService in TcpTransportFactory.newTransport(). we will instead 
+ * invoke new_etch_transport(uri, resources), returning an i_delivery_service. 
+ */
+typedef struct etch_udp_delivery_service  
+{
+    ETCH_DELIVERY_SERVICE_COMMON_TYPES;
+
+    /* udp implementation */
+    etch_udp_connection* udpconx; /* not owned on server - destroyed on listener exit */
+} etch_udp_delivery_service;
 
 /* - - - - - - - - - - - - - - - - - - - -
  * factory parameter bundle
@@ -254,7 +283,7 @@ typedef struct etch_client_factory
 
 
 etch_tcp_delivery_service* new_tcp_delivery_service (etch_url*, etch_factory_params*, etch_tcp_connection*);
-etch_tcp_delivery_service* get_etch_ds_impl (i_delivery_service*); 
+etch_udp_delivery_service* new_udp_delivery_service (etch_url*, etch_factory_params*, etch_udp_connection*);
 
 etch_resources* etch_transport_resources_init(etch_resources*); 
 
@@ -265,9 +294,7 @@ etch_server_factory* new_server_factory (etch_object* session, i_session* isessi
 
 i_delivery_service* new_delivery_service_interface(i_sessionmessage*, i_transportmessage*);  
 i_delivery_service* new_etch_transport  (wchar_t*  uri, etch_factory_params*, void* conximpl);
-i_delivery_service* new_etch_transport_a(etch_url* url, etch_factory_params*, void* conximpl);
 
-etch_session* remove_etch_session (etch_server_factory*, const int session_id);
 int  get_etch_session (etch_server_factory*, const int session_id, etch_session** out);
 int  transport_teardown_client_sessions (i_sessionlistener*);
 int  transport_session_count (i_sessionlistener*);
