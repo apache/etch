@@ -72,7 +72,7 @@
      <!-- Info about build -->
      <echo>
 =====================================
-Buil      : ${ant.project.name}
+Build     : ${ant.project.name}
 Build-Type: ${build.type}
 =====================================
      </echo>
