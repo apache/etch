@@ -158,16 +158,36 @@
 
     <target name="component-bindings">
         <!-- Bindings -->
-        <build_component dir="binding-xml" />
+        <!-- Stable Bindings -->
+        <condition property="is-build-type-stable">
+            <or>
+                <equals arg1="${build.type}" arg2="stable" />
+                <equals arg1="${build.type}" arg2="experimental" />
+            </or>
+        </condition>
+        <antcall target="component-bindings-stable" />
+
+        <!-- Experimental Bindings -->
+        <condition property="is-build-type-experimental">
+            <equals arg1="${build.type}" arg2="experimental" />
+        </condition>
+        <antcall target="component-bindings-experimental" />
+    </target>
+
+    <target name="component-bindings-stable" if="is-build-type-stable">
+        <!-- Stable Bindings -->
         <build_component dir="binding-java" />
         <build_component dir="binding-csharp" />
         <build_component dir="binding-c" />
     </target>
 
-    <target name="component-bindings-experimental" if="include.experimental">
+    <target name="component-bindings-experimental" if="is-build-type-experimental">
         <!-- Experimental Bindings -->
         <build_component dir="binding-cpp" />
         <build_component dir="binding-go" />
+        <!--
+        <build_component dir="binding-xml" />
+        -->
     </target>
 
     <target name="component-examples" unless="build.skip.examples">

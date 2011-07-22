@@ -71,9 +71,10 @@
   <target name="info" >
      <!-- Info about build -->
      <echo>
-     =====================================
-     Building ${ant.project.name}
-     =====================================
+=====================================
+Buil      : ${ant.project.name}
+Build-Type: ${build.type}
+=====================================
      </echo>
   </target>
 
@@ -147,7 +148,7 @@
   </target>
 
   <target name="do-publish">
-	<!-- Use this target to publish the build
+    <!-- Use this target to publish the build
          results but if the tests successfully
          passed -->
     <echo>No Publishing defined.</echo>

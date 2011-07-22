@@ -17,7 +17,7 @@
  * specific language governing permissions and limitations      *
  * under the License.                                           *
  -->
-<project name="etch-c-compiler" basedir="." default="help">
+<project name="etch-cpp-compiler" basedir="." default="help">
     <description>Etch-to-CPP compiler implementation</description>
     <property name="Etch.basedir" location="${basedir}/../.." />
     <import file="${Etch.basedir}/build-support/etch.includes.xml" />

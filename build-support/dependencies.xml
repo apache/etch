@@ -26,7 +26,8 @@
     
     <!-- Load dependencies -->
     <property file="${Etch.basedir}/build.dependencies" prefix="file" />
-    
+    <property file="${Etch.basedir}/build.properties" prefix="file" />
+
     <!-- Pull properties from commandline -->
     <condition property="build.javacc.home" value="${javacc.home}" >
         <isset property="javacc.home" />

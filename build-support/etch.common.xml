@@ -31,6 +31,7 @@
     <!-- Load Environment -->
     <property environment="env" />
     <property file="${Etch.basedir}/build.dependencies" prefix="file" />
+    <property file="${Etch.basedir}/build.properties" prefix="build" />
 
     <!-- Pull properties from commandline -->
     <condition property="build.skip.tests" value="${skip.tests}">
