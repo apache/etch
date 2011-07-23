@@ -20,13 +20,12 @@ include_directories (${PROJECT_SOURCE_DIR}/include)
 include_directories (${GTEST})
 include_directories (${GTEST}/include)
 
-IF (WIN32)
+IF (WIN32 AND BUILD_CHECK_MEMORY)
   include_directories (${VLD}/include)
-ENDIF (WIN32)
+  add_definitions (-DBUILD_CHECK_MEMORY)
+ENDIF (WIN32 AND BUILD_CHECK_MEMORY)
 
 add_executable (etch-cpp-test
-    ${GTEST}/src/gtest-all.cc
-    ${GTEST}/src/gtest_main.cc
     common/EtchInt32Test.cpp
     common/EtchBoolTest.cpp
     common/EtchByteTest.cpp
@@ -38,13 +37,19 @@ add_executable (etch-cpp-test
     common/EtchObjectTest.cpp
     common/EtchListTest.cpp
     util/EtchUtilTest.cpp
+    ${GTEST}/src/gtest-all.cc
+    main.cpp
 )
 
 target_link_libraries (etch-cpp-test etch-cpp)
 
-IF (WIN32)
+IF (WIN32 AND BUILD_CHECK_MEMORY)
+  file (COPY ${VLD}/vld.ini DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE})
+  file (COPY ${VLD}/bin/dbghelp.dll DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE})
+  file (COPY ${VLD}/bin/vld.dll DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE})
+
   target_link_libraries (etch-cpp-test ${VLD}/lib/vld.lib)
-ENDIF (WIN32)
+ENDIF (WIN32 AND BUILD_CHECK_MEMORY)
 
 IF (UNIX)
   set_target_properties (etch-cpp-test PROPERTIES COMPILE_FLAGS "-m32" LINK_FLAGS "-m32 -pthread")
