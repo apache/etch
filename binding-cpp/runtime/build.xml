@@ -87,7 +87,12 @@
     <!-- TEST TARGET -->
     <target name="do-test" unless="build.skip.tests">
         <!-- Run Unit Tests -->
-        <exec executable="${target}/src/test/debug/etch-cpp-test">
+        <!-- Run Unit Tests on Windows-->
+        <exec executable="${target}/src/test/debug/etch-cpp-test" osfamily="windows">
+            <arg value="--gtest_output=xml:${testResultsDirectory}/"/>
+        </exec>
+        <!-- Run Unit Tests on Unix -->
+        <exec executable="${target}/src/test/etch-cpp-test" osfamily="unix">
             <arg value="--gtest_output=xml:${testResultsDirectory}/"/>
         </exec>
     </target>
