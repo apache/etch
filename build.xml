@@ -156,33 +156,35 @@
         <build_component dir="plugins/ant" />
     </target>
 
-    <target name="component-bindings">
-        <!-- Bindings -->
-        <!-- Stable Bindings -->
+    <target name="component-bindings" depends="component-bindings-stable, component-bindings-experimental">
+    </target>
+
+    <!-- Stable Bindings -->
+    <target name="component-bindings-stable" depends="component-bindings-stable-if, component-bindings-stable-then">
+    </target>
+    <target name="component-bindings-stable-if">
         <condition property="is-build-type-stable">
             <or>
                 <equals arg1="${build.type}" arg2="stable" />
                 <equals arg1="${build.type}" arg2="experimental" />
             </or>
         </condition>
-        <antcall target="component-bindings-stable" />
-
-        <!-- Experimental Bindings -->
-        <condition property="is-build-type-experimental">
-            <equals arg1="${build.type}" arg2="experimental" />
-        </condition>
-        <antcall target="component-bindings-experimental" />
     </target>
-
-    <target name="component-bindings-stable" if="is-build-type-stable">
-        <!-- Stable Bindings -->
+    <target name="component-bindings-stable-then" if="is-build-type-stable">
         <build_component dir="binding-java" />
         <build_component dir="binding-csharp" />
         <build_component dir="binding-c" />
     </target>
 
-    <target name="component-bindings-experimental" if="is-build-type-experimental">
-        <!-- Experimental Bindings -->
+    <!-- Experimental Bindings -->
+    <target name="component-bindings-experimental" depends="component-bindings-experimental-if, component-bindings-experimental-then">
+    </target>
+    <target name="component-bindings-experimental-if">
+        <condition property="is-build-type-experimental">
+            <equals arg1="${build.type}" arg2="experimental" />
+        </condition>
+    </target>
+    <target name="component-bindings-experimental-then" if="is-build-type-experimental">
         <build_component dir="binding-cpp" />
         <build_component dir="binding-go" />
         <build_component dir="binding-xml" />
