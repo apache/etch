@@ -17,7 +17,7 @@
  * specific language governing permissions and limitations      *
  * under the License.                                           *
  -->
-    <project name="etch.common" basedir="." >
+<project name="etch.common" basedir="." >
 
     <!-- Static properties -->
     <property name="Etch.copyrightNotice" value="Copyright © Apache Software Foundation 2009" />
@@ -138,6 +138,50 @@
     <property name="etch-util-src.zip"            value="apache-etch-util-${Etch.longversion}-src.zip" />
     <property name="etch-ant-task.jar"            value="apache-etch-ant-plugin-${Etch.longversion}.jar" />
     <property name="etch-ant-task-src.zip"        value="apache-etch-ant-plugin-${Etch.longversion}-src.zip" />
+
+    <!-- check if binding is available -->
+    <condition property="is-binding-java-available" >
+        <and>
+            <available file="${Etch.dist}${file.separator}binding-java" />
+            <available file="${Etch.dist}${file.separator}lib${file.separator}${etch-java-compiler.jar}" />
+        </and>
+    </condition>
+    <condition property="is-binding-c-available" >
+        <and>
+            <available file="${Etch.dist}${file.separator}binding-c" />
+            <available file="${Etch.dist}${file.separator}lib${file.separator}${etch-c-compiler.jar}" />
+        </and>
+    </condition>
+    <condition property="is-binding-cpp-available" >
+        <and>
+            <available file="${Etch.dist}${file.separator}binding-cpp" />
+            <available file="${Etch.dist}${file.separator}lib${file.separator}${etch-cpp-compiler.jar}" />
+        </and>
+    </condition>
+    <condition property="is-binding-go-available" >
+        <and>
+            <available file="${Etch.dist}${file.separator}binding-go" />
+            <available file="${Etch.dist}${file.separator}lib${file.separator}${etch-go-compiler.jar}" />
+        </and>
+    </condition>
+    <condition property="is-binding-csharp-available" >
+        <and>
+            <available file="${Etch.dist}${file.separator}binding-csharp" />
+            <available file="${Etch.dist}${file.separator}lib${file.separator}${etch-csharp-compiler.jar}" />
+        </and>
+    </condition>
+    <condition property="is-binding-xml-available" >
+        <and>
+            <!--<available file="${Etch.dist}${file.separator}binding-csharp" />-->
+            <available file="${Etch.dist}${file.separator}lib${file.separator}${etch-xml-compiler.jar}" />
+        </and>
+    </condition>
+    <condition property="is-binding-python-available" >
+        <and>
+            <!--<available file="${Etch.dist}${file.separator}binding-python" />-->
+            <available file="${Etch.dist}${file.separator}lib${file.separator}${etch-python-compiler.jar}" />
+        </and>
+    </condition>
 
     <!-- java-runtime -->
     <property name="etch-java-runtime.jar"        value="apache-etch-java-runtime-${Etch.longversion}.jar" />

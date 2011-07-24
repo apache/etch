@@ -92,21 +92,45 @@
         <mkdir dir="${test-results}" />
         <mkdir dir="${nunit-results}" />
     </target>
-    
-    <!-- build the server -->
-    <target name="generate-java" >
+
+    <!-- ############ -->
+    <!-- binding-java -->
+    <!-- ############ -->
+    <target name="build-java-if" depends="build-java-then, build-java-else" >
+    </target>
+    <target name="build-java-then" depends="build-java" if="is-binding-java-available" >
+        <echo message="binding-java available" />
+    </target>
+    <target name="build-java-else" unless="is-binding-java-available" >
+        <echo message="No binding-java available" />
+    </target>
+
+    <target name="test-java-if" depends="test-java-then, test-java-else" >
+    </target>
+    <target name="test-java-then" depends="test-java" if="is-binding-java-available" >
+        <echo message="binding-java available" />
+    </target>
+    <target name="test-java-else" unless="is-binding-java-available" >
+        <echo message="No binding-java available" />
+    </target>
+
+    <!-- binding-java build -->
+    <target name="generate-java" if="is-binding-java-available">
         <generate-sources binding="java" />
     </target>
 
-    <target name="generate-xml" >
-        <generate-sources binding="xml" />
+    <!-- binding-java clover -->
+    <target name="init-java-sources-for-clover" depends="init-java-sources-for-clover-if, init-java-sources-for-clover-then">
     </target>
-    
-    <target name="generate-csharp" >
-        <generate-sources binding="csharp" />
+    <target name="init-java-sources-for-clover-if" >
+        <condition property="do-init-java-sources-for-clover">
+            <and>
+                <isset property="is-binding-java-available" />
+                <isset property="Clover.enabled" />
+            </and>
+        </condition>
     </target>
-    
-    <target name="init-sources-for-clover" if="Clover.enabled">
+    <target name="init-java-sources-for-clover-then" if="do-init-java-sources-for-clover">
         <initialize-clover suffix="etchtests" >
             <fileset dir="${src}/main/java" >
                 <include name="**/*.java" />
@@ -120,8 +144,8 @@
             </testsources>
         </initialize-clover>
     </target>
-    
-    <target name="build-java" depends="generate-java,init-sources-for-clover">
+
+    <target name="build-java" depends="generate-java, init-java-sources-for-clover" if="is-binding-java-available" >
         <!-- compile sources -->
         <mkdir dir="${classes}" />
         <javac target="1.5" destdir="${classes}">
@@ -136,7 +160,7 @@
         </javac>
     </target>
     
-    <target name="test-java" depends="build-java" >
+    <target name="test-java" depends="build-java" if="is-binding-java-available" >
         <!-- Run Unit Tests -->
         <junit printsummary="yes" haltonfailure="no" dir="${classes}"
             errorProperty="build.tests.fail" failureProperty="build.tests.fail">
@@ -158,24 +182,66 @@
             </batchtest>
         </junit>
     </target>
-    
-    <target name="build-csharp" depends="generate-csharp,build-tests-csharp"
-        if="BUILD.csharp" />
-    
-    <target name="build-tests-csharp"
-        depends="build-tests-csharp-dotnet,build-tests-csharp-mono" />
-    
-    <target name="build-tests-csharp-dotnet" if="USE.dotnet" >
+
+    <!-- ############# -->
+    <!-- binding-charp -->
+    <!-- ############# -->
+    <target name="generate-csharp" if="is-binding-csharp-available" >
+        <generate-sources binding="csharp" />
+    </target>
+
+    <target name="build-csharp-if" depends="build-csharp-then, build-csharp-else" >
+    </target>
+    <target name="build-csharp-then" depends="build-csharp" if="is-binding-csharp-available" >
+        <echo message="binding-csharp available" />
+    </target>
+    <target name="build-csharp-else" unless="is-binding-csharp-available" >
+        <echo message="No binding-csharp available" />
+    </target>
+
+    <target name="test-csharp-if" depends="test-csharp-then, test-csharp-else" >
+    </target>
+    <target name="test-csharp-then" depends="test-csharp" if="is-binding-csharp-available" >
+        <echo message="binding-csharp available" />
+    </target>
+    <target name="test-csharp-else" unless="is-binding-csharp-available" >
+        <echo message="No binding-csharp available" />
+    </target>
+
+    <!-- binding-charp build-->
+    <target name="build-csharp" depends="generate-csharp, build-tests-csharp-dotnet,build-tests-csharp-mono" />
+
+    <target name="build-tests-csharp-dotnet" depends="build-tests-csharp-dotnet-if, build-tests-csharp-dotnet-then">
+    </target>
+    <target name="build-tests-csharp-dotnet-if">
+        <condition property="do-build-tests-csharp-dotnet" >
+            <and>
+                <isset property="is-binding-csharp-available" />
+                <isset property="USE.dotnet" />
+            </and>
+        </condition>
+    </target>
+    <target name="build-tests-csharp-dotnet-then" if="do-build-tests-csharp-dotnet" >
         <msbuild buildfile="${src}/test/csharp/TestsProj/TestsProj.csproj">
             <property name="Configuration" value="${Etch.build.target}" />
         </msbuild>
     </target>
-    
-    <target name="build-tests-csharp-mono" if="USE.mono" >
+
+    <target name="build-tests-csharp-mono" depends="build-tests-csharp-mono-if, build-tests-csharp-mono-then">
+    </target>
+    <target name="build-tests-csharp-mono-if">
+        <condition property="do-build-tests-csharp-mono" >
+            <and>
+                <isset property="is-binding-csharp-available" />
+                <isset property="USE.mono" />
+            </and>
+        </condition>
+    </target>
+    <target name="build-tests-csharp-mono-then" if="do-build-tests-csharp-mono" >
         <echo message="TODO: build w/ mono" />
     </target>
 
-    <target name="test-csharp" depends="build-csharp" if="BUILD.csharp" >
+    <target name="test-csharp" depends="build-csharp" if="is-binding-csharp-available" >
         <mkdir dir="${nunit-results}" />
 
         <nunit xmlout="${nunit-results}/NUnitResults.xml">
@@ -185,22 +251,49 @@
         <xslt style="${Etch.buildSupportDirectory}/NUnitToJUnit.xsl"
                 in="${nunit-results}/NUnitResults.xml" out="${test-results}/TEST-NUnitResults.xml" />
     </target>
-    
-    <target name="build-xml" depends="generate-xml" >
-    
+
+    <!-- ########### -->
+    <!-- binding-xml -->
+    <!-- ########### -->
+    <target name="generate-xml" if="is-binding-xml-available" >
+        <generate-sources binding="xml" />
     </target>
     
-    <target name="test-xml" depends="build-xml" >
-    
+    <target name="build-xml-if" depends="build-xml-then, build-xml-else" >
     </target>
-    
+    <target name="build-xml-then" depends="build-xml" if="is-binding-xml-available" >
+        <echo message="binding-xml available" />
+    </target>
+    <target name="build-xml-else" unless="is-binding-xml-available" >
+        <echo message="No binding-xml available" />
+    </target>
+
+    <target name="test-xml-if" depends="test-xml-then, test-xml-else" >
+    </target>
+    <target name="test-xml-then" depends="test-xml" if="is-binding-xml-available" >
+        <echo message="binding-xml available" />
+    </target>
+    <target name="test-xml-else" unless="is-binding-xml-available" >
+        <echo message="No binding-xml available" />
+    </target>
+
+    <!-- binding-xml build -->
+    <target name="build-xml" depends="generate-xml" if="is-binding-xml-available" >
+    </target>
+
+    <target name="test-xml" depends="build-xml" if="is-binding-xml-available" >
+    </target>
+
+    <!-- ########### -->
+    <!-- general -->
+    <!-- ########### -->
     <!-- build sources -->
-    <target name="build" depends="init,build-java,build-csharp,build-xml" />
+    <target name="build" depends="init, build-java-if, build-csharp-if, build-xml-if" />
 
     <!-- run unit tests -->
-    <target name="test" depends="build,test-java,test-csharp,test-xml" />
-        
-    <!-- clean -->    
+    <target name="test" depends="build, test-java-if, test-csharp-if, test-xml-if" />
+
+    <!-- clean -->
     <target name="clean">
         <delete dir="${target}" quiet="true" />
         <delete dir="${src}/test/csharp/TestsProj/obj" />

@@ -185,9 +185,7 @@
         <!-- Experimental Bindings -->
         <build_component dir="binding-cpp" />
         <build_component dir="binding-go" />
-        <!--
         <build_component dir="binding-xml" />
-        -->
     </target>
 
     <target name="component-examples" unless="build.skip.examples">
