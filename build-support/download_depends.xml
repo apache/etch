@@ -18,22 +18,70 @@
  * under the License.                                           *
  -->
 <project name="download_depends" default="download" basedir=".">
-    <condition property="externals.available">
-     <available file="${unzip-dest}"/>
+
+
+    <!-- check parameters -->
+    <condition property="params.available">
+        <and>
+            <isset property="download-url"/>
+            <isset property="download-dirname"/>
+            <isset property="download-filename"/>
+            <isset property="dest-dirname"/>
+        </and>
     </condition>
 
-    <target name="download" unless="externals.available" depends="echo">
-      <get src="${download-url}" dest="${download-dest}"/>
-      <unzip src="${download-dest}" dest="${unzip-dest}"/>
+    <!-- check externals folder -->
+    <condition property="externals.available">
+        <available file="${unzip-dest}"/>
+    </condition>
+
+    <!-- check for os family -->
+    <condition property="do-download-windows">
+        <and>
+            <not><isset property="externals.available"/></not>
+            <os family="windows"/>
+        </and>
+    </condition>
+    <condition property="do-download-linux">
+        <and>
+            <not><isset property="externals.available"/></not>
+            <os family="unix"/>
+        </and>
+    </condition>
+
+    <target name="check-params" unless="params.available">
+        <fail message="missing parameters."/>
     </target>
 
-    <target name="download-linux" unless="externals.available" depends="echo">
-      <get src="${download-url}" dest="${download-dest}"/>
-      <gunzip src="${download-dest}"/>
-      <untar src="${download-dest-tar}" dest="${unzip-dest}"/>
+    <target name="info" if="externals.available">
+        <echo message="${unzip-dest} already available, doing nothing"/>
     </target>
 
-    <target name="echo" if="externals.available">
-      <echo message="${unzip-dest} already available, doing nothing"/>
+    <target name="download" depends="check-params, info, download-windows, download-linux">
     </target>
+
+    <target name="download-windows" if="do-download-windows">
+        <echo message="downloading externals for windows"/>
+        <mkdir dir="${download-dirname}" />
+        <get src="${download-url}" dest="${download-dirname}${file.separator}${download-filename}"/>
+        <unzip src="${download-dirname}${file.separator}${download-filename}" dest="${dest-dirname}"/>
+    </target>
+    <target name="download-linux" if="do-download-linux">
+        <echo message="downloading externals for linux"/>
+	<mkdir dir="${download-dirname}" />
+        <get src="${download-url}" dest="${download-dirname}${file.separator}${download-filename}"/>
+        <mkdir dir="${dest-dirname}"/>
+        <exec executable="pwd"></exec>
+	<exec executable="tar" output="info.txt">
+            <arg value="-xvpzf" />
+            <arg value="${download-dirname}${file.separator}${download-filename}" />
+            <arg value="-C" />
+            <arg value="${dest-dirname}" /> 
+	</exec>
+    </target>
+
+    <target name="clean" depends="check-params">
+	<delete dir="${dest-dirname}" failonerror="true"/>
+    </target>
+
 </project>
