@@ -3,16 +3,150 @@
 <!ENTITY % globalent SYSTEM "../../libs/global.ent">
 %globalent;
 ]>
-<chapter xmlns="http://docbook.org/ns/docbook" version="5.0" xml:id="docbook-introduction-chap" status="review"><info><title xml:id="docbook-introduction">Docbook Introduction</title></info>
+<chapter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0" xml:id="docbook-introduction-chap" status="review">
+  <info>
+    <title xml:id="docbook-introduction">Docbook Introduction</title>
+  </info>
   
-  
-  <section xml:id="docbook-general" status="review"><info><title>Docbook general</title></info>
+  <section xml:id="introduction" status="review"><info><title>Introduction</title></info>
     
-<!--
+    <para>This chapter should give an short overview of the docbook
+      elements which can be used in this documentation.</para>
+    <para>The following tags are described: </para>
+    <simplelist type="horiz">
+     <member>
+        <link linkend="vertical_list">Vertical list</link>
+      </member>
+      <member>
+        <link linkend="horizontal_list">Horizontal list</link>
+      </member>
+      <member>
+        <link linkend="table">Table</link>
+      </member>
+      <member><link linkend="image">Images</link></member>
+      <member><link linkend="links">Links</link></member>
+      <member><link linkend="example">Example</link></member>
+      <member><link linkend="code">Program code</link></member>
+    </simplelist>
+  </section>
+  <section xml:id="vertical_list">
+    <info><title>Vertical list</title></info>
     <para>
-    There are example para. For more information see the 
-    <ulink url="http://www.link">Further information</ulink> page.
+      Vertical lists can be used for an Enumeration in a vertical way.
     </para>
--->
+    <para>
+      <simplelist type="vert">
+	<member>Member 1</member>
+	<member>Member 2</member>
+	<member>Member 3</member>
+	<member>Member 4</member>
+	<member>Member 5</member>
+      </simplelist>
+    </para>
+  </section>
+  <section xml:id="horizontal_list">
+    <info><title>Horizontal list</title></info>
+    <para>
+      Horizontal lists can be used for an Enumeration in a horizontal
+      way.
+    </para>
+      <para>
+        <simplelist type="inline">
+          <member>Member 1</member>
+          <member>Member 2</member>
+          <member>Member 3</member>
+          <member>Member 4</member>
+          <member>Member 5</member>
+        </simplelist>
+      </para>
+  </section>
+  <section xml:id="table">
+    <info><title>Table</title></info>
+    <para>
+      Tables can be used to present values in columns and rows.
+    </para>
+    <para>
+      <table>
+	<info><title>Sample table</title></info>
+        <tgroup cols="3">
+          <thead>
+            <row>
+              <entry>First Heading</entry>
+              <entry>Second Heading</entry>
+              <entry>Third Heading</entry>
+            </row>
+          </thead>
+          <tbody>
+            <row>
+              <entry>Text 1</entry>
+              <entry>Text 2</entry>
+              <entry>Text 3</entry>
+            </row>
+            <row>
+              <entry>Text 4</entry>
+              <entry>Text 5</entry>
+              <entry>Text 6</entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </table>
+    </para>
+  </section>
+  <section xml:id="image">
+    <info><title>Image</title></info>
+    
+    <figure><info><title>Picture's Title</title></info>
+      
+      <mediaobject><imageobject><imagedata fileref="libs/images/etch-logo.png"/></imageobject></mediaobject>
+    </figure>
+  </section>
+  <section xml:id="links"><info><title>Links</title></info>
+    
+  <para>
+      You can reference to internal elements and external URIs by using
+      links.
+  </para>
+  <para>
+    <emphasis>Internal link:</emphasis>
+  </para>
+  <para>
+    Generated label: <xref linkend="links"/>
+  </para>
+  <para>
+    Manually added label: <link linkend="links">Link Text</link>
+  </para>
+  <para>
+    <emphasis>External link:</emphasis>
+  </para>
+  <para>
+    <link xlink:href="http://www.apache.org">Apache</link>
+  </para>
+  </section>
+  <section xml:id="example">
+    <info>
+      <title>Examples</title>
+    </info>
+    <para>
+      A Formal example with a title.
+      <example>
+	<title>Example title</title>
+	<programlisting>
+	  Example content
+	</programlisting>	  
+      </example>
+    </para>
+  </section>
+  <section xml:id="code">
+    <info>
+      <title>Program code</title>
+    </info>
+    <para>
+      A literal listing of a program.
+      <programlisting>
+	void foo(params) {
+	  return null;
+	}
+      </programlisting>
+    </para>
   </section>
 </chapter>
