@@ -30,7 +30,7 @@ in the near future.
 If you would like to generate the documentation, you need the
 following components.
 
-- sudo apt-get install docbook
+- sudo apt-get install docbook5-xml
 - sudo apt-get install docbook-xsl
 - sudo apt-get install docbook-xsl-doc-pdf
 - sudo apt-get install xsltproc
@@ -58,7 +58,7 @@ following components.
 
 - Change still the following files:
 -- Makefile; set the FOP variable to the fop binary etc. FOP=C:/etch/external/fop/1.0/fop.bat
--- Set the correct docbook import file etc
+-- Set the correct docbook import file in every xsl file (e.g. libs/etch-pdf.xsl):
    <xsl:import href="/usr/share/sgml/docbook/xsl-ns-stylesheets/fo/docbook.xsl"/>
 
 # Links

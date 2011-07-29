@@ -1,29 +1,24 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN" 
-	"http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd" [
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE book [
 <!ENTITY % globalent SYSTEM "../../libs/global.ent">
 %globalent;
-<!ENTITY % xinclude SYSTEM "../../libs/xinclude.mod">
-%xinclude;
-<!ENTITY language "en">
 ]>
-<book lang="&language;">
-<bookinfo>
-  <title>Etch Documentation</title>
+<book xmlns="http://docbook.org/ns/docbook" version="5.0" xml:lang="en">
+<info><title>Etch Documentation</title>
+  
     <abstract>
       <para>
       This is the reference documentation for Apache Etch.
       </para>
   </abstract>
-</bookinfo>
-<xi:include href="introduction.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
-<xi:include href="overview.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
-<xi:include href="hello-world-example.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
-<xi:include href="nsdl.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
-<xi:include href="binding-java.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
-<xi:include href="binding-csharp.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
-<xi:include href="binding-c.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
-<xi:include href="bibliography.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
-<xi:include href="docbook-intro.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+</info>
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="introduction.xml" parse="xml"/>
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="overview.xml" parse="xml"/>
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="hello-world-example.xml" parse="xml"/>
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="nsdl.xml" parse="xml"/>
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="binding-java.xml" parse="xml"/>
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="binding-csharp.xml" parse="xml"/>
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="binding-c.xml" parse="xml"/>
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="bibliography.xml" parse="xml"/>
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="docbook-intro.xml" parse="xml"/>
 </book>
-

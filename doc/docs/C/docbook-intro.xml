@@ -1,23 +1,18 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN" 
-	"http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd" [
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE chapter [
 <!ENTITY % globalent SYSTEM "../../libs/global.ent">
 %globalent;
-<!ENTITY % xinclude SYSTEM "../../libs/xinclude.mod">
-%xinclude;
-<!ENTITY language "en">
 ]>
-<chapter id="docbook-introduction-chap" status="review">
-  <title id="docbook-introduction">Docbook Introduction</title>
+<chapter xmlns="http://docbook.org/ns/docbook" version="5.0" xml:id="docbook-introduction-chap" status="review"><info><title xml:id="docbook-introduction">Docbook Introduction</title></info>
   
-  <sect1 id="docbook-general" status="review">
-    <title>Docbook general</title>
+  
+  <section xml:id="docbook-general" status="review"><info><title>Docbook general</title></info>
+    
 <!--
     <para>
     There are example para. For more information see the 
     <ulink url="http://www.link">Further information</ulink> page.
     </para>
 -->
-  </sect1>
+  </section>
 </chapter>
-
