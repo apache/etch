@@ -16,20 +16,29 @@
  * limitations under the License. 
  */
 
-#ifndef __ETCHCONFIG_H__
-#define __ETCHCONFIG_H__
+#ifndef __ETCHNATIVE_H__
+#define __ETCHNATIVE_H__
 
-#include "stdio.h"
-#include "stdlib.h"
-#include "string.h"
+#include "common/EtchObject.h"
+#include "common/EtchError.h"
 
-#ifdef _WIN32
-typedef char int8_t;
-typedef short int16_t;
-typedef int int32_t;
-typedef signed __int64 int64_t;
-#else //other OS should be C99 compliant
-#include "stdint.h"
-#endif //_WIN32
+class EtchNative {
+ public:
+
+  /**
+   * TypeIds for native types
+   */
+  static const int32_t INT8 = EOTID_NATIVE_INT8;
+  static const int32_t INT16 = EOTID_NATIVE_INT16;
+  static const int32_t INT32 = EOTID_NATIVE_INT32;
+  static const int32_t INT64 = EOTID_NATIVE_INT64;
+  static const int32_t DOUBLE = EOTID_NATIVE_DOUBLE;
+  static const int32_t FLOAT = EOTID_NATIVE_FLOAT;
+  static const int32_t LONG = EOTID_NATIVE_LONG;
+  static const int32_t SHORT = EOTID_NATIVE_SHORT;
+  static const int32_t BOOL = EOTID_NATIVE_BOOL;
+  static const int32_t BYTE = EOTID_NATIVE_BYTE;
+ 
+};
 
 #endif
