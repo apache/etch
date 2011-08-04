@@ -33,8 +33,6 @@ enum EtchObjectTypeIds {
     EOTID_DATE,
     EOTID_LIST,
     EOTID_NATIVE_ARRAY,
-    EOTID_BYTES,
-    EOTID_OBJECT,
       
     EOTID_NATIVE_INT8,
     EOTID_NATIVE_INT16,

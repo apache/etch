@@ -36,8 +36,8 @@ TEST(EtchNativeArrayTest, Constructor_Array) {
     EtchNativeArray<EtchInt32*, EtchInt32::TYPE_ID>* na1 =
       new EtchNativeArray<EtchInt32*, EtchInt32::TYPE_ID>(2);
 
-    na1->set(int1,0);
-    na1->set(int2,1);
+    na1->set(0, int1);
+    na1->set(1, int2);
 
     EXPECT_TRUE(na1->getObjectTypeId() == (EtchNativeArray<EtchInt32,EtchInt32::TYPE_ID>::TYPE_ID));
 
@@ -65,8 +65,8 @@ TEST(EtchNativeArrayTest, setget) {
       new EtchNativeArray<EtchInt32*, EtchInt32::TYPE_ID>(2);
     EXPECT_TRUE(na1->getObjectTypeId() == (EtchNativeArray<EtchInt32, EtchInt32::TYPE_ID>::TYPE_ID));
     
-    na1->set(int1,0);
-    na1->set(int2,1);
+    na1->set(0, int1);
+    na1->set(1, int2);
 
     EtchInt32* value = NULL;
     int i = 0;
@@ -78,7 +78,7 @@ TEST(EtchNativeArrayTest, setget) {
 
     EtchInt32* newValue = new EtchInt32(44);
 
-    na1->set(newValue, 1);
+    na1->set(1, newValue);
 
     status_t ret = na1->get(1, &value);
     ASSERT_EQ(ETCH_OK, ret);

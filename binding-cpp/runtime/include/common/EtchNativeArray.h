@@ -78,7 +78,7 @@ public:
      * returns ETCH_ERANGE, if out of bounds.
      * returns ETCH_OK otherwise
      */
-    status_t set(T value, int32_t index);
+    status_t set(int32_t index, T value);
     
     /**
      * sets a block of the EtchObject at index i in result
@@ -118,7 +118,7 @@ EtchNativeArray<T, content_type_id>::~EtchNativeArray()
 }
 
 template<class T, int32_t content_type_id>
-status_t EtchNativeArray<T, content_type_id>::set(T value, int32_t index)
+status_t EtchNativeArray<T, content_type_id>::set(int32_t index, T value)
 {
   if(0 <= index && index < m_length) {
     m_array[index] = value;
@@ -147,7 +147,7 @@ status_t EtchNativeArray<T, content_type_id>::get(int32_t index, T* result)
 }
 
 template<class T, int32_t content_type_id>
-  status_t EtchNativeArray<T, content_type_id>::set(int32_t index, T* buffer, int32_t buffer_size, int32_t offset, int32_t count )
+status_t EtchNativeArray<T, content_type_id>::set(int32_t index, T* buffer, int32_t buffer_size, int32_t offset, int32_t count )
 {
   if (buffer == NULL)
   {
@@ -167,13 +167,13 @@ template<class T, int32_t content_type_id>
 
 
 template<class T, int32_t content_type_id>
-  status_t EtchNativeArray<T, content_type_id>::get(int32_t index, T* buffer, int32_t buffer_size, int32_t offset, int32_t count )
+status_t EtchNativeArray<T, content_type_id>::get(int32_t index, T* buffer, int32_t buffer_size, int32_t offset, int32_t count )
 {
   if (buffer == NULL)
   {
     return ETCH_EINVAL;
   }
-  if (0 <= index && index < m_length && (m_length - index) >= count && buffer_size >= (m_length - index && buffer_size >= count) && (offset+count) <= buffer_size)
+  if (0 <= index && index < m_length && (m_length - index) >= count && buffer_size >= (m_length - index) && buffer_size >= count && (offset+count) <= buffer_size)
   {
       
       for(int i = 0;i < count - offset;i++,index++)
