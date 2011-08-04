@@ -32,10 +32,13 @@ IF "%NUNIT_HOME%" == "" (
 set NUNIT_HOME=%ETCH_EXTERNAL_DEPENDS%\NUnit\2.5.9.10348
 )
 
-rem uncomment this line / unset this variable if you don't want to build csharp
+@rem CMAKE_HOME settings
+set CMAKE_HOME=%ETCH_EXTERNAL_DEPENDS%\cmake\2.8.2
+
+@rem uncomment this line / unset this variable if you don't want to build csharp
 set DOTNET_HOME=C:\WINDOWS\Microsoft.NET\Framework\v4.0.30319
 
-set PATH=%ANT_HOME%\bin;%JAVA_HOME%\bin;%DOTNET_HOME%;%NUNIT_HOME%\bin\net-2.0;%PATH%
+set PATH=%ANT_HOME%\bin;%JAVA_HOME%\bin;%DOTNET_HOME%;%NUNIT_HOME%\bin\net-2.0;%CMAKE_HOME%\bin;%PATH%
 
 @echo ==================================================
 @echo Etch Configuration
@@ -45,4 +48,5 @@ set PATH=%ANT_HOME%\bin;%JAVA_HOME%\bin;%DOTNET_HOME%;%NUNIT_HOME%\bin\net-2.0;%
 @echo JAVA_HOME: %JAVA_HOME%
 @echo NUNIT_HOME: %NUNIT_HOME%
 @echo DOTNET_HOME: %DOTNET_HOME%
+@echo CMAKE_HOME: %CMAKE_HOME%
 @echo ==================================================
