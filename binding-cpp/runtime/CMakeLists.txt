@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and 
 # limitations under the License. 
 #
-cmake_minimum_required (VERSION 2.6) 
+cmake_minimum_required (VERSION 2.8) 
 project (etch-cpp)
 
 message (STATUS "using external libraries ${ETCH_EXTERNAL_DEPENDS}")
@@ -32,6 +32,36 @@ SET(GTEST ${ETCH_EXTERNAL_DEPENDS}/gtest/1.6.0)
 
 # Set build settings
 SET(BUILD_CHECK_MEMORY FALSE)
+
+
+#Build external CAPU project (OS Abstraction)
+SET(CAPU_PROJECT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/lib/capu")
+SET(CAPU_CMAKE_BUILD_DIR "${CAPU_PROJECT_DIR}/build")
+SET(CAPU_CMAKE_TOOLCHAIN_DIR "${CAPU_PROJECT_DIR}/cmake/toolchain")
+SET(CAPU_DELIVERABLE_DIR "${CAPU_PROJECT_DIR}/deliverable")
+IF(UNIX)
+  SET(CAPU_CMAKE_TOOLCHAIN_FILE "Linux.toolchain")
+  add_definitions("-DARCH_LINUX")
+ELSEIF(WIN32)
+  SET(CAPU_CMAKE_TOOLCHAIN_FILE "Win32.toolchain")
+  add_definitions("-DARCH_WIN32")
+ENDIF()
+
+include(ExternalProject)
+ExternalProject_Add(
+  Capu
+  SOURCE_DIR "${CAPU_PROJECT_DIR}"
+  BINARY_DIR "${CAPU_CMAKE_BUILD_DIR}"
+  DOWNLOAD_COMMAND ""
+  UPDATE_COMMAND ""
+  CMAKE_ARGS -DCMAKE_TOOLCHAIN_FILE:PATH=${CAPU_CMAKE_TOOLCHAIN_DIR}/${CAPU_CMAKE_TOOLCHAIN_FILE} 
+             -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+  INSTALL_COMMAND ""
+)
+
+#CAPU path
+SET(CAPU "${CAPU_PROJECT_DIR}/deliverable")
+
 
 # Set definitions
 IF (UNIX)
