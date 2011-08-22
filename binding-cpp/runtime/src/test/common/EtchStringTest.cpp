@@ -42,6 +42,13 @@ TEST(EtchStringTest, set) {
     EXPECT_TRUE(strcmp(s1->c_str(), "hello") == 0);
     delete s1;
 }
+TEST(EtchStringTest, setLen) {
+    EtchString* s1 = new EtchString("test");
+    s1->set("hello",3);
+    EXPECT_TRUE(s1->c_str() != NULL);
+    EXPECT_TRUE(strcmp(s1->c_str(), "hel") == 0);
+    delete s1;
+}
 
 TEST(EtchStringTest, c_str) {
     EXPECT_TRUE(true);

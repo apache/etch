@@ -58,6 +58,22 @@ void EtchString::set(const char* string)
     }
 }
 
+void EtchString::set(const char* string,uint32_t len)
+{
+    if(m_data != NULL) {
+        delete[] m_data;
+        m_data = NULL;
+    }
+    if(string != NULL) {
+        if(strlen(string)<len)
+            return;
+        size_t length = len;
+        m_data = new char[length + 1];
+        etch_strcpy_s(m_data, length + 1, string);
+    }
+    
+}
+
 int32_t EtchString::lenght()
 {
     return 0;

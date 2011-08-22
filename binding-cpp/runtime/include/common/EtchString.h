@@ -44,7 +44,7 @@ public:
      * @param string as c string
      */
     EtchString(const char* string);
-
+    
     /**
      * Destructure.
      */
@@ -55,6 +55,13 @@ public:
      * @param string as c string
      */
     void set(const char* string);
+    
+    /**
+     * Set a new string.
+     * @param string as c string
+     * @param len as unsigned integer to represent size of string
+     */
+    void set(const char* string, uint32_t len);
 
     /**
      * Returns the amount of characters in the string.

@@ -28,6 +28,7 @@ typedef char int8_t;
 typedef short int16_t;
 typedef int int32_t;
 typedef signed __int64 int64_t;
+typedef unsigned int uint32_t;
 #else //other OS should be C99 compliant
 #include "stdint.h"
 #endif //_WIN32
