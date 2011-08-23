@@ -16,29 +16,33 @@
  * limitations under the License.
  */
 
-#ifndef __CONFIG_H__
-#define __CONFIG_H__
+#include <gtest/gtest.h>
+#include "capu/os/AtomicOperation.h"
 
-#include "stdio.h"
-#include "stdlib.h"
-#include "string.h"
-
-
-namespace capu
-{
-   #ifdef _WIN32
-    typedef char int8_t;
-    typedef short int16_t;
-    typedef int int32_t;
-    typedef signed __int64 int64_t;
-    typedef unsigned int uint32_t;
-    #else //other OS should be C99 compliant
-    typedef signed char int8_t;
-    typedef short int int16_t;
-    typedef int int32_t;
-    typedef long long int int64_t;
-    typedef unsigned long int uint32_t;
-    #endif //_WIN32 
+TEST(AtomicOperation,Add) {
+  capu::uint32_t val = 4294967295u;
+  capu::AtomicOperation::AtomicAdd32(val, 3);
+  EXPECT_EQ((capu::uint32_t) 2,val);
 }
 
-#endif
+TEST(AtomicOperation,Sub) {
+  capu::uint32_t val = 13;
+  capu::AtomicOperation::AtomicSub32(val, 5);
+  EXPECT_EQ((capu::uint32_t) 8,val);
+
+  val = 0;
+  capu::AtomicOperation::AtomicSub32(val, 5);
+  EXPECT_EQ((capu::uint32_t) 4294967291u,val);
+}
+
+TEST(AtomicOperation,Inc) {
+  capu::uint32_t val = 1;
+  capu::AtomicOperation::AtomicInc32(val);
+  EXPECT_EQ((capu::uint32_t) 2,val);
+}
+
+TEST(AtomicOperation,Dec) {
+  capu::uint32_t val = 3;
+  capu::AtomicOperation::AtomicDec32(val);
+  EXPECT_EQ((capu::uint32_t) 2,val);
+}

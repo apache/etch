@@ -18,7 +18,8 @@
 ADD_MODULE(capu static)
 
 ADD_CLASS(os/Mutex SOURCE_GROUP arch_source_group)
-
+ADD_CLASS(os/AtomicOperation SOURCE_GROUP arch_source_group)
+ADD_CLASS(util/SmartPointer)
 
 REQUIRED_PACKAGE(Thread)
 
