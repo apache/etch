@@ -15,66 +15,61 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
-#ifndef __MUTEX_H__
-#define __MUTEX_H__
 
-#define MUTEX_INC_HEADER
-#include "arch/Mutex.inc"
-#undef MUTEX_INC_HEADER
+#ifndef __THREAD_H__
+#define __THREAD_H__
+
+#define THREAD_INC_HEADER
+#include "arch/Thread.inc"
+#undef THREAD_INC_HEADER
 
 #include "capu/Error.h"
 
 namespace capu
 {
-  class Mutex
+
+  class Thread
   {
 
-#define MUTEX_INC_MEMBER
-#include "arch/Mutex.inc"
-#undef MUTEX_INC_MEMBER
+#define THREAD_INC_MEMBER
+#include "arch/Thread.inc"
+#undef THREAD_INC_MEMBER
 
   public:
-
     /**
     * Constructor
+    * Creates a thread which will execute the given function
+    * @param func function object that will be executed
+    * @param arguments
     */
-    inline Mutex();
+    template <typename T>
+    inline Thread(T* object,void* args=NULL);
 
     /**
     * Destructor
     */
-    inline ~Mutex();
+    inline ~Thread();
 
     /**
-    * used for locking if lock is not currently available, then wait until the lock is captured
-    * @return CAPU_OK if the locking is successful
+    * Waits the thread completeness
+    * @return CAPU_OK if thread is currently waiting for completeness
     *         CAPU_ERROR otherwise
     */
-    inline status_t lock();
+    inline status_t join();
 
     /**
-    * it will attempt to lock a mutex. However if the mutex is already locked, the routine will return false immediately
-    * @return true if the mutex is successfully locked
-    *         false if the mutex is already locked
+    * Suspend the current thread for specific amount of time
+    * @return CAPU_OK if thread is currently suspended
+    *         CAPU_ERROR otherwise
     */
-    inline bool trylock();
-
-    /**
-    *release the lock
-    *@return CAPU_OK if the unlocking is successful
-    *        CAPU_ERROR otherwise 
-    */
-    inline status_t unlock();
-
-
+    static inline status_t Sleep(uint32_t millis);
 
   };
 
-#define MUTEX_INC_IMPL
-    #include "arch/Mutex.inc"
-#undef MUTEX_INC_IMPL
+#define THREAD_INC_IMPL
+    #include "arch/Thread.inc"
+#undef THREAD_INC_IMPL
+
 }
 
-#endif
-
+#endif /* Thread_H */

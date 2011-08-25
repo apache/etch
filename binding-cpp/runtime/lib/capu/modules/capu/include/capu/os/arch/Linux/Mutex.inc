@@ -22,43 +22,48 @@
 
 #ifdef MUTEX_INC_MEMBER
 public:
-    friend class CondVar;
+  friend class CondVar;
 
 private:
-    pthread_mutex_t     m_lock;
-    pthread_mutexattr_t m_lock_attr;
+  pthread_mutex_t     mLock;
+  pthread_mutexattr_t mLockAttr;
 #endif
 
 #ifdef MUTEX_INC_IMPL
 inline Mutex::Mutex()
 {
-    pthread_mutexattr_init(&m_lock_attr);
-    pthread_mutex_init(&m_lock,&m_lock_attr);
+  pthread_mutexattr_init(&mLockAttr);
+  pthread_mutex_init(&mLock,&mLockAttr);
 }
+
 inline Mutex::~Mutex()
 {
-    pthread_mutex_destroy(&m_lock);
-    pthread_mutexattr_destroy(&m_lock_attr);
+  pthread_mutex_destroy(&mLock);
+  pthread_mutexattr_destroy(&mLockAttr);
 }
+
 inline status_t Mutex::lock()
 {
-    if(pthread_mutex_lock(& m_lock)==0)
-        return CAPU_OK;
-    else
-        return CAPU_ERROR;
+  if(pthread_mutex_lock(&mLock)==0)
+    return CAPU_OK;
+  else
+    return CAPU_ERROR;
 }
+
 inline status_t Mutex::unlock()
 {
-    if(pthread_mutex_unlock(& m_lock)==0)
-        return CAPU_OK;
-    else
-        return CAPU_ERROR;
+  if(pthread_mutex_unlock(&mLock)==0)
+    return CAPU_OK;
+  else
+    return CAPU_ERROR;
 }
+
 inline bool Mutex::trylock()
 {
-    if(pthread_mutex_trylock(& m_lock)==0)
-        return true;
-    else
-        return false;
+  if(pthread_mutex_trylock(&mLock)==0)
+    return true;
+  else
+    return false;
 }
+
 #endif

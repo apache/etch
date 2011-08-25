@@ -21,4 +21,3 @@
 #elif ARCH_WIN32
 #include "Win32/Mutex.inc"
 #endif
-

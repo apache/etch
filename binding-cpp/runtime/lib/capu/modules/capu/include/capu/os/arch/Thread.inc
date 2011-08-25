@@ -16,40 +16,10 @@
  * limitations under the License.
  */
 
-#ifdef MUTEX_INC_HEADER
-#include <windows.h>
-#endif
 
-#ifdef MUTEX_INC_MEMBER
-public:
-  friend class CondVar;
 
-private:
-  CRITICAL_SECTION mLock;
-#endif
-
-#ifdef MUTEX_INC_IMPL
-inline Mutex::Mutex()
-{
-  InitializeCriticalSection(&mLock);
-}
-inline Mutex::~Mutex()
-{
-  DeleteCriticalSection(&mLock);
-}
-inline status_t Mutex::lock()
-{
-  EnterCriticalSection(&mLock);
-  return CAPU_OK;
-}
-inline status_t Mutex::unlock()
-{
-  LeaveCriticalSection(&mLock);
-  return CAPU_OK;
-}
-inline bool Mutex::trylock()
-{
-  TryEnterCriticalSection(&mLock);
-  return true;
-}
+#ifdef ARCH_LINUX
+    #include "Linux/Thread.inc"
+#elif ARCH_WIN32
+    #include "Win32/Thread.inc"
 #endif
