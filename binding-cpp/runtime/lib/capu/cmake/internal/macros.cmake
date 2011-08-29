@@ -403,10 +403,16 @@ MACRO(INTERNAL_JUST_DOIT)
 						SET(jd_collected_dependencies ${jd_collected_dependencies} ${CURRENT_MODULE_NAME})
 					ENDIF()
 					
-					#ADD_DEBUG_COMPILER_FLAG("/MTd")
-					#ADD_RELEASE_COMPILER_FLAG("/MT")
+					INTERNAL_GET_TEST_PATH(jd_test_path)
+					SET(${CURRENT_MODULE_NAME}_TEST_MAIN "")
+					IF(EXISTS "${jd_test_path}/main.cpp")
+						SET(${CURRENT_MODULE_NAME}_TEST_MAIN "${jd_test_path}/main.cpp")
+					ELSE()
+						SET(${jd_collected_dependencies} "${jd_collected_dependencies}" gtest_main)
+					ENDIF()
+					
 					LINK_DIRECTORIES(${GTEST_LIB_DIR} ${GMOCK_LIB_DIR})
-					ADD_EXECUTABLE(${CURRENT_MODULE_NAME}Test ${${CURRENT_MODULE_NAME}_TEST_FILES})
+					ADD_EXECUTABLE(${CURRENT_MODULE_NAME}Test ${${CURRENT_MODULE_NAME}_TEST_FILES} ${${CURRENT_MODULE_NAME}_TEST_MAIN})
 
 					INTERNAL_ADD_COMPILER_FLAGS_TO_TARGET(${CURRENT_MODULE_NAME}Test "${${CURRENT_MODULE_NAME}_COMPILER_FLAGS}")
 					INTERNAL_ADD_LINKER_FLAGS_TO_TARGET(${CURRENT_MODULE_NAME}Test "${${CURRENT_MODULE_NAME}_LINKER_FLAGS}")
@@ -414,7 +420,8 @@ MACRO(INTERNAL_JUST_DOIT)
 
 					INCLUDE_DIRECTORIES(${GTEST_INCLUDE_DIR} ${GMOCK_INCLUDE_DIR} "${PROJECT_SOURCE_DIR}/deliverable/include")
 					MESSAGE(STATUS "${CURRENT_MODULE_NAME} contains unit tests, building ${CURRENT_MODULE_NAME}Test")
-					TARGET_LINK_LIBRARIES(${CURRENT_MODULE_NAME}Test gmock gtest gtest_main ${jd_collected_dependencies})
+					
+					TARGET_LINK_LIBRARIES(${CURRENT_MODULE_NAME}Test gmock gtest ${jd_collected_dependencies})
 					ADD_DEPENDENCIES(${CURRENT_MODULE_NAME}Test GoogleMock GoogleTest ${CURRENT_MODULE_NAME})
 					
 				ENDIF()
