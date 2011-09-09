@@ -162,7 +162,7 @@ func New${vf}() *$vf {
 #foreach ( $n in $intf.iterator() )
 #if ($n.isStruct() || $n.isExcept())
 #set( $tname = $n.efqname( $helper ) )
-      	(*ret.GetClass2type())[reflect.Typeof(new($helper.capitalize($n.name().toString())))] = ${n.vname( $helper )}
+      	(*ret.GetClass2type())[reflect.TypeOf(new($helper.capitalize($n.name().toString())))] = ${n.vname( $helper )}
 	${n.vname( $helper )}.Helper = new(${n.vname( $helper )}ImportExportHelper)
 #end
 #end

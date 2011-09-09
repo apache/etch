@@ -64,7 +64,7 @@ func SetStubHelpers_Stub$i$suffix () {
 
 type $mthd.vname( $helper )Helper struct{}
 
-func (dh *$mthd.vname( $helper )Helper) run(svc etch.DeliveryService, impl interface{}, sender interface{}, msg *etch.Message) {
+func (dh *$mthd.vname( $helper )Helper) Run(svc etch.DeliveryService, impl interface{}, sender interface{}, msg *etch.Message) {
 #if (!$mthd.isOneway())
     rmsg := msg.Reply()
 #end
