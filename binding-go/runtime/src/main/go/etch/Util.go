@@ -19,6 +19,8 @@
 package etch
 
 import "time"
+import "reflect"
+import "strings" 
 
 func WaitOnChannel(value interface{}, timeout int, channel chan interface{}) interface{} {
 	timeoutchan := make(chan bool, 1)
@@ -51,6 +53,28 @@ func EtchRecoverAll() {
 	recover()
 }
 
+
+func ToAssignableValue(reference reflect.Value, val interface{})  interface{} {
+	value := reflect.ValueOf(val)
+	
+	if ! strings.HasPrefix(value.Type().String(),"int") {
+		return val
+	}
+
+	valueInt64 := value.Int()
+
+	switch reference.Interface().(type) {
+	case int8:
+		return Toint8(valueInt64)
+	case int16:
+		return Toint16(valueInt64)
+	case int32:
+		return Toint32(valueInt64)
+	case int64:
+		return Toint64(valueInt64)
+	}
+	return val
+}
 
 
 

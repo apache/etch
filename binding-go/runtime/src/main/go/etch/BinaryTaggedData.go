@@ -51,11 +51,11 @@ type ArrayValue struct {
 	TypeCode int8
 	CustomTy *Type
 	Dim      int
-	ArrayVal reflect.ArrayOrSliceValue
+	ArrayVal reflect.Value
 }
 
 func NewArrayValueWith(array interface{}, ty int8, cty *Type) *ArrayValue{
-	ret := &ArrayValue{ty, cty,1,reflect.NewValue(array).(reflect.ArrayOrSliceValue)}
+	ret := &ArrayValue{ty, cty,1,reflect.ValueOf(array)}
 	return ret
 }
 
@@ -63,12 +63,12 @@ func NewArrayValueWith(array interface{}, ty int8, cty *Type) *ArrayValue{
 func NewArrayValue(array interface{}, vf ValueFactory) *ArrayValue{
 	//only support 1-dimensional, non-empty arrays up to now...
 	//other arrays are likely to crash
-	ret := &ArrayValue{0,nil,1,reflect.NewValue(array).(reflect.ArrayOrSliceValue)}
+	ret := &ArrayValue{0,nil,1,reflect.ValueOf(array)}
 	Log("NewArrayValue: " + fmt.Sprint(ret.Get(0)) + "\n")
 	ret.TypeCode = getTypeCode(ret.Get(0))
 	Log("NewArrayValue: getTypeCode said " + fmt.Sprint(ret.TypeCode) + "\n")
 	if ret.TypeCode == CUSTOM {
-		ret.CustomTy = vf.GetCustomStructType(reflect.Typeof(ret.Get(0)))
+		ret.CustomTy = vf.GetCustomStructType(reflect.TypeOf(ret.Get(0)))
 	}
 	return ret
 }
@@ -87,11 +87,11 @@ func (ar *ArrayValue) Size() int {
 }
 
 func (ar *ArrayValue) Get(i int) interface{} {
-	return ar.ArrayVal.Elem(i).Interface()
+	return ar.ArrayVal.Index(i).Interface()
 }
 
 func (ar *ArrayValue) Set(i int, value interface{}) {
-	ar.ArrayVal.Elem(i).SetValue(reflect.NewValue(value))
+	ar.ArrayVal.Index(i).Set(reflect.ValueOf(ToAssignableValue(ar.ArrayVal.Index(i),value)))
 }
 
 
@@ -105,7 +105,7 @@ func getTypeCode(val interface{}) int8 {
 		return BYTES
 	}
 
-	if reflect.Typeof(val).Kind() == reflect.Slice {
+	if reflect.TypeOf(val).Kind() == reflect.Slice {
 		return ARRAY
 	}
 
@@ -146,7 +146,7 @@ func checkValue(val interface{}) int8 {
 		return BYTES
 	}
 
-	if reflect.Typeof(val).Kind() == reflect.Slice {
+	if reflect.TypeOf(val).Kind() == reflect.Slice {
 		return ARRAY
 	}
 

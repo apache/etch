@@ -49,7 +49,7 @@ func SetStubHelpers_StubHelloWorldServer (dvf etch.ValueFactory) {
 
 type _mt_org_apache_etch_examples_helloworld_HelloWorld_say_helloHelper struct{}
 
-func (dh *_mt_org_apache_etch_examples_helloworld_HelloWorld_say_helloHelper) run(svc etch.DeliveryService, impl interface{}, sender interface{}, msg *etch.Message) {
+func (dh *_mt_org_apache_etch_examples_helloworld_HelloWorld_say_helloHelper) Run(svc etch.DeliveryService, impl interface{}, sender interface{}, msg *etch.Message) {
     rmsg := msg.Reply()
     di := impl.(*ImplHelloWorldServer)
     to_whom := msg.Vf.(*ValueFactoryHelloWorld)._mf_to_whom ;
@@ -68,7 +68,7 @@ func (dh *_mt_org_apache_etch_examples_helloworld_HelloWorld_say_helloHelper) ru
 
 type _mt_org_apache_etch_examples_helloworld_HelloWorld_onewayHelper struct{}
 
-func (dh *_mt_org_apache_etch_examples_helloworld_HelloWorld_onewayHelper) run(svc etch.DeliveryService, impl interface{}, sender interface{}, msg *etch.Message) {
+func (dh *_mt_org_apache_etch_examples_helloworld_HelloWorld_onewayHelper) Run(svc etch.DeliveryService, impl interface{}, sender interface{}, msg *etch.Message) {
     di := impl.(*ImplHelloWorldServer)
 
 
@@ -78,7 +78,7 @@ func (dh *_mt_org_apache_etch_examples_helloworld_HelloWorld_onewayHelper) run(s
 
 type _mt_org_apache_etch_examples_helloworld_HelloWorld_twowayHelper struct{}
 
-func (dh *_mt_org_apache_etch_examples_helloworld_HelloWorld_twowayHelper) run(svc etch.DeliveryService, impl interface{}, sender interface{}, msg *etch.Message) {
+func (dh *_mt_org_apache_etch_examples_helloworld_HelloWorld_twowayHelper) Run(svc etch.DeliveryService, impl interface{}, sender interface{}, msg *etch.Message) {
     rmsg := msg.Reply()
     di := impl.(*ImplHelloWorldServer)
 
@@ -90,7 +90,7 @@ func (dh *_mt_org_apache_etch_examples_helloworld_HelloWorld_twowayHelper) run(s
 
 type _mt_org_apache_etch_examples_helloworld_HelloWorld_simpleArrayTestHelper struct{}
 
-func (dh *_mt_org_apache_etch_examples_helloworld_HelloWorld_simpleArrayTestHelper) run(svc etch.DeliveryService, impl interface{}, sender interface{}, msg *etch.Message) {
+func (dh *_mt_org_apache_etch_examples_helloworld_HelloWorld_simpleArrayTestHelper) Run(svc etch.DeliveryService, impl interface{}, sender interface{}, msg *etch.Message) {
     rmsg := msg.Reply()
     di := impl.(*ImplHelloWorldServer)
     ints := msg.Vf.(*ValueFactoryHelloWorld)._mf_ints ;
@@ -105,7 +105,7 @@ func (dh *_mt_org_apache_etch_examples_helloworld_HelloWorld_simpleArrayTestHelp
 
 type _mt_org_apache_etch_examples_helloworld_HelloWorld_structArrayTestHelper struct{}
 
-func (dh *_mt_org_apache_etch_examples_helloworld_HelloWorld_structArrayTestHelper) run(svc etch.DeliveryService, impl interface{}, sender interface{}, msg *etch.Message) {
+func (dh *_mt_org_apache_etch_examples_helloworld_HelloWorld_structArrayTestHelper) Run(svc etch.DeliveryService, impl interface{}, sender interface{}, msg *etch.Message) {
     rmsg := msg.Reply()
     di := impl.(*ImplHelloWorldServer)
     users := msg.Vf.(*ValueFactoryHelloWorld)._mf_users ;

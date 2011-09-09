@@ -31,7 +31,7 @@ type Type struct {
 	Fields        map[int32]*Field
 	RType         *Type
 	Helper        ImportExportHelper
-	StubHelper    interface{}
+	StubHelper    StubHelper
 	Timeout       int
 	ResponseField *Field
 	SuperType     *Type

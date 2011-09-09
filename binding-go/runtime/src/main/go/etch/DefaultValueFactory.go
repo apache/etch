@@ -160,7 +160,7 @@ func (dvf *DefaultValueFactory) SetInReplyTo(msg *Message, msgId int64) {
 }
 
 func (dvf *DefaultValueFactory) ExportCustomValue(value interface{}) *StructValue {
-	ty := reflect.Typeof(value)
+	ty := reflect.TypeOf(value)
 	etchty := (*dvf.Class2type)[ty]
 	if etchty.Helper != nil {
 		return etchty.Helper.ExportValue(etchty, dvf, value)

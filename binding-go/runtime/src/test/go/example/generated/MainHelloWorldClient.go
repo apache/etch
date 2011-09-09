@@ -50,18 +50,18 @@ func main() {
 
 
 	start := time.Nanoseconds()
-	for i := 0; i < 1000; i++{
+	for i := 0; i < 100; i++{
 		remote.Twoway()
 	}
 	end := time.Nanoseconds()
-	fmt.Printf("1000 twoway calls took " + fmt.Sprint((end-start)/1e6) + " ms\n")
+	fmt.Printf("100 twoway calls took " + fmt.Sprint((end-start)/1e6) + " ms\n")
 
 	start = time.Nanoseconds()
-	for i := 0; i < 1000; i++{
+	for i := 0; i < 100; i++{
 		remote.Oneway()
 	}
 	end = time.Nanoseconds()
-	fmt.Printf("1000 oneway calls took " + fmt.Sprint((end-start)/1e6) + " ms\n")
+	fmt.Printf("100 oneway calls took " + fmt.Sprint((end-start)/1e6) + " ms\n")
 
 
 	fmt.Printf("Press Enter to exit\n")

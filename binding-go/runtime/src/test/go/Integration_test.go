@@ -125,9 +125,6 @@ func (dsf *dummyServerFactory) TransportNotify(value interface{}) {
 
 //****************************************************
 
-
-type dummyHelper struct{}
-
 func toInteger(val interface{}) int32 {
 	switch val.(type) {
 	case int:
@@ -144,8 +141,9 @@ func toInteger(val interface{}) int32 {
 	return 0
 }
 
+type dummyHelper struct{}
 
-func (dh *dummyHelper) run(svc DeliveryService, impl interface{}, sender interface{}, msg *Message) {
+func (dh *dummyHelper) Run(svc DeliveryService, impl interface{}, sender interface{}, msg *Message) {
 	Log("dummyHelper got message: " + fmt.Sprint(msg) + "\n")
 	rmsg := msg.Reply()
 	di := impl.(*dummyImpl)

@@ -169,9 +169,9 @@ func NewValueFactoryHelloWorld() *ValueFactoryHelloWorld {
 	_mt_org_apache_etch_examples_helloworld_HelloWorld__result_structArrayTest.PutValidator(ret.GetDefaultInReplyToField(), new(dummyVal))
 	_mt_org_apache_etch_examples_helloworld_HelloWorld__result_structArrayTest.PutValidator(ret.GetDefaultResponseField(), new(dummyVal))
 
-      	(*ret.GetClass2type())[reflect.Typeof(new(User))] = _mt_org_apache_etch_examples_helloworld_HelloWorld_user
+      	(*ret.GetClass2type())[reflect.TypeOf(new(User))] = _mt_org_apache_etch_examples_helloworld_HelloWorld_user
 	_mt_org_apache_etch_examples_helloworld_HelloWorld_user.Helper = new(_mt_org_apache_etch_examples_helloworld_HelloWorld_userImportExportHelper)
-      	(*ret.GetClass2type())[reflect.Typeof(new(UserUnknownException))] = _mt_org_apache_etch_examples_helloworld_HelloWorld_UserUnknownException
+      	(*ret.GetClass2type())[reflect.TypeOf(new(UserUnknownException))] = _mt_org_apache_etch_examples_helloworld_HelloWorld_UserUnknownException
 	_mt_org_apache_etch_examples_helloworld_HelloWorld_UserUnknownException.Helper = new(_mt_org_apache_etch_examples_helloworld_HelloWorld_UserUnknownExceptionImportExportHelper)
 
 	return ret

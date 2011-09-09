@@ -35,7 +35,7 @@ func NewTcpListener(address string) *TcpListener {
 
 func (tcpl *TcpListener) openSocket() bool {
 	var er os.Error = nil
-	addr, _ := net.ResolveTCPAddr(tcpl.address)
+	addr, _ := net.ResolveTCPAddr("tcp", tcpl.address)
 	tcpl.listener, er = net.ListenTCP("tcp", addr)
 	if er != nil {
 		tcpl.status = DOWN

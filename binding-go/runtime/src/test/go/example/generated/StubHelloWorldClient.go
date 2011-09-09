@@ -37,7 +37,7 @@ func SetStubHelpers_StubHelloWorldClient (dvf etch.ValueFactory) {
 
 type _mt_org_apache_etch_examples_helloworld_HelloWorld_fHelper struct{}
 
-func (dh *_mt_org_apache_etch_examples_helloworld_HelloWorld_fHelper) run(svc etch.DeliveryService, impl interface{}, sender interface{}, msg *etch.Message) {
+func (dh *_mt_org_apache_etch_examples_helloworld_HelloWorld_fHelper) Run(svc etch.DeliveryService, impl interface{}, sender interface{}, msg *etch.Message) {
     rmsg := msg.Reply()
     di := impl.(*ImplHelloWorldClient)
     x := msg.Vf.(*ValueFactoryHelloWorld)._mf_x ;

@@ -21,9 +21,8 @@ package etch
 import "fmt"
 
 type StubHelper interface {
-	run(svc DeliveryService, impl interface{}, sender interface{}, msg *Message)
+	Run(svc DeliveryService, impl interface{}, sender interface{}, msg *Message)
 }
-
 
 type EtchStub struct {
 	svc  DeliveryService
@@ -45,8 +44,7 @@ func (es *EtchStub) SessionMessage(sender interface{}, theMsg *Message) bool {
 	}
 
 	execution := func() {
-		helper := stubhelper.(StubHelper)
-		helper.run(es.svc, es.Impl, sender, theMsg)
+		stubhelper.Run(es.svc, es.Impl, sender, theMsg)
 	}
 
 	if ty.AsyncMode != MODE_NONE {

@@ -53,7 +53,7 @@ func (tcpc *TcpConnection) openSocket() bool {
 			return true
 		}
 	} else {
-		addr, _ := net.ResolveTCPAddr(tcpc.address)
+		addr, _ := net.ResolveTCPAddr("tcp", tcpc.address)
 
 		tcpc.connection, er = net.DialTCP("tcp", nil, addr)
 		tcpc.connection.SetLinger(0)
