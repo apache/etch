@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 #ifndef __MUTEX_H__
 #define __MUTEX_H__
 
@@ -67,9 +67,8 @@ namespace capu
     */
     inline status_t unlock();
 
-
-
   };
+
 
 #define MUTEX_INC_IMPL
     #include "arch/Mutex.inc"
@@ -77,4 +76,3 @@ namespace capu
 }
 
 #endif
-

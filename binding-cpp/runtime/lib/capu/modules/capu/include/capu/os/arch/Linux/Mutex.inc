@@ -33,6 +33,7 @@ private:
 inline Mutex::Mutex()
 {
   pthread_mutexattr_init(&mLockAttr);
+  pthread_mutexattr_settype(&mLockAttr,PTHREAD_MUTEX_RECURSIVE);
   pthread_mutex_init(&mLock,&mLockAttr);
 }
 
