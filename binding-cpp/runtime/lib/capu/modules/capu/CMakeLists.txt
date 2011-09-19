@@ -21,6 +21,7 @@ ADD_CLASS(os/Mutex SOURCE_GROUP arch_source_group)
 ADD_CLASS(os/AtomicOperation SOURCE_GROUP arch_source_group)
 ADD_CLASS(util/SmartPointer)
 ADD_CLASS(os/Thread SOURCE_GROUP arch_source_group)
+ADD_CLASS(os/CondVar SOURCE_GROUP arch_source_group)
 
 REQUIRED_PACKAGE(Thread)
 
