@@ -24,18 +24,18 @@ EtchInt32::EtchInt32()
 {
 }
 
-EtchInt32::EtchInt32(int32_t value)
+EtchInt32::EtchInt32(capu::int32_t value)
     : EtchObject(EtchInt32::TYPE_ID)
     , m_value(value)
 {
 }
 
-void EtchInt32::set(int32_t value)
+void EtchInt32::set(capu::int32_t value)
 {
     m_value = value;
 }
 
-int32_t EtchInt32::get()
+capu::int32_t EtchInt32::get()
 {
     return m_value;
 }

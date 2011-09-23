@@ -30,7 +30,7 @@ public:
     /**
      * TypeId for EtchBool.
      */
-    static const int32_t TYPE_ID = EOTID_BOOL;
+    static const capu::int32_t TYPE_ID = EOTID_BOOL;
 
     /**
      * Constructs a EtchBool object.
@@ -40,20 +40,20 @@ public:
     /**
      * Constructs a EtchBool object with given value.
      */
-    EtchBool(bool value);
+    EtchBool(capu::bool_t value);
 
     /**
      * Sets bool value.
      */
-    void set(bool value);
+    void set(capu::bool_t value);
 
     /**
      * Returns bool value.
      */
-    bool get();
+    capu::bool_t get();
 
 private:
-    bool m_value;
+    capu::bool_t m_value;
 };
 
 #endif

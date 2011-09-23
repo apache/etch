@@ -30,7 +30,7 @@ public:
     /**
      * TypeId for EtchByte.
      */
-    static const int32_t TYPE_ID = EOTID_BYTE;
+    static const capu::int32_t TYPE_ID = EOTID_BYTE;
 
     /**
      * Constructs a EtchByte object.
@@ -40,20 +40,20 @@ public:
     /**
      * Constructs a EtchByte object with given value.
      */
-    EtchByte(int8_t value);
+    EtchByte(capu::int8_t value);
 
     /**
      * Sets byte value.
      */
-    void set(int8_t value);
+    void set(capu::int8_t value);
 
     /**
      * Returns byte value.
      */
-    int8_t get();
+    capu::int8_t get();
 
 private:
-    int8_t m_value;
+  capu::int8_t m_value;
 };
 
 #endif

@@ -50,7 +50,7 @@ public:
     /**
      * TypeId for EtchList.
      */
-    static const int32_t TYPE_ID = EOTID_LIST;
+    static const capu::int32_t TYPE_ID = EOTID_LIST;
 
     /**
      * Constructs EtchList.
@@ -70,7 +70,7 @@ public:
     /**
      * Get element at index.
      */
-    status_t get(int32_t index, T* data);
+    status_t get(capu::int32_t index, T* data);
 
 private:
     Item* m_head;
@@ -115,7 +115,7 @@ void EtchList<T>::add(T data)
 }
 
 template<class T>
-status_t EtchList<T>::get(int32_t index, T* data)
+status_t EtchList<T>::get(capu::int32_t index, T* data)
 {
     return ETCH_EUNIMPL;
 }

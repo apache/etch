@@ -22,7 +22,7 @@
 #include "common/EtchObject.h"
 #include "common/EtchError.h"
 
-template<class T, int32_t content_type_id>
+template<class T, capu::int32_t content_type_id>
 class EtchNativeArray :
     public EtchObject
 {
@@ -31,14 +31,14 @@ public:
     /**
      * TypeId for EtchNativeArray.
      */
-    static const int32_t TYPE_ID = EOTID_NATIVE_ARRAY;
+    static const capu::int32_t TYPE_ID = EOTID_NATIVE_ARRAY;
 
     /**
      * Constructs a EtchNativeArray object.
      * T must be a pointer to a subclass of EtchObject (e.g. EtchInt32*) for this
      * class to work correctly.
      */
-    EtchNativeArray(int32_t length);
+    EtchNativeArray(capu::int32_t length);
 
     /**
      * Destructor for Etch Nativearray.
@@ -49,14 +49,14 @@ public:
     /**
      * returns the TypeID of the content of this native array.
      */
-    int32_t getContentTypeId();
+    capu::int32_t getContentTypeId();
 
     /**
      * gets the EtchObject at index i in result
      * returns ETCH_ERANGE, if out of bounds.
      * returns ETCH_OK otherwise
      */
-    status_t get(int32_t index, T* result);
+    status_t get(capu::int32_t index, T* result);
 
       /**
      * gets a block of EtchObject at index i in result
@@ -69,7 +69,7 @@ public:
      * returns ETCH_ERANGE, if out of bounds.
      * returns ETCH_OK otherwise
      */
-    status_t get(int32_t index, T* buffer, int32_t buffer_size, int32_t offset, int32_t count);
+    status_t get(capu::int32_t index, T* buffer, capu::int32_t buffer_size, capu::int32_t offset, capu::int32_t count);
     
     
     /**
@@ -78,7 +78,7 @@ public:
      * returns ETCH_ERANGE, if out of bounds.
      * returns ETCH_OK otherwise
      */
-    status_t set(int32_t index, T value);
+    status_t set(capu::int32_t index, T value);
     
     /**
      * sets a block of the EtchObject at index i in result
@@ -92,18 +92,18 @@ public:
      * returns ETCH_ERANGE, if out of bounds.
      * returns ETCH_OK otherwise
      */
-    status_t set(int32_t index, T* buffer, int32_t buffer_size, int32_t offset, int32_t count);
+    status_t set(capu::int32_t index, T* buffer, capu::int32_t buffer_size, capu::int32_t offset, capu::int32_t count);
 
     
     
 private:
     T* m_array;
-    int32_t m_length;
-    int32_t m_content_type_id;
+    capu::int32_t m_length;
+    capu::int32_t m_content_type_id;
 };
 
-template<class T, int32_t content_type_id>
-EtchNativeArray<T, content_type_id>::EtchNativeArray(int32_t length)
+template<class T, capu::int32_t content_type_id>
+EtchNativeArray<T, content_type_id>::EtchNativeArray(capu::int32_t length)
       : EtchObject(EtchNativeArray::TYPE_ID),
       m_length(length) 
 {
@@ -111,14 +111,14 @@ EtchNativeArray<T, content_type_id>::EtchNativeArray(int32_t length)
   m_content_type_id = content_type_id;
 }
 
-template<class T, int32_t content_type_id>
+template<class T, capu::int32_t content_type_id>
 EtchNativeArray<T, content_type_id>::~EtchNativeArray()
 {
 	delete[] m_array;
 }
 
-template<class T, int32_t content_type_id>
-status_t EtchNativeArray<T, content_type_id>::set(int32_t index, T value)
+template<class T, capu::int32_t content_type_id>
+status_t EtchNativeArray<T, content_type_id>::set(capu::int32_t index, T value)
 {
   if(0 <= index && index < m_length) {
     m_array[index] = value;
@@ -127,13 +127,13 @@ status_t EtchNativeArray<T, content_type_id>::set(int32_t index, T value)
   return ETCH_ERANGE;
 }
 
-template<class T, int32_t content_type_id>
-int32_t EtchNativeArray<T, content_type_id>::getContentTypeId() {
+template<class T, capu::int32_t content_type_id>
+capu::int32_t EtchNativeArray<T, content_type_id>::getContentTypeId() {
 	return m_content_type_id;
 }
 
-template<class T, int32_t content_type_id>
-status_t EtchNativeArray<T, content_type_id>::get(int32_t index, T* result)
+template<class T, capu::int32_t content_type_id>
+status_t EtchNativeArray<T, content_type_id>::get(capu::int32_t index, T* result)
 {
   if (result == NULL)
   {
@@ -146,8 +146,8 @@ status_t EtchNativeArray<T, content_type_id>::get(int32_t index, T* result)
   return ETCH_ERANGE;
 }
 
-template<class T, int32_t content_type_id>
-status_t EtchNativeArray<T, content_type_id>::set(int32_t index, T* buffer, int32_t buffer_size, int32_t offset, int32_t count )
+template<class T, capu::int32_t content_type_id>
+status_t EtchNativeArray<T, content_type_id>::set(capu::int32_t index, T* buffer, capu::int32_t buffer_size, capu::int32_t offset, capu::int32_t count )
 {
   if (buffer == NULL)
   {
@@ -166,8 +166,8 @@ status_t EtchNativeArray<T, content_type_id>::set(int32_t index, T* buffer, int3
 }
 
 
-template<class T, int32_t content_type_id>
-status_t EtchNativeArray<T, content_type_id>::get(int32_t index, T* buffer, int32_t buffer_size, int32_t offset, int32_t count )
+template<class T, capu::int32_t content_type_id>
+status_t EtchNativeArray<T, content_type_id>::get(capu::int32_t index, T* buffer, capu::int32_t buffer_size, capu::int32_t offset, capu::int32_t count )
 {
   if (buffer == NULL)
   {

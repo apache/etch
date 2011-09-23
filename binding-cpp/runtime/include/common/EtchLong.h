@@ -30,7 +30,7 @@ public:
     /**
      * TypeId for EtchLong.
      */
-    static const int32_t TYPE_ID = EOTID_LONG;
+    static const capu::int32_t TYPE_ID = EOTID_LONG;
 
     /**
      * Constructs a EtchLong object.
@@ -40,20 +40,20 @@ public:
     /**
      * Constructs a EtchLong object with given value.
      */
-    EtchLong(int64_t value);
+    EtchLong(capu::int64_t value);
 
     /**
      * Sets long value.
      */
-    void set(int64_t value);
+    void set(capu::int64_t value);
 
     /**
      * Returns long value.
      */
-    int64_t get();
+    capu::int64_t get();
 
 private:
-    int64_t m_value;
+    capu::int64_t m_value;
 };
 
 #endif

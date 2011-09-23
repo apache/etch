@@ -22,6 +22,7 @@
 #include "common/EtchObject.h"
 #include "common/EtchError.h"
 
+
 class EtchInt32 :
     public EtchObject
 {
@@ -30,7 +31,7 @@ public:
     /**
      * TypeId for EtchString.
      */
-    static const int32_t TYPE_ID = EOTID_INT32;
+    static const capu::int32_t TYPE_ID = EOTID_INT32;
 
     /**
      * Constructs a EtchInt32 object.
@@ -40,20 +41,20 @@ public:
     /**
      * Constructs a EtchInt32 object with given value.
      */
-    EtchInt32(int32_t value);
+    EtchInt32(capu::int32_t value);
 
     /**
      * Sets int32 value.
      */
-    void set(int32_t value);
+    void set(capu::int32_t value);
 
     /**
      * Returns int32 value.
      */
-    int32_t get();
+    capu::int32_t get();
 
 private:
-    int32_t m_value;
+    capu::int32_t m_value;
 };
 
 #endif

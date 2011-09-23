@@ -30,7 +30,7 @@ public:
     /**
      * TypeId for EtchShort.
      */
-    static const int32_t TYPE_ID = EOTID_SHORT;
+    static const capu::int32_t TYPE_ID = EOTID_SHORT;
 
     /**
      * Constructs a EtchShort object.
@@ -40,20 +40,20 @@ public:
     /**
      * Constructs a EtchShort object with given value.
      */
-    EtchShort(int16_t value);
+    EtchShort(capu::int16_t value);
 
     /**
      * Sets short value.
      */
-    void set(int16_t value);
+    void set(capu::int16_t value);
 
     /**
      * Returns short value.
      */
-    int16_t get();
+    capu::int16_t get();
 
 private:
-    int16_t m_value;
+    capu::int16_t m_value;
 };
 
 #endif

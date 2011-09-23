@@ -75,7 +75,7 @@ namespace capu {
     T& operator*() const;
 
     /**
-    * Returns theh object stored by the smartPointer
+    * Returns the object stored by the smartPointer
     */
     T* get() const;
 

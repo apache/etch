@@ -52,7 +52,7 @@ public:
     /**
      * Constructor.
      */
-    EtchObject(int32_t typeId);
+    EtchObject(capu::int32_t typeId);
     
     /**
      * Destructor.
@@ -62,10 +62,10 @@ public:
     /**
      * Returns object type id.
      */
-    int32_t getObjectTypeId();
+    capu::int32_t getObjectTypeId();
 
 private:
-    int32_t m_typeId;
+    capu::int32_t m_typeId;
 };
 
 #endif

@@ -30,7 +30,7 @@ TEST(EtchListTest, add) {
     //EtchList<EtchInt32*>* l1 = new EtchList<EtchInt32*>();
     //add smart pointer here
     //l1->add(new EtchInt32(42));
-    EtchList<int32_t>* l1 = new EtchList<int32_t>();
+    EtchList<capu::int32_t>* l1 = new EtchList<capu::int32_t>();
     l1->add(42);
     l1->add(84);
     delete l1;
@@ -40,7 +40,7 @@ TEST(EtchListTest, get) {
     //EtchList<EtchInt32*>* l1 = new EtchList<EtchInt32*>();
     //add smart pointer here
     //l1->add(new EtchInt32(42));
-    //EtchList<int32_t>* l1 = new EtchList<int32_t>();
+    //EtchList<capu::int32_t>* l1 = new EtchList<capu::int32_t>();
     //l1->add(42);
     //l1->add(84);
     //delete l1;

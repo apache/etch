@@ -21,7 +21,6 @@
 
 #include "common/EtchObject.h"
 #include "common/EtchError.h"
-
 class EtchFloat :
     public EtchObject
 {
@@ -30,7 +29,7 @@ public:
     /**
      * TypeId for EtchFloat.
      */
-    static const int32_t TYPE_ID = EOTID_FLOAT;
+    static const capu::int32_t TYPE_ID = EOTID_FLOAT;
 
     /**
      * Constructs a EtchFloat object.
@@ -40,20 +39,20 @@ public:
     /**
      * Constructs a EtchFloat object with given value.
      */
-    EtchFloat(float value);
+    EtchFloat(capu::float_t value);
 
     /**
      * Sets float value.
      */
-    void set(float value);
+    void set(capu::float_t value);
 
     /**
      * Returns float value.
      */
-    float get();
+    capu::float_t get();
 
 private:
-    float m_value;
+    capu::float_t m_value;
 };
 
 #endif

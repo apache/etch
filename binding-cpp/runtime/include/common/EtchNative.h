@@ -28,16 +28,16 @@ class EtchNative {
   /**
    * TypeIds for native types
    */
-  static const int32_t INT8 = EOTID_NATIVE_INT8;
-  static const int32_t INT16 = EOTID_NATIVE_INT16;
-  static const int32_t INT32 = EOTID_NATIVE_INT32;
-  static const int32_t INT64 = EOTID_NATIVE_INT64;
-  static const int32_t DOUBLE = EOTID_NATIVE_DOUBLE;
-  static const int32_t FLOAT = EOTID_NATIVE_FLOAT;
-  static const int32_t LONG = EOTID_NATIVE_LONG;
-  static const int32_t SHORT = EOTID_NATIVE_SHORT;
-  static const int32_t BOOL = EOTID_NATIVE_BOOL;
-  static const int32_t BYTE = EOTID_NATIVE_BYTE;
+  static const capu::int32_t INT8 = EOTID_NATIVE_INT8;
+  static const capu::int32_t INT16 = EOTID_NATIVE_INT16;
+  static const capu::int32_t INT32 = EOTID_NATIVE_INT32;
+  static const capu::int32_t INT64 = EOTID_NATIVE_INT64;
+  static const capu::int32_t DOUBLE = EOTID_NATIVE_DOUBLE;
+  static const capu::int32_t FLOAT = EOTID_NATIVE_FLOAT;
+  static const capu::int32_t LONG = EOTID_NATIVE_LONG;
+  static const capu::int32_t SHORT = EOTID_NATIVE_SHORT;
+  static const capu::int32_t BOOL = EOTID_NATIVE_BOOL;
+  static const capu::int32_t BYTE = EOTID_NATIVE_BYTE;
  
 };
 

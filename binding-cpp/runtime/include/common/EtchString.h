@@ -32,7 +32,7 @@ public:
     /**
      * TypeId for EtchString.
      */
-    static const int32_t TYPE_ID = EOTID_STRING;
+    static const capu::int32_t TYPE_ID = EOTID_STRING;
 
     /**
      * Constructs the String.
@@ -61,12 +61,12 @@ public:
      * @param string as c string
      * @param len as unsigned integer to represent size of string
      */
-    void set(const char* string, uint32_t len);
+    void set(const char* string, capu::uint32_t len);
 
     /**
      * Returns the amount of characters in the string.
      */
-    int32_t lenght();
+    capu::int32_t lenght();
 
     /**
      * Returns c styled string.

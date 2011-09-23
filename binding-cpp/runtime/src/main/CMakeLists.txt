@@ -17,8 +17,24 @@
 
 # set include dirs
 include_directories (${PROJECT_SOURCE_DIR}/include)
+include_directories (${CAPU}/include/capu)
 
-add_library (etch-cpp STATIC
+#Add header files
+SET(MAIN_INCLUDES
+    ${PROJECT_SOURCE_DIR}/include/common/EtchObject.h
+    ${PROJECT_SOURCE_DIR}/include/common/EtchString.h
+    ${PROJECT_SOURCE_DIR}/include/common/EtchInt32.h
+    ${PROJECT_SOURCE_DIR}/include/common/EtchBool.h
+    ${PROJECT_SOURCE_DIR}/include/common/EtchByte.h
+    ${PROJECT_SOURCE_DIR}/include/common/EtchShort.h
+    ${PROJECT_SOURCE_DIR}/include/common/EtchLong.h
+    ${PROJECT_SOURCE_DIR}/include/common/EtchFloat.h
+    ${PROJECT_SOURCE_DIR}/include/common/EtchDouble.h
+    ${PROJECT_SOURCE_DIR}/include/util/EtchUtil.h
+    )
+
+#Add cpp files
+SET(MAIN_SOURCES
     common/EtchObject.cpp
     common/EtchString.cpp
     common/EtchInt32.cpp
@@ -29,7 +45,19 @@ add_library (etch-cpp STATIC
     common/EtchFloat.cpp
     common/EtchDouble.cpp
     util/EtchUtil.cpp
+    )
+
+#Add source and header files to library so they are visible in the different IDEs (Visual Studio and Eclipse)
+add_library (etch-cpp STATIC
+    ${MAIN_SOURCES}
+    ${MAIN_INCLUDES}
 )
+
+IF (UNIX)
+  target_link_libraries (etch-cpp ${CAPU/lib/Linux})
+ELSEIF(WIN32)
+  target_link_libraries (etch-cpp ${CAPU/lib/Win32})
+ENDIF()
 
 IF (UNIX)
   set_target_properties (etch-cpp PROPERTIES COMPILE_FLAGS "-m32" LINK_FLAGS "-m32")

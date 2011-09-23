@@ -21,7 +21,7 @@
 
 #include "EtchConfig.h"
 
-typedef int32_t status_t;
+typedef capu::int32_t status_t;
 
 enum {
     ETCH_OK                 = 0,

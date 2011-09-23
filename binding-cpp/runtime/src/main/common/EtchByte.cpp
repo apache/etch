@@ -24,18 +24,18 @@ EtchByte::EtchByte()
 {
 }
 
-EtchByte::EtchByte(int8_t value)
+EtchByte::EtchByte(capu::int8_t value)
     : EtchObject(EtchByte::TYPE_ID)
     , m_value(value)
 {
 }
 
-void EtchByte::set(int8_t value)
+void EtchByte::set(capu::int8_t value)
 {
     m_value = value;
 }
 
-int8_t EtchByte::get()
+capu::int8_t EtchByte::get()
 {
     return m_value;
 }

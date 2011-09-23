@@ -58,7 +58,7 @@ void EtchString::set(const char* string)
     }
 }
 
-void EtchString::set(const char* string,uint32_t len)
+void EtchString::set(const char* string,capu::uint32_t len)
 {
     if(m_data != NULL) {
         delete[] m_data;
@@ -74,7 +74,7 @@ void EtchString::set(const char* string,uint32_t len)
     
 }
 
-int32_t EtchString::lenght()
+capu::int32_t EtchString::lenght()
 {
     return 0;
 }

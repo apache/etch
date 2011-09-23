@@ -24,18 +24,18 @@ EtchShort::EtchShort()
 {
 }
 
-EtchShort::EtchShort(int16_t value)
+EtchShort::EtchShort(capu::int16_t value)
     : EtchObject(EtchShort::TYPE_ID)
     , m_value(value)
 {
 }
 
-void EtchShort::set(int16_t value)
+void EtchShort::set(capu::int16_t value)
 {
     m_value = value;
 }
 
-int16_t EtchShort::get()
+capu::int16_t EtchShort::get()
 {
     return m_value;
 }

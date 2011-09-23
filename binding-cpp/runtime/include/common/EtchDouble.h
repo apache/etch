@@ -22,6 +22,7 @@
 #include "common/EtchObject.h"
 #include "common/EtchError.h"
 
+
 class EtchDouble :
     public EtchObject
 {
@@ -30,7 +31,7 @@ public:
     /**
      * TypeId for EtchDouble.
      */
-    static const int32_t TYPE_ID = EOTID_DOUBLE;
+    static const capu::int32_t TYPE_ID = EOTID_DOUBLE;
 
     /**
      * Constructs a EtchDouble object.
@@ -40,20 +41,20 @@ public:
     /**
      * Constructs a EtchDouble object with given value.
      */
-    EtchDouble(double value);
+    EtchDouble(capu::double_t value);
 
     /**
      * Sets double value.
      */
-    void set(double value);
+    void set(capu::double_t value);
 
     /**
      * Returns double value.
      */
-    double get();
+    capu::double_t get();
 
 private:
-    double m_value;
+    capu::double_t m_value;
 };
 
 #endif

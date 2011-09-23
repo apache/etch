@@ -19,7 +19,7 @@
 include_directories (${PROJECT_SOURCE_DIR}/include)
 include_directories (${GTEST})
 include_directories (${GTEST}/include)
-#include_directories (${CAPU}/include)
+include_directories (${CAPU}/include/capu)
 
 
 IF (WIN32 AND BUILD_CHECK_MEMORY)
@@ -44,11 +44,11 @@ add_executable (etch-cpp-test
     main.cpp
 )
 
-#IF (UNIX)
-#  target_link_libraries (etch-cpp-test ${CAPU/lib/Linux})
-#ELSEIF(WIN32)
-#  target_link_libraries (etch-cpp-test ${CAPU/lib/Win32})
-#ENDIF()
+IF (UNIX)
+  target_link_libraries (etch-cpp-test ${CAPU/lib/Linux})
+ELSEIF(WIN32)
+  target_link_libraries (etch-cpp-test ${CAPU/lib/Win32})
+ENDIF()
 
 target_link_libraries (etch-cpp-test etch-cpp)
 

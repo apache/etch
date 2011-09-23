@@ -24,18 +24,18 @@ EtchLong::EtchLong()
 {
 }
 
-EtchLong::EtchLong(int64_t value)
+EtchLong::EtchLong(capu::int64_t value)
     : EtchObject(EtchLong::TYPE_ID)
     , m_value(value)
 {
 }
 
-void EtchLong::set(int64_t value)
+void EtchLong::set(capu::int64_t value)
 {
     m_value = value;
 }
 
-int64_t EtchLong::get()
+capu::int64_t EtchLong::get()
 {
     return m_value;
 }
