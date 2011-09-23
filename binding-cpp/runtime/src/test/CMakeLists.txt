@@ -63,3 +63,5 @@ ENDIF (WIN32 AND BUILD_CHECK_MEMORY)
 IF (UNIX)
   set_target_properties (etch-cpp-test PROPERTIES COMPILE_FLAGS "-m32" LINK_FLAGS "-m32 -pthread")
 ENDIF (UNIX)
+
+add_dependencies (etch-cpp Capu)

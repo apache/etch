@@ -37,3 +37,4 @@ ENDIF (UNIX)
 
 set_target_properties (etch-cpp PROPERTIES OUTPUT_NAME "etch")
 
+add_dependencies (etch-cpp Capu)

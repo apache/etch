@@ -86,8 +86,20 @@
 
     <!-- TEST TARGET -->
     <target name="do-test" unless="build.skip.tests">
-        <!-- Run Unit Tests -->
-        <!-- Run Unit Tests on Windows-->
+        <!-- Run CAPU Unit Tests -->
+        <!-- Run CAPU Unit Tests on Windows-->
+        <property name="executable-full-path"
+            location="lib/capu/deliverable/bin/Win32/Debug/capuTest.exe"/>
+        <exec executable="${executable-full-path}" osfamily="windows">
+            <arg value="--gtest_output=xml:${testResultsDirectory}/"/>
+        </exec>
+        <!-- Run CAPU Unit Tests on Unix -->
+        <exec executable="lib/capu/deliverable/bin/Linux/capuTest" osfamily="unix">
+            <arg value="--gtest_output=xml:${testResultsDirectory}/"/>
+        </exec>
+    
+        <!-- Run Etch Unit Tests -->
+        <!-- Run Etch Unit Tests on Windows-->
         <exec executable="${target}/src/test/debug/etch-cpp-test" osfamily="windows">
             <arg value="--gtest_output=xml:${testResultsDirectory}/"/>
         </exec>
