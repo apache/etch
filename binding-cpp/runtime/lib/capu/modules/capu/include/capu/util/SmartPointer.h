@@ -69,10 +69,15 @@ namespace capu {
     T* operator->() const;
 
     /**
-    * Overload dereferencing operator to be able to get the object
-    * referenced by the pointer
+    * Overload dereference operator to be able to get the object
+    * referenced by the pointer. Use with care!
     */
-    //T& operator*() const;
+    T& operator*() const;
+
+    /**
+    * Returns theh object stored by the smartPointer
+    */
+    T* get() const;
 
     /**
     * Check if object exists
@@ -178,12 +183,12 @@ namespace capu {
     return m_data;
   }
 
-  /*template<class T>
+  template<class T>
   inline
   T& SmartPointer<T>::operator*() const
   {
   return *m_data;
-  }*/
+  }
 
   template<class T>
   inline
@@ -215,6 +220,13 @@ namespace capu {
     delete m_referenceCount;
     m_data = 0;
     m_referenceCount = 0;
+  }
+
+  template<class T>
+  inline
+  T* SmartPointer<T>::get() const
+  {
+    return m_data;
   }
 
   template<class T>

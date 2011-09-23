@@ -25,6 +25,7 @@ private:
   FRIEND_TEST(SmartPointer,Constructors);
   FRIEND_TEST(SmartPointer,Deconstructor);
   FRIEND_TEST(SmartPointer,FileOperator);
+  FRIEND_TEST(SmartPointer,DereferencingOperator);
 public:
   static capu::int32_t mRefCount;
 
@@ -46,7 +47,7 @@ capu::int32_t DummyClass::mRefCount = 0;
 
 
 
-TEST(SmartPointer,Constructors) {	
+TEST(SmartPointer,Constructors) {
   {
     capu::SmartPointer<DummyClass> ptr(new DummyClass());
     EXPECT_EQ((capu::uint32_t)1,ptr.getRefCount());
@@ -62,10 +63,6 @@ TEST(SmartPointer,Constructors) {
   }
   EXPECT_EQ(0,DummyClass::mRefCount);
 }
-
-TEST(SmartPointer,Deconstructor) {
-}    
-
 
 
 TEST(SmartPointer,AssignmentOperator) {
@@ -92,6 +89,21 @@ TEST(SmartPointer,FileOperator) {
   EXPECT_EQ(5,ptr->mValue);
   ptr->set(13);
   EXPECT_EQ(13,ptr->mValue);
+}
+
+TEST(SmartPointer,DereferencingOperator) {
+  DummyClass *dc = new DummyClass();
+  capu::SmartPointer<DummyClass> ptr(dc);
+  DummyClass *dc2 = &(*ptr);
+  EXPECT_EQ(dc,dc2);
+}
+
+TEST(SmartPointer,getObject) {
+  DummyClass *dc = new DummyClass();
+  capu::SmartPointer<DummyClass> ptr(dc);
+  DummyClass *dc2 = ptr.get();
+  EXPECT_TRUE(dc2 != NULL);
+  EXPECT_EQ(dc,dc2);
 }
 
 TEST(SmartPointer,BoolOperator) {
