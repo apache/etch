@@ -58,8 +58,14 @@
         </zip>
     </target>
 
+    <!-- Uncomment the generator you would like to use on your platform. If no generator is set explicitly the default generator will be used. -->
     <target name="do-build-main" if="USE.cmake">
         <cmake srcdir="${basedir}" bindir="${basedir}/target" buildtype="Debug" >
+            <!--<generator name="Visual Studio 8 2005" platform="windows" />-->
+            <!--<generator name="Visual Studio 9 2008" platform="windows" />-->
+            <!--<generator name="Visual Studio 10 2010" platform="windows" />-->
+            <!--<generator name="Unix Makefiles"/>-->
+            <!--<generator name="Eclipse CDT4 - Unix Makefiles" platform="Linux" />-->
             <variable name="ETCH_EXTERNAL_DEPENDS" type="PATH" value="${env.ETCH_EXTERNAL_DEPENDS}" />
         </cmake>
     </target>
@@ -86,6 +92,7 @@
 
     <!-- TEST TARGET -->
     <target name="do-test" unless="build.skip.tests">
+
         <!-- Run CAPU Unit Tests -->
         <!-- Run CAPU Unit Tests on Windows-->
         <property name="executable-full-path"
@@ -103,7 +110,7 @@
         <exec executable="${target}/src/test/debug/etch-cpp-test" osfamily="windows">
             <arg value="--gtest_output=xml:${testResultsDirectory}/"/>
         </exec>
-        <!-- Run Unit Tests on Unix -->
+        <!-- Run Etch Unit Tests on Unix -->
         <exec executable="${target}/src/test/etch-cpp-test" osfamily="unix">
             <arg value="--gtest_output=xml:${testResultsDirectory}/"/>
         </exec>
