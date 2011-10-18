@@ -37,11 +37,28 @@ class ThreadTest
         variable = *val;
     }
 };
+
+class ThreadTest2
+{
+  public:
+   
+    ThreadTest2()
+    {
+    }
+
+    inline void operator()(void * param)
+    {
+      return;
+    }
+};
+
+
 capu::int32_t ThreadTest::variable;
 
 TEST(Thread,startAndJoinTest)
 {
     ThreadTest _test;
+    ThreadTest2 _test2;
     capu::int32_t newval = 6;
     //CREATE THREAD
     capu::Thread * CAPU_thread = new capu::Thread(&_test,(void *)&newval);
@@ -50,7 +67,22 @@ TEST(Thread,startAndJoinTest)
     //CHECK THE VALUE CALCULATED IN THREAD
     EXPECT_TRUE(ThreadTest::variable == newval);
     delete CAPU_thread;
+    capu::Thread * CAPU_thread2 = new capu::Thread(&_test2,NULL);
+    EXPECT_TRUE(CAPU_thread2->join()==capu::CAPU_OK);
+    delete CAPU_thread2;
 }
+
+TEST(Thread,startAndDestructorTest)
+{
+    ThreadTest _test;
+    capu::int32_t newval = 6;
+
+    capu::Thread * CAPU_thread = new capu::Thread(&_test,(void *)&newval);
+    delete CAPU_thread;
+
+    EXPECT_TRUE(ThreadTest::variable == newval);
+}
+
 
 TEST(Thread,sleepTest)
 {

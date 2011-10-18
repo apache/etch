@@ -73,7 +73,11 @@ inline Thread::~Thread()
 
 inline status_t Thread::join ()
 {
+  if (mThread == 0) {
+    return CAPU_ERROR;
+  }
   if(pthread_join(mThread,NULL) == 0) {
+    mThread = 0;
     return CAPU_OK;
   }
   else {
