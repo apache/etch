@@ -86,9 +86,12 @@ TEST(EtchNativeArrayTest, setget) {
 
     //Test setget of block
     EtchNativeArray<EtchInt32*, EtchInt32::TYPE_ID> *native_array = new EtchNativeArray<EtchInt32*, EtchInt32::TYPE_ID> (2);
-    EtchInt32* int3 = new EtchInt32[2]();
-    int3[0].set(2);
-    int3[1].set(4);
+    EtchInt32** int3 = new EtchInt32*[2];
+    int3[0] = new EtchInt32();
+    int3[1] = new EtchInt32();
+
+    int3[0]->set(2);
+    int3[1]->set(4);
     
     ret = native_array->set(0,NULL,0,0,0); 
     EXPECT_TRUE(ret == ETCH_EINVAL);
@@ -96,15 +99,15 @@ TEST(EtchNativeArrayTest, setget) {
     ret = native_array->get(0,NULL,0,0,0);
     EXPECT_TRUE(ret == ETCH_EINVAL);
     
-    ret = native_array->set(0,&int3,2,0,2);
+    ret = native_array->set(0,int3,2,0,2);
     EXPECT_TRUE(ret == ETCH_OK);
     
-    ret = native_array->get(0,&int1,2,0,2);
+    EtchInt32** int6 = new EtchInt32*[2];
+    ret = native_array->get(0,int6,2,0,2);
     EXPECT_TRUE(ret == ETCH_OK);
     
-    EXPECT_TRUE(int1[0].get() == 2);
-    EXPECT_TRUE(int1[1].get() == 4);
-
+    EXPECT_TRUE(int6[0]->get() == 2);
+    EXPECT_TRUE(int6[1]->get() == 4);
 
     //Test setget of block of native type
     EtchNativeArray<int, EtchNative::INT32> *native_array2 = new EtchNativeArray<int, EtchNative::INT32> (2);
@@ -152,9 +155,12 @@ TEST(EtchNativeArrayTest, setget) {
     ret = native_array2->set(0,(int*) int5,2,2,2);
     EXPECT_TRUE(ret == ETCH_ERANGE);
     
-    
+    delete int3[0];
+    delete int3[1];
     delete[] int3;
+    delete[] int6;
     delete na1;
+    delete int1;
     delete int2;
     delete newValue;
     delete native_array;
