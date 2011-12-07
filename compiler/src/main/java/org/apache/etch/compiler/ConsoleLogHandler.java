@@ -56,7 +56,9 @@ public class ConsoleLogHandler extends AbstractLogHandler
 		ps.print( "Etch" );		
 		formatLevel( ps, msg.level );
 		formatPhase( ps, msg.phase );
-		formatSource( ps, msg.source, msg.lineNumber );
+		if (msg.source != null) {
+			formatSource( ps, msg.source, msg.lineNumber );
+		}
 		formatMsg( ps, msg.msg );
 		ps.println();
 		
