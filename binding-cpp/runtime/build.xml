@@ -37,6 +37,9 @@
     <!-- CLEAN TARGET -->
     <target name="do-clean">
         <delete dir="${target}" />
+	<delete dir="${proj}/lib/capu/3psw/libs" />
+	<delete dir="${proj}/lib/capu/build" />
+	<delete dir="${proj}/lib/capu/deliverable" />
     </target>
 
     <!-- BUILD TARGET -->
