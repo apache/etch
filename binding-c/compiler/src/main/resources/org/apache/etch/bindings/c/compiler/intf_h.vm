@@ -23,7 +23,7 @@
 // This file is automatically created and should not be edited!
 
 #ifndef $helper.getIntfName( $intf ).toUpperCase()_H
-#define $helper.getIntfName( $intf ).toUpperCase()_H
+\#define $helper.getIntfName( $intf ).toUpperCase()_H
 
 \#include "etch_object.h"
 \#include "etch_mailbox.h"

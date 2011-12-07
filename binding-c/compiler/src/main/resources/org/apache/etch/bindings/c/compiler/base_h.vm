@@ -29,7 +29,7 @@
  */
 
 #ifndef $helper.getBaseName( $intf, $suffix ).toUpperCase()_H
-#define $helper.getBaseName( $intf, $suffix ).toUpperCase()_H
+\#define $helper.getBaseName( $intf, $suffix ).toUpperCase()_H
 
 \#include "$helper.getIntfFileNameH( $intf )"
 \#include "etch_sessionint.h"

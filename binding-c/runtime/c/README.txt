@@ -3,15 +3,16 @@ Introduction to binding-c
 ==================================================
 To build the binding-c components, the following dependencies
 are needed.
-- Apache APR Source Version 1.4.2
-  http://mirror.serversupportforum.de/apache/apr/apr-1.4.2.tar.gz
-- Apache APR Util Sources Version 1.3.9
-  http://mirror.serversupportforum.de/apache/apr/apr-util-1.3.9.tar.gz
+- Apache APR Source Version 1.4.5
+  http://apr.apache.org/download.cgi
+- Apache APR Util Sources Version 1.3.12
+  http://apr.apache.org/download.cgi
 - Apache APR Iconv Sources Version 1.2.1
-  http://mirror.serversupportforum.de/apache/apr/apr-iconv-1.2.1.tar.gz
+  http://apr.apache.org/download.cgi
 - CUnit 2.1
   http://sourceforge.net/projects/cunit/
-  CMake 2.6 or higher
+- CMake 2.8 or higher
+  http://www.cmake.org/
 
 ==================================================
 Build for windows
@@ -24,19 +25,19 @@ You should have the following folder and file structure inside your external
 etch directory "ETCH_EXTERNAL_DEPENDS".
 
 APR and APR-ICONV libraries
-- <ETCH_EXTERNAL_DEPENDS>/apr/1.3.12/bin
-- <ETCH_EXTERNAL_DEPENDS>/apr/1.3.12/bin/libapr-1.dll
-- <ETCH_EXTERNAL_DEPENDS>/apr/1.3.12/bin/libapr-1.pdb
-- <ETCH_EXTERNAL_DEPENDS>/apr/1.3.12/bin/libapriconv-1.dll
-- <ETCH_EXTERNAL_DEPENDS>/apr/1.3.12/bin/libapriconv-1.pdb
-- <ETCH_EXTERNAL_DEPENDS>/apr/1.3.12/iconv
-- <ETCH_EXTERNAL_DEPENDS>/apr/1.3.12/iconv/*.so + *.pdb (coding tables)
-- <ETCH_EXTERNAL_DEPENDS>/apr/1.3.12/include
-- <ETCH_EXTERNAL_DEPENDS>/apr/1.3.12/include/apr-1
-- <ETCH_EXTERNAL_DEPENDS>/apr/1.3.12/include/apr-1/*.h (header files)
-- <ETCH_EXTERNAL_DEPENDS>/apr/1.3.12/lib
-- <ETCH_EXTERNAL_DEPENDS>/apr/1.3.12/lib/libapr-1.lib
-- <ETCH_EXTERNAL_DEPENDS>/apr/1.3.12/lib/libapriconv-1.lib
+- <ETCH_EXTERNAL_DEPENDS>/apr/1.4.5/bin
+- <ETCH_EXTERNAL_DEPENDS>/apr/1.4.5/bin/libapr-1.dll
+- <ETCH_EXTERNAL_DEPENDS>/apr/1.4.5/bin/libapr-1.pdb
+- <ETCH_EXTERNAL_DEPENDS>/apr/1.4.5/bin/libapriconv-1.dll
+- <ETCH_EXTERNAL_DEPENDS>/apr/1.4.5/bin/libapriconv-1.pdb
+- <ETCH_EXTERNAL_DEPENDS>/apr/1.4.5/iconv
+- <ETCH_EXTERNAL_DEPENDS>/apr/1.4.5/iconv/*.so + *.pdb (coding tables)
+- <ETCH_EXTERNAL_DEPENDS>/apr/1.4.5/include
+- <ETCH_EXTERNAL_DEPENDS>/apr/1.4.5/include/apr-1
+- <ETCH_EXTERNAL_DEPENDS>/apr/1.4.5/include/apr-1/*.h (header files)
+- <ETCH_EXTERNAL_DEPENDS>/apr/1.4.5/lib
+- <ETCH_EXTERNAL_DEPENDS>/apr/1.4.5/lib/libapr-1.lib
+- <ETCH_EXTERNAL_DEPENDS>/apr/1.4.5/lib/libapriconv-1.lib
 
 APR and APR-ICONV can be build via MS Visual Studio GUI. After that, all needed
 artifacts have to be copied to above folder and file structure. If you do so, please
@@ -89,7 +90,7 @@ and ../trunk/binding-c/runtime/c/target/src/test.
 
 Please note that tests need libapr-1.dll and libapriconv-1.dll either in your path environment
 variable or in case of MS Visual Studio under the ..\binding-c\runtime\c\target\src\test\ folder.
-Additionally, you have to set APR_ICONV_PATH to <ETCH_EXTERNAL_DEPENDS>\apr\1.3.12\iconv\ to make
+Additionally, you have to set APR_ICONV_PATH to <ETCH_EXTERNAL_DEPENDS>\apr\1.4.5\iconv\ to make
 character conversion run. 
 
 ==================================================
@@ -102,18 +103,18 @@ You should have the following folder and file structure inside your external
 etch directory "ETCH_EXTERNAL_DEPENDS".
 
 APR and APR-ICONV libraries
-- <ETCH_EXTERNAL_DEPENDS>/apr/1.3.12/bin
-- <ETCH_EXTERNAL_DEPENDS>/apr/1.3.12/include
-- <ETCH_EXTERNAL_DEPENDS>/apr/1.3.12/include/apr-1
-- <ETCH_EXTERNAL_DEPENDS>/apr/1.3.12/include/apr-1/*.h (header files)
-- <ETCH_EXTERNAL_DEPENDS>/apr/1.3.12/lib
-- <ETCH_EXTERNAL_DEPENDS>/apr/1.3.12/lib/libapr-1.so
-- <ETCH_EXTERNAL_DEPENDS>/apr/1.3.12/lib/libapriconv-1.so
-- <ETCH_EXTERNAL_DEPENDS>/apr/1.3.12/lib/iconv/*.so (coding tables)
+- <ETCH_EXTERNAL_DEPENDS>/apr/1.4.5/bin
+- <ETCH_EXTERNAL_DEPENDS>/apr/1.4.5/include
+- <ETCH_EXTERNAL_DEPENDS>/apr/1.4.5/include/apr-1
+- <ETCH_EXTERNAL_DEPENDS>/apr/1.4.5/include/apr-1/*.h (header files)
+- <ETCH_EXTERNAL_DEPENDS>/apr/1.4.5/lib
+- <ETCH_EXTERNAL_DEPENDS>/apr/1.4.5/lib/libapr-1.so
+- <ETCH_EXTERNAL_DEPENDS>/apr/1.4.5/lib/libapriconv-1.so
+- <ETCH_EXTERNAL_DEPENDS>/apr/1.4.5/lib/iconv/*.so (coding tables)
 
 APR and APR-ICONV can be build via "configure" and make. Please set correct install
-location to configure script configure --prefix=$INSTALL_PREFIX/apr/1.3.12/ for apr
-and configure --prefix=$INSTALL_PREFIX/apr/1.3.12/ --with-apr=$INSTALL_PREFIX/apr/1.3.12/
+location to configure script configure --prefix=$INSTALL_PREFIX/apr/1.4.5/ for apr
+and configure --prefix=$INSTALL_PREFIX/apr/1.4.5/ --with-apr=$INSTALL_PREFIX/apr/1.4.5/
 for apr-iconv.
 
 A much more easy way to build apr is to use our apr-install.sh script (). For build the apr libraries,

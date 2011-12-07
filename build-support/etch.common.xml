@@ -234,9 +234,9 @@
 
     <property   name="Etch.dependency.javacc.home" value="${build.javacc.home}" />
     <property   name="Etch.dependency.junit.jar" location="${build.junit.lib}/junit-4.3.1.jar" />
-    <property   name="Etch.dependency.velocity.jar" value="${build.velocity.lib}/velocity-1.5.jar" />
-    <property   name="Etch.dependency.velocity-dep.jar" value="${build.velocity.lib}/velocity-dep-1.5.jar" />
-    <property   name="Etch.dependency.ant-dotnet-1.0.jar" value="${build.ant-dotnet.lib}/ant-dotnet-1.0.jar" />
+    <property   name="Etch.dependency.velocity.jar" value="${build.velocity.lib}/velocity-1.7.jar" />
+    <property   name="Etch.dependency.velocity-dep.jar" value="${build.velocity.lib}/velocity-1.7-dep.jar" />
+    <property   name="Etch.dependency.ant-dotnet-1.1.jar" value="${build.ant-dotnet.lib}/ant-dotnet-1.1.jar" />
     <property   name="Etch.dependency.ant-cmake.jar" value="${build.ant-cmake.lib}/cmakeant.jar" />
 
     <!-- Csharp Support -->
@@ -244,10 +244,11 @@
         <and>
             <os family="windows" />
             <available file="${env.DOTNET_HOME}/msbuild.exe" />
-            <available file="${build.ant-dotnet.lib}/ant-dotnet-1.0.jar" />
+            <available file="${build.ant-dotnet.lib}/ant-dotnet-1.1.jar" />
             <available file="${env.NUNIT_HOME}/bin/net-2.0/nunit.exe" />
         </and>
     </condition>
+
     <condition property="USE.mono">
         <and>
             <not><os family="windows" /></not>
@@ -303,10 +304,10 @@
     <property name="EXAMPLE.etch.home" value="${Etch.dist}" />
     <property name="EXAMPLE.etch.version" value="${Etch.version}" />
     <property name="EXAMPLE.etch.longversion" value="${Etch.longversion}" />
-    <property name="EXAMPLE.ant.dotnet.jar" value="${Etch.dependency.ant-dotnet-1.0.jar}" />
+    <property name="EXAMPLE.ant.dotnet.jar" value="${Etch.dependency.ant-dotnet-1.1.jar}" />
 
     <!-- csharp ANT support -->
-    <taskdef onerror="report" resource="org/apache/ant/dotnet/antlib.xml" classpath="${Etch.dependency.ant-dotnet-1.0.jar}" />
+    <taskdef onerror="report" resource="org/apache/ant/dotnet/antlib.xml" classpath="${Etch.dependency.ant-dotnet-1.1.jar}" />
 
     <!-- CMake ANT support -->
     <taskdef onerror="report" name="cmake" classname="org.iainhull.ant.CmakeBuilder" classpath="${Etch.dependency.ant-cmake.jar}"/>

@@ -20,7 +20,7 @@
 IF "%ETCH_EXTERNAL_DEPENDS%" == "" (
 set ETCH_EXTERNAL_DEPENDS=C:\etch\external
 )
-set ANT_HOME=%ETCH_EXTERNAL_DEPENDS%\apache-ant\1.7.0
+set ANT_HOME=%ETCH_EXTERNAL_DEPENDS%\apache-ant\1.8.2
 
 @rem JAVA_HOME settings
 IF "%JAVA_HOME%" == "" (
@@ -29,11 +29,11 @@ set JAVA_HOME="c:\Program Files (x86)\Java\jdk1.6.0_18\"
 
 @rem NUNIT_HOME settings
 IF "%NUNIT_HOME%" == "" (
-set NUNIT_HOME=%ETCH_EXTERNAL_DEPENDS%\NUnit\2.5.9.10348
+set NUNIT_HOME=%ETCH_EXTERNAL_DEPENDS%\NUnit\2.5.10.11092
 )
 
 @rem CMAKE_HOME settings
-set CMAKE_HOME=%ETCH_EXTERNAL_DEPENDS%\cmake\2.8.2
+set CMAKE_HOME=%ETCH_EXTERNAL_DEPENDS%\cmake\2.8.6
 
 @rem uncomment this line / unset this variable if you don't want to build csharp
 set DOTNET_HOME=C:\WINDOWS\Microsoft.NET\Framework\v4.0.30319

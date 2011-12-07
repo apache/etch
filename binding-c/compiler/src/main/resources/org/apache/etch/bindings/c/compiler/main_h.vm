@@ -29,7 +29,7 @@
  */
 
 #ifndef $helper.getMainFileNameH($intf, $mc).toUpperCase().replace(".","_")
-#define $helper.getMainFileNameH($intf, $mc).toUpperCase().replace(".","_")
+\#define $helper.getMainFileNameH($intf, $mc).toUpperCase().replace(".","_")
 
 \#include "etch_runtime.h"
 \#include "$helper.getHelperFileNameH($intf)"

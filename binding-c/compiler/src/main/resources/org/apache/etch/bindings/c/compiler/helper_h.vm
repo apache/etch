@@ -25,7 +25,7 @@
 #set($i = $intf.name().name().toLowerCase()) 
 
 #ifndef $i.toUpperCase()_HELPER_H
-#define $i.toUpperCase()_HELPER_H
+\#define $i.toUpperCase()_HELPER_H
 
 \#include "etch.h"
 \#include "etch_errno.h"

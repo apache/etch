@@ -31,19 +31,19 @@ rm -rf apr
 mkdir apr
 cd apr
 # apr
-wget http://apache.abdaal.com/apr/apr-1.3.12.tar.gz
-tar xzf apr-1.3.12.tar.gz
-mv apr-1.3.12 apr
-rm -rf apr-1.3.12.tar.gz
+wget http://apache.imsam.info//apr/apr-1.4.5.tar.gz 
+tar xzf apr-1.4.5.tar.gz
+mv apr-1.4.5 apr
+rm -rf apr-1.4.5.tar.gz
 
 # apr-util
-wget http://mirror.serversupportforum.de/apache/apr/apr-util-1.3.9.tar.gz
-tar xzf apr-util-1.3.9.tar.gz
-mv apr-util-1.3.9 apr-util
-rm -rf apr-util-1.3.9.tar.gz
+#wget http://apache.imsam.info//apr/apr-util-1.3.9.tar.gz
+#tar xzf apr-util-1.3.12.tar.gz
+#mv apr-util-1.3.12 apr-util
+#rm -rf apr-util-1.3.12.tar.gz
 
 # apr-iconv
-wget http://mirror.serversupportforum.de/apache/apr/apr-iconv-1.2.1.tar.gz
+wget http://apache.imsam.info//apr/apr-iconv-1.2.1.tar.gz
 tar xzf apr-iconv-1.2.1.tar.gz
 mv apr-iconv-1.2.1 apr-iconv
 rm -rf apr-iconv-1.2.1.tar.gz
@@ -59,7 +59,7 @@ build_apr(){
 cd apr/apr
 mkdir linux
 cd linux
-../configure --prefix=$INSTALL_PREFIX/apr/1.3.12/ CC="gcc"
+../configure --prefix=$INSTALL_PREFIX/apr/1.4.5 CC="gcc" 
 make
 make install
 cd ../../..
@@ -69,7 +69,7 @@ build_apr_iconv(){
 cd apr/apr-iconv
 mkdir linux
 cd linux
-../configure --prefix=$INSTALL_PREFIX/apr/1.3.12/ --with-apr=$INSTALL_PREFIX/apr/1.3.12/ CC="gcc"
+../configure --prefix=$INSTALL_PREFIX/apr/1.4.5 --with-apr=$INSTALL_PREFIX/apr/1.4.5 CC="gcc"
 make
 make install
 }

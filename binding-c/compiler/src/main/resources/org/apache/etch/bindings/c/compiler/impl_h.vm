@@ -23,7 +23,7 @@
 // This file is automatically created and should not be edited!
 
 #ifndef $helper.getImplName($intf, $suffix).toUpperCase()_H
-#define $helper.getImplName($intf, $suffix).toUpperCase()_H
+\#define $helper.getImplName($intf, $suffix).toUpperCase()_H
 
 \#include "$helper.getBaseFileNameH($intf, $suffix)"
 \#include "etch_transport.h"

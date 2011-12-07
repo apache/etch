@@ -64,10 +64,10 @@ To build the compiler core and the Java and XML bindings and Java-based examples
 you need the following:
 
  * Java JDK 1.5_011 or later
- * Apache Ant 1.7+
- * JavaCC 4.0
+ * Apache Ant 1.8.2
+ * JavaCC 5.0
  * Junit 4.3.1
- * Velocity 1.5
+ * Velocity 1.7
 
 To compile the C# bindings and examples:
 
@@ -78,11 +78,11 @@ To compile the C# bindings and examples:
  
 To compile NSIS installers:
 
- * NSIS 2.23
+ * NSIS 2.46
 
 To compile the C binding:
 
- * Apache APR 1.3.12
+ * Apache APR 1.4.5
  * Apache APR Util 1.3.12
  * Apache APR iconv
  * Cunit 2.1
@@ -112,40 +112,40 @@ You should have the following structure, if you want to compile and build for al
 
   ETCH_EXTERNAL_DEPENDS/
     javacc/
-        4.0/
+        5.0/
           javacc.jar
     junit /
         4.3.1/
           junit-4.3.1.jar
     nunit/
-        2.4.7/
-          [contents of nunit 2.4.7 release tgz/zip]               
+        2.5.10.11092/
+          [contents of nunit 2.5.10.11092 release tgz/zip]               
     velocity/
-        1.5/
-          velocity-dep-1.5.jar
+        1.7/
+          velocity-1.7-dep.jar
     apache-ant/
-        1.7.0/
-          [contents of apache ant 1.7 release tgz/zip]
+        1.8.2/
+          [contents of apache ant 1.8.2 release tgz/zip]
     apache-ant-cmake/
         1.0/
           cmakeant.jar
     apache-ant-dotnet/
-        1.0/
-          [contents of apache ant dotnet 1.0 release tgz/zip]
+        1.1/
+          [contents of apache ant dotnet 1.1 release tgz/zip]
     apr/
-        1.3.2/
+        1.4.5/
           [apr binary installation, see above]
     cmake/
-        2.8.2/
-          [contents of cmake standalone 2.8.2 release tgz/zip]    
+        2.8.6/
+          [contents of cmake standalone 2.8.6 release tgz/zip]    
     cunit/
         2.1/
           [built cunit version, 
            on linux: you can skip this and use system libraries on your machine, e.g. apt-get install libcunit1 libcunit1-dev
            on win32: see binding-c/runtime/c/README.txt for instructions on building cunit on Win32]
     nsis/ (WINDOWS ONLY)
-        2.23/
-          [skip if you want no installer built, else: contents of nsis 2.23 standalone zip/tgz]
+        2.46/
+          [skip if you want no installer built, else: contents of nsis 2.46 standalone zip/tgz]
 
 Setup development environment
 -----------------------------
@@ -169,7 +169,7 @@ sectarian violence to a minimum. :-)
 Building from ANT
 -----------------
 
-1. Install Apache ANT (version 1.7 or later). 
+1. Install Apache ANT (version 1.8.2 or later). 
 
 2. on Win32: 
       set ETCH_EXTERNAL_DEPENDS=<YOUR_EXTERNAL_DEPENDS_FOLDER>
@@ -197,10 +197,10 @@ After you checkout the project in eclipse, you will likely be told that there ar
 build path problems. There are three dependent projects you need to get going with
 etch for eclipse, and one plugin:
 
- javacc 4.0
- ant 1.7.0
+ javacc 5.0
+ ant 1.8.2
  junit 4.3.1
- velocity 1.5
+ velocity 1.7
 
 JavaCC is an eclipse plugin, get it from here:
 
@@ -210,7 +210,7 @@ On that page are directions to install the plugin from within eclipse. The other
 you download:
 
  http://sourceforge.net/projects/junit/
- http://velocity.apache.org/engine/releases/velocity-1.5/
+ http://velocity.apache.org/engine/releases/velocity-1.7/
  http://archive.apache.org/dist/ant/binaries/
 
 NOTE: junit-4.3.1 is a hard dependency. Later versions of ant, JavaCC and Velocity may
@@ -218,7 +218,7 @@ work, but later versions of JUnit will not (true as of etch-1.0.2).
 
 Once downloaded, you will need to create an environment variable (for example):
 
- ETCH_DEPENDENT_JARS=C:\workspace-etch\tools\velocity\1.5\velocity-dep-1.5.jar
+ ETCH_DEPENDENT_JARS=C:\workspace-etch\tools\velocity\1.7\velocity-1.7-dep.jar
 
 These are the extra jar files required to actually run the compiler. You will need
 to restart eclipse if it is running. Once eclipse is started, you will need to 
@@ -246,7 +246,7 @@ configure the Etch project:
 
  With ETCH_DEPENDENT_JARS selected, click Add JARs... again...
 
- Navigate to velocity-dep-1.5.jar and select it.
+ Navigate to velocity-1.7-dep.jar and select it.
 
  Navigate to ant.jar and select it.
 

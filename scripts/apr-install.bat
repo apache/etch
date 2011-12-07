@@ -16,8 +16,8 @@
 @rem  under the License.                                           *
 @echo off
 
-REM set INSTALL_PREFIX=C:\Daten\projekte\2010_apache\etch\external
-REM set VC_HOME=C:\Program Files (x86)\Microsoft Visual Studio 8\VC
+@REM set INSTALL_PREFIX=C:\dev\projects\Etch\externals
+@REM set VC_HOME=C:\Program Files (x86)\Microsoft Visual Studio 8\VC
 
 REM check if environment is set
 IF "%INSTALL_PREFIX%" == "" (
@@ -66,19 +66,19 @@ mkdir apr
 cd apr
 
 REM apr
-wget http://mirror.serversupportforum.de/apache//apr/apr-1.3.12-win32-src.zip
-unzip apr-1.3.12-win32-src.zip
-mv apr-1.3.12 apr
-rm -rf apr-1.3.12-win32-src.zip
+wget http://apache.imsam.info//apr/apr-1.4.5-win32-src.zip
+unzip apr-1.4.5-win32-src.zip
+mv apr-1.4.5 apr
+rm -rf apr-1.4.5-win32-src.zip
 
 REM apr-util
-wget http://mirror.serversupportforum.de/apache/apr/apr-util-1.3.9-win32-src.zip
-unzip apr-util-1.3.9-win32-src.zip
-mv apr-util-1.3.9 apr-util
-rm -rf apr-util-1.3.9-win32-src.zip
+wget http://apache.imsam.info//apr/apr-util-1.3.12-win32-src.zip
+unzip apr-util-1.3.12-win32-src.zip
+mv apr-util-1.3.12 apr-util
+rm -rf apr-util-1.3.12-win32-src.zip
 
 REM apr-iconv
-wget http://mirror.serversupportforum.de/apache//apr/apr-iconv-1.2.1-win32-src-r2.zip
+wget http://mirror.synyx.de/apache//apr/apr-iconv-1.2.1-win32-src-r2.zip
 unzip apr-iconv-1.2.1-win32-src-r2.zip
 mv apr-iconv-1.2.1 apr-iconv
 rm -rf apr-iconv-1.2.1-win32-src-r2.zip
@@ -144,7 +144,7 @@ cd ../..
 goto :EOF
 
 :install
-set INSTALL_PREFIX_APR=%INSTALL_PREFIX%\apr\1.3.12
+set INSTALL_PREFIX_APR=%INSTALL_PREFIX%\apr\1.4.5
 mkdir "%INSTALL_PREFIX_APR%\bin"
 mkdir "%INSTALL_PREFIX_APR%\iconv"
 mkdir "%INSTALL_PREFIX_APR%\include\apr-1"
@@ -170,7 +170,7 @@ goto :EOF
 @echo apr-install.bat download // Dowload all APR sources to ./apr/
 @echo apr-install.bat convert // Start VS to convert APR projects
 @echo apr-install.bat build // Build APR
-@echo apr-install.bat install // Install APR to giben location
+@echo apr-install.bat install // Install APR to given location
 goto :EOF
 
 :error

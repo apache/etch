@@ -29,7 +29,7 @@
  */
 
 #ifndef $helper.getRemoteName($intf, $suffix).toUpperCase()_H
-#define $helper.getRemoteName($intf, $suffix).toUpperCase()_H
+\#define $helper.getRemoteName($intf, $suffix).toUpperCase()_H
 
 \#include "$helper.getRemoteFileNameH($intf, "")"
 \#include "$helper.getBaseFileNameH($intf, $suffix)"

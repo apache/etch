@@ -74,9 +74,9 @@
     </target>
     
     <target name="check-velocity">
-        <fail message="'velocity-dep-1.5.jar' cannot be found. Please set 'velocity.lib' in build.dependencies or specify value for 'velocity.lib' on the command-line">
+        <fail message="'velocity-1.7-dep.jar' cannot be found. Please set 'velocity.lib' in build.dependencies or specify value for 'velocity.lib' on the command-line">
             <condition>
-                <not><available file="${build.velocity.lib}/velocity-dep-1.5.jar" /></not>
+                <not><available file="${build.velocity.lib}/velocity-1.7-dep.jar" /></not>
             </condition>
         </fail>        
     </target>
@@ -87,7 +87,7 @@
               *
               *
               ************************************************************************
-              WARNING: ant-dotnet-1.0.jar and/or msbuild.exe and/or nunit.exe is missing, 
+              WARNING: ant-dotnet-1.1.jar and/or msbuild.exe and/or nunit.exe is missing, 
                        dotnet support will be disabled on your windows system.
                        (please check scripts/antSetup.bat for correct paths)
               ************************************************************************
@@ -102,7 +102,7 @@
              <and>
              <os family="windows" />
              <or>
-                <not><available file="${build.ant-dotnet.lib}/ant-dotnet-1.0.jar" /></not>
+                <not><available file="${build.ant-dotnet.lib}/ant-dotnet-1.1.jar" /></not>
                 <not><available file="${env.DOTNET_HOME}/msbuild.exe" /></not>
                 <not><available file="${env.NUNIT_HOME}/bin/net-2.0/nunit.exe" /></not>
              </or>

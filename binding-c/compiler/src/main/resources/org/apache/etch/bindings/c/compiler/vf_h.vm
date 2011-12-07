@@ -29,7 +29,7 @@
  */
 
 #ifndef $helper.getVfName($intf).toUpperCase()_H
-#define $helper.getVfName($intf).toUpperCase()_H
+\#define $helper.getVfName($intf).toUpperCase()_H
 
 \#include "etch_default_value_factory.h"
 

@@ -53,7 +53,7 @@
         <and>
             <os family="windows" />
             <available file="${env.DOTNET_HOME}/msbuild.exe" />
-            <available file="${build.ant-dotnet.lib}/ant-dotnet-1.0.jar" />
+            <available file="${build.ant-dotnet.lib}/ant-dotnet-1.1.jar" />
             <available file="${env.NUNIT_HOME}/bin/net-2.0/nunit.exe" />
         </and>
     </condition>
@@ -76,7 +76,7 @@
     <taskdef onerror="report" resource="org/apache/etch/tools/ant/etch.xml" classpath="${etch.home}/lib/apache-etch-ant-plugin-${etch.longversion}.jar" />
 
     <!-- import dotnet task -->
-    <condition property="ant.dotnet.jar" value="ant-dotnet-1.0.jar" >
+    <condition property="ant.dotnet.jar" value="ant-dotnet-1.1.jar" >
         <not><isset property="ant.dotnet.jar" /></not>
     </condition>
 

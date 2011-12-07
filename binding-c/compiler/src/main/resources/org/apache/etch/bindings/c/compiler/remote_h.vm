@@ -29,7 +29,7 @@
  */
 
 #ifndef $helper.getRemoteName($intf, "").toUpperCase()_H
-#define $helper.getRemoteName($intf, "").toUpperCase()_H
+\#define $helper.getRemoteName($intf, "").toUpperCase()_H
 
 \#include "$helper.getIntfFileNameH($intf)"
 \#include "etch_remote.h"

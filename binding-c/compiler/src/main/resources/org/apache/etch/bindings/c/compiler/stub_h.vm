@@ -23,7 +23,7 @@
 // This file is automatically created and should not be edited!
 
 #ifndef $helper.getStubName($intf, $suffix).toUpperCase()_H
-#define $helper.getStubName($intf, $suffix).toUpperCase()_H
+\#define $helper.getStubName($intf, $suffix).toUpperCase()_H
 
 \#include "etch_stub.h"
 
