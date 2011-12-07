@@ -48,6 +48,7 @@
     </condition>    
 
     <taskdef resource="org/apache/etch/tools/ant/etch.xml" classpath="${etch-ant-plugin.jar}"/>
+    <taskdef resource="org/apache/ant/dotnet/antlib.xml" classpath="${etch.home}/lib/ant-dotnet-1.1.jar" />
 
     <target name="build" depends="build-java, build-csharp, build-c, done"/>
 

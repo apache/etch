@@ -96,6 +96,9 @@
                 <include name="${etch-csharp-runtime.dll}" />
             </fileset>
         </copy>
+        
+        <!-- Copy 3rd party dependency -->
+        <copy todir="${Etch.dist}/lib" file="${Etch.dependency.ant-dotnet-1.1.jar}" />
     </target>
 
     <!-- TEST TARGET -->

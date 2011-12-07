@@ -17,6 +17,11 @@
 cmake_minimum_required (VERSION 2.6) 
 project (etch-c-helloworld)
 
+#if ETCH_HOME has not been set by Ant it is set to the OS environment variable
+IF (NOT ETCH_HOME)
+    SET(ETCH_HOME $ENV{ETCH_HOME})
+ENDIF (NOT ETCH_HOME)
+
 message(STATUS "using etch home ${ETCH_HOME}")
 
 #Etch Home
