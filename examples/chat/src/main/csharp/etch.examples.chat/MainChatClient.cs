@@ -40,7 +40,7 @@ namespace org.apache.etch.examples.chat
             }
             else if ( args.Length == 0 )
             {
-                uri = "tcp://localhost:4005?TcpTransport.reconnectDelay=4000";
+                uri = "tcp://127.0.0.1:4005?TcpTransport.reconnectDelay=4000";
             }
             else
             {
