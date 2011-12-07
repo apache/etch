@@ -22,6 +22,8 @@ using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Runtime.CompilerServices;
+using System.Threading;
+using System.Globalization;
 
 namespace Org.Apache.Etch.Bindings.Csharp.Util
 {
@@ -285,6 +287,17 @@ namespace Org.Apache.Etch.Bindings.Csharp.Util
 
         protected override void ReadSocket()
         {
+
+            //set the language to English in order to make sure the following
+            //string comparisons work also with an installed .Net Framework Language Pack
+
+            //save users current CI
+            CultureInfo userCI = Thread.CurrentThread.CurrentCulture;
+
+            //set CI to English
+            Thread.CurrentThread.CurrentCulture = CultureInfo.CreateSpecificCulture("en-US");
+            Thread.CurrentThread.CurrentUICulture = Thread.CurrentThread.CurrentCulture;
+
             Stream ns = checkStream();
             FlexBuffer buf = new FlexBuffer(new byte[8192]);
 
@@ -295,26 +308,35 @@ namespace Org.Apache.Etch.Bindings.Csharp.Util
                     int n = ns.Read(buf.GetBuf(), 0, buf.Length());
 
                     if (n <= 0)
-                        break;
+                       break;
 
                     buf.SetLength(n);
                     buf.SetIndex(0);
                     FireData(buf);
                 }
-            }
+              }
             catch (Exception e)
             {
-                if (e.Message == null)
-                    throw;
-                if (e.Message.Contains("connection was aborted"))
-                    return;
-                if (e.Message.Contains("blocking operation"))
-                    return;
-                if (e.Message.Contains("socket closed"))
-                    return;
-                if (e.Message.Contains("read operation failed"))
-                    return;
+                string errorMessage = e.Message;
+
+                if (errorMessage == null)
+                  throw;
+                if (errorMessage.Contains("connection was aborted"))
+                  return;
+                if (errorMessage.Contains("blocking operation"))
+                  return;
+                if (errorMessage.Contains("socket closed"))
+                  return;
+                if (errorMessage.Contains("read operation failed"))
+                  return;
                 throw;
+
+            }
+            finally
+            {
+                //set CI back to the users CI
+                Thread.CurrentThread.CurrentCulture = userCI;
+                Thread.CurrentThread.CurrentUICulture = Thread.CurrentThread.CurrentCulture;
             }
         }
     }
