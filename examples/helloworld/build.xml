@@ -314,7 +314,7 @@ You can mix and match the various clients and listeners.
            <filterset refid="Etch.buildTokens" />
        </copy>    
         <copy file="CMakeLists.txt" tofile="${dist-src}/CMakeLists.txt" overwrite="true" />
-        <copy file="README.txt" tofile="${dist-src}/README.txt" overwrite="true" />
+        <copy file="dist-README.txt" tofile="${dist-src}/README.txt" overwrite="true" />
         
         <copy todir="${dist-src}/src/main/etch" overwrite="true" >
             <fileset dir="${src}/main/etch" >

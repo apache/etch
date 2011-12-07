@@ -289,7 +289,7 @@ You can mix and match the various clients and listeners.
         <copy file="dist-build.xml" tofile="${dist-src}/build.xml" overwrite="true" >
             <filterset refid="Etch.buildTokens" />
         </copy>    
-        <copy file="README.txt" tofile="${dist-src}/README.txt" overwrite="true" />
+        <copy file="dist-README.txt" tofile="${dist-src}/README.txt" overwrite="true" />
         
         <copy todir="${dist-src}/src/main/etch" overwrite="true" >
             <fileset dir="${src}/main/etch" >

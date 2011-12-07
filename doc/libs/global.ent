@@ -4,10 +4,10 @@
 
 <!-- VERSIONS -->
 <!ENTITY version-major '1'>
-<!ENTITY version-minor '1'>
+<!ENTITY version-minor '2'>
 <!ENTITY version-patch '0'>
 <!ENTITY version-suffix 'incubating-'>
-<!ENTITY version-name 'incubating-1.1.0'>
+<!ENTITY version-name 'incubating-1.2.0'>
 
 <!-- RELEASES --> 
 <!ENTITY release-date "October 2010">

@@ -1,4 +1,4 @@
-Welcome to Apache Etch 1.1.0. Etch is incubating at apache.org. You can find
+Welcome to Apache Etch 1.2.0. Etch is incubating at apache.org. You can find
 us here:
 
 Project info:
