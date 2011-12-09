@@ -1,7 +1,727 @@
 -------------
+Release 1.2.0
+-------------
+
+------------------------------------------------------------------------
+r1211560 | veithm | 2011-12-07 18:42:48 +0100 (Mi, 07 Dez 2011) | 5 lines
+
+ETCH-189 CSharp examples have broken builds for 2008/2010 Visual Studio
+
+Fixed CSharp Chat Example
+
+Change-Id: I5102bd84cc99c2a2cb3f2451e608f9bf310be7fa
+------------------------------------------------------------------------
+r1211505 | veithm | 2011-12-07 17:19:30 +0100 (Mi, 07 Dez 2011) | 1 line
+
+ETCH-132 Changed Linux toolchain and capu CMake build file
+------------------------------------------------------------------------
+r1211383 | veithm | 2011-12-07 11:51:26 +0100 (Mi, 07 Dez 2011) | 3 lines
+
+ETCH-132 Changed Linux toolchain file in order to use 32 bit for the moment
+
+Change-Id: I86119d08aa70cdd7c5c81d5d8a867ae895065c9f
+------------------------------------------------------------------------
+r1211375 | veithm | 2011-12-07 11:23:52 +0100 (Mi, 07 Dez 2011) | 3 lines
+
+ETCH-188 Updated Readme files
+
+Change-Id: Ife7799376b30ee8a3478d53cf86ab650ca2be546
+------------------------------------------------------------------------
+r1211374 | veithm | 2011-12-07 11:22:06 +0100 (Mi, 07 Dez 2011) | 6 lines
+
+ETCH-93 Updated build scripts
+
+Added ant-dotnet dependency to installers
+Fixed Cmake based build of examples
+
+Change-Id: Ifad3a77c0ac9ac2f8a6e102ebe7cde67476ac7f3
+------------------------------------------------------------------------
+r1211373 | veithm | 2011-12-07 11:21:03 +0100 (Mi, 07 Dez 2011) | 11 lines
+
+ETCH-93 Update external etch dependencies to new versions
+
+Updated APR from 1.3.12 to 1.4.5
+Updated ant-dotnet from 1.0 to 1.1
+Updated javacc from 4.0 to 5.0
+Updated Velocity from 1.5 to 1.7
+Fixed c-binding velocity templates to get them working with Velocity 1.7
+Updated NSIS installer from 2.23 to 2.46
+Updated antsetup script to new external dependencies
+
+Change-Id: I8ab56c07bd0c3f550086b72b0a40d71e3cfa7d1e
+------------------------------------------------------------------------
+r1211372 | veithm | 2011-12-07 11:19:09 +0100 (Mi, 07 Dez 2011) | 5 lines
+
+ETCH-165 Compiler *.etch extension
+
+Fixed error logging
+
+Change-Id: I7c1b73bd488e67e10a05adeff4bd2a898a149951
+------------------------------------------------------------------------
+r1211369 | veithm | 2011-12-07 11:12:47 +0100 (Mi, 07 Dez 2011) | 3 lines
+
+ETCH-26 Fixed .Net language pack issue
+
+Change-Id: I7856f5cca7ab15bb205eed121655cf5bc3b43d05
+------------------------------------------------------------------------
+r1185676 | fitzner | 2011-10-18 16:11:18 +0200 (Di, 18 Okt 2011) | 3 lines
+
+ETCH-112
+
+Changed some build script issues
+------------------------------------------------------------------------
+r1185624 | veithm | 2011-10-18 14:35:59 +0200 (Di, 18 Okt 2011) | 4 lines
+
+ETCH-140 EtchThread Fix
+
+Fixed join implementation which caused Segmentation Fault on some linux
+versions
+------------------------------------------------------------------------
+r1185623 | veithm | 2011-10-18 14:34:55 +0200 (Di, 18 Okt 2011) | 3 lines
+
+ETCH-139 EtchNativeArray
+
+Small fix in Test
+------------------------------------------------------------------------
+r1174858 | fitzner | 2011-09-23 18:10:22 +0200 (Fr, 23 Sep 2011) | 5 lines
+
+ETCH-132 OS Abstraction for binding-cpp
+
+Updated existing files from Etch types to Capu types
+
+Change-Id: If0874266043ec6e7f6117572dd248f07890f2270
+------------------------------------------------------------------------
+r1174856 | fitzner | 2011-09-23 18:06:29 +0200 (Fr, 23 Sep 2011) | 6 lines
+
+ETCH-149 Etch Utility Functions
+
+Added dereference operator to SmartPointer implementation
+Added Get function to retrieve the object stored by the SmartPointer
+
+Change-Id: Ic09c53e691a37174edb2d91b27242dce1527a17b
+------------------------------------------------------------------------
+r1174621 | fitzner | 2011-09-23 11:45:56 +0200 (Fr, 23 Sep 2011) | 6 lines
+
+ETCH-112 Etch cpp-binding Runtime
+
+Avoid concurrent CAPU and etch runtime build
+Fixed path to CAPU test executable
+
+Change-Id: I2f98892313c2c9d4f79f00ea7a6025ef95e17914
+------------------------------------------------------------------------
+r1172834 | fitzner | 2011-09-19 23:19:47 +0200 (Mo, 19 Sep 2011) | 3 lines
+
+ETCH-143 Condition Variables OS Abstraction is implemented
+
+Change-Id: I4d77205556fdf266b623136893c9d2cf74bd1999
+------------------------------------------------------------------------
+r1172824 | fitzner | 2011-09-19 23:11:26 +0200 (Mo, 19 Sep 2011) | 3 lines
+
+ETCH-142 Mutex OS Abstraction is implemented
+
+Change-Id: I49014bbc7191794d7cf09cff59fbffcd3205eae6
+------------------------------------------------------------------------
+r1167361 | grandyho | 2011-09-09 23:16:34 +0200 (Fr, 09 Sep 2011) | 2 lines
+
+ETCH-171
+updated runtime to current google go version release.r60 9481
+------------------------------------------------------------------------
+r1167360 | grandyho | 2011-09-09 23:15:10 +0200 (Fr, 09 Sep 2011) | 2 lines
+
+ETCH-171
+updated compiler to current google go version release.r60 9481
+------------------------------------------------------------------------
+r1162877 | fitzner | 2011-08-29 17:47:42 +0200 (Mo, 29 Aug 2011) | 5 lines
+
+ETCH-132 OS Abstraction for binding-cpp
+
+Added Visual Leak Detector (VLD) support for tests
+
+Change-Id: Ia14912f2f281fc99fe0aa0fb4b8534e60f22a0c1
+------------------------------------------------------------------------
+r1161632 | fitzner | 2011-08-25 18:32:37 +0200 (Do, 25 Aug 2011) | 5 lines
+
+ETCH-140 Thread OS Abstraction is implemented
+
+Thanks to Goekhan Yilmaz and Martin Veith
+
+Change-Id: I5958a7f9ddec279b147f80987d103159d63b604a
+------------------------------------------------------------------------
+r1160819 | fitzner | 2011-08-23 19:23:27 +0200 (Di, 23 Aug 2011) | 6 lines
+
+ETCH-149 Etch Utility Functions
+
+Added atomic Add and Sub methods
+Added smart pointer implementation
+
+Change-Id: I24fbbe94f89f6e5dccba00c36c3abe5fd096fb65
+------------------------------------------------------------------------
+r1160276 | fitzner | 2011-08-22 16:31:24 +0200 (Mo, 22 Aug 2011) | 5 lines
+
+ETCH-112 Implementation of cpp-binding
+
+Etch String Set Method Extension
+
+Change-Id: Iab9abe0cafbbeda5ee6f57e3e9ae92c2e19cfe1d
+------------------------------------------------------------------------
+r1160264 | fitzner | 2011-08-22 15:27:56 +0200 (Mo, 22 Aug 2011) | 5 lines
+
+ETCH-132
+
+Added small change in configuration header
+
+Change-Id: I7b61d5489d8ec950d5bb147e2e95f59700603f81
+------------------------------------------------------------------------
+r1159622 | fitzner | 2011-08-19 15:11:21 +0200 (Fr, 19 Aug 2011) | 10 lines
+
+ETCH-132 OS Abstraction for binding-cpp
+
+Added CAPU (Collections and Plattform Abstraction Utils) CMake based build system
+Added CAPU to binding-cpp runtime build
+Added Mutex Abstraction (see ETCH-142)
+
+Many thanks to Martin Veith, Sven von Beuningen and Timo Lotterbach for the CMake based
+build system and the basic os abtraction.
+
+Change-Id: I87b4f9a95df5a018754712fe4091ea4c39e5b683
+------------------------------------------------------------------------
+r1153862 | fitzner | 2011-08-04 14:28:14 +0200 (Do, 04 Aug 2011) | 3 lines
+
+ETCH-164 Added cMake path configuration to setup script
+
+This patch is from Martin Veith (see ETCH-164)
+------------------------------------------------------------------------
+r1153860 | fitzner | 2011-08-04 14:15:53 +0200 (Do, 04 Aug 2011) | 6 lines
+
+ETCH-139 Small bug fixes
+
+Updated EtchTypes
+Updated EtchNativeArray method signature
+
+This patch comes from Martin Veith (see Issue ETCH-139)
+------------------------------------------------------------------------
+r1153858 | fitzner | 2011-08-04 14:09:32 +0200 (Do, 04 Aug 2011) | 5 lines
+
+ETCH-139, ETCH-154 NativeArray, native datatypes
+
+Implementation of EtchNativeArray and tests
+
+This patch comes from Martin Veith (see Issue ETCH-133)
+------------------------------------------------------------------------
+r1152287 | fitzner | 2011-07-29 18:01:37 +0200 (Fr, 29 Jul 2011) | 1 line
+
+ETCH-162 Added frequently used docbook5 elements to docbook-intro
+------------------------------------------------------------------------
+r1152285 | fitzner | 2011-07-29 17:52:14 +0200 (Fr, 29 Jul 2011) | 1 line
+
+ETCH-115 Upgraded docbook xml-files from docbook 4.3 to docbook 5
+------------------------------------------------------------------------
+r1151162 | fitzner | 2011-07-26 18:43:31 +0200 (Di, 26 Jul 2011) | 3 lines
+
+ETCH-152 build server integration
+
+Changed external download script
+------------------------------------------------------------------------
+r1151071 | fitzner | 2011-07-26 14:18:13 +0200 (Di, 26 Jul 2011) | 3 lines
+
+ETCH-152 build server integration
+
+Fixed csharp build for Linux if Mono is not available
+------------------------------------------------------------------------
+r1150449 | fitzner | 2011-07-24 20:09:55 +0200 (So, 24 Jul 2011) | 3 lines
+
+ETCH-152 build server integration
+
+Removed ancall for stable and experimental builds
+------------------------------------------------------------------------
+r1150438 | fitzner | 2011-07-24 19:10:26 +0200 (So, 24 Jul 2011) | 3 lines
+
+ETCH-152 build server integration
+
+Changed build script of tests component; build of all bindings is not necessary anymore
+------------------------------------------------------------------------
+r1150226 | fitzner | 2011-07-23 23:44:45 +0200 (Sa, 23 Jul 2011) | 3 lines
+
+ETCH-152 build server integration
+
+Add condition for test execution os famaliy windows and unix
+------------------------------------------------------------------------
+r1150217 | fitzner | 2011-07-23 22:40:39 +0200 (Sa, 23 Jul 2011) | 3 lines
+
+ETCH-152 build server integration
+
+Add settings to enable memory leak detection for binding-cpp on windows builds
+------------------------------------------------------------------------
+r1149661 | fitzner | 2011-07-22 19:21:44 +0200 (Fr, 22 Jul 2011) | 3 lines
+
+ETCH-113 binding-cpp compiler
+
+Add some needed files for building binding-cpp
+------------------------------------------------------------------------
+r1149650 | fitzner | 2011-07-22 18:54:52 +0200 (Fr, 22 Jul 2011) | 3 lines
+
+ETCH-152 build system for build server integration
+
+Add option for experimental builds, fix cpp compiler naming, add new setting property file
+------------------------------------------------------------------------
+r1149318 | fitzner | 2011-07-21 21:06:53 +0200 (Do, 21 Jul 2011) | 3 lines
+
+ETCH-158 build
+
+Add ignore files, and info block to ant build
+------------------------------------------------------------------------
+r1149291 | fitzner | 2011-07-21 20:10:44 +0200 (Do, 21 Jul 2011) | 3 lines
+
+ETCH-158 build
+
+Add ignore files
+------------------------------------------------------------------------
+r1143773 | fitzner | 2011-07-07 13:42:09 +0200 (Do, 07 Jul 2011) | 2 lines
+
+[ETCH-115]
+Add template for docbook documentation introduction
+------------------------------------------------------------------------
+r1143759 | fitzner | 2011-07-07 13:06:28 +0200 (Do, 07 Jul 2011) | 2 lines
+
+[ETCH-115]
+Add support for windows docbook build
+------------------------------------------------------------------------
+r1136323 | fitzner | 2011-06-16 10:34:21 +0200 (Do, 16 Jun 2011) | 2 lines
+
+[ETCH-161]
+Naming conflicts in Etch binding-c runtime message module
+------------------------------------------------------------------------
+r1127088 | grandyho | 2011-05-24 16:33:03 +0200 (Di, 24 Mai 2011) | 2 lines
+
+ETCH-93
+updated gtest 1.6
+------------------------------------------------------------------------
+r1103543 | fitzner | 2011-05-15 23:07:41 +0200 (So, 15 Mai 2011) | 9 lines
+
+[ETCH-157]
+binding-csharp: add udp transport support
+
+Make udp and tcp protocols seamlessly interchangable in etch
+The differences between the underlying protocols remain.
+
+This patch comes from
+Armin Mueller <mueller@itestra.com>
+Aleksandar Kanchev <kanchev@itestra.com>
+------------------------------------------------------------------------
+r1103514 | fitzner | 2011-05-15 21:41:31 +0200 (So, 15 Mai 2011) | 9 lines
+
+[ETCH-157]
+binding-java: add udp transport support
+
+Make udp and tcp protocols seamlessly interchangable in etch.
+The differences between the underlying protocols remain.
+
+This patch comes from
+Armin Mueller <mueller@itestra.com>
+Aleksandar Kanchev <kanchev@itestra.com>
+------------------------------------------------------------------------
+r1103377 | fitzner | 2011-05-15 15:54:29 +0200 (So, 15 Mai 2011) | 2 lines
+
+[ETCH-160]
+Changed .Net Culture for Tests, fix thread handling for TodoManager, add livecycle to TestKeepAlive tests
+------------------------------------------------------------------------
+r1103036 | grandyho | 2011-05-14 12:57:07 +0200 (Sa, 14 Mai 2011) | 1 line
+
+ETCH-159 update build to work with latest Apache Ant 1.8.2
+------------------------------------------------------------------------
+r1097374 | fitzner | 2011-04-28 11:04:23 +0200 (Do, 28 Apr 2011) | 8 lines
+
+[ETCH-157]
+
+binding-csharp: bump dependencies to .NET 4.0 and NUnit 2.5.9
+
+The C# UDP implementation uses features only available in .NET 4.0.
+Dependencies are changed to current .NET and NUnit versions.
+
+This patch was signed off by Armin Mueller (mueller@itestra.com)
+------------------------------------------------------------------------
+r1097344 | grandyho | 2011-04-28 09:56:44 +0200 (Do, 28 Apr 2011) | 8 lines
+
+ETCH-158
+
+Patch provided by Armin Mueller (mueller@itestra.com)
+
+build: add "skip.examples" property
+Can be used to skip building examples, e.g.
+ant -Dskip.examples=true -Dskip.tests=true
+skips building examples and tests
+------------------------------------------------------------------------
+r1094860 | grandyho | 2011-04-19 07:49:22 +0200 (Di, 19 Apr 2011) | 2 lines
+
+ETCH-156
+now joining rcvlxr thread in case of shutdown from other side and simulaneous stop_wait call
+------------------------------------------------------------------------
+r1094573 | fitzner | 2011-04-18 15:51:12 +0200 (Mo, 18 Apr 2011) | 2 lines
+
+[ETCH-109]
+c-binding: Implementation of Mixins Major parts of this patch was provided by Armin Mueller, Holger Grandy
+------------------------------------------------------------------------
+r1086630 | fitzner | 2011-03-29 17:38:00 +0200 (Di, 29 Mär 2011) | 2 lines
+
+[ETCH-153]
+Add binding-cpp to nightly builds
+------------------------------------------------------------------------
+r1074706 | grandyho | 2011-02-25 22:26:00 +0100 (Fr, 25 Feb 2011) | 1 line
+
+ETCH-91 small fixes in helloworld example
+------------------------------------------------------------------------
+r1074705 | grandyho | 2011-02-25 22:25:24 +0100 (Fr, 25 Feb 2011) | 1 line
+
+ETCH-155 added apr_socket_shutdown to socket_closex
+------------------------------------------------------------------------
+r1074704 | grandyho | 2011-02-25 22:24:31 +0100 (Fr, 25 Feb 2011) | 1 line
+
+ETCH-109 fixes for tests using mixins, delay for reconnect in tcp max conn test
+------------------------------------------------------------------------
+r1065979 | grandyho | 2011-02-01 11:13:41 +0100 (Di, 01 Feb 2011) | 1 line
+
+ETCH-150 etch primitive type tests
+------------------------------------------------------------------------
+r1065978 | grandyho | 2011-02-01 11:11:21 +0100 (Di, 01 Feb 2011) | 1 line
+
+ETCH-150 added primitive type implementations
+------------------------------------------------------------------------
+r1065977 | grandyho | 2011-02-01 11:08:21 +0100 (Di, 01 Feb 2011) | 2 lines
+
+ETCH-150
+header files for primitive types
+------------------------------------------------------------------------
+r1065971 | grandyho | 2011-02-01 11:05:14 +0100 (Di, 01 Feb 2011) | 1 line
+
+ETCH-150 gitignores
+------------------------------------------------------------------------
+r1065558 | grandyho | 2011-01-31 12:10:50 +0100 (Mo, 31 Jan 2011) | 2 lines
+
+ETCH-131
+typo fix in readme for documentation
+------------------------------------------------------------------------
+r1063447 | grandyho | 2011-01-25 21:39:58 +0100 (Di, 25 Jan 2011) | 2 lines
+
+ETCH-149
+changed indent style to 4 spaces for tabs
+------------------------------------------------------------------------
+r1062874 | grandyho | 2011-01-24 17:55:20 +0100 (Mo, 24 Jan 2011) | 3 lines
+
+ETCH-149
+initial changes for Linux
+
+------------------------------------------------------------------------
+r1061972 | grandyho | 2011-01-21 20:13:40 +0100 (Fr, 21 Jan 2011) | 2 lines
+
+[ETCH-131] started work on reference documentation
+
+------------------------------------------------------------------------
+r1051033 | grandyho | 2010-12-20 11:03:03 +0100 (Mo, 20 Dez 2010) | 2 lines
+
+Updated Versions to 1.2
+fixed generated C binding header comments (generation timestamp and version)
+------------------------------------------------------------------------
+r1044449 | fitzner | 2010-12-10 18:21:51 +0100 (Fr, 10 Dez 2010) | 3 lines
+
+[ETCH-111] Implementation of cpp-binding for etch 
+
+Initial project setup for binding-cpp, package contains runtime project CMake and projects for main and test runtime parts.
+------------------------------------------------------------------------
+r1043970 | fitzner | 2010-12-09 15:10:18 +0100 (Do, 09 Dez 2010) | 2 lines
+
+[ETCH-115] Etch Documentation Template for PDF and Html
+- Add template and basic documentation infrastructure
+------------------------------------------------------------------------
+r1040129 | grandyho | 2010-11-29 15:44:28 +0100 (Mo, 29 Nov 2010) | 1 line
+
+small addition / correction in BUILD.txt
+------------------------------------------------------------------------
+r1040122 | grandyho | 2010-11-29 15:29:21 +0100 (Mo, 29 Nov 2010) | 2 lines
+
+ETCH-120
+alpha version of a Google Go Binding
+------------------------------------------------------------------------
+r1040060 | fitzner | 2010-11-29 11:47:36 +0100 (Mo, 29 Nov 2010) | 2 lines
+
+[ETCH-119]
+Bugfix TCP backlog parameter
+------------------------------------------------------------------------
+r1035341 | fitzner | 2010-11-15 17:20:20 +0100 (Mo, 15 Nov 2010) | 1 line
+
+[ETCH-118] Add exception handling code to hello world c-binding example
+------------------------------------------------------------------------
+r1035334 | fitzner | 2010-11-15 17:09:06 +0100 (Mo, 15 Nov 2010) | 1 line
+
+[ETCH-117] Race condition while connection goes down
+------------------------------------------------------------------------
+r1035328 | fitzner | 2010-11-15 17:03:36 +0100 (Mo, 15 Nov 2010) | 1 line
+
+[ETCH-116] Change \scripts\antsetup.bat so external ENV variables are also handled
+------------------------------------------------------------------------
+r1032943 | fitzner | 2010-11-09 12:53:52 +0100 (Di, 09 Nov 2010) | 1 line
+
+[ETCH-114] Bug fix plain_mailbox_manager; do cleanup all registered mailboxes if connection goes down
+------------------------------------------------------------------------
+r1032912 | fitzner | 2010-11-09 11:37:36 +0100 (Di, 09 Nov 2010) | 1 line
+
+[ETCH-110] add some binding-c unit mutex tests
+------------------------------------------------------------------------
+r1031550 | grandyho | 2010-11-05 14:10:50 +0100 (Fr, 05 Nov 2010) | 1 line
+
+ETCH-109: Fixes for mixins in C Binding. At the moment only mixed in data structures work. Function calls of mixed in services are not yet possible.
+------------------------------------------------------------------------
+r1027966 | grandyho | 2010-10-27 15:57:37 +0200 (Mi, 27 Okt 2010) | 2 lines
+
+ETCH-106
+fix for C Binding: double-free bug for structs containing structs containing strings, clone now sets cloned object to "static_content" -> no double free on clone / original destruction
+------------------------------------------------------------------------
+r1027844 | grandyho | 2010-10-27 09:30:18 +0200 (Mi, 27 Okt 2010) | 2 lines
+
+ETCH-83
+Helloworld Example build script now uses -m32 on Linux
+------------------------------------------------------------------------
+r1027829 | grandyho | 2010-10-27 08:40:15 +0200 (Mi, 27 Okt 2010) | 2 lines
+
+ETCH-83
+Download Script for linux depends for Hudson
+------------------------------------------------------------------------
+r1027525 | grandyho | 2010-10-26 14:54:23 +0200 (Di, 26 Okt 2010) | 1 line
+
+
+------------------------------------------------------------------------
+r1026300 | grandyho | 2010-10-22 13:21:01 +0200 (Fr, 22 Okt 2010) | 3 lines
+
+ETCH-108
+when stopping and destroying the runtime on client side in the same moment as the server closes the socket, a race condition might occur.
+Fix: join client receive thread even in case of errors
+------------------------------------------------------------------------
+r1024127 | grandyho | 2010-10-19 08:15:28 +0200 (Di, 19 Okt 2010) | 2 lines
+
+ETCH-107
+Etch C binding Compiler: different genereted port numbers 
+------------------------------------------------------------------------
+
+
+-------------
 Release 1.1.0
 -------------
 
+------------------------------------------------------------------------
+r1004126 | grandyho | 2010-10-04 08:52:48 +0200 (Mo, 04 Okt 2010) | 2 lines
+
+ETCH-86
+copyright ASF 2010
+------------------------------------------------------------------------
+r1000740 | grandyho | 2010-09-24 08:55:17 +0200 (Fr, 24 Sep 2010) | 2 lines
+
+ETCH-74
+added apache license header
+------------------------------------------------------------------------
+r1000739 | grandyho | 2010-09-24 08:54:14 +0200 (Fr, 24 Sep 2010) | 2 lines
+
+ETCH-74
+added apache license header
+------------------------------------------------------------------------
+r1000736 | grandyho | 2010-09-24 08:48:37 +0200 (Fr, 24 Sep 2010) | 2 lines
+
+ETCH-91
+unified behavior of all helloworld implementations
+------------------------------------------------------------------------
+r1000489 | grandyho | 2010-09-23 16:58:23 +0200 (Do, 23 Sep 2010) | 4 lines
+
+ETCH-100
+ETCH-85
+ETCH-84
+READMEs updated to match new trunk structure
+------------------------------------------------------------------------
+r1000464 | grandyho | 2010-09-23 15:36:01 +0200 (Do, 23 Sep 2010) | 1 line
+
+line endings changed to unix
+------------------------------------------------------------------------
+r1000454 | grandyho | 2010-09-23 15:16:02 +0200 (Do, 23 Sep 2010) | 2 lines
+
+ETCH-104
+added third party license and notice files to dist folder
+------------------------------------------------------------------------
+r1000452 | fitzner | 2010-09-23 15:11:00 +0200 (Do, 23 Sep 2010) | 1 line
+
+[ETCH-104] Create NOTICE_THIRD_PARTY.txt and LICENSE_THIRD_PARTY.txt
+------------------------------------------------------------------------
+r1000432 | grandyho | 2010-09-23 14:42:15 +0200 (Do, 23 Sep 2010) | 3 lines
+
+ETCH-88
+ETCH-83
+small path name fix for build server
+------------------------------------------------------------------------
+r1000427 | grandyho | 2010-09-23 14:28:15 +0200 (Do, 23 Sep 2010) | 3 lines
+
+ETCH-101 
+Helloworld Example integrated into trunk build (incl. code generation and compile for c)
+when on release dist, only code is generated, no cmake call is made (don't want cmake-ant dependency in release package)
+------------------------------------------------------------------------
+r1000412 | grandyho | 2010-09-23 13:24:56 +0200 (Do, 23 Sep 2010) | 3 lines
+
+ETCH-88
+ETCH-83
+fix in build for tests (missing binding-java)
+------------------------------------------------------------------------
+r1000379 | grandyho | 2010-09-23 11:30:50 +0200 (Do, 23 Sep 2010) | 7 lines
+
+ETCH-88
+ETCH-83
+added check if download is already there
+
+
+
+
+------------------------------------------------------------------------
+r1000363 | grandyho | 2010-09-23 11:09:00 +0200 (Do, 23 Sep 2010) | 7 lines
+
+ETCH-88
+ETCH-83
+added build-support/download_depends.xml to download external files and unzip them
+
+
+
+
+------------------------------------------------------------------------
+r1000350 | grandyho | 2010-09-23 10:34:24 +0200 (Do, 23 Sep 2010) | 3 lines
+
+[ETCH-88] -m32 added for unix build. now in CMakeLists.txt
+
+
+------------------------------------------------------------------------
+r1000344 | grandyho | 2010-09-23 09:35:39 +0200 (Do, 23 Sep 2010) | 3 lines
+
+[ETCH-88] -m32 added for unix build. needed on apache's hudson
+
+
+------------------------------------------------------------------------
+r1000340 | fitzner | 2010-09-23 09:18:43 +0200 (Do, 23 Sep 2010) | 1 line
+
+[ETCH-92] Integrate C binding to NSIS installer and packaging, changed installer binding-xx installer layout, add os and platform labels
+------------------------------------------------------------------------
+r1000338 | grandyho | 2010-09-23 09:07:10 +0200 (Do, 23 Sep 2010) | 2 lines
+
+[ETCH-88] small extension for use on build server 
+
+------------------------------------------------------------------------
+r1000134 | grandyho | 2010-09-22 20:43:34 +0200 (Mi, 22 Sep 2010) | 2 lines
+
+small fix for build on linux
+
+------------------------------------------------------------------------
+r1000031 | grandyho | 2010-09-22 17:14:40 +0200 (Mi, 22 Sep 2010) | 1 line
+
+add ctarget to svn ignore
+------------------------------------------------------------------------
+r1000027 | grandyho | 2010-09-22 17:10:44 +0200 (Mi, 22 Sep 2010) | 1 line
+
+added cmake based build for helloworld example in c binding
+------------------------------------------------------------------------
+r1000019 | grandyho | 2010-09-22 16:58:28 +0200 (Mi, 22 Sep 2010) | 1 line
+
+fix in validator for longer service names
+------------------------------------------------------------------------
+r1000017 | grandyho | 2010-09-22 16:58:13 +0200 (Mi, 22 Sep 2010) | 1 line
+
+moved extern "C" after includes
+------------------------------------------------------------------------
+r999973 | grandyho | 2010-09-22 16:24:13 +0200 (Mi, 22 Sep 2010) | 1 line
+
+small typo fixes in apr-install.sh for linux
+------------------------------------------------------------------------
+r999968 | fitzner | 2010-09-22 16:20:33 +0200 (Mi, 22 Sep 2010) | 1 line
+
+[ETCH-65] integrate binding-c into ANT build
+------------------------------------------------------------------------
+r999964 | grandyho | 2010-09-22 16:16:17 +0200 (Mi, 22 Sep 2010) | 1 line
+
+extended all etch compilers to generate configuration files for wireshark
+------------------------------------------------------------------------
+r999845 | grandyho | 2010-09-22 11:47:20 +0200 (Mi, 22 Sep 2010) | 1 line
+
+fix in message.java: added missing util methods for c compiler templates (remote_server_h.vm)
+------------------------------------------------------------------------
+r999456 | fitzner | 2010-09-21 17:12:40 +0200 (Di, 21 Sep 2010) | 1 line
+
+[ETCH-81] Setup CMake based build environment for C binding for windows and linux
+------------------------------------------------------------------------
+r998923 | grandyho | 2010-09-20 15:39:19 +0200 (Mo, 20 Sep 2010) | 1 line
+
+bin/obj/target folders in svn_ignore
+------------------------------------------------------------------------
+r998902 | grandyho | 2010-09-20 14:10:40 +0200 (Mo, 20 Sep 2010) | 1 line
+
+added code signing key for holger grandy
+------------------------------------------------------------------------
+r998836 | fitzner | 2010-09-20 11:11:37 +0200 (Mo, 20 Sep 2010) | 1 line
+
+[ETCH-97] Add public KEY for fitzner
+------------------------------------------------------------------------
+r998801 | grandyho | 2010-09-20 08:49:34 +0200 (Mo, 20 Sep 2010) | 2 lines
+
+added helloworld example to eclipse sources
+
+------------------------------------------------------------------------
+r998142 | grandyho | 2010-09-17 16:00:30 +0200 (Fr, 17 Sep 2010) | 2 lines
+
+VTune in svn:ignore
+test/c (empty) added
+------------------------------------------------------------------------
+r998135 | grandyho | 2010-09-17 15:53:26 +0200 (Fr, 17 Sep 2010) | 1 line
+
+overhauled the helloworld example. current implementation works for Java and C#. C sources get generated too, but build is not yet integrated. (the latter will be done when the c binding itself will be built using cmake).
+------------------------------------------------------------------------
+r998118 | grandyho | 2010-09-17 15:24:16 +0200 (Fr, 17 Sep 2010) | 15 lines
+
+build now uses ETCH_EXTERNAL_DEPENDS environment variable to look for dependencies. 
+Use "scripts/antsetup.bat" on Win32 to set up your command line before calling "ant Debug"
+On Linux, just do export ETCH_EXTERNAL_DEPENDS=/path/to/some/folder
+
+In ETCH_EXTERNAL_DEPENDS, you should have the following:
+
+apache-ant/1.7.0/
+apache-ant-dotnet/1.0/
+javacc/4.0
+junit/4.3.1
+nsis/2.23
+nunit/2.4.7
+velocity/1.5
+
+this resolves https://issues.apache.org/jira/browse/ETCH-90
+------------------------------------------------------------------------
+r997620 | grandyho | 2010-09-16 09:09:35 +0200 (Do, 16 Sep 2010) | 1 line
+
+deleted old helloworld example contents
+------------------------------------------------------------------------
+r997616 | grandyho | 2010-09-16 09:03:30 +0200 (Do, 16 Sep 2010) | 1 line
+
+added VTune to svn:ignore
+------------------------------------------------------------------------
+r997607 | grandyho | 2010-09-16 08:50:34 +0200 (Do, 16 Sep 2010) | 1 line
+
+added VTune to svn:ignore
+------------------------------------------------------------------------
+r997275 | grandyho | 2010-09-15 13:02:56 +0200 (Mi, 15 Sep 2010) | 1 line
+
+added target folder to svn:ignore
+------------------------------------------------------------------------
+r997242 | grandyho | 2010-09-15 11:49:49 +0200 (Mi, 15 Sep 2010) | 1 line
+
+fix for https://issues.apache.org/jira/browse/ETCH-80
+------------------------------------------------------------------------
+r997238 | fitzner | 2010-09-15 11:22:10 +0200 (Mi, 15 Sep 2010) | 1 line
+
+[ETCH-82] Merge branch etch-c into trunk
+------------------------------------------------------------------------
+r996956 | fitzner | 2010-09-14 17:36:17 +0200 (Di, 14 Sep 2010) | 1 line
+
+[ETCH-82] remove old binding-c implementation for doing merge from branches/etch-c
+------------------------------------------------------------------------
+r783810 | sccomer | 2009-06-11 17:10:34 +0200 (Do, 11 Jun 2009) | 1 line
+
+update change log and release notes.
 ----------------------------------------------------------------------------
 r783606 | manojganesan | 2009-06-10 21:16:08 CDT
 

@@ -39,111 +39,84 @@ The release consists of the three stable language bindings of Etch
 - C#
 - C
 
-One Apache requirement is that the java, csharp and c name spaces look something
-like org.apache.etch... These changes have been made, however, they will break
-existing users of etch. All that need be done for java is to correct the package
-names from etch.* to org.apache.etch.*. For C#, the namespace has changed from
-Etch.* to Org.Apache.Etch.*. In both cases, you will need to re-etch your *.etch
-source files.
+Since release 1.1.0 Etch uses name spaces which look something like 
+org.apache.etch... 
+If you upgrade from an older version you have to preceed the following steps
+in order to continue using your old etch files:
+- All bindings
+  In every cases, you will need to re-etch your *.etch source files.
+- Java:
+  All that need be done for java is to correct the package names from etch.* 
+  to org.apache.etch.*. 
+- C#:
+  For C#, the namespace has changed from Etch.* to Org.Apache.Etch.*. 
+  
 
-There are also some new components in this release, the biggest of which is the
-contribution of the python and c bindings from Cisco and the stabilization of the C binding. 
-For the python binding, there is still some work to be done, interested parties should 
+There are also some new components in this release. There is now an experimental binding for Google Go and we 
+started working on a binding for C++. 
+For the Go binding, there is still some work to be done, interested parties should 
 send inquiries to etch-dev@incubator.apache.org. 
-
-There are a few bugs fixed in this release, too, as detailed below. Some of
-these fixes are compiler changes. Please be sure to recompile all your etch
-source files.
+The C++ binding is not function yet, we just added the first prerequisite like a CMake based build system 
+and first components of the needed OS abstraction.
+There are a few bugs fixed in this release, too, as detailed below.
 
 Here are the issues resolved in this release:
 
-Sub-task
+** Bug
+    * [ETCH-26] - C# Binding: some unexpected exceptions are thrown if .Net Framework Language Pack is installed
+    * [ETCH-106] - C Binding: double-free bug for structs containing structs containing strings
+    * [ETCH-107] - C binding Compiler: different genereted port numbers 
+    * [ETCH-108] - C Binding: Race condition for simultaneous connection loss and runtime cleanup
+    * [ETCH-109] - C Binding: Mixins not fully functional
+    * [ETCH-114] - Bug fix plain_mailbox_manager; do cleanup all registered mailboxes if connection goes down
+    * [ETCH-116] - Change \scripts\antsetup.bat so external ENV variables are also handled
+    * [ETCH-117] - Race condition while connection goes down
+    * [ETCH-119] - Bugfix TCP backlog parameter
+    * [ETCH-155] - Sockets do not shutdown correctly on Linux
+    * [ETCH-156] - C-Binding: client side crash when calling stop_wait while socket is being shut down from server side
+    * [ETCH-160] - Some of csharp tests are failing with .Net 4.0 and Nunit 2.5.9.10348
+    * [ETCH-161] - Naming conflicts in Etch binding-c runtime message module; add prefix etch_message
+    * [ETCH-164] - Cmake home path is not set in antsetup.bat for Windows
+    * [ETCH-165] - *.etch extension
+    * [ETCH-169] - Website must display disclaimer text and link to incubator
+    * [ETCH-171] - Update Etch Binding to new Go Version
+    * [ETCH-189] - CSharp examples have broken builds for 2008/2010 Visual Studio
 
-    * [ETCH-33] - create directory structure for c binding
-    * [ETCH-34] - import the c binding code into the new directory structure
-    * [ETCH-36] - create the directory structure for the python binding
-    * [ETCH-37] - import the python binding into the new directory structure
-    * [ETCH-39] - create directory structure for interoperability tester
-    * [ETCH-40] - import the code for the interoperability tester
-    * [ETCH-41] - import the java example test
-    * [ETCH-42] - create a csharp example test
-    * [ETCH-43] - create a interoptest script which combines java and csharp
-    * [ETCH-45] - put java header comments in order per apache standard
-    * [ETCH-46] - put csharp header comments in order per apache standard
-    * [ETCH-47] - put python header comments in order per apache standard
-    * [ETCH-48] - put c header comments in order per apache standard
-    * [ETCH-50] - merge changes from 1.0.2 branch to trunk - 738635 update version string
-    * [ETCH-51] - merge changes from 1.0.2 branch to trunk - 738652 make examples more tolerant
-    * [ETCH-52] - merge changes from 1.0.2 branch to trunk - 739277 update eclipse build
-    * [ETCH-53] - merge changes from 1.0.2 branch to trunk - 739282 updates to unit tests
-    * [ETCH-55] - merge changes from 1.0.2 branch to trunk - 739287 fix for selector under linux
+** Improvement
+    * [ETCH-5] - We need a Logo
+    * [ETCH-58] - Integrate apache-rat into build
+    * [ETCH-118] - Add exception handling code to hello world c-binding example
+    * [ETCH-158] - Build Configuration
 
-Bug
+** New Feature
+    * [ETCH-14] - Design and provide example of using forrest to deploy etch documentation
+    * [ETCH-120] - Implement first Google Go Binding version
+    * [ETCH-152] - Change build system to support different build stages like stable, nightly
+    * [ETCH-153] - Add binding-cpp to nightly builds
 
-    * [ETCH-56] - UnwantedMessage.ToString method attempts to format using the java style formatting instead of csharp style
-    * [ETCH-57] - Sometimes closing a TlsConnection normally will result in an IOException with Socket is closed.
-    * [ETCH-69] - Compiler throws URISyntaxException if there are spaces in the classpath
-    * [ETCH-76] - Build problems if Etch source is downloaded to a path with spaces
-    * [ETCH-77] - Incompatibility in the READMEs for the bundled examples
-    * [ETCH-80] - Windows 7 / .NET 3.5 SP1 runtime setsockopt error
-
-Improvement
-
-    * [ETCH-54] - TransportFactory.newTransport returns stack topped by DeliveryService which makes it hard to implement meta transports
-    * [ETCH-59] - Listener stack is built 1/2 upside down and strange inhibiting name service and other transport filters
-    * [ETCH-63] - Change maven groupId to "org.apache.etch" from "etch.etch"
-
-New Feature
-
-    * [ETCH-15] - design and implement a framework for interoperability testing, plus a simple demonstration test
-    * [ETCH-64] - Implement the compiler portion of the c-binding, to generate code for the etch c runtime
-    * [ETCH-65] - Integrate the c-binding into the windows build.
-    * [ETCH-66] - Port the c-binding to linux, resolve differences between windows and linux.
-    * [ETCH-79] - Implementation of Etch C Binding (Runtime + Compiler)
-
-Task
-
-    * [ETCH-4] - Map http://cwiki.apache.org/ETCH to http://incubator.apache.org/etch
-    * [ETCH-22] - Change Java (and C#) package names to org.apache.etch
-    * [ETCH-32] - import the c binding
-    * [ETCH-35] - import the python binding
-    * [ETCH-38] - import interoperability tester
-    * [ETCH-44] - put header comments in order per apache standard
-    * [ETCH-49] - merge changes from 1.0.2 branch to trunk
-    * [ETCH-70] - Rename jar file build products to include incubating in the name.
-    * [ETCH-71] - repair license header in c binding
-    * [ETCH-72] - repair license header in interop tester
-    * [ETCH-73] - repair license header in tests
-    * [ETCH-74] - repair license header in scripts
-    * [ETCH-81] - Setup CMake based build environment for C binding
-    * [ETCH-82] - Merge etch-c into trunk
+** Task
     * [ETCH-83] - Setup Hudson Build Configuration for continous Etch builds
-    * [ETCH-84] - Provide getting started Setup documentation
-    * [ETCH-85] - Provide Documentation for Examples
-    * [ETCH-86] - Provide 1.1. release package
-    * [ETCH-87] - Provide 1.1. release package for Win32 + Installer
-    * [ETCH-88] - Provide 1.1. release package for Linux
-    * [ETCH-89] - Extend C# and Java Compilers to generate Wireshark keyfiles
-    * [ETCH-90] - Ant Build using ETCH_EXTERNAL_DEPENDS
-    * [ETCH-91] - Clean up / re-create examples/HelloWorld for all bindings
-    * [ETCH-92] - Integrate C binding to NSIS installer and packaging
-    * [ETCH-94] - Provide Documentation for Etch's binary protocol
-    * [ETCH-97] - Add public PGP KEY (CODE SIGNING KEY) to etch KEYS (fitzner)
-    * [ETCH-98] - Add CMake makefiles to exambles for binding-c
-    * [ETCH-100] - update BUILD.txt on top level
-    * [ETCH-101] - Integrate HelloWorld C Binding example into top level ant build
-    * [ETCH-103] - Add documentation regarding APR_ICONV_PATH to documentation
-    * [ETCH-104] - Create NOTICE_THIRD_PARTY.txt and LICENSE_THIRD_PARTY.txt
+    * [ETCH-93] - Update external etch dependencies to new versions
+    * [ETCH-102] - clean up etch headers (distribution vs. build)
+    * [ETCH-110] - extend etch mutex unit tests
+    * [ETCH-126] - Migrate Etch website to new Apache CMS
+    * [ETCH-127] - Create CMS infrastructure
+    * [ETCH-128] - Create website layout and templates
+    * [ETCH-129] - Create website basic sites
+    * [ETCH-130] - Migrate content to new CMS structure
+    * [ETCH-148] - Cmake based build system for C++ binding & tests
+    * [ETCH-159] - Update Build to work with latest Apache Ant 1.8.2
+    * [ETCH-188] - Update Readme files
 
-Test
+** Sub-task
+    * [ETCH-139] - Implementation of EtchNativeArray
+    * [ETCH-140] - Implementation of EtchThread
+    * [ETCH-142] - Implementation of EtchMutex
+    * [ETCH-144] - Implementation of EtchWait
+    * [ETCH-150] - Implementation of basic primitive data types for the NSDL
+    * [ETCH-154] - Implementation of Etch Bytes Wrapper
 
-    * [ETCH-96] - Change CWiki etch confluence template
 
-Here are the outstanding bugs in this release:
 
-Key         Summary
----         -------
-ETCH-12     An exception return value from a message is indistinguishable from a
-            thrown exception.
-ETCH-26     Some unexpected exceptions are thrown if .Net Framework Language
-            Pack is installed.
+
+
