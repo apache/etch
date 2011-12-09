@@ -2,8 +2,10 @@ ExampleMixin is an example for using Etch mixins.
 
 To get started with the example you will need jdk 1.5.0_x,
 where x is pretty recent (>= 15), or any release of jdk 1.6.
-You will also need ant 1.8.2. You will also need microsoft .net
-sdk 2.0 for csharp builds.
+You will also need ant 1.8.2. 
+For building the csharp examples you need the Microsoft .NET Framework v4.0 or higher. 
+Furthermore you need to add the .NET Framework path to your PATH environment variable:
+set PATH=C:\WINDOWS\Microsoft.NET\Framework\v4.0.30319;%PATH%
 
 To generate sources, build and run tests execute:
 
