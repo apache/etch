@@ -16,28 +16,23 @@
  * limitations under the License.
  */
 
-#ifndef __ERROR_H__
-#define __ERROR_H__
+#ifndef __COMPARATOR_H__
+#define __COMPARATOR_H__
 
-#include "Config.h"
+#include "capu/Config.h"
 
-namespace capu
-{
-    typedef int32_t status_t;
-    enum {
-        CAPU_OK                 = 0,
-        CAPU_EUNIMPL            = 1,
-        CAPU_ERANGE             = 2,
-        CAPU_EINVAL             = 3,
-        CAPU_ERROR              = 4,
-        CAPU_SOCKET_EBIND       = 5,
-        CAPU_SOCKET_ESOCKET     = 6,
-        CAPU_SOCKET_ECONNECT    = 7,
-        CAPU_SOCKET_ELISTEN     = 8,
-        CAPU_SOCKET_ECLOSE      = 9,
-        CAPU_SOCKET_EADDR       = 10,
-        CAPU_ENO_MEMORY         = 11
+namespace capu {
+
+    template <class T>
+    class Comparator {
+
+    public:
+
+        bool_t operator () (const T& x, const T& y) const {
+            return x == y;
+        }
     };
 }
-#endif
+
+#endif /* COMPARATOR_H */
 

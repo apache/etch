@@ -23,6 +23,7 @@ ADD_CLASS(util/SmartPointer)
 ADD_CLASS(os/Thread SOURCE_GROUP arch_source_group)
 ADD_CLASS(os/CondVar SOURCE_GROUP arch_source_group)
 ADD_CLASS(os/StringUtils SOURCE_GROUP arch_source_group)
+ADD_CLASS(container/List)
 
 REQUIRED_PACKAGE(Thread)
 
