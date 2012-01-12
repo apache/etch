@@ -257,7 +257,9 @@ To run java chat, open a cmd window and run these commands:
 
 > cd target\bin
 > start java -cp chat.jar org.apache.etch.examples.chat.MainChatListener
+Start client 1
 > start java -cp chat.jar org.apache.etch.examples.chat.MainChatClient
+Start client 2
 > start java -cp chat.jar org.apache.etch.examples.chat.MainChatClient
 
 Two chat clients will be started; there is a help command;
@@ -268,7 +270,9 @@ To run csharp chat:
 
 > cd target\bin
 > start ChatListener.exe
+Start client 1
 > start ChatClient.exe
+Start client 2
 > start ChatClient.exe
 
 You can mix and match the various clients and listeners.
