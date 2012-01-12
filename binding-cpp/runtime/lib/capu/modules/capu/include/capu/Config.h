@@ -23,6 +23,7 @@
 #include "stdlib.h"
 #include "string.h"
 
+#define DEFAULT_HASH_TABLE_SIZE 1000
 
 namespace capu
 {

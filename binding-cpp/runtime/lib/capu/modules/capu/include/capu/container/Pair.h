@@ -15,31 +15,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-#ifndef __ERROR_H__
-#define __ERROR_H__
-
-#include "Config.h"
+#ifndef __PAIR_H__
+#define __PAIR_H__
 
 namespace capu {
-  typedef int32_t status_t;
 
-  enum {
-    CAPU_OK = 0,
-    CAPU_EUNIMPL = 1,
-    CAPU_ERANGE = 2,
-    CAPU_EINVAL = 3,
-    CAPU_ERROR = 4,
-    CAPU_SOCKET_EBIND = 5,
-    CAPU_SOCKET_ESOCKET = 6,
-    CAPU_SOCKET_ECONNECT = 7,
-    CAPU_SOCKET_ELISTEN = 8,
-    CAPU_SOCKET_ECLOSE = 9,
-    CAPU_SOCKET_EADDR = 10,
-    CAPU_ENO_MEMORY = 11,
-    CAPU_TIMEOUT = 12,
-    CAPU_ENOT_EXIST = 13
-  };
+    template <class T1, class T2>
+    class Pair {
+
+    public:
+
+        inline bool_t operator==(const Pair<T1, T2> &rhs) {
+            return ((first == rhs.first) && (second == rhs.second));
+        }
+
+        ~Pair() {
+
+        }
+
+        Pair() {
+
+        }
+
+        Pair(T1 _first, T2 _second)
+        : first(_first), second(_second) {
+
+        }
+        T1 first;
+        T2 second;
+    };
 }
-#endif
+
+
+#endif /* PAIR_H */
 

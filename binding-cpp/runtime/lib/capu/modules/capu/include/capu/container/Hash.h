@@ -16,30 +16,38 @@
  * limitations under the License.
  */
 
-#ifndef __ERROR_H__
-#define __ERROR_H__
 
-#include "Config.h"
+#ifndef __HASH_H__
+#define __HASH_H__
+
+#include "capu/Config.h"
 
 namespace capu {
-  typedef int32_t status_t;
 
-  enum {
-    CAPU_OK = 0,
-    CAPU_EUNIMPL = 1,
-    CAPU_ERANGE = 2,
-    CAPU_EINVAL = 3,
-    CAPU_ERROR = 4,
-    CAPU_SOCKET_EBIND = 5,
-    CAPU_SOCKET_ESOCKET = 6,
-    CAPU_SOCKET_ECONNECT = 7,
-    CAPU_SOCKET_ELISTEN = 8,
-    CAPU_SOCKET_ECLOSE = 9,
-    CAPU_SOCKET_EADDR = 10,
-    CAPU_ENO_MEMORY = 11,
-    CAPU_TIMEOUT = 12,
-    CAPU_ENOT_EXIST = 13
+  template <class T>
+  class Hash {
+  public:
+
+    static uint64_t Digest(T key) {
+      uint64_t result = 0;
+      for (uint64_t i = 0; i < 10; ++i) {
+        result = (result + static_cast<uint64_t> (key) * 13);
+      }
+      return static_cast<uint64_t> (result);
+    }
+
+    static uint64_t Digest(char* key) {
+      uint64_t result = 0;
+      char * keyStart = key;
+      char * keyEnd = key + strlen(key);
+      while (keyStart != keyEnd) {
+        result = (result + static_cast<uint64_t> (*keyStart) * 13);
+        ++keyStart;
+      }
+      return result;
+    }
+
   };
 }
-#endif
+#endif /* HASH_H */
 

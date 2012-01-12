@@ -24,6 +24,7 @@ ADD_CLASS(os/Thread SOURCE_GROUP arch_source_group)
 ADD_CLASS(os/CondVar SOURCE_GROUP arch_source_group)
 ADD_CLASS(os/StringUtils SOURCE_GROUP arch_source_group)
 ADD_CLASS(container/List)
+ADD_CLASS(container/HashTable)
 
 REQUIRED_PACKAGE(Thread)
 
