@@ -396,3 +396,105 @@ TEST(ListIterator, next) {
   delete list;
 }
 
+TEST(ListIterator, current){
+  capu::List<capu::int32_t> list;
+  capu::int32_t data1 = 0;
+  capu::List<capu::int32_t>::Iterator it = list.begin();
+  
+  EXPECT_TRUE(it.current(&data1) == capu::CAPU_ERANGE);
+  list.add(1);
+  it = list.begin();
+  EXPECT_TRUE(it.current(&data1) == capu::CAPU_OK);
+  EXPECT_TRUE(data1 == 1);
+  list.add(2);
+  list.add(3);
+
+
+  data1 = 0;
+  capu::int32_t index = 1;
+  for(it = list.begin(); it.hasNext(); it.next())
+  {
+    EXPECT_TRUE(it.current(&data1) == capu::CAPU_OK);
+    EXPECT_TRUE(data1 == index);
+    ++index;
+  }
+}
+
+TEST(ListIterator, removeAt){
+  capu::List<capu::int32_t> list;
+  capu::int32_t data1 = 0;
+  capu::List<capu::int32_t>::Iterator it = list.begin();
+
+  EXPECT_TRUE(list.removeAt(it) == capu::CAPU_EINVAL);
+  list.add(1);
+  it = list.begin();
+  EXPECT_TRUE(list.removeAt(it, &data1) == capu::CAPU_OK);
+  EXPECT_TRUE(list.size() == 0);
+  EXPECT_TRUE(data1 == 1);
+
+  list.add(1);
+  list.add(2);
+  list.add(3);
+
+  it = list.begin();
+  it.next();
+  list.removeAt(it, &data1);
+  EXPECT_TRUE(data1 == 2);
+
+  capu::int32_t index = 1;
+
+  for(it = list.begin(); it.hasNext();)
+  {
+    it.next(&data1);
+    EXPECT_TRUE(data1 == index);
+    index += 2;
+  }
+
+  list.add(1,2);
+
+  index = 1;
+
+  it = list.begin();
+  it.current(&data1);
+  while(it.hasNext())
+  {
+    list.removeAt(it, &data1);
+    EXPECT_TRUE(data1 == index);
+    ++index;
+  }
+}
+
+TEST(ListIterator, add){
+  capu::List<capu::int32_t> list;
+  capu::List<capu::int32_t>::Iterator iter;
+  capu::int32_t data1 = 0;
+
+  list.add(iter, 1);
+  list.add(iter, 2);
+  list.add(iter, 3);
+  EXPECT_TRUE(list.get(0, &data1) == capu::CAPU_OK);
+  EXPECT_TRUE(data1 == 1);
+  EXPECT_TRUE(list.get(1, &data1) == capu::CAPU_OK);
+  EXPECT_TRUE(data1 == 2);
+  EXPECT_TRUE(list.get(2, &data1) == capu::CAPU_OK);
+  EXPECT_TRUE(data1 == 3);
+
+  iter = list.begin();
+  iter.next();
+  list.add(iter, 4);
+  EXPECT_TRUE(list.get(1, &data1) == capu::CAPU_OK);
+  EXPECT_TRUE(data1 == 4);
+
+  iter.next();
+  iter.next();
+  list.add(iter, 5);
+  EXPECT_TRUE(list.get(4, &data1) == capu::CAPU_OK);
+  EXPECT_TRUE(data1 == 5);
+
+  iter = list.begin();
+  list.add(iter, 6);
+  EXPECT_TRUE(list.get(0, &data1) == capu::CAPU_OK);
+  EXPECT_TRUE(data1 == 6);
+
+}
+

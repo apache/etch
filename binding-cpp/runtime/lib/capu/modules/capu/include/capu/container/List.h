@@ -50,7 +50,7 @@ namespace capu {
 
     class ListIterator {
     public:
-
+      friend class List<T, C>;
       /**
        * Default Constructor
        */
@@ -74,14 +74,23 @@ namespace capu {
       bool_t hasNext();
 
       /**
-       * Get next iterator element.
-       * @param element point to the next element
-       * @return CAPU_ERANGE if the next of current node that is pointed, is null
-       *         CAPU_EINVAL if the value is NULL
+       * Shifts the iterator to the next position and returns the element if next != NULL
+       * @param element
+       * @return ETCH_ERANGE if the next of current node that is pointed, is null
        *         CAPU_OK if the next element has been gotten
        *
        */
-      status_t next(T* element);
+      status_t next(T* element = NULL);
+
+      /**
+       * Get current iterator element.
+       * @param element
+       * @return ETCH_ERANGE if the current node that is pointed, is null
+       *         CAPU_EINVAL if the value is NULL
+       *         CAPU_OK if the current element has been gotten
+       *
+       */
+      status_t current(T* element);
 
     private:
       ListNode *mNextPosition;
@@ -114,7 +123,7 @@ namespace capu {
     status_t add(const T element);
 
     /**
-     * It will insert new element to specified position only the element at specified index with given element
+     * Add element to specified position
      *
      * @param index index of element which will be inserted
      * @param element new value that will replace the old value
@@ -127,6 +136,17 @@ namespace capu {
     status_t add(int32_t index, const T element);
 
     /**
+     * Add element to specified position
+     *
+     * @param iterator with the position to insert
+     * @param element new value that will replace the old value
+     *
+     * @return CAPU_ENO_MEMORY memory allocation failed.
+     *         CAPU_OK otherwise
+     */
+    status_t add(Iterator& iter, const T element);
+
+    /**
      * remove the element in the specified index and if the element_old
      * parameter is not NULL, the removed element will be put to element_old
      * @param index index of element that will be removed
@@ -135,6 +155,17 @@ namespace capu {
      *         CAPU_OK if the element is successfully removed
      */
     status_t removeAt(int32_t index, T* elementOld = NULL);
+
+    /**
+     * remove the element in the specified iterator position and if the element_old
+     * parameter is not NULL, the removed element will be put to element_old
+     * @param iterator of element that will be removed
+     * @param element_old the buffer which will keep the copy of the removed element
+     * @return CAPU_EINVAL invalid iterator
+     *         CAPU_OK if the element is successfully removed
+     * 
+     */
+    status_t removeAt(Iterator& listIterator, T* elementOld = NULL);
 
     /**
      * get a single element on specified index
@@ -334,8 +365,40 @@ namespace capu {
     return CAPU_ERROR;
   }
 
-  //remove the specific element indicated by the index in the list
+  template <class T, class C>
+  status_t List<T, C>::add(Iterator& iter, const T element) {
+    ListNode *listElem = new ListNode(element);
 
+    //NOT ALLOCATED
+    if (listElem == NULL) {
+      return CAPU_ENO_MEMORY;
+    }
+
+    if (mHead == NULL && mTail == NULL) {
+      mHead = listElem;
+      mTail = mHead;
+    } else if (iter.mNextPosition->mNext == NULL) {
+      listElem->mNext = NULL;
+      listElem->mPrev = iter.mNextPosition;
+      iter.mNextPosition->mNext = listElem;
+      mTail = listElem;
+    } else if (iter.mNextPosition->mPrev == NULL) {
+      listElem->mPrev = NULL;
+      listElem->mNext = iter.mNextPosition->mNext;
+      mHead = listElem;
+    } else {
+      listElem->mPrev = iter.mNextPosition->mPrev;
+      listElem->mNext = iter.mNextPosition;
+      iter.mNextPosition->mPrev->mNext = listElem;
+    }
+    iter.mNextPosition = listElem;
+
+    ++mSize;
+    return CAPU_OK;
+
+  }
+
+  //remove the specific element indicated by the index in the list
   template <class T, class C>
   status_t List<T, C>::removeAt(int32_t index, T* elementOld) {
     if ((index < 0) || (index >= mSize)) {
@@ -368,6 +431,47 @@ namespace capu {
     delete tmp;
     mSize--;
     return CAPU_OK;
+  }
+
+  template <class T, class C>
+  status_t List<T, C>::removeAt(Iterator& listIterator, T* elementOld) {
+
+    ListNode* tmp = NULL;
+
+    if (mHead == mTail) {
+      tmp = mHead;
+      if (!tmp) {
+        return CAPU_EINVAL;
+      }
+      mHead = NULL;
+      mTail = NULL;
+      listIterator.mNextPosition = NULL;
+    } else if (listIterator.mNextPosition == mHead) {
+
+      tmp = mHead;
+      mHead = mHead->mNext;
+      mHead->mPrev = NULL;
+      listIterator.mNextPosition = mHead;
+    } else if (listIterator.mNextPosition == mTail) {
+      tmp = mTail;
+      mTail = mTail->mPrev;
+      mTail->mNext = NULL;
+      listIterator.mNextPosition = mTail;
+    } else {
+      tmp = listIterator.mNextPosition;
+      listIterator.mNextPosition->mPrev->mNext = listIterator.mNextPosition->mNext;
+      listIterator.mNextPosition->mNext->mPrev = listIterator.mNextPosition->mPrev;
+      listIterator.mNextPosition = listIterator.mNextPosition->mPrev;
+    }
+
+    if (elementOld != 0) {
+      *elementOld = tmp->mData;
+    }
+    delete tmp;
+    mSize--;
+
+    return CAPU_OK;
+
   }
 
   //get the specified element from list
@@ -457,17 +561,31 @@ namespace capu {
 
   template <class T, class C>
   status_t List<T, C>::ListIterator::next(T* element) {
+    T* result = 0;
     if (mNextPosition == NULL) {
       return CAPU_ERANGE;
-    } else if (element == NULL) {
+    } else {
+      result = &mNextPosition->mData;
+      mNextPosition = mNextPosition->mNext;
+    }
+    if (element != NULL) {
+      *element = *result;
+    }
+    return CAPU_OK;
+  }
+
+  template <class T, class C>
+  status_t List<T, C>::ListIterator::current(T* value) {
+    if (mNextPosition == 0) {
+      return CAPU_ERANGE;
+    } else if (value == 0) {
       return CAPU_EINVAL;
     } else {
-      *element = mNextPosition->mData;
-      mNextPosition = mNextPosition->mNext;
+      *value = mNextPosition->mData;
       return CAPU_OK;
     }
   }
 }
 
-#endif /* DOUBLELINKEDLIST_H */
+#endif /* __LIST_H__ */
 
