@@ -20,8 +20,9 @@
 #include "common/EtchObject.h"
 
 // Tests positive input.
-TEST(EtchObjectTest, Constructor_Default) {
-    EtchObject* o1 = new EtchObject(42);
-    EXPECT_TRUE(o1->getObjectTypeId() == 42);
-    delete o1;
+
+TEST(EtchObjectTest, Constructor_Default){
+  EtchObject* o1 = new EtchObject(42);
+  EXPECT_TRUE(o1->getObjectTypeId() == 42);
+  delete o1;
 }
