@@ -103,9 +103,9 @@ You can use the workspace contents of our continous integration server as a refe
 for you machine, 
 
 - e.g. for Win32:
-  https://hudson.apache.org/hudson/job/etch-trunk-windows-x86/ws/externals/
+  https://builds.apache.org/job/etch-trunk-windows-x86/ws/externals/
 - e.g. for Linux x86:
-  https://hudson.apache.org/hudson/job/etch-trunk-linux-x86/ws/externals/
+  https://builds.apache.org/job/etch-trunk-linux-x86/ws/externals/
 
 You should have the following structure, if you want to compile and build for all language bindings
 (newer version could, but do not have to, work):
@@ -154,8 +154,8 @@ The primary development environments for the Etch committers are Win32 and
 *nix (Linux, Mac OS X). As such we have attempted to make the build process platform
 neutral. 
 
-The build is running contiously for Windows and Linux on our build server at Apache:
-https://hudson.apache.org/hudson/view/etch/
+The build is running continously for Windows and Linux on our build server at Apache:
+https://builds.apache.org/view/A-F/view/Etch/
 
 To further complicate matters, we have much development-environment divergence in 
 our committer base, some of us being very shell-centric while others of us 
