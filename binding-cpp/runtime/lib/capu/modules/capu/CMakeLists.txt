@@ -32,6 +32,8 @@ ADD_CLASS(container/Pair)
 ADD_CLASS(util/Traits)
 ADD_CLASS(container/HashTable)
 ADD_CLASS(container/HashSet)
+ADD_CLASS(os/Socket SOURCE_GROUP arch_source_group)
+ADD_CLASS(os/ServerSocket SOURCE_GROUP arch_source_group)
 
 REQUIRED_PACKAGE(Thread)
 
