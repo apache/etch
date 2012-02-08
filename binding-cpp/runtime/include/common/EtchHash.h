@@ -19,6 +19,7 @@
 #ifndef __ETCHHASH_H__
 #define __ETCHHASH_H__
 #include "common/EtchConfig.h"
+#include "common/EtchObject.h"
 
 class EtchHash {
 public:
