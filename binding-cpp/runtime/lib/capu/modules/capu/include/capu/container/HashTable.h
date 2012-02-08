@@ -24,12 +24,16 @@
 #include "capu/container/List.h"
 #include "capu/container/Pair.h"
 #include "capu/container/Hash.h"
+#include "capu/util/Traits.h"
 
 namespace capu {
 
   template <class Key, class T, class C = Comparator<Key>, class Hash = Hash<Key> >
   class HashTable {
   private:
+
+    typedef typename ReferenceType<T>::Type ReferenceValue;
+    typedef typename ReferenceType<Key>::Type ReferenceKey;
 
     class HashTableIterator {
     public:
@@ -100,7 +104,7 @@ namespace capu {
      *         CAPU_EINVAL if value_old is null
      *
      */
-    status_t put(Key key, T value, T* value_old = NULL);
+    status_t put(ReferenceKey key, ReferenceValue value, T* value_old = NULL);
 
     /**
      * Get value associated with key in the hashtable.
@@ -111,7 +115,7 @@ namespace capu {
      *         CAPU_EINVAL if value is null
      *         CAPU_ENOT_EXIST if there is no pair with specified key
      */
-    status_t get(Key key, T* value);
+    status_t get(ReferenceKey key, T* value);
 
     /**
      * Remove value associated with key in the hashtable.
@@ -124,7 +128,7 @@ namespace capu {
      *         CAPU_ERANGE if the pair with specified key does not exist in hash table
      *
      */
-    status_t remove(Key key, T* value_old);
+    status_t remove(ReferenceKey key, T* value_old);
 
     /**
      * Returns count of the hashtable.
@@ -155,7 +159,7 @@ namespace capu {
      * @return -1 if the key is unique
      *          otherwise the index in the linked list
      */
-    int32_t getKeyIndexFromBucket(uint64_t index, Key k) {
+    int32_t getKeyIndexFromBucket(uint64_t index, Key &k) {
       int32_t count = 0;
       typename List<Pair<Key, T> >::Iterator it = mLists[index].begin();
       Pair<Key, T> pair;
@@ -201,7 +205,7 @@ namespace capu {
   }
 
   template <class Key, class T, class C, class Hash>
-  status_t HashTable<Key, T, C, Hash>::put(Key key, T value, T* value_old) {
+  status_t HashTable<Key, T, C, Hash>::put(ReferenceKey key, ReferenceValue value, T* value_old) {
     status_t result;
     uint64_t index = Hash::Digest(key) % mSize;
     if (mLists[index].isEmpty()) {
@@ -245,7 +249,7 @@ namespace capu {
   }
 
   template <class Key, class T, class C, class Hash>
-  status_t HashTable<Key, T, C, Hash>::get(Key key, T* value) {
+  status_t HashTable<Key, T, C, Hash>::get(ReferenceKey key, T* value) {
     if (value == NULL)
       return CAPU_EINVAL;
 
@@ -268,7 +272,7 @@ namespace capu {
   }
 
   template <class Key, class T, class C, class Hash>
-  status_t HashTable<Key, T, C, Hash>::remove(Key key, T* value_old) {
+  status_t HashTable<Key, T, C, Hash>::remove(ReferenceKey key, T* value_old) {
     if (value_old == NULL) {
       return CAPU_EINVAL;
     }

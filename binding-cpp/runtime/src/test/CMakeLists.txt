@@ -39,6 +39,7 @@ add_executable (etch-cpp-test
     common/EtchObjectTest.cpp
     common/EtchListTest.cpp
     common/EtchNativeArrayTest.cpp
+    common/EtchHashTableTest.cpp
     util/EtchUtilTest.cpp
     ${GTEST}/src/gtest-all.cc
     main.cpp

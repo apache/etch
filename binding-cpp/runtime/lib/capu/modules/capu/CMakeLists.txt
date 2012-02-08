@@ -17,6 +17,8 @@
 
 ADD_MODULE(capu static)
 
+ADD_CLASS(Config)
+ADD_CLASS(Error)
 ADD_CLASS(os/Mutex SOURCE_GROUP arch_source_group)
 ADD_CLASS(os/AtomicOperation SOURCE_GROUP arch_source_group)
 ADD_CLASS(util/SmartPointer)
@@ -24,6 +26,10 @@ ADD_CLASS(os/Thread SOURCE_GROUP arch_source_group)
 ADD_CLASS(os/CondVar SOURCE_GROUP arch_source_group)
 ADD_CLASS(os/StringUtils SOURCE_GROUP arch_source_group)
 ADD_CLASS(container/List)
+ADD_CLASS(container/Comparator)
+ADD_CLASS(container/Hash)
+ADD_CLASS(container/Pair)
+ADD_CLASS(util/Traits)
 ADD_CLASS(container/HashTable)
 
 REQUIRED_PACKAGE(Thread)

@@ -16,30 +16,21 @@
  * limitations under the License.
  */
 
-#ifndef __COMPARATOR_H__
-#define __COMPARATOR_H__
+#ifndef __ETCHHASH_H__
+#define __ETCHHASH_H__
+#include "common/EtchConfig.h"
 
-#include "capu/Config.h"
-#include "capu/util/Traits.h"
+class EtchHash {
+public:
 
-namespace capu {
+  static capu::uint64_t Digest(EtchObject &key) {
+    return key.getHashCode();
+  }
 
-    template <class T>
-    class Comparator {
-    private:
-      typedef typename ReferenceType<T>::Type Reference;
+  static capu::uint64_t Digest(EtchObject* key) {
+    return key->getHashCode();
+  }
+};
 
-    public:
-
-        bool_t operator () (const Reference x, const Reference y) const {
-            return x == y;
-        }
-
-        bool_t operator () (const char* x, const char* y) const {
-            return (strcmp(x,y) == 0);
-        }
-    };
-}
-
-#endif /* COMPARATOR_H */
+#endif
 

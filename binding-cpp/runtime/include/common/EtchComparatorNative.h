@@ -18,25 +18,21 @@
  * under the License.
  */
 
-#ifndef __ETCHCOMPARATOR_H__
-#define __ETCHCOMPARATOR_H__
-#include "common/EtchObject.h"
+#ifndef __ETCHCOMPARATORNATIVE_H__
+#define __ETCHCOMPARATORNATIVE_H__
+#include "capu/container/Comparator.h"
+#include "capu/util/Traits.h"
 
 template <class T>
-class EtchComparator {
+class EtchComparatorNative {
+private:
+  typedef typename capu::ReferenceType<T>::Type Reference;
+
 public:
-
-  inline capu::bool_t operator() (EtchObject &first, const EtchObject &second) {
-    return first.equals(&second);
-  }
-};
-
-template <class T>
-class EtchComparator <T*> {
-public:
-
-  inline capu::bool_t operator() (EtchObject* first, EtchObject* second) {
-    return first->equals(second);
+  
+  inline capu::bool_t operator() (const Reference first, const Reference second) {
+    capu::Comparator<T> c;
+    return c(first, second);
   }
 };
 

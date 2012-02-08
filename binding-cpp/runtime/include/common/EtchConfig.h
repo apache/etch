@@ -24,5 +24,6 @@
 #include "string.h"
 
 #include "capu/Config.h"
+#define ETCH_DEFAULT_HASH_TABLE_SIZE 1000
 
 #endif

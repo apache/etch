@@ -28,7 +28,7 @@ namespace capu {
   class Hash {
   public:
 
-    static uint64_t Digest(T key) {
+    static uint64_t Digest(T &key) {
       uint64_t result = 0;
       for (uint64_t i = 0; i < 10; ++i) {
         result = (result + static_cast<uint64_t> (key) * 13);
