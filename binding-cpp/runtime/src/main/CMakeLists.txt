@@ -40,6 +40,8 @@ SET(MAIN_INCLUDES
 	${PROJECT_SOURCE_DIR}/include/common/EtchList.h
     ${PROJECT_SOURCE_DIR}/include/common/EtchNative.h
     ${PROJECT_SOURCE_DIR}/include/common/EtchNativeArray.h
+    ${PROJECT_SOURCE_DIR}/include/common/EtchSocket.h
+    ${PROJECT_SOURCE_DIR}/include/common/EtchServerSocket.h
     ${PROJECT_SOURCE_DIR}/include/util/EtchUtil.h
     )
 
@@ -54,6 +56,8 @@ SET(MAIN_SOURCES
     common/EtchLong.cpp
     common/EtchFloat.cpp
     common/EtchDouble.cpp
+    common/EtchSocket.cpp
+    common/EtchServerSocket.cpp
     util/EtchUtil.cpp
     )
 
