@@ -31,6 +31,7 @@ ADD_CLASS(container/Hash)
 ADD_CLASS(container/Pair)
 ADD_CLASS(util/Traits)
 ADD_CLASS(container/HashTable)
+ADD_CLASS(container/HashSet)
 
 REQUIRED_PACKAGE(Thread)
 
