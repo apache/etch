@@ -25,6 +25,10 @@
 
 #define DEFAULT_HASH_TABLE_SIZE 1000
 
+#ifdef _WIN32
+        #define _WINSOCKAPI_
+#endif
+
 namespace capu
 {
    #ifdef _WIN32
