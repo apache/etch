@@ -216,7 +216,7 @@
 
 	<target name="build-c" depends="generate-sources" if="USE.cmake">
 		 <cmake srcdir="${basedir}" bindir="${basedir}/target" buildtype="Debug" >
-		           	<variable name="ETCH_HOME" type="PATH" value="${etch.home}" />
+		           	<variable name="ETCH_HOME" type="PATH" value="${build.ETCH_HOME}" />
   		 </cmake>
                  <copy todir="${bin}" flatten="true">
                     <fileset dir="${basedir}/target/" >
