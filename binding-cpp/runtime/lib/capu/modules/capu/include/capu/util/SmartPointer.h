@@ -38,10 +38,18 @@ namespace capu {
     * @param pointer to object
     */
     SmartPointer(T* ptr);
-    
+
+    /**
+    * Copy constructor for different, but castable type
+    * @param reference to smartPointer
+    */
+    template<class X> friend class SmartPointer;
+    template<class X>
+    SmartPointer(const SmartPointer<X>& smartPointer);
+
     /**
     * Copy constructor
-    * @param reference to object
+    * @param reference to smartPointer
     */
     SmartPointer(const SmartPointer& smartPointer);
 
@@ -49,12 +57,20 @@ namespace capu {
     * Deconstructor
     */
     ~SmartPointer();
-    
+
     /**
     * Overload assignment operator to be able to decrement the 
     * reference count if another object gets assigned to this smart pointer
+    * @param reference to smartPointer
     */
     SmartPointer& operator= (const SmartPointer& smartPointer);
+
+    /**
+    * Overload assignment operator for castable, but different type
+    * @param reference to smartPointer
+    */
+    template <class X>
+    SmartPointer<T>& operator= (const SmartPointer<X>& smartPointer);
 
     /**
     * Overload assignment operator to be able to decrement the 
@@ -75,6 +91,18 @@ namespace capu {
     T& operator*() const;
 
     /**
+    * Returns true if two smart pointer are equal to each other
+    *         false otherwise
+    */
+   capu::bool_t operator==(const SmartPointer<T>& x) const;
+
+   /**
+    * Returns true if two smart pointer aren't equal to each other
+    *         false otherwise
+    */
+   capu::bool_t operator!=(const SmartPointer<T>& x) const;
+
+    /**
     * Returns the object stored by the smartPointer
     */
     T* get() const;
@@ -92,7 +120,6 @@ namespace capu {
     */
     capu::uint32_t getRefCount();
 
-  protected:
   private:
     T* m_data;
     capu::uint32_t* m_referenceCount;
@@ -121,10 +148,18 @@ namespace capu {
     {
       m_data = ptr;
       m_referenceCount = new capu::uint32_t(0);
-
       incRefCount();
-
     }
+  }
+
+  template<class T>
+  template<class X>
+  inline
+  SmartPointer<T>::SmartPointer(const SmartPointer<X>& smartPointer)
+    : m_data(static_cast<X*> (smartPointer.m_data))
+    , m_referenceCount(smartPointer.m_referenceCount)
+  {
+    incRefCount();
   }
 
   template<class T>
@@ -176,6 +211,19 @@ namespace capu {
     return *this;
   }
 
+  template <class T>
+  template <class X>
+  inline
+  SmartPointer<T>& SmartPointer<T>::operator= (const SmartPointer<X>& smartPointer) {
+    if (*this != smartPointer) {
+      decRefCount();
+      m_data = static_cast<X*> (smartPointer.m_data);
+      m_referenceCount = smartPointer.m_referenceCount;
+      incRefCount();
+    }
+    return *this;
+  }
+
   template<class T>
   inline
   T* SmartPointer<T>::operator->() const
@@ -188,6 +236,16 @@ namespace capu {
   T& SmartPointer<T>::operator*() const
   {
   return *m_data;
+  }
+
+  template<class T>
+  capu::bool_t SmartPointer<T>::operator==(const SmartPointer<T>& x) const {
+    return ((x.m_data == this->m_data) && (x.m_referenceCount == this->m_referenceCount));
+  }
+
+  template<class T>
+  capu::bool_t SmartPointer<T>::operator!=(const SmartPointer<T>& x) const {
+    return ((x.m_data != this->m_data) || (x.m_referenceCount != this->m_referenceCount));
   }
 
   template<class T>
