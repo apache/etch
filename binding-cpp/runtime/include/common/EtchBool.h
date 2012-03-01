@@ -56,12 +56,12 @@ public:
    * @return true if two object is equal
    *         false otherwise
    */
-  capu::bool_t equals(const EtchObject * other);
+  capu::bool_t equals(const EtchObject * other) const;
 
   /**
    * Returns hash code
    */
-  capu::uint64_t getHashCode();
+  capu::uint64_t getHashCode() const;
 
 private:
 

@@ -25,44 +25,45 @@
 
 namespace capu {
 
+#define CAPU_PRIMITIVE 1
+#define CAPU_CLASS     0
+
+  //is CAPU_PRIMITIVE
+  template<typename T> struct is_CAPU_PRIMITIVE { enum { Value = CAPU_CLASS }; };
+  template<> struct is_CAPU_PRIMITIVE<int8_t  > { enum { Value = CAPU_PRIMITIVE }; };
+  template<> struct is_CAPU_PRIMITIVE<int16_t > { enum { Value = CAPU_PRIMITIVE }; };
+  template<> struct is_CAPU_PRIMITIVE<int32_t > { enum { Value = CAPU_PRIMITIVE }; };
+  template<> struct is_CAPU_PRIMITIVE<int64_t > { enum { Value = CAPU_PRIMITIVE }; };
+  template<> struct is_CAPU_PRIMITIVE<uint32_t> { enum { Value = CAPU_PRIMITIVE }; };
+  template<> struct is_CAPU_PRIMITIVE<uint64_t> { enum { Value = CAPU_PRIMITIVE }; };
+  template<> struct is_CAPU_PRIMITIVE<float_t > { enum { Value = CAPU_PRIMITIVE }; };
+  template<> struct is_CAPU_PRIMITIVE<double_t> { enum { Value = CAPU_PRIMITIVE }; };
+  template<> struct is_CAPU_PRIMITIVE<bool_t  > { enum { Value = CAPU_PRIMITIVE }; };
+
+  //References Helper (T &)
+  template<typename T, int TYPE> struct _ReferenceType {};
+  template<typename T> struct _ReferenceType<T, CAPU_CLASS     > { typedef T &Type; };
+  template<typename T> struct _ReferenceType<T, CAPU_PRIMITIVE > { typedef T Type;  };
+  
+  //ConstReferences Helper (const T &)
+  template<typename T, int TYPE> struct _ConstReferenceType {};
+  template<typename T> struct _ConstReferenceType<T, CAPU_CLASS      > { typedef const T &Type; };
+  template<typename T> struct _ConstReferenceType<T, CAPU_PRIMITIVE  > { typedef const T Type;  };
+
+  //References (T &)
   template<typename T>
-  struct ReferenceType { typedef T &Type; };
-
+  struct ReferenceType
+  {
+   typedef typename _ReferenceType<T, is_CAPU_PRIMITIVE<T>::Value >::Type Type;
+  };
+    
+  //ConstReferences (const T &)
   template<typename T>
-  struct ReferenceType<T*> { typedef T *Type; };
+  struct ConstReferenceType
+  {
+   typedef typename _ConstReferenceType<T, is_CAPU_PRIMITIVE<T>::Value >::Type Type;
+  };
 
-  template<>
-  struct ReferenceType<int8_t> { typedef int8_t Type; };
-
-  template<>
-  struct ReferenceType<int16_t> { typedef int16_t Type; };
-  
-  template<>
-  struct ReferenceType<int32_t> { typedef int32_t Type; };
-  
-  template<>
-  struct ReferenceType<int64_t> { typedef int64_t Type; };
-  
-  template<>
-  struct ReferenceType<uint32_t> { typedef uint32_t Type; };
-  
-  template<>
-  struct ReferenceType<uint64_t> { typedef uint64_t Type; };
-  
-  template<>
-  struct ReferenceType<float_t> { typedef float_t Type; };
-  
-  template<>
-  struct ReferenceType<double_t> { typedef double_t Type; };
-  
-  template<>
-  struct ReferenceType<bool_t> { typedef bool_t Type; };
-
-  template<>
-  struct ReferenceType<char*> { typedef char* Type; };
-
-  template<>
-  struct ReferenceType<const char*> { typedef const char* Type; };
 }
 
 #endif /* __TRAITS_H__ */

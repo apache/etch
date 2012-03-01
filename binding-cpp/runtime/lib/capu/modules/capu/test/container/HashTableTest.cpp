@@ -24,6 +24,8 @@ TEST(HashTable, Constructor_Default) {
   //create an empty linked list
   capu::HashTable<capu::int32_t, capu::int32_t>* list = new capu::HashTable<capu::int32_t, capu::int32_t > ();
   delete list;
+  capu::HashTable<char*, capu::int32_t>* list2 = new capu::HashTable<char*, capu::int32_t > ();
+  delete list2;
 }
 
 TEST(HashTable, put) {

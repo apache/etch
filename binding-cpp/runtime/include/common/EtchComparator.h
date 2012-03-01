@@ -26,7 +26,7 @@ template <class T>
 class EtchComparator {
 public:
 
-  inline capu::bool_t operator() (EtchObject &first, const EtchObject &second) {
+  inline capu::bool_t operator() (const EtchObject &first, const EtchObject &second) {
     return first.equals(&second);
   }
 };
@@ -35,7 +35,7 @@ template <class T>
 class EtchComparator <T*> {
 public:
 
-  inline capu::bool_t operator() (EtchObject* first, EtchObject* second) {
+  inline capu::bool_t operator() (const EtchObject* first, const EtchObject* second) {
     return first->equals(second);
   }
 };

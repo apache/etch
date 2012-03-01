@@ -24,12 +24,12 @@
 class EtchHash {
 public:
 
-  static capu::uint64_t Digest(EtchObject &key) {
+  static capu::uint64_t Digest(const EtchObject &key) {
     return key.getHashCode();
   }
 
-  static capu::uint64_t Digest(EtchObject* key) {
-    return key->getHashCode();
+  static capu::uint64_t Digest(const EtchObject* key) {
+   return key->getHashCode();
   }
 };
 

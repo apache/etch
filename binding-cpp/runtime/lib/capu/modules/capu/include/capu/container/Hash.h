@@ -24,11 +24,11 @@
 
 namespace capu {
 
-  template <class T>
   class Hash {
   public:
 
-    static uint64_t Digest(T &key) {
+    template <typename T>
+    static uint64_t Digest(const T &key) {
       uint64_t result = 0;
       for (uint64_t i = 0; i < 10; ++i) {
         result = (result + static_cast<uint64_t> (key) * 13);
@@ -46,6 +46,19 @@ namespace capu {
       }
       return result;
     }
+
+    static uint64_t Digest(const char* key) {
+      uint64_t result = 0;
+      const char * keyStart = key;
+      const char * keyEnd = key + strlen(key);
+      while (keyStart != keyEnd) {
+        result = (result + static_cast<uint64_t> (*keyStart) * 13);
+        ++keyStart;
+      }
+      return result;
+    }
+
+    
 
   };
 }

@@ -22,18 +22,16 @@
 #include "capu/container/Comparator.h"
 #include "capu/container/Hash.h"
 #include "capu/container/List.h"
-#include "capu/util/Traits.h"
 
 #define DEFAULT_HASH_SET_SIZE 1000
 
 
 namespace capu {
 
-  template <class T, class C = Comparator<T>, class H = Hash<T> >
+  template <class T, class C = Comparator, class H = Hash >
   class HashSet {
-  private:
-    typedef typename ReferenceType<T>::Type Reference;
 
+  private:
     class HashSetIterator {
     public:
 
@@ -102,7 +100,7 @@ namespace capu {
      *         CAPU_ERROR if value already exists in the set
      *
      */
-    status_t put(Reference value);
+    status_t put(const T &value);
 
     /**
      * Remove value associated with key in the hash set.
@@ -113,7 +111,7 @@ namespace capu {
      *         CAPU_ERANGE if specified value does not exist in hash set
      *
      */
-    status_t remove(Reference value);
+    status_t remove(const T &value);
 
     /**
      * Returns count of the hash set.
@@ -185,7 +183,7 @@ namespace capu {
   }
 
   template <class T, class C, class H>
-  status_t HashSet< T, C, H>::put(Reference value) {
+  status_t HashSet< T, C, H>::put(const T &value) {
     status_t result;
     uint64_t index = H::Digest(value) % mSize;
     if (mLists[index].isEmpty()) {
@@ -213,7 +211,7 @@ namespace capu {
   }
 
   template <class T, class C, class H>
-  status_t HashSet< T, C, H>::remove(Reference value) {
+  status_t HashSet< T, C, H>::remove(const T &value) {
     status_t result;
     uint64_t index = H::Digest(value) % mSize;
 

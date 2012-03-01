@@ -29,11 +29,11 @@ capu::int32_t EtchObject::getObjectTypeId() const{
 EtchObject::~EtchObject(){
 }
 
-capu::uint64_t EtchObject::getHashCode(){
+capu::uint64_t EtchObject::getHashCode() const{
   return (capu::uint64_t) this;
 }
 
-capu::bool_t EtchObject::equals(const EtchObject* other){
+capu::bool_t EtchObject::equals(const EtchObject* other) const{
   return (other == this);
 }
 

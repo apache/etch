@@ -27,7 +27,7 @@ TEST(EtchHashTableTest, Constructor_Default){
   EtchHashTable<EtchString, EtchInt32>* h1 = new EtchHashTable<EtchString, EtchInt32 > ();
   delete h1;
 
-  EtchHashTable<char*, int, EtchHashNative<char*>, EtchComparatorNative<char*> >* h2 = new EtchHashTable<char*, int, EtchHashNative<char*>, EtchComparatorNative<char*> > ();
+  EtchHashTable<char*, int, EtchHashNative, EtchComparatorNative >* h2 = new EtchHashTable<char*, int, EtchHashNative, EtchComparatorNative > ();
   delete h2;
 }
 
@@ -45,7 +45,7 @@ TEST(EtchHashTableTest, put){
   count = h1->count();
   EXPECT_TRUE(count == 1);
 
-  EtchHashTable<char*, int, EtchHashNative<char*>, EtchComparatorNative<char*> >* h2 = new EtchHashTable<char*, int, EtchHashNative<char*>, EtchComparatorNative<char*> > ();
+  EtchHashTable<char*, int, EtchHashNative, EtchComparatorNative >* h2 = new EtchHashTable<char*, int, EtchHashNative, EtchComparatorNative > ();
   // add new key
   char* key1 = "key1";
   int value1 = 5;
@@ -111,7 +111,7 @@ TEST(EtchHashTableTest, get){
   status = h1->get(key2, &return_value);
   EXPECT_TRUE(status == ETCH_ENOT_EXIST);
 
-  EtchHashTable<char*, int, EtchHashNative<char*>, EtchComparatorNative<char*> >* h2 = new EtchHashTable<char*, int, EtchHashNative<char*>, EtchComparatorNative<char*> > ();
+  EtchHashTable<char*, int, EtchHashNative, EtchComparatorNative >* h2 = new EtchHashTable<char*, int, EtchHashNative, EtchComparatorNative > ();
   // add new key
   char* key1 = "key1";
   int value1 = 5;

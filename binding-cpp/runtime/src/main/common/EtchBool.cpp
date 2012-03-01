@@ -36,7 +36,7 @@ capu::bool_t EtchBool::get(){
   return mValue;
 }
 
-capu::bool_t EtchBool::equals(const EtchObject * other){
+capu::bool_t EtchBool::equals(const EtchObject * other) const{
   if (other == NULL)
     return false;
   else if (other->getObjectTypeId() != EtchBool::TYPE_ID)
@@ -45,7 +45,7 @@ capu::bool_t EtchBool::equals(const EtchObject * other){
   return (a->mValue == this->mValue);
 }
 
-capu::uint64_t EtchBool::getHashCode(){
+capu::uint64_t EtchBool::getHashCode() const{
   if (mValue)
     return 0;
   return 1;

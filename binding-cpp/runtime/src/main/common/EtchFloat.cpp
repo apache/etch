@@ -36,13 +36,13 @@ capu::float_t EtchFloat::get(){
   return mValue;
 }
 
-capu::uint64_t EtchFloat::getHashCode(){
+capu::uint64_t EtchFloat::getHashCode() const{
   capu::uint64_t result = 0;
   memcpy(&result, &mValue, sizeof(capu::float_t));
   return result;
 }
 
-capu::bool_t EtchFloat::equals(const EtchObject * other){
+capu::bool_t EtchFloat::equals(const EtchObject * other) const{
   if (other == NULL)
     return false;
   else if (other->getObjectTypeId() != EtchFloat::TYPE_ID)

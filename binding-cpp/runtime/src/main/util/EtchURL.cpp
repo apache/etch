@@ -315,9 +315,9 @@ void EtchURL::setScheme(EtchString& scheme) {
 status_t EtchURL::setScheme(EtchString* scheme) {
   if (scheme != NULL) {
     this->scheme.set(scheme->c_str());
-  } else {
-    return ETCH_EINVAL;
+    return ETCH_OK;
   }
+  return ETCH_EINVAL;
 }
 
 EtchString& EtchURL::getUser() {

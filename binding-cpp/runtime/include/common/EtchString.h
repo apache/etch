@@ -74,7 +74,7 @@ public:
    * Returns the amount of characters in the string.
    * @return amount of characters
    */
-  capu::int32_t length();
+  capu::int32_t length() const;
 
   /**
    * the substring is generated.
@@ -108,7 +108,12 @@ public:
    * @param other
    * @return true if this equals b, false otherwise. takes into account nulls.
    */
-  capu::bool_t equals(const EtchObject * other);
+  capu::bool_t equals(const EtchObject * other) const;
+
+  /**
+   * Returns c styled string.
+   */
+  const char* c_str() const;
 
   /**
    * Returns c styled string.
@@ -133,7 +138,7 @@ public:
   /**
    * Returns hash code
    */
-  capu::uint64_t getHashCode();
+  capu::uint64_t getHashCode() const;
 
 private:
 

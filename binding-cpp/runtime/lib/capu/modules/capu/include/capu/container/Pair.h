@@ -37,7 +37,7 @@ namespace capu {
 
         }
 
-        Pair(T1 _first, T2 _second)
+        Pair(const T1 _first, const T2 _second)
         : first(_first), second(_second) {
 
         }

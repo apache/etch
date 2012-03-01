@@ -36,13 +36,13 @@ capu::double_t EtchDouble::get(){
   return mValue;
 }
 
-capu::uint64_t EtchDouble::getHashCode(){
+capu::uint64_t EtchDouble::getHashCode() const{
    capu::uint64_t result = 0;
   memcpy(&result, &mValue, sizeof(capu::double_t));
   return result;
 }
 
-capu::bool_t EtchDouble::equals(const EtchObject * other){
+capu::bool_t EtchDouble::equals(const EtchObject * other) const{
   if (other == NULL)
     return false;
   else if (other->getObjectTypeId() != EtchDouble::TYPE_ID)

@@ -21,19 +21,16 @@
 #ifndef __ETCHCOMPARATORNATIVE_H__
 #define __ETCHCOMPARATORNATIVE_H__
 #include "capu/container/Comparator.h"
-#include "capu/util/Traits.h"
 
-template <class T>
 class EtchComparatorNative {
-private:
-  typedef typename capu::ReferenceType<T>::Type Reference;
-
 public:
-  
-  inline capu::bool_t operator() (const Reference first, const Reference second) {
-    capu::Comparator<T> c;
+ 
+  template <class T>
+  inline capu::bool_t operator() (const T &first, const T &second) {
+    capu::Comparator c;
     return c(first, second);
-  }
+  } 
+
 };
 
 #endif

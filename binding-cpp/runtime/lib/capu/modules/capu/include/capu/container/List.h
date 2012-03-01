@@ -21,15 +21,12 @@
 #include "capu/Error.h"
 #include "capu/Config.h"
 #include "capu/container/Comparator.h"
-#include "capu/util/Traits.h"
 
 namespace capu {
 
-  template <class T, class C = Comparator<T> >
+  template <class T, class C = Comparator >
   class List {
-  private:
-    typedef typename ReferenceType<T>::Type Reference;
-
+  
     class ListNode {
     public:
 
@@ -122,7 +119,7 @@ namespace capu {
      * @return CAPU_ENO_MEMORY if allocation of element is failed
      *         CAPU_OK if the element is successfully added
      */
-    status_t add(const Reference element);
+    status_t add(const T &element);
 
     /**
      * Add element to specified position
@@ -135,7 +132,7 @@ namespace capu {
      *         CAPU_OK if the element is successfully added
      *         CAPU_ERROR otherwise
      */
-    status_t add(int32_t index, const Reference element);
+    status_t add(int32_t index, const T &element);
 
     /**
      * Add element to specified position
@@ -146,7 +143,7 @@ namespace capu {
      * @return CAPU_ENO_MEMORY memory allocation failed.
      *         CAPU_OK otherwise
      */
-    status_t add(Iterator& iter, const Reference element);
+    status_t add(Iterator& iter, const T &element);
 
     /**
      * remove the element in the specified index and if the element_old
@@ -205,7 +202,7 @@ namespace capu {
      * @return -1 if the value either does not exist or given value is NULL
      *          otherwise index of value on linked list
      */
-    int32_t find(const Reference element);
+    int32_t find(const T &element);
 
     /**
      *
@@ -215,7 +212,7 @@ namespace capu {
      * @return CAPU_EINVAL if the index is not valid
      *         CAPU_OK otherwise
      */
-    status_t set(int32_t index, const Reference element, T* elementOld = NULL);
+    status_t set(int32_t index, const T &element, T* elementOld = NULL);
 
     /**
      * check that if the list contains the given parameter or not
@@ -224,7 +221,7 @@ namespace capu {
      * @return true list contains it
      *         false otherwise
      */
-    bool_t contains(const Reference element);
+    bool_t contains(const T &element);
 
     /**
      * removes all elements from linked list
@@ -266,7 +263,7 @@ namespace capu {
   }
 
   template <class T, class C>
-  int32_t List<T, C>::find(const Reference element) {
+  int32_t List<T, C>::find(const T &element) {
     int32_t counter = 0;
     ListNode * cursor = mHead;
     C comparator;
@@ -281,14 +278,14 @@ namespace capu {
   }
 
   template <class T, class C>
-  bool_t List<T, C>::contains(const Reference element) {
+  bool_t List<T, C>::contains(const T &element) {
     return (find(element) != -1);
   }
 
   //add elements to the end of list
 
   template <class T, class C>
-  status_t List<T, C>::add(const Reference element) {
+  status_t List<T, C>::add(const T &element) {
     ListNode *listElem = NULL;
     listElem = new ListNode(element);
     //NOT ALLOCATED
@@ -311,7 +308,7 @@ namespace capu {
   }
 
   template <class T, class C>
-  status_t List<T, C>::add(int32_t index, const Reference element) {
+  status_t List<T, C>::add(int32_t index, const T &element) {
     if ((index > mSize) || (index < 0)) {
       return CAPU_EINVAL;
     }
@@ -368,7 +365,7 @@ namespace capu {
   }
 
   template <class T, class C>
-  status_t List<T, C>::add(Iterator& iter, const Reference element) {
+  status_t List<T, C>::add(Iterator& iter, const T &element) {
     ListNode *listElem = new ListNode(element);
 
     //NOT ALLOCATED
@@ -501,7 +498,7 @@ namespace capu {
   }
 
   template <class T, class C>
-  status_t List<T, C>::set(int32_t index, const Reference element, T* elementOld) {
+  status_t List<T, C>::set(int32_t index, const T &element, T* elementOld) {
     if ((index < 0) || (index >= mSize))
       return CAPU_EINVAL;
 

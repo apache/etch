@@ -36,7 +36,7 @@ capu::int8_t EtchByte::get(){
   return mValue;
 }
 
-capu::bool_t EtchByte::equals(const EtchObject * other){
+capu::bool_t EtchByte::equals(const EtchObject * other) const{
   if (other == NULL)
     return false;
   else if (other->getObjectTypeId() != EtchByte::TYPE_ID)
@@ -45,7 +45,7 @@ capu::bool_t EtchByte::equals(const EtchObject * other){
   return (a->mValue == this->mValue);
 }
 
-capu::uint64_t EtchByte::getHashCode(){
+capu::uint64_t EtchByte::getHashCode() const{
   //For better distribution
   capu::uint64_t result = (capu::uint64_t) ((capu::int64_t) mValue + 128); 
   return result;

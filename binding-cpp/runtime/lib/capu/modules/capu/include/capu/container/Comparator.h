@@ -20,24 +20,21 @@
 #define __COMPARATOR_H__
 
 #include "capu/Config.h"
-#include "capu/util/Traits.h"
 
 namespace capu {
 
-    template <class T>
     class Comparator {
-    private:
-      typedef typename ReferenceType<T>::Type Reference;
-
+  
     public:
-
-        bool_t operator () (const Reference x, const Reference y) const {
+        template <class T>
+        bool_t operator () (const T &x, const T &y) const {
             return x == y;
         }
 
         bool_t operator () (const char* x, const char* y) const {
             return (strcmp(x,y) == 0);
         }
+
     };
 }
 

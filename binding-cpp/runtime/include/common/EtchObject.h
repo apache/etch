@@ -73,13 +73,13 @@ public:
   /**
    * Returns hash code
    */
-  virtual capu::uint64_t getHashCode();
+  virtual capu::uint64_t getHashCode() const;
 
   /**
    * @return true if two object is equal
    *         false otherwise
    */
-  virtual capu::bool_t equals(const EtchObject * other);
+  virtual capu::bool_t equals(const EtchObject * other) const;
 
 private:
 

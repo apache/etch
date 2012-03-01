@@ -22,7 +22,6 @@
 #include "common/EtchHash.h"
 #include "common/EtchComparator.h"
 #include "capu/container/HashSet.h"
-#include "capu/util/Traits.h"
 #include "common/EtchObject.h"
 
 
@@ -34,7 +33,6 @@ public:
   typedef typename capu::HashSet<T, C, H>::Iterator Iterator;
   static const capu::int32_t TYPE_ID = EOTID_SET;
 
-  typedef typename capu::ReferenceType<T>::Type Reference;
 
   /**
    * Default Constructor
@@ -61,7 +59,7 @@ public:
    *         ETCH_ERROR if value already exists in the set
    *
    */
-  inline status_t put(Reference value);
+  inline status_t put(const T &value);
 
   /**
    * Remove value associated with key in the hashset.
@@ -72,7 +70,7 @@ public:
    *         ETCH_ERANGE if specified value does not exist in hashset
    *
    */
-  inline status_t remove(Reference value);
+  inline status_t remove(const T &value);
 
   /**
    * Returns count of the hashset.
@@ -127,12 +125,12 @@ inline capu::uint64_t EtchHashSet<T, H, C>::count() {
 }
 
 template <class T, class H, class C>
-inline status_t EtchHashSet<T, H, C>::put(Reference value) {
+inline status_t EtchHashSet<T, H, C>::put(const T &value) {
   return mHashSet.put(value);
 }
 
 template <class T, class H, class C>
-inline status_t EtchHashSet<T, H, C>::remove(Reference value) {
+inline status_t EtchHashSet<T, H, C>::remove(const T &value) {
   return mHashSet.remove(value);
 }
 

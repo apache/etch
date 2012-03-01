@@ -16,32 +16,33 @@
  * limitations under the License.
  */
 
-#ifndef __ETCHHASHNATIVE_H__
-#define __ETCHHASHNATIVE_H__
-#include "common/EtchConfig.h"
-#include "capu/container/HashTable.h"
-#include "capu/util/Traits.h"
+#include "util/EtchResources.h"
 
+EtchResources::EtchResources() {
 
-class EtchHashNative {
-public:
+}
 
-  template<class T>
-  static capu::uint64_t Digest(T &key) {
-    return capu::Hash::Digest<T>(key);
-  }
+EtchResources::~EtchResources() {
 
-  static capu::uint64_t Digest(char* key) {
-    return capu::Hash::Digest(key);
-  }
+}
 
-  static capu::uint64_t Digest(const char* key) {
-    return capu::Hash::Digest(key);
-  }
+capu::bool_t EtchResources::containsKey(const EtchString& key) {
+  EtchObject* ptr = NULL;
+  if (res.get(key, &ptr) == ETCH_OK)
+    return true;
+  else
+    return false;
+}
 
- 
+status_t EtchResources::get(const EtchString& key, EtchObject** result) {
+  return res.get(key, result);
+}
 
-};
+status_t EtchResources::put(const EtchString& key, EtchObject* value, EtchObject** result) {
+  return res.put(key, value, result);
+}
 
-#endif
+status_t EtchResources::remove(const EtchString& key, EtchObject** result) {
 
+  return res.remove(key, result);
+}

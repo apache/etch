@@ -28,7 +28,7 @@ TEST(EtchHashSet, Constructor_Default){
   EtchHashSet<EtchString>* set = new EtchHashSet<EtchString > ();
   delete set;
 
-  EtchHashSet<char*, EtchHashNative<char*>, EtchComparatorNative<char*> >* set2 = new EtchHashSet<char*, EtchHashNative<char*>, EtchComparatorNative<char*> > ();
+  EtchHashSet<char*, EtchHashNative, EtchComparatorNative >* set2 = new EtchHashSet<char*, EtchHashNative, EtchComparatorNative > ();
   delete set2;
 }
 
@@ -51,7 +51,7 @@ TEST(EtchHashSet, put){
   status = h1->put(value2);
   EXPECT_TRUE(status == ETCH_ERROR);
 
-  EtchHashSet<char*, EtchHashNative<char*>, EtchComparatorNative<char*> >* h2 = new EtchHashSet<char*, EtchHashNative<char*>, EtchComparatorNative<char*> > ();
+  EtchHashSet<char*, EtchHashNative, EtchComparatorNative >* h2 = new EtchHashSet<char*, EtchHashNative, EtchComparatorNative > ();
 
   // add new key
   char* value3 = "val1";

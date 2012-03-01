@@ -24,15 +24,11 @@
 #include "common/EtchHash.h"
 #include "common/EtchComparator.h"
 #include "capu/container/HashTable.h"
-#include "capu/util/Traits.h"
 
 template <class Key, class T, class H = EtchHash, class C = EtchComparator<Key> >
 class EtchHashTable : public EtchObject {
 
 private:
-  typedef typename capu::ReferenceType<T>::Type ReferenceValue;
-  typedef typename capu::ReferenceType<Key>::Type ReferenceKey;
-
   capu::HashTable<Key, T, C, H> mHashTable;
 
 public:
@@ -65,7 +61,7 @@ public:
    *         ETCH_EINVAL if value_old is null
    *
    */
-  inline status_t put(ReferenceKey key, ReferenceValue value, T* value_old = NULL);
+  inline status_t put(const Key &key, T value, T* value_old = NULL);
 
   /**
    * Get value associated with key in the EtchHashTable.
@@ -77,7 +73,7 @@ public:
    *         ETCH_ENOT_EXIST if there is no existing pair with specified key
    *
    */
-  inline status_t get(ReferenceKey key, T* value);
+  inline status_t get(const Key &key, T* value);
 
   /**
    * Remove value associated with key in the EtchHashTable.
@@ -90,7 +86,7 @@ public:
    *         ETCH_ERANGE if the pair with specified key does not exist in hash table
    *
    */
-  inline status_t remove(ReferenceKey key, T* value_old);
+  inline status_t remove(const Key &key, T* value_old);
 
   /**
    * Returns count of the EtchHashTable.
@@ -131,17 +127,17 @@ inline EtchHashTable<Key, T, H, C>::~EtchHashTable() {
 }
 
 template <class Key, class T, class H, class C>
-inline status_t EtchHashTable<Key, T, H, C>::put(ReferenceKey key, ReferenceValue value, T* value_old) {
+inline status_t EtchHashTable<Key, T, H, C>::put(const Key &key, T value, T* value_old) {
   return mHashTable.put(key, value, value_old);
 }
 
 template <class Key, class T, class H, class C>
-inline status_t EtchHashTable<Key, T, H, C>::get(ReferenceKey key, T* value) {
+inline status_t EtchHashTable<Key, T, H, C>::get(const Key &key, T* value) {
   return mHashTable.get(key, value);
 }
 
 template <class Key, class T, class H, class C>
-inline status_t EtchHashTable<Key, T, H, C>::remove(ReferenceKey key, T* value_old) {
+inline status_t EtchHashTable<Key, T, H, C>::remove(const Key &key, T* value_old) {
   return mHashTable.remove(key, value_old);
 }
 

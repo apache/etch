@@ -91,15 +91,22 @@ void EtchString::set(const char* string) {
   }
 }
 
-capu::int32_t EtchString::length() {
+capu::int32_t EtchString::length() const {
   return strlen(mData);
+}
+
+const char* EtchString::c_str() const{
+  capu::int32_t len = strlen(mData);
+  char* tmp = new char[len + 1];
+  etch_strcpy_s(tmp, len + 1, mData);
+  return tmp;
 }
 
 const char* EtchString::c_str() {
   return mData;
 }
 
-capu::bool_t EtchString::equals(const EtchObject* other) {
+capu::bool_t EtchString::equals(const EtchObject* other) const{
   if (other == NULL)
     return false;
   else if (other->getObjectTypeId() != EtchString::TYPE_ID)
@@ -141,7 +148,7 @@ status_t EtchString::substring(capu::uint32_t start, capu::uint32_t length, Etch
   }
 }
 
-capu::uint64_t EtchString::getHashCode() {
+capu::uint64_t EtchString::getHashCode() const{
   capu::uint64_t result = 0;
   capu::uint32_t len = strlen(mData);
   for (capu::uint32_t i = 0; i < len; i++) {

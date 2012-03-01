@@ -24,16 +24,12 @@
 #include "capu/container/List.h"
 #include "capu/container/Pair.h"
 #include "capu/container/Hash.h"
-#include "capu/util/Traits.h"
 
 namespace capu {
 
-  template <class Key, class T, class C = Comparator<Key>, class Hash = Hash<Key> >
+  template <class Key, class T, class C = Comparator, class Hash = Hash >
   class HashTable {
   private:
-
-    typedef typename ReferenceType<T>::Type ReferenceValue;
-    typedef typename ReferenceType<Key>::Type ReferenceKey;
 
     class HashTableIterator {
     public:
@@ -104,7 +100,7 @@ namespace capu {
      *         CAPU_EINVAL if value_old is null
      *
      */
-    status_t put(ReferenceKey key, ReferenceValue value, T* value_old = NULL);
+    status_t put(const Key &key, T &value, T* value_old = NULL);
 
     /**
      * Get value associated with key in the hashtable.
@@ -115,7 +111,7 @@ namespace capu {
      *         CAPU_EINVAL if value is null
      *         CAPU_ENOT_EXIST if there is no pair with specified key
      */
-    status_t get(ReferenceKey key, T* value);
+    status_t get(const Key &key, T* value);
 
     /**
      * Remove value associated with key in the hashtable.
@@ -128,7 +124,7 @@ namespace capu {
      *         CAPU_ERANGE if the pair with specified key does not exist in hash table
      *
      */
-    status_t remove(ReferenceKey key, T* value_old);
+    status_t remove(const Key &key, T* value_old);
 
     /**
      * Returns count of the hashtable.
@@ -159,7 +155,7 @@ namespace capu {
      * @return -1 if the key is unique
      *          otherwise the index in the linked list
      */
-    int32_t getKeyIndexFromBucket(uint64_t index, Key &k) {
+    int32_t getKeyIndexFromBucket(uint64_t index, const Key &k) {
       int32_t count = 0;
       typename List<Pair<Key, T> >::Iterator it = mLists[index].begin();
       Pair<Key, T> pair;
@@ -175,7 +171,7 @@ namespace capu {
       return -1;
     }
 
-    List<Pair<Key, T>, Comparator<Pair<Key, T> > > *mLists;
+    List<Pair<Key, T>, Comparator > *mLists;
     uint64_t mSize;
     uint64_t mCount;
 
@@ -185,7 +181,7 @@ namespace capu {
   HashTable<Key, T, C, Hash>::HashTable()
   : mSize(DEFAULT_HASH_TABLE_SIZE)
   , mCount(0) {
-    mLists = new List<Pair<Key, T>, Comparator<Pair<Key, T> > >[(uint32_t) mSize];
+    mLists = new List<Pair<Key, T>, Comparator >[(uint32_t) mSize];
   }
 
   template <class Key, class T, class C, class Hash>
@@ -196,7 +192,7 @@ namespace capu {
     } else {
       mSize = size;
     }
-    mLists = new List<Pair<Key, T>, Comparator<Pair<Key, T> > >[(uint32_t) mSize];
+    mLists = new List<Pair<Key, T>, Comparator >[(uint32_t) mSize];
   }
 
   template <class Key, class T, class C, class Hash>
@@ -205,7 +201,7 @@ namespace capu {
   }
 
   template <class Key, class T, class C, class Hash>
-  status_t HashTable<Key, T, C, Hash>::put(ReferenceKey key, ReferenceValue value, T* value_old) {
+  status_t HashTable<Key, T, C, Hash>::put(const Key &key, T &value, T* value_old) {
     status_t result;
     uint64_t index = Hash::Digest(key) % mSize;
     if (mLists[index].isEmpty()) {
@@ -249,7 +245,7 @@ namespace capu {
   }
 
   template <class Key, class T, class C, class Hash>
-  status_t HashTable<Key, T, C, Hash>::get(ReferenceKey key, T* value) {
+  status_t HashTable<Key, T, C, Hash>::get(const Key &key, T* value) {
     if (value == NULL)
       return CAPU_EINVAL;
 
@@ -272,7 +268,7 @@ namespace capu {
   }
 
   template <class Key, class T, class C, class Hash>
-  status_t HashTable<Key, T, C, Hash>::remove(ReferenceKey key, T* value_old) {
+  status_t HashTable<Key, T, C, Hash>::remove(const Key &key, T* value_old) {
     if (value_old == NULL) {
       return CAPU_EINVAL;
     }

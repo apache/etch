@@ -36,11 +36,11 @@ capu::int32_t EtchInt32::get(){
   return mValue;
 }
 
-capu::uint64_t EtchInt32::getHashCode(){
+capu::uint64_t EtchInt32::getHashCode() const{
   return static_cast <capu::uint64_t> (mValue);
 }
 
-capu::bool_t EtchInt32::equals(const EtchObject * other){
+capu::bool_t EtchInt32::equals(const EtchObject * other) const{
   if (other == NULL)
     return false;
   else if (other->getObjectTypeId() != EtchInt32::TYPE_ID)

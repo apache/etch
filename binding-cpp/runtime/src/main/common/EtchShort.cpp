@@ -36,13 +36,13 @@ capu::int16_t EtchShort::get(){
   return mValue;
 }
 
-capu::uint64_t EtchShort::getHashCode(){
+capu::uint64_t EtchShort::getHashCode() const{
   //for better distribution
   capu::uint64_t result = (capu::uint64_t) ((capu::int64_t) mValue + 32768);
   return result;
 }
 
-capu::bool_t EtchShort::equals(const EtchObject * other){
+capu::bool_t EtchShort::equals(const EtchObject * other) const{
   if (other == NULL)
     return false;
   else if (other->getObjectTypeId() != EtchShort::TYPE_ID)

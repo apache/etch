@@ -22,13 +22,10 @@
 #include "common/EtchObject.h"
 #include "common/EtchComparator.h"
 #include "capu/container/List.h"
-#include "capu/util/Traits.h"
 
 template <class T, class C = EtchComparator<T> >
 class EtchList : public EtchObject {
 private:
-  typedef typename capu::ReferenceType<T>::Type Reference;
-
   capu::List<T, C> mList;
 
 public:
@@ -52,7 +49,7 @@ public:
    * @return ETCH_ENO_MEMORY if allocation of element is failed
    *         ETCH_OK if the element is successfully added
    */
-  status_t add(const Reference element);
+  status_t add(const T &element);
 
   /**
    * It will insert new element to specified position only the element at specified index with given element
@@ -65,7 +62,7 @@ public:
    *         ETCH_OK if the element is successfully added
    *         ETCH_ERROR otherwise
    */
-  status_t add(capu::int32_t index, const Reference element);
+  status_t add(capu::int32_t index, const T &element);
 
   /**
    * remove the element in the specified index and if the element_old
@@ -113,7 +110,7 @@ public:
    * @return -1 if the value either does not exist or given value is NULL
    *          otherwise index of value on linked list
    */
-  capu::int32_t find(const Reference element);
+  capu::int32_t find(const T &element);
 
   /**
    *
@@ -123,7 +120,7 @@ public:
    * @return ETCH_EINVAL if the index is not valid
    *         ETCH_OK otherwise
    */
-  status_t set(capu::int32_t index, const Reference element, T* elementOld = NULL);
+  status_t set(capu::int32_t index, const T &element, T* elementOld = NULL);
 
   /**
    * check that if the list contains the given parameter or not
@@ -132,7 +129,7 @@ public:
    * @return true list contains it
    *         false otherwise
    */
-  capu::bool_t contains(const Reference element);
+  capu::bool_t contains(const T &element);
 
   /**
    * removes all elements from linked list
@@ -156,12 +153,12 @@ EtchList<T, C>::~EtchList() {
 }
 
 template<class T, class C>
-status_t EtchList<T, C>::add(const Reference element) {
+status_t EtchList<T, C>::add(const T &element) {
   return mList.add(element);
 }
 
 template<class T, class C>
-status_t EtchList<T, C>::add(capu::int32_t index, const Reference element) {
+status_t EtchList<T, C>::add(capu::int32_t index, const T &element) {
   return mList.add(index, element);
 }
 
@@ -176,12 +173,12 @@ status_t EtchList<T, C>::clear() {
 }
 
 template<class T, class C>
-capu::bool_t EtchList<T, C>::contains(const Reference element) {
+capu::bool_t EtchList<T, C>::contains(const T &element) {
   return mList.contains(element);
 }
 
 template<class T, class C>
-capu::int32_t EtchList<T, C>::find(const Reference element) {
+capu::int32_t EtchList<T, C>::find(const T &element) {
   return mList.find(element);
 }
 
@@ -206,7 +203,7 @@ capu::int32_t EtchList<T, C>::size() {
 }
 
 template<class T, class C>
-capu::int32_t EtchList<T, C>::set(capu::int32_t index, const Reference element, T* elementOld) {
+capu::int32_t EtchList<T, C>::set(capu::int32_t index, const T &element, T* elementOld) {
   return mList.set(index, element, elementOld);
 }
 #endif /* ETCHDOUBLELINKEDLIST_H */
