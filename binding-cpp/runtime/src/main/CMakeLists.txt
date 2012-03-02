@@ -46,6 +46,12 @@ SET(MAIN_INCLUDES
     ${PROJECT_SOURCE_DIR}/include/util/EtchURL.h
     ${PROJECT_SOURCE_DIR}/include/util/EtchResources.h
     ${PROJECT_SOURCE_DIR}/include/transport/EtchFlexBuffer.h
+    ${PROJECT_SOURCE_DIR}/include/transport/EtchSession.h
+    ${PROJECT_SOURCE_DIR}/include/transport/EtchSessionData.h
+    ${PROJECT_SOURCE_DIR}/include/transport/EtchSessionListener.h
+    ${PROJECT_SOURCE_DIR}/include/transport/EtchSessionMessage.h
+    ${PROJECT_SOURCE_DIR}/include/transport/EtchSessionPacket.h
+    ${PROJECT_SOURCE_DIR}/include/transport/EtchWho.h
     ${PROJECT_SOURCE_DIR}/include/util/EtchUtil.h
     )
 
@@ -66,6 +72,7 @@ SET(MAIN_SOURCES
     util/EtchURL.cpp
     util/EtchResources.cpp
     transport/EtchFlexBuffer.cpp
+    transport/EtchSession.cpp
     util/EtchUtil.cpp
     )
 
