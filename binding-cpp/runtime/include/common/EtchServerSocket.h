@@ -29,7 +29,7 @@ public:
   /**
    * TypeID
    */
-  static const EtchObjectType TYPE_ID;
+  static const EtchObjectType TYPE;
 
   /**
    * Default Constructor
