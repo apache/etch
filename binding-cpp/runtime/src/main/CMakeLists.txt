@@ -52,6 +52,10 @@ SET(MAIN_INCLUDES
     ${PROJECT_SOURCE_DIR}/include/transport/EtchSessionMessage.h
     ${PROJECT_SOURCE_DIR}/include/transport/EtchSessionPacket.h
     ${PROJECT_SOURCE_DIR}/include/transport/EtchWho.h
+    ${PROJECT_SOURCE_DIR}/include/transport/EtchTransport.h
+    ${PROJECT_SOURCE_DIR}/include/transport/EtchTransportData.h
+    ${PROJECT_SOURCE_DIR}/include/transport/EtchTransportMessage.h
+    ${PROJECT_SOURCE_DIR}/include/transport/EtchTransportPacket.h
     ${PROJECT_SOURCE_DIR}/include/util/EtchUtil.h
     )
 
