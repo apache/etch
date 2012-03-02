@@ -45,6 +45,7 @@ SET(MAIN_INCLUDES
     ${PROJECT_SOURCE_DIR}/include/common/EtchServerSocket.h
     ${PROJECT_SOURCE_DIR}/include/util/EtchURL.h
     ${PROJECT_SOURCE_DIR}/include/util/EtchResources.h
+    ${PROJECT_SOURCE_DIR}/include/transport/EtchFlexBuffer.h
     ${PROJECT_SOURCE_DIR}/include/util/EtchUtil.h
     )
 
@@ -64,6 +65,7 @@ SET(MAIN_SOURCES
     common/EtchServerSocket.cpp
     util/EtchURL.cpp
     util/EtchResources.cpp
+    transport/EtchFlexBuffer.cpp
     util/EtchUtil.cpp
     )
 
