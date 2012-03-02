@@ -97,13 +97,6 @@ capu::int32_t EtchString::length() const {
 }
 
 const char* EtchString::c_str() const{
-  capu::int32_t len = strlen(mData);
-  char* tmp = new char[len + 1];
-  etch_strcpy_s(tmp, len + 1, mData);
-  return tmp;
-}
-
-const char* EtchString::c_str() {
   return mData;
 }
 

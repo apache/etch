@@ -19,6 +19,8 @@
 include_directories (${PROJECT_SOURCE_DIR}/include)
 include_directories (${GTEST})
 include_directories (${GTEST}/include)
+include_directories (${GMOCK})
+include_directories (${GMOCK}/include)
 include_directories (${CAPU}/include/capu)
 
 
@@ -43,8 +45,11 @@ add_executable (etch-cpp-test
     util/EtchURLTest.cpp
     util/EtchResourcesTest.cpp
     transport/EtchFlexBufferTest.cpp
+    transport/EtchTcpConnectionTest.cpp
+    transport/EtchTcpListenerTest.cpp
     util/EtchUtilTest.cpp
     ${GTEST}/src/gtest-all.cc
+    ${GMOCK}/src/gmock-all.cc
     main.cpp
 )
 

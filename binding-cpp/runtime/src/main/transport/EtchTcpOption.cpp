@@ -1,0 +1,129 @@
+/* $Id$
+ *
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements. See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to you under the Apache License, Version
+ * 2.0 (the "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+#include "transport/EtchTcpOption.h"
+
+const EtchString EtchTcpOption::BUFFER_SIZE("TcpTransport.bufferSize");
+
+const EtchString EtchTcpOption::KEEP_ALIVE("TcpTransport.keepAlive");
+
+const EtchString EtchTcpOption::LINGER_TIME("TcpTransport.lingerTime");
+
+const EtchString EtchTcpOption::NO_DELAY("TcpTransport.noDelay");
+
+const EtchString EtchTcpOption::RECONNECT_DELAY("TcpTransport.reconnectDelay");
+
+EtchTcpOption::EtchTcpOption(EtchURL *url)
+: mBufferSize(0), mLingerTime(30), mReconnectDelay(10), mKeepAlive(0), mNoDelay(1) {
+  EtchString result;
+  if (url->getTerms().get((EtchString&) BUFFER_SIZE, &result) != ETCH_ENOT_EXIST) {
+    const char * str = result.c_str();
+
+    if (str != NULL) {
+      capu::int32_t len = capu::StringUtils::Strlen(str);
+      if (isValidNumber(str, len))
+        mBufferSize = atoi(str);
+      str = NULL;
+    }
+  }
+
+  if (url->getTerms().get((EtchString&) KEEP_ALIVE, &result) != ETCH_ENOT_EXIST) {
+    const char * str = result.c_str();
+    if (str != NULL) {
+      capu::int32_t len = capu::StringUtils::Strlen(str);
+      if (isValidNumber(str, len))
+        mKeepAlive = atoi(str);
+      str = NULL;
+    }
+  }
+
+  if (url->getTerms().get((EtchString&) LINGER_TIME, &result) != ETCH_ENOT_EXIST) {
+    const char * str = result.c_str();
+    if (str != NULL) {
+      capu::int32_t len = capu::StringUtils::Strlen(str);
+      //check if the string contains only digits
+      if (isValidNumber(str, len))
+        mLingerTime = atoi(str);
+    }
+  }
+
+  if (url->getTerms().get((EtchString&) NO_DELAY, &result) != ETCH_ENOT_EXIST) {
+    const char * str = result.c_str();
+    if (str != NULL) {
+
+      capu::int32_t len = capu::StringUtils::Strlen(str);
+
+      if (isValidNumber(str, len))
+        mNoDelay = atoi(str);
+      delete[] str;
+    }
+  }
+
+  if (url->getTerms().get((EtchString&) RECONNECT_DELAY, &result) != ETCH_ENOT_EXIST) {
+    const char * str = result.c_str();
+    if (str != NULL) {
+      //check if the string contains only digits
+      capu::int32_t len = capu::StringUtils::Strlen(str);
+
+      if (isValidNumber(str, len))
+        mReconnectDelay = atoi(str);
+      str = NULL;
+    }
+  }
+
+  if (checkBufferSize(mBufferSize) == false)
+    mBufferSize = 0;
+
+  if (checkLingerTime(mLingerTime) == false)
+    mLingerTime = 30;
+
+  if (checkReconnectDelay(mReconnectDelay) == false)
+    mReconnectDelay = 10;
+}
+
+EtchTcpOption::~EtchTcpOption() {
+
+}
+
+capu::bool_t EtchTcpOption::checkBufferSize(capu::int32_t size) {
+  if ((size < 0) || (size > 65536))
+    return false;
+  return true;
+}
+
+capu::bool_t EtchTcpOption::checkLingerTime(capu::int32_t lingertime) {
+  if ((lingertime <= -1) || (lingertime > 240))
+    return false;
+  return true;
+}
+
+capu::bool_t EtchTcpOption::checkReconnectDelay(capu::int32_t delay) {
+
+  if (delay < 0)
+    return false;
+  return true;
+}
+
+capu::bool_t EtchTcpOption::isValidNumber(const char * str, capu::int32_t len) {
+  for (capu::int32_t i = 0; i < len; i++) {
+    if ((str[i] > 57) || (str[i] < 48)) {
+      return false;
+    }
+  }
+  return true;
+}

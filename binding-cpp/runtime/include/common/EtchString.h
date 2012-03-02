@@ -116,11 +116,6 @@ public:
   const char* c_str() const;
 
   /**
-   * Returns c styled string.
-   */
-  const char* c_str();
-
-  /**
    * Assignment operator overloading
    */
   EtchString& operator=(const EtchString &str);
