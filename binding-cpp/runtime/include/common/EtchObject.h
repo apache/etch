@@ -23,7 +23,6 @@
 #include "EtchObjectType.h"
 
 class EtchObject {
-
 public:
 
   /**

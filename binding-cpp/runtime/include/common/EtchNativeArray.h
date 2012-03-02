@@ -35,18 +35,23 @@ public:
   /**
    * Constructs a EtchNativeArray object.
    */
-  EtchNativeArray(capu::int32_t length);
+  EtchNativeArray(capu::int32_t length, const EtchObjectType* content_type_id);
 
   /**
    * Constructs a EtchNativeArray object.
    */
-  EtchNativeArray(capu::int32_t length, T* array);
+  EtchNativeArray(capu::int32_t length, T* array, const EtchObjectType* content_type_id);
 
   /**
    * Destructor for Etch Nativearray.
    * Frees array if content_owned was set.
    */
   virtual ~EtchNativeArray();
+
+  /**
+   * returns the TypeID of the content of this native array.
+   */
+  const EtchObjectType* getContentType();
 
   /**
    * gets the EtchObject at index i in result
@@ -100,32 +105,49 @@ public:
    * Returns the pointer to the beginning of array
    */
   T* getArray();
+  /**
+   * set the content type id will be deleted or not
+   */
+  void setDeleteMode(capu::bool_t isDelete);
 
 private:
   T* mArray;
+  capu::bool_t mIsDeleteContentType;
   capu::int32_t mLength;
+  const EtchObjectType* mContentType;
 };
 
 template<class T>
 const EtchObjectType EtchNativeArray<T>::TYPE(EOTID_NATIVE_ARRAY, EtchObjectType::getType<T>());
 
 template<class T>
-EtchNativeArray<T>::EtchNativeArray(capu::int32_t length)
-: EtchObject(&EtchNativeArray::TYPE),
+EtchNativeArray<T>::EtchNativeArray(capu::int32_t length, const EtchObjectType* content_type_id)
+: EtchObject(&EtchNativeArray::TYPE), mIsDeleteContentType(false),
 mLength(length) {
   mArray = new T[length];
+  mContentType = content_type_id;
 }
 
 template<class T>
-EtchNativeArray<T>::EtchNativeArray(capu::int32_t length, T* array)
-: EtchObject(&EtchNativeArray::TYPE), mArray(array),
+EtchNativeArray<T>::EtchNativeArray(capu::int32_t length, T* array, const EtchObjectType* content_type_id)
+: EtchObject(&EtchNativeArray::TYPE), mArray(array), mIsDeleteContentType(false),
 mLength(length) {
-
+  mContentType = content_type_id;
 }
 
 template<class T>
 EtchNativeArray<T>::~EtchNativeArray() {
   delete[] mArray;
+
+  if (mIsDeleteContentType && (mContentType != NULL)) {
+    const EtchObjectType * content = mContentType->getObjectComponentType();
+    while (content) {
+      const EtchObjectType * tmp = content;
+      content = content->getObjectComponentType();
+      delete tmp;
+    }
+    delete mContentType;
+  }
 }
 
 template<class T>
@@ -138,12 +160,17 @@ status_t EtchNativeArray<T>::set(capu::int32_t index, T value) {
 }
 
 template<class T>
-T* EtchNativeArray<T>::getArray() {
+const EtchObjectType * EtchNativeArray<T>::getContentType() {
+  return mContentType;
+}
+
+template<class T >
+T * EtchNativeArray<T>::getArray() {
   return mArray;
 }
 
-template<class T>
-status_t EtchNativeArray<T>::get(capu::int32_t index, T* result) {
+template<class T >
+status_t EtchNativeArray<T>::get(capu::int32_t index, T * result) {
   if (result == NULL) {
     return ETCH_EINVAL;
   } else if (0 <= index && index < mLength) {
@@ -153,7 +180,7 @@ status_t EtchNativeArray<T>::get(capu::int32_t index, T* result) {
   return ETCH_ERANGE;
 }
 
-template<class T>
+template<class T >
 status_t EtchNativeArray<T>::set(capu::int32_t index, T* buffer, capu::int32_t buffer_size, capu::int32_t offset, capu::int32_t count) {
   if (buffer == NULL) {
     return ETCH_EINVAL;
@@ -168,7 +195,7 @@ status_t EtchNativeArray<T>::set(capu::int32_t index, T* buffer, capu::int32_t b
   return ETCH_ERANGE;
 }
 
-template<class T>
+template<class T >
 status_t EtchNativeArray<T>::get(capu::int32_t index, T* buffer, capu::int32_t buffer_size, capu::int32_t offset, capu::int32_t count) {
   if (buffer == NULL) {
     return ETCH_EINVAL;
@@ -184,8 +211,13 @@ status_t EtchNativeArray<T>::get(capu::int32_t index, T* buffer, capu::int32_t b
   return ETCH_ERANGE;
 }
 
-template<class T>
+template<class T >
 capu::int32_t EtchNativeArray<T>::getLength() {
   return mLength;
+}
+
+template<class T>
+void EtchNativeArray<T>::setDeleteMode(capu::bool_t isDelete) {
+  mIsDeleteContentType = isDelete;
 }
 #endif //__ETCHNATIVEARRAY_H__
