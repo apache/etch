@@ -20,8 +20,10 @@
 #include "capu/util/SmartPointer.h"
 #include "common/EtchSocket.h"
 
+const EtchObjectType EtchServerSocket::TYPE_ID(EOTID_SERVER_SOCKET, NULL);
+
 EtchServerSocket::EtchServerSocket()
-: EtchObject(EtchServerSocket::TYPE_ID) {
+: EtchObject(&EtchServerSocket::TYPE_ID) {
 
 }
 

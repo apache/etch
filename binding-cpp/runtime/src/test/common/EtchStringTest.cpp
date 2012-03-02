@@ -23,14 +23,14 @@
 
 TEST(EtchStringTest, Constructor_Default) {
   EtchString* s1 = new EtchString();
-  EXPECT_TRUE(s1->getObjectTypeId() == EtchString::TYPE_ID);
+  EXPECT_TRUE(s1->getObjectType()->equals(&EtchString::TYPE));
   EXPECT_TRUE(s1->c_str() == NULL);
   delete s1;
 }
 
 TEST(EtchStringTest, Constructor_Char) {
   EtchString* s1 = new EtchString("test");
-  EXPECT_TRUE(s1->getObjectTypeId() == EtchString::TYPE_ID);
+  EXPECT_TRUE(s1->getObjectType()->equals(&EtchString::TYPE));
   EXPECT_TRUE(s1->c_str() != NULL);
   EXPECT_TRUE(strcmp(s1->c_str(), "test") == 0);
   delete s1;

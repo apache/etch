@@ -23,14 +23,14 @@
 
 TEST(EtchLongTest, Constructor_Default){
   EtchLong* i1 = new EtchLong();
-  EXPECT_TRUE(i1->getObjectTypeId() == EtchLong::TYPE_ID);
+  EXPECT_TRUE(i1->getObjectType()->equals(&EtchLong::TYPE));
   EXPECT_TRUE(i1->get() == 0);
   delete i1;
 }
 
 TEST(EtchLongTest, Constructor_Long){
   EtchLong* i1 = new EtchLong(42);
-  EXPECT_TRUE(i1->getObjectTypeId() == EtchLong::TYPE_ID);
+  EXPECT_TRUE(i1->getObjectType()->equals(&EtchLong::TYPE));
   EXPECT_TRUE(i1->get() == 42);
   delete i1;
 }

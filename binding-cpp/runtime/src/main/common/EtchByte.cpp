@@ -18,13 +18,15 @@
 
 #include "common/EtchByte.h"
 
+const EtchObjectType EtchByte::TYPE(EOTID_BYTE, NULL);
+
 EtchByte::EtchByte()
-: EtchObject(EtchByte::TYPE_ID)
+: EtchObject(&EtchByte::TYPE)
 , mValue(0){
 }
 
 EtchByte::EtchByte(capu::int8_t value)
-: EtchObject(EtchByte::TYPE_ID)
+: EtchObject(&EtchByte::TYPE)
 , mValue(value){
 }
 
@@ -39,7 +41,7 @@ capu::int8_t EtchByte::get(){
 capu::bool_t EtchByte::equals(const EtchObject * other) const{
   if (other == NULL)
     return false;
-  else if (other->getObjectTypeId() != EtchByte::TYPE_ID)
+  else if (!other->getObjectType()->equals(&EtchByte::TYPE))
     return false;
   EtchByte * a = (EtchByte*) other;
   return (a->mValue == this->mValue);

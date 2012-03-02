@@ -18,13 +18,15 @@
 
 #include "common/EtchLong.h"
 
+const EtchObjectType EtchLong::TYPE(EOTID_LONG, NULL);
+
 EtchLong::EtchLong()
-: EtchObject(EtchLong::TYPE_ID)
+: EtchObject(&EtchLong::TYPE)
 , mValue(0){
 }
 
 EtchLong::EtchLong(capu::int64_t value)
-: EtchObject(EtchLong::TYPE_ID)
+: EtchObject(&EtchLong::TYPE)
 , mValue(value){
 }
 
@@ -43,7 +45,7 @@ capu::uint64_t EtchLong::getHashCode() const{
 capu::bool_t EtchLong::equals(const EtchObject * other) const{
   if (other == NULL)
     return false;
-  else if (other->getObjectTypeId() != EtchLong::TYPE_ID)
+  else if (!other->getObjectType()->equals(&EtchLong::TYPE))
     return false;
   EtchLong * a = (EtchLong*) other;
   return (a->mValue == this->mValue);

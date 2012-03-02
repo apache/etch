@@ -28,7 +28,7 @@ public:
   /**
    * TypeID
    */
-  static const capu::int32_t TYPE_ID = EOTID_SOCKET;
+  static const EtchObjectType TYPE;
 
   /**
    * Default Constructor

@@ -33,7 +33,7 @@ public:
   /**
    * TypeId for EtchString.
    */
-  static const capu::int32_t TYPE_ID = EOTID_STRING;
+  static const EtchObjectType TYPE;
 
   /**
    * Constructs the String.

@@ -30,7 +30,7 @@ public:
   /**
    * TypeId for EtchShort.
    */
-  static const capu::int32_t TYPE_ID = EOTID_SHORT;
+  static const EtchObjectType TYPE;
 
   /**
    * Constructs a EtchShort object.

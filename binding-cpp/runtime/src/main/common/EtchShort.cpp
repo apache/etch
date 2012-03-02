@@ -18,13 +18,15 @@
 
 #include "common/EtchShort.h"
 
+const EtchObjectType EtchShort::TYPE(EOTID_SHORT, NULL);
+
 EtchShort::EtchShort()
-: EtchObject(EtchShort::TYPE_ID)
+: EtchObject(&EtchShort::TYPE)
 , mValue(0){
 }
 
 EtchShort::EtchShort(capu::int16_t value)
-: EtchObject(EtchShort::TYPE_ID)
+: EtchObject(&EtchShort::TYPE)
 , mValue(value){
 }
 
@@ -45,7 +47,7 @@ capu::uint64_t EtchShort::getHashCode() const{
 capu::bool_t EtchShort::equals(const EtchObject * other) const{
   if (other == NULL)
     return false;
-  else if (other->getObjectTypeId() != EtchShort::TYPE_ID)
+  else if (!other->getObjectType()->equals(&EtchShort::TYPE))
     return false;
   EtchShort * a = (EtchShort*) other;
   return (a->mValue == this->mValue);

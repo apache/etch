@@ -18,13 +18,15 @@
 
 #include "common/EtchDouble.h"
 
+const EtchObjectType EtchDouble::TYPE(EOTID_DOUBLE, NULL);
+
 EtchDouble::EtchDouble()
-: EtchObject(EtchDouble::TYPE_ID)
+: EtchObject(&EtchDouble::TYPE)
 , mValue(0.0L){
 }
 
 EtchDouble::EtchDouble(capu::double_t value)
-: EtchObject(EtchDouble::TYPE_ID)
+: EtchObject(&EtchDouble::TYPE)
 , mValue(value){
 }
 
@@ -45,7 +47,7 @@ capu::uint64_t EtchDouble::getHashCode() const{
 capu::bool_t EtchDouble::equals(const EtchObject * other) const{
   if (other == NULL)
     return false;
-  else if (other->getObjectTypeId() != EtchDouble::TYPE_ID)
+  else if (!other->getObjectType()->equals(&EtchDouble::TYPE))
     return false;
   EtchDouble * a = (EtchDouble *) other;
   return (a->mValue == this->mValue);

@@ -23,14 +23,14 @@
 
 TEST(EtchInt32Test, Constructor_Default){
   EtchInt32* i1 = new EtchInt32();
-  EtchInt32(i1->getObjectTypeId() == EtchInt32::TYPE_ID);
+  EtchInt32(i1->getObjectType()->equals(&EtchInt32::TYPE));
   EtchInt32(i1->get() == 0);
   delete i1;
 }
 
 TEST(EtchInt32Test, Constructor_Int){
   EtchInt32* i1 = new EtchInt32(42);
-  EXPECT_TRUE(i1->getObjectTypeId() == EtchInt32::TYPE_ID);
+  EXPECT_TRUE(i1->getObjectType()->equals(&EtchInt32::TYPE));
   EXPECT_TRUE(i1->get() == 42);
   delete i1;
 }

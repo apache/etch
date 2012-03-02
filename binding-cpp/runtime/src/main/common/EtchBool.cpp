@@ -18,13 +18,16 @@
 
 #include "common/EtchBool.h"
 
+const EtchObjectType EtchBool::TYPE(EOTID_BOOL, NULL);
+
 EtchBool::EtchBool()
-: EtchObject(EtchBool::TYPE_ID)
+: EtchObject(&EtchBool::TYPE)
 , mValue(false){
+
 }
 
 EtchBool::EtchBool(capu::bool_t value)
-: EtchObject(EtchBool::TYPE_ID)
+: EtchObject(&EtchBool::TYPE)
 , mValue(value){
 }
 
@@ -39,7 +42,7 @@ capu::bool_t EtchBool::get(){
 capu::bool_t EtchBool::equals(const EtchObject * other) const{
   if (other == NULL)
     return false;
-  else if (other->getObjectTypeId() != EtchBool::TYPE_ID)
+  else if (!other->getObjectType()->equals(&EtchBool::TYPE))
     return false;
   EtchBool* a = (EtchBool *) other;
   return (a->mValue == this->mValue);

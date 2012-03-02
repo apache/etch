@@ -20,36 +20,7 @@
 #define __ETCHOBJECT_H__
 
 #include "EtchConfig.h"
-
-enum EtchObjectTypeIds {
-
-  EOTID_INT32 = 0,
-  EOTID_BOOL,
-  EOTID_BYTE,
-  EOTID_SHORT,
-  EOTID_LONG,
-  EOTID_DOUBLE,
-  EOTID_FLOAT,
-  EOTID_STRING,
-  EOTID_DATE,
-  EOTID_LIST,
-  EOTID_NATIVE_ARRAY,
-  EOTID_HASHTABLE,
-  EOTID_SET,
-  EOTID_SOCKET,
-  EOTID_SERVER_SOCKET,
-
-  EOTID_NATIVE_INT8,
-  EOTID_NATIVE_INT16,
-  EOTID_NATIVE_INT32,
-  EOTID_NATIVE_INT64,
-  EOTID_NATIVE_DOUBLE,
-  EOTID_NATIVE_FLOAT,
-  EOTID_NATIVE_LONG,
-  EOTID_NATIVE_SHORT,
-  EOTID_NATIVE_BOOL,
-  EOTID_NATIVE_BYTE,
-};
+#include "EtchObjectType.h"
 
 class EtchObject {
 
@@ -58,7 +29,7 @@ public:
   /**
    * Constructor.
    */
-  EtchObject(capu::int32_t typeId);
+  EtchObject(const EtchObjectType* type);
 
   /**
    * Destructor.
@@ -68,7 +39,7 @@ public:
   /**
    * Returns object type id.
    */
-  capu::int32_t getObjectTypeId() const;
+  const EtchObjectType* getObjectType() const;
 
   /**
    * Returns hash code
@@ -81,9 +52,11 @@ public:
    */
   virtual capu::bool_t equals(const EtchObject * other) const;
 
+  static const EtchObjectType TYPE;
+
 private:
 
-  capu::int32_t m_typeId;
+  const EtchObjectType* mType;
 
 };
 

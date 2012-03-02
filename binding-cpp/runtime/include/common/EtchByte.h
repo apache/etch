@@ -30,7 +30,7 @@ public:
   /**
    * TypeId for EtchByte.
    */
-  static const capu::int32_t TYPE_ID = EOTID_BYTE;
+  static const EtchObjectType TYPE;
 
   /**
    * Constructs a EtchByte object.

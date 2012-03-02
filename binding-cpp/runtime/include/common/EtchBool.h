@@ -30,7 +30,7 @@ public:
   /**
    * TypeId for EtchBool.
    */
-  static const capu::int32_t TYPE_ID = EOTID_BOOL;
+  static const EtchObjectType TYPE;
 
   /**
    * Constructs a EtchBool object.

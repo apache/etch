@@ -18,12 +18,12 @@
 
 #include "common/EtchObject.h"
 
-EtchObject::EtchObject(capu::int32_t typeId){
-  m_typeId = typeId;
+EtchObject::EtchObject(const EtchObjectType* type){
+  mType = type;
 }
 
-capu::int32_t EtchObject::getObjectTypeId() const{
-  return m_typeId;
+const EtchObjectType* EtchObject::getObjectType() const{
+  return mType;
 }
 
 EtchObject::~EtchObject(){

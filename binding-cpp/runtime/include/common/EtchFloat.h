@@ -30,7 +30,7 @@ public:
   /**
    * TypeId for EtchFloat.
    */
-  static const capu::int32_t TYPE_ID = EOTID_FLOAT;
+  static const EtchObjectType TYPE;
 
   /**
    * Constructs a EtchFloat object.

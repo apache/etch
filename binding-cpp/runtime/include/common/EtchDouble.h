@@ -30,7 +30,7 @@ public:
   /**
    * TypeId for EtchDouble.
    */
-  static const capu::int32_t TYPE_ID = EOTID_DOUBLE;
+  static const EtchObjectType TYPE;
 
   /**
    * Constructs a EtchDouble object.

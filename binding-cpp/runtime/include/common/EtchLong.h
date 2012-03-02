@@ -30,7 +30,7 @@ public:
   /**
    * TypeId for EtchLong.
    */
-  static const capu::int32_t TYPE_ID = EOTID_LONG;
+  static const EtchObjectType TYPE;
 
   /**
    * Constructs a EtchLong object.

@@ -18,13 +18,12 @@
 
 #include <gtest/gtest.h>
 #include "common/EtchInt32.h"
-#include "common/EtchNative.h"
 #include "common/EtchNativeArray.h"
 
 
 TEST(EtchNativeArrayTest, Constructor_Default) {
-  EtchNativeArray<EtchInt32*, EtchInt32::TYPE_ID>* na =
-    new EtchNativeArray<EtchInt32*, EtchInt32::TYPE_ID>(10);
+  EtchNativeArray<EtchInt32*>* na =
+    new EtchNativeArray<EtchInt32*>(10);
     delete na;
 }
 
@@ -33,13 +32,13 @@ TEST(EtchNativeArrayTest, Constructor_Array) {
     EtchInt32* int1 = new EtchInt32(42);
     EtchInt32* int2  = new EtchInt32(43);
 
-    EtchNativeArray<EtchInt32*, EtchInt32::TYPE_ID>* na1 =
-      new EtchNativeArray<EtchInt32*, EtchInt32::TYPE_ID>(2);
+    EtchNativeArray<EtchInt32*>* na1 =
+      new EtchNativeArray<EtchInt32*>(2);
 
     na1->set(0, int1);
     na1->set(1, int2);
 
-    EXPECT_TRUE(na1->getObjectTypeId() == (EtchNativeArray<EtchInt32,EtchInt32::TYPE_ID>::TYPE_ID));
+    EXPECT_TRUE(na1->getObjectType()->equals(&EtchNativeArray<EtchInt32*>::TYPE));
 
     EtchInt32* value = NULL;
     int i = 0;
@@ -61,9 +60,9 @@ TEST(EtchNativeArrayTest, setget) {
 
     EtchInt32* int1 = new EtchInt32(42);
     EtchInt32* int2 = new EtchInt32(43);
-    EtchNativeArray<EtchInt32*, EtchInt32::TYPE_ID>* na1 =
-      new EtchNativeArray<EtchInt32*, EtchInt32::TYPE_ID>(2);
-    EXPECT_TRUE(na1->getObjectTypeId() == (EtchNativeArray<EtchInt32, EtchInt32::TYPE_ID>::TYPE_ID));
+    EtchNativeArray<EtchInt32*>* na1 =
+      new EtchNativeArray<EtchInt32*>(2);
+    EXPECT_TRUE(na1->getObjectType()->equals(&EtchNativeArray<EtchInt32*>::TYPE));
     
     na1->set(0, int1);
     na1->set(1, int2);
@@ -85,7 +84,7 @@ TEST(EtchNativeArrayTest, setget) {
     ASSERT_EQ(44, newValue->get());
 
     //Test setget of block
-    EtchNativeArray<EtchInt32*, EtchInt32::TYPE_ID> *native_array = new EtchNativeArray<EtchInt32*, EtchInt32::TYPE_ID> (2);
+    EtchNativeArray<EtchInt32*> *native_array = new EtchNativeArray<EtchInt32*> (2);
     EtchInt32** int3 = new EtchInt32*[2];
     int3[0] = new EtchInt32();
     int3[1] = new EtchInt32();
@@ -110,7 +109,7 @@ TEST(EtchNativeArrayTest, setget) {
     EXPECT_TRUE(int6[1]->get() == 4);
 
     //Test setget of block of native type
-    EtchNativeArray<int, EtchNative::INT32> *native_array2 = new EtchNativeArray<int, EtchNative::INT32> (2);
+    EtchNativeArray<int> *native_array2 = new EtchNativeArray<int> (2);
     int int4[2];
     int int5[2];
     int4[0] = 3;
@@ -165,4 +164,36 @@ TEST(EtchNativeArrayTest, setget) {
     delete newValue;
     delete native_array;
     delete native_array2;
+}
+
+TEST(EtchNativeArrayTest, multiDimensionalArrays) {
+
+    EtchInt32* int1 = new EtchInt32(1);
+    EtchInt32* int2 = new EtchInt32(2);
+    EtchInt32* int3 = new EtchInt32(3);
+    EtchInt32* int4 = new EtchInt32(4);
+
+    EtchNativeArray<EtchInt32*>* subArray1 = new EtchNativeArray<EtchInt32*>(2);
+    EtchNativeArray<EtchInt32*>* subArray2 = new EtchNativeArray<EtchInt32*>(2);
+    subArray1->set(0,int1);
+    subArray1->set(1,int2);
+    subArray2->set(0,int3);
+    subArray2->set(1,int4);
+
+    EtchNativeArray<EtchNativeArray<EtchInt32*>*>* mainArray = new EtchNativeArray<EtchNativeArray<EtchInt32*>*>(2);
+    mainArray->set(0,subArray1);
+    mainArray->set(1,subArray2);
+    const EtchObjectType *ot = mainArray->getObjectType();
+    //get type of main array
+    EXPECT_TRUE(ot->equals(&EtchNativeArray<EtchNativeArray<EtchInt32*>*>::TYPE));
+    //get component type of main array = type of subarray
+    EXPECT_TRUE(ot->getObjectComponentType()->equals(&EtchNativeArray<EtchInt32*>::TYPE));
+    //get component type of subarray
+    EXPECT_TRUE(ot->getObjectComponentType()->getObjectComponentType()->equals(&EtchInt32::TYPE));
+    
+    EtchNativeArray<EtchInt32*>* result;  
+    mainArray->get(0,&result);
+    EtchInt32* int5;
+    result->get(0,&int5);
+    EXPECT_EQ(1,int5->get());
 }

@@ -27,14 +27,13 @@
 
 template <class Key, class T, class H = EtchHash, class C = EtchComparator<Key> >
 class EtchHashTable : public EtchObject {
-
 private:
   capu::HashTable<Key, T, C, H> mHashTable;
 
 public:
   typedef typename capu::Pair<Key, T> Pair;
   typedef typename capu::HashTable<Key, T, C, H >::Iterator Iterator;
-  static const capu::int32_t TYPE_ID = EOTID_HASHTABLE;
+  static const EtchObjectType TYPE;
 
   /**
    * Constructs EtchHashTable.
@@ -110,14 +109,17 @@ public:
 };
 
 template <class Key, class T, class H, class C>
+const EtchObjectType EtchHashTable<Key, T, H, C>::TYPE(EOTID_HASHTABLE, NULL);
+
+template <class Key, class T, class H, class C>
 inline EtchHashTable<Key, T, H, C>::EtchHashTable()
-: EtchObject(EtchHashTable<Key, T, H, C>::TYPE_ID),mHashTable(ETCH_DEFAULT_HASH_TABLE_SIZE) {
+: EtchObject(&EtchHashTable<Key, T, H, C>::TYPE), mHashTable(ETCH_DEFAULT_HASH_TABLE_SIZE) {
 
 }
 
 template <class Key, class T, class H, class C>
 inline EtchHashTable<Key, T, H, C>::EtchHashTable(capu::uint64_t size)
-: EtchObject(EtchHashTable<Key, T, H, C>::TYPE_ID), mHashTable(size) {
+: EtchObject(&EtchHashTable<Key, T, H, C>::TYPE), mHashTable(size) {
 
 }
 

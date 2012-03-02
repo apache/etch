@@ -36,7 +36,6 @@ add_executable (etch-cpp-test
     common/EtchFloatTest.cpp
     common/EtchDoubleTest.cpp
     common/EtchStringTest.cpp
-    common/EtchObjectTest.cpp
     common/EtchListTest.cpp
     common/EtchNativeArrayTest.cpp
     common/EtchHashTableTest.cpp

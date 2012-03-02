@@ -23,14 +23,14 @@
 
 TEST(EtchByteTest, Constructor_Default){
   EtchByte* i1 = new EtchByte();
-  EXPECT_TRUE(i1->getObjectTypeId() == EtchByte::TYPE_ID);
+  EXPECT_TRUE(i1->getObjectType()->equals(&EtchByte::TYPE));
   EXPECT_TRUE(i1->get() == 0);
   delete i1;
 }
 
 TEST(EtchByteTest, Constructor_Byte){
   EtchByte* i1 = new EtchByte(42);
-  EXPECT_TRUE(i1->getObjectTypeId() == EtchByte::TYPE_ID);
+  EXPECT_TRUE(i1->getObjectType()->equals(&EtchByte::TYPE));
   EXPECT_TRUE(i1->get() == 42);
   delete i1;
 }

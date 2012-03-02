@@ -18,13 +18,15 @@
 
 #include "common/EtchInt32.h"
 
+const EtchObjectType EtchInt32::TYPE(EOTID_INT32, NULL);
+
 EtchInt32::EtchInt32()
-: EtchObject(EtchInt32::TYPE_ID)
+: EtchObject(&EtchInt32::TYPE)
 , mValue(0){
 }
 
 EtchInt32::EtchInt32(capu::int32_t value)
-: EtchObject(EtchInt32::TYPE_ID)
+: EtchObject(&EtchInt32::TYPE)
 , mValue(value){
 }
 
@@ -43,7 +45,7 @@ capu::uint64_t EtchInt32::getHashCode() const{
 capu::bool_t EtchInt32::equals(const EtchObject * other) const{
   if (other == NULL)
     return false;
-  else if (other->getObjectTypeId() != EtchInt32::TYPE_ID)
+  else if (!other->getObjectType()->equals(&EtchInt32::TYPE))
     return false;
   EtchInt32 *a = (EtchInt32*) other;
   return (a->mValue == this->mValue);

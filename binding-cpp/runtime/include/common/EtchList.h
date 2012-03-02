@@ -31,7 +31,7 @@ private:
 public:
 
   typedef typename capu::List<T, C>::Iterator Iterator;
-  static const capu::int32_t TYPE_ID = EOTID_LIST;
+  static const EtchObjectType TYPE;
 
   /**
    * Default Constructor
@@ -142,8 +142,11 @@ public:
 };
 
 template<class T, class C>
+const EtchObjectType EtchList<T, C>::TYPE(EOTID_LIST, NULL);
+
+template<class T, class C>
 EtchList<T, C>::EtchList()
-: EtchObject(EtchList<T, C>::TYPE_ID) {
+: EtchObject(&EtchList<T, C>::TYPE) {
 
 }
 

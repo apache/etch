@@ -22,6 +22,7 @@ include_directories (${CAPU}/include/capu)
 #Add header files
 SET(MAIN_INCLUDES
     ${PROJECT_SOURCE_DIR}/include/common/EtchObject.h
+    ${PROJECT_SOURCE_DIR}/include/common/EtchObjectType.h
     ${PROJECT_SOURCE_DIR}/include/common/EtchString.h
     ${PROJECT_SOURCE_DIR}/include/common/EtchInt32.h
     ${PROJECT_SOURCE_DIR}/include/common/EtchBool.h
@@ -37,8 +38,8 @@ SET(MAIN_INCLUDES
     ${PROJECT_SOURCE_DIR}/include/common/EtchHash.h
     ${PROJECT_SOURCE_DIR}/include/common/EtchHashNative.h
     ${PROJECT_SOURCE_DIR}/include/common/EtchHashTable.h
+    ${PROJECT_SOURCE_DIR}/include/common/EtchHashSet.h
     ${PROJECT_SOURCE_DIR}/include/common/EtchList.h
-    ${PROJECT_SOURCE_DIR}/include/common/EtchNative.h
     ${PROJECT_SOURCE_DIR}/include/common/EtchNativeArray.h
     ${PROJECT_SOURCE_DIR}/include/common/EtchSocket.h
     ${PROJECT_SOURCE_DIR}/include/common/EtchServerSocket.h
@@ -50,6 +51,7 @@ SET(MAIN_INCLUDES
 #Add cpp files
 SET(MAIN_SOURCES
     common/EtchObject.cpp
+    common/EtchObjectType.cpp
     common/EtchString.cpp
     common/EtchInt32.cpp
     common/EtchBool.cpp

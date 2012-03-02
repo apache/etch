@@ -31,7 +31,7 @@ class EtchHashSet : public EtchObject {
 public:
 
   typedef typename capu::HashSet<T, C, H>::Iterator Iterator;
-  static const capu::int32_t TYPE_ID = EOTID_SET;
+  static const EtchObjectType TYPE;
 
 
   /**
@@ -99,15 +99,18 @@ private:
 
 template <class T, class H, class C>
 inline EtchHashSet<T, H, C>::EtchHashSet()
-: EtchObject(EtchHashSet<T, H, C>::TYPE_ID) {
+: EtchObject(&EtchHashSet<T, H, C>::TYPE) {
 
 }
 
 template <class T, class H, class C>
 inline EtchHashSet<T, H, C>::EtchHashSet(capu::uint32_t size)
-: EtchObject(EtchHashSet<T, H, C>::TYPE_ID), mHashSet(size) {
+: EtchObject(&EtchHashSet<T, H, C>::TYPE), mHashSet(size) {
 
 }
+
+template <class T, class H, class C>
+const EtchObjectType EtchHashSet<T, H, C>::TYPE(EOTID_SET, NULL);
 
 template <class T, class H, class C>
 inline EtchHashSet<T, H, C>::~EtchHashSet() {
