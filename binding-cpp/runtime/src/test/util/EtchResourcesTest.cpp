@@ -35,10 +35,10 @@ TEST(EtchResources, putTest) {
   EtchString key1("key1");
   EtchString key2("key2");
 
-  EXPECT_TRUE(res->put(key1, &value1, &result) == ETCH_OK);
-  EXPECT_TRUE(res->put(key2, &value2, &result) == ETCH_OK);
+  EXPECT_TRUE(res->put(key1, &value1, result) == ETCH_OK);
+  EXPECT_TRUE(res->put(key2, &value2, result) == ETCH_OK);
 
-  res->put(key2, &value1, &result);
+  res->put(key2, &value1, result);
   EXPECT_TRUE(((EtchFloat*) result)->get() == 12.1f);
   delete res;
 }
@@ -52,18 +52,18 @@ TEST(EtchResources, getTest) {
   EtchString key1("key1");
   EtchString key2("key2");
 
-  EXPECT_TRUE(res->put(key1, &value1, &result) == ETCH_OK);
-  EXPECT_TRUE(res->put(key2, &value2, &result) == ETCH_OK);
+  EXPECT_TRUE(res->put(key1, &value1, result) == ETCH_OK);
+  EXPECT_TRUE(res->put(key2, &value2, result) == ETCH_OK);
 
   EtchObject* ptr1;
-  EXPECT_TRUE(res->get(key1, &ptr1) == ETCH_OK);
+  EXPECT_TRUE(res->get(key1, ptr1) == ETCH_OK);
   EtchObject* ptr2;
-  EXPECT_TRUE(res->get(key2, &ptr2) == ETCH_OK);
+  EXPECT_TRUE(res->get(key2, ptr2) == ETCH_OK);
 
   EXPECT_TRUE(((EtchInt32*) ptr1)->get() == 12);
   EXPECT_TRUE(((EtchFloat*) ptr2)->get() == 12.1f);
 
-  EXPECT_TRUE(res->put(key2, &value1, &result) == ETCH_OK);
+  EXPECT_TRUE(res->put(key2, &value1, result) == ETCH_OK);
   EXPECT_TRUE(((EtchFloat*) result)->get() == 12.1f);
   delete res;
 }
@@ -78,8 +78,8 @@ TEST(EtchResources, containsKeyTest) {
   EtchString key2("key2");
   EtchString key3("key3");
 
-  EXPECT_TRUE(res->put(key1, &value1, &result) == ETCH_OK);
-  EXPECT_TRUE(res->put(key2, &value2, &result) == ETCH_OK);
+  EXPECT_TRUE(res->put(key1, &value1, result) == ETCH_OK);
+  EXPECT_TRUE(res->put(key2, &value2, result) == ETCH_OK);
 
   EXPECT_TRUE(res->containsKey(key1) == true);
   EXPECT_TRUE(res->containsKey(key2) == true);
@@ -97,12 +97,12 @@ TEST(EtchResources, removeTest) {
   EtchString key1("key1");
   EtchString key2("key2");
 
-  EXPECT_TRUE(res->put(key1, &value1, &result) == ETCH_OK);
-  EXPECT_TRUE(res->put(key2, &value2, &result) == ETCH_OK);
+  EXPECT_TRUE(res->put(key1, &value1, result) == ETCH_OK);
+  EXPECT_TRUE(res->put(key2, &value2, result) == ETCH_OK);
   EtchObject* ptr1;
   EtchObject* ptr2;
-  EXPECT_TRUE(res->remove(key1, &ptr1) == ETCH_OK);
-  EXPECT_TRUE(res->remove(key2, &ptr2) == ETCH_OK);
+  EXPECT_TRUE(res->remove(key1, ptr1) == ETCH_OK);
+  EXPECT_TRUE(res->remove(key2, ptr2) == ETCH_OK);
   
   EXPECT_TRUE(((EtchInt32*) ptr1)->get() == 12);
   EXPECT_TRUE(((EtchFloat*) ptr2)->get() == 12.1f);

@@ -23,7 +23,6 @@
 #include "capu/util/SmartPointer.h"
 #include "common/EtchString.h"
 
-
 class EtchResources {
 public:
 
@@ -31,6 +30,12 @@ public:
    * Constructs the Resources.
    */
   EtchResources();
+
+  /**
+   * Constructs the Resources.
+   * @param related another EtchResources which has
+   */
+  EtchResources(EtchResources * related);
 
   /**
    * Destructor
@@ -43,7 +48,7 @@ public:
    * @return true if this Resources has the key
    *         false otherwise.
    */
-  capu::bool_t containsKey(const EtchString& key);
+  capu::bool_t containsKey(EtchString& key);
 
   /**
    * Returns the named resource from this Resources
@@ -52,7 +57,7 @@ public:
    * @return a pointer to the object with given key
    *         if there is no element with given key return a NULL pointer
    */
-  status_t get(const EtchString& key, EtchObject** result);
+  status_t get(EtchString& key, EtchObject*& result);
 
   /**
    * Puts the named resource into this Resources.
@@ -61,7 +66,7 @@ public:
    * @return a pointer to the overwritten element
    *         if there is no existing element with same key returns a NULL pointer
    */
-  status_t put(const EtchString& key, EtchObject *value, EtchObject** result);
+  status_t put(EtchString& key, EtchObject *value, EtchObject*& result);
 
   /**
    * Removes the named resource from this Resources only.
@@ -69,10 +74,15 @@ public:
    * @return a pointer to the removed element
    *         if there is no element with given key return a NULL pointer
    */
-  status_t remove(const EtchString& key, EtchObject** result);
+  status_t remove(EtchString& key, EtchObject*& result);
 
+  /**
+   * @return related EtchResources
+   */
+  EtchResources* getRelated();
 private:
 
+  EtchResources *mRelated;
   EtchHashTable <EtchString, EtchObject*> res;
 
 };

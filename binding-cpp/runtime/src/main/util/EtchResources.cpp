@@ -18,7 +18,13 @@
 
 #include "util/EtchResources.h"
 
-EtchResources::EtchResources() {
+EtchResources::EtchResources()
+: mRelated(NULL) {
+
+}
+
+EtchResources::EtchResources(EtchResources * related)
+: mRelated(related) {
 
 }
 
@@ -26,23 +32,42 @@ EtchResources::~EtchResources() {
 
 }
 
-capu::bool_t EtchResources::containsKey(const EtchString& key) {
+capu::bool_t EtchResources::containsKey(EtchString& key) {
   EtchObject* ptr = NULL;
   if (res.get(key, &ptr) == ETCH_OK)
     return true;
-  else
+  else {
+    if (mRelated == NULL)
+      return false;
+
+    if (mRelated->containsKey(key) == ETCH_OK) {
+      return true;
+    }
     return false;
+  }
 }
 
-status_t EtchResources::get(const EtchString& key, EtchObject** result) {
-  return res.get(key, result);
+status_t EtchResources::get(EtchString& key, EtchObject*& result) {
+  if (res.get(key, &result) != ETCH_OK) {
+
+    if (mRelated == NULL)
+      return ETCH_ENOT_EXIST;
+    if (mRelated->get(key, result) == ETCH_OK)
+      return ETCH_OK;
+    return ETCH_ENOT_EXIST;
+  }
+  return ETCH_OK;
 }
 
-status_t EtchResources::put(const EtchString& key, EtchObject* value, EtchObject** result) {
-  return res.put(key, value, result);
+status_t EtchResources::put(EtchString& key, EtchObject* value, EtchObject*& result) {
+  return res.put(key, value, &result);
 }
 
-status_t EtchResources::remove(const EtchString& key, EtchObject** result) {
+status_t EtchResources::remove(EtchString& key, EtchObject*& result) {
 
-  return res.remove(key, result);
+  return res.remove(key, &result);
+}
+
+EtchResources* EtchResources::getRelated() {
+  return mRelated;
 }
