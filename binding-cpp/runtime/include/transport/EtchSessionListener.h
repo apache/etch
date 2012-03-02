@@ -31,7 +31,7 @@ public:
    * Delivers a socket to the session from the listener.
    * @param connection
    */
-  virtual status_t sessionAccepted(capu::SmartPointer<T> connection) = 0;
+  virtual status_t sessionAccepted(T* connection) = 0;
 
   /**
    * Destructor
