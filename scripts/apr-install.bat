@@ -17,7 +17,9 @@
 @echo off
 
 @REM set INSTALL_PREFIX=C:\dev\projects\Etch\externals
-@REM set VC_HOME=C:\Program Files (x86)\Microsoft Visual Studio 8\VC
+@REM set VC_HOME=C:\Program Files ^(x86^)\Microsoft Visual Studio 8\VC
+@REM use this instead on 32-bit windows:
+@REM set VC_HOME=C:\Program Files\Microsoft Visual Studio 8\VC
 
 REM check if environment is set
 IF "%INSTALL_PREFIX%" == "" (
@@ -66,13 +68,25 @@ mkdir apr
 cd apr
 
 REM apr
-svn export https://svn.apache.org/repos/asf/apr/apr/tags/1.4.6/ apr
+rem svn export https://svn.apache.org/repos/asf/apr/apr/tags/1.4.6/ apr
+wget http://apache.imsam.info//apr/apr-1.4.6-win32-src.zip
+unzip apr-1.4.6-win32-src.zip
+mv apr-1.4.6 apr
+rm -rf apr-1.4.6-win32-src.zip
 
 REM apr-util
-svn export https://svn.apache.org/repos/asf/apr/apr-util/tags/1.4.1/ apr-util
+rem svn export https://svn.apache.org/repos/asf/apr/apr-util/tags/1.4.1/ apr-util
+wget http://apache.imsam.info//apr/apr-util-1.4.1-win32-src.zip
+unzip apr-util-1.4.1-win32-src.zip
+mv apr-util-1.4.1 apr-util
+rm -rf apr-util-1.4.1-win32-src.zip
 
 REM apr-iconv
-svn export https://svn.apache.org/repos/asf/apr/apr-iconv/tags/1.2.1/ apr-iconv
+rem svn export https://svn.apache.org/repos/asf/apr/apr-iconv/tags/1.2.1/ apr-iconv
+wget http://mirror.synyx.de/apache//apr/apr-iconv-1.2.1-win32-src-r2.zip
+unzip apr-iconv-1.2.1-win32-src-r2.zip
+mv apr-iconv-1.2.1 apr-iconv
+rm -rf apr-iconv-1.2.1-win32-src-r2.zip
 
 cd ..
 @echo ==================================================
@@ -102,9 +116,9 @@ call :build-init
 @echo solution. After that , please close VS.
 @echo ==================================================
 PAUSE
-cd apr/apr-util
+cd apr\apr-util
 devenv aprutil.dsw
-cd ../..
+cd ..\..
 
 @echo ==================================================
 @echo Converting APR to new VS version done.
@@ -120,14 +134,14 @@ call :build-init
 @echo Building APR...
 @echo ==================================================
 
-cd apr/apr-util
+cd apr\apr-util
 devenv aprutil.sln /build Release /project apr
 devenv aprutil.sln /build Release /project apriconv
 devenv aprutil.sln /build Release /project libapr
 devenv aprutil.sln /build Release /project libapriconv
 devenv aprutil.sln /build Release /project libapriconv_ccs_modules
 devenv aprutil.sln /build Release /project libapriconv_ces_modules
-cd ../..
+cd ..\..
 
 @echo ==================================================
 @echo Building APR done.
@@ -135,6 +149,7 @@ cd ../..
 goto :EOF
 
 :install
+rem should be 1.4.6 but this is a hack
 set INSTALL_PREFIX_APR=%INSTALL_PREFIX%\apr\1.4.5
 mkdir "%INSTALL_PREFIX_APR%\bin"
 mkdir "%INSTALL_PREFIX_APR%\iconv"

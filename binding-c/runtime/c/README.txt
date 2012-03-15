@@ -42,7 +42,7 @@ APR and APR-ICONV libraries
 APR and APR-ICONV can be build via MS Visual Studio GUI. After that, all needed
 artifacts have to be copied to above folder and file structure. If you do so, please
 follow the instructions on http://apr.apache.org/compiling_win32.html. The installation
-to <ETCH_EXTERNAL_DEPENDS> have to be done by hand. Nedded projects are: apr,
+to <ETCH_EXTERNAL_DEPENDS> have to be done by hand. Needed projects are: apr,
 apriconv, libapr, libapriconv, libapriconv_ccs_modules and libapriconv_ces_modules.
 
 A much more easy way is to use our apr-install.bat script (../trunk/scrips/). To run the
@@ -66,7 +66,7 @@ CUnit
 - <ETCH_EXTERNAL_DEPENDS>/cunit/2.1/lib/libcunit.lib
 - <ETCH_EXTERNAL_DEPENDS>/cunit/2.1/lib/vc80_libcunit.pdb
 - <ETCH_EXTERNAL_DEPENDS>/cunit/2.1/res
-- <ETCH_EXTERNAL_DEPENDS>/cunit/2.1/res/*dtd + *.xsl (shared files, nedded to show cunit results)
+- <ETCH_EXTERNAL_DEPENDS>/cunit/2.1/res/*.dtd + *.xsl (shared files, nedded to show cunit results)
 
 Open the CUNIT solution in VS ([external_source]/cunit/VS8/CUnit.sln) and build
 libcunit project. After build, copy nedded artificts to <ETCH_EXTERNAL_DEPENDS>

@@ -20,11 +20,15 @@
 IF "%ETCH_EXTERNAL_DEPENDS%" == "" (
 set ETCH_EXTERNAL_DEPENDS=C:\etch\external
 )
+
+@rem ANT_HOME settings
+IF "%ANT_HOME%" == "" (
 set ANT_HOME=%ETCH_EXTERNAL_DEPENDS%\apache-ant\1.8.2
+)
 
 @rem JAVA_HOME settings
 IF "%JAVA_HOME%" == "" (
-set JAVA_HOME="c:\Program Files (x86)\Java\jdk1.6.0_18\"
+set JAVA_HOME=c:\Program Files ^(x86^)\Java\jdk1.6.0_18
 )
 
 @rem NUNIT_HOME settings
@@ -33,7 +37,9 @@ set NUNIT_HOME=%ETCH_EXTERNAL_DEPENDS%\NUnit\2.5.10.11092
 )
 
 @rem CMAKE_HOME settings
+IF "%CMAKE_HOME%" == "" (
 set CMAKE_HOME=%ETCH_EXTERNAL_DEPENDS%\cmake\2.8.6
+)
 
 @rem uncomment this line / unset this variable if you don't want to build csharp
 set DOTNET_HOME=C:\WINDOWS\Microsoft.NET\Framework\v4.0.30319
@@ -47,6 +53,13 @@ set PATH=%ANT_HOME%\bin;%JAVA_HOME%\bin;%DOTNET_HOME%;%NUNIT_HOME%\bin\net-2.0;%
 @echo ANT_HOME: %ANT_HOME%
 @echo JAVA_HOME: %JAVA_HOME%
 @echo NUNIT_HOME: %NUNIT_HOME%
-@echo DOTNET_HOME: %DOTNET_HOME%
 @echo CMAKE_HOME: %CMAKE_HOME%
+@echo DOTNET_HOME: %DOTNET_HOME%
 @echo ==================================================
+
+if not exist "%ETCH_EXTERNAL_DEPENDS%" echo "%ETCH_EXTERNAL_DEPENDS%" does not exist
+if not exist "%ANT_HOME%" echo "%ANT_HOME%" does not exist
+if not exist "%JAVA_HOME%" echo "%JAVA_HOME%" does not exist
+if not exist "%NUNIT_HOME%" echo "%NUNIT_HOME%" does not exist
+if not exist "%CMAKE_HOME%" echo "%CMAKE_HOME%" does not exist
+if not exist "%DOTNET_HOME%" echo "%DOTNET_HOME%" does not exist
