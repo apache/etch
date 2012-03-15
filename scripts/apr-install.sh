@@ -30,23 +30,15 @@ download(){
 rm -rf apr
 mkdir apr
 cd apr
-# apr
-wget http://apache.imsam.info//apr/apr-1.4.5.tar.gz 
-tar xzf apr-1.4.5.tar.gz
-mv apr-1.4.5 apr
-rm -rf apr-1.4.5.tar.gz
 
-# apr-util
-#wget http://apache.imsam.info//apr/apr-util-1.3.9.tar.gz
-#tar xzf apr-util-1.3.12.tar.gz
-#mv apr-util-1.3.12 apr-util
-#rm -rf apr-util-1.3.12.tar.gz
+# apr
+svn export https://svn.apache.org/repos/asf/apr/apr/tags/1.4.6/ apr
+
+#apr-util
+#svn export https://svn.apache.org/repos/asf/apr/apr-util/tags/1.4.1/ apr-util
 
 # apr-iconv
-wget http://apache.imsam.info//apr/apr-iconv-1.2.1.tar.gz
-tar xzf apr-iconv-1.2.1.tar.gz
-mv apr-iconv-1.2.1 apr-iconv
-rm -rf apr-iconv-1.2.1.tar.gz
+svn export https://svn.apache.org/repos/asf/apr/apr-iconv/tags/1.2.1/ apr-iconv
 
 cd ..
 }

@@ -66,22 +66,13 @@ mkdir apr
 cd apr
 
 REM apr
-wget http://apache.imsam.info//apr/apr-1.4.5-win32-src.zip
-unzip apr-1.4.5-win32-src.zip
-mv apr-1.4.5 apr
-rm -rf apr-1.4.5-win32-src.zip
+svn export https://svn.apache.org/repos/asf/apr/apr/tags/1.4.6/ apr
 
 REM apr-util
-wget http://apache.imsam.info//apr/apr-util-1.3.12-win32-src.zip
-unzip apr-util-1.3.12-win32-src.zip
-mv apr-util-1.3.12 apr-util
-rm -rf apr-util-1.3.12-win32-src.zip
+svn export https://svn.apache.org/repos/asf/apr/apr-util/tags/1.4.1/ apr-util
 
 REM apr-iconv
-wget http://mirror.synyx.de/apache//apr/apr-iconv-1.2.1-win32-src-r2.zip
-unzip apr-iconv-1.2.1-win32-src-r2.zip
-mv apr-iconv-1.2.1 apr-iconv
-rm -rf apr-iconv-1.2.1-win32-src-r2.zip
+svn export https://svn.apache.org/repos/asf/apr/apr-iconv/tags/1.2.1/ apr-iconv
 
 cd ..
 @echo ==================================================
