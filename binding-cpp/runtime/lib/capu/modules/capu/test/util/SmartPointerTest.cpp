@@ -103,7 +103,7 @@ TEST(SmartPointer,AssignmentOperator) {
 
   EXPECT_EQ((capu::uint32_t)2,parentPtr.getRefCount());
   EXPECT_EQ((capu::uint32_t)2,parentPtrCopy.getRefCount());
-  
+
   //assign
   parentPtr = childPtr;
   EXPECT_EQ((capu::uint32_t)2,childPtr.getRefCount());
@@ -168,4 +168,20 @@ TEST(SmartPointer,castTest) {
   EXPECT_EQ((capu::uint32_t)1, ptr.getRefCount());
   capu::SmartPointer<DummyClass> gecastet =  ptr;
   EXPECT_EQ((capu::uint32_t)2, ptr.getRefCount());
+}
+
+TEST(SmartPointer,smartpointer_castTest) {
+  capu::SmartPointer<DummyClass> spDummy;
+
+  spDummy = new ChildDummyClass();
+  EXPECT_EQ((capu::uint32_t)1, spDummy.getRefCount());
+
+  // test cast to pointer and copy
+  capu::SmartPointer<ChildDummyClass> spChildDummy = capu::smartpointer_cast<ChildDummyClass>(spDummy);
+  EXPECT_EQ((capu::uint32_t)2, spDummy.getRefCount());
+  EXPECT_EQ((capu::uint32_t)2, spChildDummy.getRefCount());
+  // change pointer
+  spDummy = new ChildDummyClass();
+  EXPECT_EQ((capu::uint32_t)1, spDummy.getRefCount());
+  EXPECT_EQ((capu::uint32_t)1, spChildDummy.getRefCount());
 }

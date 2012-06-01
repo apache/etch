@@ -22,7 +22,7 @@
 #include "capu/Config.h"
 #include "capu/os/AtomicOperation.h"
 
-namespace capu { 
+namespace capu {
 
   template<class T>
   class SmartPointer
@@ -59,7 +59,7 @@ namespace capu {
     ~SmartPointer();
 
     /**
-    * Overload assignment operator to be able to decrement the 
+    * Overload assignment operator to be able to decrement the
     * reference count if another object gets assigned to this smart pointer
     * @param reference to smartPointer
     */
@@ -73,13 +73,13 @@ namespace capu {
     SmartPointer<T>& operator= (const SmartPointer<X>& smartPointer);
 
     /**
-    * Overload assignment operator to be able to decrement the 
+    * Overload assignment operator to be able to decrement the
     * reference count if another object gets assigned to this smart pointer
     */
     SmartPointer& operator= (T* ptr);
 
     /**
-    * Overload file operator to be able to access the object 
+    * Overload file operator to be able to access the object
     * referenced by the pointer
     */
     T* operator->() const;
@@ -112,17 +112,25 @@ namespace capu {
     * @return true if object exists
     */
     operator bool();
-  
+
     /**
-    * Returns the reference counter value. 
+    * Returns the reference counter value.
     * If the object does not exist, 0 ist returned
     * @return reference count
     */
     capu::uint32_t getRefCount();
 
+    /**
+    * cast a SmartPointer of type X to type T
+    * this is a simple C-cast, so there are no type checks
+    * @param reference to smartPointer
+    */
+    template<class X>
+    SmartPointer<X> unchecked_cast();
+
   private:
-    T* m_data;
-    capu::uint32_t* m_referenceCount;
+    T* mData;
+    capu::uint32_t* mReferenceCount;
 
     void incRefCount();
     void decRefCount();
@@ -130,24 +138,24 @@ namespace capu {
     void freeData();
   };
 
-  template<class T> 
+  template<class T>
   inline
     SmartPointer<T>::SmartPointer()
-    : m_data(0)
-    , m_referenceCount(0)
+    : mData(0)
+    , mReferenceCount(0)
   {
   }
 
   template<class T>
   inline
     SmartPointer<T>::SmartPointer(T* ptr)
-    : m_data(0)
-    , m_referenceCount(0)
+    : mData(0)
+    , mReferenceCount(0)
   {
-    if( m_data != ptr)
+    if( mData != ptr)
     {
-      m_data = ptr;
-      m_referenceCount = new capu::uint32_t(0);
+      mData = ptr;
+      mReferenceCount = new capu::uint32_t(0);
       incRefCount();
     }
   }
@@ -156,8 +164,8 @@ namespace capu {
   template<class X>
   inline
   SmartPointer<T>::SmartPointer(const SmartPointer<X>& smartPointer)
-    : m_data(static_cast<X*> (smartPointer.m_data))
-    , m_referenceCount(smartPointer.m_referenceCount)
+    : mData(static_cast<X*>(smartPointer.mData))
+    , mReferenceCount(smartPointer.mReferenceCount)
   {
     incRefCount();
   }
@@ -165,8 +173,8 @@ namespace capu {
   template<class T>
   inline
     SmartPointer<T>::SmartPointer(const SmartPointer<T>& smartPointer)
-    : m_data(smartPointer.m_data)
-    , m_referenceCount(smartPointer.m_referenceCount)
+    : mData(smartPointer.mData)
+    , mReferenceCount(smartPointer.mReferenceCount)
   {
     incRefCount();
   }
@@ -186,8 +194,8 @@ namespace capu {
     {
       decRefCount();
 
-      m_data = smartPointer.m_data;
-      m_referenceCount = smartPointer.m_referenceCount;
+      mData = smartPointer.mData;
+      mReferenceCount = smartPointer.mReferenceCount;
 
       incRefCount();
     }
@@ -199,12 +207,12 @@ namespace capu {
   inline
   SmartPointer<T>& SmartPointer<T>::operator= (T* ptr)
   {
-    if( m_data != ptr)
+    if( mData != ptr)
     {
       decRefCount();
 
-      m_data = ptr;
-      m_referenceCount = new capu::uint32_t(0);
+      mData = ptr;
+      mReferenceCount = new capu::uint32_t(0);
 
       incRefCount();
     }
@@ -217,8 +225,8 @@ namespace capu {
   SmartPointer<T>& SmartPointer<T>::operator= (const SmartPointer<X>& smartPointer) {
     if (*this != smartPointer) {
       decRefCount();
-      m_data = static_cast<X*> (smartPointer.m_data);
-      m_referenceCount = smartPointer.m_referenceCount;
+      mData = static_cast<X*> (smartPointer.mData);
+      mReferenceCount = smartPointer.mReferenceCount;
       incRefCount();
     }
     return *this;
@@ -228,33 +236,33 @@ namespace capu {
   inline
   T* SmartPointer<T>::operator->() const
   {
-    return m_data;
+    return mData;
   }
 
   template<class T>
   inline
   T& SmartPointer<T>::operator*() const
   {
-  return *m_data;
+  return *mData;
   }
 
   template<class T>
   capu::bool_t SmartPointer<T>::operator==(const SmartPointer<T>& x) const {
-    return ((x.m_data == this->m_data) && (x.m_referenceCount == this->m_referenceCount));
+    return ((x.mData == this->mData) && (x.mReferenceCount == this->mReferenceCount));
   }
 
   template<class T>
   capu::bool_t SmartPointer<T>::operator!=(const SmartPointer<T>& x) const {
-    return ((x.m_data != this->m_data) || (x.m_referenceCount != this->m_referenceCount));
+    return ((x.mData != this->mData) || (x.mReferenceCount != this->mReferenceCount));
   }
 
   template<class T>
   inline
   void SmartPointer<T>::incRefCount()
   {
-    if(m_referenceCount)
+    if(mReferenceCount)
     {
-      capu::AtomicOperation::AtomicInc32(*m_referenceCount);
+      capu::AtomicOperation::AtomicInc32(*mReferenceCount);
     }
   }
 
@@ -262,9 +270,9 @@ namespace capu {
   inline
   void SmartPointer<T>::decRefCount()
   {
-    if(m_referenceCount) {
-      capu::AtomicOperation::AtomicDec32(*m_referenceCount);
-      if (!(*m_referenceCount)) {
+    if(mReferenceCount) {
+      capu::AtomicOperation::AtomicDec32(*mReferenceCount);
+      if (!(*mReferenceCount)) {
         freeData();
       }
     }
@@ -274,34 +282,52 @@ namespace capu {
   inline
   void SmartPointer<T>::freeData()
   {
-    delete m_data;
-    delete m_referenceCount;
-    m_data = 0;
-    m_referenceCount = 0;
+    delete mData;
+    delete mReferenceCount;
+    mData = 0;
+    mReferenceCount = 0;
   }
 
   template<class T>
   inline
   T* SmartPointer<T>::get() const
   {
-    return m_data;
+    return mData;
   }
 
   template<class T>
   inline
   SmartPointer<T>::operator bool()
   {
-    return m_data != 0;
+    return mData != 0;
   }
 
   template<class T>
   inline
   capu::uint32_t SmartPointer<T>::getRefCount()
   {
-    if (m_referenceCount != 0)
-      return *m_referenceCount;
-    else 
+    if (mReferenceCount != 0)
+      return *mReferenceCount;
+    else
       return 0;
+  }
+
+  template<class T>
+  template<class X>
+  inline
+  SmartPointer<X> SmartPointer<T>::unchecked_cast()
+  {
+    SmartPointer<X> p;
+    p.mData = (X*)mData;
+    p.mReferenceCount = mReferenceCount;
+    incRefCount();
+    return p;
+  }
+
+  template<class X, class T>
+  SmartPointer<X> smartpointer_cast(SmartPointer<T>& ptr)
+  {
+      return ptr.template unchecked_cast<X>();
   }
 }
 
