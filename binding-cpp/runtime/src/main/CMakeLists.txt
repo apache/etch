@@ -35,7 +35,7 @@ SET(MAIN_INCLUDES
     ${PROJECT_SOURCE_DIR}/include/common/EtchComparatorNative.h
     ${PROJECT_SOURCE_DIR}/include/common/EtchConfig.h
     ${PROJECT_SOURCE_DIR}/include/common/EtchError.h
-    ${PROJECT_SOURCE_DIR}/include/common/EtchHash.h
+	${PROJECT_SOURCE_DIR}/include/common/EtchObjectHash.h
     ${PROJECT_SOURCE_DIR}/include/common/EtchHashNative.h
     ${PROJECT_SOURCE_DIR}/include/common/EtchHashTable.h
     ${PROJECT_SOURCE_DIR}/include/common/EtchHashSet.h
@@ -45,6 +45,7 @@ SET(MAIN_INCLUDES
     ${PROJECT_SOURCE_DIR}/include/common/EtchServerSocket.h
     ${PROJECT_SOURCE_DIR}/include/util/EtchURL.h
     ${PROJECT_SOURCE_DIR}/include/util/EtchResources.h
+	${PROJECT_SOURCE_DIR}/include/util/EtchHash.h
     ${PROJECT_SOURCE_DIR}/include/transport/EtchFlexBuffer.h
     ${PROJECT_SOURCE_DIR}/include/transport/EtchSession.h
     ${PROJECT_SOURCE_DIR}/include/transport/EtchSessionData.h
@@ -73,6 +74,7 @@ SET(MAIN_INCLUDES
     ${PROJECT_SOURCE_DIR}/include/serialization/EtchValidatorLong.h
     ${PROJECT_SOURCE_DIR}/include/serialization/EtchValidatorString.h
     ${PROJECT_SOURCE_DIR}/include/serialization/EtchComboValidator.h
+    ${PROJECT_SOURCE_DIR}/include/serialization/EtchField.h
     ${PROJECT_SOURCE_DIR}/include/util/EtchUtil.h
     )
 
@@ -108,6 +110,7 @@ SET(MAIN_SOURCES
     serialization/EtchValidatorLong.cpp
     serialization/EtchValidatorString.cpp
     serialization/EtchComboValidator.cpp
+    serialization/EtchField.cpp
     util/EtchUtil.cpp
     )
 

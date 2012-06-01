@@ -21,11 +21,11 @@
 
 #include "common/EtchObject.h"
 #include "common/EtchError.h"
-#include "common/EtchHash.h"
+#include "common/EtchObjectHash.h"
 #include "common/EtchComparator.h"
 #include "capu/container/HashTable.h"
 
-template <class Key, class T, class H = EtchHash, class C = EtchComparator<Key> >
+template <class Key, class T, class H = EtchObjectHash, class C = EtchComparator<Key> >
 class EtchHashTable : public EtchObject {
 private:
   capu::HashTable<Key, T, C, H> mHashTable;

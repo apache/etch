@@ -16,22 +16,32 @@
  * limitations under the License.
  */
 
-#ifndef __ETCHHASH_H__
-#define __ETCHHASH_H__
-#include "common/EtchConfig.h"
-#include "common/EtchObject.h"
+#include <gtest/gtest.h>
+#include "serialization/EtchField.h"
+#include "util/EtchHash.h"
 
-class EtchHash {
-public:
+TEST(EtchFieldTest, createTest) {
+  EtchField *test = NULL;
+  test = new EtchField();
+  EXPECT_TRUE(test != NULL);
+  delete test;
+}
 
-  static capu::uint64_t Digest(const EtchObject &key) {
-    return key.getHashCode();
-  }
+TEST(EtchFieldTest, getTest) {
+  EtchField *test = NULL;
+  EtchString type("testType");
+  test = new EtchField(5, type);
 
-  static capu::uint64_t Digest(const EtchObject* key) {
-   return key->getHashCode();
-  }
-};
+  EXPECT_TRUE(test->getId() == 5);
+  EXPECT_TRUE(test->getName().equals(&type));
+  delete test;
+}
 
-#endif
+TEST(EtchFieldTest, hashTest) {
+  EtchString str = "test";
+  EtchField *field = new EtchField(str);
+  EXPECT_EQ(EtchHashEx::Digest(str),field->getId());
+  EXPECT_TRUE(field->getName().equals(&str));
+  delete field;
 
+}

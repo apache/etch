@@ -19,13 +19,13 @@
 #ifndef __ETCHSET_H__
 #define __ETCHSET_H__
 #include "common/EtchError.h"
-#include "common/EtchHash.h"
+#include "common/EtchObjectHash.h"
 #include "common/EtchComparator.h"
 #include "capu/container/HashSet.h"
 #include "common/EtchObject.h"
 
 
-template <class T, class H = EtchHash, class C = EtchComparator<T> >
+template <class T, class H = EtchObjectHash, class C = EtchComparator<T> >
 class EtchHashSet : public EtchObject {
 
 public:
