@@ -80,6 +80,7 @@ SET(MAIN_INCLUDES
     ${PROJECT_SOURCE_DIR}/include/serialization/EtchValueFactory.h
     ${PROJECT_SOURCE_DIR}/include/serialization/EtchImportExportHelper.h
     ${PROJECT_SOURCE_DIR}/include/serialization/EtchType.h
+    ${PROJECT_SOURCE_DIR}/include/serialization/EtchStructValue.h
     ${PROJECT_SOURCE_DIR}/include/util/EtchUtil.h
     )
 
@@ -120,6 +121,7 @@ SET(MAIN_SOURCES
     serialization/EtchFieldMap.cpp
     serialization/EtchValueFactory.cpp
     serialization/EtchType.cpp
+    serialization/EtchStructValue.cpp
     util/EtchUtil.cpp
     )
 
