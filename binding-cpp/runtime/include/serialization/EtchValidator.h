@@ -53,7 +53,7 @@ public:
    * @return ETCH_OK if elementValidator is succesfully get
    *         ETCH_EINVAL otherwise
    */
-  virtual status_t elementValidator(capu::SmartPointer<EtchValidator> &val) = 0;
+  virtual status_t getElementValidator(capu::SmartPointer<EtchValidator> &val) = 0;
 
   /**
    * Checks the value for being valid. If the value is valid
