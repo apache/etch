@@ -27,7 +27,19 @@
 
 GTEST_API_ int main(int argc, char **argv) {
   std::cout << "Running etch-cpp tests\n";
+ 
+  bool insideIde = false;
+  if(argc > 1) {
+    insideIde = true;
+  }
 
   testing::InitGoogleTest(&argc, argv);
-  return RUN_ALL_TESTS();
+  int result = RUN_ALL_TESTS();
+
+  if(insideIde) {
+    printf("press <enter> to exit.\n");
+    getchar();
+  }
+ 
+  return result;
 }
