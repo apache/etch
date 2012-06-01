@@ -43,6 +43,7 @@ namespace capu
     typedef float float_t;
     typedef double double_t;
     typedef bool bool_t;
+    typedef int64_t time_t;
     #else //other OS should be C99 compliant
     typedef signed char int8_t;
     typedef unsigned char uint8_t;
@@ -55,6 +56,7 @@ namespace capu
     typedef float float_t;
     typedef double double_t;
     typedef bool bool_t;
+    typedef int64_t time_t;
     #endif //_WIN32 
 }
 
