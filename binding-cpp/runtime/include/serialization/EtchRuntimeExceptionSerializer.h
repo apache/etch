@@ -16,30 +16,31 @@
  * limitations under the License.
  */
 
-#ifndef __ETCHLISTSERIALIZER_H__
-#define __ETCHLISTSERIALIZER_H__
 
-#include "common/EtchList.h"
-#include "common/EtchNativeArray.h"
+#ifndef __ETCHRUNTIMEEXCEPTIONSERIALIZER_H__
+#define __ETCHRUNTIMEEXCEPTIONSERIALIZER_H__
+
+#include "common/EtchString.h"
+#include "common/EtchRuntimeException.h"
 #include "serialization/EtchImportExportHelper.h"
 #include "serialization/EtchStructValue.h"
-#include "serialization/EtchField.h"
 #include "serialization/EtchType.h"
+#include "serialization/EtchField.h"
 #include "serialization/EtchClass2TypeMap.h"
-#include "serialization/EtchValidatorObject.h"
+#include "serialization/EtchValidatorString.h"
 
-class EtchListSerializer : public EtchImportExportHelper {
+class EtchRuntimeExceptionSerializer : public EtchImportExportHelper {
 public:
 
   /**
    * Constructor
    */
-  EtchListSerializer(EtchType* type, EtchField* field);
+  EtchRuntimeExceptionSerializer(EtchType* type, EtchField* field);
 
   /**
    * Destructor
    */
-  virtual ~EtchListSerializer();
+  virtual ~EtchRuntimeExceptionSerializer();
 
   /**
    * @see EtchImportExportHelper
@@ -63,7 +64,9 @@ private:
   EtchType* mType;
   EtchField mField;
   const static EtchString FIELD_NAME;
+
 };
 
-#endif /* ETCHLISTSERIALIZER_H */
+
+#endif /* ETCHRUNTIMEEXCEPTIONSERIALIZER_H */
 
