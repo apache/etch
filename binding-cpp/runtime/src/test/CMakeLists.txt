@@ -43,6 +43,7 @@ add_executable (etch-cpp-test
     common/EtchHashTableTest.cpp
     common/EtchHashSetTest.cpp
     common/EtchExceptionTest.cpp
+    common/EtchAuthenticationExceptionTest.cpp
     util/EtchURLTest.cpp
     util/EtchResourcesTest.cpp
     transport/EtchFlexBufferTest.cpp
