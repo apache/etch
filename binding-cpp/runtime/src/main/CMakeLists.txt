@@ -71,6 +71,7 @@ SET(MAIN_INCLUDES
     ${PROJECT_SOURCE_DIR}/include/serialization/EtchValidatorFloat.h
     ${PROJECT_SOURCE_DIR}/include/serialization/EtchValidatorDouble.h
     ${PROJECT_SOURCE_DIR}/include/serialization/EtchValidatorLong.h
+    ${PROJECT_SOURCE_DIR}/include/serialization/EtchValidatorString.h
     ${PROJECT_SOURCE_DIR}/include/util/EtchUtil.h
     )
 
@@ -104,6 +105,7 @@ SET(MAIN_SOURCES
     serialization/EtchValidatorFloat.cpp
     serialization/EtchValidatorDouble.cpp
     serialization/EtchValidatorLong.cpp
+    serialization/EtchValidatorString.cpp
     util/EtchUtil.cpp
     )
 
