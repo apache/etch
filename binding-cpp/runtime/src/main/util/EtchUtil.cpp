@@ -19,31 +19,59 @@
 #include "util/EtchUtil.h"
 
 status_t etch_strcpy_s(char *dst, size_t dstSize, const char *src) {
-    char *d, *end;
+  char *d, *end;
 
-    if (dst == NULL || src == NULL) {
-        return ETCH_EINVAL;
+  if (dst == NULL || src == NULL) {
+    return ETCH_EINVAL;
+  }
+
+  if (dstSize == 0) {
+    return ETCH_ERANGE;
+  }
+
+  d = dst;
+  end = dst + dstSize - 1;
+
+  for (; d < end; ++d, ++src) {
+    if (!(*d = *src)) {
+      return ETCH_OK;
     }
+  }
 
-    if (dstSize == 0) {
-        return ETCH_ERANGE;
-    }
+  // if src buffer is not 0 now, then we have bytes left in src --> error
+  if (!(*d = *src)) {
+    return ETCH_OK;
+  } else {
+    // always null terminate
+    *d = '\0';
+    return ETCH_EINVAL;
+  }
+}
 
-    d = dst;
-    end = dst + dstSize - 1;
-
-    for (; d < end; ++d, ++src) {
-        if (!(*d = *src)) {
-            return ETCH_OK;
-        }
-    }
-
-    // if src buffer is not 0 now, then we have bytes left in src --> error
-    if(! (*d = *src)) {
-        return ETCH_OK;
+status_t etch_strlen_utf8(const char *src, capu::int32_t &length) {
+  if (src == NULL)
+    return ETCH_EINVAL;
+  length = 0;
+  for (capu::int32_t i = 0; src[i] != 0;) {
+    if (!(src[i] & (0x80))) {
+      //1 byte character
+      i++;
+      length++;
+    } else if ((src[i] & (0xF0)) == 0xF0) {
+      //4 byte character
+      i = i + 4;
+      length++;
+    } else if ((src[i] & (0xE0)) == 0xE0) {
+      //3 byte character
+      i = i + 3;
+      length++;
+    } else if ((src[i] & (0xC0)) == 0xC0) {
+      //2 byte character
+      i = i + 2;
+      length++;
     } else {
-        // always null terminate
-        *d = '\0';
-        return ETCH_EINVAL;
+      return ETCH_ERROR;
     }
+  }
+  return ETCH_OK;
 }

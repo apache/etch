@@ -20,6 +20,7 @@
 #define __ETCHUTIL_H__
 
 #include "common/EtchError.h"
+#include "common/EtchConfig.h"
 
 /*
  * copy src to dst. Copies at most dst_size bytes. In case that
@@ -27,5 +28,15 @@
  * Asserts that dstSize is length of dst.
  */
 status_t etch_strcpy_s(char *dst, size_t dstSize, const char *src);
+
+/**
+ * calculate the length of given string which is encoded in UTF8
+ * @param src string in UTF8
+ * @param length as out param
+ * @return ETCH_OK if length is successfully calculated
+ *         ETCH_ERROR if length calculation has failed
+ *         ETCH_EINVAL if src == NULL
+ */
+status_t etch_strlen_utf8(const char *src, capu::int32_t &length);
 
 #endif
