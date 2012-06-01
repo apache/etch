@@ -97,6 +97,7 @@ SET(MAIN_INCLUDES
     ${PROJECT_SOURCE_DIR}/include/serialization/EtchSetSerializer.h
     ${PROJECT_SOURCE_DIR}/include/serialization/EtchDateSerializer.h
     ${PROJECT_SOURCE_DIR}/include/serialization/EtchDefaultValueFactory.h
+    ${PROJECT_SOURCE_DIR}/include/serialization/EtchValidatorStructValue.h
     ${PROJECT_SOURCE_DIR}/include/util/EtchUtil.h
     )
 
@@ -154,6 +155,7 @@ SET(MAIN_SOURCES
     serialization/EtchSetSerializer.cpp
     serialization/EtchDateSerializer.cpp
     serialization/EtchDefaultValueFactory.cpp
+    serialization/EtchValidatorStructValue.cpp
     util/EtchUtil.cpp
     )
 
