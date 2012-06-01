@@ -24,13 +24,11 @@ const EtchObjectType EtchType::TYPE(EOTID_TYPE, NULL);
 EtchType::EtchType()
 : EtchObject(&EtchType::TYPE), mId(0), mTimeout(0), mName(""), mSuperType(NULL),
 mResultType(NULL), mDirection(BOTH), mAsyncMode(NONE), mLocked(false), mComponentType(NULL), mHelper(NULL) {
-
 }
 
 EtchType::EtchType(capu::uint32_t id, EtchString &name)
 : EtchObject(&EtchType::TYPE), mId(id), mTimeout(0), mName(name), mSuperType(NULL),
 mResultType(NULL), mDirection(BOTH), mAsyncMode(NONE), mLocked(false), mComponentType(NULL), mHelper(NULL) {
-
 }
 
 EtchType::EtchType(EtchString &name)
@@ -40,8 +38,10 @@ mResultType(NULL), mDirection(BOTH), mAsyncMode(NONE), mLocked(false), mComponen
 }
 
 EtchType::~EtchType() {
-  if (mHelper != NULL)
+  if (mHelper != NULL) {
+    //TODO: Check memory management
     delete mHelper;
+  }
 }
 
 capu::uint64_t EtchType::getHashCode() {
