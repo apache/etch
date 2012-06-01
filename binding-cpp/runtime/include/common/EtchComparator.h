@@ -40,4 +40,13 @@ public:
   }
 };
 
+template <class T>
+class EtchComparator <capu::SmartPointer<T> > {
+public:
+
+  inline capu::bool_t operator() (const capu::SmartPointer<EtchObject>& first, const capu::SmartPointer<EtchObject>& second) {
+    return first->equals(second.get());
+  }
+};
+
 #endif

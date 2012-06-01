@@ -29,7 +29,11 @@ public:
   }
 
   static capu::uint64_t Digest(const EtchObject* key) {
-   return key->getHashCode();
+    return key->getHashCode();
+  }
+
+  static capu::uint64_t Digest(const capu::SmartPointer<EtchObject>& key) {
+    return key->getHashCode();
   }
 };
 #endif
