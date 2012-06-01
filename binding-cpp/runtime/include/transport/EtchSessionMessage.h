@@ -37,9 +37,8 @@ public:
    * @param sender the sender of the message, for transports which allow
    * multiple senders. This is who to return any response to.
    * @param msg a Message.
-   * @return true if the message was consumed, false otherwise.
    */
-  virtual status_t sessionMessage(capu::SmartPointer<EtchWho> sender, capu::SmartPointer<EtchMessage> msg, capu::bool_t &result) = 0;
+  virtual status_t sessionMessage(capu::SmartPointer<EtchWho> sender, capu::SmartPointer<EtchMessage> msg) = 0;
 
   /**
    * Destructor
