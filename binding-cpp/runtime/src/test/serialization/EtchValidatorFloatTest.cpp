@@ -42,15 +42,15 @@ TEST(EtchValidatorFloatTest, createTest) {
 }
 
 TEST(EtchValidatorFloatTest, validateTest) {
-  EtchObject* byte = NULL;
+  capu::SmartPointer<EtchObject> byte = NULL;
 
-  EtchObject* floatTmp = new EtchFloat(capu::NumericLimitMin<capu::float_t>());
-  EtchObject* floatTmp1 = new EtchFloat(0);
-  EtchObject* floatTmp2 = new EtchFloat(capu::NumericLimitMax<capu::float_t>());
-  EtchObject* floatTmp3 = new EtchFloat(897.12);
+  capu::SmartPointer<EtchObject> floatTmp = new EtchFloat(capu::NumericLimitMin<capu::float_t>());
+  capu::SmartPointer<EtchObject> floatTmp1 = new EtchFloat(0);
+  capu::SmartPointer<EtchObject> floatTmp2 = new EtchFloat(capu::NumericLimitMax<capu::float_t>());
+  capu::SmartPointer<EtchObject> floatTmp3 = new EtchFloat(897.12);
 
   //incompatible type
-  EtchObject* str = new EtchString();
+  capu::SmartPointer<EtchObject> str = new EtchString();
 
   capu::SmartPointer<EtchValidator> ptr = NULL;
   EXPECT_TRUE(EtchValidatorFloat::Get(0, ptr) == ETCH_OK);
@@ -63,32 +63,23 @@ TEST(EtchValidatorFloatTest, validateTest) {
   EXPECT_TRUE(ptr->validate(floatTmp1));
   EXPECT_TRUE(ptr->validate(floatTmp2));
   EXPECT_TRUE(ptr->validate(floatTmp3));
-
-  delete floatTmp;
-  delete floatTmp1;
-  delete floatTmp2;
-  delete floatTmp3;
-  delete str;
 }
 
 TEST(EtchValidatorFloatTest, validateValueTest) {
-  EtchObject* byte = NULL;
-  EtchObject* result;
-  EtchObject* floatTmp = new EtchFloat(-128.12);
-  EtchObject* floatTmp2 = new EtchFloat(5.13);
-  EtchObject* floatTmp3 = new EtchFloat(127.54);
+  capu::SmartPointer<EtchObject> byte = NULL;
+  capu::SmartPointer<EtchObject> result;
+  capu::SmartPointer<EtchObject> floatTmp = new EtchFloat(-128.12);
+  capu::SmartPointer<EtchObject> floatTmp2 = new EtchFloat(5.13);
+  capu::SmartPointer<EtchObject> floatTmp3 = new EtchFloat(127.54);
   capu::SmartPointer<EtchValidator> ptr = NULL;
   EXPECT_TRUE(EtchValidatorFloat::Get(0, ptr) == ETCH_OK);
   EXPECT_TRUE(ptr->validateValue(byte, result) == ETCH_ERROR);
   EXPECT_TRUE(ptr->validateValue(floatTmp, result) == ETCH_OK);
-  EXPECT_TRUE(((EtchFloat*) result)->get() == ((EtchFloat*) floatTmp)->get());
+  EXPECT_TRUE(((EtchFloat*) result.get())->get() == ((EtchFloat*) floatTmp.get())->get());
   EXPECT_TRUE(ptr->validateValue(floatTmp2, result) == ETCH_OK);
-  EXPECT_TRUE(((EtchFloat*) result)->get() == ((EtchFloat*) floatTmp2)->get());
+  EXPECT_TRUE(((EtchFloat*) result.get())->get() == ((EtchFloat*) floatTmp2.get())->get());
   EXPECT_TRUE(ptr->validateValue(floatTmp3, result) == ETCH_OK);
-  EXPECT_TRUE(((EtchFloat*) result)->get() == ((EtchFloat*) floatTmp3)->get());
-  delete floatTmp;
-  delete floatTmp2;
-  delete floatTmp3;
+  EXPECT_TRUE(((EtchFloat*) result.get())->get() == ((EtchFloat*) floatTmp3.get())->get());
 }
 
 TEST(EtchValidatorFloatTest, elementValidatorTest) {
@@ -97,26 +88,19 @@ TEST(EtchValidatorFloatTest, elementValidatorTest) {
   capu::SmartPointer<EtchValidator> elementValidator;
   ptr->getElementValidator(elementValidator);
 
-  EtchObject* floatTmp = new EtchFloat(capu::NumericLimitMin<capu::float_t>());
-  EtchObject* floatTmp1 = new EtchFloat(0);
-  EtchObject* floatTmp2 = new EtchFloat(capu::NumericLimitMax<capu::float_t>());
-  EtchObject* floatTmp3 = new EtchFloat(897.12);
+  capu::SmartPointer<EtchObject> floatTmp = new EtchFloat(capu::NumericLimitMin<capu::float_t>());
+  capu::SmartPointer<EtchObject> floatTmp1 = new EtchFloat(0);
+  capu::SmartPointer<EtchObject> floatTmp2 = new EtchFloat(capu::NumericLimitMax<capu::float_t>());
+  capu::SmartPointer<EtchObject> floatTmp3 = new EtchFloat(897.12);
 
   //incompatible type
-  EtchObject* str = new EtchString();
+  capu::SmartPointer<EtchObject> str = new EtchString();
 
   EXPECT_FALSE(elementValidator->validate(str));
   EXPECT_TRUE(elementValidator->validate(floatTmp));
   EXPECT_TRUE(elementValidator->validate(floatTmp1));
   EXPECT_TRUE(elementValidator->validate(floatTmp2));
   EXPECT_TRUE(elementValidator->validate(floatTmp3));
-
-  delete floatTmp;
-  delete floatTmp1;
-  delete floatTmp2;
-  delete floatTmp3;
-
-  delete str;
 }
 
 

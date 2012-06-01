@@ -42,49 +42,47 @@ TEST(EtchValidatorObjectTest, createTest) {
 }
 
 TEST(EtchValidatorObjectTest, validateTest) {
-  EtchObject* boolean = NULL;
-  EtchObject* integer = new EtchInt32(4);
-  EtchObject* boolean2 = new EtchBool(false);
+  capu::SmartPointer<EtchObject> boolean = NULL;
+  capu::SmartPointer<EtchObject> integer = new EtchInt32(4);
+  capu::SmartPointer<EtchObject> boolean2 = new EtchBool(false);
   capu::SmartPointer<EtchValidator> ptr = NULL;
   EXPECT_TRUE(EtchValidatorObject::Get(0, ptr) == ETCH_OK);
   EXPECT_TRUE((capu::smartpointer_cast<EtchTypeValidator>(ptr))->getNDims() == 0);
   EXPECT_FALSE(ptr->validate(boolean));
   EXPECT_TRUE(ptr->validate(integer));
   EXPECT_TRUE(ptr->validate(boolean2));
-  delete integer;
-  delete boolean2;
 }
 
 TEST(EtchValidatorObjectTest, validateValueTest) {
-  EtchObject* byte = NULL;
-  EtchObject* result = NULL;
-  EtchObject* integer = new EtchInt32(capu::NumericLimitMin<capu::int16_t > ());
-  EtchObject* integer2 = new EtchInt32(0);
-  EtchObject* integer3 = new EtchInt32(capu::NumericLimitMax<capu::int16_t > ());
-  EtchObject* integer4 = new EtchInt32(897);
+  capu::SmartPointer<EtchObject> byte = NULL;
+  capu::SmartPointer<EtchObject> result = NULL;
+  capu::SmartPointer<EtchObject> integer = new EtchInt32(capu::NumericLimitMin<capu::int16_t > ());
+  capu::SmartPointer<EtchObject> integer2 = new EtchInt32(0);
+  capu::SmartPointer<EtchObject> integer3 = new EtchInt32(capu::NumericLimitMax<capu::int16_t > ());
+  capu::SmartPointer<EtchObject> integer4 = new EtchInt32(897);
 
   //exceed limits of integer
-  EtchObject* integer5 = new EtchInt32(capu::NumericLimitMax<capu::int16_t > () + 2);
+  capu::SmartPointer<EtchObject> integer5 = new EtchInt32(capu::NumericLimitMax<capu::int16_t > () + 2);
 
-  EtchObject* longInteger = new EtchLong(capu::NumericLimitMin<capu::int16_t > ());
-  EtchObject* longInteger2 = new EtchLong(0);
-  EtchObject* longInteger3 = new EtchLong(capu::NumericLimitMax<capu::int16_t > ());
-  EtchObject* longInteger4 = new EtchLong(897);
+  capu::SmartPointer<EtchObject> longInteger = new EtchLong(capu::NumericLimitMin<capu::int16_t > ());
+  capu::SmartPointer<EtchObject> longInteger2 = new EtchLong(0);
+  capu::SmartPointer<EtchObject> longInteger3 = new EtchLong(capu::NumericLimitMax<capu::int16_t > ());
+  capu::SmartPointer<EtchObject> longInteger4 = new EtchLong(897);
   //exceed limits of integer
-  EtchObject* longInteger5 = new EtchLong((capu::int64_t)capu::NumericLimitMax<capu::int16_t > () + (capu::int64_t)2);
+  capu::SmartPointer<EtchObject> longInteger5 = new EtchLong((capu::int64_t)capu::NumericLimitMax<capu::int16_t > () + (capu::int64_t)2);
 
-  EtchObject* shortInteger = new EtchShort(capu::NumericLimitMin<capu::int16_t > ());
-  EtchObject* shortInteger2 = new EtchShort(0);
-  EtchObject* shortInteger3 = new EtchShort(capu::NumericLimitMax<capu::int16_t > ());
-  EtchObject* shortInteger4 = new EtchShort();
+  capu::SmartPointer<EtchObject> shortInteger = new EtchShort(capu::NumericLimitMin<capu::int16_t > ());
+  capu::SmartPointer<EtchObject> shortInteger2 = new EtchShort(0);
+  capu::SmartPointer<EtchObject> shortInteger3 = new EtchShort(capu::NumericLimitMax<capu::int16_t > ());
+  capu::SmartPointer<EtchObject> shortInteger4 = new EtchShort();
 
   //incompatible type
-  EtchObject* str = new EtchString();
+  capu::SmartPointer<EtchObject> str = new EtchString();
 
-  EtchObject* byte1 = new EtchByte(capu::NumericLimitMax<capu::int8_t > ());
-  EtchObject* byte2 = new EtchByte(0);
-  EtchObject* byte3 = new EtchByte(capu::NumericLimitMin<capu::int8_t > ());
-  EtchObject* byte4 = new EtchByte(32);
+  capu::SmartPointer<EtchObject> byte1 = new EtchByte(capu::NumericLimitMax<capu::int8_t > ());
+  capu::SmartPointer<EtchObject> byte2 = new EtchByte(0);
+  capu::SmartPointer<EtchObject> byte3 = new EtchByte(capu::NumericLimitMin<capu::int8_t > ());
+  capu::SmartPointer<EtchObject> byte4 = new EtchByte(32);
 
   capu::SmartPointer<EtchValidator> ptr = NULL;
   EXPECT_TRUE(EtchValidatorObject::Get(0, ptr) == ETCH_OK);
@@ -108,28 +106,6 @@ TEST(EtchValidatorObjectTest, validateValueTest) {
   EXPECT_TRUE(ptr->validateValue(integer4, result) == ETCH_OK);
   EXPECT_TRUE(ptr->validateValue(longInteger4, result) == ETCH_OK);
   EXPECT_TRUE(ptr->validateValue(shortInteger4, result) == ETCH_OK);
-
-  delete integer;
-  delete integer2;
-  delete integer3;
-  delete integer4;
-  delete integer5;
-  delete longInteger;
-  delete longInteger2;
-  delete longInteger3;
-  delete longInteger4;
-  delete longInteger5;
-
-  delete shortInteger;
-  delete shortInteger2;
-  delete shortInteger3;
-  delete shortInteger4;
-
-  delete str;
-  delete byte1;
-  delete byte2;
-  delete byte3;
-  delete byte4;
 }
 
 TEST(EtchValidatorObjectTest, elementValidatorTest) {
@@ -139,33 +115,33 @@ TEST(EtchValidatorObjectTest, elementValidatorTest) {
   ptr->getElementValidator(elementValidator);
 
 
-  EtchObject* integer = new EtchInt32(capu::NumericLimitMin<capu::int16_t > ());
-  EtchObject* integer2 = new EtchInt32(0);
-  EtchObject* integer3 = new EtchInt32(capu::NumericLimitMax<capu::int16_t > ());
-  EtchObject* integer4 = new EtchInt32(897);
+  capu::SmartPointer<EtchObject> integer = new EtchInt32(capu::NumericLimitMin<capu::int16_t > ());
+  capu::SmartPointer<EtchObject> integer2 = new EtchInt32(0);
+  capu::SmartPointer<EtchObject> integer3 = new EtchInt32(capu::NumericLimitMax<capu::int16_t > ());
+  capu::SmartPointer<EtchObject> integer4 = new EtchInt32(897);
 
   //exceed limits of integer
-  EtchObject* integer5 = new EtchInt32(capu::NumericLimitMax<capu::int16_t > () + 2);
+  capu::SmartPointer<EtchObject> integer5 = new EtchInt32(capu::NumericLimitMax<capu::int16_t > () + 2);
 
-  EtchObject* longInteger = new EtchLong(capu::NumericLimitMin<capu::int16_t > ());
-  EtchObject* longInteger2 = new EtchLong(0);
-  EtchObject* longInteger3 = new EtchLong(capu::NumericLimitMax<capu::int16_t > ());
-  EtchObject* longInteger4 = new EtchLong(897);
+  capu::SmartPointer<EtchObject> longInteger = new EtchLong(capu::NumericLimitMin<capu::int16_t > ());
+  capu::SmartPointer<EtchObject> longInteger2 = new EtchLong(0);
+  capu::SmartPointer<EtchObject> longInteger3 = new EtchLong(capu::NumericLimitMax<capu::int16_t > ());
+  capu::SmartPointer<EtchObject> longInteger4 = new EtchLong(897);
   //exceed limits of integer
-  EtchObject* longInteger5 = new EtchLong((capu::int64_t)capu::NumericLimitMax<capu::int16_t > () + (capu::int64_t)2);
+  capu::SmartPointer<EtchObject> longInteger5 = new EtchLong((capu::int64_t)capu::NumericLimitMax<capu::int16_t > () + (capu::int64_t)2);
 
-  EtchObject* shortInteger = new EtchShort(capu::NumericLimitMin<capu::int16_t > ());
-  EtchObject* shortInteger2 = new EtchShort(0);
-  EtchObject* shortInteger3 = new EtchShort(capu::NumericLimitMax<capu::int16_t > ());
-  EtchObject* shortInteger4 = new EtchShort();
+  capu::SmartPointer<EtchObject> shortInteger = new EtchShort(capu::NumericLimitMin<capu::int16_t > ());
+  capu::SmartPointer<EtchObject> shortInteger2 = new EtchShort(0);
+  capu::SmartPointer<EtchObject> shortInteger3 = new EtchShort(capu::NumericLimitMax<capu::int16_t > ());
+  capu::SmartPointer<EtchObject> shortInteger4 = new EtchShort();
 
   //incompatible type
-  EtchObject* str = new EtchString();
+  capu::SmartPointer<EtchObject> str = new EtchString();
 
-  EtchObject* byte1 = new EtchByte(capu::NumericLimitMax<capu::int8_t > ());
-  EtchObject* byte2 = new EtchByte(0);
-  EtchObject* byte3 = new EtchByte(capu::NumericLimitMin<capu::int8_t > ());
-  EtchObject* byte4 = new EtchByte(32);
+  capu::SmartPointer<EtchObject> byte1 = new EtchByte(capu::NumericLimitMax<capu::int8_t > ());
+  capu::SmartPointer<EtchObject> byte2 = new EtchByte(0);
+  capu::SmartPointer<EtchObject> byte3 = new EtchByte(capu::NumericLimitMin<capu::int8_t > ());
+  capu::SmartPointer<EtchObject> byte4 = new EtchByte(32);
 
   EXPECT_TRUE(elementValidator->validate(str));
   EXPECT_TRUE(elementValidator->validate(longInteger5));
@@ -186,26 +162,4 @@ TEST(EtchValidatorObjectTest, elementValidatorTest) {
   EXPECT_TRUE(elementValidator->validate(integer4));
   EXPECT_TRUE(elementValidator->validate(longInteger4));
   EXPECT_TRUE(elementValidator->validate(shortInteger4));
-
-  delete integer;
-  delete integer2;
-  delete integer3;
-  delete integer4;
-  delete integer5;
-  delete longInteger;
-  delete longInteger2;
-  delete longInteger3;
-  delete longInteger4;
-  delete longInteger5;
-
-  delete shortInteger;
-  delete shortInteger2;
-  delete shortInteger3;
-  delete shortInteger4;
-
-  delete str;
-  delete byte1;
-  delete byte2;
-  delete byte3;
-  delete byte4;
 }

@@ -31,30 +31,27 @@ TEST(EtchValidatorRuntimeExceptionTest, createTest) {
 
 TEST(EtchValidatorRuntimeExceptionTest, validateTest) {
   EtchString excepmess("test");
-  EtchObject* boolean = NULL;
-  EtchObject* integer = new EtchInt32(4);
-  EtchObject* exc = new EtchRuntimeException(excepmess, ETCH_ERROR);
+  capu::SmartPointer<EtchObject> boolean = NULL;
+  capu::SmartPointer<EtchObject> integer = new EtchInt32(4);
+  capu::SmartPointer<EtchObject> exc = new EtchRuntimeException(excepmess, ETCH_ERROR);
   capu::SmartPointer<EtchValidator> ptr = NULL;
   EXPECT_TRUE(EtchValidatorRuntimeException::Get(ptr) == ETCH_OK);
   EXPECT_FALSE(ptr->validate(boolean));
   EXPECT_FALSE(ptr->validate(integer));
   EXPECT_TRUE(ptr->validate(exc));
-  delete integer;
-  delete exc;
 
 }
 
 TEST(EtchValidatorRuntimeExceptionTest, validateValueTest) {
   EtchString excepmess("test");
-  EtchObject* boolean = NULL;
-  EtchObject* result;
-  EtchObject* integer = new EtchInt32(4);
-  EtchObject* exc = new EtchRuntimeException(excepmess, ETCH_ERROR);
+
+  capu::SmartPointer<EtchObject> boolean = NULL;
+  capu::SmartPointer<EtchObject> result;
+  capu::SmartPointer<EtchObject> integer = new EtchInt32(4);
+  capu::SmartPointer<EtchObject> exc = new EtchRuntimeException(excepmess, ETCH_ERROR);
   capu::SmartPointer<EtchValidator> ptr = NULL;
   EXPECT_TRUE(EtchValidatorRuntimeException::Get(ptr) == ETCH_OK);
   EXPECT_TRUE(ptr->validateValue(boolean, result) == ETCH_ERROR);
   EXPECT_TRUE(ptr->validateValue(integer, result) == ETCH_ERROR);
   EXPECT_TRUE(ptr->validateValue(exc, result) == ETCH_OK);
-  delete integer;
-  delete exc;
 }

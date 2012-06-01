@@ -64,7 +64,7 @@ public:
    * @return true if the value is valid by any validator in the
    * chain, or false if all reject it.
    */
-  virtual capu::bool_t validate(EtchObject* value) = 0;
+  virtual capu::bool_t validate(capu::SmartPointer<EtchObject> value) = 0;
 
   /**
    * @param value
@@ -74,7 +74,7 @@ public:
    * @return TRUE if the value is validated
    *         FALSE otherwise
    */
-  virtual status_t validateValue(EtchObject* value, EtchObject*& result) = 0;
+  virtual status_t validateValue(capu::SmartPointer<EtchObject> value, capu::SmartPointer<EtchObject>& result) = 0;
 
 };
 

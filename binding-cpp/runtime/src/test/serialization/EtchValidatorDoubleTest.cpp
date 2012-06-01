@@ -41,16 +41,16 @@ TEST(EtchValidatorDoubleTest, createTest) {
 }
 
 TEST(EtchValidatorDoubleTest, validateTest) {
-  EtchObject* byte = NULL;
+  capu::SmartPointer<EtchObject> byte = NULL;
 
-  EtchObject* doubleTmp = new EtchDouble(capu::NumericLimitMax<capu::float_t>());
-  EtchObject* doubleTmp1 = new EtchDouble(0);
-  EtchObject* doubleTmp2 = new EtchDouble(capu::NumericLimitMin<capu::float_t>());
-  EtchObject* doubleTmp3 = new EtchDouble(897.12);
+  capu::SmartPointer<EtchObject> doubleTmp = new EtchDouble(capu::NumericLimitMax<capu::float_t>());
+  capu::SmartPointer<EtchObject> doubleTmp1 = new EtchDouble(0);
+  capu::SmartPointer<EtchObject> doubleTmp2 = new EtchDouble(capu::NumericLimitMin<capu::float_t>());
+  capu::SmartPointer<EtchObject> doubleTmp3 = new EtchDouble(897.12);
   //exceed limits of Float
-  EtchObject* doubleTmp4_true = new EtchDouble((capu::double_t)capu::NumericLimitMax<capu::float_t>() + (capu::double_t)2.12);
+  capu::SmartPointer<EtchObject> doubleTmp4_true = new EtchDouble((capu::double_t)capu::NumericLimitMax<capu::float_t>() + (capu::double_t)2.12);
   //incompatible type
-  EtchObject* str = new EtchString();
+  capu::SmartPointer<EtchObject> str = new EtchString();
 
   capu::SmartPointer<EtchValidator> ptr = NULL;
   EXPECT_TRUE(EtchValidatorDouble::Get(0, ptr) == ETCH_OK);
@@ -64,35 +64,23 @@ TEST(EtchValidatorDoubleTest, validateTest) {
   EXPECT_TRUE(ptr->validate(doubleTmp2));
   EXPECT_TRUE(ptr->validate(doubleTmp3));
   EXPECT_TRUE(ptr->validate(doubleTmp4_true));
-
-  delete doubleTmp;
-  delete doubleTmp1;
-  delete doubleTmp2;
-  delete doubleTmp3;
-  delete doubleTmp4_true;
-
-  delete str;
 }
 
 TEST(EtchValidatorDoubleTest, validateValueTest) {
-  EtchObject* byte = NULL;
-  EtchObject* result;
-  EtchObject* doubleTmp = new EtchDouble(-128.12);
-  EtchObject* doubleTmp2 = new EtchDouble(5.13);
-  EtchObject* doubleTmp3 = new EtchDouble(127.54);
+  capu::SmartPointer<EtchObject> byte = NULL;
+  capu::SmartPointer<EtchObject> result;
+  capu::SmartPointer<EtchObject> doubleTmp = new EtchDouble(-128.12);
+  capu::SmartPointer<EtchObject> doubleTmp2 = new EtchDouble(5.13);
+  capu::SmartPointer<EtchObject> doubleTmp3 = new EtchDouble(127.54);
   capu::SmartPointer<EtchValidator> ptr = NULL;
   EXPECT_TRUE(EtchValidatorDouble::Get(0, ptr) == ETCH_OK);
   EXPECT_TRUE(ptr->validateValue(byte, result) == ETCH_ERROR);
   EXPECT_TRUE(ptr->validateValue(doubleTmp, result) == ETCH_OK);
-  EXPECT_TRUE(((EtchDouble*) result)->get() == ((EtchDouble*) doubleTmp)->get());
+  EXPECT_TRUE(((EtchDouble*) result.get())->get() == ((EtchDouble*) doubleTmp.get())->get());
   EXPECT_TRUE(ptr->validateValue(doubleTmp2, result) == ETCH_OK);
-  EXPECT_TRUE(((EtchDouble*) result)->get() == ((EtchDouble*) doubleTmp2)->get());
+  EXPECT_TRUE(((EtchDouble*) result.get())->get() == ((EtchDouble*) doubleTmp2.get())->get());
   EXPECT_TRUE(ptr->validateValue(doubleTmp3, result) == ETCH_OK);
-  EXPECT_TRUE(((EtchDouble*) result)->get() == ((EtchDouble*) doubleTmp3)->get());
-
-  delete doubleTmp;
-  delete doubleTmp2;
-  delete doubleTmp3;
+  EXPECT_TRUE(((EtchDouble*) result.get())->get() == ((EtchDouble*) doubleTmp3.get())->get());
 }
 
 TEST(EtchValidatorDoubleTest, elementValidatorTest) {
@@ -101,15 +89,15 @@ TEST(EtchValidatorDoubleTest, elementValidatorTest) {
   capu::SmartPointer<EtchValidator> elementValidator;
   ptr->getElementValidator(elementValidator);
 
-  EtchObject* doubleTmp = new EtchDouble(capu::NumericLimitMax<capu::float_t>());
-  EtchObject* doubleTmp1 = new EtchDouble(0);
-  EtchObject* doubleTmp2 = new EtchDouble(capu::NumericLimitMin<capu::float_t>());
-  EtchObject* doubleTmp3 = new EtchDouble(897.12);
+  capu::SmartPointer<EtchObject> doubleTmp = new EtchDouble(capu::NumericLimitMax<capu::float_t>());
+  capu::SmartPointer<EtchObject> doubleTmp1 = new EtchDouble(0);
+  capu::SmartPointer<EtchObject> doubleTmp2 = new EtchDouble(capu::NumericLimitMin<capu::float_t>());
+  capu::SmartPointer<EtchObject> doubleTmp3 = new EtchDouble(897.12);
   //exceed limits of Float
-  EtchObject* doubleTmp4_true = new EtchDouble((capu::double_t)capu::NumericLimitMax<capu::float_t>() + (capu::double_t)2.12);
+  capu::SmartPointer<EtchObject> doubleTmp4_true = new EtchDouble((capu::double_t)capu::NumericLimitMax<capu::float_t>() + (capu::double_t)2.12);
 
   //incompatible type
-  EtchObject* str = new EtchString();
+  capu::SmartPointer<EtchObject> str = new EtchString();
 
   EXPECT_FALSE(elementValidator->validate(str));
   EXPECT_TRUE(elementValidator->validate(doubleTmp4_true));
@@ -117,14 +105,6 @@ TEST(EtchValidatorDoubleTest, elementValidatorTest) {
   EXPECT_TRUE(elementValidator->validate(doubleTmp1));
   EXPECT_TRUE(elementValidator->validate(doubleTmp2));
   EXPECT_TRUE(elementValidator->validate(doubleTmp3));
-
-  delete doubleTmp;
-  delete doubleTmp1;
-  delete doubleTmp2;
-  delete doubleTmp3;
-  delete doubleTmp4_true;
-
-  delete str;
 }
 
 

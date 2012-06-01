@@ -43,33 +43,29 @@ TEST(EtchValidatorBooleanTest, createTest) {
 }
 
 TEST(EtchValidatorBooleanTest, validateTest) {
-  EtchObject* boolean = NULL;
-  EtchObject* integer = new EtchInt32(4);
-  EtchObject* boolean2 = new EtchBool(false);
+  capu::SmartPointer<EtchObject> boolean = NULL;
+  capu::SmartPointer<EtchObject> integer = new EtchInt32(4);
+  capu::SmartPointer<EtchObject> boolean2 = new EtchBool(false);
   capu::SmartPointer<EtchValidator> val2;
   EXPECT_TRUE(EtchValidatorBoolean::Get(0, val2) == ETCH_OK);
   capu::SmartPointer<EtchValidatorBoolean> val = capu::smartpointer_cast<EtchValidatorBoolean>(val2);
   EXPECT_FALSE(val->validate(boolean));
   EXPECT_FALSE(val->validate(integer));
   EXPECT_TRUE(val->validate(boolean2));
-  delete integer;
-  delete boolean2;
 
 }
 
 TEST(EtchValidatorBooleanTest, validateValueTest) {
-  EtchObject* boolean = NULL;
-  EtchObject* result;
-  EtchObject* integer = new EtchInt32(4);
-  EtchObject* boolean2 = new EtchBool(false);
+  capu::SmartPointer<EtchObject> boolean = NULL;
+  capu::SmartPointer<EtchObject> result;
+  capu::SmartPointer<EtchObject> integer = new EtchInt32(4);
+  capu::SmartPointer<EtchObject> boolean2 = new EtchBool(false);
   capu::SmartPointer<EtchValidator> val2;
   EXPECT_TRUE(EtchValidatorBoolean::Get(0, val2) == ETCH_OK);
   capu::SmartPointer<EtchValidatorBoolean> val = capu::smartpointer_cast<EtchValidatorBoolean>(val2);
   EXPECT_TRUE(val->validateValue(boolean, result) == ETCH_ERROR);
   EXPECT_TRUE(val->validateValue(integer, result) == ETCH_ERROR);
   EXPECT_TRUE(val->validateValue(boolean2, result) == ETCH_OK);
-  delete integer;
-  delete boolean2;
 }
 
 TEST(EtchValidatorBooleanTest, elementValidatorTest) {
@@ -80,13 +76,11 @@ TEST(EtchValidatorBooleanTest, elementValidatorTest) {
   capu::SmartPointer<EtchValidator> element_validator;
   val->getElementValidator(element_validator);
 
-  EtchObject* boolean = NULL;
-  EtchObject* integer = new EtchInt32(4);
-  EtchObject* boolean2 = new EtchBool(false);
+  capu::SmartPointer<EtchObject> boolean = NULL;
+  capu::SmartPointer<EtchObject> integer = new EtchInt32(4);
+  capu::SmartPointer<EtchObject> boolean2 = new EtchBool(false);
 
   EXPECT_FALSE(element_validator->validate(boolean));
   EXPECT_FALSE(element_validator->validate(integer));
   EXPECT_TRUE(element_validator->validate(boolean2));
-  delete integer;
-  delete boolean2;
 }

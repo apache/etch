@@ -33,7 +33,7 @@ EtchValidatorStructValue::~EtchValidatorStructValue() {
 
 }
 
-status_t EtchValidatorStructValue::validateValue(EtchObject* value, EtchObject*& result) {
+status_t EtchValidatorStructValue::validateValue(capu::SmartPointer<EtchObject> value, capu::SmartPointer<EtchObject>& result) {
   if (validate(value)) {
     result = value;
     return ETCH_OK;
@@ -42,16 +42,17 @@ status_t EtchValidatorStructValue::validateValue(EtchObject* value, EtchObject*&
   }
 }
 
-capu::bool_t EtchValidatorStructValue::validate(EtchObject* value) {
+capu::bool_t EtchValidatorStructValue::validate(capu::SmartPointer<EtchObject> value) {
   if (mExpectedType == NULL)
     return false;
-  if (value == NULL)
+  if (value.get() == NULL)
     return false;
   if (value->getObjectType()->equals(mExpectedType))
     return true;
   //handle array
   if ((value->getObjectType()->isArray()) && (mExpectedType->isArray())) {
-    EtchNativeArray<EtchObject*> *array = (EtchNativeArray<EtchObject*> *) value;
+    //TODO: move getDim to EtchObjectType and set it dynamically during creation of the object
+    EtchNativeArray<EtchObject*> *array = (EtchNativeArray<EtchObject*> *) value.get();
     if (array->getDim() != mNDims) {
       return false;
     }
@@ -59,7 +60,7 @@ capu::bool_t EtchValidatorStructValue::validate(EtchObject* value) {
     const EtchObjectType* type2 = mExpectedType->getObjectComponentType();
     return type->equals(type2);
   }
-  return (dynamic_cast<EtchValidatorStructValue*> (value) != NULL);
+  return (dynamic_cast<EtchValidatorStructValue*> (value.get()) != NULL);
 }
 
 status_t EtchValidatorStructValue::getElementValidator(capu::SmartPointer<EtchValidator> &val) {

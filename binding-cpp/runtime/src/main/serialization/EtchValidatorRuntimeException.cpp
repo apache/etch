@@ -33,13 +33,13 @@ EtchValidatorRuntimeException::~EtchValidatorRuntimeException() {
 
 }
 
-capu::bool_t EtchValidatorRuntimeException::validate(EtchObject* value) {
-  if (value == NULL)
+capu::bool_t EtchValidatorRuntimeException::validate(capu::SmartPointer<EtchObject> value) {
+  if (value.get() == NULL)
     return false;
   return value->getObjectType()->equals(EtchRuntimeException::TYPE());
 }
 
-status_t EtchValidatorRuntimeException::validateValue(EtchObject* value, EtchObject*& result) {
+status_t EtchValidatorRuntimeException::validateValue(capu::SmartPointer<EtchObject> value, capu::SmartPointer<EtchObject>& result) {
   if (validate(value)) {
     result = value;
     return ETCH_OK;

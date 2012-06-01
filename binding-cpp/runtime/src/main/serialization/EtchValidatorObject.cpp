@@ -35,17 +35,17 @@ EtchValidatorObject::~EtchValidatorObject() {
 
 }
 
-capu::bool_t EtchValidatorObject::validate(EtchObject* value) {
-  if (value == NULL)
+capu::bool_t EtchValidatorObject::validate(capu::SmartPointer<EtchObject> value) {
+  if (value.get() == NULL)
     return false;
   if (mExpectedType == NULL)
     return false;
   if (value->getObjectType()->equals(mExpectedType))
     return true;
-  return ((dynamic_cast<EtchObject*> (value) != NULL) && (mSubclass));
+  return ((dynamic_cast<EtchObject*> (value.get()) != NULL) && (mSubclass));
 }
 
-status_t EtchValidatorObject::validateValue(EtchObject* value, EtchObject*& result) {
+status_t EtchValidatorObject::validateValue(capu::SmartPointer<EtchObject> value, capu::SmartPointer<EtchObject>& result) {
   if (validate(value)) {
     result = value;
     return ETCH_OK;

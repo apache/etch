@@ -34,9 +34,9 @@ EtchValidatorFloat::~EtchValidatorFloat() {
 
 }
 
-capu::bool_t EtchValidatorFloat::validate(EtchObject* value) {
+capu::bool_t EtchValidatorFloat::validate(capu::SmartPointer<EtchObject> value) {
 
-  if (value == NULL)
+  if (value.get() == NULL)
     return false;
   if (mExpectedType == NULL)
     return false;
@@ -45,7 +45,7 @@ capu::bool_t EtchValidatorFloat::validate(EtchObject* value) {
 
   //array handling
   if ((value->getObjectType()->isArray()) && (mExpectedType->isArray())) {
-    EtchNativeArray<EtchObject*> *array = (EtchNativeArray<EtchObject*> *) value;
+    EtchNativeArray<EtchObject*> *array = (EtchNativeArray<EtchObject*> *) value.get();
     if (array->getDim() != mNDims) {
       return false;
     }
@@ -56,7 +56,7 @@ capu::bool_t EtchValidatorFloat::validate(EtchObject* value) {
   return false;
 }
 
-status_t EtchValidatorFloat::validateValue(EtchObject* value, EtchObject*& result) {
+status_t EtchValidatorFloat::validateValue(capu::SmartPointer<EtchObject> value, capu::SmartPointer<EtchObject>& result) {
   if (validate(value)) {
     result = value;
     return ETCH_OK;

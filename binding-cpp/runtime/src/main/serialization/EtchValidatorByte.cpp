@@ -34,8 +34,8 @@ EtchValidatorByte::~EtchValidatorByte() {
 
 }
 
-capu::bool_t EtchValidatorByte::validate(EtchObject* value) {
-  if (value == NULL)
+capu::bool_t EtchValidatorByte::validate(capu::SmartPointer<EtchObject> value) {
+  if (value.get() == NULL)
     return false;
   if (mExpectedType == NULL)
     return false;
@@ -44,23 +44,23 @@ capu::bool_t EtchValidatorByte::validate(EtchObject* value) {
     return true;
 
   if (value->getObjectType()->equals(EtchShort::TYPE())) {
-    EtchShort *v = (EtchShort *) value;
+    EtchShort *v = (EtchShort *) value.get();
     return ((v->get() >= capu::NumericLimitMin<capu::int8_t> ()) && (v->get() <= capu::NumericLimitMax<capu::int8_t> ()));
   }
 
   if (value->getObjectType()->equals(EtchInt32::TYPE())) {
-    EtchInt32 *v = (EtchInt32 *) value;
+    EtchInt32 *v = (EtchInt32 *) value.get();
     return ((v->get() >= capu::NumericLimitMin<capu::int8_t> ()) && (v->get() <= capu::NumericLimitMax<capu::int8_t> ()));
   }
 
   if (value->getObjectType()->equals(EtchLong::TYPE())) {
-    EtchLong *v = (EtchLong *) value;
+    EtchLong *v = (EtchLong *) value.get();
     return ((v->get() >= capu::NumericLimitMin<capu::int8_t> ()) && (v->get() <= capu::NumericLimitMax<capu::int8_t> ()));
   }
   //array handling
   if ((value->getObjectType()->isArray()) && (mExpectedType->isArray())) {
 
-    EtchNativeArray<EtchObject*> *array = (EtchNativeArray<EtchObject*> *) value;
+    EtchNativeArray<EtchObject*> *array = (EtchNativeArray<EtchObject*> *) value.get();
     if (array->getDim() != mNDims) {
       return false;
     }
@@ -73,27 +73,27 @@ capu::bool_t EtchValidatorByte::validate(EtchObject* value) {
   return false;
 }
 
-status_t EtchValidatorByte::validateValue(EtchObject* value, EtchObject*& result) {
+status_t EtchValidatorByte::validateValue(capu::SmartPointer<EtchObject> value, capu::SmartPointer<EtchObject>& result) {
   if (validate(value)) {
     if ((value->getObjectType()->equals(EtchByte::TYPE())) || (mNDims > 0)) {
       result = value;
       return ETCH_OK;
     } else {
       if (value->getObjectType()->equals(EtchShort::TYPE())) {
-        EtchShort *v = (EtchShort *) value;
-        result = (EtchObject*) (new EtchByte((capu::int8_t)v->get()));
+        EtchShort *v = (EtchShort *) value.get();
+        result = new EtchByte((capu::int8_t)v->get());
         return ETCH_OK;
       }
 
       if (value->getObjectType()->equals(EtchLong::TYPE())) {
-        EtchByte *v = (EtchByte *) value;
-        result = (EtchObject*) (new EtchByte((capu::int8_t)v->get()));
+        EtchLong *v = (EtchLong *) value.get();
+        result = new EtchByte((capu::int8_t)v->get());
         return ETCH_OK;
       }
 
       if (value->getObjectType()->equals(EtchInt32::TYPE())) {
-        EtchInt32 *v = (EtchInt32 *) value;
-        result = (EtchObject*) (new EtchByte((capu::int8_t)v->get()));
+        EtchInt32 *v = (EtchInt32 *) value.get();
+        result = new EtchByte((capu::int8_t)v->get());
         return ETCH_OK;
       }
       return ETCH_ERROR;

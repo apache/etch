@@ -45,12 +45,12 @@ public:
   /**
    * @see EtchValidator
    */
-  capu::bool_t validate(EtchObject* value);
+  capu::bool_t validate(capu::SmartPointer<EtchObject> value);
 
   /**
    * @see EtchValidator
    */
-  status_t validateValue(EtchObject* value, EtchObject*& result);
+  status_t validateValue(capu::SmartPointer<EtchObject> value, capu::SmartPointer<EtchObject>& result);
 
   /**
    * @see EtchValidator

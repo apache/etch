@@ -40,11 +40,11 @@ capu::SmartPointer<EtchValidator> EtchComboValidator::getSecond() {
   return mSecond;
 }
 
-capu::bool_t EtchComboValidator::validate(EtchObject* value) {
+capu::bool_t EtchComboValidator::validate(capu::SmartPointer<EtchObject> value) {
   return mFirst->validate(value) || mSecond->validate(value);
 }
 
-status_t EtchComboValidator::validateValue(EtchObject* value, EtchObject*& result) {
+status_t EtchComboValidator::validateValue(capu::SmartPointer<EtchObject> value, capu::SmartPointer<EtchObject>& result) {
   if (mFirst->validateValue(value, result) == ETCH_OK) {
     return ETCH_OK;
   }

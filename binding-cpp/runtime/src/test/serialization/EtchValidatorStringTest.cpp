@@ -41,32 +41,28 @@ TEST(EtchValidatorStringTest, createTest) {
 }
 
 TEST(EtchValidatorStringTest, validateTest) {
-  EtchObject* str = NULL;
-  EtchObject* integer = new EtchInt32(4);
-  EtchObject* str2 = new EtchString("hello");
+  capu::SmartPointer<EtchObject> str = NULL;
+  capu::SmartPointer<EtchObject> integer = new EtchInt32(4);
+  capu::SmartPointer<EtchObject> str2 = new EtchString("hello");
   capu::SmartPointer<EtchValidator> ptr = NULL;
   EXPECT_TRUE(EtchValidatorString::Get(0, ptr) == ETCH_OK);
   EXPECT_TRUE(((EtchTypeValidator*) ptr.get())->getNDims() == 0);
   EXPECT_FALSE(ptr->validate(str));
   EXPECT_FALSE(ptr->validate(integer));
   EXPECT_TRUE(ptr->validate(str2));
-  delete integer;
-  delete str2;
 }
 
 TEST(EtchValidatorStringTest, validateValueTest) {
-  EtchObject* str = NULL;
-  EtchObject* result;
-  EtchObject* integer = new EtchInt32(4);
-  EtchObject* str2 = new EtchString("hello");
+  capu::SmartPointer<EtchObject> str = NULL;
+  capu::SmartPointer<EtchObject> result;
+  capu::SmartPointer<EtchObject> integer = new EtchInt32(4);
+  capu::SmartPointer<EtchObject> str2 = new EtchString("hello");
   capu::SmartPointer<EtchValidator> ptr = NULL;
   EXPECT_TRUE(EtchValidatorString::Get(0, ptr) == ETCH_OK);
   EXPECT_TRUE(ptr->validateValue(str, result) == ETCH_ERROR);
   EXPECT_TRUE(ptr->validateValue(integer, result) == ETCH_ERROR);
   EXPECT_TRUE(ptr->validateValue(str2, result) == ETCH_OK);
-  EXPECT_TRUE(((EtchString*) result)->equals((EtchString*) str2));
-  delete integer;
-  delete str2;
+  EXPECT_TRUE(((EtchString*) result.get())->equals((EtchString*) str2.get()));
 }
 
 TEST(EtchValidatorStringTest, elementValidatorTest) {
@@ -75,13 +71,11 @@ TEST(EtchValidatorStringTest, elementValidatorTest) {
   capu::SmartPointer<EtchValidator> elementValidator;
   ptr->getElementValidator(elementValidator);
 
-  EtchObject* str = NULL;
-  EtchObject* integer = new EtchInt32(4);
-  EtchObject* str2 = new EtchString("hello");
+  capu::SmartPointer<EtchObject> str = NULL;
+  capu::SmartPointer<EtchObject> integer = new EtchInt32(4);
+  capu::SmartPointer<EtchObject> str2 = new EtchString("hello");
 
   EXPECT_FALSE(elementValidator->validate(str));
   EXPECT_FALSE(elementValidator->validate(integer));
   EXPECT_TRUE(elementValidator->validate(str2));
-  delete integer;
-  delete str2;
 }

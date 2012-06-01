@@ -34,8 +34,8 @@ EtchValidatorLong::~EtchValidatorLong() {
 
 }
 
-capu::bool_t EtchValidatorLong::validate(EtchObject* value) {
-  if (value == NULL)
+capu::bool_t EtchValidatorLong::validate(capu::SmartPointer<EtchObject> value) {
+  if (value.get() == NULL)
     return false;
 
   if (mExpectedType == NULL)
@@ -51,7 +51,7 @@ capu::bool_t EtchValidatorLong::validate(EtchObject* value) {
 
   //handle array
   if ((value->getObjectType()->isArray()) && (mExpectedType->isArray())) {
-    EtchNativeArray<EtchObject*> *array = (EtchNativeArray<EtchObject*> *) value;
+    EtchNativeArray<EtchObject*> *array = (EtchNativeArray<EtchObject*> *) value.get();
     if (array->getDim() != mNDims) {
       return false;
     }
@@ -59,28 +59,29 @@ capu::bool_t EtchValidatorLong::validate(EtchObject* value) {
     const EtchObjectType* type2 = mExpectedType->getObjectComponentType();
     return type->equals(type2);
   }
+  return false;
 }
 
-status_t EtchValidatorLong::validateValue(EtchObject* value, EtchObject*& result) {
+status_t EtchValidatorLong::validateValue(capu::SmartPointer<EtchObject> value, capu::SmartPointer<EtchObject>& result) {
   if (validate(value)) {
     if ((value->getObjectType()->equals(EtchLong::TYPE())) || (mNDims > 0)) {
       result = value;
       return ETCH_OK;
     } else {
       if (value->getObjectType()->equals(EtchShort::TYPE())) {
-        EtchShort *v = (EtchShort *) value;
+        EtchShort *v = (EtchShort *) value.get();
         result = new EtchLong((capu::int64_t)v->get());
         return ETCH_OK;
       }
 
       if (value->getObjectType()->equals(EtchByte::TYPE())) {
-        EtchByte *v = (EtchByte *) value;
+        EtchByte *v = (EtchByte *) value.get();
         result = new EtchLong((capu::int64_t)v->get());
         return ETCH_OK;
       }
 
       if (value->getObjectType()->equals(EtchInt32::TYPE())) {
-        EtchInt32 *v = (EtchInt32 *) value;
+        EtchInt32 *v = (EtchInt32 *) value.get();
         result = new EtchLong((capu::int64_t)v->get());
         return ETCH_OK;
       }

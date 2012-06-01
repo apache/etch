@@ -53,7 +53,7 @@ status_t EtchStructValue::put(EtchField &field, capu::SmartPointer<EtchObject> o
     if ((mLevel == LEVEL_FULL) && (v.get() == NULL))
       return ETCH_ENOT_EXIST;
 
-    if ((v.get() != NULL) && (!v->validate(object.get())))
+    if ((v.get() != NULL) && (!v->validate(object)))
       return ETCH_EINVAL;
   }
   return mTable.put(field, object, old_value);
