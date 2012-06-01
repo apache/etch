@@ -98,6 +98,8 @@ SET(MAIN_INCLUDES
     ${PROJECT_SOURCE_DIR}/include/serialization/EtchDateSerializer.h
     ${PROJECT_SOURCE_DIR}/include/serialization/EtchDefaultValueFactory.h
     ${PROJECT_SOURCE_DIR}/include/serialization/EtchValidatorStructValue.h
+	${PROJECT_SOURCE_DIR}/include/serialization/EtchTaggedDataInput.h
+	${PROJECT_SOURCE_DIR}/include/serialization/EtchTaggedDataOutput.h
     ${PROJECT_SOURCE_DIR}/include/util/EtchUtil.h
     )
 
