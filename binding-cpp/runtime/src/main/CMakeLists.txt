@@ -60,6 +60,7 @@ SET(MAIN_INCLUDES
     ${PROJECT_SOURCE_DIR}/include/transport/EtchTcpConnection.h
     ${PROJECT_SOURCE_DIR}/include/transport/EtchTcpListener.h
     ${PROJECT_SOURCE_DIR}/include/transport/EtchTcpOption.h
+    ${PROJECT_SOURCE_DIR}/include/transport/EtchPacketizer.h
     ${PROJECT_SOURCE_DIR}/include/util/EtchUtil.h
     )
 
@@ -84,6 +85,7 @@ SET(MAIN_SOURCES
     transport/EtchTcpConnection.cpp
     transport/EtchTcpListener.cpp
     transport/EtchTcpOption.cpp
+    transport/EtchPacketizer.cpp
     util/EtchUtil.cpp
     )
 

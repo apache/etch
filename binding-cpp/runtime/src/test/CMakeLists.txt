@@ -47,6 +47,7 @@ add_executable (etch-cpp-test
     transport/EtchFlexBufferTest.cpp
     transport/EtchTcpConnectionTest.cpp
     transport/EtchTcpListenerTest.cpp
+    transport/EtchPacketizerTest.cpp
     util/EtchUtilTest.cpp
     ${GTEST}/src/gtest-all.cc
     ${GMOCK}/src/gmock-all.cc

@@ -32,7 +32,7 @@ public:
    * Returns the size of the packet header for the transport.
    * @return the size of the packet header for the transport.
    */
-  virtual capu::int32_t headerSize() = 0;
+  virtual capu::int32_t getHeaderSize() = 0;
 
   /**
    * Delivers the packet to the transport after adding the packet header.
