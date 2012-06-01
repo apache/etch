@@ -17,6 +17,7 @@
  */
 
 #include "common/EtchObject.h"
+const EtchObjectType EtchObject::TYPE(EOTID_OBJECT, NULL);
 
 EtchObject::EtchObject(const EtchObjectType* type){
   mType = type;
@@ -26,7 +27,7 @@ const EtchObjectType* EtchObject::getObjectType() const{
   return mType;
 }
 
-EtchObject::~EtchObject(){
+EtchObject::~EtchObject() {
 }
 
 capu::uint64_t EtchObject::getHashCode() const{
