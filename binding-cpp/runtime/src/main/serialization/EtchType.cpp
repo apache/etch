@@ -19,22 +19,25 @@
 #include "serialization/EtchType.h"
 #include "util/EtchHash.h"
 
-const EtchObjectType EtchType::TYPE(EOTID_TYPE, NULL);
+const EtchObjectType* EtchType::TYPE() {
+  const static EtchObjectType TYPE(EOTID_TYPE, NULL);
+  return &TYPE;
+}
 
 EtchType::EtchType()
-: EtchObject(&EtchType::TYPE), mId(0), mTimeout(0), mName(""), mSuperType(NULL),
+: EtchObject(EtchType::TYPE()), mId(0), mTimeout(0), mName(""), mSuperType(NULL),
 mResultType(NULL), mDirection(BOTH), mAsyncMode(NONE), mLocked(false), mComponentType(NULL), mHelper(NULL) {
 }
 
-EtchType::EtchType(capu::uint32_t id, EtchString &name)
-: EtchObject(&EtchType::TYPE), mId(id), mTimeout(0), mName(name), mSuperType(NULL),
-mResultType(NULL), mDirection(BOTH), mAsyncMode(NONE), mLocked(false), mComponentType(NULL), mHelper(NULL) {
-}
-
-EtchType::EtchType(EtchString &name)
-: EtchObject(&EtchType::TYPE), mTimeout(0), mName(name), mSuperType(NULL),
+EtchType::EtchType(EtchString name)
+: EtchObject(EtchType::TYPE()), mTimeout(0), mName(name), mSuperType(NULL),
 mResultType(NULL), mDirection(BOTH), mAsyncMode(NONE), mLocked(false), mComponentType(NULL), mHelper(NULL) {
   mId = EtchHashEx::Digest(mName);;
+}
+
+EtchType::EtchType(capu::uint32_t id, EtchString name)
+: EtchObject(EtchType::TYPE()), mId(id), mTimeout(0), mName(name), mSuperType(NULL),
+mResultType(NULL), mDirection(BOTH), mAsyncMode(NONE), mLocked(false), mComponentType(NULL), mHelper(NULL) {
 }
 
 EtchType::~EtchType() {
@@ -159,7 +162,7 @@ void EtchType::lock() {
 capu::bool_t EtchType::equals(EtchObject *other) {
   if (other == NULL)
     return false;
-  if (other->getObjectType() != &EtchType::TYPE)
+  if (other->getObjectType() != EtchType::TYPE())
     return false;
   EtchType *type = (EtchType*) other;
   return ((type->mId.equals(&(mId))) && (type->mName.equals(&mName)));

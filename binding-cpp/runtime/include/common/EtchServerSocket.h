@@ -18,6 +18,8 @@
 
 #ifndef __ETCHSERVERSOCKET_H__
 #define __ETCHSERVERSOCKET_H__
+
+
 #include "capu/os/ServerSocket.h"
 #include "capu/os/Socket.h"
 #include "capu/util/SmartPointer.h"
@@ -27,9 +29,9 @@ class EtchServerSocket : public EtchObject {
 public:
 
   /**
-   * TypeID
+   * EtchObjectType for EtchServerSocket.
    */
-  static const EtchObjectType TYPE;
+  static const EtchObjectType* TYPE();
 
   /**
    * Default Constructor

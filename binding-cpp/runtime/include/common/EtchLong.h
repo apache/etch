@@ -20,6 +20,7 @@
 #define __ETCHLONG_H__
 
 #include "common/EtchObject.h"
+#include "common/EtchObjectType.h"
 #include "common/EtchError.h"
 
 class EtchLong :
@@ -28,9 +29,9 @@ public EtchObject {
 public:
 
   /**
-   * TypeId for EtchLong.
+   * EtchObjectType for EtchLong.
    */
-  static const EtchObjectType TYPE;
+  static const EtchObjectType* TYPE();
 
   /**
    * Constructs a EtchLong object.

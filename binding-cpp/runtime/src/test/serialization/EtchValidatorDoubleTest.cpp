@@ -28,7 +28,7 @@ TEST(EtchValidatorDoubleTest, createTest) {
   EXPECT_TRUE(EtchValidatorDouble::Get(0, val) == ETCH_OK);
   ptr = capu::smartpointer_cast<EtchValidatorDouble>(val);
 
-  EXPECT_TRUE(ptr->getExpectedType()->equals(&EtchDouble::TYPE));
+  EXPECT_TRUE(ptr->getExpectedType()->equals(EtchDouble::TYPE()));
   EXPECT_TRUE(ptr->getNDims() == 0);
 
   EtchObjectType type1(EOTID_DOUBLE, NULL);

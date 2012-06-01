@@ -28,7 +28,7 @@ TEST(EtchValidatorLongTest, createTest) {
   EXPECT_TRUE(EtchValidatorLong::Get(0, val) == ETCH_OK);
   ptr = capu::smartpointer_cast<EtchValidatorLong>(val);
 
-  EXPECT_TRUE(ptr->getExpectedType()->equals(&EtchLong::TYPE));
+  EXPECT_TRUE(ptr->getExpectedType()->equals(EtchLong::TYPE()));
   EXPECT_TRUE(ptr->getNDims() == 0);
 
   EtchObjectType type1(EOTID_LONG, NULL);

@@ -15,39 +15,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "common/EtchServerSocket.h"
-#include "capu/util/SmartPointer.h"
-#include "common/EtchSocket.h"
 
-const EtchObjectType* EtchServerSocket::TYPE() {
-  const static EtchObjectType TYPE(EOTID_SERVER_SOCKET, NULL);
-  return &TYPE;
+#include "common/EtchHashTable.h"
+#include "serialization/EtchType.h"
+#include "serialization/EtchClass2TypeMap.h"
+
+EtchClass2TypeMap::EtchClass2TypeMap()
+: mLocked(false) {
 }
 
-EtchServerSocket::EtchServerSocket()
-: EtchObject(EtchServerSocket::TYPE()) {
-
+EtchClass2TypeMap::~EtchClass2TypeMap() {
 }
 
-EtchServerSocket::~EtchServerSocket() {
-  this->close();
+status_t EtchClass2TypeMap::get(const EtchObjectType* classType, EtchType **result) {
+  return mC2T.get(classType, result);
 }
 
-status_t EtchServerSocket::listen(capu::uint8_t backlog) {
-  return mServerSocket.listen(backlog);
+status_t EtchClass2TypeMap::put(const EtchObjectType* classType, EtchType *type) {
+
+  if (mLocked) {
+    return ETCH_EINVAL;
+  }
+
+  EtchType* tmp = NULL;
+  if (mC2T.get(classType, &tmp) == ETCH_OK) {
+    if (!tmp->equals(type)) {
+      return ETCH_ERANGE;
+    }
+    return ETCH_OK;
+  }
+
+  return mC2T.put(classType, type);
 }
 
-status_t EtchServerSocket::close() {
-  return mServerSocket.close();
-}
-
-EtchSocket* EtchServerSocket::accept() {
-  capu::Socket *capu_soc = mServerSocket.accept();
-  EtchSocket *sock = new EtchSocket(capu_soc);
-  return sock;
-}
-
-status_t EtchServerSocket::bind(capu::uint16_t port, const char* addr)
-{
-  return mServerSocket.bind(port,addr);
+void EtchClass2TypeMap::lock() {
+  mLocked = true;
 }

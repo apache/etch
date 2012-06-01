@@ -25,6 +25,11 @@
 class EtchValidatorObject : public EtchTypeValidator {
 public:
 
+  /**
+   * EtchObjectType for EtchValidatorObject.
+   */
+  static const EtchObjectType* TYPE();
+
   virtual ~EtchValidatorObject();
 
   /**
@@ -46,8 +51,6 @@ public:
    * @see EtchValidator
    */
   static status_t Get(capu::uint32_t ndim, capu::SmartPointer<EtchValidator> &val);
-
-  static const EtchObjectType TYPE;
 
 protected:
   EtchValidatorObject(capu::uint32_t ndim);

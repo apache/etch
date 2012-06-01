@@ -19,16 +19,17 @@
 #ifndef __ETCHSOCKET_H__
 #define __ETCHSOCKET_H__
 #include "capu/os/Socket.h"
-#include "common/EtchError.h"
 #include "common/EtchObject.h"
+#include "common/EtchObjectType.h"
+#include "common/EtchError.h"
 
 class EtchSocket : public EtchObject {
 public:
 
   /**
-   * TypeID
+   * EtchObjectType for EtchSocket.
    */
-  static const EtchObjectType TYPE;
+  static const EtchObjectType* TYPE();;
 
   /**
    * Default Constructor

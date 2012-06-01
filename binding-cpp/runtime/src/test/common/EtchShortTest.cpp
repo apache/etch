@@ -23,14 +23,14 @@
 
 TEST(EtchShortTest, Constructor_Default){
   EtchShort* i1 = new EtchShort();
-  EXPECT_TRUE(i1->getObjectType()->equals(&EtchShort::TYPE));
+  EXPECT_TRUE(i1->getObjectType()->equals(EtchShort::TYPE()));
   EXPECT_TRUE(i1->get() == 0);
   delete i1;
 }
 
 TEST(EtchShortTest, Constructor_Short){
   EtchShort* i1 = new EtchShort(42);
-  EXPECT_TRUE(i1->getObjectType()->equals(&EtchShort::TYPE));
+  EXPECT_TRUE(i1->getObjectType()->equals(EtchShort::TYPE()));
   EXPECT_TRUE(i1->get() == 42);
   delete i1;
 }

@@ -27,6 +27,11 @@
 class EtchValidatorFloat : public EtchTypeValidator {
 public:
 
+  /**
+   * EtchObjectType for EtchValidatorFloat.
+   */
+  static const EtchObjectType* TYPE();
+
   virtual ~EtchValidatorFloat();
 
   /**
@@ -48,8 +53,6 @@ public:
    * @see EtchValidator
    */
   static status_t Get(capu::uint32_t ndim, capu::SmartPointer<EtchValidator> &val);
-
-  static const EtchObjectType TYPE;
 
 protected:
   EtchValidatorFloat(capu::uint32_t ndim);

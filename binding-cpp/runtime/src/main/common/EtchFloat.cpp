@@ -18,16 +18,18 @@
 
 #include "common/EtchFloat.h"
 
-
-const EtchObjectType EtchFloat::TYPE(EOTID_FLOAT, NULL);
+const EtchObjectType* EtchFloat::TYPE() {
+  const static EtchObjectType TYPE(EOTID_FLOAT, NULL);
+  return &TYPE;
+}
 
 EtchFloat::EtchFloat()
-: EtchObject(&EtchFloat::TYPE)
+: EtchObject(EtchFloat::TYPE())
 , mValue(0.0f){
 }
 
 EtchFloat::EtchFloat(capu::float_t value)
-: EtchObject(&EtchFloat::TYPE)
+: EtchObject(EtchFloat::TYPE())
 , mValue(value){
 }
 
@@ -48,7 +50,7 @@ capu::uint64_t EtchFloat::getHashCode() const{
 capu::bool_t EtchFloat::equals(const EtchObject * other) const{
   if (other == NULL)
     return false;
-  else if (!other->getObjectType()->equals(&EtchFloat::TYPE))
+  else if (!other->getObjectType()->equals(EtchFloat::TYPE()))
     return false;
   EtchFloat * a = (EtchFloat*) other;
   return (a->mValue == this->mValue);

@@ -20,6 +20,7 @@
 #define __ETCHINT32_H__
 
 #include "common/EtchObject.h"
+#include "common/EtchObjectType.h"
 #include "common/EtchError.h"
 
 class EtchInt32 :
@@ -28,9 +29,10 @@ public EtchObject {
 public:
 
   /**
-   * TypeId for EtchString.
+   * EtchObjectType for EtchString.
    */
-  static const EtchObjectType TYPE;
+  static const EtchObjectType* TYPE();
+
 
   /**
    * Constructs a EtchInt32 object.

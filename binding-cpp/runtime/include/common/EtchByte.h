@@ -20,6 +20,7 @@
 #define __ETCHBYTE_H__
 
 #include "common/EtchObject.h"
+#include "common/EtchObjectType.h"
 #include "common/EtchError.h"
 
 class EtchByte :
@@ -28,9 +29,9 @@ public EtchObject {
 public:
 
   /**
-   * TypeId for EtchByte.
+   * EtchObjectType for EtchByte.
    */
-  static const EtchObjectType TYPE;
+  static const EtchObjectType* TYPE();
 
   /**
    * Constructs a EtchByte object.

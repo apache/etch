@@ -18,15 +18,18 @@
 
 #include "serialization/EtchStructValue.h"
 
-const EtchObjectType EtchStructValue::TYPE(EOTID_STRUCT_VALUE, NULL);
+const EtchObjectType* EtchStructValue::TYPE() {
+  const static EtchObjectType TYPE(EOTID_STRUCT_VALUE, NULL);
+  return &TYPE;
+}
 
 EtchStructValue::EtchStructValue(EtchType* type, EtchValueFactory* vf)
-: EtchObject(&EtchStructValue::TYPE), mType(type), mLevel(vf->getLevel()), mTable(DEFAULT_SIZE) {
+: EtchObject(EtchStructValue::TYPE()), mType(type), mLevel(vf->getLevel()), mTable(DEFAULT_SIZE) {
 
 }
 
 EtchStructValue::EtchStructValue(EtchType* type, EtchValueFactory* vf, capu::uint32_t length)
-: EtchObject(&EtchStructValue::TYPE), mType(type), mLevel(vf->getLevel()), mTable(length > 0 ? (length * 4 + 2) / 3 : DEFAULT_SIZE) {
+: EtchObject(EtchStructValue::TYPE()), mType(type), mLevel(vf->getLevel()), mTable(length > 0 ? (length * 4 + 2) / 3 : DEFAULT_SIZE) {
 
 }
 

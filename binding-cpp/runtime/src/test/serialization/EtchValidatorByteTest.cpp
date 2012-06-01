@@ -27,7 +27,7 @@ TEST(EtchValidatorByteTest, createTest) {
   capu::SmartPointer<EtchValidator> val;
   EXPECT_TRUE(EtchValidatorByte::Get(0, val) == ETCH_OK);
   ptr = capu::smartpointer_cast<EtchValidatorByte>(val);
-  EXPECT_TRUE(ptr->getExpectedType()->equals(&EtchByte::TYPE));
+  EXPECT_TRUE(ptr->getExpectedType()->equals(EtchByte::TYPE()));
   EXPECT_TRUE(ptr->getNDims() == 0);
 
   EtchObjectType type1(EOTID_BYTE, NULL);

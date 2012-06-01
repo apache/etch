@@ -29,7 +29,7 @@ TEST(EtchValidatorFloatTest, createTest) {
   EXPECT_TRUE(EtchValidatorFloat::Get(0, val) == ETCH_OK);
   ptr = capu::smartpointer_cast<EtchValidatorFloat>(val);
 
-  EXPECT_TRUE(ptr->getExpectedType()->equals(&EtchFloat::TYPE));
+  EXPECT_TRUE(ptr->getExpectedType()->equals(EtchFloat::TYPE()));
   EXPECT_TRUE(ptr->getNDims() == 0);
 
   EtchObjectType type1(EOTID_FLOAT, NULL);

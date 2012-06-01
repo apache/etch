@@ -28,9 +28,9 @@ public EtchObject {
 public:
 
   /**
-   * TypeId for EtchNativeArray.
+   * EtchObjectType for EtchNativeArray.
    */
-  static const EtchObjectType TYPE;
+  static const EtchObjectType* TYPE();
 
   /**
    * Constructs a EtchNativeArray object.
@@ -118,11 +118,14 @@ private:
 };
 
 template<class T>
-const EtchObjectType EtchNativeArray<T>::TYPE(EOTID_NATIVE_ARRAY, EtchObjectType::getType<T>());
+const EtchObjectType* EtchNativeArray<T>::TYPE() {
+  const static EtchObjectType TYPE(EOTID_NATIVE_ARRAY, EtchObjectType::getType<T>());
+  return &TYPE;
+}
 
 template<class T>
 EtchNativeArray<T>::EtchNativeArray(capu::int32_t length, const EtchObjectType* content_type_id)
-: EtchObject(&EtchNativeArray::TYPE), mIsDeleteContentType(false),
+: EtchObject(EtchNativeArray::TYPE()), mIsDeleteContentType(false),
 mLength(length) {
   mArray = new T[length];
   mContentType = content_type_id;
@@ -130,7 +133,7 @@ mLength(length) {
 
 template<class T>
 EtchNativeArray<T>::EtchNativeArray(capu::int32_t length, T* array, const EtchObjectType* content_type_id)
-: EtchObject(&EtchNativeArray::TYPE), mArray(array), mIsDeleteContentType(false),
+: EtchObject(EtchNativeArray::TYPE()), mArray(array), mIsDeleteContentType(false),
 mLength(length) {
   mContentType = content_type_id;
 }

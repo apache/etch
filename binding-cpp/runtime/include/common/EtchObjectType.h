@@ -20,7 +20,9 @@
 
 #ifndef __ETCHOBJECTTYPE_H__
 #define __ETCHOBJECTTYPE_H__
+
 #include "EtchConfig.h"
+#include "common/EtchObject.h"
 
 enum EtchObjectTypeIds {
 
@@ -51,6 +53,7 @@ enum EtchObjectTypeIds {
   EOTID_VALIDATOR_OBJECT,
   EOTID_FIELD,
   EOTID_OBJECT,
+  EOTID_OBJECT_TYPE,
   EOTID_VALUE_FACTORY,
   EOTID_TYPE,
   EOTID_STRUCT_VALUE,
@@ -67,7 +70,7 @@ enum EtchObjectTypeIds {
   EOTID_NATIVE_BYTE,
 };
 
-class EtchObjectType {
+class EtchObjectType : public EtchObject {
 public:
    /**
     * TypeIds for native types
@@ -79,6 +82,11 @@ public:
   static const EtchObjectType NATIVE_DOUBLE;
   static const EtchObjectType NATIVE_FLOAT;
   static const EtchObjectType NATIVE_BOOL;
+
+  /**
+   * EtchObjectType for EtchString.
+   */
+  static const EtchObjectType* TYPE();
 
   /**
    * Constructor
@@ -135,7 +143,7 @@ private:
   struct __Wrapper__<T*> {
 
     static const EtchObjectType * getType() {
-      return &T::TYPE;
+      return T::TYPE();
     }
   };
 

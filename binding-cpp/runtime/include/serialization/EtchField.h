@@ -26,9 +26,9 @@ class EtchField : public EtchObject {
 public:
 
   /**
-   * TypeId for EtchField.
+   * EtchObjectType for EtchField.
    */
-  static const EtchObjectType TYPE;
+  static const EtchObjectType* TYPE();
 
   /**
    * Default Constructor

@@ -41,9 +41,9 @@ class EtchValueFactory : public EtchObject {
 public:
 
   /**
-   * TypeID
+   * EtchObjectType for EtchValueFactory.
    */
-  static const EtchObjectType TYPE;
+  static const EtchObjectType* TYPE();
 
   /**
    * Default Constructor

@@ -17,16 +17,20 @@
  */
 
 #include "common/EtchString.h"
-const EtchObjectType EtchString::TYPE(EOTID_STRING, NULL);
+
+const EtchObjectType* EtchString::TYPE() {
+  const static EtchObjectType TYPE(EOTID_STRING, NULL);
+  return &TYPE;
+}
 
 EtchString::EtchString()
-: EtchObject(&EtchString::TYPE)
+: EtchObject(EtchString::TYPE())
 , mData(NULL) {
   //ETCH_LOG("EtchString: ", EtchLogLevel::Error, "dies ist ein Test");
 }
 
 EtchString::EtchString(const char* string)
-: EtchObject(&EtchString::TYPE)
+: EtchObject(EtchString::TYPE())
 , mData(NULL) {
   if (string != NULL) {
     capu::int32_t len = strlen(string);
@@ -36,7 +40,7 @@ EtchString::EtchString(const char* string)
 }
 
 EtchString::EtchString(const EtchString &copy)
-: EtchObject(&EtchString::TYPE) {
+: EtchObject(EtchString::TYPE()) {
   if (copy.mData == NULL)
     return;
   capu::int32_t len = strlen(copy.mData);
@@ -103,7 +107,7 @@ const char* EtchString::c_str() const{
 capu::bool_t EtchString::equals(const EtchObject* other) const{
   if (other == NULL)
     return false;
-  else if (!other->getObjectType()->equals(&EtchString::TYPE))
+  else if (!other->getObjectType()->equals(EtchString::TYPE()))
     return false;
   if (strcmp(((EtchString*) other)->mData, this->mData) == 0)
     return true;

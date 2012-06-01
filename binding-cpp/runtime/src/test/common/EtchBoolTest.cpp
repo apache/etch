@@ -23,14 +23,14 @@
 
 TEST(EtchBoolTest, Constructor_Default){
   EtchBool* i1 = new EtchBool();
-  EXPECT_TRUE(i1->getObjectType()->equals(&EtchBool::TYPE));
+  EXPECT_TRUE(i1->getObjectType()->equals(EtchBool::TYPE()));
   EXPECT_TRUE(i1->get() == false);
   delete i1;
 }
 
 TEST(EtchBoolTest, Constructor_Bool){
   EtchBool* i1 = new EtchBool(true);
-  EXPECT_TRUE(i1->getObjectType()->equals(&EtchBool::TYPE));
+  EXPECT_TRUE(i1->getObjectType()->equals(EtchBool::TYPE()));
   EXPECT_TRUE(i1->get() == true);
   delete i1;
 }

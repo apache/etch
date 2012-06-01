@@ -20,6 +20,7 @@
 #define __ETCHFLOAT_H__
 
 #include "common/EtchObject.h"
+#include "common/EtchObjectType.h"
 #include "common/EtchError.h"
 
 class EtchFloat :
@@ -28,9 +29,9 @@ public EtchObject {
 public:
 
   /**
-   * TypeId for EtchFloat.
+   * EtchObjectType for EtchFloat.
    */
-  static const EtchObjectType TYPE;
+  static const EtchObjectType* TYPE();
 
   /**
    * Constructs a EtchFloat object.

@@ -18,11 +18,13 @@
 
 #ifndef __ETCHSET_H__
 #define __ETCHSET_H__
+#include "common/EtchObject.h"
+#include "common/EtchObjectType.h"
 #include "common/EtchError.h"
 #include "common/EtchObjectHash.h"
 #include "common/EtchComparator.h"
 #include "capu/container/HashSet.h"
-#include "common/EtchObject.h"
+
 
 
 template <class T, class H = EtchObjectHash, class C = EtchComparator<T> >
@@ -31,8 +33,11 @@ class EtchHashSet : public EtchObject {
 public:
 
   typedef typename capu::HashSet<T, C, H>::Iterator Iterator;
-  static const EtchObjectType TYPE;
 
+  /**
+   * EtchObjectType for EtchHashSet.
+   */
+  static const EtchObjectType* TYPE();
 
   /**
    * Default Constructor
@@ -99,7 +104,7 @@ private:
 
 template <class T, class H, class C>
 inline EtchHashSet<T, H, C>::EtchHashSet()
-: EtchObject(&EtchHashSet<T, H, C>::TYPE) {
+: EtchObject(EtchHashSet<T, H, C>::TYPE()) {
 
 }
 
@@ -110,7 +115,10 @@ inline EtchHashSet<T, H, C>::EtchHashSet(capu::uint32_t size)
 }
 
 template <class T, class H, class C>
-const EtchObjectType EtchHashSet<T, H, C>::TYPE(EOTID_SET, NULL);
+const EtchObjectType* EtchHashSet<T, H, C>::TYPE() {
+  const static EtchObjectType TYPE(EOTID_SET, NULL);
+  return &TYPE;
+}
 
 template <class T, class H, class C>
 inline EtchHashSet<T, H, C>::~EtchHashSet() {

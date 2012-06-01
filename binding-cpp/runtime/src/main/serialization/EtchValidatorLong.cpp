@@ -19,10 +19,14 @@
 #include "serialization/EtchValidatorLong.h"
 
 capu::SmartPointer<EtchValidator> EtchValidatorLong::mValidator[MAX_CACHED];
-const EtchObjectType EtchValidatorLong::TYPE(EOTID_VALIDATOR_LONG, NULL);
+
+const EtchObjectType* EtchValidatorLong::TYPE() {
+  const static EtchObjectType TYPE(EOTID_VALIDATOR_LONG, NULL);
+  return &TYPE;
+}
 
 EtchValidatorLong::EtchValidatorLong(capu::uint32_t ndim)
-: EtchTypeValidator(&EtchValidatorLong::TYPE, &EtchLong::TYPE, &EtchLong::TYPE, ndim) {
+: EtchTypeValidator(EtchValidatorLong::TYPE(), EtchLong::TYPE(), EtchLong::TYPE(), ndim) {
 
 }
 
@@ -40,9 +44,9 @@ capu::bool_t EtchValidatorLong::validate(EtchObject* value) {
   if (value->getObjectType()->equals(mExpectedType))
     return true;
 
-  if ((value->getObjectType()->equals(&EtchInt32::TYPE)) ||
-          (value->getObjectType()->equals(&EtchShort::TYPE)) ||
-          (value->getObjectType()->equals(&EtchByte::TYPE)))
+  if ((value->getObjectType()->equals(EtchInt32::TYPE())) ||
+          (value->getObjectType()->equals(EtchShort::TYPE())) ||
+          (value->getObjectType()->equals(EtchByte::TYPE())))
     return true;
 
   //handle array
@@ -66,23 +70,23 @@ capu::bool_t EtchValidatorLong::validate(EtchObject* value) {
 
 status_t EtchValidatorLong::validateValue(EtchObject* value, EtchObject*& result) {
   if (validate(value)) {
-    if ((value->getObjectType()->equals(&EtchLong::TYPE)) || (mNDims > 0)) {
+    if ((value->getObjectType()->equals(EtchLong::TYPE())) || (mNDims > 0)) {
       result = value;
       return ETCH_OK;
     } else {
-      if (value->getObjectType()->equals(&EtchShort::TYPE)) {
+      if (value->getObjectType()->equals(EtchShort::TYPE())) {
         EtchShort *v = (EtchShort *) value;
         result = new EtchLong((capu::int64_t)v->get());
         return ETCH_OK;
       }
 
-      if (value->getObjectType()->equals(&EtchByte::TYPE)) {
+      if (value->getObjectType()->equals(EtchByte::TYPE())) {
         EtchByte *v = (EtchByte *) value;
         result = new EtchLong((capu::int64_t)v->get());
         return ETCH_OK;
       }
 
-      if (value->getObjectType()->equals(&EtchInt32::TYPE)) {
+      if (value->getObjectType()->equals(EtchInt32::TYPE())) {
         EtchInt32 *v = (EtchInt32 *) value;
         result = new EtchLong((capu::int64_t)v->get());
         return ETCH_OK;

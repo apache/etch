@@ -26,7 +26,7 @@ TEST(EtchValidatorShortTest, createTest) {
   capu::SmartPointer<EtchValidator> val;
   EXPECT_TRUE(EtchValidatorShort::Get(0, val) == ETCH_OK);
   ptr = capu::smartpointer_cast<EtchValidatorShort>(val);
-  EXPECT_TRUE(ptr->getExpectedType()->equals(&EtchShort::TYPE));
+  EXPECT_TRUE(ptr->getExpectedType()->equals(EtchShort::TYPE()));
   EXPECT_TRUE(ptr->getNDims() == 0);
 
   EtchObjectType type1(EOTID_SHORT, NULL);

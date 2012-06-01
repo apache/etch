@@ -20,6 +20,7 @@
 #define __ETCHBOOL_H__
 
 #include "common/EtchObject.h"
+#include "common/EtchObjectType.h"
 #include "common/EtchError.h"
 
 class EtchBool :
@@ -28,9 +29,9 @@ public EtchObject {
 public:
 
   /**
-   * TypeId for EtchBool.
+   * EtchObjectType for EtchBool.
    */
-  static const EtchObjectType TYPE;
+  static const EtchObjectType* TYPE();
 
   /**
    * Constructs a EtchBool object.

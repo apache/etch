@@ -23,14 +23,14 @@
 
 TEST(EtchDoubleTest, Constructor_Default){
   EtchDouble* i1 = new EtchDouble();
-  EXPECT_TRUE(i1->getObjectType()->equals(&EtchDouble::TYPE));
+  EXPECT_TRUE(i1->getObjectType()->equals(EtchDouble::TYPE()));
   EXPECT_TRUE(i1->get() == 0.0L);
   delete i1;
 }
 
 TEST(EtchDoubleTest, Constructor_Double){
   EtchDouble* i1 = new EtchDouble(42.0L);
-  EXPECT_TRUE(i1->getObjectType()->equals(&EtchDouble::TYPE));
+  EXPECT_TRUE(i1->getObjectType()->equals(EtchDouble::TYPE()));
   EXPECT_TRUE(i1->get() == 42.0L);
   delete i1;
 }

@@ -20,19 +20,22 @@
 #include "util/EtchHash.h"
 #include "common/EtchObjectHash.h"
 
-const EtchObjectType EtchField::TYPE(EOTID_FIELD, NULL);
+const EtchObjectType* EtchField::TYPE() {
+  const static EtchObjectType TYPE(EOTID_FIELD, NULL);
+  return &TYPE;
+}
 
 EtchField::EtchField(capu::uint32_t id, EtchString& name)
-: EtchObject(&EtchField::TYPE), mId(id), mName(name) {
+: EtchObject(EtchField::TYPE()), mId(id), mName(name) {
 }
 
 EtchField::EtchField(const EtchString& name)
-: EtchObject(&EtchField::TYPE), mId(0), mName(name) {
+: EtchObject(EtchField::TYPE()), mId(0), mName(name) {
   mId = EtchHashEx::Digest(name);
 }
 
 EtchField::EtchField()
-: EtchObject(&EtchField::TYPE), mId(0), mName("") {
+: EtchObject(EtchField::TYPE()), mId(0), mName("") {
 }
 
 capu::uint64_t EtchField::getHashCode() const{
@@ -42,7 +45,7 @@ capu::uint64_t EtchField::getHashCode() const{
 capu::bool_t EtchField::equals(const EtchObject * object) const{
   if (object == NULL)
     return false;
-  else if (object->getObjectType() != &EtchField::TYPE)
+  else if (object->getObjectType() != EtchField::TYPE())
     return false;
   EtchField * a = (EtchField*) object;
   return ((a->mId.equals(&(this->mId))) && (a->mName.equals(&this->mName)));

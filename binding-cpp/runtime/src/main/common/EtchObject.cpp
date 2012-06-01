@@ -17,7 +17,15 @@
  */
 
 #include "common/EtchObject.h"
-const EtchObjectType EtchObject::TYPE(EOTID_OBJECT, NULL);
+#include "common/EtchObjectType.h"
+
+const EtchObjectType* EtchObject::TYPE() {
+  const static EtchObjectType TYPE(EOTID_OBJECT, NULL);
+  return &TYPE;
+}
+
+EtchObject::EtchObject() {
+}
 
 EtchObject::EtchObject(const EtchObjectType* type){
   mType = type;

@@ -20,6 +20,7 @@
 #define __ETCHSTRING_H__
 
 #include "common/EtchObject.h"
+#include "common/EtchObjectType.h"
 #include "util/EtchUtil.h"
 
 /**
@@ -31,9 +32,9 @@ public EtchObject {
 public:
 
   /**
-   * TypeId for EtchString.
+   * EtchObjectType for EtchString.
    */
-  static const EtchObjectType TYPE;
+  static const EtchObjectType* TYPE();
 
   /**
    * Constructs the String.

@@ -18,8 +18,11 @@
 
 #include "serialization/EtchValueFactory.h"
 
-const EtchObjectType EtchValueFactory::TYPE(EOTID_VALUE_FACTORY, NULL);
+const EtchObjectType* EtchValueFactory::TYPE() {
+  const static EtchObjectType TYPE(EOTID_VALUE_FACTORY, NULL);
+  return &TYPE;
+}
 
 EtchValueFactory::EtchValueFactory()
-: EtchObject(&EtchValueFactory::TYPE) {
+: EtchObject(EtchValueFactory::TYPE()) {
 }

@@ -23,14 +23,14 @@
 
 TEST(EtchFloatTest, Constructor_Default){
   EtchFloat* i1 = new EtchFloat();
-  EXPECT_TRUE(i1->getObjectType()->equals(&EtchFloat::TYPE));
+  EXPECT_TRUE(i1->getObjectType()->equals(EtchFloat::TYPE()));
   EXPECT_TRUE(i1->get() == 0.0f);
   delete i1;
 }
 
 TEST(EtchFloatTest, Constructor_Float){
   EtchFloat* i1 = new EtchFloat(42.0f);
-  EXPECT_TRUE(i1->getObjectType()->equals(&EtchFloat::TYPE));
+  EXPECT_TRUE(i1->getObjectType()->equals(EtchFloat::TYPE()));
   EXPECT_TRUE(i1->get() == 42.0f);
   delete i1;
 }

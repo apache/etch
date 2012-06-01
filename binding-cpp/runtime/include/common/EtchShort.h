@@ -20,6 +20,7 @@
 #define __ETCHSHORT_H__
 
 #include "common/EtchObject.h"
+#include "common/EtchObjectType.h"
 #include "common/EtchError.h"
 
 class EtchShort :
@@ -28,9 +29,9 @@ public EtchObject {
 public:
 
   /**
-   * TypeId for EtchShort.
+   * EtchObjectType for EtchShort.
    */
-  static const EtchObjectType TYPE;
+  static const EtchObjectType* TYPE();
 
   /**
    * Constructs a EtchShort object.

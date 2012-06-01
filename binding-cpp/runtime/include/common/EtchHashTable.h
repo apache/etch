@@ -20,6 +20,7 @@
 #define __ETCHHASHTABLE_H__
 
 #include "common/EtchObject.h"
+#include "common/EtchObjectType.h"
 #include "common/EtchError.h"
 #include "common/EtchObjectHash.h"
 #include "common/EtchComparator.h"
@@ -33,7 +34,11 @@ private:
 public:
   typedef typename capu::Pair<Key, T> Pair;
   typedef typename capu::HashTable<Key, T, C, H >::Iterator Iterator;
-  static const EtchObjectType TYPE;
+
+  /**
+   * EtchObjectType for EtchHashTable.
+   */
+  static const EtchObjectType* TYPE();
 
   /**
    * Constructs EtchHashTable.
@@ -109,17 +114,20 @@ public:
 };
 
 template <class Key, class T, class H, class C>
-const EtchObjectType EtchHashTable<Key, T, H, C>::TYPE(EOTID_HASHTABLE, NULL);
+const EtchObjectType* EtchHashTable<Key, T, H, C>::TYPE() {
+  const static EtchObjectType TYPE(EOTID_HASHTABLE, NULL);
+  return &TYPE;
+}
 
 template <class Key, class T, class H, class C>
 inline EtchHashTable<Key, T, H, C>::EtchHashTable()
-: EtchObject(&EtchHashTable<Key, T, H, C>::TYPE), mHashTable(ETCH_DEFAULT_HASH_TABLE_SIZE) {
+: EtchObject(EtchHashTable<Key, T, H, C>::TYPE()), mHashTable(ETCH_DEFAULT_HASH_TABLE_SIZE) {
 
 }
 
 template <class Key, class T, class H, class C>
 inline EtchHashTable<Key, T, H, C>::EtchHashTable(capu::uint64_t size)
-: EtchObject(&EtchHashTable<Key, T, H, C>::TYPE), mHashTable(size) {
+: EtchObject(EtchHashTable<Key, T, H, C>::TYPE()), mHashTable(size) {
 
 }
 

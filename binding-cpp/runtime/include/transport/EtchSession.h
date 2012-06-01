@@ -27,7 +27,6 @@ class EtchSession {
 public:
 
   virtual ~EtchSession() {
-
   }
 
   /**

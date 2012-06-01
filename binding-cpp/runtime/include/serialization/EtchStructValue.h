@@ -41,7 +41,10 @@ class EtchValueFactory;
 class EtchStructValue : public EtchObject {
 public:
 
-  static const EtchObjectType TYPE;
+  /**
+   * EtchObjectType for EtchStructValue.
+   */
+  static const EtchObjectType* TYPE();
 
   /**
    * Constructs the StructValue with default length.

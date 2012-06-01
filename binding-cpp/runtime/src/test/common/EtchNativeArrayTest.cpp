@@ -21,8 +21,7 @@
 #include "common/EtchNativeArray.h"
 
 TEST(EtchNativeArrayTest, Constructor_Default) {
-  EtchNativeArray<EtchInt32*>* na =
-          new EtchNativeArray<EtchInt32*>(10, &EtchInt32::TYPE);
+  EtchNativeArray<EtchInt32*>* na = new EtchNativeArray<EtchInt32*>(10, EtchInt32::TYPE());
   delete na;
 }
 
@@ -32,12 +31,12 @@ TEST(EtchNativeArrayTest, Constructor_Array) {
   EtchInt32* int2 = new EtchInt32(43);
 
   EtchNativeArray<EtchInt32*>* na1 =
-          new EtchNativeArray<EtchInt32*>(2, &EtchInt32::TYPE);
+          new EtchNativeArray<EtchInt32*>(2, EtchInt32::TYPE());
 
   na1->set(0, int1);
   na1->set(1, int2);
 
-  EXPECT_TRUE(na1->getObjectType()->equals(&EtchNativeArray<EtchInt32*>::TYPE));
+  EXPECT_TRUE(na1->getObjectType()->equals(EtchNativeArray<EtchInt32*>::TYPE()));
 
   EtchInt32* value = NULL;
   int i = 0;
@@ -60,8 +59,8 @@ TEST(EtchNativeArrayTest, setget) {
   EtchInt32* int1 = new EtchInt32(42);
   EtchInt32* int2 = new EtchInt32(43);
   EtchNativeArray<EtchInt32*>* na1 =
-          new EtchNativeArray<EtchInt32*>(2, &EtchInt32::TYPE);
-  EXPECT_TRUE(na1->getObjectType()->equals(&EtchNativeArray<EtchInt32*>::TYPE));
+          new EtchNativeArray<EtchInt32*>(2, EtchInt32::TYPE());
+  EXPECT_TRUE(na1->getObjectType()->equals(EtchNativeArray<EtchInt32*>::TYPE()));
 
   na1->set(0, int1);
   na1->set(1, int2);
@@ -83,7 +82,7 @@ TEST(EtchNativeArrayTest, setget) {
   ASSERT_EQ(44, newValue->get());
 
   //Test setget of block
-  EtchNativeArray<EtchInt32*> *native_array = new EtchNativeArray<EtchInt32*> (2, &EtchInt32::TYPE);
+  EtchNativeArray<EtchInt32*> *native_array = new EtchNativeArray<EtchInt32*> (2, EtchInt32::TYPE());
   EtchInt32** int3 = new EtchInt32*[2];
   int3[0] = new EtchInt32();
   int3[1] = new EtchInt32();
@@ -172,23 +171,23 @@ TEST(EtchNativeArrayTest, multiDimensionalArrays) {
   EtchInt32* int3 = new EtchInt32(3);
   EtchInt32* int4 = new EtchInt32(4);
 
-  EtchNativeArray<EtchInt32*>* subArray1 = new EtchNativeArray<EtchInt32*>(2, &EtchInt32::TYPE);
-  EtchNativeArray<EtchInt32*>* subArray2 = new EtchNativeArray<EtchInt32*>(2, &EtchInt32::TYPE);
+  EtchNativeArray<EtchInt32*>* subArray1 = new EtchNativeArray<EtchInt32*>(2, EtchInt32::TYPE());
+  EtchNativeArray<EtchInt32*>* subArray2 = new EtchNativeArray<EtchInt32*>(2, EtchInt32::TYPE());
   subArray1->set(0, int1);
   subArray1->set(1, int2);
   subArray2->set(0, int3);
   subArray2->set(1, int4);
 
-  EtchNativeArray<EtchNativeArray<EtchInt32*>*>* mainArray = new EtchNativeArray<EtchNativeArray<EtchInt32*>*>(2, &EtchNativeArray<EtchNativeArray<EtchInt32*>*>::TYPE);
+  EtchNativeArray<EtchNativeArray<EtchInt32*>*>* mainArray = new EtchNativeArray<EtchNativeArray<EtchInt32*>*>(2, EtchNativeArray<EtchNativeArray<EtchInt32*>*>::TYPE());
   mainArray->set(0, subArray1);
   mainArray->set(1, subArray2);
   const EtchObjectType *ot = mainArray->getObjectType();
   //get type of main array
-  EXPECT_TRUE(ot->equals(&EtchNativeArray<EtchNativeArray<EtchInt32*>*>::TYPE));
+  EXPECT_TRUE(ot->equals(EtchNativeArray<EtchNativeArray<EtchInt32*>*>::TYPE()));
   //get component type of main array = type of subarray
-  EXPECT_TRUE(ot->getObjectComponentType()->equals(&EtchNativeArray<EtchInt32*>::TYPE));
+  EXPECT_TRUE(ot->getObjectComponentType()->equals(EtchNativeArray<EtchInt32*>::TYPE()));
   //get component type of subarray
-  EXPECT_TRUE(ot->getObjectComponentType()->getObjectComponentType()->equals(&EtchInt32::TYPE));
+  EXPECT_TRUE(ot->getObjectComponentType()->getObjectComponentType()->equals(EtchInt32::TYPE()));
 
   EtchNativeArray<EtchInt32*>* result;
   mainArray->get(0, &result);
@@ -207,7 +206,7 @@ TEST(EtchNativeArrayTest, multiDimensionalArrays) {
 }
 
 TEST(EtchNativeArrayTest, DeleteModeTest) {
-  EtchNativeArray<EtchInt32*>* Array1 = new EtchNativeArray<EtchInt32*>(2, &EtchInt32::TYPE);
+  EtchNativeArray<EtchInt32*>* Array1 = new EtchNativeArray<EtchInt32*>(2, EtchInt32::TYPE());
   Array1->setDeleteMode(false);
   EtchNativeArray<EtchInt32*>* Array2 = new EtchNativeArray<EtchInt32*>(2, new EtchObjectType(EOTID_INT32, NULL));
   Array2->setDeleteMode(true);

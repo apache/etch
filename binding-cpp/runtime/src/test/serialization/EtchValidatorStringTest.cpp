@@ -28,7 +28,7 @@ TEST(EtchValidatorStringTest, createTest) {
   EXPECT_TRUE(EtchValidatorString::Get(0, val) == ETCH_OK);
   ptr = capu::smartpointer_cast<EtchValidatorString>(val);
 
-  EXPECT_TRUE(ptr->getExpectedType()->equals(&EtchString::TYPE));
+  EXPECT_TRUE(ptr->getExpectedType()->equals(EtchString::TYPE()));
   EXPECT_TRUE(ptr->getNDims() == 0);
 
   EtchObjectType type1(EOTID_STRING, NULL);

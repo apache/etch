@@ -18,11 +18,16 @@
 
 #ifndef __ETCHCOMBOVALIDATOR_H__
 #define __ETCHCOMBOVALIDATOR_H__
+
 #include "serialization/EtchValidator.h"
-#include "common/EtchError.h"
 
 class EtchComboValidator : public EtchValidator {
 public:
+
+   /**
+   * EtchObjectType for EtchBool.
+   */
+  static const EtchObjectType* TYPE();
 
   /**
    * Constructs the ComboValidator.
@@ -63,7 +68,6 @@ public:
    * @return second child validator
    */
   capu::SmartPointer<EtchValidator> getSecond();
-  static const EtchObjectType TYPE;
 
 private:
   capu::SmartPointer<EtchValidator> mFirst;

@@ -18,10 +18,13 @@
 
 #include "serialization/EtchComboValidator.h"
 
-const EtchObjectType EtchComboValidator::TYPE(EOTID_VALIDATOR_COMBO, NULL);
+const EtchObjectType* EtchComboValidator::TYPE() {
+  const static EtchObjectType TYPE(EOTID_VALIDATOR_COMBO, NULL);
+  return &TYPE;
+}
 
 EtchComboValidator::EtchComboValidator(capu::SmartPointer<EtchValidator> a, capu::SmartPointer<EtchValidator> b)
-: EtchValidator(&EtchComboValidator::TYPE), mFirst(a), mSecond(b) {
+: EtchValidator(EtchComboValidator::TYPE()), mFirst(a), mSecond(b) {
 
 }
 

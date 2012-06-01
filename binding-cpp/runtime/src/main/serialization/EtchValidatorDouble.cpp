@@ -19,10 +19,14 @@
 #include "serialization/EtchValidatorDouble.h"
 
 capu::SmartPointer<EtchValidator> EtchValidatorDouble::mValidator[MAX_CACHED];
-const EtchObjectType EtchValidatorDouble::TYPE(EOTID_VALIDATOR_DOUBLE, NULL);
+
+const EtchObjectType* EtchValidatorDouble::TYPE() {
+  const static EtchObjectType TYPE(EOTID_VALIDATOR_DOUBLE, NULL);
+  return &TYPE;
+}
 
 EtchValidatorDouble::EtchValidatorDouble(capu::uint32_t ndim)
-: EtchTypeValidator(&EtchValidatorDouble::TYPE, &EtchDouble::TYPE, &EtchDouble::TYPE, ndim) {
+: EtchTypeValidator(EtchValidatorDouble::TYPE(), EtchDouble::TYPE(), EtchDouble::TYPE(), ndim) {
 
 }
 

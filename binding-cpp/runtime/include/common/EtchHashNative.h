@@ -22,7 +22,6 @@
 #include "capu/container/HashTable.h"
 #include "capu/util/Traits.h"
 
-
 class EtchHashNative {
 public:
 
@@ -38,8 +37,6 @@ public:
   static capu::uint64_t Digest(const char* key) {
     return capu::Hash::Digest(key);
   }
-
- 
 
 };
 

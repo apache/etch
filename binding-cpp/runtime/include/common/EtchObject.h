@@ -20,10 +20,21 @@
 #define __ETCHOBJECT_H__
 
 #include "EtchConfig.h"
-#include "EtchObjectType.h"
+
+class EtchObjectType;
 
 class EtchObject {
 public:
+
+  /**
+   * EtchObjectType for EtchObject.
+   */
+  static const EtchObjectType* TYPE();
+
+  /**
+   * Constructor.
+   */
+  EtchObject();
 
   /**
    * Constructor.
@@ -35,8 +46,13 @@ public:
    */
   virtual ~EtchObject();
 
+/**
+   * Returns object type id of this type.
+   */
+  const EtchObjectType* GetObjectType() const;
+
   /**
-   * Returns object type id.
+   * Returns object type id of this object.
    */
   const EtchObjectType* getObjectType() const;
 
@@ -50,8 +66,6 @@ public:
    *         false otherwise
    */
   virtual capu::bool_t equals(const EtchObject * other) const;
-
-  static const EtchObjectType TYPE;
 
 private:
 

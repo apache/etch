@@ -33,7 +33,10 @@
 class EtchType : public EtchObject {
 public:
 
-  static const EtchObjectType TYPE;
+  /**
+   * EtchObjectType for EtchNativeArray.
+   */
+  static const EtchObjectType* TYPE();
 
   /**
    * Constructor
@@ -44,14 +47,14 @@ public:
    * Constructor
    * @param name name of the type
    */
-  EtchType(EtchString &name);
+  EtchType(EtchString name);
 
   /**
    * Constructor
    * @param id identifier of the type
    * @param name name of the type
    */
-  EtchType(capu::uint32_t id, EtchString &name);
+  EtchType(capu::uint32_t id, EtchString name);
 
   /**
    * Default Destructor

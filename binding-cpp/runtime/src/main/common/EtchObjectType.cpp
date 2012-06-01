@@ -28,6 +28,11 @@ const EtchObjectType EtchObjectType::NATIVE_DOUBLE(EOTID_DOUBLE, NULL);
 const EtchObjectType EtchObjectType::NATIVE_FLOAT(EOTID_FLOAT, NULL);
 const EtchObjectType EtchObjectType::NATIVE_BOOL(EOTID_BOOL, NULL);
 
+const EtchObjectType* EtchObjectType::TYPE() {
+  const static EtchObjectType TYPE(EOTID_OBJECT_TYPE, NULL);
+  return &TYPE;
+}
+
 EtchObjectType::EtchObjectType(capu::int32_t typeId, const EtchObjectType* componentType)
 : mTypeId(typeId), mComponentType(componentType) {
 

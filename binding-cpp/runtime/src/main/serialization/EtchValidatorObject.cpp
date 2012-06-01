@@ -20,10 +20,14 @@
 
 
 capu::SmartPointer<EtchValidator> EtchValidatorObject::mValidator[MAX_CACHED];
-const EtchObjectType EtchValidatorObject::TYPE(EOTID_VALIDATOR_OBJECT, NULL);
+
+const EtchObjectType* EtchValidatorObject::TYPE() {
+  const static EtchObjectType TYPE(EOTID_VALIDATOR_OBJECT, NULL);
+  return &TYPE;
+}
 
 EtchValidatorObject::EtchValidatorObject(capu::uint32_t ndim)
-: EtchTypeValidator(&EtchValidatorObject::TYPE, &EtchObject::TYPE, &EtchObject::TYPE, ndim) {
+: EtchTypeValidator(EtchValidatorObject::TYPE(), EtchObject::TYPE(), EtchObject::TYPE(), ndim) {
   mSubclass = true;
 }
 

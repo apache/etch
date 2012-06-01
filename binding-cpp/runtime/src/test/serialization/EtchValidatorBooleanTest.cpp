@@ -28,7 +28,7 @@ TEST(EtchValidatorBooleanTest, createTest) {
 
   capu::SmartPointer<EtchValidatorBoolean> val = capu::smartpointer_cast<EtchValidatorBoolean>(val2);
   EXPECT_TRUE(val.get() != NULL);
-  EXPECT_TRUE(val->getExpectedType()->equals(&EtchBool::TYPE));
+  EXPECT_TRUE(val->getExpectedType()->equals(EtchBool::TYPE()));
   EXPECT_TRUE(val->getNDims() == 0);
 
   EtchObjectType type1(EOTID_BOOL, NULL);

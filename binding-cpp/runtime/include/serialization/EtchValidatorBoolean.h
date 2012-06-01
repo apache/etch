@@ -25,6 +25,11 @@
 class EtchValidatorBoolean : public EtchTypeValidator {
 public:
 
+  /**
+   * EtchObjectType for EtchValidatorBoolean.
+   */
+  static const EtchObjectType* TYPE();
+
   virtual ~EtchValidatorBoolean();
 
    /**
@@ -46,8 +51,6 @@ public:
    * @see EtchValidator
    */
   static status_t Get(capu::uint32_t ndim, capu::SmartPointer<EtchValidator> &val);
-
-  static const EtchObjectType TYPE;
 
 protected:
   EtchValidatorBoolean(capu::uint32_t ndim);

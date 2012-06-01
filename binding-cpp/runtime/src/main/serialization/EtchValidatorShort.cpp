@@ -19,10 +19,14 @@
 #include "serialization/EtchValidatorShort.h"
 
 capu::SmartPointer<EtchValidator> EtchValidatorShort::mValidator[MAX_CACHED];
-const EtchObjectType EtchValidatorShort::TYPE(EOTID_VALIDATOR_SHORT, NULL);
+
+const EtchObjectType* EtchValidatorShort::TYPE() {
+  const static EtchObjectType TYPE(EOTID_VALIDATOR_SHORT, NULL);
+  return &TYPE;
+}
 
 EtchValidatorShort::EtchValidatorShort(capu::uint32_t ndim)
-: EtchTypeValidator(&EtchValidatorShort::TYPE, &EtchShort::TYPE, &EtchShort::TYPE, ndim) {
+: EtchTypeValidator(EtchValidatorShort::TYPE(), EtchShort::TYPE(), EtchShort::TYPE(), ndim) {
 
 }
 
@@ -40,16 +44,16 @@ capu::bool_t EtchValidatorShort::validate(EtchObject* value) {
   if (value->getObjectType()->equals(mExpectedType))
     return true;
 
-  if ((value->getObjectType()->equals(&EtchShort::TYPE)) ||
-          (value->getObjectType()->equals(&EtchByte::TYPE)))
+  if ((value->getObjectType()->equals(EtchShort::TYPE())) ||
+          (value->getObjectType()->equals(EtchByte::TYPE())))
     return true;
 
-  if (value->getObjectType()->equals(&EtchInt32::TYPE)) {
+  if (value->getObjectType()->equals(EtchInt32::TYPE())) {
     EtchInt32 *v = (EtchInt32 *) value;
     return ((v->get() >= capu::NumericLimitMin<capu::int16_t > ()) && (v->get() <= capu::NumericLimitMax<capu::int16_t > ()));
   }
 
-  if (value->getObjectType()->equals(&EtchLong::TYPE)) {
+  if (value->getObjectType()->equals(EtchLong::TYPE())) {
     EtchLong *v = (EtchLong *) value;
     return ((v->get() >= capu::NumericLimitMin<capu::int16_t > ()) && (v->get() <= capu::NumericLimitMax<capu::int16_t > ()));
   }
@@ -75,23 +79,23 @@ capu::bool_t EtchValidatorShort::validate(EtchObject* value) {
 
 status_t EtchValidatorShort::validateValue(EtchObject* value, EtchObject*& result) {
   if (validate(value)) {
-    if ((value->getObjectType()->equals(&EtchShort::TYPE)) || (mNDims > 0)) {
+    if ((value->getObjectType()->equals(EtchShort::TYPE())) || (mNDims > 0)) {
       result = value;
       return ETCH_OK;
     } else {
-      if (value->getObjectType()->equals(&EtchInt32::TYPE)) {
+      if (value->getObjectType()->equals(EtchInt32::TYPE())) {
         EtchInt32 *v = (EtchInt32 *) value;
         result = (EtchObject*) (new EtchShort((capu::int16_t)v->get()));
         return ETCH_OK;
       }
 
-      if (value->getObjectType()->equals(&EtchByte::TYPE)) {
+      if (value->getObjectType()->equals(EtchByte::TYPE())) {
         EtchByte *v = (EtchByte *) value;
         result = (EtchObject*) (new EtchShort((capu::int16_t)v->get()));
         return ETCH_OK;
       }
 
-      if (value->getObjectType()->equals(&EtchLong::TYPE)) {
+      if (value->getObjectType()->equals(EtchLong::TYPE())) {
         EtchLong *v = (EtchLong *) value;
         result = (EtchObject*) (new EtchShort((capu::int16_t)v->get()));
         return ETCH_OK;

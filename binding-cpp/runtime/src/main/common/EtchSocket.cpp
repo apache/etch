@@ -18,15 +18,18 @@
 
 #include "common/EtchSocket.h"
 
-const EtchObjectType EtchSocket::TYPE(EOTID_SOCKET, NULL);
+const EtchObjectType* EtchSocket::TYPE() {
+  const static EtchObjectType TYPE(EOTID_SOCKET, NULL);
+  return &TYPE;
+}
 
 EtchSocket::EtchSocket()
-: EtchObject(&EtchSocket::TYPE) {
+: EtchObject(EtchSocket::TYPE()) {
   mSocket = new capu::Socket();
 }
 
 EtchSocket::EtchSocket(capu::Socket* soc)
-: EtchObject(&EtchSocket::TYPE) {
+: EtchObject(EtchSocket::TYPE()) {
   if (soc == NULL)
     mSocket = new capu::Socket();
   else
