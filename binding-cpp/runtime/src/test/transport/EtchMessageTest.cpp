@@ -44,13 +44,13 @@ public:
 
   MOCK_METHOD0(get_mf__messageId, EtchField());
 
-  status_t getInReplyTo(EtchMessage* msg, capu::int64_t &result) {
+  status_t getInReplyToMessageId(EtchMessage* msg, capu::int64_t &result) {
     result = 0;
     return ETCH_OK;
   }
   MOCK_METHOD2(setMessageId, status_t(EtchMessage* msg, capu::int64_t msgid));
 
-  MOCK_METHOD2(setInReplyTo, status_t(EtchMessage* msg, capu::int64_t msgid));
+  MOCK_METHOD2(setInReplyToMessageId, status_t(EtchMessage* msg, capu::int64_t msgid));
 
   MOCK_METHOD0(get_mf__inReplyTo, EtchField());
 
@@ -60,7 +60,7 @@ public:
 
   MOCK_METHOD0(get_mt__exception, EtchType*());
 
-  MOCK_METHOD2(getCustomStructType, status_t(capu::int32_t c, EtchType *& type));
+  MOCK_METHOD2(getCustomStructType, status_t(const EtchObjectType *c, EtchType *& type));
 
   EtchLevel getLevel() {
     return LEVEL_FULL;

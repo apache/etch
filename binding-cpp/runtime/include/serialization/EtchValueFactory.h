@@ -143,7 +143,7 @@ public:
    *         ETCH_EINVAL if msg is null
    *         ETCH_ERROR if it is not found
    */
-  virtual status_t getInReplyTo(EtchMessage *msg, capu::int64_t &result) = 0;
+  virtual status_t getInReplyToMessageId(EtchMessage *msg, capu::int64_t &result) = 0;
 
   /**
    * @param msg the message whose well-known in-reply-to field is to
@@ -154,7 +154,7 @@ public:
    * @return ETCH_EINVAL if msg is null
    *         ETCH_OK otherwise
    */
-  virtual status_t setInReplyTo(EtchMessage *msg, capu::int64_t msgid) = 0;
+  virtual status_t setInReplyToMessageId(EtchMessage *msg, capu::int64_t msgid) = 0;
 
   /**
    * @return well-known message field for in reply to.
@@ -192,7 +192,7 @@ public:
    * @return ETCH_OK if the type is found correctly.
    *         ETCH_EINVAL otherwise
    */
-  virtual status_t getCustomStructType(capu::int32_t c, EtchType *&type) = 0;
+  virtual status_t getCustomStructType(const EtchObjectType *c, EtchType *&type) = 0;
 
   /**
    * @return well-known message type for exception thrown by one-way
