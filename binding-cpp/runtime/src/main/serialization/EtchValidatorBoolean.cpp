@@ -47,16 +47,11 @@ capu::bool_t EtchValidatorBoolean::validate(EtchObject* value) {
   //array handling
   if ((value->getObjectType()->isArray()) && (mExpectedType->isArray())) {
     EtchNativeArray<EtchObject*> *array = (EtchNativeArray<EtchObject*> *) value;
-    const EtchObjectType* type = array->getContentType();
-    const EtchObjectType* type2 = mExpectedType->getObjectComponentType();
-    while ((type->getObjectComponentType() != NULL) && (mExpectedType->getObjectComponentType() != NULL)) {
-      type = type->getObjectComponentType();
-      type2 = type2->getObjectComponentType();
-    }
-    //both of them should be pointing null
-    if (type->getObjectComponentType() != type2->getObjectComponentType()) {
+    if (array->getDim() != mNDims) {
       return false;
     }
+    const EtchObjectType* type = array->getObjectType()->getObjectComponentType();
+    const EtchObjectType* type2 = mExpectedType->getObjectComponentType();
     return type->equals(type2);
   }
   return false;

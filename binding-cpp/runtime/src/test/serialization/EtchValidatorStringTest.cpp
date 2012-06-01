@@ -33,10 +33,9 @@ TEST(EtchValidatorStringTest, createTest) {
 
   EtchObjectType type1(EOTID_STRING, NULL);
   EtchObjectType type2(EOTID_NATIVE_ARRAY, &type1);
-  EtchObjectType type3(EOTID_NATIVE_ARRAY, &type2);
   EXPECT_TRUE(EtchValidatorString::Get(2, val) == ETCH_OK);
   ptr = capu::smartpointer_cast<EtchValidatorString>(val);
-  EXPECT_TRUE(ptr->getExpectedType()->equals(&type3));
+  EXPECT_TRUE(ptr->getExpectedType()->equals(&type2));
   EXPECT_TRUE(ptr->getNDims() == 2);
 
 }

@@ -26,11 +26,7 @@ EtchTypeValidator::EtchTypeValidator(const EtchObjectType * type, const EtchObje
   if (mNDims == 0)
     mExpectedType = new EtchObjectType(scalarClass->getTypeId(),scalarClass->getObjectComponentType());
   else if (mNDims > 0){    
-    EtchObjectType *type = new EtchObjectType(scalarClass->getTypeId(), NULL);
-    for(capu::uint32_t i = 0 ; i < mNDims ;i++)
-    {
-      type = new EtchObjectType(EOTID_NATIVE_ARRAY, type);
-    }
+    EtchObjectType *type = new EtchObjectType(EOTID_NATIVE_ARRAY, scalarClass);
     mExpectedType = type;
     mArrayComponentType = scalarClass;
   }
@@ -38,14 +34,6 @@ EtchTypeValidator::EtchTypeValidator(const EtchObjectType * type, const EtchObje
 }
 
 EtchTypeValidator::~EtchTypeValidator(){
-  const EtchObjectType *type;
-  type = mExpectedType->getObjectComponentType();
-  while(type != NULL)
-  {
-    const EtchObjectType *tmp = type;
-    type = type->getObjectComponentType();
-    delete tmp;
-  }
   delete mExpectedType;
 }
 

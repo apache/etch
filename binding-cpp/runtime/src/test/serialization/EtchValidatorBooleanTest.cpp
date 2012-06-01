@@ -33,12 +33,11 @@ TEST(EtchValidatorBooleanTest, createTest) {
 
   EtchObjectType type1(EOTID_BOOL, NULL);
   EtchObjectType type2(EOTID_NATIVE_ARRAY, &type1);
-  EtchObjectType type3(EOTID_NATIVE_ARRAY, &type2);
 
   EXPECT_TRUE(EtchValidatorBoolean::Get(2, val2) == ETCH_OK);
   val = capu::smartpointer_cast<EtchValidatorBoolean>(val2);
   EXPECT_TRUE(val.get() != NULL);
-  EXPECT_TRUE(val->getExpectedType()->equals(&type3));
+  EXPECT_TRUE(val->getExpectedType()->equals(&type2));
   EXPECT_TRUE(val->getNDims() == 2);
 
 }
