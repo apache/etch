@@ -67,6 +67,7 @@ SET(MAIN_INCLUDES
     ${PROJECT_SOURCE_DIR}/include/serialization/EtchValidatorBoolean.h
     ${PROJECT_SOURCE_DIR}/include/serialization/EtchValidatorByte.h
     ${PROJECT_SOURCE_DIR}/include/serialization/EtchValidatorInt.h
+    ${PROJECT_SOURCE_DIR}/include/serialization/EtchValidatorShort.h
     ${PROJECT_SOURCE_DIR}/include/util/EtchUtil.h
     )
 
@@ -96,6 +97,7 @@ SET(MAIN_SOURCES
     serialization/EtchValidatorBoolean.cpp
     serialization/EtchValidatorByte.cpp
     serialization/EtchValidatorInt.cpp
+    serialization/EtchValidatorShort.cpp
     util/EtchUtil.cpp
     )
 

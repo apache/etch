@@ -51,6 +51,7 @@ add_executable (etch-cpp-test
     serialization/EtchValidatorBooleanTest.cpp
     serialization/EtchValidatorByteTest.cpp
     serialization/EtchValidatorIntTest.cpp
+    serialization/EtchValidatorShortTest.cpp
     util/EtchUtilTest.cpp
     ${GTEST}/src/gtest-all.cc
     ${GMOCK}/src/gmock-all.cc
