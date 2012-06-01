@@ -76,6 +76,7 @@ SET(MAIN_INCLUDES
     ${PROJECT_SOURCE_DIR}/include/serialization/EtchComboValidator.h
     ${PROJECT_SOURCE_DIR}/include/serialization/EtchField.h
     ${PROJECT_SOURCE_DIR}/include/serialization/EtchValidatorObject.h
+    ${PROJECT_SOURCE_DIR}/include/serialization/EtchFieldMap.h
     ${PROJECT_SOURCE_DIR}/include/util/EtchUtil.h
     )
 
@@ -113,6 +114,7 @@ SET(MAIN_SOURCES
     serialization/EtchComboValidator.cpp
     serialization/EtchField.cpp
     serialization/EtchValidatorObject.cpp
+    serialization/EtchFieldMap.cpp
     util/EtchUtil.cpp
     )
 
