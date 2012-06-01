@@ -19,7 +19,9 @@
 #ifndef __ETCHNATIVEARRAY_H__
 #define __ETCHNATIVEARRAY_H__
 
+#include "capu/util/SmartPointer.h"
 #include "common/EtchObject.h"
+#include "common/EtchObjectType.h"
 #include "common/EtchError.h"
 
 class Pos {
@@ -86,35 +88,360 @@ public:
   capu::int32_t size;
 };
 
-template <class T>
-class EtchArray {
-public:
-  capu::int32_t mDim;
-  capu::int32_t mLen;
-  void* mArray;
+  //internal helper classes
+  template <class T>
+  class EtchArray;
 
-  EtchArray()
-  : mDim(0), mLen(0), mArray(NULL) {
+  template <class T>
+  class EtchArrayBase {
+  public:
 
-  }
-
-  EtchArray(capu::int32_t dim, capu::int32_t length)
-  : mDim(dim), mLen(length), mArray(NULL) {
-    if (dim == 1) {
-      mArray = new T[length];
-    } else {
-      mArray = new EtchArray[length];
+    /**
+     * Creates a new instance of EtchArrayBase
+     */
+    EtchArrayBase(capu::int32_t length, capu::int32_t dim = 1)
+      : mLength(length), mDim(dim) {
     }
-  }
 
-  EtchArray(capu::int32_t dim, capu::int32_t length, T* array)
-  : mDim(dim), mLen(length), mArray(array) {
+    virtual ~EtchArrayBase() {
+    }
 
-  }
+    /**
+     * Returns the dimension
+     */
+    virtual capu::int32_t getDim() {
+      return mDim;
+    }
 
-  virtual ~EtchArray() {
-  }
-};
+    /**
+     * Returns the length
+     */
+    virtual capu::int32_t getLength() {
+      return mLength;
+    }
+
+    /**
+     * Sets an element at the given position
+     */
+    virtual status_t set(Pos pos, capu::int32_t index, const T &data) = 0;
+
+    /**
+     * Sets an array at the given position
+     */
+    virtual status_t set(Pos pos, capu::int32_t index, const T* data, capu::int32_t dataSize, capu::int32_t offset, capu::int32_t length, capu::int32_t *written) = 0;
+
+    /**
+     * Sets the sub array at the given position
+     */
+    virtual status_t set(Pos pos, capu::int32_t index, const capu::SmartPointer<EtchArray<T> > &data) = 0;
+
+    /**
+     * Returns the element at the given position
+     */
+    virtual status_t get(Pos pos, capu::int32_t index, T *result) = 0;
+
+    /**
+     * Returns the array at the given position
+     */
+    virtual status_t get(Pos pos, capu::int32_t index, T* data, capu::int32_t dataSize, capu::int32_t offset, capu::int32_t length, capu::int32_t *read) = 0;
+
+    /**
+     * Returns the subarray at the given position
+     */
+    virtual status_t get(Pos pos, capu::int32_t index, capu::SmartPointer<EtchArray<T> > *result) = 0;
+
+    /**
+     * creates a new nested array at the given position with the given length and dim
+     */
+    virtual status_t createArray(Pos pos, capu::int32_t index, capu::int32_t length, capu::int32_t dim) = 0;
+
+    /**
+     * copies the array into the given new array
+     */
+    virtual status_t copyToArray(capu::SmartPointer<EtchArrayBase<T> > newArray) = 0;
+
+    
+  protected:
+    capu::int32_t mLength;
+    capu::int32_t mDim;
+  };
+
+  template <class T>
+  class EtchArrayData : public EtchArrayBase<T> {
+  public:
+
+    /**
+     * Create a new instance of EtchArrayData
+     */
+    EtchArrayData(capu::int32_t length)
+      : EtchArrayBase<T>(length) {
+        mData = new T[EtchArrayBase<T>::mLength];
+    }
+
+    /**
+     * Destructure
+     */
+    virtual ~EtchArrayData() {
+      delete[] mData;
+    }
+
+    /**
+     *@see EtchArrayBase
+     */
+    status_t set(Pos pos, capu::int32_t index, const T &data) {
+      if(pos.size < index || pos.pos[index] > EtchArrayBase<T>::mLength || pos.size-1 != index) {
+        return ETCH_ERANGE;
+      }
+      mData[pos.pos[index]] = data;
+      return ETCH_OK;
+    }
+
+    /**
+     *@see EtchArrayBase
+     */
+    status_t set(Pos pos, capu::int32_t index, const T* data, capu::int32_t dataSize, capu::int32_t offset, capu::int32_t length, capu::int32_t *written) {
+      if(pos.size < index || pos.pos[index] > EtchArrayBase<T>::mLength || pos.size-1 != index || dataSize < offset + length) {
+        return ETCH_ERANGE;
+      }
+      if(data != NULL) {
+        //TODO: replace with memcpy
+        capu::int32_t i;
+        for (i = 0; i < EtchArrayBase<T>::mLength && i < length; i++) {
+          mData[pos.pos[index]+i] = data[offset + i];
+        }
+        if (written != NULL) {
+          *written = i;
+        }
+      } else {
+        return ETCH_EINVAL;
+      }
+      return ETCH_OK;
+    }
+
+    /**
+     *@see EtchArrayBase
+     */
+    status_t set(Pos pos, capu::int32_t index, const capu::SmartPointer<EtchArray<T> > &data) {
+      return ETCH_ERANGE;
+    }
+
+    /**
+     *@see EtchArrayBase
+     */
+    status_t get(Pos pos, capu::int32_t index, T *result) {
+      if(pos.size < index || pos.pos[index] > EtchArrayBase<T>::mLength || pos.size-1 != index) {
+        return ETCH_ERANGE;
+      }
+      if(result != NULL) {
+        *result = mData[pos.pos[index]];
+      } else {
+        return ETCH_EINVAL;
+      }
+       return ETCH_OK;
+    }
+
+    /**
+     *@see EtchArrayBase
+     */
+    status_t get(Pos pos, capu::int32_t index, T* data, capu::int32_t dataSize, capu::int32_t offset, capu::int32_t length, capu::int32_t *read) {
+      if(pos.size < index || pos.pos[index] > EtchArrayBase<T>::mLength || pos.size-1 != index || dataSize < offset + length) {
+        return ETCH_ERANGE;
+      }
+      if(data != NULL) {
+        //TODO: replace with memcpy
+        capu::int32_t i;
+        for (i = 0; i < EtchArrayBase<T>::mLength && i < length; i++) {
+          data[offset + i] = mData[pos.pos[index]+i];
+        }
+        if (read != NULL) {
+          *read = i;
+        }
+      } else {
+        return ETCH_EINVAL;
+      }
+      return ETCH_OK;
+    }
+
+    /**
+     *@see EtchArrayBase
+     */
+    status_t get(Pos pos, capu::int32_t index, capu::SmartPointer<EtchArray<T> > *result) {
+      return ETCH_ERANGE;
+    }
+
+    /**
+     *@see EtchArrayBase
+     */
+    status_t createArray(Pos pos, capu::int32_t index, capu::int32_t length, capu::int32_t dim) {
+      return ETCH_ERANGE;
+    }
+    
+    /**
+     *@see EtchArrayBase
+     */
+    status_t copyToArray(capu::SmartPointer<EtchArrayBase<T> > newArray) {
+      //TODO: replace with capu memory abstraction
+      capu::SmartPointer<EtchArrayData<T> > temp = capu::smartpointer_cast<EtchArrayData<T> >(newArray);
+      for(capu::int32_t i = 0; i < EtchArrayBase<T>::mLength; i++) {
+        temp->mData[i] = mData[i];
+      }
+      return ETCH_OK;
+    }
+  private:
+    T* mData;
+  };
+
+  template <class T>
+  class EtchArray : public EtchArrayBase<T> {
+  public:
+
+    /**
+     * Creats a new instance of the EtchArray class
+     */
+    EtchArray(capu::int32_t length, capu::int32_t dim) 
+      : EtchArrayBase<T>(length, dim) {
+      mData = new capu::SmartPointer<EtchArrayBase<T> >[EtchArrayBase<T>::mLength];
+    }
+
+    /**
+     * Destructure
+     */
+    virtual ~EtchArray() {
+      delete[] mData;
+    }
+
+    /**
+     *@see EtchArrayBase
+     */
+    status_t set(Pos pos, capu::int32_t index, const T &data) {
+      if(mData[pos.pos[index]].get() != NULL) {
+        return mData[pos.pos[index]]->set(pos, index+1, data);
+      }
+      return ETCH_OK;
+    }
+
+  /**
+     *@see EtchArrayBase
+     */
+    status_t set(Pos pos, capu::int32_t index, const T* data, capu::int32_t dataSize, capu::int32_t offset, capu::int32_t length, capu::int32_t *written) {
+      if(pos.size < index || pos.pos[index] > EtchArrayBase<T>::mLength) {
+        return ETCH_ERANGE;
+      }
+
+      if(mData[pos.pos[index]].get() != NULL) {
+        return mData[pos.pos[index]]->set(pos, index+1, data, dataSize, offset, length, written);
+      } else {
+        return ETCH_EINVAL;
+      }
+      return ETCH_OK;
+    }
+
+    /**
+     *@see EtchArrayBase
+     */
+    status_t set(Pos pos, capu::int32_t index, const capu::SmartPointer<EtchArray<T> > &data) {
+      if(pos.size < index || pos.pos[index] > EtchArrayBase<T>::mLength || mData[pos.pos[index]].get() == NULL) {
+        return ETCH_ERANGE;
+      }
+
+      if (pos.size - index == 1) {
+        if (EtchArrayBase<T>::mDim -1 == data->getDim()) { //check if we set a subarray with correct dimension
+          mData[pos.pos[index]] = data;
+        } else {
+          return ETCH_ERANGE;
+        }
+      } else {
+        return mData[pos.pos[index]]->set(pos,index+1,data);
+      }
+
+      return ETCH_OK;
+    }
+
+    /**
+     *@see EtchArrayBase
+     */
+    status_t get(Pos pos, capu::int32_t index, T *result) {
+      if(pos.size < index || pos.pos[index] > EtchArrayBase<T>::mLength) {
+        return ETCH_ERANGE;
+      }
+
+      if(mData[pos.pos[index]].get() != NULL) {
+        return mData[pos.pos[index]]->get(pos, index+1, result);
+      }
+      else {
+        return ETCH_EINVAL;
+      }
+      return ETCH_OK;
+    }
+
+  /**
+     *@see EtchArrayBase
+     */
+    status_t get(Pos pos, capu::int32_t index, T* data, capu::int32_t dataSize, capu::int32_t offset, capu::int32_t length, capu::int32_t *read) {
+      if(pos.size < index || pos.pos[index] > EtchArrayBase<T>::mLength) {
+        return ETCH_ERANGE;
+      }
+
+      if(mData[pos.pos[index]].get() != NULL) {
+        return mData[pos.pos[index]]->get(pos, index+1, data, dataSize, offset, length, read);
+      } else {
+        return ETCH_EINVAL;
+      }
+      return ETCH_OK;
+    }
+
+    /**
+     *@see EtchArrayBase
+     */
+      status_t get(Pos pos, capu::int32_t index, capu::SmartPointer<EtchArray<T> > *result) {
+        if(pos.size < index || pos.pos[index] > EtchArrayBase<T>::mLength || mData[pos.pos[index]].get() == NULL) {
+          return ETCH_ERANGE;
+        }
+        if (pos.size - index == 1) {
+          *result = capu::smartpointer_cast<EtchArray<T> >(mData[pos.pos[index]]);
+        } else {
+          return mData[pos.pos[index]]->get(pos,index+1,result);
+        }
+
+        return ETCH_OK;
+      }
+
+    /**
+     *@see EtchArrayBase
+     */
+    status_t createArray(Pos pos, capu::int32_t index, capu::int32_t length, capu::int32_t dim) {
+      if(mData[pos.pos[index]].get() == NULL) {
+        if(dim == 1) {
+          mData[pos.pos[index]] = new EtchArrayData<T>(length);
+        } else {
+          if (pos.size - index == 1) {
+            mData[pos.pos[index]] = new EtchArray<T>(length, dim);
+          }
+        }
+      } else {
+        if (dim == 1 || pos.size - index == 1) {
+          return ETCH_ERANGE;
+        }
+        return mData[pos.pos[index]]->createArray(pos, index+1, length, dim-1);
+      }
+      return ETCH_OK;
+    }
+
+    /**
+     *@see EtchArrayBase
+     */
+    status_t copyToArray(capu::SmartPointer<EtchArrayBase<T> > newArray) {
+      capu::SmartPointer<EtchArray<T> > temp = capu::smartpointer_cast<EtchArray<T> >(newArray);
+      for(capu::int32_t i = 0; i < EtchArrayBase<T>::mLength; i++) {
+        temp->mData[i] = mData[i];
+      }
+      return ETCH_OK;
+    }
+  private:
+    capu::SmartPointer<EtchArrayBase<T> > *mData;
+  };
+
+
 
 template<class T>
 class EtchNativeArray :
@@ -129,12 +456,12 @@ public:
   /**
    * Constructs a EtchNativeArray object.
    */
-  EtchNativeArray(capu::int32_t dim, capu::int32_t length);
+  EtchNativeArray(capu::int32_t length, capu::int32_t dim = 1);
 
   /**
    * Constructs a EtchNativeArray object.
    */
-  EtchNativeArray(capu::int32_t dim, capu::int32_t length, T* array);
+  EtchNativeArray(capu::int32_t length, capu::int32_t dim, T* array);
 
   /**
    * Destructor for Etch Nativearray.
@@ -149,7 +476,14 @@ public:
    */
   status_t get(Pos pos, T *result);
 
-  status_t get(Pos pos, capu::int32_t length, T* data, capu::int32_t offset);
+  status_t get(Pos pos, T* data, capu::int32_t dataSize, capu::int32_t offset, capu::int32_t length, capu::int32_t *read  = NULL);
+
+  /**
+   * gets the array stored at the given position
+   * returns ETCH_ERANGE, if out of bounds.
+   * returns ETCH_OK otherwise
+   */
+  status_t get(Pos pos, EtchNativeArray *&subarray);
 
   /**
    * sets the EtchObject at index i in result
@@ -157,9 +491,18 @@ public:
    * returns ETCH_ERANGE, if out of bounds.
    * returns ETCH_OK otherwise
    */
-  status_t set(Pos pos, T result);
+  status_t set(Pos pos, const T &data);
 
-  status_t set(Pos pos, capu::int32_t length, T* data, capu::int32_t offset);
+  status_t set(Pos pos, const T* data, capu::int32_t dataSize, capu::int32_t offset, capu::int32_t length, capu::int32_t *written = NULL);
+
+  /**
+   * sets the array at the given position
+   * returns ETCH_ERANGE, if out of bounds.
+   * returns ETCH_OK otherwise
+   */
+  status_t set(Pos pos, EtchNativeArray *subarray);
+
+  //status_t set(Pos pos, capu::int32_t length, T* data, capu::int32_t offset);
 
   /**
    * Returns the length of array
@@ -167,21 +510,36 @@ public:
   capu::int32_t getLength();
 
   /**
-   * Returns the length of array
+   * Returns the dim of array
    */
   capu::int32_t getDim();
 
   /**
-   * Returns the pointer to the beginning of array
+   * Creates a new nested array
+   * @pos of the neseted array
+   * @length length of the nested array
    */
-  T* getArray();
+  status_t createArray(Pos pos, capu::int32_t length);
 
-  status_t createArray(Pos pos, capu::int32_t dims, capu::int32_t length);
+  /**
+   * Copies the array into the given array
+   * @pos of the neseted array
+   * @length length of the nested array
+   */
+  status_t copyToArray(EtchNativeArray *newArray);
 
 private:
 
-  void deallocate(EtchArray<T> *array);
-  EtchArray<T> mArray;
+
+private:
+  capu::SmartPointer<EtchArrayBase<T> > mData;
+
+  /**
+   * private constructor
+   * creates a new native array from an existing subarray
+   */
+  EtchNativeArray(capu::SmartPointer<EtchArray<T> > *array);
+
 };
 
 template<class T>
@@ -191,142 +549,89 @@ const EtchObjectType* EtchNativeArray<T>::TYPE() {
 }
 
 template<class T>
-EtchNativeArray<T>::EtchNativeArray(capu::int32_t dim, capu::int32_t length)
-: EtchObject(EtchNativeArray<T>::TYPE()), mArray(dim, length) {
-
+EtchNativeArray<T>::EtchNativeArray(capu::int32_t length, capu::int32_t dim)
+  : EtchObject(EtchNativeArray::TYPE()) {
+  if (dim == 1) {
+    mData = new EtchArrayData<T>(length);
+  } else {
+    mData = new EtchArray<T>(length, dim);
+  }
 }
 
 template<class T>
-EtchNativeArray<T>::EtchNativeArray(capu::int32_t dim, capu::int32_t length, T* array)
-: EtchObject(EtchNativeArray<T>::TYPE()), mArray(dim, length, array) {
-
+EtchNativeArray<T>::EtchNativeArray(capu::SmartPointer<EtchArray<T> > *array) 
+: EtchObject(EtchNativeArray::TYPE()){
+  mData = capu::smartpointer_cast<EtchArrayBase<T> > (*array);
 }
 
 template<class T>
 EtchNativeArray<T>::~EtchNativeArray() {
-  deallocate(&mArray);
 }
 
 template<class T>
-T * EtchNativeArray<T>::getArray() {
-  return mArray;
+status_t EtchNativeArray<T>::get(Pos pos, T *result) {
+  return mData->get(pos, 0, result);
 }
 
 template<class T>
-status_t EtchNativeArray<T>::get(Pos pos, T * result) {
-  if (mArray.mArray == NULL || result == NULL || (pos.size != mArray.mDim)) {
-    return ETCH_EINVAL;
-  }
-  capu::int32_t i = 0;
-  void * array = mArray.mArray;
-  for (i = 1; i < mArray.mDim; i++) {
-    array = ((EtchArray<T>*) array)[pos.pos[i]].mArray;
-  }
-  *result = ((T*) array)[pos.pos[i - 1]];
-  return ETCH_OK;
+status_t EtchNativeArray<T>::get(Pos pos, T* data, capu::int32_t dataSize, capu::int32_t offset, capu::int32_t length, capu::int32_t *read) {
+  return mData->get(pos, 0, data, dataSize, offset, length, read);
 }
 
-template<class T >
-status_t EtchNativeArray<T>::set(Pos pos, T result) {
-  if (mArray.mArray == NULL || (pos.size != mArray.mDim)) {
-    return ETCH_EINVAL;
+template <class T>
+status_t EtchNativeArray<T>::get(Pos pos, EtchNativeArray<T> *&subarray) {
+  capu::SmartPointer<EtchArray<T> > temp = NULL;
+  status_t res = mData->get(pos, 0, &temp);
+  if (res != ETCH_OK) {
+    return res;
   }
-  capu::int32_t i = 0;
-  void * array = mArray.mArray;
-  for (i = 1; i < mArray.mDim; i++) {
-    array = ((EtchArray<T>*) array)[pos.pos[i - 1]].mArray;
-  }
-  ((T*) array)[pos.pos[i - 1]] = result;
+
+  subarray = new EtchNativeArray<T>(&temp);
   return ETCH_OK;
 }
 
 template<class T>
-status_t EtchNativeArray<T>::set(Pos pos, capu::int32_t length, T* data, capu::int32_t offset) {
-  if (mArray.mArray == NULL || (pos.size != mArray.mDim) || data == NULL) {
-    return ETCH_EINVAL;
-  }
-  if (offset >= length) {
+status_t EtchNativeArray<T>::set(Pos pos, const T &data) {
+  return mData->set(pos, 0, data);
+}
+
+template<class T>
+status_t EtchNativeArray<T>::set(Pos pos, const T* data, capu::int32_t dataSize, capu::int32_t offset, capu::int32_t length, capu::int32_t *written) {
+  return mData->set(pos, 0, data, dataSize, offset, length, written);
+}
+
+template<class T>
+status_t EtchNativeArray<T>::set(Pos pos, EtchNativeArray<T> *subarray) {
+  if (subarray == NULL) {
     return ETCH_ERANGE;
   }
-  capu::int32_t i = 0;
-  void * array = mArray.mArray;
-  for (i = 1; i < mArray.mDim; i++) {
-    array = ((EtchArray<T>*) array)[pos.pos[i - 1]].mArray;
-  }
-
-  for (capu::int32_t z = offset; z < length; z++) {
-    ((T*) array)[pos.pos[i - 1] + z] = data[z];
-  }
-  return ETCH_OK;
+  capu::SmartPointer<EtchArray<T> > temp = capu::smartpointer_cast<EtchArray<T> >(subarray->mData);
+  return mData->set(pos, 0, temp);
 }
 
-template<class T>
-status_t EtchNativeArray<T>::get(Pos pos, capu::int32_t length, T* data, capu::int32_t offset) {
-  if (mArray.mArray == NULL || (pos.size != mArray.mDim) || data == NULL) {
-    return ETCH_EINVAL;
-  }
-  if (offset >= length) {
-    return ETCH_ERANGE;
-  }
-  capu::int32_t i = 0;
-  void * array = mArray.mArray;
-  for (i = 1; i < mArray.mDim; i++) {
-    array = ((EtchArray<T>*) array)[pos.pos[i - 1]].mArray;
-  }
-  for (capu::int32_t z = offset; z < length; z++) {
-    data[z] = ((T*) array)[pos.pos[i - 1] + z];
-  }
-  return ETCH_OK;
-}
 
 template<class T>
 capu::int32_t EtchNativeArray<T>::getLength() {
-  return mArray.mLen;
-}
-
-template<class T>
-status_t EtchNativeArray<T>::createArray(Pos pos, capu::int32_t dim, capu::int32_t length) {
-  if (mArray.mArray == NULL || (pos.size >= mArray.mDim)) {
-    return ETCH_EINVAL;
-  }
-  capu::int32_t i = 0;
-  void * array = mArray.mArray;
-  for (i = 0; i < pos.size - 1; i++) {
-    array = ((EtchArray<T>*) array)[pos.pos[i]].mArray;
-  }
-
-  ((EtchArray<T>*) array)[pos.pos[i]].mDim = dim;
-  ((EtchArray<T>*) array)[pos.pos[i]].mLen = length;
-
-  if (dim > 1) {
-    ((EtchArray<T>*) array)[pos.pos[i]].mArray = new EtchArray<T>[length];
-  } else if (dim == 1) {
-    ((EtchArray<T>*) array)[pos.pos[i]].mArray = new T[length];
-  }
-  return ETCH_OK;
-}
-
-template<class T>
-void EtchNativeArray<T>::deallocate(EtchArray<T> *array) {
-
-  if (array == NULL)
-    return;
-  else if (array->mDim == 1)
-    delete [] (T*) array->mArray;
-  else if (array->mDim < 0)
-    return;
-  else {
-    capu::int32_t i;
-    for (i = 0; i < array->mLen; i++) {
-      deallocate(&((EtchArray<T>*) array->mArray)[i]);
-    }
-    delete [] (EtchArray<T>*) array->mArray;
-  }
+  return mData->getLength();
 }
 
 template<class T>
 capu::int32_t EtchNativeArray<T>::getDim() {
-  return mArray.mDim;
+  return mData->getDim();
 }
 
+template<class T>
+status_t EtchNativeArray<T>::createArray(Pos pos, capu::int32_t length) {
+  return mData->createArray(pos, 0, length, mData->getDim()-1);
+}
+
+template<class T>
+status_t EtchNativeArray<T>::copyToArray(EtchNativeArray *newArray) {
+  if (newArray == NULL) {
+    return ETCH_EINVAL;
+  }
+
+  return mData->copyToArray(newArray->mData);
+
+}
 #endif //__ETCHNATIVEARRAY_H__

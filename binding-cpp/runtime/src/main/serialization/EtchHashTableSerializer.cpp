@@ -40,7 +40,7 @@ status_t EtchHashTableSerializer::exportValue(EtchValueFactory* vf, capu::SmartP
   capu::SmartPointer<EtchHashTable<capu::SmartPointer<EtchObject>, capu::SmartPointer<EtchObject> > > table = capu::smartpointer_cast<EtchHashTable<capu::SmartPointer<EtchObject>, capu::SmartPointer<EtchObject> > > (value);
 
   EtchHashTable<capu::SmartPointer<EtchObject> , capu::SmartPointer<EtchObject> >::Iterator it = table->begin();
-  capu::SmartPointer<EtchNativeArray<capu::SmartPointer<EtchObject> > > keysAndValuesArray = new EtchNativeArray<capu::SmartPointer<EtchObject> > (1, table->count()*2);
+  capu::SmartPointer<EtchNativeArray<capu::SmartPointer<EtchObject> > > keysAndValuesArray = new EtchNativeArray<capu::SmartPointer<EtchObject> > (table->count()*2);
   capu::int32_t i = 0;
   EtchHashTable<capu::SmartPointer<EtchObject> , capu::SmartPointer<EtchObject> >::Pair ptr;
 

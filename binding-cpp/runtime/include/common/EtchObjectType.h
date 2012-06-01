@@ -61,6 +61,7 @@ enum EtchObjectTypeIds {
   EOTID_EXCEPTION,
   EOTID_AUTH_EXCEPTION,
   EOTID_RUNTIME_EXCEPTION,
+  EOTID_ARRAY_VALUE,
 
   EOTID_NATIVE_INT8,
   EOTID_NATIVE_INT16,
@@ -150,7 +151,7 @@ private:
       return T::TYPE();
     }
   };
-
+  
   template <class T>
   struct __Wrapper__<capu::SmartPointer<T> > {
 

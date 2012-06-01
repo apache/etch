@@ -38,7 +38,7 @@ status_t EtchSetSerializer::exportValue(EtchValueFactory* vf, capu::SmartPointer
   capu::SmartPointer<EtchHashSet<capu::SmartPointer<EtchObject> > > set = capu::smartpointer_cast<EtchHashSet<capu::SmartPointer<EtchObject> > > (value);
 
   EtchHashSet<capu::SmartPointer<EtchObject> >::Iterator it = set->begin();
-  capu::SmartPointer<EtchNativeArray<capu::SmartPointer<EtchObject> > > array = new EtchNativeArray<capu::SmartPointer<EtchObject> > (1, set->count());
+  capu::SmartPointer<EtchNativeArray<capu::SmartPointer<EtchObject> > > array = new EtchNativeArray<capu::SmartPointer<EtchObject> > (set->count());
   capu::int32_t i = 0;
   capu::SmartPointer<EtchObject> ptr;
 

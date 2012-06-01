@@ -19,6 +19,15 @@ project (etch-cpp)
 
 message (STATUS "using external libraries ${ETCH_EXTERNAL_DEPENDS}")
 
+IF (EXISTS "${CMAKE_SOURCE_DIR}/CMakeLists_local.txt")
+INCLUDE ("${CMAKE_SOURCE_DIR}/CMakeLists_local.txt" OPTIONAL)
+ENDIF()
+
+# Set build settings
+IF ("${BUILD_CHECK_MEMORY}" STREQUAL "")
+  SET(BUILD_CHECK_MEMORY FALSE)
+ENDIF()
+
 # Etch external
 IF (NOT ETCH_EXTERNAL_DEPENDS)
   MESSAGE (FATAL_ERROR "ETCH_EXTERNAL_DEPENDS not set")
@@ -32,11 +41,6 @@ SET(GTEST ${ETCH_EXTERNAL_DEPENDS}/gtest/1.6.0)
 
 # GMock
 SET(GMOCK ${ETCH_EXTERNAL_DEPENDS}/gmock/1.6.0)
-
-
-# Set build settings
-SET(BUILD_CHECK_MEMORY FALSE)
-
 
 #Build external CAPU project (OS Abstraction)
 SET(CAPU_PROJECT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/lib/capu")
