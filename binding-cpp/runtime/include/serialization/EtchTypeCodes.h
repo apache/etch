@@ -29,7 +29,6 @@
  * Tiny integers are completely encoded within the type byte.
  */
 class EtchTypeCode {
-
 public:
   /**
    * A code denoting a null value.
