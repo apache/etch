@@ -60,6 +60,7 @@ SET(MAIN_INCLUDES
     ${PROJECT_SOURCE_DIR}/include/transport/EtchTransportPacket.h
     ${PROJECT_SOURCE_DIR}/include/common/EtchException.h
     ${PROJECT_SOURCE_DIR}/include/common/EtchAuthenticationException.h
+    ${PROJECT_SOURCE_DIR}/include/common/EtchRuntimeException.h
     ${PROJECT_SOURCE_DIR}/include/transport/EtchTcpConnection.h
     ${PROJECT_SOURCE_DIR}/include/transport/EtchTcpListener.h
     ${PROJECT_SOURCE_DIR}/include/transport/EtchTcpOption.h
@@ -105,6 +106,7 @@ SET(MAIN_SOURCES
     common/EtchServerSocket.cpp
     common/EtchException.cpp
     common/EtchAuthenticationException.cpp
+    common/EtchRuntimeException.cpp
     util/EtchURL.cpp
     util/EtchResources.cpp
     transport/EtchFlexBuffer.cpp

@@ -17,21 +17,20 @@
  */
 
 #include <gtest/gtest.h>
-#include "common/EtchAuthenticationException.h"
+#include "common/EtchRuntimeException.h"
 
-TEST(EtchAuthenticationExceptionTest, createTest) {
-
+TEST(EtchRuntimeExceptionTest, createTest) {
   EtchString str("test message");
-  EtchAuthenticationException *test = NULL;
-  test = new EtchAuthenticationException(str);
+  EtchRuntimeException *test = NULL;
+  test = new EtchRuntimeException(str, ETCH_ERROR);
   EXPECT_TRUE(test != NULL);
   delete test;
 }
 
-TEST(EtchAuthenticationExceptionTest, getTests) {
+TEST(EtchRuntimeExceptionTest, getTests) {
   EtchString str("test message");
-  EtchAuthenticationException *test = NULL;
-  test = new EtchAuthenticationException(str);
+  EtchRuntimeException *test = NULL;
+  test = new EtchRuntimeException(str, ETCH_ERROR);
   EXPECT_TRUE(test != NULL);
   EXPECT_TRUE(test->getErrorMessage().equals(&str));
   EXPECT_TRUE(test->getErrorCode() == ETCH_ERROR);
@@ -39,15 +38,15 @@ TEST(EtchAuthenticationExceptionTest, getTests) {
   delete test;
 }
 
-TEST(EtchAuthenticationExceptionTest, equalsTest) {
+TEST(EtchRuntimeExceptionTest, equalsTest) {
   EtchString str("test message");
   EtchString str2("test2 message");
-  EtchAuthenticationException *test = NULL;
-  test = new EtchAuthenticationException(str);
-  EtchAuthenticationException *test2 = NULL;
-  test2 = new EtchAuthenticationException(str2);
-  EtchAuthenticationException *test3 = NULL;
-  test3 = new EtchAuthenticationException(str);
+  EtchRuntimeException *test = NULL;
+  test = new EtchRuntimeException(str, ETCH_ERROR);
+  EtchRuntimeException *test2 = NULL;
+  test2 = new EtchRuntimeException(str2, ETCH_EINVAL);
+  EtchRuntimeException *test3 = NULL;
+  test3 = new EtchRuntimeException(str, ETCH_ERROR);
 
   EXPECT_TRUE(test != NULL);
   EXPECT_TRUE(test2 != NULL);
