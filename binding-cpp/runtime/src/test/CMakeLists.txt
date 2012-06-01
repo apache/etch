@@ -64,6 +64,7 @@ add_executable (etch-cpp-test
     serialization/EtchStructValueTest.cpp
     serialization/EtchTypeMapTest.cpp
     serialization/EtchClass2TypeMapTest.cpp
+    serialization/EtchListSerializerTest.cpp
     util/EtchUtilTest.cpp
     ${GTEST}/src/gtest-all.cc
     ${GMOCK}/src/gmock-all.cc
@@ -87,7 +88,7 @@ IF (WIN32 AND BUILD_CHECK_MEMORY)
 ENDIF (WIN32 AND BUILD_CHECK_MEMORY)
 
 IF (UNIX)
-  set_target_properties (etch-cpp-test PROPERTIES COMPILE_FLAGS "-m32" LINK_FLAGS "-m32 -pthread")
+  set_target_properties (etch-cpp-test PROPERTIES COMPILE_FLAGS "-m32 -g" LINK_FLAGS "-m32 -pthread")
 ENDIF (UNIX)
 
 add_dependencies (etch-cpp Capu)

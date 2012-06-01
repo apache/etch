@@ -101,7 +101,7 @@ public:
    *         ETCH_EINVAL if value is null
    *         ETCH_ERANGE if there is no existing pair with specified key
    */
-  status_t getField(EtchString &name, EtchField *field);
+  status_t getField(const EtchString &name, EtchField *field);
 
   /**
    * @return the time in milliseconds to wait for this response message.

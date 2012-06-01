@@ -83,6 +83,7 @@ SET(MAIN_INCLUDES
     ${PROJECT_SOURCE_DIR}/include/serialization/EtchStructValue.h
     ${PROJECT_SOURCE_DIR}/include/serialization/EtchTypeMap.h
     ${PROJECT_SOURCE_DIR}/include/serialization/EtchClass2TypeMap.h
+    ${PROJECT_SOURCE_DIR}/include/serialization/EtchListSerializer.h
     ${PROJECT_SOURCE_DIR}/include/util/EtchUtil.h
     )
 
@@ -126,6 +127,7 @@ SET(MAIN_SOURCES
     serialization/EtchStructValue.cpp
     serialization/EtchTypeMap.cpp
     serialization/EtchClass2TypeMap.cpp
+    serialization/EtchListSerializer.cpp
     util/EtchUtil.cpp
     )
 
@@ -142,7 +144,7 @@ ELSEIF(WIN32)
 ENDIF()
 
 IF (UNIX)
-  set_target_properties (etch-cpp PROPERTIES COMPILE_FLAGS "-m32" LINK_FLAGS "-m32")
+  set_target_properties (etch-cpp PROPERTIES COMPILE_FLAGS "-m32 -g" LINK_FLAGS "-m32")
 ENDIF (UNIX)
 
 set_target_properties (etch-cpp PROPERTIES OUTPUT_NAME "etch")

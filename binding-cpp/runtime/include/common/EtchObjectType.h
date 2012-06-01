@@ -23,9 +23,9 @@
 
 #include "EtchConfig.h"
 #include "common/EtchObject.h"
+#include "capu/util/SmartPointer.h"
 
 enum EtchObjectTypeIds {
-
   EOTID_INT32 = 0,
   EOTID_BOOL,
   EOTID_BYTE,
@@ -72,9 +72,9 @@ enum EtchObjectTypeIds {
 
 class EtchObjectType : public EtchObject {
 public:
-   /**
-    * TypeIds for native types
-    */
+  /**
+   * TypeIds for native types
+   */
   static const EtchObjectType NATIVE_INT8;
   static const EtchObjectType NATIVE_INT16;
   static const EtchObjectType NATIVE_INT32;
@@ -135,7 +135,7 @@ private:
   struct __Wrapper__ {
 
     static const EtchObjectType * getType() {
-      return &T::TYPE;
+      return T::TYPE();
     }
   };
 
@@ -147,119 +147,127 @@ private:
     }
   };
 
+  template <class T>
+  struct __Wrapper__<capu::SmartPointer<T> > {
+
+    static const EtchObjectType * getType() {
+      return T::TYPE();
+    }
+  };
+
 };
 
- template <>
- struct EtchObjectType::__Wrapper__<capu::int32_t> {
+template <>
+struct EtchObjectType::__Wrapper__<capu::int32_t> {
 
-    static const EtchObjectType * getType() {
-      return &EtchObjectType::NATIVE_INT32;
-    }
-  };
+  static const EtchObjectType * getType() {
+    return &EtchObjectType::NATIVE_INT32;
+  }
+};
 
-  template <>
-  struct EtchObjectType::__Wrapper__<capu::int16_t> {
+template <>
+struct EtchObjectType::__Wrapper__<capu::int16_t> {
 
-    static const EtchObjectType * getType() {
-      return &EtchObjectType::NATIVE_INT16;
-    }
-  };
+  static const EtchObjectType * getType() {
+    return &EtchObjectType::NATIVE_INT16;
+  }
+};
 
-  template <>
-  struct EtchObjectType::__Wrapper__<capu::int8_t> {
+template <>
+struct EtchObjectType::__Wrapper__<capu::int8_t> {
 
-    static const EtchObjectType * getType() {
-      return &EtchObjectType::NATIVE_INT8;
-    }
-  };
+  static const EtchObjectType * getType() {
+    return &EtchObjectType::NATIVE_INT8;
+  }
+};
 
-  template <>
-  struct EtchObjectType::__Wrapper__<capu::int64_t> {
+template <>
+struct EtchObjectType::__Wrapper__<capu::int64_t> {
 
-    static const EtchObjectType * getType() {
-      return &EtchObjectType::NATIVE_INT64;
-    }
-  };
+  static const EtchObjectType * getType() {
+    return &EtchObjectType::NATIVE_INT64;
+  }
+};
 
-  template <>
-  struct EtchObjectType::__Wrapper__<capu::float_t> {
+template <>
+struct EtchObjectType::__Wrapper__<capu::float_t> {
 
-    static const EtchObjectType * getType() {
-      return &EtchObjectType::NATIVE_FLOAT;
-    }
-  };
+  static const EtchObjectType * getType() {
+    return &EtchObjectType::NATIVE_FLOAT;
+  }
+};
 
-  template <>
-  struct EtchObjectType::__Wrapper__<capu::double_t> {
+template <>
+struct EtchObjectType::__Wrapper__<capu::double_t> {
 
-    static const EtchObjectType * getType() {
-      return &EtchObjectType::NATIVE_DOUBLE;
-    }
-  };
+  static const EtchObjectType * getType() {
+    return &EtchObjectType::NATIVE_DOUBLE;
+  }
+};
 
-  template <>
-  struct EtchObjectType::__Wrapper__<capu::bool_t> {
+template <>
+struct EtchObjectType::__Wrapper__<capu::bool_t> {
 
-    static const EtchObjectType * getType() {
-      return &EtchObjectType::NATIVE_BOOL;
-    }
-  };
+  static const EtchObjectType * getType() {
+    return &EtchObjectType::NATIVE_BOOL;
+  }
+};
 
-  template <>
-  struct EtchObjectType::__Wrapper__<capu::int32_t*> {
+template <>
+struct EtchObjectType::__Wrapper__<capu::int32_t*> {
 
-    static const EtchObjectType * getType() {
-      return &EtchObjectType::NATIVE_INT32;
-    }
-  };
+  static const EtchObjectType * getType() {
+    return &EtchObjectType::NATIVE_INT32;
+  }
+};
 
-  template <>
-  struct EtchObjectType::__Wrapper__<capu::int16_t*> {
+template <>
+struct EtchObjectType::__Wrapper__<capu::int16_t*> {
 
-    static const EtchObjectType * getType() {
-      return &EtchObjectType::NATIVE_INT16;
-    }
-  };
+  static const EtchObjectType * getType() {
+    return &EtchObjectType::NATIVE_INT16;
+  }
+};
 
-  template <>
-  struct EtchObjectType::__Wrapper__<capu::int8_t*> {
+template <>
+struct EtchObjectType::__Wrapper__<capu::int8_t*> {
 
-    static const EtchObjectType * getType() {
-      return &EtchObjectType::NATIVE_INT8;
-    }
-  };
+  static const EtchObjectType * getType() {
+    return &EtchObjectType::NATIVE_INT8;
+  }
+};
 
-  template <>
-  struct EtchObjectType::__Wrapper__<capu::int64_t*> {
+template <>
+struct EtchObjectType::__Wrapper__<capu::int64_t*> {
 
-    static const EtchObjectType * getType() {
-      return &EtchObjectType::NATIVE_INT64;
-    }
-  };
+  static const EtchObjectType * getType() {
+    return &EtchObjectType::NATIVE_INT64;
+  }
+};
 
-  template <>
-  struct EtchObjectType::__Wrapper__<capu::float_t*> {
+template <>
+struct EtchObjectType::__Wrapper__<capu::float_t*> {
 
-    static const EtchObjectType * getType() {
-      return &EtchObjectType::NATIVE_FLOAT;
-    }
-  };
+  static const EtchObjectType * getType() {
+    return &EtchObjectType::NATIVE_FLOAT;
+  }
+};
 
-  template <>
-  struct EtchObjectType::__Wrapper__<capu::double_t*> {
+template <>
+struct EtchObjectType::__Wrapper__<capu::double_t*> {
 
-    static const EtchObjectType * getType() {
-      return &EtchObjectType::NATIVE_DOUBLE;
-    }
-  };
+  static const EtchObjectType * getType() {
+    return &EtchObjectType::NATIVE_DOUBLE;
+  }
+};
 
-  template <>
-  struct EtchObjectType::__Wrapper__<capu::bool_t*> {
+template <>
+struct EtchObjectType::__Wrapper__<capu::bool_t*> {
 
-    static const EtchObjectType * getType() {
-      return &EtchObjectType::NATIVE_BOOL;
-    }
-  };
+  static const EtchObjectType * getType() {
+    return &EtchObjectType::NATIVE_BOOL;
+  }
+};
 
 #endif /* ETCHOBJECTTYPE_H */
 

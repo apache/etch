@@ -59,7 +59,7 @@ status_t EtchType::getField(capu::uint32_t id, EtchField *field) {
   return mFieldMap.get(id, field);
 }
 
-status_t EtchType::getField(EtchString &name, EtchField *field) {
+status_t EtchType::getField(const EtchString &name, EtchField *field) {
   return mFieldMap.get(name, field);
 }
 
