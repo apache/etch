@@ -91,6 +91,7 @@ SET(MAIN_INCLUDES
     ${PROJECT_SOURCE_DIR}/include/serialization/EtchRuntimeExceptionSerializer.h
     ${PROJECT_SOURCE_DIR}/include/serialization/EtchAuthenticationExceptionSerializer.h
     ${PROJECT_SOURCE_DIR}/include/serialization/EtchHashTableSerializer.h
+    ${PROJECT_SOURCE_DIR}/include/serialization/EtchSetSerializer.h
     ${PROJECT_SOURCE_DIR}/include/util/EtchUtil.h
     )
 
@@ -142,6 +143,7 @@ SET(MAIN_SOURCES
     serialization/EtchRuntimeExceptionSerializer.cpp
     serialization/EtchAuthenticationExceptionSerializer.cpp
     serialization/EtchHashTableSerializer.cpp
+    serialization/EtchSetSerializer.cpp
     util/EtchUtil.cpp
     )
 
