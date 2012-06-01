@@ -87,6 +87,7 @@ SET(MAIN_INCLUDES
     ${PROJECT_SOURCE_DIR}/include/serialization/EtchTypeMap.h
     ${PROJECT_SOURCE_DIR}/include/serialization/EtchClass2TypeMap.h
     ${PROJECT_SOURCE_DIR}/include/serialization/EtchListSerializer.h
+    ${PROJECT_SOURCE_DIR}/include/serialization/EtchValidatorRuntimeException.h
     ${PROJECT_SOURCE_DIR}/include/util/EtchUtil.h
     )
 
@@ -134,6 +135,7 @@ SET(MAIN_SOURCES
     serialization/EtchTypeMap.cpp
     serialization/EtchClass2TypeMap.cpp
     serialization/EtchListSerializer.cpp
+    serialization/EtchValidatorRuntimeException.cpp
     util/EtchUtil.cpp
     )
 
