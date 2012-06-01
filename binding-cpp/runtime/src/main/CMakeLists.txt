@@ -66,6 +66,7 @@ SET(MAIN_INCLUDES
     ${PROJECT_SOURCE_DIR}/include/transport/EtchTcpListener.h
     ${PROJECT_SOURCE_DIR}/include/transport/EtchTcpOption.h
     ${PROJECT_SOURCE_DIR}/include/transport/EtchPacketizer.h
+    ${PROJECT_SOURCE_DIR}/include/transport/EtchMessage.h
     ${PROJECT_SOURCE_DIR}/include/serialization/EtchValidator.h
     ${PROJECT_SOURCE_DIR}/include/serialization/EtchTypeValidator.h
     ${PROJECT_SOURCE_DIR}/include/serialization/EtchTypeCodes.h
@@ -123,6 +124,7 @@ SET(MAIN_SOURCES
     transport/EtchTcpListener.cpp
     transport/EtchTcpOption.cpp
     transport/EtchPacketizer.cpp
+    transport/EtchMessage.cpp
     serialization/EtchTypeValidator.cpp
     serialization/EtchValidatorBoolean.cpp
     serialization/EtchValidatorByte.cpp

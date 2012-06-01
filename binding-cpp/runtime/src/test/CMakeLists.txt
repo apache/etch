@@ -52,6 +52,7 @@ add_executable (etch-cpp-test
     transport/EtchTcpConnectionTest.cpp
     transport/EtchTcpListenerTest.cpp
     transport/EtchPacketizerTest.cpp
+    transport/EtchMessageTest.cpp
     serialization/EtchValidatorBooleanTest.cpp
     serialization/EtchValidatorByteTest.cpp
     serialization/EtchValidatorIntTest.cpp

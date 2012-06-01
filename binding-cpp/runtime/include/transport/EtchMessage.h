@@ -17,14 +17,88 @@
  */
 
 
-#ifndef ETCHMESSAGE_H
-#define ETCHMESSAGE_H
+#ifndef __ETCHMESSAGE_H__
+#define __ETCHMESSAGE_H__
 
-class EtchMessage {
+#include "capu/util/SmartPointer.h"
+#include "serialization/EtchType.h"
+#include "serialization/EtchValueFactory.h"
+#include "serialization/EtchStructValue.h"
 
+class EtchMessage : public EtchStructValue {
 public:
 
+  /**
+   * Constructor
+   */
+  EtchMessage(EtchType *type, EtchValueFactory* vf);
 
+  /**
+   * Constructor
+   */
+  EtchMessage(EtchType *type, EtchValueFactory* vf, capu::uint32_t length);
+
+  /**
+   * Destructor
+   */
+  virtual ~EtchMessage();
+
+  /**
+   * @return the value factory.
+   */
+  EtchValueFactory* getValueFactory();
+
+  /**
+   * Creates a message which is a reply to the current message.
+   * The current message's value factory is copied to the new
+   * message. The message-id of the current message (if any) is
+   * copied into the in-reply-to field of the new message.
+   * @param rType the type of the reply.
+   * @param a reply message.
+   * @return ETCH_OK if reply is created
+   *         ETCH_EINVAL if rType is null
+   *         ETCH_ERROR otherwise
+   */
+  status_t createReplyMessage(EtchType* rType, capu::SmartPointer<EtchMessage> &message);
+
+  /**
+   * 
+   * @param a reply message.
+   * @return ETCH_OK if reply is created
+   *         ETCH_ERROR otherwise
+   */
+  status_t createReplyMessage(capu::SmartPointer<EtchMessage> &message);
+
+  /**
+   * @param the connection specific unique identifier of this
+   * message, or null if there was no such identifier.
+   */
+  status_t getMessageId(capu::int64_t &result);
+
+  /**
+   * Sets the message-id field of this message.
+   * @param msgid the connection specific unique identifier of this
+   * message. Null if the message has not been sent yet. NOTE: the
+   * send process overwrites any value the user might set here. So
+   * don't bother trying to set it.
+   */
+  void setMessageId(capu::int64_t msgid);
+
+  /**
+   * @param the message-id of the message that this is a response to.
+   * Null if this is an original message or if the original message did
+   * not have a message-id.
+   */
+  status_t getInReplyToMessageId(capu::int64_t &result);
+
+  /**
+   * Sets the in-reply-to field of this message.
+   * @param msgid the message-id of the message that this is a response to.
+   */
+  void setInReplyToMessageId(capu::int64_t msgid);
+
+private:
+  EtchValueFactory* mVf;
 };
 
 #endif /* ETCHMESSAGE_H */
