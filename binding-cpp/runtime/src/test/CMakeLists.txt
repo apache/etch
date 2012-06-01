@@ -74,6 +74,7 @@ add_executable (etch-cpp-test
     serialization/EtchAuthenticationExceptionSerializerTest.cpp
     serialization/EtchHashTableSerializerTest.cpp
     serialization/EtchSetSerializerTest.cpp
+    serialization/EtchDateSerializerTest.cpp
     util/EtchUtilTest.cpp
     ${GTEST}/src/gtest-all.cc
     ${GMOCK}/src/gmock-all.cc

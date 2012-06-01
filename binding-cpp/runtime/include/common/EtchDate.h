@@ -20,7 +20,6 @@
 #define ETCHDATE_H
 #include "common/EtchObject.h"
 #include "common/EtchObjectType.h"
-#include <time.h>
 
 class EtchDate : public EtchObject {
 public:
@@ -30,8 +29,16 @@ public:
    */
   static const EtchObjectType* TYPE();
 
-  //Constructor
+  /**
+   * Constructor
+   */
   EtchDate();
+
+  /**
+   * Constructor
+   * @param value the time
+   */
+  EtchDate(capu::time_t value);
 
   //Destructor
   virtual ~EtchDate();

@@ -34,8 +34,7 @@ TEST(EtchDateTest, set) {
 
 TEST(EtchDateTest, get) {
   EtchDate* i1 = new EtchDate();
-  time_t _time;
-  time(&_time);
+  time_t _time = 1234567;
   i1->set(_time);
   EXPECT_TRUE(i1->get() == _time);
   delete i1;

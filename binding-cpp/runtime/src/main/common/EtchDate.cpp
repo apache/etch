@@ -27,6 +27,10 @@ EtchDate::EtchDate()
 : EtchObject(EtchDate::TYPE()), mValue(0) {
 }
 
+EtchDate::EtchDate(capu::time_t value)
+: EtchObject(EtchDate::TYPE()), mValue(value) {
+}
+
 EtchDate::~EtchDate() {
 
 }
