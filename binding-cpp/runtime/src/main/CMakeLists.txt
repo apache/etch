@@ -133,6 +133,7 @@ SET(MAIN_INCLUDES
     ${PROJECT_SOURCE_DIR}/include/util/EtchUtil.h
     ${PROJECT_SOURCE_DIR}/include/util/EtchCircularQueue.h
     ${PROJECT_SOURCE_DIR}/include/util/EtchIdGenerator.h
+    ${PROJECT_SOURCE_DIR}/include/util/EtchExceptionFactory.h
     )
 
 #Add cpp files
