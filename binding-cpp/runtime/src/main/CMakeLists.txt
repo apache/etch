@@ -121,7 +121,9 @@ SET(MAIN_INCLUDES
     ${PROJECT_SOURCE_DIR}/include/support/EtchRemoteBase.h    
     ${PROJECT_SOURCE_DIR}/include/support/EtchServerFactory.h
     ${PROJECT_SOURCE_DIR}/include/support/EtchStubHelper.h
-    ${PROJECT_SOURCE_DIR}/include/support/EtchStubBase.h  
+    ${PROJECT_SOURCE_DIR}/include/support/EtchStubBase.h
+    ${PROJECT_SOURCE_DIR}/include/transport/EtchTransportFactory.h
+    ${PROJECT_SOURCE_DIR}/include/transport/EtchTcpTransportFactory.h
     ${PROJECT_SOURCE_DIR}/include/support/EtchTransportHelper.h
     ${PROJECT_SOURCE_DIR}/include/support/EtchPlainMailbox.h
     ${PROJECT_SOURCE_DIR}/include/util/EtchUtil.h
@@ -162,6 +164,8 @@ SET(MAIN_SOURCES
     transport/EtchMessagizer.cpp
     transport/EtchFormat.cpp
     transport/EtchPlainMailboxManager.cpp
+    transport/EtchTransportFactory.cpp
+    transport/EtchTcpTransportFactory.cpp
     serialization/EtchTypeValidator.cpp
     serialization/EtchValidatorBoolean.cpp
     serialization/EtchValidatorByte.cpp
@@ -199,6 +203,8 @@ SET(MAIN_SOURCES
     support/EtchDefaultServerFactory.cpp
     support/EtchStubBase.cpp
     support/EtchRemoteBase.cpp
+    transport/EtchTransportFactory.cpp
+    transport/EtchTcpTransportFactory.cpp
     support/EtchTransportHelper.cpp
     util/EtchCircularQueue.cpp
     util/EtchUtil.cpp
