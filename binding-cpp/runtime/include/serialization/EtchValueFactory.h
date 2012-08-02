@@ -195,6 +195,12 @@ public:
   virtual status_t getCustomStructType(const EtchObjectType *c, EtchType *&type) = 0;
 
   /**
+   * Returns the current string encoding.
+   * @return string encoding
+   */
+  virtual EtchString getStringEncoding();
+
+  /**
    * @return well-known message type for exception thrown by one-way
    * message.
    */

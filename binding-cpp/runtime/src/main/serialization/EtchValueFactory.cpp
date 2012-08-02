@@ -26,3 +26,7 @@ const EtchObjectType* EtchValueFactory::TYPE() {
 EtchValueFactory::EtchValueFactory()
 : EtchObject(EtchValueFactory::TYPE()) {
 }
+
+EtchString EtchValueFactory::getStringEncoding() {
+  return "utf-8";
+}

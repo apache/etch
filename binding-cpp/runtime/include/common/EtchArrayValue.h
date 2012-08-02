@@ -51,7 +51,7 @@ public:
    * @param typeCode
    *
    */
-  EtchArrayValue(EtchObject* array, capu::int32_t size, capu::int8_t typeCode, EtchType* customStructType, capu::int32_t dim);
+  EtchArrayValue(capu::SmartPointer<EtchNativeArrayBase> array, capu::int32_t size, capu::int8_t typeCode, EtchType* customStructType, capu::int32_t dim);
 
   /**
    * Constructs an array value with no type info. This is used perhaps
@@ -59,7 +59,7 @@ public:
    * @param array
    * @param size
    */
-  EtchArrayValue(EtchObject* array, capu::int32_t size);
+  EtchArrayValue(capu::SmartPointer<EtchNativeArrayBase> array, capu::int32_t size);
 
   virtual ~EtchArrayValue();
 
@@ -102,7 +102,8 @@ public:
    * @param index
    * @return the element at the specified index.
    */
-  capu::int32_t get(capu::uint32_t index, capu::SmartPointer<EtchObject> &result);
+  status_t get(capu::uint32_t index, capu::SmartPointer<EtchObject> &result);
+
   /**
    * Adds the value to the end of the array, making more space
    * available if needed.
@@ -113,10 +114,10 @@ public:
   /**
    * @return the array value.
    */
-  EtchNativeArray<capu::SmartPointer<EtchObject> >* getArray();
+  capu::SmartPointer<EtchNativeArrayBase> getArray();
 
 private:
-  EtchNativeArray<capu::SmartPointer<EtchObject> >* mArray;
+  capu::SmartPointer<EtchNativeArrayBase> mArray;
   capu::int8_t mTypeCode;
   EtchType* mCustomStructType;
   capu::int32_t mDim;

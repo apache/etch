@@ -156,9 +156,9 @@ public:
     virtual status_t createArray(Pos pos, capu::int32_t index, capu::int32_t length, capu::int32_t dim) = 0;
 
     /**
-     * copies the array into the given new array
+     * resizes the array to the given size
      */
-    virtual status_t copyToArray(capu::SmartPointer<EtchArrayBase<T> > newArray) = 0;
+    virtual status_t resize(capu::int32_t newSize) = 0;
 
     
   protected:
@@ -279,12 +279,17 @@ public:
     /**
      *@see EtchArrayBase
      */
-    status_t copyToArray(capu::SmartPointer<EtchArrayBase<T> > newArray) {
-      //TODO: replace with capu memory abstraction
-      capu::SmartPointer<EtchArrayData<T> > temp = capu::smartpointer_cast<EtchArrayData<T> >(newArray);
-      for(capu::int32_t i = 0; i < EtchArrayBase<T>::mLength; i++) {
-        temp->mData[i] = mData[i];
+    status_t resize(capu::int32_t newSize) {
+      if (newSize <= EtchArrayBase<T>::mLength) {
+        return ETCH_ERANGE;
       }
+      T *newData = new T[newSize];
+      for (capu::int32_t i = 0; i<EtchArrayBase<T>::mLength; i++) {
+        newData[i] = mData[i];
+      }
+      delete[] mData;
+      mData = newData;
+      EtchArrayBase<T>::mLength = newSize;
       return ETCH_OK;
     }
   private:
@@ -317,7 +322,7 @@ public:
       if(mData[pos.pos[index]].get() != NULL) {
         return mData[pos.pos[index]]->set(pos, index+1, data);
       }
-      return ETCH_OK;
+      return ETCH_ERANGE;
     }
 
   /**
@@ -329,7 +334,16 @@ public:
       }
 
       if(mData[pos.pos[index]].get() != NULL) {
-        return mData[pos.pos[index]]->set(pos, index+1, data, dataSize, offset, length, written);
+        if ((pos.size -1) == index) {
+          //set subarray
+          //TODO: enhance performance avoiding for-loop-copy
+          for (capu::int8_t i = 0; i < length; i++) {
+            mData[pos.pos[index]]->set(i,0,data[i]);
+          } 
+        } else {
+          //redirect to next sub array
+          return mData[pos.pos[index]]->set(pos, index+1, data, dataSize, offset, length, written);
+        }
       } else {
         return ETCH_EINVAL;
       }
@@ -340,7 +354,7 @@ public:
      *@see EtchArrayBase
      */
     status_t set(Pos pos, capu::int32_t index, const capu::SmartPointer<EtchArray<T> > &data) {
-      if(pos.size < index || pos.pos[index] > EtchArrayBase<T>::mLength || mData[pos.pos[index]].get() == NULL) {
+      if(pos.size < index || pos.pos[index] > EtchArrayBase<T>::mLength) {
         return ETCH_ERANGE;
       }
 
@@ -430,22 +444,70 @@ public:
     /**
      *@see EtchArrayBase
      */
-    status_t copyToArray(capu::SmartPointer<EtchArrayBase<T> > newArray) {
-      capu::SmartPointer<EtchArray<T> > temp = capu::smartpointer_cast<EtchArray<T> >(newArray);
-      for(capu::int32_t i = 0; i < EtchArrayBase<T>::mLength; i++) {
-        temp->mData[i] = mData[i];
+    status_t resize(capu::int32_t newSize) {
+      if (newSize <= EtchArrayBase<T>::mLength) {
+        return ETCH_ERANGE;
       }
+      capu::SmartPointer<EtchArrayBase<T> > *newData = new capu::SmartPointer<EtchArrayBase<T> >[newSize];
+      for (capu::int32_t i = 0; i<EtchArrayBase<T>::mLength; i++) {
+        newData[i] = mData[i];
+      }
+      delete[] mData;
+      mData = newData;
+      EtchArrayBase<T>::mLength = newSize;
       return ETCH_OK;
     }
   private:
     capu::SmartPointer<EtchArrayBase<T> > *mData;
   };
 
+template<class T>
+class EtchNativeArray;
 
+class EtchNativeArrayBase :
+public EtchObject {
+public:
+
+  EtchNativeArrayBase(const EtchObjectType* type)
+    : EtchObject(type) {
+  }
+
+  /**
+   * gets the EtchObject at index i in result
+   * returns ETCH_ERANGE, if out of bounds.
+   * returns ETCH_OK otherwise
+   */
+  status_t getBase(Pos pos, capu::SmartPointer<EtchObject> &result);
+
+  /**
+   * sets the EtchObject at index i
+   * returns ETCH_ERANGE, if out of bounds.
+   * returns ETCH_OK otherwise
+   */
+  status_t setBase(Pos pos, capu::SmartPointer<EtchObject> data);
+
+  /**
+   * resize current array to newSize
+   * returns ETCH_ERANGE, if newSize is smaller then current size
+   * returns ETCH_OK otherwise
+   */
+  virtual status_t resize(capu::int32_t newSize) = 0;
+
+  /**
+   * Returns the length of array
+   */
+  virtual capu::int32_t getLength() = 0;
+
+  /**
+   * Returns the dim of array
+   */
+  virtual capu::int32_t getDim() = 0;
+
+};
 
 template<class T>
 class EtchNativeArray :
-public EtchObject {
+public EtchNativeArrayBase {
 public:
 
   /**
@@ -459,7 +521,7 @@ public:
   EtchNativeArray(capu::int32_t length, capu::int32_t dim = 1);
 
   /**
-   * Constructs a EtchNativeArray object.
+   * Constructs a EtchNativeArray object from native array.
    */
   EtchNativeArray(capu::int32_t length, capu::int32_t dim, T* array);
 
@@ -483,7 +545,7 @@ public:
    * returns ETCH_ERANGE, if out of bounds.
    * returns ETCH_OK otherwise
    */
-  status_t get(Pos pos, EtchNativeArray *&subarray);
+  status_t get(Pos pos, capu::SmartPointer<EtchNativeArray> &subarray);
 
   /**
    * sets the EtchObject at index i in result
@@ -522,14 +584,9 @@ public:
   status_t createArray(Pos pos, capu::int32_t length);
 
   /**
-   * Copies the array into the given array
-   * @pos of the neseted array
-   * @length length of the nested array
+   * @see EtchNativeArrayBase
    */
-  status_t copyToArray(EtchNativeArray *newArray);
-
-private:
-
+  status_t resize(capu::int32_t newSize);
 
 private:
   capu::SmartPointer<EtchArrayBase<T> > mData;
@@ -538,19 +595,20 @@ private:
    * private constructor
    * creates a new native array from an existing subarray
    */
-  EtchNativeArray(capu::SmartPointer<EtchArray<T> > *array);
+  EtchNativeArray(capu::SmartPointer<EtchArray<T> > array);
 
 };
 
 template<class T>
 const EtchObjectType* EtchNativeArray<T>::TYPE() {
-  const static EtchObjectType TYPE(EOTID_NATIVE_ARRAY, EtchObjectType::getType<T>());
+  const static EtchObjectType TYPE(EOTID_NATIVE_ARRAY, EtchObjectType::getType<T>(), EtchObjectType::getTypeTrait<T>());
+
   return &TYPE;
 }
 
 template<class T>
 EtchNativeArray<T>::EtchNativeArray(capu::int32_t length, capu::int32_t dim)
-  : EtchObject(EtchNativeArray::TYPE()) {
+: EtchNativeArrayBase(EtchNativeArray<T>::TYPE()) {
   if (dim == 1) {
     mData = new EtchArrayData<T>(length);
   } else {
@@ -559,9 +617,30 @@ EtchNativeArray<T>::EtchNativeArray(capu::int32_t length, capu::int32_t dim)
 }
 
 template<class T>
-EtchNativeArray<T>::EtchNativeArray(capu::SmartPointer<EtchArray<T> > *array) 
-: EtchObject(EtchNativeArray::TYPE()){
-  mData = capu::smartpointer_cast<EtchArrayBase<T> > (*array);
+EtchNativeArray<T>::EtchNativeArray(capu::int32_t length, capu::int32_t dim, T* array)
+: EtchNativeArrayBase(EtchNativeArray<T>::TYPE()) {
+  capu::int32_t bytesWritten;
+  if (dim == 1) {
+    mData = new EtchArrayData<T>(length);
+    mData->set(0, 0, array, length, 0, length, &bytesWritten);
+  } else if (dim == 2) {
+    mData = new EtchArray<T>(length, dim);
+    capu::int32_t dimCount = dim;
+    capu::int32_t offset = 0;
+    for (capu::int32_t i = 0; i < length; i++) {
+      mData->createArray(i, 0, 2,dim-1); 
+      mData->set(i, 0, &array[offset], length, 0, length, &bytesWritten);
+      offset += length;
+    }
+  } else if (dim >= 3 || dim <= 9) {
+    //the construction of EtchNativeArrays of more than 2 dimensions is not supported
+  }
+}
+
+template<class T>
+EtchNativeArray<T>::EtchNativeArray(capu::SmartPointer<EtchArray<T> > array) 
+: EtchNativeArrayBase(EtchNativeArray<T>::TYPE()){
+  mData = capu::smartpointer_cast<EtchArrayBase<T> > (array);
 }
 
 template<class T>
@@ -579,14 +658,14 @@ status_t EtchNativeArray<T>::get(Pos pos, T* data, capu::int32_t dataSize, capu:
 }
 
 template <class T>
-status_t EtchNativeArray<T>::get(Pos pos, EtchNativeArray<T> *&subarray) {
+status_t EtchNativeArray<T>::get(Pos pos, capu::SmartPointer<EtchNativeArray<T> > &subarray) {
   capu::SmartPointer<EtchArray<T> > temp = NULL;
   status_t res = mData->get(pos, 0, &temp);
   if (res != ETCH_OK) {
     return res;
   }
 
-  subarray = new EtchNativeArray<T>(&temp);
+  subarray = new EtchNativeArray(temp);
   return ETCH_OK;
 }
 
@@ -626,12 +705,108 @@ status_t EtchNativeArray<T>::createArray(Pos pos, capu::int32_t length) {
 }
 
 template<class T>
-status_t EtchNativeArray<T>::copyToArray(EtchNativeArray *newArray) {
-  if (newArray == NULL) {
-    return ETCH_EINVAL;
-  }
+status_t EtchNativeArray<T>::resize(capu::int32_t newSize) {
+  return mData->resize(newSize);
+}
 
-  return mData->copyToArray(newArray->mData);
+//getBaseMacro used in NativeArrayBase::getBase()
+#define GETBASE_CAST_OBJECT_TO_NA(type) { \
+  switch(trait) { \
+    case EtchObjectType::VALUE: { \
+      EtchNativeArray<type>* na = (EtchNativeArray<type>*)(this); \
+      if(dims == 1) { \
+        type value; \
+        ret = na->get(pos, &value); \
+        if (ret == ETCH_OK) { \
+          result = new type(value); \
+        } \
+      } else { \
+        capu::SmartPointer<EtchNativeArray<type> > subarray; \
+        ret = na->get(pos,subarray); \
+        if (ret == ETCH_OK) { \
+          result = subarray; \
+        } \
+      } \
+      break; \
+    } \
+    case EtchObjectType::POINTER: { \
+      EtchNativeArray<type*>* na = (EtchNativeArray<type*>*)(this); \
+      if(dims == 1) { \
+        type* value = NULL; \
+        ret = na->get(pos, &value); \
+        if(ret == ETCH_OK && value != NULL) { \
+          result = new type(*value); \
+        } \
+      } else { \
+        capu::SmartPointer<EtchNativeArray<type*> > subarray; \
+        ret = na->get(pos,subarray); \
+        if (ret == ETCH_OK) { \
+          result = subarray; \
+        } \
+      } \
+      break; \
+    } \
+    case EtchObjectType::SMART_POINTER: { \
+      EtchNativeArray<capu::SmartPointer<type> >* na = (EtchNativeArray<capu::SmartPointer<type> >*)(this); \
+      if(dims == 1) { \
+        capu::SmartPointer<type> value = NULL; \
+        ret = na->get(pos, &value); \
+        if (ret == ETCH_OK) { \
+          result = value; \
+        } \
+      } else { \
+        capu::SmartPointer<EtchNativeArray<capu::SmartPointer<type> > > subarray; \
+        ret = na->get(pos,subarray); \
+        if (ret == ETCH_OK) { \
+          result = subarray; \
+        } \
+      } \
+      break; \
+    } \
+  } \
+}
 
+//setBaseMacro used in NativeArrayBase::setBase()
+#define SETBASE_CAST_OBJECT_TO_NA(type) { \
+  switch(trait) { \
+    case EtchObjectType::VALUE: { \
+      EtchNativeArray<type>* na = (EtchNativeArray<type>*)(this); \
+      if(dims == 1) { \
+        capu::SmartPointer<type> value = capu::smartpointer_cast<type> (data); \
+        type *newValue = value.get(); \
+        if (newValue != NULL) { \
+          return na->set(pos, *newValue); \
+        } \
+      } else { \
+        capu::SmartPointer<EtchNativeArray<type> > subarray = capu::smartpointer_cast<EtchNativeArray<type> >(data); \
+        return na->set(pos,subarray.get()); \
+      } \
+      break; \
+    } \
+    case EtchObjectType::POINTER: { \
+      EtchNativeArray<type*>* na = (EtchNativeArray<type*>*)(this); \
+      if(dims == 1) { \
+        capu::SmartPointer<type> value = capu::smartpointer_cast<type> (data); \
+        type *newValue = value.get(); \
+        return na->set(pos, newValue); \
+      } else { \
+        capu::SmartPointer<EtchNativeArray<type*> > subarray = capu::smartpointer_cast<EtchNativeArray<type*> >(data); \
+        return na->set(pos,subarray.get()); \
+      } \
+      break; \
+    } \
+    case EtchObjectType::SMART_POINTER: \
+      EtchNativeArray<capu::SmartPointer<type> >* na = (EtchNativeArray<capu::SmartPointer<type> >*)(this); \
+      if(dims == 1) { \
+        capu::SmartPointer<type> value = capu::smartpointer_cast<type> (data); \
+        return na->set(pos, value); \
+      } else { \
+        capu::SmartPointer<EtchNativeArray<capu::SmartPointer<type> > > subarray = capu::smartpointer_cast<EtchNativeArray<capu::SmartPointer<type> > >(data); \
+        return na->set(pos,subarray.get()); \
+      } \
+      break; \
+    } \
+  break; \
 }
 #endif //__ETCHNATIVEARRAY_H__
+

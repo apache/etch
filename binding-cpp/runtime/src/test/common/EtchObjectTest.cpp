@@ -16,27 +16,12 @@
  * limitations under the License.
  */
 
-#ifndef __ETCHTAGGEDDATAINPUT_H__
-#define	__ETCHTAGGEDDATAINPUT_H__
-#include "transport/EtchFlexBuffer.h"
-#include "transport/EtchMessage.h"
-#include "capu/util/SmartPointer.h"
+#include <gtest/gtest.h>
+#include "common/EtchString.h"
 
-class EtchTaggedDataInput {
-public:
+TEST(EtchObjectTest, getTypeTrait) {
+  EXPECT_EQ(EtchObjectType::VALUE, EtchObjectType::getTypeTrait<EtchString>());
+  EXPECT_EQ(EtchObjectType::POINTER, EtchObjectType::getTypeTrait<EtchString*>());
+  EXPECT_EQ(EtchObjectType::SMART_POINTER, EtchObjectType::getTypeTrait<capu::SmartPointer<EtchString> >());
 
-  /**
-   * Reads a message from the buf.
-   * @param buf the flex buffer containing the message.
-   * @param a message read from the buf.
-   */
-  virtual status_t readMessage(EtchFlexBuffer *buf, EtchMessage *&message) = 0;
-
-  virtual ~EtchTaggedDataInput() {
-
-  }
-
-};
-
-#endif /* ETCHTAGGEDDATAINPUT_H */
-
+}

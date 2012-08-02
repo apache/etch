@@ -20,6 +20,7 @@
 #include "common/EtchObjectType.h"
 #include "common/EtchObject.h"
 
+// TODO change to correct EOTID
 const EtchObjectType EtchObjectType::NATIVE_INT8(EOTID_BYTE, NULL);
 const EtchObjectType EtchObjectType::NATIVE_INT16(EOTID_SHORT, NULL);
 const EtchObjectType EtchObjectType::NATIVE_INT32(EOTID_INT32, NULL);
@@ -33,13 +34,17 @@ const EtchObjectType* EtchObjectType::TYPE() {
   return &TYPE;
 }
 
-EtchObjectType::EtchObjectType(capu::int32_t typeId, const EtchObjectType* componentType)
-: mTypeId(typeId), mComponentType(componentType) {
+EtchObjectType::EtchObjectType(capu::int32_t typeId, const EtchObjectType* componentType, const EtchObjectTypeTrait componentTypeTrait)
+: mTypeId(typeId), mComponentType(componentType), mComponentTypeTrait(componentTypeTrait) {
 
 }
 
 const EtchObjectType* EtchObjectType::getObjectComponentType() const {
   return mComponentType;
+}
+
+const EtchObjectType::EtchObjectTypeTrait EtchObjectType::getObjectComponentTypeTrait() const {
+  return mComponentTypeTrait;
 }
 
 capu::bool_t EtchObjectType::isArray() const {

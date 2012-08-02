@@ -20,9 +20,71 @@
 #include "common/EtchInt32.h"
 #include "common/EtchNativeArray.h"
 
-TEST(EtchNativeArrayTest, Constructor_Default) {
-  EtchNativeArray<EtchInt32*>* na = new EtchNativeArray<EtchInt32*>(2);
+TEST(EtchNativeArrayTest, SetGetResize_Base) {
+  EtchNativeArray<EtchInt32>* na = new EtchNativeArray<EtchInt32>(2);
+  EXPECT_EQ(ETCH_OK, na->set(0, 4));
+  EtchNativeArrayBase* nab = static_cast<EtchNativeArrayBase*>(na);
+  capu::SmartPointer<EtchObject> o;
+  EXPECT_EQ(ETCH_OK, nab->getBase(0, o));
+  EXPECT_EQ(ETCH_OK, nab->setBase(0, o));
+
+  EtchInt32 int32Value;
+  EXPECT_EQ(ETCH_OK, na->get(0, &int32Value));
+  EXPECT_EQ(4, int32Value.get());
+
+  //test resizing
+  EXPECT_EQ(ETCH_OK, na->resize(10));
+  EXPECT_EQ(10, na->getLength());
+  EtchInt32 value;
+  EXPECT_EQ(ETCH_OK, na->get(0,&value));
+  EXPECT_EQ(4, value.get());
+
+  EtchNativeArray<EtchInt32*>* na1 = new EtchNativeArray<EtchInt32*>(2);
+  EtchInt32* i1 = new EtchInt32(3);
+  EXPECT_EQ(ETCH_OK,na1->set(0, i1));
+  EtchNativeArrayBase* nab1 = static_cast<EtchNativeArrayBase*>(na1);
+  capu::SmartPointer<EtchObject> o1;
+  EXPECT_EQ(ETCH_OK, nab1->getBase(0, o1));
+  EXPECT_EQ(ETCH_OK, nab1->setBase(0, o1));
+
+  EtchNativeArray<capu::SmartPointer<EtchInt32> >* na2 = new EtchNativeArray<capu::SmartPointer<EtchInt32> >(2);
+  EXPECT_EQ(ETCH_OK, na2->set(0, new EtchInt32(3)));
+  EtchNativeArrayBase* nab2 = static_cast<EtchNativeArrayBase*>(na2);
+  capu::SmartPointer<EtchObject> o2;
+  EXPECT_EQ(ETCH_OK, nab2->getBase(0, o2));
+  EXPECT_EQ(ETCH_OK, nab2->setBase(0, o2));
+
+  EtchNativeArray<capu::int8_t>* na3 = new EtchNativeArray<capu::int8_t>(2);
+  EXPECT_EQ(ETCH_OK, na3->set(0, 4));
+  EtchNativeArrayBase* nab3 = static_cast<EtchNativeArrayBase*>(na3);
+  capu::SmartPointer<EtchObject> o3;
+  EXPECT_EQ(ETCH_OK, nab3->getBase(0, o3));
+  EXPECT_EQ(ETCH_OK, nab3->setBase(0, o3));
+
+  capu::int8_t* ni1 = new capu::int8_t(5);
+  EtchNativeArray<capu::int8_t*>* na4 = new EtchNativeArray<capu::int8_t*>(2);
+  EXPECT_EQ(ETCH_OK, na4->set(0, ni1));
+  EtchNativeArrayBase* nab4 = static_cast<EtchNativeArrayBase*>(na4);
+  capu::SmartPointer<EtchObject> o4;
+  EXPECT_EQ(ETCH_OK, nab4->getBase(0, o4));
+  EXPECT_EQ(ETCH_OK, nab4->setBase(0, o4));
+
+  capu::SmartPointer<capu::int8_t> si1 = new capu::int8_t(5);
+  EtchNativeArray<capu::SmartPointer<capu::int8_t> >* na5 = new EtchNativeArray<capu::SmartPointer<capu::int8_t> >(2);
+  EXPECT_EQ(ETCH_OK, na5->set(0, si1));
+  EtchNativeArrayBase* nab5 = static_cast<EtchNativeArrayBase*>(na5);
+  capu::SmartPointer<EtchObject> o5;
+  EXPECT_EQ(ETCH_OK, nab5->getBase(0, o5));
+  EXPECT_EQ(ETCH_OK, nab5->setBase(0, o5));
+
   delete na;
+  delete i1;
+  delete ni1;
+  delete na1;
+  delete na2;
+  delete na3;
+  delete na4;
+  delete na5;
 }
 
 TEST(EtchNativeArrayTest, Constructor_Array) {
@@ -30,8 +92,8 @@ TEST(EtchNativeArrayTest, Constructor_Array) {
   EtchInt32* int1 = new EtchInt32(42);
   EtchInt32* int2 = new EtchInt32(43);
 
-  EtchNativeArray<EtchInt32*>* na1 = new EtchNativeArray<EtchInt32*>(2);
-  EXPECT_TRUE(na1->getObjectType()->equals(EtchNativeArray<EtchInt32*>::TYPE()));
+  EtchNativeArray<EtchInt32*>* na1 = new EtchNativeArray<EtchInt32* >(2);
+  EXPECT_TRUE(na1->getObjectType()->equals(EtchNativeArray<EtchInt32* >::TYPE()));
 
   na1->set(0, int1);
   na1->set(1, int2);
@@ -47,12 +109,55 @@ TEST(EtchNativeArrayTest, Constructor_Array) {
   delete na1;
   delete int1;
   delete int2;
+
+
+  //native type array with dim = 1 and length = 2
+  capu::int8_t nativeArray[2];
+  nativeArray[0] = 1;
+  nativeArray[1] = 2;
+
+  EtchNativeArray<capu::int8_t> *na2 = new EtchNativeArray<capu::int8_t>(2, 1, (capu::int8_t*)nativeArray);
+
+  EXPECT_EQ(1, na2->getDim());
+  EXPECT_EQ(2, na2->getLength());
+  
+  capu::int8_t nativeResult;
+  EXPECT_EQ(ETCH_OK, na2->get(0,&nativeResult));
+  EXPECT_EQ(1, nativeResult);
+  EXPECT_EQ(ETCH_OK, na2->get(1,&nativeResult));
+  EXPECT_EQ(2, nativeResult);
+
+  delete na2;
+
+  //native type array with dim = 2 and length = 2
+  capu::int8_t nativeArray2[2][2];
+  nativeArray2[0][0] = 0;
+  nativeArray2[0][1] = 1;
+  nativeArray2[1][0] = 2;
+  nativeArray2[1][1] = 3;
+
+  EtchNativeArray<capu::int8_t> *na3 = new EtchNativeArray<capu::int8_t>(2, 2, (capu::int8_t*)nativeArray2);
+
+  EXPECT_EQ(2, na3->getDim());
+  EXPECT_EQ(2, na3->getLength());
+  
+  EXPECT_EQ(ETCH_OK, na3->get(Pos(0,0),&nativeResult));
+  EXPECT_EQ(0, nativeResult);
+  EXPECT_EQ(ETCH_OK, na3->get(Pos(0,1),&nativeResult));
+  EXPECT_EQ(1, nativeResult);
+  EXPECT_EQ(ETCH_OK, na3->get(Pos(1,0),&nativeResult));
+  EXPECT_EQ(2, nativeResult);
+  EXPECT_EQ(ETCH_OK, na3->get(Pos(1,1),&nativeResult));
+  EXPECT_EQ(3, nativeResult);
+
+  delete na3;
+
 }
 
 TEST(EtchNativeArrayTest, setGetSingleValue) {
   EtchInt32* int1 = new EtchInt32(42);
   EtchInt32* int2 = new EtchInt32(43);
-  EtchNativeArray<EtchInt32*>* na1 = new EtchNativeArray<EtchInt32*>(2);
+  EtchNativeArray<EtchInt32* >* na1 = new EtchNativeArray<EtchInt32* >(2);
 
   na1->set(0, int1);
   na1->set(1, int2);
@@ -94,7 +199,7 @@ TEST(EtchNativeArrayTest, setGetArray) {
   capu::int32_t elementsWritten = 0;
   capu::int32_t elementsRead = 0;
 
-  EtchNativeArray<EtchInt32*> *na = new EtchNativeArray<EtchInt32*> (6);
+  EtchNativeArray<EtchInt32* > *na = new EtchNativeArray<EtchInt32* > (6);
 
   //test invalids
   //data == NULL
@@ -156,9 +261,9 @@ TEST(EtchNativeArrayTest, nativeTypes) {
 
   status_t ret;
   //Test setget of block of native type
-  EtchNativeArray<int> *na = new EtchNativeArray<int> (2);
-  capu::int32_t arr1[2];
-  capu::int32_t arr2[2];
+  EtchNativeArray<capu::int8_t> *na = new EtchNativeArray<capu::int8_t> (2);
+  capu::int8_t arr1[2];
+  capu::int8_t arr2[2];
   capu::int32_t elementsWritten = 0;
   capu::int32_t elementsRead = 0;
 
@@ -177,16 +282,23 @@ TEST(EtchNativeArrayTest, nativeTypes) {
   delete na;
 }
 
+
+
 TEST(EtchNativeArrayTest, multiDimensionalArrays) {
 
   status_t ret;
-  EtchInt32* int00 = new EtchInt32(1);
-  EtchInt32* int01 = new EtchInt32(2);
-  EtchInt32* int10 = new EtchInt32(3);
-  EtchInt32* int11 = new EtchInt32(4);
-  EtchInt32* temp  = NULL;
+  EtchInt32 *int00  = new EtchInt32(1);
+  EtchInt32 *int01  = new EtchInt32(2);
+  EtchInt32 *int10  = new EtchInt32(3);
+  EtchInt32 *int11  = new EtchInt32(4);
+  EtchInt32 *int000 = new EtchInt32(1);
+  EtchInt32 *int001 = new EtchInt32(2);
+  EtchInt32 *int010 = new EtchInt32(3);
+  EtchInt32 *int011 = new EtchInt32(4);
+  EtchInt32 *int113 = new EtchInt32(5);
+  capu::SmartPointer<EtchInt32> temp  = NULL;
 
-  EtchNativeArray<EtchInt32*>* main1 = new EtchNativeArray<EtchInt32*>(2, 2);
+  EtchNativeArray<capu::SmartPointer<EtchInt32> >* main1 = new EtchNativeArray<capu::SmartPointer<EtchInt32> >(2, 2);
 
   main1->createArray(Pos(0), 2);
   main1->createArray(Pos(1), 2);
@@ -203,9 +315,26 @@ TEST(EtchNativeArrayTest, multiDimensionalArrays) {
   EXPECT_EQ(ETCH_OK, ret);
   EXPECT_EQ(4, temp->get());
 
-  delete main1;
+  //test setBase and getBase of EtchNativeArrayBase
+  EtchNativeArrayBase* main1b = (EtchNativeArrayBase*)main1;
+  capu::SmartPointer<EtchObject> o1;
+  EXPECT_EQ(ETCH_OK, main1b->getBase(0, o1));
+  capu::SmartPointer<EtchObject> o2;
+  EtchNativeArrayBase* sub1b = (EtchNativeArrayBase*)o1.get();
+  EXPECT_EQ(ETCH_OK, sub1b->getBase(0,o2));
+  capu::SmartPointer<EtchInt32> o3 = capu::smartpointer_cast<EtchInt32>(o2);
+  EXPECT_EQ(1,o3->get());
 
-  EtchNativeArray<EtchInt32*>* main2 = new EtchNativeArray<EtchInt32*>(2, 3);
+  //test resizing
+  EXPECT_EQ(ETCH_OK, main1->resize(10));
+  EXPECT_EQ(10, main1->getLength());
+
+  //check data after resizing
+  ret = main1->get(Pos(1, 1), &temp);
+  EXPECT_EQ(ETCH_OK, ret);
+  EXPECT_EQ(4, temp->get());
+
+  EtchNativeArray<capu::SmartPointer<EtchInt32> >* main2 = new EtchNativeArray<capu::SmartPointer<EtchInt32> >(2, 3);
 
   // create dim2
   main2->createArray(Pos(0), 2);
@@ -217,27 +346,24 @@ TEST(EtchNativeArrayTest, multiDimensionalArrays) {
   main2->createArray(Pos(1, 0), 4);
   main2->createArray(Pos(1, 1), 4);
 
-  main2->set(Pos(0, 0, 0), int00);
-  main2->set(Pos(0, 0, 1), int01);
-  main2->set(Pos(0, 1, 0), int10);
-  main2->set(Pos(0, 1, 1), int11);
-  main2->set(Pos(1, 1, 3), int11);
+  main2->set(Pos(0, 0, 0), int000);
+  main2->set(Pos(0, 0, 1), int001);
+  main2->set(Pos(0, 1, 0), int010);
+  main2->set(Pos(0, 1, 1), int011);
+  main2->set(Pos(1, 1, 3), int113);
 
   ret = main2->get(Pos(1, 1), &temp);
   EXPECT_EQ(ETCH_ERANGE, ret);
 
   ret = main2->get(Pos(1, 1, 3), &temp);
   EXPECT_EQ(ETCH_OK, ret);
-  EXPECT_EQ(4, temp->get());
+  EXPECT_EQ(5, temp->get());
 
+  delete main1;
   delete main2;
 
-  delete int00;
-  delete int01;
-  delete int10;
-  delete int11;
-
 }
+
 
 TEST(EtchNativeArrayTest, getSubarray) {
   status_t ret;
@@ -248,7 +374,7 @@ TEST(EtchNativeArrayTest, getSubarray) {
   EtchInt32* temp = NULL;
 
   EtchNativeArray<EtchInt32*>* mainArray = new EtchNativeArray<EtchInt32*>(2, 3);
-  EtchNativeArray<EtchInt32*>* subArray = NULL;
+  capu::SmartPointer<EtchNativeArray<EtchInt32*> > subArray = NULL;
 
   // create dim2
   mainArray->createArray(Pos(0), 2);
@@ -277,12 +403,12 @@ TEST(EtchNativeArrayTest, getSubarray) {
   subArray->get(Pos(1,3),&temp);
   EXPECT_EQ(4, temp->get());
 
+  EXPECT_EQ(subArray->getObjectType()->getObjectComponentType()->getTypeId(),mainArray->getObjectType()->getObjectComponentType()->getTypeId());
+
   delete mainArray;
   //check data again to make sure is has not been deleted by mainArray
   subArray->get(Pos(1,3),&temp);
   EXPECT_EQ(4, temp->get());
-
-  delete subArray;
 
   delete int1;
   delete int2;
@@ -345,5 +471,33 @@ TEST(EtchNativeArrayTest, setSubarray) {
   delete int2;
   delete int3;
   delete int4;
+
+  capu::int8_t nativeTypesArray[2][2][2];
+  nativeTypesArray[0][0][0] = 1;
+  nativeTypesArray[0][0][1] = 2;
+  nativeTypesArray[0][1][0] = 3;
+  nativeTypesArray[0][1][1] = 4;
+  nativeTypesArray[1][0][0] = 5;
+  nativeTypesArray[1][0][1] = 6;
+  nativeTypesArray[1][1][0] = 7;
+  nativeTypesArray[1][1][1] = 8;
+
+  EtchNativeArray<capu::int8_t> *na = new EtchNativeArray<capu::int8_t>(2,3);
+  na->createArray(0,2);
+  na->createArray(1,2);
+  na->createArray(Pos(0,0),2);
+  na->createArray(Pos(0,1),2);
+  na->createArray(Pos(1,0),2);
+  na->createArray(Pos(1,1),2);
+
+  EXPECT_EQ(ETCH_OK, na->set(Pos(0,0), (capu::int8_t*) nativeTypesArray[0][0], 2, 0, 2));
+  capu::int8_t returnValue;
+  EXPECT_EQ(ETCH_OK, na->get(Pos(0,0,0), &returnValue));
+  EXPECT_EQ(1, returnValue);
+  EXPECT_EQ(ETCH_OK, na->get(Pos(0,0,1), &returnValue));
+  EXPECT_EQ(2, returnValue);
+
+  delete na;
+
 
 }

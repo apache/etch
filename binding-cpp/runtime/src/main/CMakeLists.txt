@@ -79,6 +79,7 @@ SET(MAIN_INCLUDES
     ${PROJECT_SOURCE_DIR}/include/serialization/EtchValidatorDouble.h
     ${PROJECT_SOURCE_DIR}/include/serialization/EtchValidatorLong.h
     ${PROJECT_SOURCE_DIR}/include/serialization/EtchValidatorString.h
+    ${PROJECT_SOURCE_DIR}/include/serialization/EtchValidatorNone.h
     ${PROJECT_SOURCE_DIR}/include/serialization/EtchComboValidator.h
     ${PROJECT_SOURCE_DIR}/include/serialization/EtchField.h
     ${PROJECT_SOURCE_DIR}/include/serialization/EtchValidatorObject.h
@@ -98,8 +99,10 @@ SET(MAIN_INCLUDES
     ${PROJECT_SOURCE_DIR}/include/serialization/EtchDateSerializer.h
     ${PROJECT_SOURCE_DIR}/include/serialization/EtchDefaultValueFactory.h
     ${PROJECT_SOURCE_DIR}/include/serialization/EtchValidatorStructValue.h
-	${PROJECT_SOURCE_DIR}/include/serialization/EtchTaggedDataInput.h
-	${PROJECT_SOURCE_DIR}/include/serialization/EtchTaggedDataOutput.h
+    ${PROJECT_SOURCE_DIR}/include/serialization/EtchTaggedData.h
+    ${PROJECT_SOURCE_DIR}/include/serialization/EtchBinaryTaggedData.h
+    ${PROJECT_SOURCE_DIR}/include/serialization/EtchBinaryTaggedDataInput.h
+    ${PROJECT_SOURCE_DIR}/include/serialization/EtchBinaryTaggedDataOutput.h
     ${PROJECT_SOURCE_DIR}/include/util/EtchUtil.h
     )
 
@@ -121,6 +124,7 @@ SET(MAIN_SOURCES
     common/EtchAuthenticationException.cpp
     common/EtchRuntimeException.cpp
     common/EtchDate.cpp
+    common/EtchNativeArray.cpp
     common/EtchArrayValue.cpp
     util/EtchURL.cpp
     util/EtchResources.cpp
@@ -140,6 +144,7 @@ SET(MAIN_SOURCES
     serialization/EtchValidatorDouble.cpp
     serialization/EtchValidatorLong.cpp
     serialization/EtchValidatorString.cpp
+    serialization/EtchValidatorNone.cpp
     serialization/EtchComboValidator.cpp
     serialization/EtchField.cpp
     serialization/EtchValidatorObject.cpp
@@ -158,6 +163,10 @@ SET(MAIN_SOURCES
     serialization/EtchDateSerializer.cpp
     serialization/EtchDefaultValueFactory.cpp
     serialization/EtchValidatorStructValue.cpp
+    serialization/EtchTaggedData.cpp
+    serialization/EtchBinaryTaggedData.cpp
+    serialization/EtchBinaryTaggedDataInput.cpp
+    serialization/EtchBinaryTaggedDataOutput.cpp
     util/EtchUtil.cpp
     )
 

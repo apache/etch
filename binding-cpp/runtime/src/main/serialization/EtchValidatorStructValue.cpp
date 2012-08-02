@@ -52,7 +52,7 @@ capu::bool_t EtchValidatorStructValue::validate(capu::SmartPointer<EtchObject> v
   //handle array
   if ((value->getObjectType()->isArray()) && (mExpectedType->isArray())) {
     //TODO: move getDim to EtchObjectType and set it dynamically during creation of the object
-    EtchNativeArray<EtchObject*> *array = (EtchNativeArray<EtchObject*> *) value.get();
+    EtchNativeArray<capu::SmartPointer<EtchObject> > *array = (EtchNativeArray<capu::SmartPointer<EtchObject> > *) value.get();
     if (array->getDim() != mNDims) {
       return false;
     }

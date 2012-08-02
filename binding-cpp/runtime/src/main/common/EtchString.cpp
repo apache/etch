@@ -39,6 +39,16 @@ EtchString::EtchString(const char* string)
   }
 }
 
+EtchString::EtchString(const capu::int8_t* buffer, const capu::int32_t bufferSize, EtchString encoding)
+: EtchObject(EtchString::TYPE())
+, mData(NULL) {
+  if (buffer != NULL) {
+    mData = new char[bufferSize + 1];
+    etch_strcpy_s(mData, bufferSize + 1, (char*)buffer);
+  }
+}
+
+
 EtchString::EtchString(const EtchString &copy)
 : EtchObject(EtchString::TYPE()) {
   if (copy.mData == NULL)
@@ -153,4 +163,17 @@ capu::uint64_t EtchString::getHashCode() const{
     result = (result + static_cast<capu::uint64_t> (mData[i]) * 13);
   }
   return result;
+}
+
+status_t EtchString::getBytes(capu::int8_t** buffer, capu::int32_t *bufferSize, EtchString encoding) {
+  //TODO: use encoding
+  if (buffer == NULL || bufferSize == NULL) {
+    return ETCH_EINVAL;
+  }
+
+  *buffer = new capu::int8_t[length() + 1];
+  memcpy(*buffer,mData,length() + 1);
+  *bufferSize = length() + 1;
+
+  return ETCH_OK;
 }

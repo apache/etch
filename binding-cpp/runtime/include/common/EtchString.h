@@ -54,6 +54,14 @@ public:
   EtchString(const char* string);
 
   /**
+   * Constructs the String from given buffer
+   * @param buffer as bytes
+   * @param bufferSize size of the buffer
+   * @param encoding of the string
+   */
+  EtchString(const capu::int8_t* buffer, const capu::int32_t bufferSize, EtchString encoding);
+
+  /**
    * Destructure.
    */
   virtual ~EtchString();
@@ -115,6 +123,14 @@ public:
    * Returns c styled string.
    */
   const char* c_str() const;
+
+  /**
+   * Returns the bytes of the string.
+   * @param buffer out parameter for bytes
+   * @param bufferSize size of buffer
+   * @param encoding of the string
+   */
+  status_t getBytes(capu::int8_t** buffer, capu::int32_t *bufferSize, EtchString encoding = "utf-8");
 
   /**
    * Assignment operator overloading

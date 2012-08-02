@@ -27,17 +27,16 @@
 #include "capu/util/SmartPointer.h"
 
 TEST(EtchArrayValueTest, ConstructorTest1) {
-  EtchNativeArray<capu::SmartPointer<EtchInt32> > *array = new EtchNativeArray<capu::SmartPointer<EtchInt32> >(0);
+  capu::SmartPointer<EtchNativeArray<capu::SmartPointer<EtchInt32> > > array = new EtchNativeArray<capu::SmartPointer<EtchInt32> >(0);
   EtchArrayValue *av = new EtchArrayValue(array, 0);
   EXPECT_TRUE(av->getTypeCode() == 0);
   EXPECT_TRUE(av->getCustomStructType() == NULL);
   EXPECT_TRUE(av->getDim() == 1);
   delete av;
-  delete array;
 }
 
 TEST(EtchArrayValueTest, ConstructorTest2) {
-  EtchNativeArray<capu::SmartPointer<EtchInt32> > *array = new EtchNativeArray<capu::SmartPointer<EtchInt32> >(0);
+  capu::SmartPointer<EtchNativeArray<capu::SmartPointer<EtchInt32> > > array = new EtchNativeArray<capu::SmartPointer<EtchInt32> >(0);
   EtchString type("t1");
   EtchType *t1 = new EtchType(type);
   EtchArrayValue *av = new EtchArrayValue(array, 0, 1, t1, 2);
@@ -46,11 +45,10 @@ TEST(EtchArrayValueTest, ConstructorTest2) {
   EXPECT_EQ(2, av->getDim());
   delete av;
   delete t1;
-  delete array;
 }
 
 TEST(EtchArrayValueTest, ConstructorTest3) {
-  EtchNativeArray<capu::SmartPointer<EtchInt32> > *array = new EtchNativeArray<capu::SmartPointer<EtchInt32> >(0);
+  capu::SmartPointer<EtchNativeArray<capu::SmartPointer<EtchInt32> > > array = new EtchNativeArray<capu::SmartPointer<EtchInt32> >(0);
   EtchString type("t1");
   EtchType *t1 = new EtchType(type);
   EtchArrayValue *av = new EtchArrayValue(array, 0, 3, t1, 4);
@@ -59,11 +57,10 @@ TEST(EtchArrayValueTest, ConstructorTest3) {
   EXPECT_EQ(4, av->getDim());
   delete av;
   delete t1;
-  delete array;
 }
 
 TEST(EtchArrayValueTest, getTest) {
-  EtchNativeArray<capu::SmartPointer<EtchObject> > *array = new EtchNativeArray<capu::SmartPointer<EtchObject> >(5);
+  capu::SmartPointer<EtchNativeArray<capu::SmartPointer<EtchObject> > > array = new EtchNativeArray<capu::SmartPointer<EtchObject> >(5);
 
   capu::SmartPointer<EtchObject> array0 = new EtchInt32(5);
   capu::SmartPointer<EtchObject> array1 = new EtchDouble(5);
@@ -97,14 +94,48 @@ TEST(EtchArrayValueTest, getTest) {
   EXPECT_EQ(ETCH_OK, av->get(index++, result));
   EXPECT_TRUE(result->equals(array4.get()));
 
-  array = (EtchNativeArray<capu::SmartPointer<EtchObject> > *) av->getArray();
-  delete array;
   delete av;
+
+
+  capu::SmartPointer<EtchNativeArray<capu::int8_t> > nativeTypeArray = new EtchNativeArray<capu::int8_t>(5);
+  nativeTypeArray->set(0, 1);
+  nativeTypeArray->set(1, 2);
+  nativeTypeArray->set(2, 3);
+  nativeTypeArray->set(3, 4);
+  nativeTypeArray->set(4, 5);
+
+  EtchArrayValue *av2 = new EtchArrayValue(nativeTypeArray, 5);
+
+  EXPECT_EQ(5, av2->getSize());
+  index = 0;
+
+  capu::SmartPointer<EtchInt32> intResult;
+  EXPECT_EQ(ETCH_OK, av2->get(index++, result));
+  intResult = capu::smartpointer_cast<EtchInt32>(result);
+  EXPECT_EQ(1, intResult->get());
+
+  EXPECT_EQ(ETCH_OK, av2->get(index++, result));
+  intResult = capu::smartpointer_cast<EtchInt32>(result);
+  EXPECT_EQ(2, intResult->get());
+
+  EXPECT_EQ(ETCH_OK, av2->get(index++, result));
+  intResult = capu::smartpointer_cast<EtchInt32>(result);
+  EXPECT_EQ(3, intResult->get());
+
+  EXPECT_EQ(ETCH_OK, av2->get(index++, result));
+  intResult = capu::smartpointer_cast<EtchInt32>(result);
+  EXPECT_EQ(4, intResult->get());
+
+  EXPECT_EQ(ETCH_OK, av2->get(index++, result));
+  intResult = capu::smartpointer_cast<EtchInt32>(result);
+  EXPECT_EQ(5, intResult->get());
+
+  delete av2;
 }
 
 TEST(EtchArrayValueTest, addTest) {
   capu::SmartPointer<EtchObject> dt = new EtchBool(false);
-  EtchNativeArray<capu::SmartPointer<EtchObject> > *array = new EtchNativeArray<capu::SmartPointer<EtchObject> >(5);
+  capu::SmartPointer<EtchNativeArray<capu::SmartPointer<EtchObject> > > array = new EtchNativeArray<capu::SmartPointer<EtchObject> >(5);
 
   capu::SmartPointer<EtchObject> array0 = new EtchInt32(5);
   capu::SmartPointer<EtchObject> array1 = new EtchDouble(5);
@@ -138,7 +169,7 @@ TEST(EtchArrayValueTest, addTest) {
   EXPECT_TRUE(result->equals(array4.get()));
 
   //correct add
-  av->add(dt);
+  EXPECT_EQ(ETCH_OK, av->add(dt));
   EXPECT_EQ(ETCH_OK, av->get(index++, result));
   EXPECT_TRUE(result->equals(dt.get()));
   //size should be doubled
@@ -146,10 +177,22 @@ TEST(EtchArrayValueTest, addTest) {
 
   av->add(NULL);
   EXPECT_EQ(10, av->getSize());
-  array = (EtchNativeArray<capu::SmartPointer<EtchObject> > *) av->getArray();
 
-  delete array;
   delete av;
+
+  capu::SmartPointer<EtchNativeArray<capu::int8_t> > nativeTypeArray = new EtchNativeArray<capu::int8_t>(1);
+  nativeTypeArray->set(0, 1);
+
+  EtchArrayValue *av2 = new EtchArrayValue(nativeTypeArray, 1);
+
+  capu::SmartPointer<EtchInt32> nativeIntValue = new EtchInt32(3);
+  capu::SmartPointer<EtchObject> o = nativeIntValue;
+  EXPECT_EQ(ETCH_OK, av2->add(o));
+  EXPECT_EQ(ETCH_OK, av2->get(1, result));
+  capu::SmartPointer<EtchInt32> returnValue = capu::smartpointer_cast<EtchInt32>(result);
+  EXPECT_EQ(3, returnValue->get());
+
+  delete av2;
 }
 
 
