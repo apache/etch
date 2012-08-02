@@ -37,7 +37,7 @@ EtchStructValue::~EtchStructValue() {
 
 }
 
-status_t EtchStructValue::put(EtchField &field, capu::SmartPointer<EtchObject> object, capu::SmartPointer<EtchObject> *old_value) {
+status_t EtchStructValue::put(const EtchField &field, capu::SmartPointer<EtchObject> object, capu::SmartPointer<EtchObject> *old_value) {
   if (object.get() == NULL) {
     capu::SmartPointer<EtchObject> tmp;
     status_t result = remove(field, &tmp);
@@ -71,7 +71,7 @@ capu::bool_t EtchStructValue::isType(EtchType* otherType) {
   return mType->equals(otherType);
 }
 
-status_t EtchStructValue::remove(EtchField &key, capu::SmartPointer<EtchObject> *value_old) {
+status_t EtchStructValue::remove(const EtchField &key, capu::SmartPointer<EtchObject> *value_old) {
   return mTable.remove(key, value_old);
 }
 

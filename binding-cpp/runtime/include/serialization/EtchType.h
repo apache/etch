@@ -156,7 +156,7 @@ public:
    *         ETCH_EINVAL if value is null
    *         ETCH_ENOT_EXIST if there is no existing pair with specified key
    */
-  status_t getValidator(EtchField &key, capu::SmartPointer<EtchValidator> &result);
+  status_t getValidator(const EtchField &key, capu::SmartPointer<EtchValidator> &result);
 
   /**
    * Adds the validator to the chain for this key.

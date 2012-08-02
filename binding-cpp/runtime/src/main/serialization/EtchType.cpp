@@ -136,7 +136,7 @@ status_t EtchType::putValidator(EtchField key, capu::SmartPointer<EtchValidator>
   }
 }
 
-status_t EtchType::getValidator(EtchField& key, capu::SmartPointer<EtchValidator> &validator) {
+status_t EtchType::getValidator(const EtchField& key, capu::SmartPointer<EtchValidator> &validator) {
   return mValidatorMap.get(key, &validator);
 }
 

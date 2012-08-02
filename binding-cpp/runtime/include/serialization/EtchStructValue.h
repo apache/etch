@@ -84,7 +84,7 @@ public:
    *         ETCH_EINVAL if the level of type is not LEVEL_NONE and the object is NULL
    *         ETCH_ERROR  if the level of type is not LEVEL_NONE and the object is not validated and is not NULL
    */
-  status_t put(EtchField &field, capu::SmartPointer<EtchObject> object, capu::SmartPointer<EtchObject> *value_old = NULL);
+  status_t put(const EtchField &field, capu::SmartPointer<EtchObject> object, capu::SmartPointer<EtchObject> *value_old = NULL);
 
   /**
    * Get value associated with key in the EtchStructValue.
@@ -109,7 +109,7 @@ public:
    *         ETCH_ERANGE if the pair with specified key does not exist in hash table
    *
    */
-  status_t remove(EtchField &key, capu::SmartPointer<EtchObject> *value_old);
+  status_t remove(const EtchField &key, capu::SmartPointer<EtchObject> *value_old);
 
   /**
    * Compares the type of this struct to another type.
