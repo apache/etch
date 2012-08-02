@@ -40,7 +40,8 @@ namespace capu {
     CAPU_ETIMEOUT = 12,
     CAPU_ENOT_EXIST = 13,
     CAPU_ENOT_SUPPORTED = 14,
-    CAPU_EIO = 15
+    CAPU_EIO = 15,
+    CAPU_EOF = 16
   };
 }
 #endif
