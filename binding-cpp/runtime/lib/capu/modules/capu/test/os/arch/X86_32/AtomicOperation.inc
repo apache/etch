@@ -21,13 +21,13 @@
 TEST(AtomicOperation, Add_Overflow_X86_32) {
   capu::uint32_t val = 4294967295u;
   capu::uint32_t ret = capu::AtomicOperation::AtomicAdd32(val, 3);
-  EXPECT_EQ((capu::uint32_t) 2, val);
-  EXPECT_EQ(ret, 4294967295u);
+  EXPECT_EQ(2u, val);
+  EXPECT_EQ(4294967295u, ret);
 }
 
 TEST(AtomicOperation, Sub_Overflow_X86_32) {
   capu::uint32_t val = 0;
   capu::uint32_t ret = capu::AtomicOperation::AtomicSub32(val, 5);
-  EXPECT_EQ((capu::uint32_t) 4294967291u, val);
-  EXPECT_EQ(ret, 0u);
+  EXPECT_EQ(4294967291u, val);
+  EXPECT_EQ(0u, ret);
 }

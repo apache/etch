@@ -102,7 +102,7 @@ TEST(File, ReadTest) {
   memset(buf2, 0, sizeof(buf2));
   status = f3->read(buf2, strlen(buf1), &read);
   EXPECT_TRUE(status == capu::CAPU_OK);
-  EXPECT_TRUE(read == strlen(buf1));
+  EXPECT_TRUE(read == (capu::uint32_t)strlen(buf1));
   delete f3;
 
   // read data
@@ -113,7 +113,7 @@ TEST(File, ReadTest) {
   memset(buf2, 0, sizeof(buf2));
   status = f4->read(buf2, strlen(buf1), NULL);
   EXPECT_TRUE(status == capu::CAPU_OK);
-  EXPECT_TRUE(read == strlen(buf1));
+  EXPECT_TRUE(read == (capu::uint32_t)strlen(buf1));
   delete f4;
 
   // read data Eof
@@ -125,7 +125,7 @@ TEST(File, ReadTest) {
   memset(buf2, 0, sizeof(buf2));
   status = f5->read(buf2, sizeof(buf2), &read);
   EXPECT_TRUE(status == capu::CAPU_EOF);
-  EXPECT_TRUE(read == strlen(buf1));
+  EXPECT_TRUE(read == (capu::uint32_t)strlen(buf1));
   EXPECT_TRUE(strcmp(buf1, buf2) == 0);
   delete f5;
 }

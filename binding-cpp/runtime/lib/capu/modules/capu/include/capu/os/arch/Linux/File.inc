@@ -49,7 +49,7 @@
     return (feof(mHandle) != 0);
   }
 
-  inline status_t File::read(char * buffer, int32_t length, int32_t* numBytes) {
+  inline status_t File::read(char * buffer, uint32_t length, int32_t* numBytes) {
     if(buffer == NULL) {
       return CAPU_EINVAL;
     }
@@ -74,7 +74,7 @@
     return CAPU_ERROR;
   }
 
-  inline status_t File::write(char * buffer, int32_t length) {
+  inline status_t File::write(char * buffer, uint32_t length) {
     if(buffer == NULL) {
       return CAPU_EINVAL;
     }

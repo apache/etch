@@ -66,7 +66,7 @@ namespace capu {
               CAPU_EOF    if end of stream 
               CAPU_ERROR  if invalid state or file not open
      */
-    inline status_t read(char * buffer, int32_t length, int32_t* numBytes);
+    inline status_t read(char * buffer, uint32_t length, int32_t* numBytes);
 
     /**
      * Writes the given byte buffer to the stream.
@@ -75,7 +75,7 @@ namespace capu {
      * return CAPU_OK buffer could be written to the stream
      *        CAPU_ERROR otherwise
      */
-    inline status_t write(char * buffer, int32_t length);
+    inline status_t write(char * buffer, uint32_t length);
 
     /**
      * Writes any unwritten data to the file.
