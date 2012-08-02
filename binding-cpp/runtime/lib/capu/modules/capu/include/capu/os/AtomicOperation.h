@@ -35,26 +35,26 @@ namespace capu
     * @param mem reference to the object
     * @param summand amount to add
     */
-    static void AtomicAdd32(volatile uint32_t &mem, uint32_t summand);  
+    static uint32_t AtomicAdd32(volatile uint32_t &mem, uint32_t summand);
 
     /**
     * atomically subtract 'substrahend' from an uint32_t
     * @param mem reference to the object
     * @param subtrahend amount to subtract
     */
-    static void AtomicSub32(volatile uint32_t &mem, uint32_t subtrahend);
+    static uint32_t AtomicSub32(volatile uint32_t &mem, uint32_t subtrahend);
 
     /**
     * atomically increment an uint32_t
     * @param mem reference to the object
     */
-    static void AtomicInc32(volatile uint32_t &mem);  
+    static uint32_t AtomicInc32(volatile uint32_t &mem);
 
     /**
     * atomically decrement  an uint32_t
     * @param mem reference to the object
     */
-    static void AtomicDec32(volatile uint32_t &mem);
+    static uint32_t AtomicDec32(volatile uint32_t &mem);
   };
 
 #define ATOMIC_OPERATION_INC_IMPL

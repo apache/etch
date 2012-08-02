@@ -256,8 +256,8 @@ namespace capu {
   inline
   void SmartPointer<T>::decRefCount() {
     if (mReferenceCount) {
-      capu::AtomicOperation::AtomicDec32(*mReferenceCount);
-      if (!(*mReferenceCount)) {
+      uint32_t oldValue = capu::AtomicOperation::AtomicDec32(*mReferenceCount);
+      if (--oldValue == 0) {
         freeData();
       }
     }

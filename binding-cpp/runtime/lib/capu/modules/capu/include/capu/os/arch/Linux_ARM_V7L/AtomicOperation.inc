@@ -23,7 +23,9 @@
 #endif
 
 #ifdef ATOMIC_OPERATION_INC_IMPL
-inline void AtomicOperation::AtomicAdd32(volatile uint32_t &mem, uint32_t summand) {
+inline uint32_t AtomicOperation::AtomicAdd32(volatile uint32_t &mem, uint32_t summand) {
+    //TODO: Make this thread-safe
+    uint32_t oldValue = mem;
   __asm__ volatile (
    "1: ldrex r0, [%0]      \n\t" //load mem into r0
    "add      r0,  r0,  %1  \n\t" //add summand to r0 and store result in r0
@@ -34,9 +36,14 @@ inline void AtomicOperation::AtomicAdd32(volatile uint32_t &mem, uint32_t summan
    : "r"   (&mem), "r"(summand)
    : "r0"  , "r1"
   );
+
+   return oldValue;
 }
 
-inline void AtomicOperation::AtomicSub32(volatile uint32_t &mem, uint32_t subtrahend) {
+inline uint32_t AtomicOperation::AtomicSub32(volatile uint32_t &mem, uint32_t subtrahend) {
+  //TODO: Make this thread-safe
+  uint32_t oldValue = mem;
+
   __asm__ volatile (
    "2: ldrex r0, [%0]      \n\t" //load mem into r0
    "sub      r0,  r0,  %1  \n\t" //subs subthrahend from r0 and store result in r0
@@ -47,13 +54,15 @@ inline void AtomicOperation::AtomicSub32(volatile uint32_t &mem, uint32_t subtra
    : "r"   (&mem), "r"(subtrahend)
    : "r0"  , "r1"
   );
+
+   return oldValue;
 }
 
-inline void AtomicOperation::AtomicInc32(volatile uint32_t &mem){
-  AtomicAdd32(mem, 1);
+inline uint32_t AtomicOperation::AtomicInc32(volatile uint32_t &mem){
+  return AtomicAdd32(mem, 1);
 }
 
-inline void AtomicOperation::AtomicDec32(volatile uint32_t &mem) {
-  AtomicSub32(mem, 1);
+inline uint32_t AtomicOperation::AtomicDec32(volatile uint32_t &mem) {
+  return AtomicSub32(mem, 1);
 }
 #endif

@@ -23,27 +23,33 @@
 #endif
 
 #ifdef ATOMIC_OPERATION_INC_IMPL
-inline void AtomicOperation::AtomicAdd32(volatile uint32_t &mem, uint32_t summand) {
+inline uint32_t AtomicOperation::AtomicAdd32(volatile uint32_t &mem, uint32_t summand) {
 //This code comes from the Apache APR project (apache-apr/1.4.2/atomic/unix/ia32.c)
   asm volatile ("lock; xadd %0,%1"
   : "=r" (summand), "=m" (mem)
   : "0" (summand), "m" (mem)
   : "memory", "cc");
+
+  return summand;
 }
 
-inline void AtomicOperation::AtomicSub32(volatile uint32_t &mem, uint32_t subtrahend) {
+inline uint32_t AtomicOperation::AtomicSub32(volatile uint32_t &mem, uint32_t subtrahend) {
 //This code comes from the Apache APR project (apache-apr/1.4.2/atomic/unix/ia32.c)
-  asm volatile ("lock; sub %1, %0"
-  : /* no output */
-  : "m" (mem), "r" (subtrahend)
+  
+  int32_t summand = subtrahend * -1;
+  asm volatile ("lock; xadd %0,%1"
+  : "=r" (summand), "=m" (mem)
+  : "0" (summand), "m" (mem)
   : "memory", "cc");
+
+  return summand;
 }
 
-inline void AtomicOperation::AtomicInc32(volatile uint32_t &mem) {
-  AtomicAdd32(mem, 1);
+inline uint32_t AtomicOperation::AtomicInc32(volatile uint32_t &mem) {
+  return AtomicAdd32(mem, 1);
 }
 
-inline void AtomicOperation::AtomicDec32(volatile uint32_t &mem) { 
-  AtomicSub32(mem, 1);
+inline uint32_t AtomicOperation::AtomicDec32(volatile uint32_t &mem) { 
+  return AtomicSub32(mem, 1);
 }
 #endif

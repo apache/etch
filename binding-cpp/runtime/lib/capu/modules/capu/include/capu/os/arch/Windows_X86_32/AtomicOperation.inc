@@ -25,19 +25,20 @@
 
 #ifdef ATOMIC_OPERATION_INC_IMPL
 
-inline void AtomicOperation::AtomicAdd32(volatile uint32_t &mem, uint32_t summand){
-  InterlockedExchangeAdd((long*)&mem, summand);
+inline uint32_t AtomicOperation::AtomicAdd32(volatile uint32_t &mem, uint32_t summand){
+  return InterlockedExchangeAdd((long*)&mem, summand);
 }
 
-inline void AtomicOperation::AtomicSub32(volatile uint32_t &mem, uint32_t subtrahend) {
-  InterlockedExchangeAdd((long*)&mem, 0-subtrahend);
+inline uint32_t AtomicOperation::AtomicSub32(volatile uint32_t &mem, uint32_t subtrahend) {
+  return InterlockedExchangeAdd((long*)&mem, 0-subtrahend);
 }
 
-inline void AtomicOperation::AtomicInc32(volatile uint32_t &mem) {
-  AtomicAdd32(mem, 1);
+inline uint32_t AtomicOperation::AtomicInc32(volatile uint32_t &mem) {
+  return AtomicAdd32(mem, 1);
 }
 
-inline void AtomicOperation::AtomicDec32(volatile uint32_t &mem) { 
-  AtomicSub32(mem, 1);
+inline uint32_t AtomicOperation::AtomicDec32(volatile uint32_t &mem) { 
+  return AtomicSub32(mem, 1);;
+  
 }
 #endif

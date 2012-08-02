@@ -24,24 +24,28 @@
 
 TEST(AtomicOperation,Add) {
   capu::uint32_t val = 100;
-  capu::AtomicOperation::AtomicAdd32(val, 3);
+  capu::uint32_t ret = capu::AtomicOperation::AtomicAdd32(val, 3);
   EXPECT_EQ((capu::uint32_t) 103,val);
+  EXPECT_EQ(ret, 100);
 }
 
 TEST(AtomicOperation,Sub) {
   capu::uint32_t val = 13;
-  capu::AtomicOperation::AtomicSub32(val, 5);
+  capu::uint32_t ret = capu::AtomicOperation::AtomicSub32(val, 5);
   EXPECT_EQ((capu::uint32_t) 8,val);
+  EXPECT_EQ(ret, 13);
 }
 
 TEST(AtomicOperation,Inc) {
   capu::uint32_t val = 1;
-  capu::AtomicOperation::AtomicInc32(val);
+  capu::uint32_t ret = capu::AtomicOperation::AtomicInc32(val);
   EXPECT_EQ((capu::uint32_t) 2,val);
+  EXPECT_EQ(ret, 1);
 }
 
 TEST(AtomicOperation,Dec) {
   capu::uint32_t val = 3;
-  capu::AtomicOperation::AtomicDec32(val);
+  capu::uint32_t ret = capu::AtomicOperation::AtomicDec32(val);
   EXPECT_EQ((capu::uint32_t) 2,val);
+  EXPECT_EQ(ret, 3);
 }
