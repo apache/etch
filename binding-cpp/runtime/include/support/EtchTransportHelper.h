@@ -62,7 +62,12 @@ public:
    * items.
    * @return an error if there is a problem
    */
-  static status_t initResources(EtchResources* resources, EtchResources** result);
+  static status_t initResources( EtchResources* resources, EtchResources*& result );
+  
+  /**
+   * Dealloc resources 
+   */
+  static status_t destroyResources(EtchResources* resources);
 };
 
 #endif /* __ETCHTRANSPORTHELPER_H__ */
