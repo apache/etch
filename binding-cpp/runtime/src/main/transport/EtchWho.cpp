@@ -15,47 +15,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include "transport/EtchWho.h"
 
-#ifndef __ETCHWHO_H__
-#define __ETCHWHO_H__
-#include "common/EtchString.h"
+EtchWho::EtchWho(EtchString inetAddr, capu::int32_t port)
+: mAddr(inetAddr), mPort(port) {
 
-class EtchWho {
-public:
+}
 
-  /**
-   * @param addr
-   * @param port
-   */
-  EtchWho(EtchString addr, capu::int32_t port);
+EtchWho::~EtchWho() {
 
-  /**
-   * Destructor
-   */
-  virtual ~EtchWho();
+}
 
-  /**
-   * @return the address of who.
-   */
-  EtchString getInetAddress();
+EtchString EtchWho::getInetAddress() {
+  return mAddr;
+}
 
-  /**
-   * @return the port of who.
-   */
-  capu::int32_t getPort();
+capu::int32_t EtchWho::getPort() {
+  return mPort;
+}
 
-  /**
-   * @param addr
-   * @param port
-   * @return true if the specified addr and port match this who.
-   */
-  capu::bool_t matches(const EtchString &addr, capu::int32_t port);
-
-private:
-  EtchString mAddr;
-  capu::int32_t mPort;
-};
-
-#endif
-
-
+capu::bool_t EtchWho::matches(const EtchString &addr, capu::int32_t port) {
+  return mAddr.equals(&addr) && mPort == port;
+}

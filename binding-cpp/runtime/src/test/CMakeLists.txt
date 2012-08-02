@@ -59,6 +59,7 @@ add_executable (etch-cpp-test
     transport/EtchMessagizerTest.cpp
     transport/EtchPlainMailboxManagerTest.cpp
     transport/EtchDefaultDeliveryServiceTest.cpp
+    transport/EtchWhoTest.cpp
     serialization/EtchValidatorBooleanTest.cpp
     serialization/EtchValidatorByteTest.cpp
     serialization/EtchValidatorIntTest.cpp

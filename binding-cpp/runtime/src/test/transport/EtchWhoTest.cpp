@@ -16,46 +16,15 @@
  * limitations under the License.
  */
 
-#ifndef __ETCHWHO_H__
-#define __ETCHWHO_H__
-#include "common/EtchString.h"
+#include <gtest/gtest.h>
+#include "transport/EtchWho.h"
 
-class EtchWho {
-public:
-
-  /**
-   * @param addr
-   * @param port
-   */
-  EtchWho(EtchString addr, capu::int32_t port);
-
-  /**
-   * Destructor
-   */
-  virtual ~EtchWho();
-
-  /**
-   * @return the address of who.
-   */
-  EtchString getInetAddress();
-
-  /**
-   * @return the port of who.
-   */
-  capu::int32_t getPort();
-
-  /**
-   * @param addr
-   * @param port
-   * @return true if the specified addr and port match this who.
-   */
-  capu::bool_t matches(const EtchString &addr, capu::int32_t port);
-
-private:
-  EtchString mAddr;
-  capu::int32_t mPort;
-};
-
-#endif
-
-
+TEST(EtchWhoTest, testAll) {
+  EtchWho who1("127.0.0.1", 3003);
+  EtchWho who2("127.0.0.1", 3003);
+  EtchWho who3("192.168.100.1", 3003);
+  
+  EXPECT_TRUE(who1.matches(who2.getInetAddress(), who2.getPort()));
+  EXPECT_FALSE(who1.matches(who3.getInetAddress(), who3.getPort()));
+  
+}

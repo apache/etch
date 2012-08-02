@@ -76,6 +76,7 @@ SET(MAIN_INCLUDES
     ${PROJECT_SOURCE_DIR}/include/transport/EtchMessage.h
     ${PROJECT_SOURCE_DIR}/include/transport/EtchMailboxManager.h
     ${PROJECT_SOURCE_DIR}/include/transport/EtchPlainMailboxManager.h
+    ${PROJECT_SOURCE_DIR}/include/transport/EtchWho.h
     ${PROJECT_SOURCE_DIR}/include/serialization/EtchValidator.h
     ${PROJECT_SOURCE_DIR}/include/serialization/EtchAsyncMode.h
     ${PROJECT_SOURCE_DIR}/include/serialization/EtchDirection.h
@@ -177,6 +178,7 @@ SET(MAIN_SOURCES
     transport/EtchPlainMailboxManager.cpp
     transport/EtchTransportFactory.cpp
     transport/EtchTcpTransportFactory.cpp
+    transport/EtchWho.cpp
     serialization/EtchTypeValidator.cpp
     serialization/EtchValidatorBoolean.cpp
     serialization/EtchValidatorByte.cpp
