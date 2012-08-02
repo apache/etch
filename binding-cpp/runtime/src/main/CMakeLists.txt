@@ -86,6 +86,7 @@ SET(MAIN_INCLUDES
     ${PROJECT_SOURCE_DIR}/include/serialization/EtchValidatorLong.h
     ${PROJECT_SOURCE_DIR}/include/serialization/EtchValidatorString.h
     ${PROJECT_SOURCE_DIR}/include/serialization/EtchValidatorNone.h
+    ${PROJECT_SOURCE_DIR}/include/serialization/EtchValidatorCustom.h
     ${PROJECT_SOURCE_DIR}/include/serialization/EtchComboValidator.h
     ${PROJECT_SOURCE_DIR}/include/serialization/EtchField.h
     ${PROJECT_SOURCE_DIR}/include/serialization/EtchValidatorObject.h
@@ -180,6 +181,7 @@ SET(MAIN_SOURCES
     serialization/EtchValidatorLong.cpp
     serialization/EtchValidatorString.cpp
     serialization/EtchValidatorNone.cpp
+    serialization/EtchValidatorCustom.cpp
     serialization/EtchComboValidator.cpp
     serialization/EtchField.cpp
     serialization/EtchValidatorObject.cpp
@@ -210,6 +212,7 @@ SET(MAIN_SOURCES
     support/EtchRemoteBase.cpp
     support/EtchTransportHelper.cpp
     support/EtchMonitor.cpp
+    support/EtchPool.cpp
     util/EtchCircularQueue.cpp
     util/EtchUtil.cpp
     util/EtchIdGenerator.cpp

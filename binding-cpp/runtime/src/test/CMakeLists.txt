@@ -84,6 +84,7 @@ add_executable (etch-cpp-test
     serialization/EtchDefaultValueFactoryTest.cpp
     serialization/EtchValidatorStructValueTest.cpp
     serialization/EtchBinaryTaggedDataInputOutputTest.cpp
+    serialization/EtchValidatorCustomTest.cpp
     support/EtchFreePoolTest.cpp
     support/EtchQueuedPoolTest.cpp
     support/EtchPlainMailboxTest.cpp
