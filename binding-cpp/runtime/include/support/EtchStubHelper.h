@@ -20,34 +20,49 @@
 #ifndef __ETCHSTUBHELPER_H__
 #define __ETCHSTUBHELPER_H__
 
+#include "capu/util/SmartPointer.h"
 #include "support/EtchDeliveryService.h"
 
-/**
-* Generated code to dispatch method from message.
-* @param <T> the service interface type.
-*/
+template<typename T>
+class EtchStubBase;
 
+/**
+ * Generated code to dispatch method from message.
+ * @param <T> the service interface type.
+ */
 template <typename T>
 class EtchStubHelper
-{
- /**
-  * Constructs a StubHelper which uses synchronous mode to dispatch
-  * method from message.
-  */
+  : public EtchObject {
 public:
+
+  /**
+   * EtchObjectType for EtchStubHelper.
+   */
+  static const EtchObjectType* TYPE();
+
+  /**
+   * Constructs a StubHelper which uses synchronous mode to dispatch
+   * method from message.
+   */
   EtchStubHelper()
-  {
+  : EtchObject(EtchStubHelper::TYPE()) {
     // nothing to do.
   }
 
- /**
-  * Dispatches the method from message.
-  * @param svc
-  * @param obj
-  * @param sender
-  * @param msg
-  */
-  virtual status_t run(capu::SmartPointer<EtchDeliveryService> svc, capu::SmartPointer<T> obj, capu::SmartPointer<EtchWho> sender, capu::SmartPointer<EtchMessage> msg);
+  /**
+   * Dispatches the method from message.
+   * @param svc
+   * @param obj
+   * @param sender
+   * @param msg
+   */
+  virtual status_t run(EtchStubBase<T>* ref, EtchDeliveryService* svc, T* obj, capu::SmartPointer<EtchWho> sender, capu::SmartPointer<EtchMessage> msg ) = 0;
 };
+
+template<typename T>
+const EtchObjectType* EtchStubHelper<T>::TYPE() {
+  const static EtchObjectType TYPE(EOTID_STUBHELPER, NULL);
+  return &TYPE;
+}
 
 #endif

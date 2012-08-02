@@ -114,11 +114,12 @@ SET(MAIN_INCLUDES
     ${PROJECT_SOURCE_DIR}/include/support/EtchAsyncResultBase.h
     ${PROJECT_SOURCE_DIR}/include/support/EtchDefaultServerFactory.h
     ${PROJECT_SOURCE_DIR}/include/support/EtchDeliveryService.h
-    ${PROJECT_SOURCE_DIR}/include/support/EtchFreePool.h
     ${PROJECT_SOURCE_DIR}/include/support/EtchMailbox.h
     ${PROJECT_SOURCE_DIR}/include/support/EtchObjectSession.h
     ${PROJECT_SOURCE_DIR}/include/support/EtchPool.h
     ${PROJECT_SOURCE_DIR}/include/support/EtchPoolRunnable.h
+    ${PROJECT_SOURCE_DIR}/include/support/EtchFreePool.h
+    ${PROJECT_SOURCE_DIR}/include/support/EtchQueuedPool.h
     ${PROJECT_SOURCE_DIR}/include/support/EtchRemoteBase.h    
     ${PROJECT_SOURCE_DIR}/include/support/EtchServerFactory.h
     ${PROJECT_SOURCE_DIR}/include/support/EtchStubHelper.h
@@ -202,12 +203,11 @@ SET(MAIN_SOURCES
     serialization/EtchBinaryTaggedDataInput.cpp
     serialization/EtchBinaryTaggedDataOutput.cpp
     support/EtchPlainMailbox.cpp
+    support/EtchPool.cpp
     support/EtchFreePool.cpp
+    support/EtchQueuedPool.cpp
     support/EtchDefaultServerFactory.cpp
-    support/EtchStubBase.cpp
     support/EtchRemoteBase.cpp
-    transport/EtchTransportFactory.cpp
-    transport/EtchTcpTransportFactory.cpp
     support/EtchTransportHelper.cpp
     support/EtchMonitor.cpp
     util/EtchCircularQueue.cpp
@@ -222,9 +222,11 @@ add_library (etch-cpp STATIC
 )
 
 IF (UNIX)
-  target_link_libraries (etch-cpp ${CAPU/lib/Linux})
+  #TODO: add correct lib here debug / release
+  target_link_libraries (etch-cpp ${CAPU}/lib/Linux_X86_32/libcapu.a)
 ELSEIF(WIN32)
-  target_link_libraries (etch-cpp ${CAPU/lib/Win32})
+  #TODO: add correct lib here debug / release
+  target_link_libraries (etch-cpp ${CAPU}/lib/windows_x86_32/debug/capu.lib)
 ENDIF()
 
 IF (UNIX)

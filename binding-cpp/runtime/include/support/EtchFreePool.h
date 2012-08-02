@@ -19,6 +19,7 @@
 #ifndef __ETCHFREEPOOL_H__
 #define __ETCHFREEPOOL_H__
 
+#include "capu/os/Mutex.h"
 #include "capu/container/List.h"
 #include "support/EtchPool.h"
 #include "support/EtchPoolRunnable.h"
@@ -34,6 +35,11 @@ namespace capu {
 class EtchFreePool : public EtchPool
 {
 public:
+
+  /**
+   * Internal friend class
+   */
+  friend class EtchFreePoolRunnable;
 
   /**
    * EtchObjectType for EtchFreePool.
@@ -57,24 +63,36 @@ public:
    * threads are allowed to start.
    * @return error if somthings goes wrong
    */
-  capu::status_t close();
+  status_t close();
+
+  /**
+   * Return the current pool size
+   */
+  capu::int32_t getSize();
 
   /**
    * Joins each of the threads in this pool until there
    * are none left. The pool will be closed first.
    * @return error if somthings goes wrong
    */
-  capu::status_t join();
+  status_t join();
 
   /**
    * @see EtchPool
    */
-  virtual capu::status_t add(capu::SmartPointer<EtchPoolRunnable> runnable);
+  virtual status_t add(capu::SmartPointer<EtchPoolRunnable> runnable);
 
 private:
-  capu::int32_t mMaxSize;
+  capu::int32_t mSize;
+  capu::int32_t mSizeMax;
   capu::bool_t mIsOpen;
-  capu::List<capu::Thread*> mThreads;
+  capu::Mutex mMutex;
+  capu::Thread** mThreads;
+
+  /**
+   * Checks thread list and clean up
+   */
+  status_t check();
 };
 
 #endif /* __ETCHFREEPOOL_H__ */

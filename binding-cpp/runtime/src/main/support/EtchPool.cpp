@@ -17,37 +17,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-#ifndef __ETCHPOOL_H__
-#define __ETCHPOOL_H__
 
-#include "common/EtchObject.h"
-#include "support/EtchPoolRunnable.h"
+#include "support/EtchPool.h"
 
-/**
-  * Interface to a pool of runnables.
-  */
-class EtchPool
-  : public EtchObject {
-public:
-
-  /**
-   * Creates a new instance of the EtchPool-Class.
-   */
-  EtchPool(const EtchObjectType* type)
-    : EtchObject(type) {}
-
-  /**
-   * Destructure.
-   */
-  virtual ~EtchPool() {}
-
-  /**
-   * scheduling the runnable to run
-   * @param runnable the thing to run.
-   * @return error if there is a problem scheduling the
-   *         runnable to run
-   */
-  virtual status_t add(capu::SmartPointer<EtchPoolRunnable> runnable) = 0;
-
-};
-#endif /* __ETCHPOOL_H__ */

@@ -183,3 +183,11 @@ void EtchType::setComponentType(const EtchObjectType* type) {
 const EtchObjectType* EtchType::getComponentType() {
   return mComponentType;
 }
+
+EtchObject* EtchType::getStubHelper() {
+  return mStubHelper;
+}
+
+void EtchType::setStubHelper(EtchObject* stubHelper) {
+  mStubHelper = stubHelper;
+}

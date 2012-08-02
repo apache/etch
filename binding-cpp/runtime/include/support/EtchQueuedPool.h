@@ -22,6 +22,10 @@
 #include "support/EtchPool.h"
 #include "support/EtchPoolRunnable.h"
 
+namespace capu {
+  class ThreadPool;
+};
+
 /**
  * A implementation of the free pool.
  */
@@ -38,7 +42,7 @@ public:
    * Creats a new instance of the EtchQueuedPool-Class.
    * @param size of the pool
    */
-  EtchQueuedPool();
+  EtchQueuedPool(capu::int32_t size = 50);
 
   /**
    * Destructure.
@@ -46,10 +50,30 @@ public:
   virtual ~EtchQueuedPool();
 
   /**
+   * Closes the pool. This just marks the pool as being closed, it doesn't
+   * actually do anything to the currently running thread. But no more
+   * threads are allowed to start.
+   * @return error if somthings goes wrong
+   */
+  status_t close();
+
+  /**
+   * Joins each of the threads in this pool until there
+   * are none left. The pool will be closed first.
+   * @return error if somthings goes wrong
+   */
+  status_t join();
+
+  /**
    * @see EtchPool
    */
-  virtual capu::status_t add(capu::SmartPointer<EtchPoolRunnable> runnable);
+  status_t add(capu::SmartPointer<EtchPoolRunnable> runnable);
 
+private:
+  capu::int32_t mSizeMax;
+  capu::bool_t mIsOpen;
+  capu::ThreadPool* mPool;
 };
 
 #endif /*__ETCHQUEUEDPOOL_H__ */
+

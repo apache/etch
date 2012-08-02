@@ -85,6 +85,7 @@ add_executable (etch-cpp-test
     serialization/EtchValidatorStructValueTest.cpp
     serialization/EtchBinaryTaggedDataInputOutputTest.cpp
     support/EtchFreePoolTest.cpp
+    support/EtchQueuedPoolTest.cpp
     support/EtchPlainMailboxTest.cpp
     support/EtchMonitorTest.cpp
     support/EtchRemoteBaseTest.cpp
@@ -94,12 +95,6 @@ add_executable (etch-cpp-test
     ${GMOCK}/src/gmock-all.cc
     main.cpp
 )
-
-IF (UNIX)
-  target_link_libraries (etch-cpp-test ${CAPU/lib/Linux_X86_32})
-ELSEIF(WIN32)
-  target_link_libraries (etch-cpp-test ${CAPU/lib/Windows_x86_32})
-ENDIF()
 
 IF (UNIX)
   target_link_libraries (etch-cpp-test etch-cpp pthread rt)

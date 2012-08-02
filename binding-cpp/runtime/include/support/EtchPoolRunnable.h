@@ -33,13 +33,42 @@ public:
    * Execute the runnable
    * @return error core if some exeception occures
    */
-  virtual capu::status_t run() = 0;
+  virtual status_t run() = 0;
+
+  /**
+   * Sets an exception
+   * @param exception that occured
+   * @return ETCH_OK if no error
+   */
+  status_t setException(capu::SmartPointer<EtchException> exception) {
+    mException = exception;
+  }
+
+  capu::bool_t hasException() {
+    return (mException.get() != NULL);
+  }
+
+  /**
+   * Gets the exception
+   * @param exception that should be returned
+   * @return ETCH_OK if no error, ETCH_EINVAL if the given params are invalid
+   */
+  status_t getException(capu::SmartPointer<EtchException> *exception) {
+    if(exception == NULL) {
+      return ETCH_EINVAL;
+    }
+    *exception = mException;
+    return ETCH_OK;
+  }
 
   /**
    * Reports an exception thrown by the run method.
    * @param e exception
    */
-  virtual capu::status_t exception(capu::SmartPointer<EtchException> exception) = 0;
+  virtual status_t exception(capu::SmartPointer<EtchException> exception) = 0;
+
+private:
+  capu::SmartPointer<EtchException> mException;
 };
 
 #endif

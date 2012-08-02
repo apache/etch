@@ -195,6 +195,18 @@ public:
    */
   void setImportExportHelper(EtchImportExportHelper* helper);
 
+
+  /**
+   * @return the associated StubHelper.
+   */
+  EtchObject* getStubHelper();
+
+  /**
+   * Sets the associated StubHelper
+   * @param StubHelper as EtchObject
+   */
+  void setStubHelper(EtchObject* stubHelper);
+
   /**
    * @return the field with the value of this response.
    */
@@ -249,6 +261,7 @@ private:
   EtchField mResponseField;
   const EtchObjectType* mComponentType;
   EtchImportExportHelper* mHelper;
+  EtchObject* mStubHelper;
 };
 
 #endif /* ETCHTYPE_H */
