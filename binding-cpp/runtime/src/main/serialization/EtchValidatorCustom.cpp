@@ -99,9 +99,9 @@ status_t EtchValidatorCustom::Get(capu::uint32_t ndim, const EtchObjectType *typ
   }
 
   EtchValidatorCustomKey key(type, ndim, sub);
-  if (mValidators.get(key, &val) == ETCH_ENOT_EXIST) {
+  if (Validators().get(key, &val) == ETCH_ENOT_EXIST) {
     val = new EtchValidatorCustom(type, ndim, sub);
-    mValidators.put(key, val);
+    Validators().put(key, val);
   }
   return ETCH_OK;
 }
@@ -110,4 +110,7 @@ status_t EtchValidatorCustom::getElementValidator(capu::SmartPointer<EtchValidat
   return EtchValidatorCustom::Get(mNDims - 1, mExpectedType->getObjectComponentType(), mSubclass, val);
 }
 
-EtchHashTable<EtchValidatorCustomKey, capu::SmartPointer<EtchValidator> > EtchValidatorCustom::mValidators;
+EtchHashTable<EtchValidatorCustomKey, capu::SmartPointer<EtchValidator> >& EtchValidatorCustom::Validators() {
+  static EtchHashTable<EtchValidatorCustomKey, capu::SmartPointer<EtchValidator> > ret;
+  return ret;
+}

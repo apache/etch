@@ -56,7 +56,7 @@ protected:
   EtchValidatorBoolean(capu::uint32_t ndim);
 
 private:
-  static capu::SmartPointer<EtchValidator> mValidators[MAX_CACHED];
+  static capu::SmartPointer<EtchValidator>* Validators();
 };
 
 

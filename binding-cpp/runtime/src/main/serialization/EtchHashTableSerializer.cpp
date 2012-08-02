@@ -20,7 +20,10 @@
 #include "serialization/EtchHashTableSerializer.h"
 
 
-const EtchString EtchHashTableSerializer::FIELD_NAME("keysAndValues");
+const EtchString& EtchHashTableSerializer::FIELD_NAME() {
+  static const EtchString name("keysAndValues");
+  return name;
+}
 
 EtchHashTableSerializer::EtchHashTableSerializer(EtchType* type, EtchField* field)
 : mField(*field), mType(type) {
@@ -93,7 +96,7 @@ status_t EtchHashTableSerializer::importValue(EtchStructValue* value, capu::Smar
 status_t EtchHashTableSerializer::Init(EtchType* type, EtchClass2TypeMap* class2type) {
   status_t result;
   EtchField field_ptr;
-  result = type->getField(FIELD_NAME, &field_ptr);
+  result = type->getField(FIELD_NAME(), &field_ptr);
   if (result != ETCH_OK)
     return result;
   class2type->put(EtchNativeArray<capu::SmartPointer<EtchObject> >::TYPE(), type);

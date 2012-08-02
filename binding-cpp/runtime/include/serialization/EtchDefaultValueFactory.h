@@ -39,27 +39,27 @@
 class EtchDefaultValueFactory : public EtchValueFactory {
 private:
 
-  static const EtchString ETCH_RUNTIME_EXCEPTION_TYPE_NAME;
+  static const EtchString& ETCH_RUNTIME_EXCEPTION_TYPE_NAME();
 
-  static const EtchString ETCH_LIST_TYPE_NAME;
+  static const EtchString& ETCH_LIST_TYPE_NAME();
 
-  static const EtchString ETCH_MAP_TYPE_NAME;
+  static const EtchString& ETCH_MAP_TYPE_NAME();
 
-  static const EtchString ETCH_SET_TYPE_NAME;
+  static const EtchString& ETCH_SET_TYPE_NAME();
 
-  static const EtchString ETCH_DATETIME_TYPE_NAME;
+  static const EtchString& ETCH_DATETIME_TYPE_NAME();
 
-  static const EtchString ETCH_AUTH_EXCEPTION_TYPE_NAME;
+  static const EtchString& ETCH_AUTH_EXCEPTION_TYPE_NAME();
 
-  static const EtchString ETCH_EXCEPTION_MESSAGE_NAME;
+  static const EtchString& ETCH_EXCEPTION_MESSAGE_NAME();
 
-  static const EtchString MSG_FIELD_NAME;
+  static const EtchString& MSG_FIELD_NAME();
 
-  static const EtchString MESSAGE_ID_FIELD_NAME;
+  static const EtchString& MESSAGE_ID_FIELD_NAME();
 
-  static const EtchString IN_REPLY_TO_FIELD_NAME;
+  static const EtchString& IN_REPLY_TO_FIELD_NAME();
 
-  static const EtchString RESULT_FIELD_NAME;
+  static const EtchString& RESULT_FIELD_NAME();
 
   static capu::Mutex Mutex;
 
@@ -103,22 +103,22 @@ public:
   /**
    * The msg field of the standard unchecked exception.
    */
-  static const EtchField _mf_msg;
+  static const EtchField& _mf_msg();
 
   /**
    *  The well-known _messageId field.
    */
-  static const EtchField _mf__messageId;
+  static const EtchField& _mf__messageId();
 
   /**
    * The well-known _inReplyTo field.
    */
-  static const EtchField _mf__inReplyTo;
+  static const EtchField& _mf__inReplyTo();
 
   /**
    * The well-known result field.
    */
-  static const EtchField _mf_result;
+  static const EtchField& _mf_result();
 
   ///////////////////////
   // ValueFactory impl //

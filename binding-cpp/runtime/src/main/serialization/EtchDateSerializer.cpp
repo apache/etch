@@ -18,7 +18,10 @@
 
 #include "serialization/EtchDateSerializer.h"
 
-const EtchString EtchDateSerializer::FIELD_NAME("dateTime");
+const EtchString& EtchDateSerializer::FIELD_NAME() {
+  static const EtchString name("dateTime");
+  return name;
+}
 
 EtchDateSerializer::EtchDateSerializer(EtchType* type, EtchField* field)
 : mField(*field), mType(type) {
@@ -61,7 +64,7 @@ status_t EtchDateSerializer::exportValue(EtchValueFactory* vf, capu::SmartPointe
 status_t EtchDateSerializer::Init(EtchType* type, EtchClass2TypeMap* class2type) {
   status_t result;
   EtchField field_ptr;
-  result = type->getField(FIELD_NAME, &field_ptr);
+  result = type->getField(FIELD_NAME(), &field_ptr);
   if (result != ETCH_OK)
     return result;
   class2type->put(EtchDate::TYPE(), type);

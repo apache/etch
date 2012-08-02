@@ -49,7 +49,7 @@ status_t EtchBinaryTaggedDataInput::readMessage(capu::SmartPointer<EtchFlexBuffe
   // trying to spoof us.
 
   mLengthBudget = buf->getAvailableBytes();
-  
+
   ret = startMessage(message);
   if (ret != ETCH_OK) {
     mBuffer = NULL;
@@ -76,17 +76,17 @@ status_t EtchBinaryTaggedDataInput::readMessage(capu::SmartPointer<EtchFlexBuffe
 
 status_t EtchBinaryTaggedDataInput::readStruct(capu::SmartPointer<EtchStructValue> &result) {
   status_t ret;
-  
+
   ret = startStruct(result);
   if (ret != ETCH_OK) {
     return ret;
   }
-  
+
   ret = readKeysAndValues(result);
   if (ret != ETCH_OK) {
     return ret;
   }
-  
+
   ret = endStruct(result);
   if (ret != ETCH_OK) {
     return ret;
@@ -149,7 +149,7 @@ status_t EtchBinaryTaggedDataInput::readValues(EtchArrayValue *av, capu::SmartPo
   while (true) {
     capu::SmartPointer<EtchObject> value;
     readValue(validator, true, value);
-    if(value == NONE) {
+    if(value == NONE()) {
       break;
     }
     av->add(value);
@@ -161,7 +161,7 @@ status_t EtchBinaryTaggedDataInput::startMessage(capu::SmartPointer<EtchMessage>
   capu::int8_t version = 0;
   mBuffer->getByte(version);
 
-  if (version != VERSION) {
+  if (version != VERSION()) {
     return ETCH_EIO;
   }
 
@@ -186,12 +186,12 @@ status_t EtchBinaryTaggedDataInput::startStruct(capu::SmartPointer<EtchStructVal
   if (readType(t) != ETCH_OK) {
     return ETCH_ERROR;
   }
-  
+
   capu::int32_t length;
   if (readLength(length) != ETCH_OK) {
     return ETCH_ERROR;
   }
-  
+
   result = new EtchStructValue(t, mVf, length);
   return ETCH_OK;
 }
@@ -276,7 +276,7 @@ status_t EtchBinaryTaggedDataInput::readField(EtchType *type, EtchField& field) 
     return ETCH_ERROR;
   }
 
-  if (obj == NONE) {
+  if (obj == NONE()) {
     return ETCH_ENOT_EXIST;
   }
 
@@ -350,7 +350,7 @@ status_t EtchBinaryTaggedDataInput::validateValue(capu::SmartPointer<EtchValidat
 }
 
 status_t EtchBinaryTaggedDataInput::validateValue(capu::SmartPointer<EtchValidator> v, capu::bool_t noneOk, capu::SmartPointer<EtchObject> value, capu::SmartPointer<EtchObject>& result) {
-  if (noneOk && (value == NONE)) {
+  if (noneOk && (value == NONE())) {
     result = value;
     return ETCH_OK;
   }
@@ -392,7 +392,7 @@ status_t EtchBinaryTaggedDataInput::readValue(capu::SmartPointer<EtchValidator> 
       return validateValue(v, NULL, result);
 
     case EtchTypeCode::NONE:
-      return validateValue(v, noneOk, NONE, result);
+      return validateValue(v, noneOk, NONE(), result);
 
     case EtchTypeCode::BOOLEAN_FALSE:
     {
@@ -498,7 +498,7 @@ status_t EtchBinaryTaggedDataInput::readValue(capu::SmartPointer<EtchValidator> 
 
       capu::int8_t  *buffer = NULL;
       capu::uint32_t bufferSize = 0;
-      
+
       ret = readBytes(buffer, bufferSize);
       if(ret != ETCH_OK) {
         return ETCH_ERROR;
@@ -509,7 +509,7 @@ status_t EtchBinaryTaggedDataInput::readValue(capu::SmartPointer<EtchValidator> 
       delete[] buffer;
 
       ret = validateValue(v, narray, result);
-      
+
       return ret;
     }
 
@@ -564,7 +564,7 @@ status_t EtchBinaryTaggedDataInput::readValue(capu::SmartPointer<EtchValidator> 
       status_t ret;
       capu::int8_t  *buffer = NULL;
       capu::uint32_t bufferSize;
-      
+
       ret = readBytes(buffer, bufferSize);
       if (ret != ETCH_OK)
         return ETCH_ERROR;

@@ -95,12 +95,12 @@ TEST(EtchPacketizer, TransportControlTest) {
   EtchSessionListener<EtchSocket>* listener = new MockListener3(transport);
 
   //Start the mock listener
-  transport->transportControl(new EtchString(EtchTcpListener::START_AND_WAIT_UP), new EtchInt32(1000));
+  transport->transportControl(new EtchString(EtchTcpListener::START_AND_WAIT_UP()), new EtchInt32(1000));
 
-  packetizer->transportControl(new EtchString(EtchPacketizer::START_AND_WAIT_UP), new EtchInt32(1000));
-  packetizer->transportControl(new EtchString(EtchPacketizer::STOP_AND_WAIT_DOWN), new EtchInt32(1000));
+  packetizer->transportControl(new EtchString(EtchPacketizer::START_AND_WAIT_UP()), new EtchInt32(1000));
+  packetizer->transportControl(new EtchString(EtchPacketizer::STOP_AND_WAIT_DOWN()), new EtchInt32(1000));
 
-  transport->transportControl(new EtchString(EtchTcpListener::STOP_AND_WAIT_DOWN), new EtchInt32(1000));
+  transport->transportControl(new EtchString(EtchTcpListener::STOP_AND_WAIT_DOWN()), new EtchInt32(1000));
 
   delete packetizer;
   delete listener;
@@ -130,7 +130,7 @@ TEST(EtchPacketizer, SessionDataTest) {
   capu::SmartPointer<EtchFlexBuffer> buffer = new EtchFlexBuffer();
   //A packet is created
   capu::int32_t pktsize = 4;
-  buffer->putInt(packetizer->SIG);
+  buffer->putInt(packetizer->SIG());
   buffer->putInt(pktsize);
   buffer->put((capu::int8_t *)"test", pktsize);
   buffer->setIndex(0);

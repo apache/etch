@@ -70,7 +70,7 @@ public:
    * @param the old value
    * @return ETCH_OK if it was successfully
    */
-  status_t waitUntilEqAndSet(EtchString& desiredValue, EtchString& newValue, EtchString &old);
+  status_t waitUntilEqAndSet(const EtchString& desiredValue, EtchString& newValue, EtchString &old);
 
   /**
    * Waits until value equals the desired value and
@@ -83,7 +83,7 @@ public:
    * @param the old value
    * @return ETCH_OK if it was successfully
    */
-  status_t waitUntilEqAndSet(EtchString& desiredValue, capu::int32_t maxDelay, EtchString& newValue, EtchString &old);
+  status_t waitUntilEqAndSet(const EtchString& desiredValue, capu::int32_t maxDelay, EtchString& newValue, EtchString &old);
 
   /**
    * Waits until value equals the desired value. Will wait forever.
@@ -91,7 +91,7 @@ public:
    * @param desiredValue the value we want.
    * @return ETCH_OK if it was successfully
    */
-  status_t waitUntilEq(EtchString& desiredValue);
+  status_t waitUntilEq(const EtchString& desiredValue);
 
   /**
    * Waits until value equals the desired value.
@@ -102,7 +102,8 @@ public:
    * If 0 is specified, we will wait forever.
    * @return ETCH_OK if it was successfully
    */
-  status_t waitUntilEq(EtchString& desiredValue, capu::int32_t maxDelay);
+
+  status_t waitUntilEq(const EtchString& desiredValue, capu::int32_t maxDelay);
 
   /**
    * Waits until value does not equal the undesired value and then
@@ -113,8 +114,8 @@ public:
    * @param the old value
    * @return ETCH_OK if it was successfully
    */
-  status_t waitUntilNotEqAndSet(EtchString& undesiredValue, EtchString& newValue, EtchString& old);
 
+  status_t waitUntilNotEqAndSet(const EtchString& undesiredValue, EtchString& newValue, EtchString& old);
   /**
    * Waits until value does not equal the undesired value and then
    * sets the value.
@@ -126,7 +127,8 @@ public:
    * @param the old value
    * @return ETCH_OK if it was successfully, ETCH_TIMEOUT if a timeout occurs
    */
-  status_t waitUntilNotEqAndSet(EtchString& undesiredValue, capu::int32_t maxDelay, EtchString& newValue, EtchString& old);
+
+  status_t waitUntilNotEqAndSet(const EtchString& undesiredValue, capu::int32_t maxDelay, EtchString& newValue, EtchString& old);
 
   /**
    * Waits until value does not equal the undesired value. Will
@@ -137,7 +139,7 @@ public:
    * @return ETCH_OK if it was successfully
    */
 
-  status_t waitUntilNotEq(EtchString& undesiredValue, EtchString& current);
+  status_t waitUntilNotEq(const EtchString& undesiredValue, EtchString& current);
 
   /**
    * Waits until value does not equal the undesired value.
@@ -148,7 +150,7 @@ public:
    * @param the current value.
    * @return ETCH_OK if it was successfully, ETCH_TIMEOUT if a timeout occurs
    */
-  status_t waitUntilNotEq(EtchString& undesiredValue, capu::uint32_t maxDelay, EtchString& current);
+  status_t waitUntilNotEq(const EtchString& undesiredValue, capu::uint32_t maxDelay, EtchString& current);
 
 private:
   /////////////////////
@@ -158,12 +160,12 @@ private:
   /**
    * waitUntilEq internal
    */
-  status_t waitUntilEqIntern(EtchString& desiredValue, capu::int32_t maxDelay);
+  status_t waitUntilEqIntern(const EtchString& desiredValue, capu::int32_t maxDelay);
 
   /**
    * waitUntilNotEq internal
    */
-  status_t waitUntilNotEqIntern(EtchString& undesiredValue, capu::uint32_t maxDelay, EtchString& current);
+  status_t waitUntilNotEqIntern(const EtchString& undesiredValue, capu::uint32_t maxDelay, EtchString& current);
 
   /**
    * Compares the specified values.
@@ -172,7 +174,7 @@ private:
    * @param v2 another value to compare, which may be null.
    * @return true if the values are equal, false otherwise.
    */
-  capu::bool_t eq(EtchString& v1, EtchString& v2);
+  capu::bool_t eq(const EtchString& v1, const EtchString& v2);
 
   EtchString mDescription;
   EtchString mValue;

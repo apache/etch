@@ -80,7 +80,7 @@ public:
    *         ETCH_ERROR  if there is an error
    *         ETCH_OK otherwise
    */
-  status_t addField(EtchField &field);
+  status_t addField(const EtchField &field);
 
   /**
    * Translates a field id into the appropriate Field object.
@@ -165,7 +165,7 @@ public:
    * @return ETCH_OK if remove is successful
    *         ETCH_EINVAL if value is NULL or locked
    */
-  status_t putValidator(EtchField key, capu::SmartPointer<EtchValidator> validator);
+  status_t putValidator(const EtchField key, capu::SmartPointer<EtchValidator> validator);
 
   /**
    * Removes the validator chain for this key.

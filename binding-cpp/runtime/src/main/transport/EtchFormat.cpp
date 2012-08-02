@@ -17,6 +17,12 @@
  */
 #include "transport/EtchFormat.h"
 
-const EtchString EtchFormat::BINARY("binary");
+const EtchString& EtchFormat::BINARY() {
+  static const EtchString type("binary");
+  return type;
+}
 
-const EtchString EtchFormat::XML("xml");
+const EtchString& EtchFormat::XML() {
+  static const EtchString type("xml");
+  return type;
+}

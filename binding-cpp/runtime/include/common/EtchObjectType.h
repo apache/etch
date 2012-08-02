@@ -78,13 +78,13 @@ public:
   /**
    * TypeIds for native types
    */
-  static const EtchObjectType NATIVE_INT8;
-  static const EtchObjectType NATIVE_INT16;
-  static const EtchObjectType NATIVE_INT32;
-  static const EtchObjectType NATIVE_INT64;
-  static const EtchObjectType NATIVE_DOUBLE;
-  static const EtchObjectType NATIVE_FLOAT;
-  static const EtchObjectType NATIVE_BOOL;
+  static const EtchObjectType& NATIVE_INT8();
+  static const EtchObjectType& NATIVE_INT16();
+  static const EtchObjectType& NATIVE_INT32();
+  static const EtchObjectType& NATIVE_INT64();
+  static const EtchObjectType& NATIVE_DOUBLE();
+  static const EtchObjectType& NATIVE_FLOAT();
+  static const EtchObjectType& NATIVE_BOOL();
 
   /**
    * TypeTraits
@@ -106,7 +106,7 @@ public:
    * @return
    */
   template<class T>
-  static const EtchObjectType * getType() {
+  static const EtchObjectType* getType() {
     return __Wrapper__<T>::getType();
   }
 
@@ -159,7 +159,7 @@ private:
   template <class T>
   struct __Wrapper__ {
 
-    static const EtchObjectType * getType() {
+    static const EtchObjectType* getType() {
       return T::TYPE();
     }
 
@@ -172,7 +172,7 @@ private:
   template <class T>
   struct __Wrapper__<T*> {
 
-    static const EtchObjectType * getType() {
+    static const EtchObjectType* getType() {
       return T::TYPE();
     }
 
@@ -180,7 +180,7 @@ private:
       return EtchObjectType::POINTER;
     }
   };
-  
+
   template <class T>
   struct __Wrapper__<capu::SmartPointer<T> > {
 
@@ -198,8 +198,8 @@ private:
 template <>
 struct EtchObjectType::__Wrapper__<capu::int32_t> {
 
-  static const EtchObjectType * getType() {
-    return &EtchObjectType::NATIVE_INT32;
+  static const EtchObjectType* getType() {
+    return &EtchObjectType::NATIVE_INT32();
   }
 
   static const EtchObjectTypeTrait getTypeTrait() {
@@ -210,8 +210,8 @@ struct EtchObjectType::__Wrapper__<capu::int32_t> {
 template <>
 struct EtchObjectType::__Wrapper__<capu::int16_t> {
 
-  static const EtchObjectType * getType() {
-    return &EtchObjectType::NATIVE_INT16;
+  static const EtchObjectType* getType() {
+    return &EtchObjectType::NATIVE_INT16();
   }
   
   static const EtchObjectTypeTrait getTypeTrait() {
@@ -223,8 +223,8 @@ struct EtchObjectType::__Wrapper__<capu::int16_t> {
 template <>
 struct EtchObjectType::__Wrapper__<capu::int8_t> {
 
-  static const EtchObjectType * getType() {
-    return &EtchObjectType::NATIVE_INT8;
+  static const EtchObjectType* getType() {
+    return &EtchObjectType::NATIVE_INT8();
   }
 
   static const EtchObjectTypeTrait getTypeTrait() {
@@ -235,8 +235,8 @@ struct EtchObjectType::__Wrapper__<capu::int8_t> {
 template <>
 struct EtchObjectType::__Wrapper__<capu::int64_t> {
 
-  static const EtchObjectType * getType() {
-    return &EtchObjectType::NATIVE_INT64;
+  static const EtchObjectType* getType() {
+    return &EtchObjectType::NATIVE_INT64();
   }
 
   static const EtchObjectTypeTrait getTypeTrait() {
@@ -247,8 +247,8 @@ struct EtchObjectType::__Wrapper__<capu::int64_t> {
 template <>
 struct EtchObjectType::__Wrapper__<capu::float_t> {
 
-  static const EtchObjectType * getType() {
-    return &EtchObjectType::NATIVE_FLOAT;
+  static const EtchObjectType* getType() {
+    return &EtchObjectType::NATIVE_FLOAT();
   }
 
   static const EtchObjectTypeTrait getTypeTrait() {
@@ -260,8 +260,8 @@ struct EtchObjectType::__Wrapper__<capu::float_t> {
 template <>
 struct EtchObjectType::__Wrapper__<capu::double_t> {
 
-  static const EtchObjectType * getType() {
-    return &EtchObjectType::NATIVE_DOUBLE;
+  static const EtchObjectType* getType() {
+    return &EtchObjectType::NATIVE_DOUBLE();
   }
 
   static const EtchObjectTypeTrait getTypeTrait() {
@@ -273,8 +273,8 @@ struct EtchObjectType::__Wrapper__<capu::double_t> {
 template <>
 struct EtchObjectType::__Wrapper__<capu::bool_t> {
 
-  static const EtchObjectType * getType() {
-    return &EtchObjectType::NATIVE_BOOL;
+  static const EtchObjectType* getType() {
+    return &EtchObjectType::NATIVE_BOOL();
   }
   
   static const EtchObjectTypeTrait getTypeTrait() {
@@ -286,8 +286,8 @@ struct EtchObjectType::__Wrapper__<capu::bool_t> {
 template <>
 struct EtchObjectType::__Wrapper__<capu::int32_t*> {
 
-  static const EtchObjectType * getType() {
-    return &EtchObjectType::NATIVE_INT32;
+  static const EtchObjectType* getType() {
+    return &EtchObjectType::NATIVE_INT32();
   }
 
   static const EtchObjectTypeTrait getTypeTrait() {
@@ -299,8 +299,8 @@ struct EtchObjectType::__Wrapper__<capu::int32_t*> {
 template <>
 struct EtchObjectType::__Wrapper__<capu::int16_t*> {
 
-  static const EtchObjectType * getType() {
-    return &EtchObjectType::NATIVE_INT16;
+  static const EtchObjectType* getType() {
+    return &EtchObjectType::NATIVE_INT16();
   }
   
   static const EtchObjectTypeTrait getTypeTrait() {
@@ -312,8 +312,8 @@ struct EtchObjectType::__Wrapper__<capu::int16_t*> {
 template <>
 struct EtchObjectType::__Wrapper__<capu::int8_t*> {
 
-  static const EtchObjectType * getType() {
-    return &EtchObjectType::NATIVE_INT8;
+  static const EtchObjectType* getType() {
+    return &EtchObjectType::NATIVE_INT8();
   }
 
   static const EtchObjectTypeTrait getTypeTrait() {
@@ -325,8 +325,8 @@ struct EtchObjectType::__Wrapper__<capu::int8_t*> {
 template <>
 struct EtchObjectType::__Wrapper__<capu::int64_t*> {
 
-  static const EtchObjectType * getType() {
-    return &EtchObjectType::NATIVE_INT64;
+  static const EtchObjectType* getType() {
+    return &EtchObjectType::NATIVE_INT64();
   }
 
   static const EtchObjectTypeTrait getTypeTrait() {
@@ -338,8 +338,8 @@ struct EtchObjectType::__Wrapper__<capu::int64_t*> {
 template <>
 struct EtchObjectType::__Wrapper__<capu::float_t*> {
 
-  static const EtchObjectType * getType() {
-    return &EtchObjectType::NATIVE_FLOAT;
+  static const EtchObjectType* getType() {
+    return &EtchObjectType::NATIVE_FLOAT();
   }
 
   static const EtchObjectTypeTrait getTypeTrait() {
@@ -351,8 +351,8 @@ struct EtchObjectType::__Wrapper__<capu::float_t*> {
 template <>
 struct EtchObjectType::__Wrapper__<capu::double_t*> {
 
-  static const EtchObjectType * getType() {
-    return &EtchObjectType::NATIVE_DOUBLE;
+  static const EtchObjectType* getType() {
+    return &EtchObjectType::NATIVE_DOUBLE();
   }
 
   static const EtchObjectTypeTrait getTypeTrait() {
@@ -364,8 +364,8 @@ struct EtchObjectType::__Wrapper__<capu::double_t*> {
 template <>
 struct EtchObjectType::__Wrapper__<capu::bool_t*> {
 
-  static const EtchObjectType * getType() {
-    return &EtchObjectType::NATIVE_BOOL;
+  static const EtchObjectType* getType() {
+    return &EtchObjectType::NATIVE_BOOL();
   }
 
   static const EtchObjectTypeTrait getTypeTrait() {
@@ -378,7 +378,7 @@ template <>
 struct EtchObjectType::__Wrapper__<capu::SmartPointer<capu::int32_t> > {
 
   static const EtchObjectType * getType() {
-    return &EtchObjectType::NATIVE_INT32;
+    return &EtchObjectType::NATIVE_INT32();
   }
 
   static const EtchObjectTypeTrait getTypeTrait() {
@@ -390,7 +390,7 @@ template <>
 struct EtchObjectType::__Wrapper__<capu::SmartPointer<capu::int16_t> > {
 
   static const EtchObjectType * getType() {
-    return &EtchObjectType::NATIVE_INT16;
+    return &EtchObjectType::NATIVE_INT16();
   }
   
   static const EtchObjectTypeTrait getTypeTrait() {
@@ -403,7 +403,7 @@ template <>
 struct EtchObjectType::__Wrapper__<capu::SmartPointer<capu::int8_t> > {
 
   static const EtchObjectType * getType() {
-    return &EtchObjectType::NATIVE_INT8;
+    return &EtchObjectType::NATIVE_INT8();
   }
 
   static const EtchObjectTypeTrait getTypeTrait() {
@@ -415,7 +415,7 @@ template <>
 struct EtchObjectType::__Wrapper__<capu::SmartPointer<capu::int64_t> > {
 
   static const EtchObjectType * getType() {
-    return &EtchObjectType::NATIVE_INT64;
+    return &EtchObjectType::NATIVE_INT64();
   }
 
   static const EtchObjectTypeTrait getTypeTrait() {
@@ -427,7 +427,7 @@ template <>
 struct EtchObjectType::__Wrapper__<capu::SmartPointer<capu::float_t> > {
 
   static const EtchObjectType * getType() {
-    return &EtchObjectType::NATIVE_FLOAT;
+    return &EtchObjectType::NATIVE_FLOAT();
   }
 
   static const EtchObjectTypeTrait getTypeTrait() {
@@ -440,7 +440,7 @@ template <>
 struct EtchObjectType::__Wrapper__<capu::SmartPointer<capu::double_t> > {
 
   static const EtchObjectType * getType() {
-    return &EtchObjectType::NATIVE_DOUBLE;
+    return &EtchObjectType::NATIVE_DOUBLE();
   }
 
   static const EtchObjectTypeTrait getTypeTrait() {
@@ -453,7 +453,7 @@ template <>
 struct EtchObjectType::__Wrapper__<capu::SmartPointer<capu::bool_t> > {
 
   static const EtchObjectType * getType() {
-    return &EtchObjectType::NATIVE_BOOL;
+    return &EtchObjectType::NATIVE_BOOL();
   }
   
   static const EtchObjectTypeTrait getTypeTrait() {

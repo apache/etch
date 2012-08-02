@@ -142,27 +142,27 @@ capu::Mutex EtchConnection<S>::mMutexConnection;
 
 template <class S>
 EtchConnection<S>::EtchConnection()
-: mStatus(EtchString("status"), (EtchString&) EtchSession::DOWN) {
+: mStatus(EtchString("status"), EtchSession::DOWN()) {
 }
 
 template <class S>
 status_t EtchConnection<S>::waitUp(capu::int32_t maxDelay) {
-  return mStatus.waitUntilEq((EtchString&) EtchSession::UP, maxDelay);
+  return mStatus.waitUntilEq(EtchSession::UP(), maxDelay);
 }
 
 template <class S>
 status_t EtchConnection<S>::waitDown(capu::int32_t maxDelay) {
-  return mStatus.waitUntilEq((EtchString&) EtchSession::DOWN, maxDelay);
+  return mStatus.waitUntilEq(EtchSession::DOWN(), maxDelay);
 }
 
 template <class S>
 status_t EtchConnection<S>::fireUp() {
   EtchString tmp;
-  mStatus.set((EtchString &) EtchSession::UP, tmp);
+  mStatus.set(EtchSession::UP(), tmp);
 
   if (mSession != NULL) {
     //TODO: run this in seperate thread
-    mSession->sessionNotify(new EtchString(EtchSession::UP));
+    mSession->sessionNotify(new EtchString(EtchSession::UP()));
   }
   return ETCH_ERROR;
 }
@@ -170,11 +170,11 @@ status_t EtchConnection<S>::fireUp() {
 template <class S>
 status_t EtchConnection<S>::fireDown() {
   EtchString tmp;
-  mStatus.set((EtchString &) EtchSession::DOWN, tmp);
+  mStatus.set((EtchString &) EtchSession::DOWN(), tmp);
 
   if (mSession != NULL) {
     //TODO: run this in seperate thread
-    return mSession->sessionNotify(new EtchString(EtchSession::DOWN));
+    return mSession->sessionNotify(new EtchString(EtchSession::DOWN()));
   }
   return ETCH_ERROR;
 }

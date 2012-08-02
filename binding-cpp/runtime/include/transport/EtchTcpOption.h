@@ -34,7 +34,7 @@ public:
    * string is "TcpTransport.bufferSize". The value is an integer between 0
    * and 65536. The default is 0, which means no output buffering.
    */
-  const static EtchString BUFFER_SIZE;
+  const static EtchString& BUFFER_SIZE();
 
   /**
    * Term on the uri which specifies the keep alive flag. The term string is
@@ -42,7 +42,7 @@ public:
    * "false". Here keep alive refers to TCP specified keep alive, which is not
    * the same as any application level keep alive.
    */
-  const static EtchString KEEP_ALIVE;
+  const static EtchString& KEEP_ALIVE();
 
   /**
    * Term on the uri which specifies the linger on close time in seconds. The
@@ -57,7 +57,7 @@ public:
    * close if there is buffered data. A forceful close is send RST, while a
    * graceful close means send FIN and wait for FINACK.)
    */
-  const static EtchString LINGER_TIME;
+  const static EtchString& LINGER_TIME();
 
   /**
    * Term on the uri which specifies the no delay flag. The term string is
@@ -67,7 +67,7 @@ public:
    * to allow for more efficient transmission by combining packets (see
    * Nagle's Algorithm).
    */
-  const static EtchString NO_DELAY;
+  const static EtchString& NO_DELAY();
 
   /**
    * Term on the uri which specifies the reconnect delay in milliseconds. The
@@ -75,7 +75,7 @@ public:
    * 0. The default is 0. The value 0 means no automatic reconnection is
    * desired.
    */
-  const static EtchString RECONNECT_DELAY;
+  const static EtchString& RECONNECT_DELAY();
 
 private:
 

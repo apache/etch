@@ -26,7 +26,7 @@ EtchFieldMap::~EtchFieldMap() {
 
 }
 
-status_t EtchFieldMap::add(EtchField t) {
+status_t EtchFieldMap::add(const EtchField t) {
   if (mLocked)
     return ETCH_EINVAL;
   EtchField field;

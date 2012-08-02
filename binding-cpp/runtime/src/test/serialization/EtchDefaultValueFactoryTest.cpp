@@ -167,7 +167,7 @@ TEST(EtchDefaultValueFactoryTest, exportCustomValueTest) {
   test->getType(strRuntime, type);
   EXPECT_TRUE(sv->isType(type));
   EXPECT_EQ(1, sv->count());
-  EXPECT_EQ(ETCH_OK, sv->get((EtchField&) EtchDefaultValueFactory::_mf_msg, &serialized));
+  EXPECT_EQ(ETCH_OK, sv->get(EtchDefaultValueFactory::_mf_msg(), &serialized));
   EXPECT_TRUE(serialized->equals(&str));
 
   EtchStructValue* sv_unknown;
@@ -215,7 +215,7 @@ TEST(EtchDefaultValueFactoryTest, importCustomValueTest) {
   EtchString strRuntime = "_Etch_RuntimeException";
   test->getType(strRuntime, type);
   EtchStructValue *sv = new EtchStructValue(type, test);
-  sv->put((EtchField&) EtchDefaultValueFactory::_mf_msg, new EtchString("Error Message"), &deserialized);
+  sv->put(EtchDefaultValueFactory::_mf_msg(), new EtchString("Error Message"), &deserialized);
 
   //construct the object
   test->importCustomValue(sv, deserialized);
@@ -310,7 +310,7 @@ TEST(EtchDefaultValueFactoryTest, messageIdTest) {
 
   capu::SmartPointer<EtchValidator> val;
   EtchValidatorLong::Get(0, val);
-  mt_foo->putValidator(EtchDefaultValueFactory::_mf__messageId, val);
+  mt_foo->putValidator(EtchDefaultValueFactory::_mf__messageId(), val);
 
   EtchMessage *msg = new EtchMessage(mt_foo, test);
   capu::int64_t id;
@@ -360,7 +360,7 @@ TEST(EtchDefaultValueFactoryTest, inReplyToTest) {
 
   capu::SmartPointer<EtchValidator> val;
   EtchValidatorLong::Get(0, val);
-  mt_foo->putValidator(EtchDefaultValueFactory::_mf__inReplyTo, val);
+  mt_foo->putValidator(EtchDefaultValueFactory::_mf__inReplyTo(), val);
 
   EtchMessage *msg = new EtchMessage(mt_foo, test);
   capu::int64_t id;

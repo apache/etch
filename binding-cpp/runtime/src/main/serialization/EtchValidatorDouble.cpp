@@ -18,8 +18,11 @@
 
 #include "serialization/EtchValidatorDouble.h"
 
-capu::SmartPointer<EtchValidator> EtchValidatorDouble::mValidator[MAX_CACHED];
-
+capu::SmartPointer<EtchValidator>* EtchValidatorDouble::Validators()
+{
+  static capu::SmartPointer<EtchValidator> ret[MAX_CACHED];
+  return &(ret[0]);
+}
 const EtchObjectType* EtchValidatorDouble::TYPE() {
   const static EtchObjectType TYPE(EOTID_VALIDATOR_DOUBLE, NULL);
   return &TYPE;
@@ -74,10 +77,10 @@ status_t EtchValidatorDouble::Get(capu::uint32_t ndim, capu::SmartPointer<EtchVa
     val = new EtchValidatorDouble(ndim);
     return ETCH_OK;
   }
-  if (mValidator[ndim].get() == NULL) {
-    mValidator[ndim] = new EtchValidatorDouble(ndim);
+  if (Validators()[ndim].get() == NULL) {
+    Validators()[ndim] = new EtchValidatorDouble(ndim);
   }
-  val = mValidator[ndim];
+  val = Validators()[ndim];
   return ETCH_OK;
 }
 

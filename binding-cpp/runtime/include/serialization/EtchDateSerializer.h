@@ -62,7 +62,7 @@ private:
 
   EtchField mField;
   EtchType* mType;
-  const static EtchString FIELD_NAME;
+  const static EtchString& FIELD_NAME();
 };
 
 #endif /* ETCHDATESERIALIZER_H */

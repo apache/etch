@@ -18,6 +18,12 @@
 
 #include "transport/EtchSession.h"
 
-const EtchString EtchSession::UP("UP");
+const EtchString& EtchSession::UP() {
+  static const EtchString cmd("UP");
+  return cmd;
+}
 
-const EtchString EtchSession::DOWN("DOWN");
+const EtchString& EtchSession::DOWN() {
+  static const EtchString cmd("DOWN");
+  return cmd;
+}

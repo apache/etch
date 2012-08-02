@@ -47,9 +47,9 @@ public:
    */
   virtual ~EtchObject();
 
-/**
-   * Returns object type id of this type.
-   */
+  /**
+  * Returns object type id of this type.
+  */
   const EtchObjectType* GetObjectType() const;
 
   /**

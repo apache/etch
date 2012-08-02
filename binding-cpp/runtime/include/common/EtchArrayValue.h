@@ -40,7 +40,7 @@ public:
   /**
    * TypeId for ArrayValue.
    */
-  static const EtchObjectType TYPE;
+  static const EtchObjectType* TYPE();
 
   /**
    * Constructs the ArrayValue.
@@ -91,7 +91,7 @@ public:
    * @return the number of elements in the array.
    */
   capu::int32_t getIndex();
-  
+
   /**
    * @return the number of elements in the array.
    */

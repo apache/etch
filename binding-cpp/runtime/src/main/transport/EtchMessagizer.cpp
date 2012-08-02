@@ -17,21 +17,24 @@
  */
 #include "transport/EtchMessagizer.h"
 
-const EtchString EtchMessagizer::FORMAT("Messagizer.format");
+const EtchString& EtchMessagizer::FORMAT(){
+  static const EtchString name("Messagizer.format");
+  return name;
+}
 capu::Mutex EtchMessagizer::mutex;
 
 EtchMessagizer::EtchMessagizer(EtchTransportPacket* transport, EtchURL* uri, EtchResources* resources)
 : mTransport(transport) {
   EtchString format;
   EtchObject * val;
-  resources->get((EtchString &) EtchTransport<EtchSessionMessage>::VALUE_FACTORY, val);
+  resources->get(EtchTransport<EtchSessionMessage>::VALUE_FACTORY(), val);
 
-  if (uri->getTerms().get((EtchString &) FORMAT, &format) == ETCH_OK) {
+  if (uri->getTerms().get(FORMAT(), &format) == ETCH_OK) {
 
-    if (format.equals(&EtchFormat::BINARY)) {
+    if (format.equals(&EtchFormat::BINARY())) {
       mTdi = new EtchBinaryTaggedDataInput((EtchValueFactory *) val);
       mTdo = new EtchBinaryTaggedDataOutput((EtchValueFactory *) val, uri);
-    } else if (format.equals(&EtchFormat::XML)) {
+    } else if (format.equals(&EtchFormat::XML())) {
       //we dont need serialization via xml currently
     }
   } else {

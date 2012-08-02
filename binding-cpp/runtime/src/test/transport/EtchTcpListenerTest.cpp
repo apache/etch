@@ -81,9 +81,9 @@ TEST(EtchTcpListener, transportControlTest) {
   EtchURL url("tcp://127.0.0.1:4001");
   EtchTcpListener * tcpListener = new EtchTcpListener(&url);
   tcpListener->setSession(&mock);
-  tcpListener->transportControl(new EtchString(EtchTcpListener::START_AND_WAIT_UP), new EtchInt32(1000));
+  tcpListener->transportControl(new EtchString(EtchTcpListener::START_AND_WAIT_UP()), new EtchInt32(1000));
   EXPECT_TRUE(tcpListener->isStarted());
-  tcpListener->transportControl(new EtchString(EtchTcpListener::STOP_AND_WAIT_DOWN), new EtchInt32(1000));
+  tcpListener->transportControl(new EtchString(EtchTcpListener::STOP_AND_WAIT_DOWN()), new EtchInt32(1000));
   delete tcpListener;
 }
 
@@ -96,15 +96,15 @@ TEST(EtchTcpListener, isStartedTest) {
   EXPECT_FALSE(listener->isStarted());
   //START THE LISTENER
   listener->setSession(mSessionListener);
-  listener->transportControl(new EtchString(EtchTcpListener::START_AND_WAIT_UP), new EtchInt32(1000));
+  listener->transportControl(new EtchString(EtchTcpListener::START_AND_WAIT_UP()), new EtchInt32(1000));
   //START THE TRANSPORT
   conn->setSession(mPacketizer);
-  conn->transportControl(new EtchString(EtchTcpConnection::START_AND_WAIT_UP), new EtchInt32(1000));
+  conn->transportControl(new EtchString(EtchTcpConnection::START_AND_WAIT_UP()), new EtchInt32(1000));
   EXPECT_TRUE(listener->isStarted());
   //STOP THE TRANSPORT
-  conn->transportControl(new EtchString(EtchTcpConnection::STOP_AND_WAIT_DOWN), new EtchInt32(1000));
+  conn->transportControl(new EtchString(EtchTcpConnection::STOP_AND_WAIT_DOWN()), new EtchInt32(1000));
   //STOP THE LISTENER
-  listener->transportControl(new EtchString(EtchTcpListener::STOP_AND_WAIT_DOWN), new EtchInt32(1000));
+  listener->transportControl(new EtchString(EtchTcpListener::STOP_AND_WAIT_DOWN()), new EtchInt32(1000));
   EXPECT_FALSE(listener->isStarted());
   listener->setSession(NULL);
   conn->setSession(NULL);

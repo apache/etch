@@ -116,7 +116,8 @@ protected:
   EtchValidatorCustom(const EtchObjectType *type, capu::uint32_t ndim, capu::bool_t sub);
 
 private:
-  static EtchHashTable<EtchValidatorCustomKey, capu::SmartPointer<EtchValidator> > mValidators;
+
+  static EtchHashTable<EtchValidatorCustomKey, capu::SmartPointer<EtchValidator> >& Validators();
 };
 
 #endif /* ETCHVALIDATORCUSTOM_H */

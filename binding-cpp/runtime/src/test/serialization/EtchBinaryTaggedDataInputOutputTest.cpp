@@ -196,7 +196,7 @@ public:
     capu::SmartPointer<EtchFlexBuffer> buf = new EtchFlexBuffer();
 
     EtchURL u("none:");
-    //    u.addTerm((EtchString &) EtchBinaryTaggedDataOutput::STRING_TYPE_AND_FIELD, stringTypeAndField);
+    //    u.addTerm(EtchBinaryTaggedDataOutput::STRING_TYPE_AND_FIELD(), stringTypeAndField);
 
     EtchBinaryTaggedDataOutput btdo(vf.factory, &u);
     EXPECT_TRUE(btdo.writeMessage(msg, buf) == ETCH_OK);
@@ -380,7 +380,7 @@ TEST(EtchBinaryTaggedDataInputTest, checkTest) {
 
   // none
   var = EtchTypeCode::NONE;
-  EXPECT_TRUE(var == dataIn->checkValue(EtchBinaryTaggedData::NONE));
+  EXPECT_TRUE(var == dataIn->checkValue(EtchBinaryTaggedData::NONE()));
 
   delete dataIn;
   delete factory;
@@ -596,7 +596,7 @@ TEST(EtchBinaryTaggedDataInputTest, date_serialization) {
 TEST(EtchBinaryTaggedDataInputTest, btdo_object_serialization) {
   capu::int8_t byte_array[] = {3, 1, 1, 2, -111, -106, 1, 2, 90, -126, -127, -127};
   capu::SmartPointer<EtchNativeArray<capu::SmartPointer<EtchObject> > > carray1 = new EtchNativeArray<capu::SmartPointer<EtchObject> > (2);
-  
+
   capu::SmartPointer<EtchObject> content1 = new EtchLong(90);
   capu::SmartPointer<EtchObject> content2 = new EtchBool(false);
   carray1->set(0, content1);

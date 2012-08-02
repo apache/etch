@@ -63,7 +63,7 @@ private:
 
   EtchType* mType;
   EtchField mField;
-  const static EtchString FIELD_NAME;
+  const static EtchString& FIELD_NAME();
 
 };
 

@@ -51,10 +51,10 @@ capu::bool_t EtchField::equals(const EtchObject * object) const{
   return ((a->mId.equals(&(this->mId))) && (a->mName.equals(&this->mName)));
 }
 
-capu::uint32_t EtchField::getId() {
+capu::uint32_t EtchField::getId() const {
   return mId.get();
 }
 
-EtchString EtchField::getName() {
+EtchString EtchField::getName() const {
   return mName;
 }

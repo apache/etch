@@ -42,10 +42,8 @@ EtchTcpConnection::~EtchTcpConnection() {
   }
 
   if (mSocket != NULL) {
-    mSocket->close();
     delete mSocket;
     mSocket = NULL;
-    mIsStarted = false;
   }
 }
 
@@ -145,7 +143,7 @@ status_t EtchTcpConnection::transportQuery(capu::SmartPointer<EtchObject> query,
 
 status_t EtchTcpConnection::transportControl(capu::SmartPointer<EtchObject> control, capu::SmartPointer<EtchObject> value) {
 
-  if (control->equals(&EtchTcpConnection::START)) {
+  if (control->equals(&EtchTcpConnection::START())) {
     mMutex.lock();
     if (mIsStarted) {
       mMutex.unlock();
@@ -160,7 +158,9 @@ status_t EtchTcpConnection::transportControl(capu::SmartPointer<EtchObject> cont
     return ETCH_OK;
   }
 
-  if (control->equals(&EtchTcpConnection::START_AND_WAIT_UP)) {
+  if (control->equals(&EtchTcpConnection::START_AND_WAIT_UP())) {
+    if (mIsStarted)
+      return ETCH_OK;
     mMutex.lock();
     if (mIsStarted) {
       mMutex.unlock();
@@ -174,7 +174,7 @@ status_t EtchTcpConnection::transportControl(capu::SmartPointer<EtchObject> cont
 
   }
 
-  if (control->equals(&EtchTcpConnection::STOP)) {
+  if (control->equals(&EtchTcpConnection::STOP())) {
     mMutex.lock();
     if (!mIsStarted) {
       mMutex.unlock();
@@ -187,7 +187,7 @@ status_t EtchTcpConnection::transportControl(capu::SmartPointer<EtchObject> cont
     return ETCH_OK;
   }
 
-  if (control->equals(&EtchTcpConnection::STOP_AND_WAIT_DOWN)) {
+  if (control->equals(&EtchTcpConnection::STOP_AND_WAIT_DOWN())) {
     mMutex.lock();
     if (!mIsStarted) {
       mMutex.unlock();
@@ -200,7 +200,7 @@ status_t EtchTcpConnection::transportControl(capu::SmartPointer<EtchObject> cont
     return waitDown(((EtchInt32*) value.get())->get());
   }
 
-  if (control->equals(&EtchTcpConnection::RESET)) {
+  if (control->equals(&EtchTcpConnection::RESET())) {
     mMutex.lock();
     if (!mIsStarted) {
       mMutex.unlock();

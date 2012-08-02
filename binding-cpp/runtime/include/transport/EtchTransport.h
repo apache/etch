@@ -96,7 +96,7 @@ public:
   /**
    * Name of value factory in resources.
    */
-  const static EtchString VALUE_FACTORY;
+  const static EtchString& VALUE_FACTORY();
 
   ///////////////////////////////////////////////
   // Well-known queries, controls, and events. //
@@ -106,28 +106,28 @@ public:
    * Transport control which starts the transport stack. The argument
    * should be null.
    */
-  const static EtchString START;
+  const static EtchString& START();
 
   /**
    * Transport control which starts the transport stack and waits
    * for it to come up. The argument should be the integer number of
    * milliseconds to wait before giving up.
    */
-  const static EtchString START_AND_WAIT_UP;
+  const static EtchString& START_AND_WAIT_UP();
 
   /**
    * Transport control which stops the transport stack. The argument
    * should be null, or a Boolean reset (true for instant close,
    * false for a nicer, gentler close).
    */
-  const static EtchString STOP;
+  const static EtchString& STOP();
 
   /**
    * Transport control which stops the transport stack and waits
    * for it to go down. The argument should be the integer number of
    * milliseconds to wait before giving up.
    */
-  const static EtchString STOP_AND_WAIT_DOWN;
+  const static EtchString& STOP_AND_WAIT_DOWN();
 
   /**
    * Transport control which resets the transport stack (e.g., closes the
@@ -135,13 +135,13 @@ public:
    * that. Only meaningful for connection oriented transports. Others types
    * will ignore this.
    */
-  static const EtchString RESET;
+  static const EtchString& RESET();
 
   /**
    * Transport query which asks is this a listener initiated connection or
    * is this a client initiated connection.
    */
-  static const EtchString IS_SERVER;
+  static const EtchString& IS_SERVER();
 };
 
 /**
@@ -199,24 +199,45 @@ public:
 };
 
 template <class S>
-const EtchString EtchTransport<S>::VALUE_FACTORY("Transport.valueFactory");
+const EtchString& EtchTransport<S>::VALUE_FACTORY() {
+  static const EtchString vf("Transport.valueFactory");
+  return vf;
+}
 
 template <class S>
-const EtchString EtchTransport<S>::IS_SERVER("IS_SERVER");
+const EtchString& EtchTransport<S>::IS_SERVER() {
+  static const EtchString isServer("IS_SERVER");
+  return isServer;
+}
 
 template <class S>
-const EtchString EtchTransport<S>::RESET("RESET");
+const EtchString& EtchTransport<S>::RESET() {
+  static const EtchString cmd("RESET");
+  return cmd;
+}
 
 template <class S>
-const EtchString EtchTransport<S>::STOP_AND_WAIT_DOWN("STOP_AND_WAIT_DOWN");
+const EtchString& EtchTransport<S>::STOP_AND_WAIT_DOWN() {
+  static const EtchString cmd("STOP_AND_WAIT_DOWN");
+  return cmd;
+}
 
 template <class S>
-const EtchString EtchTransport<S>::STOP("STOP");
+const EtchString& EtchTransport<S>::STOP() {
+  static const EtchString cmd("STOP");
+  return cmd;
+}
 
 template <class S>
-const EtchString EtchTransport<S>::START("START");
+const EtchString& EtchTransport<S>::START() {
+  static const EtchString cmd("START");
+  return cmd;
+}
 
 template <class S>
-const EtchString EtchTransport<S>::START_AND_WAIT_UP("START_AND_WAIT_UP");
+const EtchString& EtchTransport<S>::START_AND_WAIT_UP() {
+  static const EtchString cmd("START_AND_WAIT_UP");
+  return cmd;
+}
 
 #endif

@@ -52,7 +52,7 @@ public:
   /**
    * Returns int32 value.
    */
-  capu::int32_t get();
+  capu::int32_t get() const;
 
   /**
    * Returns hash code

@@ -162,10 +162,9 @@ status_t EtchPlainMailboxManager::sessionControl(capu::SmartPointer<EtchObject> 
 }
 
 status_t EtchPlainMailboxManager::sessionNotify(capu::SmartPointer<EtchObject> event) {
-  if(event->equals(&EtchSession::UP)) {
+  if (event->equals(&EtchSession::UP())) {
     mUp = true;
-  } else
-  if(event->equals(&EtchSession::DOWN)) {
+  } else if (event->equals(&EtchSession::DOWN())) {
     mUp = false;
     // TODO check thread safety
     EtchHashTable<EtchLong, EtchMailbox*>::Iterator it = mMailboxes.begin();

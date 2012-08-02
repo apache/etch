@@ -181,7 +181,7 @@ TEST(EtchRemoteBaseTest, sendTest) {
   //create type
   EtchType *mt;
   factory->types.get("add", mt);
-  mt->putValidator(EtchDefaultValueFactory::_mf__messageId, val);
+  mt->putValidator(EtchDefaultValueFactory::_mf__messageId(), val);
   //create new message
   capu::SmartPointer<EtchMessage> msg;
   remote->newMessage(mt, &msg);
@@ -223,7 +223,7 @@ TEST(EtchRemoteBaseTest, beginCallTest) {
   //create type
   EtchType *mt;
   factory->types.get("add", mt);
-  mt->putValidator(EtchDefaultValueFactory::_mf__messageId, val);
+  mt->putValidator(EtchDefaultValueFactory::_mf__messageId(), val);
 
   //create new message
   capu::SmartPointer<EtchMessage> msg;
@@ -232,7 +232,7 @@ TEST(EtchRemoteBaseTest, beginCallTest) {
   //check type
   EXPECT_TRUE(msg->isType(mt));
 
-  manager->sessionNotify(new EtchString(EtchSession::UP));
+  manager->sessionNotify(new EtchString(EtchSession::UP()));
 
   EtchMailbox *mail = NULL;
   EXPECT_TRUE(remote->begincall(msg, mail) == ETCH_OK);
@@ -272,18 +272,18 @@ TEST(EtchRemoteBaseTest, endCallTest) {
 
   factory->types.get("add_result", replyType);
   factory->types.get("add", type);
-  type->putValidator(EtchDefaultValueFactory::_mf__messageId, val);
-  replyType->putValidator(EtchDefaultValueFactory::_mf__inReplyTo, val);
-  replyType->putValidator(EtchDefaultValueFactory::_mf__messageId, val);
-  replyType->putValidator(EtchDefaultValueFactory::_mf_result, val);
-  replyType->setResponseField(EtchDefaultValueFactory::_mf_result);
+  type->putValidator(EtchDefaultValueFactory::_mf__messageId(), val);
+  replyType->putValidator(EtchDefaultValueFactory::_mf__inReplyTo(), val);
+  replyType->putValidator(EtchDefaultValueFactory::_mf__messageId(), val);
+  replyType->putValidator(EtchDefaultValueFactory::_mf_result(), val);
+  replyType->setResponseField(EtchDefaultValueFactory::_mf_result());
 
   //create new message
   capu::SmartPointer<EtchMessage> replyMessage;
   capu::SmartPointer<EtchMessage> message;
   remote->newMessage(type, &message);
 
-  manager->sessionNotify(new EtchString(EtchSession::UP));
+  manager->sessionNotify(new EtchString(EtchSession::UP()));
 
   EtchMailbox *mail = NULL;
   EXPECT_TRUE(remote->begincall(message, mail) == ETCH_OK);
@@ -306,7 +306,7 @@ TEST(EtchRemoteBaseTest, endCallTest) {
   EXPECT_TRUE(remote->endcall(mail, replyType, result) == ETCH_OK);
   EXPECT_TRUE(mail != NULL);
   EXPECT_TRUE(result == data);
-  
+
   factory->types.clear();
   delete mail;
   delete remote;

@@ -20,13 +20,24 @@
 #include "support/EtchQueuedPool.h"
 #include "support/EtchTransportHelper.h"
 
-EtchString EtchTransportHelper::QUEUED_POOL("QUEUED_POOL");
+const EtchString& EtchTransportHelper::QUEUED_POOL() {
+  static const EtchString pool("QUEUED_POOL");
+  return pool;
+}
 
-EtchString EtchTransportHelper::FREE_POOL("FREE_POOL");
+const EtchString& EtchTransportHelper::FREE_POOL() {
+  static const EtchString pool("FREE_POOL");
+  return pool;
+}
 
-EtchString EtchTransportHelper::BINARY("binary");
-
-EtchString EtchTransportHelper::XML("xml");
+const EtchString& EtchTransportHelper::BINARY() {
+  static const EtchString type("binary");
+  return type;
+}
+const EtchString& EtchTransportHelper::XML() {
+  static const EtchString type("xml");
+  return type;
+}
 
 status_t EtchTransportHelper::initResources(EtchResources* resources, EtchResources*& result) {
   if(resources == NULL) {
@@ -38,16 +49,16 @@ status_t EtchTransportHelper::initResources(EtchResources* resources, EtchResour
   EtchObject* obj = NULL;
   EtchObject* objOld = NULL;
   // Queued Pool
-  if(!resources->containsKey(EtchTransportHelper::QUEUED_POOL)) {
+  if(!resources->containsKey(EtchTransportHelper::QUEUED_POOL())) {
     obj = new EtchQueuedPool();
     // TODO: change interface to give NULL as return value
-    resources->put(EtchTransportHelper::QUEUED_POOL, obj, objOld );
+    resources->put(EtchTransportHelper::QUEUED_POOL(), obj, objOld );
   }
   // Free Pool
-  if(!resources->containsKey(EtchTransportHelper::FREE_POOL)) {
+  if(!resources->containsKey(EtchTransportHelper::FREE_POOL())) {
     obj = new EtchFreePool();
     // TODO: change interface to give NULL as return value
-    resources->put( EtchTransportHelper::FREE_POOL, obj, objOld);
+    resources->put( EtchTransportHelper::FREE_POOL(), obj, objOld);
   }
   result = resources;
   return ETCH_OK;
@@ -61,7 +72,7 @@ status_t EtchTransportHelper::destroyResources(EtchResources* resources) {
     EtchObject* returnValue = NULL;
     
     //get queued pool and delete it
-    result = resources->get(EtchTransportHelper::QUEUED_POOL, returnValue);
+    result = resources->get(EtchTransportHelper::QUEUED_POOL(), returnValue);
     if(result == ETCH_OK && returnValue != NULL) {
       //TODO: Add queue handling before deleting such as join()
       delete returnValue;
@@ -71,7 +82,7 @@ status_t EtchTransportHelper::destroyResources(EtchResources* resources) {
 
     //get free pool and delete it
     returnValue = NULL;
-    result = resources->get(EtchTransportHelper::FREE_POOL, returnValue);
+    result = resources->get(EtchTransportHelper::FREE_POOL(), returnValue);
     if(result == ETCH_OK && returnValue != NULL) {
       //TODO: Add queue handling before deleting  such as join()
       delete returnValue;

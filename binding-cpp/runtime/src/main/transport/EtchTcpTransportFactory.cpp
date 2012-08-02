@@ -17,7 +17,10 @@
  */
 #include "transport/EtchTcpTransportFactory.h"
 
-const EtchString EtchTcpTransportFactory::SOCKET("TcpTransportFactory.socket");
+const EtchString& EtchTcpTransportFactory::SOCKET() {
+  static const EtchString name("TcpTransportFactory.socket");
+  return name;
+}
 
 EtchTcpTransportFactory::EtchTcpTransportFactory(EtchRuntime* runtime)
 : mRuntime(runtime)
@@ -38,7 +41,7 @@ status_t EtchTcpTransportFactory::newTransport(EtchString uri, EtchResources* re
 
   status_t status;
   EtchObject* socket = NULL;
-  status = resources->get((EtchString &) SOCKET, socket);
+  status = resources->get(SOCKET(), socket);
   if(status != ETCH_OK) {
     return ETCH_ENOT_EXIST;;
   }
@@ -60,9 +63,8 @@ status_t EtchTcpTransportFactory::newTransport(EtchString uri, EtchResources* re
   //TODO: ADD FILTERS HERE
 
   EtchObject* obj = NULL;
-  // TODO check why the string must be copied
-  EtchString tmp(EtchTransport<EtchSocket>::VALUE_FACTORY);
-  if (resources->get(tmp, obj) != ETCH_OK) {
+
+  if (resources->get(EtchTransport<EtchSocket>::VALUE_FACTORY(), obj) != ETCH_OK) {
     c->setSession(NULL);
     p->setSession(NULL);
     m->setSession(NULL);
@@ -98,7 +100,9 @@ status_t EtchTcpTransportFactory::newListener(EtchString uri, EtchResources* res
 
 EtchTcpTransportFactory::MySessionListener::MySessionListener(EtchRuntime* runtime, EtchTransport<EtchSessionListener<EtchSocket> > *transport, EtchString uri, EtchResources* resources, capu::bool_t secure)
 : mRuntime(runtime), mTransport(transport), mUri(uri), mResources(resources), mIsSecure(secure) {
-  transport->setSession(this);
+  if (mTransport != NULL) {
+    mTransport->setSession(this);
+  }
 }
 
 EtchServerFactory* EtchTcpTransportFactory::MySessionListener::getSession() {
@@ -148,7 +152,7 @@ status_t EtchTcpTransportFactory::MySessionListener::sessionAccepted(EtchSocket*
 
   // put socket to the resources
   EtchObject *obj = NULL;
-  if (res->put((EtchString &) SOCKET, connection, obj) != ETCH_OK) {
+  if (res->put(SOCKET(), connection, obj) != ETCH_OK) {
     delete res;
     return ETCH_ERROR;
   }
@@ -159,7 +163,7 @@ status_t EtchTcpTransportFactory::MySessionListener::sessionAccepted(EtchSocket*
     delete res;
     return ETCH_ERROR;
   }
-  if(res->put(EtchTransport<EtchSocket>::VALUE_FACTORY, vf, obj) != ETCH_OK)
+  if(res->put(EtchTransport<EtchSocket>::VALUE_FACTORY(), vf, obj) != ETCH_OK)
   {
     delete vf;
     delete res;
@@ -169,7 +173,7 @@ status_t EtchTcpTransportFactory::MySessionListener::sessionAccepted(EtchSocket*
   EtchURL u = EtchURL(mUri);
 
   EtchObject* socket = NULL;
-  if (res->get(SOCKET, socket) != ETCH_OK) {
+  if (res->get(SOCKET(), socket) != ETCH_OK) {
     return ETCH_ENOT_EXIST;
   }
   // TODO check if we should register a new stack to the runtime
@@ -188,7 +192,7 @@ status_t EtchTcpTransportFactory::MySessionListener::sessionAccepted(EtchSocket*
 
   //TODO: ADD FILTERS HERE
 
-  if (res->get(EtchTransport<EtchSocket>::VALUE_FACTORY, obj) != ETCH_OK) {
+  if (res->get(EtchTransport<EtchSocket>::VALUE_FACTORY(), obj) != ETCH_OK) {
     c->setSession(NULL);
     p->setSession(NULL);
     m->setSession(NULL);

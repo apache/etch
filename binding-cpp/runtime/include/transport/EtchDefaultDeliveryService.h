@@ -41,7 +41,7 @@ public:
   /**
    * Parameter to Globally Disable Timeout.
    */
-  static const EtchString DISABLE_TIMEOUT;
+  static const EtchString& DISABLE_TIMEOUT();
 
   /**
    * Constructor

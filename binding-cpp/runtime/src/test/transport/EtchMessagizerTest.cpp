@@ -90,7 +90,7 @@ TEST(EtchMessagizerTest, constructorTest) {
   EtchURL u("tcp://127.0.0.1:4001");
   EtchResources r;
   EtchObject *out;
-  r.put((EtchString &) EtchTransport<EtchSessionMessage>::VALUE_FACTORY, factory, out);
+  r.put(EtchTransport<EtchSessionMessage>::VALUE_FACTORY(), factory, out);
   EtchTransportData* conn = new EtchTcpConnection(NULL, NULL, &u);
   EtchTransportPacket* pac = new EtchPacketizer(conn, &u);
   EtchSessionPacket* mes = new EtchMessagizer(pac, &u, &r);
@@ -112,7 +112,7 @@ TEST(EtchMessagizerTest, TransportControlTest) {
   EtchURL u("tcp://127.0.0.1:4001");
   EtchResources r;
   EtchObject *out;
-  r.put((EtchString &) EtchTransport<EtchSessionMessage>::VALUE_FACTORY, factory, out);
+  r.put(EtchTransport<EtchSessionMessage>::VALUE_FACTORY(), factory, out);
   EtchTransportData* conn = new EtchTcpConnection(NULL, NULL, &u);
   EtchPacketizer* pac = new EtchPacketizer(conn, &u);
   EtchMessagizer* mess = new EtchMessagizer(pac, &u, &r);
@@ -121,13 +121,13 @@ TEST(EtchMessagizerTest, TransportControlTest) {
   EtchTcpListener* transport = new EtchTcpListener(&u);
   EtchSessionListener<EtchSocket>* mSessionListener = new MockListener11(transport);
 
-  transport->transportControl(new EtchString(EtchTcpListener::START_AND_WAIT_UP), new EtchInt32(1000));
+  transport->transportControl(new EtchString(EtchTcpListener::START_AND_WAIT_UP()), new EtchInt32(1000));
   
-  mess->transportControl(new EtchString(EtchPacketizer::START_AND_WAIT_UP), new EtchInt32(1000));
+  mess->transportControl(new EtchString(EtchPacketizer::START_AND_WAIT_UP()), new EtchInt32(1000));
   //test transport commands
-  mess->transportControl(new EtchString(EtchPacketizer::STOP_AND_WAIT_DOWN), new EtchInt32(1000));
+  mess->transportControl(new EtchString(EtchPacketizer::STOP_AND_WAIT_DOWN()), new EtchInt32(1000));
 
-  transport->transportControl(new EtchString(EtchTcpListener::STOP_AND_WAIT_DOWN), new EtchInt32(1000));
+  transport->transportControl(new EtchString(EtchTcpListener::STOP_AND_WAIT_DOWN()), new EtchInt32(1000));
 
   delete mSessionListener;
   delete mess;
@@ -148,7 +148,7 @@ TEST(EtchMessagizerTest, TransportMessageTest) {
   EtchResources r;
   EtchObject *out;
   //add to the resource
-  r.put((EtchString &) EtchTransport<EtchSessionMessage>::VALUE_FACTORY, factory, out);
+  r.put(EtchTransport<EtchSessionMessage>::VALUE_FACTORY(), factory, out);
   EtchTransportData* conn = new EtchTcpConnection(NULL, NULL, &u);
   EtchPacketizer* pac = new EtchPacketizer(conn, &u);
   EtchMessagizer* mess = new EtchMessagizer(pac, &u, &r);
@@ -200,7 +200,7 @@ TEST(EtchMessagizerTest, SessionDataTest) {
   EtchResources r;
   EtchObject *out;
   //add the value factory to the resources
-  r.put((EtchString &) EtchTransport<EtchSessionMessage>::VALUE_FACTORY, factory, out);
+  r.put(EtchTransport<EtchSessionMessage>::VALUE_FACTORY(), factory, out);
   //create stack
   EtchTransportData* conn = new EtchTcpConnection(NULL, NULL, &u);
   EtchPacketizer* pac = new EtchPacketizer(conn, &u);

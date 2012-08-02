@@ -112,12 +112,12 @@ public:
    * is "TcpListener.backlog". The backlog must be >= 0 and somewhat
    * reasonable. The value 0 specifies the system default, the same as if you
    * leave the term off altogether.
-   * 
+   *
    * Example: tcp://host:port?TcpListener.backlog=250
-   * 
+   *
    * @see #TcpListener(String, Resources)
    */
-  const static EtchString BACKLOG;
+  const static EtchString& BACKLOG();
 };
 
 #endif /* ETCHTCPLISTENER_H */

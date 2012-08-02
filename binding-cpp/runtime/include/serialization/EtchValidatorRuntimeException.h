@@ -55,7 +55,7 @@ protected:
   EtchValidatorRuntimeException();
 
 private:
-  static capu::SmartPointer<EtchValidator> mValidator;
+  static capu::SmartPointer<EtchValidator>& Validators();
 };
 
 #endif

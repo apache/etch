@@ -18,13 +18,25 @@
 
 #include "transport/EtchPacketizer.h"
 
-const capu::uint32_t EtchPacketizer::HEADER_SIZE = 8;
+const capu::uint32_t& EtchPacketizer::HEADER_SIZE() {
+  static const capu::uint32_t headerSize(8);
+  return headerSize;
+}
 
-const capu::int32_t EtchPacketizer::SIG = 0xdeadbeef;
+const capu::int32_t& EtchPacketizer::SIG() {
+  static const capu::int32_t sig(0xdeadbeef);
+  return sig;
+}
 
-const capu::int32_t EtchPacketizer::DEFAULT_MAX_PKT_SIZE = 16384 - EtchPacketizer::HEADER_SIZE;
+const capu::int32_t& EtchPacketizer::DEFAULT_MAX_PKT_SIZE(){
+  static const capu::int32_t pktSize(16384 - EtchPacketizer::HEADER_SIZE());
+  return pktSize;
+}
 
-const EtchString EtchPacketizer::MAX_PKT_SIZE_TERM("Packetizer.maxPktSize");
+const EtchString& EtchPacketizer::MAX_PKT_SIZE_TERM() {
+  static const EtchString pktSize("Packetizer.maxPktSize");
+  return pktSize;
+}
 
 EtchPacketizer::EtchPacketizer(EtchTransportData* transport, EtchString& uri)
 : mTransport(transport), mBodyLen(0), mWantHeader(true) {
@@ -34,14 +46,14 @@ EtchPacketizer::EtchPacketizer(EtchTransportData* transport, EtchString& uri)
 
   EtchURL url(uri.c_str());
   EtchString value;
-  url.getTerms().get((EtchString&) EtchPacketizer::MAX_PKT_SIZE_TERM, &value);
+  url.getTerms().get(EtchPacketizer::MAX_PKT_SIZE_TERM(), &value);
   if (value.length() == 0)
-    mMaxPktSize = EtchPacketizer::DEFAULT_MAX_PKT_SIZE;
+    mMaxPktSize = EtchPacketizer::DEFAULT_MAX_PKT_SIZE();
   else {
     mMaxPktSize = atoi(value.c_str());
 
     if (mMaxPktSize <= 0)
-      mMaxPktSize = DEFAULT_MAX_PKT_SIZE;
+      mMaxPktSize = DEFAULT_MAX_PKT_SIZE();
   }
   mSavedBuf = new EtchFlexBuffer();
 }
@@ -52,14 +64,14 @@ EtchPacketizer::EtchPacketizer(EtchTransportData* transport, EtchURL* uri)
   if (mTransport != NULL)
     transport->setSession(this);
 
-  uri->getTerms().get((EtchString&) EtchPacketizer::MAX_PKT_SIZE_TERM, &value);
+  uri->getTerms().get(EtchPacketizer::MAX_PKT_SIZE_TERM(), &value);
   if (value.length() == 0)
-    mMaxPktSize = EtchPacketizer::DEFAULT_MAX_PKT_SIZE;
+    mMaxPktSize = EtchPacketizer::DEFAULT_MAX_PKT_SIZE();
   else {
     mMaxPktSize = atoi(value.c_str());
 
     if (mMaxPktSize <= 0)
-      mMaxPktSize = DEFAULT_MAX_PKT_SIZE;
+      mMaxPktSize = DEFAULT_MAX_PKT_SIZE();
   }
   mSavedBuf = new EtchFlexBuffer();
 }
@@ -70,7 +82,7 @@ EtchPacketizer::~EtchPacketizer() {
 }
 
 capu::int32_t EtchPacketizer::getHeaderSize() {
-  return EtchPacketizer::HEADER_SIZE;
+  return EtchPacketizer::HEADER_SIZE();
 }
 
 status_t EtchPacketizer::transportControl(capu::SmartPointer<EtchObject> control, capu::SmartPointer<EtchObject> value) {
@@ -108,14 +120,14 @@ status_t EtchPacketizer::sessionQuery(capu::SmartPointer<EtchObject> query, capu
 status_t EtchPacketizer::transportPacket(capu::SmartPointer<EtchWho> recipient, capu::SmartPointer<EtchFlexBuffer> buf) {
   // assert index is at the start of the header.
   capu::uint32_t dataSize = buf->getAvailableBytes();
-  if (dataSize < EtchPacketizer::HEADER_SIZE)
+  if (dataSize < EtchPacketizer::HEADER_SIZE())
     return ETCH_ERANGE;
-  capu::uint32_t pktSize = dataSize - EtchPacketizer::HEADER_SIZE;
+  capu::uint32_t pktSize = dataSize - EtchPacketizer::HEADER_SIZE();
   if (pktSize > mMaxPktSize)
     return ETCH_ERANGE;
 
   capu::uint32_t index = buf->getIndex();
-  buf->putInt(EtchPacketizer::SIG);
+  buf->putInt(EtchPacketizer::SIG());
   buf->putInt(pktSize);
   buf->setIndex(index);
   return mTransport->transportData(recipient, buf);
@@ -133,7 +145,7 @@ status_t EtchPacketizer::sessionData(capu::SmartPointer<EtchWho> sender, capu::S
     if (mWantHeader) {
       // do we have enough to make a header?
 
-      if (mSavedBuf->getLength() + buf->getAvailableBytes() >= HEADER_SIZE) {
+      if (mSavedBuf->getLength() + buf->getAvailableBytes() >= HEADER_SIZE()) {
         capu::uint32_t pktSize;
 
         if (mSavedBuf->getLength() == 0) {
@@ -146,7 +158,7 @@ status_t EtchPacketizer::sessionData(capu::SmartPointer<EtchWho> sender, capu::S
         {
           // move just enough data from buf to savedBuf to have a header.
 
-          capu::uint32_t needFromBuf = HEADER_SIZE - mSavedBuf->getLength();
+          capu::uint32_t needFromBuf = HEADER_SIZE() - mSavedBuf->getLength();
           mSavedBuf->put(*buf, needFromBuf);
           mSavedBuf->setIndex(0);
 
@@ -217,7 +229,7 @@ status_t EtchPacketizer::processHeader(EtchFlexBuffer* buf, capu::bool_t reset, 
   capu::int32_t sig = 0;
   buf->getInteger(sig);
 
-  if (sig != SIG) {
+  if (sig != SIG()) {
     return ETCH_ERROR;
   }
 

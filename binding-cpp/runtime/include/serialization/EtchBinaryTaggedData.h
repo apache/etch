@@ -39,12 +39,16 @@ public:
   /**
    * This is the current version of the protocol.
    */
-  const static capu::int8_t VERSION = 3;
+  const static capu::int8_t& VERSION()
+  {
+    static const capu::int8_t version(3);
+    return version;
+  }
 
   /**
    * sentinel that marks the end of array or struct element
    */
-  static capu::SmartPointer<EtchObject> NONE;
+  static capu::SmartPointer<EtchObject>& NONE();
 
   /**
    * Constructs the BinaryTaggedData.
@@ -79,7 +83,7 @@ public:
 
   /**
    * @param c           typeid
-   * @param result      out buffet 
+   * @param result      out buffet
    */
   status_t getCustomStructType(const EtchObjectType* c, EtchType*& result);
 

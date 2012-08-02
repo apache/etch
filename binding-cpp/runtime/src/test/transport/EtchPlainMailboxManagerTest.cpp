@@ -118,7 +118,7 @@ TEST(EtchPlainMailboxManager, transportMessageTest) {
   EtchValidatorLong::Get(0, val);
 
   factory->types.get("add", type);
-  type->putValidator(EtchDefaultValueFactory::_mf__messageId, val);
+  type->putValidator(EtchDefaultValueFactory::_mf__messageId(), val);
   capu::SmartPointer<EtchMessage> message = new EtchMessage(type, factory->factory);
 
   capu::int64_t id;
@@ -157,8 +157,8 @@ TEST(EtchPlainMailboxManager, transportResultMessageTest) {
   EtchValidatorLong::Get(0, val);
 
   factory->types.get("add_result", type);
-  type->putValidator(EtchDefaultValueFactory::_mf__messageId, val);
-  type->putValidator(EtchDefaultValueFactory::_mf__inReplyTo, val);
+  type->putValidator(EtchDefaultValueFactory::_mf__messageId(), val);
+  type->putValidator(EtchDefaultValueFactory::_mf__inReplyTo(), val);
   capu::SmartPointer<EtchMessage> message = new EtchMessage(type, factory->factory);
 
   capu::int64_t id;
@@ -199,7 +199,7 @@ TEST(EtchPlainMailboxManager, transportCallTest) {
   EtchValidatorLong::Get(0, val);
 
   factory->types.get("add", type);
-  type->putValidator(EtchDefaultValueFactory::_mf__messageId, val);
+  type->putValidator(EtchDefaultValueFactory::_mf__messageId(), val);
   capu::SmartPointer<EtchMessage> message = new EtchMessage(type, factory->factory);
 
   capu::int64_t id;
@@ -215,7 +215,7 @@ TEST(EtchPlainMailboxManager, transportCallTest) {
 
   manager->setSession(&session);
   //in order to notify upper layers that the connection is open
-  manager->sessionNotify(new EtchString(EtchSession::UP));
+  manager->sessionNotify(new EtchString(EtchSession::UP()));
 
   EtchMailbox *mail;
   EXPECT_TRUE(ETCH_OK == manager->transportCall(NULL, message, mail));
@@ -240,7 +240,7 @@ TEST(EtchPlainMailboxManager, replicatedTransportCallTest) {
   EtchValidatorLong::Get(0, val);
 
   factory->types.get("add", type);
-  type->putValidator(EtchDefaultValueFactory::_mf__messageId, val);
+  type->putValidator(EtchDefaultValueFactory::_mf__messageId(), val);
   capu::SmartPointer<EtchMessage> message = new EtchMessage(type, factory->factory);
 
   capu::int64_t id;
@@ -259,7 +259,7 @@ TEST(EtchPlainMailboxManager, replicatedTransportCallTest) {
 
   manager->setSession(&session);
   //in order to notify upper layers that the connection is open
-  manager->sessionNotify(new EtchString(EtchSession::UP));
+  manager->sessionNotify(new EtchString(EtchSession::UP()));
 
   EtchMailbox *mail;
   EXPECT_TRUE(ETCH_ERROR == manager->transportCall(NULL, message, mail));
@@ -287,9 +287,9 @@ TEST(EtchPlainMailboxManager, sessionMessageTest) {
 
   factory->types.get("add_result", replyType);
   factory->types.get("add", type);
-  type->putValidator(EtchDefaultValueFactory::_mf__messageId, val);
-  replyType->putValidator(EtchDefaultValueFactory::_mf__inReplyTo, val);
-  replyType->putValidator(EtchDefaultValueFactory::_mf__messageId, val);
+  type->putValidator(EtchDefaultValueFactory::_mf__messageId(), val);
+  replyType->putValidator(EtchDefaultValueFactory::_mf__inReplyTo(), val);
+  replyType->putValidator(EtchDefaultValueFactory::_mf__messageId(), val);
   capu::SmartPointer<EtchMessage> message = new EtchMessage(type, factory->factory);
 
   capu::int64_t id;
@@ -305,7 +305,7 @@ TEST(EtchPlainMailboxManager, sessionMessageTest) {
 
   manager->setSession(&session);
   //in order to notify upper layers that the connection is open
-  manager->sessionNotify(new EtchString(EtchSession::UP));
+  manager->sessionNotify(new EtchString(EtchSession::UP()));
 
   //perform the call
   EtchMailbox *mail;

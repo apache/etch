@@ -19,24 +19,17 @@
  */
 
 #include "transport/EtchDefaultDeliveryService.h"
+const EtchString& EtchDefaultDeliveryService::DISABLE_TIMEOUT() {
+  static const EtchString name("DefaultDeliveryService.disableTimeout");
+  return name;
+}
 
-const EtchString EtchDefaultDeliveryService::DISABLE_TIMEOUT("DefaultDeliveryService.disableTimeout");
-
-/**
- * @param transport
- * @param uri
- * @param resources
- */
 EtchDefaultDeliveryService::EtchDefaultDeliveryService(EtchMailboxManager* transport, const EtchString& uri)
 : mTransport(transport), mStatus(EtchString("session status"), EtchString("")) {
   EtchURL url(uri);
   init(&url);
 }
 
-/**
- * @param transport
- * @param uri
- */
 EtchDefaultDeliveryService::EtchDefaultDeliveryService(EtchMailboxManager* transport, EtchURL* uri)
 : mTransport(transport), mStatus(EtchString("session status"), EtchString("")) {
   init(uri);
@@ -52,7 +45,7 @@ void EtchDefaultDeliveryService::init(EtchURL* uri) {
   mDisableTimeout = false;
   EtchString str;
   if (uri != NULL) {
-    if (uri->getTerms().get(DISABLE_TIMEOUT, &str) == ETCH_OK) {
+    if (uri->getTerms().get(DISABLE_TIMEOUT(), &str) == ETCH_OK) {
       EtchString tmp("0");
       //check if disable timeout is not 0
       if (!str.equals(&tmp)) {
@@ -68,9 +61,6 @@ EtchDefaultDeliveryService::~EtchDefaultDeliveryService() {
   }
 }
 
-/**
- * @return the transport.
- */
 const EtchMailboxManager* EtchDefaultDeliveryService::getTransport() {
   return mTransport;
 }
@@ -93,10 +83,10 @@ status_t EtchDefaultDeliveryService::sessionControl(capu::SmartPointer<EtchObjec
 
 status_t EtchDefaultDeliveryService::sessionNotify(capu::SmartPointer<EtchObject> event) {
   EtchString str;
-  if (event->equals(&UP)) {
-    mStatus.set((EtchString&)UP, str);
-  } else if (event->equals(&DOWN)) {
-    mStatus.set((EtchString&)DOWN, str);
+  if (event->equals(&UP())) {
+    mStatus.set(UP(), str);
+  } else if (event->equals(&DOWN())) {
+    mStatus.set(DOWN(), str);
   }
   return mSession->sessionNotify(event);
 }
@@ -124,15 +114,15 @@ status_t EtchDefaultDeliveryService::transportQuery(capu::SmartPointer<EtchObjec
 
 status_t EtchDefaultDeliveryService::transportControl(capu::SmartPointer<EtchObject> control, capu::SmartPointer<EtchObject> value) {
   status_t result = ETCH_ERROR;;
-  if (control->equals(&START_AND_WAIT_UP)) {
-    result = mTransport->transportControl(new EtchString(START), NULL);
+  if (control->equals(&START_AND_WAIT_UP())) {
+    result = mTransport->transportControl(new EtchString(START()), NULL);
     if (result != ETCH_OK) {
       return result;
     }
     //TODO: check if value is a valid integer
     result = waitUp(((EtchInt32*) value.get())->get());
-  } else if (control->equals(&STOP_AND_WAIT_DOWN)) {
-    result = mTransport->transportControl(new EtchString(STOP), NULL);
+  } else if (control->equals(&STOP_AND_WAIT_DOWN())) {
+    result = mTransport->transportControl(new EtchString(STOP()), NULL);
     if (result != ETCH_OK) {
       return result;
     }
@@ -196,9 +186,9 @@ status_t EtchDefaultDeliveryService::endcall(EtchMailbox* mb, EtchType* response
 }
 
 status_t EtchDefaultDeliveryService::waitUp(capu::int32_t maxDelay) {
-  return mStatus.waitUntilEq((EtchString &) UP, maxDelay);
+  return mStatus.waitUntilEq(UP(), maxDelay);
 }
 
 status_t EtchDefaultDeliveryService::waitDown(capu::int32_t maxDelay) {
-  return mStatus.waitUntilEq((EtchString &) DOWN, maxDelay);
+  return mStatus.waitUntilEq(DOWN(), maxDelay);
 }

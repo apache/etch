@@ -19,7 +19,11 @@
 #include "capu/os/NumericLimits.h"
 #include "serialization/EtchBinaryTaggedData.h"
 
-capu::SmartPointer<EtchObject> EtchBinaryTaggedData::NONE = new EtchString("NONE");
+capu::SmartPointer<EtchObject>& EtchBinaryTaggedData::NONE()
+{
+  static capu::SmartPointer<EtchObject> ret = new EtchString("NONE");
+  return ret;
+}
 
 EtchBinaryTaggedData::EtchBinaryTaggedData(EtchValueFactory* vf)
 : EtchTaggedData(vf) {
@@ -34,8 +38,8 @@ capu::int8_t EtchBinaryTaggedData::checkValue(capu::SmartPointer<EtchObject> val
   if (value.get() == NULL) {
     return EtchTypeCode::Null;
   }
-  
-  if (value.get() == NONE.get()) {
+
+  if (value.get() == NONE().get()) {
     return EtchTypeCode::NONE;
   }
 
@@ -61,34 +65,34 @@ capu::int8_t EtchBinaryTaggedData::checkValue(capu::SmartPointer<EtchObject> val
     capu::SmartPointer<EtchInt32> _int = capu::smartpointer_cast<EtchInt32> (value);
     return checkInteger(_int->get());
   }
-  
+
   if (value->getObjectType()->equals(EtchLong::TYPE())) {
     capu::SmartPointer<EtchLong> _long = capu::smartpointer_cast<EtchLong> (value);
     return checkLong(_long->get());
   }
-  
+
   if (value->getObjectType()->equals(EtchFloat::TYPE())) {
     return EtchTypeCode::FLOAT;
   }
-  
+
   if (value->getObjectType()->equals(EtchDouble::TYPE())) {
     return EtchTypeCode::DOUBLE;
   }
-  
+
   if (value->getObjectType()->equals(EtchString::TYPE())) {
     capu::SmartPointer<EtchString> _string = capu::smartpointer_cast<EtchString> (value);
     if (_string->length() == 0)
       return EtchTypeCode::EMPTY_STRING;
     return EtchTypeCode::STRING;
-  } 
-  
+  }
+
   if (value->getObjectType()->isArray()) {
     capu::SmartPointer<EtchNativeArrayBase> array = capu::smartpointer_cast<EtchNativeArrayBase> (value);
-    if (array->getObjectType()->getObjectComponentType()->equals(&EtchObjectType::NATIVE_INT8) && array->getDim() == 1) {
+    if (array->getObjectType()->getObjectComponentType()->equals(&EtchObjectType::NATIVE_INT8()) && array->getDim() == 1) {
       return EtchTypeCode::BYTES;
     }
     return EtchTypeCode::ARRAY;
-  } 
+  }
 
   return EtchTypeCode::CUSTOM;
 }
@@ -123,31 +127,31 @@ capu::int8_t EtchBinaryTaggedData::checkLong(capu::int64_t v) {
 }
 
 capu::int8_t EtchBinaryTaggedData::getNativeTypeCode(const EtchObjectType *c) {
-  if ((c->equals(&EtchObjectType::NATIVE_BOOL))|| (c->equals(EtchBool::TYPE())))
+  if ((c->equals(&EtchObjectType::NATIVE_BOOL()))|| (c->equals(EtchBool::TYPE())))
     return EtchTypeCode::BOOLEAN_TRUE;
 
-  if ((c->equals(&EtchObjectType::NATIVE_INT8)) || (c->equals(EtchByte::TYPE())))
+  if ((c->equals(&EtchObjectType::NATIVE_INT8())) || (c->equals(EtchByte::TYPE())))
     return EtchTypeCode::BYTE;
 
-  if ((c->equals(&EtchObjectType::NATIVE_INT16)) || (c->equals(EtchShort::TYPE())))
+  if ((c->equals(&EtchObjectType::NATIVE_INT16())) || (c->equals(EtchShort::TYPE())))
     return EtchTypeCode::SHORT;
 
-  if ((c->equals(&EtchObjectType::NATIVE_INT32)) || (c->equals(EtchInt32::TYPE())))
+  if ((c->equals(&EtchObjectType::NATIVE_INT32())) || (c->equals(EtchInt32::TYPE())))
     return EtchTypeCode::INT;
 
-  if ((c->equals(&EtchObjectType::NATIVE_INT64)) || (c->equals(EtchLong::TYPE())))
+  if ((c->equals(&EtchObjectType::NATIVE_INT64())) || (c->equals(EtchLong::TYPE())))
     return EtchTypeCode::LONG;
 
-  if ((c->equals(&EtchObjectType::NATIVE_FLOAT)) || (c->equals(EtchFloat::TYPE())))
+  if ((c->equals(&EtchObjectType::NATIVE_FLOAT())) || (c->equals(EtchFloat::TYPE())))
     return EtchTypeCode::FLOAT;
 
-  if ((c->equals(&EtchObjectType::NATIVE_DOUBLE)) || (c->equals(EtchDouble::TYPE())))
+  if ((c->equals(&EtchObjectType::NATIVE_DOUBLE())) || (c->equals(EtchDouble::TYPE())))
     return EtchTypeCode::DOUBLE;
 
   if (c->equals(EtchString::TYPE()))
     return EtchTypeCode::STRING;
 
-  if (c->equals(EtchObject::TYPE())) 
+  if (c->equals(EtchObject::TYPE()))
     return EtchTypeCode::ANY;
 
   return EtchTypeCode::CUSTOM;

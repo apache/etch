@@ -18,7 +18,10 @@
 
 #include "serialization/EtchAuthenticationExceptionSerializer.h"
 
-const EtchString EtchAuthenticationExceptionSerializer::FIELD_NAME("msg");
+const EtchString& EtchAuthenticationExceptionSerializer::FIELD_NAME() {
+  static const EtchString name("msg");
+  return name;
+}
 
 EtchAuthenticationExceptionSerializer::EtchAuthenticationExceptionSerializer(EtchType* type, EtchField* field)
 : mField(*field), mType(type) {
@@ -61,7 +64,7 @@ status_t EtchAuthenticationExceptionSerializer::exportValue(EtchValueFactory* vf
 status_t EtchAuthenticationExceptionSerializer::Init(EtchType* type, EtchClass2TypeMap* class2type) {
   status_t result;
   EtchField field_ptr;
-  result = type->getField(FIELD_NAME, &field_ptr);
+  result = type->getField(FIELD_NAME(), &field_ptr);
   if (result != ETCH_OK)
     return result;
   class2type->put(EtchAuthenticationException::TYPE(), type);

@@ -83,12 +83,12 @@ public:
   /**
    * Session event reporting the transport is up.
    */
-  const static EtchString UP;
+  const static EtchString& UP();
 
   /**
    * Session event reporting the transport is down.
    */
-  const static EtchString DOWN;
+  const static EtchString& DOWN();
 
 };
 

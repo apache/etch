@@ -22,7 +22,10 @@
 #include "transport/EtchTcpTransportFactory.h"
 #include "support/EtchRuntime.h"
 
-const EtchString EtchTransportFactory::FILTER("filter");
+const EtchString& EtchTransportFactory::FILTER() {
+  static const EtchString name("filter");
+  return name;
+}
 
 EtchTransportFactory::~EtchTransportFactory() {
 

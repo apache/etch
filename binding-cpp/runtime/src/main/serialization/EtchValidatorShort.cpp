@@ -18,7 +18,12 @@
 
 #include "serialization/EtchValidatorShort.h"
 
-capu::SmartPointer<EtchValidator> EtchValidatorShort::mValidator[MAX_CACHED];
+capu::SmartPointer<EtchValidator>* EtchValidatorShort::Validators()
+{
+  static capu::SmartPointer<EtchValidator> ret[MAX_CACHED];
+  return &(ret[0]);
+}
+
 
 const EtchObjectType* EtchValidatorShort::TYPE() {
   const static EtchObjectType TYPE(EOTID_VALIDATOR_SHORT, NULL);
@@ -108,10 +113,10 @@ status_t EtchValidatorShort::Get(capu::uint32_t ndim, capu::SmartPointer<EtchVal
     val = new EtchValidatorShort(ndim);
     return ETCH_OK;
   }
-  if (mValidator[ndim].get() == NULL) {
-    mValidator[ndim] = new EtchValidatorShort(ndim);
+  if (Validators()[ndim].get() == NULL) {
+    Validators()[ndim] = new EtchValidatorShort(ndim);
   }
-  val = mValidator[ndim];
+  val = Validators()[ndim];
   return ETCH_OK;
 }
 

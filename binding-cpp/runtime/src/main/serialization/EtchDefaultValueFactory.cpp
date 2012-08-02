@@ -18,35 +18,80 @@
 
 #include "serialization/EtchDefaultValueFactory.h"
 
-const EtchString EtchDefaultValueFactory::ETCH_RUNTIME_EXCEPTION_TYPE_NAME("_Etch_RuntimeException");
+const EtchString& EtchDefaultValueFactory::ETCH_RUNTIME_EXCEPTION_TYPE_NAME() {
+  static const EtchString name("_Etch_RuntimeException");
+  return name;
+}
 
-const EtchString EtchDefaultValueFactory::ETCH_LIST_TYPE_NAME("_Etch_List");
+const EtchString& EtchDefaultValueFactory::ETCH_LIST_TYPE_NAME() {
+  static const EtchString name("_Etch_List");
+  return name;
+}
 
-const EtchString EtchDefaultValueFactory::ETCH_MAP_TYPE_NAME("_Etch_Map");
+const EtchString& EtchDefaultValueFactory::ETCH_MAP_TYPE_NAME() {
+  static const EtchString name("_Etch_Map");
+  return name;
+}
 
-const EtchString EtchDefaultValueFactory::ETCH_SET_TYPE_NAME("_Etch_Set");
+const EtchString& EtchDefaultValueFactory::ETCH_SET_TYPE_NAME() {
+  static const EtchString name("_Etch_Set");
+  return name;
+}
 
-const EtchString EtchDefaultValueFactory::ETCH_DATETIME_TYPE_NAME("_Etch_Datetime");
+const EtchString& EtchDefaultValueFactory::ETCH_DATETIME_TYPE_NAME() {
+  static const EtchString name("_Etch_Datetime");
+  return name;
+}
 
-const EtchString EtchDefaultValueFactory::ETCH_AUTH_EXCEPTION_TYPE_NAME("_Etch_AuthException");
+const EtchString& EtchDefaultValueFactory::ETCH_AUTH_EXCEPTION_TYPE_NAME() {
+  static const EtchString name("_Etch_AuthException");
+  return name;
+}
 
-const EtchString EtchDefaultValueFactory::ETCH_EXCEPTION_MESSAGE_NAME("_exception");
+const EtchString& EtchDefaultValueFactory::ETCH_EXCEPTION_MESSAGE_NAME() {
+  static const EtchString name("_exception");
+  return name;
+}
 
-const EtchString EtchDefaultValueFactory::MSG_FIELD_NAME("msg");
+const EtchString& EtchDefaultValueFactory::MSG_FIELD_NAME() {
+  static const EtchString name("msg");
+  return name;
+}
 
-const EtchString EtchDefaultValueFactory::MESSAGE_ID_FIELD_NAME("_messageId");
+const EtchString& EtchDefaultValueFactory::MESSAGE_ID_FIELD_NAME() {
+  static const EtchString name("_messageId");
+  return name;
+}
 
-const EtchString EtchDefaultValueFactory::IN_REPLY_TO_FIELD_NAME("_inReplyTo");
+const EtchString& EtchDefaultValueFactory::IN_REPLY_TO_FIELD_NAME() {
+  static const EtchString name("_inReplyTo");
+  return name;
+}
 
-const EtchString EtchDefaultValueFactory::RESULT_FIELD_NAME("result");
+const EtchString& EtchDefaultValueFactory::RESULT_FIELD_NAME() {
+  static const EtchString name("result");
+  return name;
+}
 
-const EtchField EtchDefaultValueFactory::_mf_msg(EtchDefaultValueFactory::MSG_FIELD_NAME);
+const EtchField& EtchDefaultValueFactory::_mf_msg() {
+  static const EtchField name(EtchDefaultValueFactory::MSG_FIELD_NAME());
+  return name;
+}
 
-const EtchField EtchDefaultValueFactory::_mf__messageId(EtchDefaultValueFactory::MESSAGE_ID_FIELD_NAME);
+const EtchField& EtchDefaultValueFactory::_mf__messageId() {
+  static const EtchField name(EtchDefaultValueFactory::MESSAGE_ID_FIELD_NAME());
+  return name;
+}
 
-const EtchField EtchDefaultValueFactory::_mf__inReplyTo(EtchDefaultValueFactory::IN_REPLY_TO_FIELD_NAME);
+const EtchField& EtchDefaultValueFactory::_mf__inReplyTo() {
+  static const EtchField name(EtchDefaultValueFactory::IN_REPLY_TO_FIELD_NAME());
+  return name;
+}
 
-const EtchField EtchDefaultValueFactory::_mf_result(EtchDefaultValueFactory::RESULT_FIELD_NAME);
+const EtchField& EtchDefaultValueFactory::_mf_result() {
+  static const EtchField name(EtchDefaultValueFactory::RESULT_FIELD_NAME());
+  return name;
+}
 
 capu::Mutex EtchDefaultValueFactory::Mutex;
 
@@ -68,13 +113,13 @@ EtchDefaultValueFactory::EtchDefaultValueFactory(EtchString uri, EtchTypeMap* ty
   mMixins = new EtchList<EtchValueFactory*> ();
   mDynamicTypes = new EtchTypeMap();
   if (types != NULL) {
-    types->get(EtchDefaultValueFactory::ETCH_AUTH_EXCEPTION_TYPE_NAME, m_mt__Etch_AuthException);
-    types->get(EtchDefaultValueFactory::ETCH_DATETIME_TYPE_NAME, m_mt__Etch_Datetime);
-    types->get(EtchDefaultValueFactory::ETCH_LIST_TYPE_NAME, m_mt__Etch_List);
-    types->get(EtchDefaultValueFactory::ETCH_MAP_TYPE_NAME, m_mt__Etch_Map);
-    types->get(EtchDefaultValueFactory::ETCH_RUNTIME_EXCEPTION_TYPE_NAME, m_mt__Etch_RuntimeException);
-    types->get(EtchDefaultValueFactory::ETCH_SET_TYPE_NAME, m_mt__Etch_Set);
-    types->get(EtchDefaultValueFactory::ETCH_EXCEPTION_MESSAGE_NAME, m_mt__exception);
+    types->get(EtchDefaultValueFactory::ETCH_AUTH_EXCEPTION_TYPE_NAME(), m_mt__Etch_AuthException);
+    types->get(EtchDefaultValueFactory::ETCH_DATETIME_TYPE_NAME(), m_mt__Etch_Datetime);
+    types->get(EtchDefaultValueFactory::ETCH_LIST_TYPE_NAME(), m_mt__Etch_List);
+    types->get(EtchDefaultValueFactory::ETCH_MAP_TYPE_NAME(), m_mt__Etch_Map);
+    types->get(EtchDefaultValueFactory::ETCH_RUNTIME_EXCEPTION_TYPE_NAME(), m_mt__Etch_RuntimeException);
+    types->get(EtchDefaultValueFactory::ETCH_SET_TYPE_NAME(), m_mt__Etch_Set);
+    types->get(EtchDefaultValueFactory::ETCH_EXCEPTION_MESSAGE_NAME(), m_mt__exception);
   }
 
 }
@@ -89,32 +134,32 @@ EtchDefaultValueFactory::~EtchDefaultValueFactory() {
 void EtchDefaultValueFactory::Init(EtchTypeMap* types, EtchClass2TypeMap* class2type) {
 
   EtchType *type;
-  types->get(ETCH_RUNTIME_EXCEPTION_TYPE_NAME, type);
+  types->get(ETCH_RUNTIME_EXCEPTION_TYPE_NAME(), type);
   EtchRuntimeExceptionSerializer::Init(type, class2type);
 
-  types->get(ETCH_LIST_TYPE_NAME, type);
+  types->get(ETCH_LIST_TYPE_NAME(), type);
   EtchListSerializer::Init(type, class2type);
 
-  types->get(ETCH_MAP_TYPE_NAME, type);
+  types->get(ETCH_MAP_TYPE_NAME(), type);
   EtchHashTableSerializer::Init(type, class2type);
 
-  types->get(ETCH_SET_TYPE_NAME, type);
+  types->get(ETCH_SET_TYPE_NAME(), type);
   EtchSetSerializer::Init(type, class2type);
 
-  types->get(ETCH_DATETIME_TYPE_NAME, type);
+  types->get(ETCH_DATETIME_TYPE_NAME(), type);
   EtchDateSerializer::Init(type, class2type);
 
-  types->get(ETCH_AUTH_EXCEPTION_TYPE_NAME, type);
+  types->get(ETCH_AUTH_EXCEPTION_TYPE_NAME(), type);
   EtchAuthenticationExceptionSerializer::Init(type, class2type);
 
   {
-    types->get(ETCH_EXCEPTION_MESSAGE_NAME, type);
+    types->get(ETCH_EXCEPTION_MESSAGE_NAME(), type);
     capu::SmartPointer<EtchValidator> val;
     EtchValidatorRuntimeException::Get(val);
-    type->putValidator(_mf_result, val);
+    type->putValidator(_mf_result(), val);
     EtchValidatorLong::Get(0, val);
-    type->putValidator(_mf__messageId, val);
-    type->putValidator(_mf__inReplyTo, val);
+    type->putValidator(_mf__messageId(), val);
+    type->putValidator(_mf__inReplyTo(), val);
   }
 }
 
@@ -277,7 +322,7 @@ status_t EtchDefaultValueFactory::getMessageId(EtchMessage* msg, capu::int64_t &
     return ETCH_EINVAL;
 
   capu::SmartPointer<EtchObject> l;
-  if (msg->get((EtchField&) _mf__messageId, &l) != ETCH_OK)
+  if (msg->get(_mf__messageId(), &l) != ETCH_OK)
     return ETCH_ERROR;
 
   result = ((EtchLong *) l.get())->get();
@@ -288,7 +333,7 @@ status_t EtchDefaultValueFactory::setMessageId(EtchMessage* msg, capu::int64_t m
   if (msg == NULL)
     return ETCH_EINVAL;
   capu::SmartPointer<EtchObject> value = new EtchLong(msgid);
-  status_t res = msg->put((EtchField&) _mf__messageId, value);
+  status_t res = msg->put(_mf__messageId(), value);
   if (res != ETCH_OK) {
     return res;
   }
@@ -296,14 +341,14 @@ status_t EtchDefaultValueFactory::setMessageId(EtchMessage* msg, capu::int64_t m
 }
 
 EtchField EtchDefaultValueFactory::get_mf__messageId() {
-  return _mf__messageId;
+  return _mf__messageId();
 }
 
 status_t EtchDefaultValueFactory::getInReplyToMessageId(EtchMessage* msg, capu::int64_t &result) {
   if (msg == NULL)
     return ETCH_EINVAL;
   capu::SmartPointer<EtchObject> l;
-  if (msg->get((EtchField&) _mf__inReplyTo, &l) != ETCH_OK)
+  if (msg->get(_mf__inReplyTo(), &l) != ETCH_OK)
     return ETCH_ERROR;
   result = ((EtchLong *) l.get())->get();
   return ETCH_OK;
@@ -313,7 +358,7 @@ status_t EtchDefaultValueFactory::setInReplyToMessageId(EtchMessage* msg, capu::
   if (msg == NULL)
     return ETCH_EINVAL;
   capu::SmartPointer<EtchObject> value = new EtchLong(msgid);
-  status_t res = msg->put((EtchField&) _mf__inReplyTo, value);
+  status_t res = msg->put(_mf__inReplyTo(), value);
   if (res != ETCH_OK) {
     return res;
   }
@@ -321,7 +366,7 @@ status_t EtchDefaultValueFactory::setInReplyToMessageId(EtchMessage* msg, capu::
 }
 
 EtchField EtchDefaultValueFactory::get_mf__inReplyTo() {
-  return _mf__inReplyTo;
+  return _mf__inReplyTo();
 }
 
 status_t EtchDefaultValueFactory::lockDynamicTypes() {

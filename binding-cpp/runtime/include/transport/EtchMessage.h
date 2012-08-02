@@ -62,7 +62,7 @@ public:
   status_t createReplyMessage(EtchType* rType, capu::SmartPointer<EtchMessage> &message);
 
   /**
-   * 
+   *
    * @param a reply message.
    * @return ETCH_OK if reply is created
    *         ETCH_ERROR otherwise
@@ -100,6 +100,8 @@ public:
 private:
   EtchValueFactory* mVf;
 };
+
+typedef capu::SmartPointer<EtchMessage> EtchMessagePtr;
 
 #endif /* ETCHMESSAGE_H */
 

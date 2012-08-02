@@ -40,7 +40,7 @@ public:
    * process messages as they move up and down the transport stack. Filter
    * names are separated by one or more of these characters: ",:;| \t\r\n".
    */
-  const static EtchString FILTER;
+  const static EtchString& FILTER();
 
   /**
    * Constructs a new Transport stack topped by a TransportMessage

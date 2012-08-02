@@ -65,12 +65,12 @@ public:
   /**
    * @return id of the field
    */
-  capu::uint32_t getId();
+  capu::uint32_t getId() const;
 
   /**
    * @return name of the field
    */
-  EtchString getName();
+  EtchString getName() const;
 
 private:
   EtchInt32 mId;

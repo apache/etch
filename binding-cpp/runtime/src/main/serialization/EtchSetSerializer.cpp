@@ -18,7 +18,10 @@
 
 #include "serialization/EtchSetSerializer.h"
 
-const EtchString EtchSetSerializer::FIELD_NAME("keys");
+const EtchString& EtchSetSerializer::FIELD_NAME() {
+  static const EtchString name("keys");
+  return name;
+}
 
 EtchSetSerializer::EtchSetSerializer(EtchType* type, EtchField* field)
 : mField(*field), mType(type) {
@@ -83,7 +86,7 @@ status_t EtchSetSerializer::importValue(EtchStructValue* value, capu::SmartPoint
 status_t EtchSetSerializer::Init(EtchType* type, EtchClass2TypeMap* class2type) {
   status_t result;
   EtchField field_ptr;
-  result = type->getField(FIELD_NAME, &field_ptr);
+  result = type->getField(FIELD_NAME(), &field_ptr);
   if (result != ETCH_OK)
     return result;
   class2type->put(EtchNativeArray<capu::SmartPointer<EtchObject> >::TYPE(), type);

@@ -51,7 +51,7 @@ capu::uint64_t EtchType::getHashCode() {
   return mId.getHashCode() ^ mName.getHashCode();
 }
 
-status_t EtchType::addField(EtchField &field) {
+status_t EtchType::addField(const EtchField &field) {
   return mFieldMap.add(field);
 }
 
@@ -117,7 +117,7 @@ EtchField EtchType::getResponseField() {
   return mResponseField;
 }
 
-status_t EtchType::putValidator(EtchField key, capu::SmartPointer<EtchValidator> validator) {
+status_t EtchType::putValidator(const EtchField key, capu::SmartPointer<EtchValidator> validator) {
   if (mLocked)
     return ETCH_EINVAL;
   if (validator.get() == NULL)

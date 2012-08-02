@@ -37,7 +37,7 @@ void EtchInt32::set(capu::int32_t value){
   mValue = value;
 }
 
-capu::int32_t EtchInt32::get(){
+capu::int32_t EtchInt32::get() const{
   return mValue;
 }
 

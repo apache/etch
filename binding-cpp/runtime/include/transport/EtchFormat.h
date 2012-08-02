@@ -23,8 +23,8 @@
 class EtchFormat
 {
 public:
-  const static EtchString BINARY;
-  const static EtchString XML;
+  const static EtchString& BINARY();
+  const static EtchString& XML();
 };
 
 #endif	/* ETCHFORMAT_H */

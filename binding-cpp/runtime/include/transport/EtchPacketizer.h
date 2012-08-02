@@ -43,13 +43,13 @@ public:
   /**
    * The default maximum packet size that will be accepted, 16376 bytes.
    */
-  const static capu::int32_t DEFAULT_MAX_PKT_SIZE;
+  const static capu::int32_t& DEFAULT_MAX_PKT_SIZE();
 
-  const static EtchString MAX_PKT_SIZE_TERM;
+  const static EtchString& MAX_PKT_SIZE_TERM();
 
-  const static capu::int32_t SIG;
+  const static capu::int32_t& SIG();
 
-  const static capu::uint32_t HEADER_SIZE;
+  const static capu::uint32_t& HEADER_SIZE();
 
   /**
    * Constructs the Packetizer with null packet handler and uri specified

@@ -134,7 +134,7 @@ TEST(EtchDeliveryServiceTest, beginCallTest) {
   EtchValidatorLong::Get(0, val);
 
   factory->types.get("add", type);
-  type->putValidator(EtchDefaultValueFactory::_mf__messageId, val);
+  type->putValidator(EtchDefaultValueFactory::_mf__messageId(), val);
 
   //create message of type
   capu::SmartPointer<EtchMessage> message = new EtchMessage(type, factory->factory);
@@ -153,7 +153,7 @@ TEST(EtchDeliveryServiceTest, beginCallTest) {
   MockSession1* session = new MockSession1(deliveryService);
 
   //put the stack up
-  mailboxManager->sessionNotify(new EtchString(EtchSession::UP));
+  mailboxManager->sessionNotify(new EtchString(EtchSession::UP()));
 
   //test begincall
   EtchMailbox *mail = NULL;
@@ -166,7 +166,7 @@ TEST(EtchDeliveryServiceTest, beginCallTest) {
   message->clear();
 
   //put the stack down
-  mailboxManager->sessionNotify(new EtchString(EtchSession::DOWN));
+  mailboxManager->sessionNotify(new EtchString(EtchSession::DOWN()));
 
   delete session;
   delete factory;
@@ -187,11 +187,11 @@ TEST(EtchDeliveryServiceTest, endCallTest) {
 
   factory->types.get("add_result", replyType);
   factory->types.get("add", type);
-  type->putValidator(EtchDefaultValueFactory::_mf__messageId, val);
-  replyType->putValidator(EtchDefaultValueFactory::_mf__inReplyTo, val);
-  replyType->putValidator(EtchDefaultValueFactory::_mf__messageId, val);
-  replyType->putValidator(EtchDefaultValueFactory::_mf_result, val);
-  replyType->setResponseField(EtchDefaultValueFactory::_mf_result);
+  type->putValidator(EtchDefaultValueFactory::_mf__messageId(), val);
+  replyType->putValidator(EtchDefaultValueFactory::_mf__inReplyTo(), val);
+  replyType->putValidator(EtchDefaultValueFactory::_mf__messageId(), val);
+  replyType->putValidator(EtchDefaultValueFactory::_mf_result(), val);
+  replyType->setResponseField(EtchDefaultValueFactory::_mf_result());
 
   //Create messsage that will be sent
   capu::SmartPointer<EtchMessage> message = new EtchMessage(type, factory->factory);
@@ -209,7 +209,7 @@ TEST(EtchDeliveryServiceTest, endCallTest) {
   MockSession1* session = new MockSession1(deliveryService);
 
   //put the stack up
-  mailboxManager->sessionNotify(new EtchString(EtchSession::UP));
+  mailboxManager->sessionNotify(new EtchString(EtchSession::UP()));
 
   //performed the call
   EtchMailbox *mail;

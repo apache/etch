@@ -42,10 +42,10 @@ public:
   /**
    * Name of format name in uri or resources. The value is "Messagizer.format".
    * The result of looking up this name should be a String.
-   * 
+   *
    * @see #Messagizer(TransportPacket, String, Resources)
    */
-  static const EtchString FORMAT;
+  const static EtchString& FORMAT();
 
   /**
    * Constructs the Messagizer with null handler and tagged data format

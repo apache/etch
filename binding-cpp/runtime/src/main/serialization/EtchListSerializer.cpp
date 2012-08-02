@@ -18,7 +18,10 @@
 
 #include "serialization/EtchListSerializer.h"
 
-const EtchString EtchListSerializer::FIELD_NAME("values");
+const EtchString& EtchListSerializer::FIELD_NAME() {
+  static const EtchString name("values");
+  return name;
+}
 
 // TODO: check signature regarding by value copy
 
@@ -84,7 +87,7 @@ status_t EtchListSerializer::Init(EtchType* type, EtchClass2TypeMap * class2type
   status_t result;
 
   EtchField field;
-  result = type->getField(FIELD_NAME, &field);
+  result = type->getField(FIELD_NAME(), &field);
   if (result != ETCH_OK) {
     return result;
   }

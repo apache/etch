@@ -18,7 +18,10 @@
 
 #include "serialization/EtchRuntimeExceptionSerializer.h"
 
-const EtchString EtchRuntimeExceptionSerializer::FIELD_NAME("msg");
+const EtchString& EtchRuntimeExceptionSerializer::FIELD_NAME() {
+  static const EtchString name("msg");
+  return name;
+}
 
 // TODO: check signature regarding by value copy
 EtchRuntimeExceptionSerializer::EtchRuntimeExceptionSerializer(EtchType* type, EtchField* field)
@@ -64,7 +67,7 @@ status_t EtchRuntimeExceptionSerializer::Init(EtchType* type, EtchClass2TypeMap*
 
   status_t result;
   EtchField field_ptr;
-  result = type->getField(FIELD_NAME, &field_ptr);
+  result = type->getField(FIELD_NAME(), &field_ptr);
   if (result != ETCH_OK)
     return result;
   class2type->put(EtchRuntimeException::TYPE(), type);

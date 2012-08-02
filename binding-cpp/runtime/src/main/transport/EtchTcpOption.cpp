@@ -18,20 +18,35 @@
 
 #include "transport/EtchTcpOption.h"
 
-const EtchString EtchTcpOption::BUFFER_SIZE("TcpTransport.bufferSize");
+const EtchString& EtchTcpOption::BUFFER_SIZE() {
+  static const EtchString name("TcpTransport.bufferSize");
+  return name;
+}
 
-const EtchString EtchTcpOption::KEEP_ALIVE("TcpTransport.keepAlive");
+const EtchString& EtchTcpOption::KEEP_ALIVE() {
+  static const EtchString name("TcpTransport.keepAlive");
+  return name;
+}
 
-const EtchString EtchTcpOption::LINGER_TIME("TcpTransport.lingerTime");
+const EtchString& EtchTcpOption::LINGER_TIME() {
+  static const EtchString name("TcpTransport.lingerTime");
+  return name;
+}
 
-const EtchString EtchTcpOption::NO_DELAY("TcpTransport.noDelay");
+const EtchString& EtchTcpOption::NO_DELAY() {
+  static const EtchString name("TcpTransport.noDelay");
+  return name;
+}
 
-const EtchString EtchTcpOption::RECONNECT_DELAY("TcpTransport.reconnectDelay");
+const EtchString& EtchTcpOption::RECONNECT_DELAY() {
+  static const EtchString name("TcpTransport.reconnectDelay");
+  return name;
+}
 
 EtchTcpOption::EtchTcpOption(EtchURL *url)
 : mBufferSize(0), mLingerTime(30), mReconnectDelay(10), mKeepAlive(0), mNoDelay(1) {
   EtchString result;
-  if (url->getTerms().get((EtchString&) BUFFER_SIZE, &result) != ETCH_ENOT_EXIST) {
+  if (url->getTerms().get(BUFFER_SIZE(), &result) != ETCH_ENOT_EXIST) {
     const char * str = result.c_str();
 
     if (str != NULL) {
@@ -42,7 +57,7 @@ EtchTcpOption::EtchTcpOption(EtchURL *url)
     }
   }
 
-  if (url->getTerms().get((EtchString&) KEEP_ALIVE, &result) != ETCH_ENOT_EXIST) {
+  if (url->getTerms().get(KEEP_ALIVE(), &result) != ETCH_ENOT_EXIST) {
     const char * str = result.c_str();
     if (str != NULL) {
       capu::int32_t len = capu::StringUtils::Strlen(str);
@@ -52,7 +67,7 @@ EtchTcpOption::EtchTcpOption(EtchURL *url)
     }
   }
 
-  if (url->getTerms().get((EtchString&) LINGER_TIME, &result) != ETCH_ENOT_EXIST) {
+  if (url->getTerms().get(LINGER_TIME(), &result) != ETCH_ENOT_EXIST) {
     const char * str = result.c_str();
     if (str != NULL) {
       capu::int32_t len = capu::StringUtils::Strlen(str);
@@ -62,7 +77,7 @@ EtchTcpOption::EtchTcpOption(EtchURL *url)
     }
   }
 
-  if (url->getTerms().get((EtchString&) NO_DELAY, &result) != ETCH_ENOT_EXIST) {
+  if (url->getTerms().get(NO_DELAY(), &result) != ETCH_ENOT_EXIST) {
     const char * str = result.c_str();
     if (str != NULL) {
 
@@ -74,7 +89,7 @@ EtchTcpOption::EtchTcpOption(EtchURL *url)
     }
   }
 
-  if (url->getTerms().get((EtchString&) RECONNECT_DELAY, &result) != ETCH_ENOT_EXIST) {
+  if (url->getTerms().get(RECONNECT_DELAY(), &result) != ETCH_ENOT_EXIST) {
     const char * str = result.c_str();
     if (str != NULL) {
       //check if the string contains only digits

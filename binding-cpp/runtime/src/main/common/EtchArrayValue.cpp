@@ -33,15 +33,18 @@
 #include "common/EtchHashTable.h"
 #include "common/EtchHashSet.h"
 
-const EtchObjectType EtchArrayValue::TYPE(EOTID_ARRAY_VALUE, NULL);
+const EtchObjectType* EtchArrayValue::TYPE() {
+  static const EtchObjectType TYPE(EOTID_ARRAY_VALUE, NULL);
+  return &TYPE;
+}
 
 EtchArrayValue::EtchArrayValue(capu::SmartPointer<EtchNativeArrayBase> array, capu::int32_t size, capu::int8_t typeCode, EtchType* customStructType, capu::int32_t dim)
-: EtchObject(&EtchArrayValue::TYPE), mArray(array), mTypeCode(typeCode),
+: EtchObject(EtchArrayValue::TYPE()), mArray(array), mTypeCode(typeCode),
 mCustomStructType(customStructType), mDim(dim), mAddIndex(size), mSize(size) {
 }
 
 EtchArrayValue::EtchArrayValue(capu::SmartPointer<EtchNativeArrayBase> array, capu::int32_t size)
-: EtchObject(&EtchArrayValue::TYPE), mArray(array), mTypeCode(0),
+: EtchObject(EtchArrayValue::TYPE()), mArray(array), mTypeCode(0),
 mCustomStructType(NULL), mDim(1), mAddIndex(size), mSize(size) {
 }
 
@@ -81,14 +84,14 @@ status_t EtchArrayValue::get(capu::uint32_t index, capu::SmartPointer<EtchObject
   if ((index >= getSize()) || (mArray.get() == NULL)) {
     return ETCH_EINVAL;
   }
-  return mArray->getBase(index,result);
+  return mArray->getBase(index, result);
 }
 
 status_t EtchArrayValue::add(capu::SmartPointer<EtchObject> value) {
   if (value.get() == NULL) {
     return ETCH_EINVAL;
   }
-  
+
   //check if we have to resize the array
   capu::int32_t n = mSize;
   if (mAddIndex >= n) {

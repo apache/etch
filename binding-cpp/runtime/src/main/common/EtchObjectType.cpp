@@ -20,14 +20,35 @@
 #include "common/EtchObjectType.h"
 #include "common/EtchObject.h"
 
-// TODO change to correct EOTID
-const EtchObjectType EtchObjectType::NATIVE_INT8(EOTID_BYTE, NULL);
-const EtchObjectType EtchObjectType::NATIVE_INT16(EOTID_SHORT, NULL);
-const EtchObjectType EtchObjectType::NATIVE_INT32(EOTID_INT32, NULL);
-const EtchObjectType EtchObjectType::NATIVE_INT64(EOTID_LONG, NULL);
-const EtchObjectType EtchObjectType::NATIVE_DOUBLE(EOTID_DOUBLE, NULL);
-const EtchObjectType EtchObjectType::NATIVE_FLOAT(EOTID_FLOAT, NULL);
-const EtchObjectType EtchObjectType::NATIVE_BOOL(EOTID_BOOL, NULL);
+
+const EtchObjectType& EtchObjectType::NATIVE_INT8() {
+  static const EtchObjectType type(EOTID_BYTE, NULL);
+  return type;
+}
+const EtchObjectType& EtchObjectType::NATIVE_INT16() {
+  static const EtchObjectType type(EOTID_SHORT, NULL);
+  return type;
+}
+const EtchObjectType& EtchObjectType::NATIVE_INT32() {
+  static const EtchObjectType type(EOTID_INT32, NULL);
+  return type;
+}
+const EtchObjectType& EtchObjectType::NATIVE_INT64() {
+  static const EtchObjectType type(EOTID_LONG, NULL);
+  return type;
+}
+const EtchObjectType& EtchObjectType::NATIVE_DOUBLE() {
+  static const EtchObjectType type(EOTID_DOUBLE, NULL);
+  return type;
+}
+const EtchObjectType& EtchObjectType::NATIVE_FLOAT() {
+  static const EtchObjectType type(EOTID_FLOAT, NULL);
+  return type;
+}
+const EtchObjectType& EtchObjectType::NATIVE_BOOL() {
+  static const EtchObjectType type(EOTID_BOOL, NULL);
+  return type;
+}
 
 const EtchObjectType* EtchObjectType::TYPE() {
   const static EtchObjectType TYPE(EOTID_OBJECT_TYPE, NULL);

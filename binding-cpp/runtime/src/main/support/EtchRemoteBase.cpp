@@ -59,7 +59,7 @@ status_t EtchRemoteBase::transportNotify(capu::SmartPointer<EtchObject> event) {
 }
 
 status_t EtchRemoteBase::start() {
-  return transportControl(new EtchString(EtchTransportData::START), NULL);
+  return transportControl(new EtchString(EtchTransportData::START()), NULL);
 }
 
 status_t EtchRemoteBase::waitUp(capu::int32_t maxDelay) {
@@ -74,7 +74,7 @@ status_t EtchRemoteBase::startAndWaitUp(capu::int32_t maxDelay) {
 }
 
 status_t EtchRemoteBase::stop() {
-  return transportControl(new EtchString(EtchTransportData::STOP), NULL);
+  return transportControl(new EtchString(EtchTransportData::STOP()), NULL);
 }
 
 status_t EtchRemoteBase::waitDown(capu::int32_t maxDelay) {

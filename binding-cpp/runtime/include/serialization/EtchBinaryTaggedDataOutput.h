@@ -33,12 +33,12 @@ public:
    * Name of uri parameter which controls whether we write ints or strings
    * for types and fields.
    */
-  static const EtchString STRING_TYPE_AND_FIELD;
+  static const EtchString& STRING_TYPE_AND_FIELD();
 
 
   /**
    * Constructs the BinaryTaggedDataInput with a null buffer.
-   * 
+   *
    * @param vf the value factory for the service.
    * @param uri.
    */

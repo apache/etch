@@ -18,12 +18,15 @@
 
 #include "transport/EtchTcpListener.h"
 
-const EtchString EtchTcpListener::BACKLOG("TcpTransportFactory.socket");
+const EtchString& EtchTcpListener::BACKLOG() {
+  static const EtchString name("TcpTransportFactory.socket");
+  return name;
+}
 
 EtchTcpListener::EtchTcpListener(EtchURL *url)
 : mPort(url->getPort()) {
   EtchString str;
-  if (url->getTerms().get(BACKLOG, &str) != ETCH_OK) {
+  if (url->getTerms().get(BACKLOG(), &str) != ETCH_OK) {
     mBackLog = 0;
   } else {
     const char *c_str = str.c_str();
@@ -109,7 +112,7 @@ status_t EtchTcpListener::readSocket() {
 
 status_t EtchTcpListener::transportControl(capu::SmartPointer<EtchObject> control, capu::SmartPointer<EtchObject> value) {
 
-  if (control->equals(&EtchTcpListener::START)) {
+  if (control->equals(&EtchTcpListener::START())) {
     if (mIsStarted)
       return ETCH_OK;
     mMutex.lock();
@@ -120,7 +123,7 @@ status_t EtchTcpListener::transportControl(capu::SmartPointer<EtchObject> contro
     return ETCH_OK;
   }
 
-  if (control->equals(&EtchTcpListener::START_AND_WAIT_UP)) {
+  if (control->equals(&EtchTcpListener::START_AND_WAIT_UP())) {
     if (mIsStarted)
       return ETCH_OK;
     mMutex.lock();
@@ -133,7 +136,7 @@ status_t EtchTcpListener::transportControl(capu::SmartPointer<EtchObject> contro
     return ETCH_OK;
   }
 
-  if (control->equals(&EtchTcpListener::STOP)) {
+  if (control->equals(&EtchTcpListener::STOP())) {
     if (!mIsStarted)
       return ETCH_OK;
     mMutex.lock();
@@ -143,7 +146,7 @@ status_t EtchTcpListener::transportControl(capu::SmartPointer<EtchObject> contro
     return ETCH_OK;
   }
 
-  if (control->equals(&EtchTcpListener::STOP_AND_WAIT_DOWN)) {
+  if (control->equals(&EtchTcpListener::STOP_AND_WAIT_DOWN())) {
     if (!mIsStarted)
       return ETCH_OK;
     mMutex.lock();
@@ -155,7 +158,7 @@ status_t EtchTcpListener::transportControl(capu::SmartPointer<EtchObject> contro
     return ETCH_OK;
   }
 
-  if (control->equals(&EtchTcpListener::RESET)) {
+  if (control->equals(&EtchTcpListener::RESET())) {
     if (!mIsStarted)
       return ETCH_OK;
     mMutex.lock();

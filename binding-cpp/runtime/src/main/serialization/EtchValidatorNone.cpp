@@ -18,11 +18,18 @@
 
 #include "serialization/EtchValidatorNone.h"
 
-capu::SmartPointer<EtchValidator> EtchValidatorNone::mValidator = NULL;
-const EtchObjectType EtchValidatorNone::TYPE(EOTID_VALIDATOR_NONE, NULL);
+capu::SmartPointer<EtchValidator>& EtchValidatorNone::Validators() {
+  static capu::SmartPointer<EtchValidator> ret = NULL;
+  return ret;
+}
+
+const EtchObjectType* EtchValidatorNone::TYPE() {
+  static const EtchObjectType TYPE(EOTID_VALIDATOR_NONE, NULL);
+  return &TYPE;
+}
 
 EtchValidatorNone::EtchValidatorNone()
-: EtchValidator(&EtchValidatorNone::TYPE) {
+: EtchValidator(EtchValidatorNone::TYPE()) {
 }
 
 EtchValidatorNone::~EtchValidatorNone() {
@@ -30,7 +37,7 @@ EtchValidatorNone::~EtchValidatorNone() {
 }
 
 capu::bool_t EtchValidatorNone::validate(capu::SmartPointer<EtchObject> value) {
-  return value->equals(EtchBinaryTaggedData::NONE.get());
+  return value->equals(EtchBinaryTaggedData::NONE().get());
 }
 
 status_t EtchValidatorNone::validateValue(capu::SmartPointer<EtchObject> value, capu::SmartPointer<EtchObject>& result) {
@@ -43,10 +50,10 @@ status_t EtchValidatorNone::validateValue(capu::SmartPointer<EtchObject> value, 
 }
 
 status_t EtchValidatorNone::Get(capu::SmartPointer<EtchValidator> &val) {
-  if (mValidator.get() == NULL) {
-    mValidator = new EtchValidatorNone();
+  if (Validators().get() == NULL) {
+    Validators() = new EtchValidatorNone();
   }
-  val = mValidator;
+  val = Validators();
   return ETCH_OK;
 }
 

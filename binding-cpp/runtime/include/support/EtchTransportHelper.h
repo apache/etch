@@ -38,16 +38,16 @@ public:
   virtual ~EtchTransportHelper();
 
   /** The Pool to use to execute queued async receiver messages. */
-  static EtchString QUEUED_POOL;
+  const static EtchString& QUEUED_POOL();
 
   /** The Pool to use to execute free async receiver messages. */
-  static EtchString FREE_POOL;
+  const static EtchString& FREE_POOL();
 
   /** Binary transport format */
-  static EtchString BINARY;
+  const static EtchString& BINARY();
 
   /** Xml transport format */
-  static EtchString XML;
+  const static EtchString& XML();
 
   ///////////////
   // UTILITIES //
@@ -61,11 +61,15 @@ public:
    * @param copy of resources initialized with default values for standard
    * items.
    * @return an error if there is a problem
+   *         ETCH_OK otherwise
    */
   static status_t initResources( EtchResources* resources, EtchResources*& result );
-  
+
   /**
-   * Dealloc resources 
+   * Destroyes the given standard resources
+   * @param resources the resources which should be destroyed
+   * @return an error if there is a problem
+   *         ETCH_OK otherwise
    */
   static status_t destroyResources(EtchResources* resources);
 };

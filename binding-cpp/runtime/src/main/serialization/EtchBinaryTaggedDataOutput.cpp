@@ -17,12 +17,15 @@
  */
 #include "serialization/EtchBinaryTaggedDataOutput.h"
 
-const EtchString EtchBinaryTaggedDataOutput::STRING_TYPE_AND_FIELD("BinaryTaggedDataOutput.stringTypeAndField");
+const EtchString& EtchBinaryTaggedDataOutput::STRING_TYPE_AND_FIELD() {
+  static const EtchString name("BinaryTaggedDataOutput.stringTypeAndField");
+  return name;
+}
 
 EtchBinaryTaggedDataOutput::EtchBinaryTaggedDataOutput(EtchValueFactory *vf, EtchURL* uri)
 : EtchBinaryTaggedData(vf), mLevel(vf->getLevel()), mBuffer(NULL) {
   EtchString tmp;
-  if (uri->getTerms().get((EtchString&) STRING_TYPE_AND_FIELD, &tmp) == ETCH_OK) {
+  if (uri->getTerms().get(STRING_TYPE_AND_FIELD(), &tmp) == ETCH_OK) {
     mStringTypeAndField = atoi(tmp.c_str()) > 0;
   } else {
     mStringTypeAndField = false;
@@ -41,7 +44,7 @@ status_t EtchBinaryTaggedDataOutput::writeMessage(capu::SmartPointer<EtchMessage
   if ((buf.get() == NULL) || (msg.get() == NULL)) {
     return ETCH_EINVAL;
   }
-  
+
   status_t ret;
   mBuffer = buf;
 
@@ -86,12 +89,12 @@ status_t EtchBinaryTaggedDataOutput::writeStruct(capu::SmartPointer<EtchStructVa
 
 status_t EtchBinaryTaggedDataOutput::writeArray(EtchArrayValue* av, EtchValidator* v) {
   status_t ret;
-  
+
   ret = startArray(av);
   if (ret != ETCH_OK) {
     return ETCH_ERROR;
   }
-  
+
   ret = writeValues(av, v);
   if (ret != ETCH_OK) {
     return ETCH_ERROR;
@@ -166,7 +169,7 @@ status_t EtchBinaryTaggedDataOutput::startMessage(capu::SmartPointer<EtchMessage
   // indicate a message is starting. we do write a version
   // number to indicate this version of the binary tagged
   // data output format.
-  mBuffer->putByte(VERSION);
+  mBuffer->putByte(VERSION());
   return startStruct(msg);
 }
 
@@ -244,7 +247,7 @@ status_t EtchBinaryTaggedDataOutput::writeStringValue(capu::SmartPointer<EtchStr
 }
 
 status_t EtchBinaryTaggedDataOutput::writeNoneValue() {
-  return writeValue(mNoneValidator, NONE);
+  return writeValue(mNoneValidator, NONE());
 }
 
 status_t EtchBinaryTaggedDataOutput::writeField(EtchField* field) {
@@ -298,7 +301,7 @@ status_t EtchBinaryTaggedDataOutput::writeValue(capu::SmartPointer<EtchValidator
       return mBuffer->putDouble(((EtchDouble*) value.get())->get());
 
 
-    case EtchTypeCode::BYTES: 
+    case EtchTypeCode::BYTES:
       {
       EtchNativeArray<capu::int8_t> *na = (EtchNativeArray<capu::int8_t> *)value.get();
       capu::int8_t *data = new capu::int8_t[na->getLength()];
