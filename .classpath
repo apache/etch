@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="util/src/main/java"/>
+	<classpathentry kind="src" path="binding-cpp/compiler/src/main/resources"/>
+	<classpathentry kind="src" path="binding-cpp/compiler/src/main/java"/>
 	<classpathentry kind="src" path="util/src/test/java"/>
 	<classpathentry kind="src" path="compiler/src/main/javacc"/>
 	<classpathentry kind="src" path="compiler/src/main/java"/>
