@@ -108,6 +108,7 @@ SET(MAIN_INCLUDES
     ${PROJECT_SOURCE_DIR}/include/transport/EtchFormat.h
     ${PROJECT_SOURCE_DIR}/include/support/EtchAsyncResultBase.h
     ${PROJECT_SOURCE_DIR}/include/support/EtchDeliveryService.h
+    ${PROJECT_SOURCE_DIR}/include/support/EtchFreePool.h
     ${PROJECT_SOURCE_DIR}/include/support/EtchMailbox.h
     ${PROJECT_SOURCE_DIR}/include/support/EtchObjectSession.h
     ${PROJECT_SOURCE_DIR}/include/support/EtchPool.h
@@ -181,6 +182,7 @@ SET(MAIN_SOURCES
     serialization/EtchBinaryTaggedData.cpp
     serialization/EtchBinaryTaggedDataInput.cpp
     serialization/EtchBinaryTaggedDataOutput.cpp
+    support/EtchFreePool.cpp
     support/EtchStubBase.cpp
     )
 

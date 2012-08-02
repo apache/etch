@@ -49,11 +49,13 @@ add_executable (etch-cpp-test
     common/EtchArrayValueTest.cpp
     util/EtchURLTest.cpp
     util/EtchResourcesTest.cpp
+    util/EtchUtilTest.cpp
     transport/EtchFlexBufferTest.cpp
     transport/EtchTcpConnectionTest.cpp
     transport/EtchTcpListenerTest.cpp
     transport/EtchPacketizerTest.cpp
     transport/EtchMessageTest.cpp
+    transport/EtchMessagizerTest.cpp
     serialization/EtchValidatorBooleanTest.cpp
     serialization/EtchValidatorByteTest.cpp
     serialization/EtchValidatorIntTest.cpp
@@ -80,8 +82,7 @@ add_executable (etch-cpp-test
     serialization/EtchDefaultValueFactoryTest.cpp
     serialization/EtchValidatorStructValueTest.cpp
     serialization/EtchBinaryTaggedDataInputOutputTest.cpp
-    transport/EtchMessagizerTest.cpp
-    util/EtchUtilTest.cpp
+    support/EtchFreePoolTest.cpp
     ${GTEST}/src/gtest-all.cc
     ${GMOCK}/src/gmock-all.cc
     main.cpp
