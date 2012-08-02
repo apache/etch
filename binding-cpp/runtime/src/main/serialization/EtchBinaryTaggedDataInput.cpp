@@ -34,7 +34,7 @@ EtchBinaryTaggedDataInput::EtchBinaryTaggedDataInput(EtchValueFactory* vf)
 EtchBinaryTaggedDataInput::~EtchBinaryTaggedDataInput() {
 }
 
-status_t EtchBinaryTaggedDataInput::readMessage(EtchFlexBuffer *buf, EtchMessage *&message) {
+status_t EtchBinaryTaggedDataInput::readMessage(capu::SmartPointer<EtchFlexBuffer> buf, capu::SmartPointer<EtchMessage> &message) {
   mBuffer = buf;
 
   status_t ret;
@@ -74,7 +74,7 @@ status_t EtchBinaryTaggedDataInput::readMessage(EtchFlexBuffer *buf, EtchMessage
   return ETCH_OK;
 }
 
-status_t EtchBinaryTaggedDataInput::readStruct(EtchStructValue *&result) {
+status_t EtchBinaryTaggedDataInput::readStruct(capu::SmartPointer<EtchStructValue> &result) {
   status_t ret;
   
   ret = startStruct(result);
@@ -115,7 +115,7 @@ status_t EtchBinaryTaggedDataInput::readArray(capu::SmartPointer<EtchValidator> 
   return ETCH_OK;
 }
 
-status_t EtchBinaryTaggedDataInput::readKeysAndValues(EtchStructValue* sv) {
+status_t EtchBinaryTaggedDataInput::readKeysAndValues(capu::SmartPointer<EtchStructValue> sv) {
   status_t ret;
   EtchType* t = sv->getType();
   while (true) {
@@ -157,7 +157,7 @@ status_t EtchBinaryTaggedDataInput::readValues(EtchArrayValue *av, capu::SmartPo
   return ETCH_OK;
 }
 
-status_t EtchBinaryTaggedDataInput::startMessage(EtchMessage *& result) {
+status_t EtchBinaryTaggedDataInput::startMessage(capu::SmartPointer<EtchMessage> &result) {
   capu::int8_t version = 0;
   mBuffer->getByte(version);
 
@@ -177,11 +177,11 @@ status_t EtchBinaryTaggedDataInput::startMessage(EtchMessage *& result) {
   return ETCH_OK;
 }
 
-status_t EtchBinaryTaggedDataInput::endMessage(EtchMessage* msg) {
+status_t EtchBinaryTaggedDataInput::endMessage(capu::SmartPointer<EtchMessage> msg) {
   return ETCH_OK;
 }
 
-status_t EtchBinaryTaggedDataInput::startStruct(EtchStructValue *& result) {
+status_t EtchBinaryTaggedDataInput::startStruct(capu::SmartPointer<EtchStructValue> &result) {
   EtchType* t = NULL;
   if (readType(t) != ETCH_OK) {
     return ETCH_ERROR;
@@ -196,7 +196,7 @@ status_t EtchBinaryTaggedDataInput::startStruct(EtchStructValue *& result) {
   return ETCH_OK;
 }
 
-status_t EtchBinaryTaggedDataInput::endStruct(EtchStructValue * result) {
+status_t EtchBinaryTaggedDataInput::endStruct(capu::SmartPointer<EtchStructValue> result) {
   return ETCH_OK;
 }
 
@@ -581,18 +581,15 @@ status_t EtchBinaryTaggedDataInput::readValue(capu::SmartPointer<EtchValidator> 
     case EtchTypeCode::STRUCT:
     case EtchTypeCode::CUSTOM:
     {
-      EtchStructValue *sv = NULL;
+      capu::SmartPointer<EtchStructValue> sv;
       if (readStruct(sv) != ETCH_OK) {
         return ETCH_ERROR;
       }
 
       capu::SmartPointer<EtchObject> obj;
-      if (mVf->importCustomValue(sv, obj) != ETCH_OK) {
-        delete sv;
+      if (mVf->importCustomValue(sv.get(), obj) != ETCH_OK) {
         return ETCH_ERROR;
       }
-
-      delete sv;
 
       if (validateValue(v, obj, result) != ETCH_OK) {
         return ETCH_ERROR;

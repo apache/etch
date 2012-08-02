@@ -53,29 +53,29 @@ public:
   // TaggedDataOutput methods //
   //////////////////////////////
   //overriden method
-  status_t writeMessage(EtchMessage* msg, EtchFlexBuffer *buf);
+  status_t writeMessage(capu::SmartPointer<EtchMessage> msg, capu::SmartPointer<EtchFlexBuffer> buf);
 
 private:
-  EtchFlexBuffer* mBuffer;
+  capu::SmartPointer<EtchFlexBuffer> mBuffer;
   EtchLevel mLevel;
   capu::bool_t mStringTypeAndField;
   capu::SmartPointer<EtchValidator> mIntValidator;
   capu::SmartPointer<EtchValidator> mStringValidator;
   capu::SmartPointer<EtchValidator> mNoneValidator;
 
-  status_t writeStruct(EtchStructValue* sv);
+  status_t writeStruct(capu::SmartPointer<EtchStructValue> sv);
   status_t writeArray(EtchArrayValue* av, EtchValidator* v);
-  status_t writeKeysAndValues(EtchStructValue* sv);
+  status_t writeKeysAndValues(capu::SmartPointer<EtchStructValue> sv);
   status_t writeValues(EtchArrayValue* av, EtchValidator* v);
 
   /////////////////////////
   // Main output methods //
   /////////////////////////
 
-  status_t startMessage(EtchMessage* msg);
-  status_t endMessage(EtchMessage* msg);
-  status_t startStruct(EtchStructValue* _struct);
-  status_t endStruct(EtchStructValue* _struct);
+  status_t startMessage(capu::SmartPointer<EtchMessage> msg);
+  status_t endMessage(capu::SmartPointer<EtchMessage> msg);
+  status_t startStruct(capu::SmartPointer<EtchStructValue> _struct);
+  status_t endStruct(capu::SmartPointer<EtchStructValue> _struct);
   status_t startArray(EtchArrayValue* array);
   status_t endArray(EtchArrayValue* array);
   status_t writeType(EtchType* type);

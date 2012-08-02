@@ -103,6 +103,8 @@ SET(MAIN_INCLUDES
     ${PROJECT_SOURCE_DIR}/include/serialization/EtchBinaryTaggedData.h
     ${PROJECT_SOURCE_DIR}/include/serialization/EtchBinaryTaggedDataInput.h
     ${PROJECT_SOURCE_DIR}/include/serialization/EtchBinaryTaggedDataOutput.h
+    ${PROJECT_SOURCE_DIR}/include/transport/EtchMessagizer.h
+    ${PROJECT_SOURCE_DIR}/include/transport/EtchFormat.h
     ${PROJECT_SOURCE_DIR}/include/util/EtchUtil.h
     )
 
@@ -167,6 +169,8 @@ SET(MAIN_SOURCES
     serialization/EtchBinaryTaggedData.cpp
     serialization/EtchBinaryTaggedDataInput.cpp
     serialization/EtchBinaryTaggedDataOutput.cpp
+    transport/EtchMessagizer.cpp
+    transport/EtchFormat.cpp
     util/EtchUtil.cpp
     )
 

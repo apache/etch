@@ -19,11 +19,13 @@
 #ifndef __MUTEX_H__
 #define __MUTEX_H__
 
+#include "capu/Error.h"
+
 #define MUTEX_INC_HEADER
 #include "arch/Mutex.inc"
 #undef MUTEX_INC_HEADER
 
-#include "capu/Error.h"
+
 
 namespace capu
 {

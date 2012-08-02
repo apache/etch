@@ -164,7 +164,7 @@ namespace capu {
   template<class X>
   inline
   SmartPointer<T>::SmartPointer(const SmartPointer<X>& smartPointer)
-    : mData(static_cast<X*>(smartPointer.mData))
+    : mData(smartPointer.mData)
     , mReferenceCount(smartPointer.mReferenceCount)
   {
     incRefCount();
@@ -225,7 +225,7 @@ namespace capu {
   SmartPointer<T>& SmartPointer<T>::operator= (const SmartPointer<X>& smartPointer) {
     if (*this != smartPointer) {
       decRefCount();
-      mData = static_cast<X*> (smartPointer.mData);
+      mData = smartPointer.mData;
       mReferenceCount = smartPointer.mReferenceCount;
       incRefCount();
     }

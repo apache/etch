@@ -15,28 +15,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include "transport/EtchFormat.h"
 
-#ifndef __ETCHTAGGEDDATAINPUT_H__
-#define	__ETCHTAGGEDDATAINPUT_H__
-#include "transport/EtchFlexBuffer.h"
-#include "transport/EtchMessage.h"
-#include "capu/util/SmartPointer.h"
+const EtchString EtchFormat::BINARY("binary");
 
-class EtchTaggedDataInput {
-public:
-
-  /**
-   * Reads a message from the buf.
-   * @param buf the flex buffer containing the message.
-   * @param a message read from the buf.
-   */
-  virtual status_t readMessage(capu::SmartPointer<EtchFlexBuffer> buf, capu::SmartPointer<EtchMessage> &message) = 0;
-
-  virtual ~EtchTaggedDataInput() {
-
-  }
-
-};
-
-#endif /* ETCHTAGGEDDATAINPUT_H */
-
+const EtchString EtchFormat::XML("xml");

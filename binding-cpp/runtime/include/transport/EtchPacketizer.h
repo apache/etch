@@ -92,7 +92,7 @@ public:
   /**
    * @see EtchTransport
    */
-  status_t transportQuery(capu::SmartPointer<EtchObject> query, capu::SmartPointer<EtchObject> result);
+  status_t transportQuery(capu::SmartPointer<EtchObject> query, capu::SmartPointer<EtchObject> &result);
 
   /**
    * @see EtchTransport
@@ -122,7 +122,7 @@ public:
   /**
    * @see EtchSession
    */
-  status_t sessionQuery(capu::SmartPointer<EtchObject> query, capu::SmartPointer<EtchObject> result);
+  status_t sessionQuery(capu::SmartPointer<EtchObject> query, capu::SmartPointer<EtchObject> &result);
 
   /**
    * @see EtchSession

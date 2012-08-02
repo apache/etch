@@ -18,10 +18,11 @@
 
 #ifndef __ETCHSESSION_H__
 #define __ETCHSESSION_H__
+
+#include "capu/util/SmartPointer.h"
 #include "common/EtchObject.h"
 #include "common/EtchString.h"
 #include "common/EtchError.h"
-#include "capu/util/SmartPointer.h"
 
 class EtchSession {
 public:
@@ -42,7 +43,7 @@ public:
    * @return ETCH_OK if requested operational value is successfully get
    *         ETCH_ERROR otherwise
    */
-  virtual status_t sessionQuery(capu::SmartPointer<EtchObject> query, capu::SmartPointer<EtchObject> result) = 0;
+  virtual status_t sessionQuery(capu::SmartPointer<EtchObject> query, capu::SmartPointer<EtchObject> &result) = 0;
 
   /**
    * Sets a configuration or operational value in the session. The

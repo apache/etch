@@ -39,7 +39,8 @@ namespace capu {
     CAPU_ENO_MEMORY = 11,
     CAPU_TIMEOUT = 12,
     CAPU_ENOT_EXIST = 13,
-    CAPU_ENOT_SUPPORTED = 14
+    CAPU_ENOT_SUPPORTED = 14,
+    CAPU_EIO = 15
   };
 }
 #endif

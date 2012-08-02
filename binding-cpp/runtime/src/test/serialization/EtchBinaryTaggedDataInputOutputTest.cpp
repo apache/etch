@@ -143,14 +143,14 @@ public:
     vf.factory->getType(foo, mt_foo);
     mt_foo->putValidator(mf_x, v);
 
-    EtchMessage msg(mt_foo, vf.factory);
-    msg.put(mf_x, x);
+    capu::SmartPointer<EtchMessage> msg = new EtchMessage(mt_foo, vf.factory);
+    msg->put(mf_x, x);
 
     capu::uint32_t length;
     capu::int8_t * buffer;
     //SERIALIZE DATA INTO FLEX BUFFER
-    msg2bytes(&msg, stringTypeAndField, length, buffer, vf);
-    EtchMessage *msg2;
+    msg2bytes(msg, stringTypeAndField, length, buffer, vf);
+    capu::SmartPointer<EtchMessage> msg2;
     //DESERIALIZE DATA FROM FLEX BYTE ARRAY
     bytes2msg(buffer, length, msg2, vf);
     //TYPE CHECK
@@ -160,7 +160,6 @@ public:
     EXPECT_TRUE(msg2->get(mf_x, &result) == ETCH_OK);
     //check result of serialization
     check_equal(result.get(), x.get());
-    delete msg2;
   }
 
   static void check_equal(EtchObject* first, EtchObject* second) {
@@ -193,34 +192,33 @@ public:
     }
   }
 
-  static void msg2bytes(EtchMessage * msg, capu::bool_t stringTypeAndField, capu::uint32_t &size, capu::int8_t *&buffer, MyValueFactory &vf) {
-    EtchFlexBuffer buf;
+  static void msg2bytes(capu::SmartPointer<EtchMessage> msg, capu::bool_t stringTypeAndField, capu::uint32_t &size, capu::int8_t *&buffer, MyValueFactory &vf) {
+    capu::SmartPointer<EtchFlexBuffer> buf = new EtchFlexBuffer();
 
     EtchURL u("none:");
     //    u.addTerm((EtchString &) EtchBinaryTaggedDataOutput::STRING_TYPE_AND_FIELD, stringTypeAndField);
 
     EtchBinaryTaggedDataOutput btdo(vf.factory, &u);
-    EXPECT_TRUE(btdo.writeMessage(msg, &buf) == ETCH_OK);
-    buf.setIndex(0);
-    size = buf.getAvailableBytes();
+    EXPECT_TRUE(btdo.writeMessage(msg, buf) == ETCH_OK);
+    buf->setIndex(0);
+    size = buf->getAvailableBytes();
     buffer = new capu::int8_t[size];
     capu::uint32_t len;
-    EXPECT_TRUE(buf.get(buffer, 0, size, len) == ETCH_OK);
+    EXPECT_TRUE(buf->get(buffer, 0, size, len) == ETCH_OK);
     return;
   }
 
-  static void bytes2msg(capu::int8_t* buf, capu::uint32_t length, EtchMessage*& msg, MyValueFactory &vf) {
+  static void bytes2msg(capu::int8_t* buf, capu::uint32_t length, capu::SmartPointer<EtchMessage> &msg, MyValueFactory &vf) {
     return bytes2msg(buf, length, msg, LEVEL_FULL, vf);
   }
 
-  static void bytes2msg(capu::int8_t* buf, capu::uint32_t length, EtchMessage*& msg, EtchLevel level, MyValueFactory &vf) {
+  static void bytes2msg(capu::int8_t* buf, capu::uint32_t length, capu::SmartPointer<EtchMessage> &msg, EtchLevel level, MyValueFactory &vf) {
     EtchLevel oldLevel = vf.factory->setLevel(level);
     EtchBinaryTaggedDataInput btdi(vf.factory);
-    EtchFlexBuffer *buffer = new EtchFlexBuffer(buf, length);
+    capu::SmartPointer<EtchFlexBuffer> buffer = new EtchFlexBuffer(buf, length);
     buffer->setIndex(0);
     EXPECT_TRUE(btdi.readMessage(buffer, msg) == ETCH_OK);
     vf.factory->setLevel(oldLevel);
-    delete buffer;
   }
 
   static void test_bto_write(capu::SmartPointer<EtchObject> x, capu::int8_t *compare_buffer, capu::SmartPointer<EtchValidator> v) {
@@ -232,19 +230,18 @@ public:
     EtchField f(2, field);
     t.putValidator(f, v);
 
-    EtchMessage msg(&t, vf.factory);
-    msg.put(f, x);
-    //		System.out.println( "msg = "+msg );
+    capu::SmartPointer<EtchMessage> msg = new EtchMessage(&t, vf.factory);
+    msg->put(f, x);
     EtchURL u("none:");
     EtchBinaryTaggedDataOutput btdo(vf.factory, &u);
-    EtchFlexBuffer buf;
-    buf.setByteRepresentation(ETCH_BIG_ENDIAN);
-    EXPECT_TRUE(btdo.writeMessage(&msg, &buf) == ETCH_OK);
-    buf.setIndex(0);
-    capu::int32_t size = buf.getAvailableBytes();
+    capu::SmartPointer<EtchFlexBuffer> buf = new EtchFlexBuffer();
+    buf->setByteRepresentation(ETCH_BIG_ENDIAN);
+    EXPECT_TRUE(btdo.writeMessage(msg, buf) == ETCH_OK);
+    buf->setIndex(0);
+    capu::int32_t size = buf->getAvailableBytes();
     capu::int8_t* buffer = new capu::int8_t[size];
     capu::uint32_t len;
-    EXPECT_TRUE(buf.get(buffer, 0, size, len) == ETCH_OK);
+    EXPECT_TRUE(buf->get(buffer, 0, size, len) == ETCH_OK);
 
     EXPECT_TRUE(memcmp(buffer, compare_buffer, len) == 0);
     delete [] buffer;

@@ -19,9 +19,9 @@
 #ifndef __ETCHSESSIONMESSAGE_H__
 #define __ETCHSESSIONMESSAGE_H__
 
-#include "transport/EtchSession.h"
-#include "common/EtchError.h"
 #include "capu/util/SmartPointer.h"
+#include "common/EtchError.h"
+#include "transport/EtchSession.h"
 #include "transport/EtchWho.h"
 #include "transport/EtchMessage.h"
 

@@ -19,8 +19,8 @@
 #ifndef __ETCHTRANSPORTMESSAGE_H__
 #define __ETCHTRANSPORTMESSAGE_H__
 
-#include "transport/EtchTransport.h"
 #include "common/EtchError.h"
+#include "transport/EtchTransport.h"
 #include "transport/EtchSessionMessage.h"
 #include "transport/EtchMessage.h"
 #include "transport/EtchWho.h"

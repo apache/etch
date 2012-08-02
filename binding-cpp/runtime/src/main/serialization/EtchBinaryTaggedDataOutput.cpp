@@ -37,8 +37,8 @@ EtchBinaryTaggedDataOutput::~EtchBinaryTaggedDataOutput() {
 
 }
 
-status_t EtchBinaryTaggedDataOutput::writeMessage(EtchMessage* msg, EtchFlexBuffer *buf) {
-  if ((buf == NULL) || (msg == NULL)) {
+status_t EtchBinaryTaggedDataOutput::writeMessage(capu::SmartPointer<EtchMessage> msg, capu::SmartPointer<EtchFlexBuffer> buf) {
+  if ((buf.get() == NULL) || (msg.get() == NULL)) {
     return ETCH_EINVAL;
   }
   
@@ -63,7 +63,7 @@ status_t EtchBinaryTaggedDataOutput::writeMessage(EtchMessage* msg, EtchFlexBuff
   return ETCH_OK;
 }
 
-status_t EtchBinaryTaggedDataOutput::writeStruct(EtchStructValue* sv) {
+status_t EtchBinaryTaggedDataOutput::writeStruct(capu::SmartPointer<EtchStructValue> sv) {
   status_t ret;
 
   ret = startStruct(sv);
@@ -81,7 +81,6 @@ status_t EtchBinaryTaggedDataOutput::writeStruct(EtchStructValue* sv) {
     return ETCH_ERROR;
   }
 
-  delete sv;
   return ETCH_OK;
 }
 
@@ -107,8 +106,8 @@ status_t EtchBinaryTaggedDataOutput::writeArray(EtchArrayValue* av, EtchValidato
   return ETCH_OK;
 }
 
-status_t EtchBinaryTaggedDataOutput::writeKeysAndValues(EtchStructValue* sv) {
-  if (sv == NULL) {
+status_t EtchBinaryTaggedDataOutput::writeKeysAndValues(capu::SmartPointer<EtchStructValue> sv) {
+  if (sv.get() == NULL) {
     return ETCH_EINVAL;
   }
 
@@ -162,7 +161,7 @@ status_t EtchBinaryTaggedDataOutput::writeValues(EtchArrayValue* av, EtchValidat
   return ETCH_OK;
 }
 
-status_t EtchBinaryTaggedDataOutput::startMessage(EtchMessage* msg) {
+status_t EtchBinaryTaggedDataOutput::startMessage(capu::SmartPointer<EtchMessage> msg) {
   // since message is top-level, no type code is written to
   // indicate a message is starting. we do write a version
   // number to indicate this version of the binary tagged
@@ -171,11 +170,11 @@ status_t EtchBinaryTaggedDataOutput::startMessage(EtchMessage* msg) {
   return startStruct(msg);
 }
 
-status_t EtchBinaryTaggedDataOutput::endMessage(EtchMessage* msg) {
+status_t EtchBinaryTaggedDataOutput::endMessage(capu::SmartPointer<EtchMessage> msg) {
   return endStruct(msg);
 }
 
-status_t EtchBinaryTaggedDataOutput::startStruct(EtchStructValue* _struct) {
+status_t EtchBinaryTaggedDataOutput::startStruct(capu::SmartPointer<EtchStructValue> _struct) {
   // the caller has already written a type code to indicate a
   // struct is starting. this code is shared by startMessage().
   if (writeType(_struct->getType()) != ETCH_OK)
@@ -185,7 +184,7 @@ status_t EtchBinaryTaggedDataOutput::startStruct(EtchStructValue* _struct) {
   return ETCH_OK;
 }
 
-status_t EtchBinaryTaggedDataOutput::endStruct(EtchStructValue* _struct) {
+status_t EtchBinaryTaggedDataOutput::endStruct(capu::SmartPointer<EtchStructValue> _struct) {
   // this code is shared by endMessage.
   return writeNoneValue();
 }

@@ -18,9 +18,10 @@
 
 #ifndef __ETCHTRANSPORTPACKET_H__
 #define __ETCHTRANSPORTPACKET_H__
+
+#include "capu/util/SmartPointer.h"
 #include "transport/EtchSessionPacket.h"
 #include "transport/EtchTransport.h"
-#include "capu/util/SmartPointer.h"
 #include "transport/EtchFlexBuffer.h"
 #include "transport/EtchWho.h"
 

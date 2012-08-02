@@ -30,7 +30,7 @@ public:
    * @param msg the message to be written.
    * @param buf the buffer to write to.
    */
-  virtual status_t writeMessage(EtchMessage* msg, EtchFlexBuffer* buf) = 0;
+  virtual status_t writeMessage(capu::SmartPointer<EtchMessage> msg, capu::SmartPointer<EtchFlexBuffer> buf) = 0;
 
   virtual ~EtchTaggedDataOutput() {
 

@@ -18,8 +18,9 @@
 
 #ifndef __ETCHSESSIONDATA_H__
 #define __ETCHSESSIONDATA_H__
-#include "common/EtchError.h"
+
 #include "capu/util/SmartPointer.h"
+#include "common/EtchError.h"
 #include "transport/EtchFlexBuffer.h"
 #include "transport/EtchSession.h"
 #include "transport/EtchWho.h"
