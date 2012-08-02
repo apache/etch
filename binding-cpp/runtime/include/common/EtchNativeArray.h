@@ -231,7 +231,7 @@ public:
      *@see EtchArrayBase
      */
     status_t get(Pos pos, capu::int32_t index, T *result) {
-      if(pos.size < index || pos.pos[index] > EtchArrayBase<T>::mLength || pos.size-1 != index) {
+      if(pos.size < index || pos.size-1 != index || pos.pos[index] > EtchArrayBase<T>::mLength) {
         return ETCH_ERANGE;
       }
       if(result != NULL) {
