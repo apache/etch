@@ -93,6 +93,7 @@ add_executable (etch-cpp-test
     support/EtchMonitorTest.cpp
     support/EtchRemoteBaseTest.cpp
     support/EtchRuntimeTest.cpp
+    support/EtchAsyncResultTest.cpp
     ${GTEST}/src/gtest-all.cc
     ${GMOCK}/src/gmock-all.cc
     main.cpp
