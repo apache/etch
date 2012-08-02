@@ -130,6 +130,9 @@ SET(MAIN_INCLUDES
     ${PROJECT_SOURCE_DIR}/include/support/EtchTransportHelper.h
     ${PROJECT_SOURCE_DIR}/include/support/EtchPlainMailbox.h
     ${PROJECT_SOURCE_DIR}/include/support/EtchMonitor.h
+    ${PROJECT_SOURCE_DIR}/include/support/EtchStack.h
+    ${PROJECT_SOURCE_DIR}/include/support/EtchServerStack.h
+    ${PROJECT_SOURCE_DIR}/include/support/EtchClientStack.h
     ${PROJECT_SOURCE_DIR}/include/util/EtchUtil.h
     ${PROJECT_SOURCE_DIR}/include/util/EtchCircularQueue.h
     ${PROJECT_SOURCE_DIR}/include/util/EtchIdGenerator.h
@@ -213,7 +216,8 @@ SET(MAIN_SOURCES
     support/EtchRemoteBase.cpp
     support/EtchTransportHelper.cpp
     support/EtchMonitor.cpp
-    support/EtchPool.cpp
+    support/EtchServerStack.cpp
+    support/EtchClientStack.cpp
     util/EtchCircularQueue.cpp
     util/EtchUtil.cpp
     util/EtchIdGenerator.cpp
