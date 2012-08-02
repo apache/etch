@@ -59,3 +59,71 @@ TEST(EtchInt32Test, equals){
   i2.set(40);
   EXPECT_TRUE(i1.equals(&i2) == true);
 }
+
+TEST(EtchInt32Test, operator_equal){
+  EtchInt32 a = 0;
+  EXPECT_EQ(0, a.get());
+  a = 5;
+  EXPECT_EQ(5, a.get());
+  EtchInt32 b(12);
+  a = b;
+  EXPECT_EQ(12, a.get());
+}
+
+TEST(EtchInt32Test, operator_post_plusplus){
+  EtchInt32 a = 0;
+  for(int i = 1; i <= 10; i++)
+  {
+    a++;
+    EXPECT_EQ(i, a.get());
+  }
+  EXPECT_EQ(10, a++);
+  EXPECT_EQ(11, a.get());
+}
+
+TEST(EtchInt32Test, operator_pre_plusplus){
+  EtchInt32 a = 0;
+  for(int i = 1; i <= 10; i++)
+  {
+    EXPECT_EQ(i, ++a);
+  }
+  EXPECT_EQ(10, a.get());
+  EXPECT_EQ(11, ++a);
+}
+
+TEST(EtchInt32Test, operator_post_minusminus){
+  EtchInt32 a = 11;
+  for(int i = 10; i > 0; i--)
+  {
+    a--;
+    EXPECT_EQ(i, a.get());
+  }
+  EXPECT_EQ(1, a--);
+  EXPECT_EQ(0, a.get());
+}
+
+TEST(EtchInt32Test, operator_pre_minusminus){
+  EtchInt32 a = 11;
+  for(int i = 10; i > 0; i--)
+  {
+    EXPECT_EQ(i, --a);
+  }
+  EXPECT_EQ(1, a.get());
+  EXPECT_EQ(0, --a);
+}
+
+TEST(EtchInt32Test, operator_equalequal){
+  EtchInt32 a(12);
+  EtchInt32 b(12);
+  EXPECT_TRUE(a == b);
+  ++b;
+  EXPECT_FALSE(a == b);
+}
+
+TEST(EtchInt32Test, operator_unequal){
+  EtchInt32 a(12);
+  EtchInt32 b(11);
+  EXPECT_TRUE(a != b);
+  ++b;
+  EXPECT_FALSE(a != b);
+}

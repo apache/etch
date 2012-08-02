@@ -65,8 +65,42 @@ public:
    */
   capu::bool_t equals(const EtchObject * other) const;
 
-private:
+  /**
+   * assigns an integer number to the stored value
+   */
+  capu::int32_t& operator=(capu::int32_t const& other);
+  
+  /**
+   * increments and assigns the stored integer value
+   */
+  capu::int32_t& operator++();
 
+  /**
+   * assigns and increments the stored integer value
+   */
+  const capu::int32_t operator++(int);
+
+  /**
+   * decrement and assigns the stored integer value
+   */
+  capu::int32_t& operator--();
+
+  /**
+   * assigns and decrement the stored integer value
+   */
+  const capu::int32_t operator--(int);
+
+  /**
+   * returns true if two objects are equal
+   */
+  capu::bool_t operator==(const EtchObject& other) const;
+
+  /**
+   * returns true if two objects are not equal
+   */
+  capu::bool_t operator!=(const EtchObject& other) const;
+
+private:
   capu::int32_t mValue;
 
 };

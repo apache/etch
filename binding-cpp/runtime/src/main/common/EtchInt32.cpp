@@ -19,8 +19,8 @@
 #include "common/EtchInt32.h"
 
 const EtchObjectType* EtchInt32::TYPE() {
-  const static EtchObjectType TYPE(EOTID_INT32, NULL);
-  return &TYPE;
+   const static EtchObjectType TYPE(EOTID_INT32, NULL);
+   return &TYPE;
 }
 
 EtchInt32::EtchInt32()
@@ -52,4 +52,48 @@ capu::bool_t EtchInt32::equals(const EtchObject * other) const{
     return false;
   EtchInt32 *a = (EtchInt32*) other;
   return (a->mValue == this->mValue);
+}
+
+capu::int32_t& EtchInt32::operator=(capu::int32_t const& other)
+{
+  if(mValue != other)
+  {
+    mValue = other;
+  }
+  return mValue;
+}
+
+capu::int32_t& EtchInt32::operator++() //pre increment
+{
+  ++mValue;
+  return mValue;
+}
+const capu::int32_t EtchInt32::operator++(int) //post increment
+{
+  capu::int32_t tmp(mValue);
+  ++mValue;
+  return tmp;
+}
+
+capu::int32_t& EtchInt32::operator--() //pre increment
+{
+  --mValue;
+  return mValue;
+}
+
+const capu::int32_t EtchInt32::operator--(int) //post increment
+{
+  capu::int32_t tmp(mValue);
+  --mValue;
+  return tmp;
+}
+
+capu::bool_t EtchInt32::operator==(const EtchObject& other) const
+{
+  return this->equals(&other);
+}
+
+capu::bool_t EtchInt32::operator!=(const EtchObject& other) const
+{
+  return !(*this == other);
 }
