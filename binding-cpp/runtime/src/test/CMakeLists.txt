@@ -85,6 +85,7 @@ add_executable (etch-cpp-test
     serialization/EtchBinaryTaggedDataInputOutputTest.cpp
     support/EtchFreePoolTest.cpp
     support/EtchPlainMailboxTest.cpp
+    support/EtchMonitorTest.cpp
     util/EtchCircularQueueTest.cpp
     util/EtchUtilTest.cpp
     ${GTEST}/src/gtest-all.cc
