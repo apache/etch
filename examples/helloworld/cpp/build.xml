@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8" ?>
+ <!--
+ * Licensed to the Apache Software Foundation (ASF) under one   *
+ * or more contributor license agreements.  See the NOTICE file *
+ * distributed with this work for additional information        *
+ * regarding copyright ownership.  The ASF licenses this file   *
+ * to you under the Apache License, Version 2.0 (the            *
+ * "License"); you may not use this file except in compliance   *
+ * with the License.  You may obtain a copy of the License at   *
+ *                                                              *
+ *   http://www.apache.org/licenses/LICENSE-2.0                 *
+ *                                                              *
+ * Unless required by applicable law or agreed to in writing,   *
+ * software distributed under the License is distributed on an  *
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY       *
+ * KIND, either express or implied.  See the License for the    *
+ * specific language governing permissions and limitations      *
+ * under the License.                                           *
+ -->
+<project name="etch-helloworld-example-cpp" basedir="." default="help" >
+    <description>HelloWorld Example Cpp</description>
+    <property name="Etch.basedir" location="${basedir}/../../.." />
+    <import file="${Etch.basedir}/build-support/etch.includes.xml" />
+
+    <!-- TODO better computation of etch.home, etch.version -->
+    <property environment="env" />
+
+    <!-- compute ETCH_HOME -->
+    <property name="build.ETCH_HOME" location="${Etch.basedir}/target/Installers/dist" />
+    <condition property="etch.home" value="${env.ETCH_HOME}" >
+        <isset property="${env.ETCH_HOME}" />
+    </condition>
+    <condition property="etch.home" value="${build.ETCH_HOME}" >
+        <not><isset property="etch.home" /></not>
+    </condition>
+
+    <property name="Etch.dependency.junit.jar"
+        location="${default.junit.lib}/junit-4.3.1.jar" />
+
+    <property name="Etch.buildSupportDirectory" location="${Etch.basedir}/build-support" />
+
+    <!-- compute etch.version -->
+    <condition property="etch.version" value="${Etch.version}" >
+        <not><isset property="etch.version" /></not>
+    </condition>
+
+    <condition property="etch.longversion" value="${Etch.longversion}" >
+        <not><isset property="etch.longversion" /></not>
+    </condition>
+
+
+    <!-- import etch task -->
+    <taskdef
+        onerror="report"
+        resource="org/apache/etch/tools/ant/etch.xml"
+        classpath="${etch.home}/lib/apache-etch-ant-plugin-${etch.longversion}.jar" />
+
+    <!-- set properties -->
+    <property name="src"               location="${basedir}/src" />
+    <property name="target"            location="${basedir}/target" />
+    <property name="example-base"      location="${basedir}/.." />
+    <property name="dist-src"          location="${target}/dist-src" />
+    <property name="generated-sources" location="${target}/generated-sources" />
+    <property name="gen-src-cpp"       location="${generated-sources}/cpp" />
+    <property name="bin"               location="${target}/bin" />
+    <property name="classes"           location="${target}/classes" />
+    <property name="classes-test"      location="${target}/classes-test" />
+    <property name="test-results"      location="${target}/test-results" />
+    <property name="nunit-results"     location="${target}/nunit-results" />
+    <property name="dist"              location="${Etch.basedir}/target/Installers/dist" />
+
+    <!-- initialize -->
+    <target name="init" >
+        <mkdir dir="${target}" />
+        <mkdir dir="${dist-src}" />
+        <mkdir dir="${generated-sources}" />
+        <mkdir dir="${gen-src-cpp}" />
+        <mkdir dir="${bin}" />
+        <mkdir dir="${classes}" />
+        <mkdir dir="${classes-test}" />
+        <mkdir dir="${test-results}" />
+        <mkdir dir="${nunit-results}" />
+    </target>
+
+    <!-- build the server -->
+    <target name="generate-sources" depends="init" >
+        <!-- generate sources -->
+     <echo>Generating Cpp Sources...</echo>
+     <etch home="${etch.home}"
+        file="${example-base}/etch/HelloWorld.etch"
+        what="all"
+        binding="cpp"
+        outputDir="${gen-src-cpp}" />
+   </target>
+
+   <target name="build-cpp" depends="generate-sources" if="USE.cmake">
+     <cmake srcdir="${basedir}" bindir="${basedir}/target" buildtype="Debug" >
+	  <generator name="Visual Studio 8 2005" platform="windows" />
+      <variable name="ETCH_INCLUDE_CAPU_DIR" type="PATH" value="${Etch.basedir}/binding-cpp/runtime/lib/capu/deliverable/capu/include/capu" />
+      <variable name="ETCH_HOME" type="PATH" value="${etch.home}" />
+     </cmake>
+     <copy todir="${bin}" flatten="true">
+        <fileset dir="${target}" >
+           <include name="helloworld-client" />
+           <include name="helloworld-server" />
+           <include name="debug/helloworld-client.exe" />
+           <include name="debug/helloworld-server.exe" />
+        </fileset>
+     </copy>
+     <delete file="${target}/helloworld-client" quiet="true" />
+     <delete file="${target}/helloworld-server" quiet="true" />
+     <delete file="${target}/debug/helloworld-client.exe" quiet="true" />
+     <delete file="${target}/debug/helloworld-server.exe" quiet="true" />
+   </target>
+
+    <target name="build" depends="build-cpp" />
+
+    <!-- run unit tests -->
+    <target name="test-cpp">
+
+    </target>
+
+
+    <target name="test" depends="build,test-cpp,done" >
+    </target>
+
+    <target name="done" depends="build" >
+      <echo>
+     Build CPP Complete!
+     ======================
+     To run cpp example:
+
+     > cd cpp\target\bin
+     > ./helloworld-server.exe
+     > ./helloworld-client.exe
+
+     You can mix and match the various clients and listeners.
+       </echo>
+    </target>
+
+    <!-- build everything -->
+    <target name="init-debug" >
+        <property name="build.target" value="Debug" />
+    </target>
+
+    <target name="init-release" >
+        <property name="build.target" value="Release" />
+    </target>
+
+    <target name="dist-src" >
+        <copy file="dist-build.xml" tofile="${dist-src}/build.xml" overwrite="true" >
+            <filterset refid="Etch.buildTokens" />
+        </copy>
+
+       <copy todir="${dist-src}/cpp/src/main" overwrite="true" >
+            <fileset dir="${src}/main" >
+                <exclude name="**/.svn/**" />
+                <include name="**/*.cpp" />
+                <include name="**/*.h" />
+            </fileset>
+        </copy>
+
+        <copy todir="${dist-src}/cpp" overwrite="true" >
+          <fileset dir="${basedir}" >
+               <include name="**/CMakeLists.txt" />
+          </fileset>
+        </copy>
+
+
+        <copy todir="${dist}/examples/helloworld/etch" overwrite="true" >
+            <fileset dir="${example-base}/etch" >
+                <exclude name="**/.svn/**" />
+                <include name="**/*.etch" />
+            </fileset>
+        </copy>
+
+        <copy todir="${dist}/examples/helloworld" overwrite="true" >
+            <fileset dir="${dist-src}" />
+        </copy>
+    </target>
+
+    <target name="debug" depends="dist-src,init-debug,test" />
+    <target name="release" depends="dist-src,init-release,test" />
+
+    <!-- clean -->
+    <target name="clean" >
+        <delete dir="${target}" quiet="true" />
+    </target>
+</project>

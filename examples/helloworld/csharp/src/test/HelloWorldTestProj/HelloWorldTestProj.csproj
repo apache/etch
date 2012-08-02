@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+ * Licensed to the Apache Software Foundation (ASF) under one   *
+ * or more contributor license agreements.  See the NOTICE file *
+ * distributed with this work for additional information        *
+ * regarding copyright ownership.  The ASF licenses this file   *
+ * to you under the Apache License, Version 2.0 (the            *
+ * "License"); you may not use this file except in compliance   *
+ * with the License.  You may obtain a copy of the License at   *
+ *                                                              *
+ *   http://www.apache.org/licenses/LICENSE-2.0                 *
+ *                                                              *
+ * Unless required by applicable law or agreed to in writing,   *
+ * software distributed under the License is distributed on an  *
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY       *
+ * KIND, either express or implied.  See the License for the    *
+ * specific language governing permissions and limitations      *
+ * under the License.                                           *
+ -->
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{E3676B8F-6BBB-4A7E-A48F-74BBB694F6B2}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>HelloWorldTestProj</RootNamespace>
+    <AssemblyName>HelloWorldTestProj</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="nunit.framework, Version=2.5.9.10348, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+      <HintPath>$(NUNIT_HOME)\bin\net-2.0\nunit.framework.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\..\target\generated-sources\csharp\org.apache.etch.examples.helloworld\BaseHelloWorldClient.cs">
+      <Link>BaseHelloWorldClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\target\generated-sources\csharp\org.apache.etch.examples.helloworld\BaseHelloWorldServer.cs">
+      <Link>BaseHelloWorldServer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\target\generated-sources\csharp\org.apache.etch.examples.helloworld\HelloWorld.cs">
+      <Link>HelloWorld.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\target\generated-sources\csharp\org.apache.etch.examples.helloworld\HelloWorldClient.cs">
+      <Link>HelloWorldClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\target\generated-sources\csharp\org.apache.etch.examples.helloworld\HelloWorldHelper.cs">
+      <Link>HelloWorldHelper.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\target\generated-sources\csharp\org.apache.etch.examples.helloworld\HelloWorldServer.cs">
+      <Link>HelloWorldServer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\target\generated-sources\csharp\org.apache.etch.examples.helloworld\RemoteHelloWorld.cs">
+      <Link>RemoteHelloWorld.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\target\generated-sources\csharp\org.apache.etch.examples.helloworld\RemoteHelloWorldClient.cs">
+      <Link>RemoteHelloWorldClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\target\generated-sources\csharp\org.apache.etch.examples.helloworld\RemoteHelloWorldServer.cs">
+      <Link>RemoteHelloWorldServer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\target\generated-sources\csharp\org.apache.etch.examples.helloworld\StubHelloWorld.cs">
+      <Link>StubHelloWorld.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\target\generated-sources\csharp\org.apache.etch.examples.helloworld\StubHelloWorldClient.cs">
+      <Link>StubHelloWorldClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\target\generated-sources\csharp\org.apache.etch.examples.helloworld\StubHelloWorldServer.cs">
+      <Link>StubHelloWorldServer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\target\generated-sources\csharp\org.apache.etch.examples.helloworld\ValueFactoryHelloWorld.cs">
+      <Link>ValueFactoryHelloWorld.cs</Link>
+    </Compile>
+    <Compile Include="..\..\main\org.apache.etch.examples.helloworld\ImplHelloWorldClient.cs">
+      <Link>ImplHelloWorldClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\main\org.apache.etch.examples.helloworld\ImplHelloWorldServer.cs">
+      <Link>ImplHelloWorldServer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\main\org.apache.etch.examples.helloworld\MainHelloWorldClient.cs">
+      <Link>MainHelloWorldClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\main\org.apache.etch.examples.helloworld\MainHelloWorldListener.cs">
+      <Link>MainHelloWorldListener.cs</Link>
+    </Compile>
+    <Compile Include="..\org.apache.etch.examples.helloworld\TestHelloWorldServer.cs">
+      <Link>TestHelloWorldServer.cs</Link>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\..\binding-csharp\runtime\src\main\csharp\EtchProj.csproj">
+      <Project>{0E518F2A-3016-4C2F-A21B-9BD52B2DC846}</Project>
+      <Name>EtchProj</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

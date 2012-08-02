@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="utf-8" ?>
+ <!--
+ * Licensed to the Apache Software Foundation (ASF) under one   *
+ * or more contributor license agreements.  See the NOTICE file *
+ * distributed with this work for additional information        *
+ * regarding copyright ownership.  The ASF licenses this file   *
+ * to you under the Apache License, Version 2.0 (the            *
+ * "License"); you may not use this file except in compliance   *
+ * with the License.  You may obtain a copy of the License at   *
+ *                                                              *
+ *   http://www.apache.org/licenses/LICENSE-2.0                 *
+ *                                                              *
+ * Unless required by applicable law or agreed to in writing,   *
+ * software distributed under the License is distributed on an  *
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY       *
+ * KIND, either express or implied.  See the License for the    *
+ * specific language governing permissions and limitations      *
+ * under the License.                                           *
+ -->
+<project name="etch-helloworld-example-csharp" basedir="." default="help" >
+    <description>HelloWorld Example CSharp</description>
+    <property name="Etch.basedir" location="${basedir}/../../.." />
+    <import file="${Etch.basedir}/build-support/etch.includes.xml" />
+
+    <!-- TODO better computation of etch.home, etch.version -->
+    <property environment="env" />
+
+    <!-- compute ETCH_HOME -->
+    <property name="build.ETCH_HOME" location="${Etch.basedir}/target/Installers/dist" />
+    <condition property="etch.home" value="${env.ETCH_HOME}" >
+        <isset property="${env.ETCH_HOME}" />
+    </condition>
+    <condition property="etch.home" value="${build.ETCH_HOME}" >
+        <not><isset property="etch.home" /></not>
+    </condition>
+
+    <property name="Etch.dependency.junit.jar"
+        location="${default.junit.lib}/junit-4.3.1.jar" />
+
+    <property name="Etch.buildSupportDirectory" location="${Etch.basedir}/build-support" />
+
+    <!-- compute etch.version -->
+    <condition property="etch.version" value="${Etch.version}" >
+        <not><isset property="etch.version" /></not>
+    </condition>
+
+    <condition property="etch.longversion" value="${Etch.longversion}" >
+        <not><isset property="etch.longversion" /></not>
+    </condition>
+
+    <!-- Csharp Support -->
+    <condition property="USE.dotnet" >
+        <and>
+            <os family="windows" />
+            <available file="${env.DOTNET_HOME}/msbuild.exe" />
+            <available file="${build.ant-dotnet.lib}/ant-dotnet-1.1.jar" />
+            <available file="${env.NUNIT_HOME}/bin/net-2.0/nunit.exe" />
+        </and>
+    </condition>
+    <condition property="USE.mono" >
+        <and>
+            <not><os family="windows" /></not>
+            <!-- TODO mono support is not fully baked, use -DUSE.mono to test -->
+            <!-- <available file="${env.MONO_HOME}/bin/mdtool" /> -->
+            <isset property="USE.mono" />
+        </and>
+    </condition>
+    <condition property="BUILD.csharp" >
+        <or>
+            <isset property="USE.dotnet" />
+            <isset property="USE.mono" />
+        </or>
+    </condition>
+
+    <!-- import etch task -->
+    <taskdef
+        onerror="report"
+        resource="org/apache/etch/tools/ant/etch.xml"
+        classpath="${etch.home}/lib/apache-etch-ant-plugin-${etch.longversion}.jar" />
+
+    <!-- import dotnet task -->
+    <condition property="ant.dotnet.jar" value="ant-dotnet-1.1.jar" >
+        <not><isset property="ant.dotnet.jar" /></not>
+    </condition>
+
+    <taskdef
+        onerror="report"
+        resource="org/apache/ant/dotnet/antlib.xml"
+        classpath="${ant.dotnet.jar}" />
+
+    <macrodef name="mdtool" >
+        <attribute name="dir"         default="." />
+        <attribute name="failonerror" default="false" />
+        <attribute name="project"     default="project.csproj" />
+        <attribute name="target"      default="${build.target}" />
+        <sequential>
+            <exec executable="${env.MONO_HOME}/bin/mdtool" dir="@{dir}" failonerror="@{failonerror}" >
+                <arg value="build" />
+                <arg value="--buildfile:@{project}" />
+            </exec>
+        </sequential>
+    </macrodef>
+
+    <!-- set properties -->
+    <property name="src"               location="${basedir}/src" />
+    <property name="example-base"      location="${basedir}/.." />
+    <property name="target"            location="${basedir}/target" />
+    <property name="dist-src"          location="${target}/dist-src" />
+    <property name="generated-sources" location="${target}/generated-sources" />
+    <property name="gen-src-csharp"    location="${generated-sources}/csharp" />
+    <property name="bin"               location="${target}/bin" />
+    <property name="classes"           location="${target}/classes" />
+    <property name="classes-test"      location="${target}/classes-test" />
+    <property name="test-results"      location="${target}/test-results" />
+    <property name="nunit-results"     location="${target}/nunit-results" />
+    <property name="dist"              location="${Etch.basedir}/target/Installers/dist" />
+
+    <!-- initialize -->
+    <target name="init" >
+        <mkdir dir="${target}" />
+        <mkdir dir="${dist-src}" />
+        <mkdir dir="${generated-sources}" />
+        <mkdir dir="${gen-src-csharp}" />
+        <mkdir dir="${bin}" />
+        <mkdir dir="${classes}" />
+        <mkdir dir="${classes-test}" />
+        <mkdir dir="${test-results}" />
+        <mkdir dir="${nunit-results}" />
+    </target>
+
+    <!-- build the server -->
+    <target name="generate-sources" depends="init" >
+        <!-- generate sources -->
+        <echo>Generating CSharp Sources...</echo>
+        <etch home="${etch.home}"
+              file="${example-base}/etch/HelloWorld.etch"
+              binding="csharp"
+              outputDir="${gen-src-csharp}" />
+    </target>
+
+
+        <!-- compile sources -->
+
+    <target name="build-csharp-with-mono" depends="generate-sources" if="USE.mono" >
+        <mdtool dir="${src}/main/HelloWorldClientProj" project="HelloWorldClientProj.csproj" />
+        <mdtool dir="${src}/main/HelloWorldListenerProj" project="HelloWorldListenerProj.csproj" />
+    </target>
+
+    <target name="build-csharp-with-dotnet" depends="generate-sources" if="USE.dotnet" >
+        <msbuild buildfile="${src}/main/HelloWorldListenerProj/HelloWorldListenerProj.csproj" >
+            <property name="Configuration" value="${build.target}" />
+        </msbuild>
+        <msbuild buildfile="${src}/main/HelloWorldClientProj/HelloWorldClientProj.csproj" >
+            <property name="Configuration" value="${build.target}" />
+        </msbuild>
+        <msbuild buildfile="${src}/test/HelloWorldTestProj/HelloWorldTestProj.csproj" >
+            <property name="Configuration" value="${build.target}" />
+        </msbuild>
+        <copy todir="${bin}" >
+            <fileset dir="${src}/main/HelloWorldListenerProj/bin/${build.target}" >
+                <include name="*" />
+            </fileset>
+            <fileset dir="${src}/main/HelloWorldClientProj/bin/${build.target}" >
+                <include name="*" />
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="build-csharp" depends="build-csharp-with-mono,build-csharp-with-dotnet" />
+
+    <target name="build" depends="build-csharp" />
+
+    <!-- run unit tests -->
+
+    <target name="test-csharp" depends="build-csharp" if="BUILD.csharp" >
+         <nunit xmlout="${nunit-results}/NUnitResults.xml">
+             <testassembly name="${src}/test/HelloWorldTestProj/bin/${build.target}/HelloWorldTestProj.dll" />
+         </nunit>
+
+         <xslt style="${Etch.buildSupportDirectory}/NUnitToJUnit.xsl"
+                 in="${nunit-results}/NUnitResults.xml" out="${test-results}/TEST-NUnitResults.xml" />
+   </target>
+
+    <target name="test" depends="build,test-csharp,done" >
+    </target>
+
+    <target name="done" depends="build" >
+        <echo>
+     Build CSharp Complete!
+     ======================
+     To run csharp example:
+
+     > cd csharp\target\bin
+     > start helloworldListener.exe
+     > start helloworldClient.exe
+
+     You can mix and match the various clients and listeners.
+        </echo>
+    </target>
+
+    <!-- build everything -->
+    <target name="init-debug" >
+        <property name="build.target" value="Debug" />
+    </target>
+
+    <target name="init-release" >
+        <property name="build.target" value="Release" />
+    </target>
+
+   <target name="dist-src" >
+       <copy file="dist-build.xml" tofile="${dist-src}/build.xml" overwrite="true" >
+           <filterset refid="Etch.buildTokens" />
+       </copy>
+
+        <copy todir="${dist-src}/src/main" overwrite="true" >
+            <fileset dir="${src}/main" >
+                <exclude name="**/.svn/**" />
+                <include name="**/*.cs" />
+            </fileset>
+        </copy>
+
+        <copy todir="${dist}/examples/helloworld/etch" overwrite="true" >
+            <fileset dir="${example-base}/etch" >
+                <exclude name="**/.svn/**" />
+                <include name="**/*.etch" />
+            </fileset>
+        </copy>
+
+        <copy todir="${dist}/examples/helloworld/csharp" overwrite="true" >
+            <fileset dir="${dist-src}" />
+        </copy>
+    </target>
+
+    <target name="debug" depends="dist-src,init-debug,test" />
+    <target name="release" depends="dist-src,init-release,test"/>
+
+    <!-- clean -->
+    <target name="clean" >
+        <delete dir="${target}" quiet="true" />
+        <delete dir="${src}/csharp/src/main/HelloWorldClientProj/bin" quiet="true" />
+        <delete dir="${src}/csharp/src/main/HelloWorldClientProj/obj" quiet="true" />
+        <delete dir="${src}/csharp/src/main/HelloWorldListenerProj/bin" quiet="true" />
+        <delete dir="${src}/csharp/src/main/HelloWorldListenerProj/obj" quiet="true" />
+        <delete dir="${src}/csharp/src/test/HelloWorldTestProj/bin" quiet="true" />
+        <delete dir="${src}/csharp/src/test/HelloWorldTestProj/obj" quiet="true" />
+    </target>
+</project>

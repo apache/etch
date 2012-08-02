@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+ <!--
+ * Licensed to the Apache Software Foundation (ASF) under one   *
+ * or more contributor license agreements.  See the NOTICE file *
+ * distributed with this work for additional information        *
+ * regarding copyright ownership.  The ASF licenses this file   *
+ * to you under the Apache License, Version 2.0 (the            *
+ * "License"); you may not use this file except in compliance   *
+ * with the License.  You may obtain a copy of the License at   *
+ *                                                              *
+ *   http://www.apache.org/licenses/LICENSE-2.0                 *
+ *                                                              *
+ * Unless required by applicable law or agreed to in writing,   *
+ * software distributed under the License is distributed on an  *
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY       *
+ * KIND, either express or implied.  See the License for the    *
+ * specific language governing permissions and limitations      *
+ * under the License.                                           *
+ -->
+<project name="etch-helloworld-example-java" basedir="." default="build">
+    <description>HelloWorld Example Java</description>
+
+    <property name="etch.home" location="${basedir}/../../.."/>
+    <property name="etch.version" value="@EtchVersion@"/>
+    <property name="etch.longversion" value="@EtchLongVersion@"/>
+    <property name="etch-java-runtime-name" value="apache-etch-java-runtime-${etch.longversion}.jar"/>
+    <property name="etch-ant-plugin.jar"     location="${etch.home}/lib/apache-etch-ant-plugin-${etch.longversion}.jar"/>
+    <property name="etch-java-runtime.jar"   location="${etch.home}/binding-java/lib/${etch-java-runtime-name}"/>
+
+    <property name="src"               location="${basedir}/src"/>
+    <property name="example-base"      location="${basedir}/.." />
+    <property name="src-main-etch"     location="${example-base}/etch"/>
+    <property name="src-main-java"     location="${src}/main"/>
+    <property name="target"            location="${basedir}/target"/>
+    <property name="generated-sources" location="${target}/generated-sources"/>
+    <property name="gensrc-main-etch-java" location="${generated-sources}/java"/>
+    <property name="classes"           location="${target}/classes"/>
+    <property name="bin"               location="${target}/bin"/>
+
+    <target name="build" depends="build-java, done"/>
+
+    <taskdef
+        resource="org/apache/etch/tools/ant/etch.xml"
+        classpath="${etch-ant-plugin.jar}"/>
+
+    <target name="build-java" depends="gensrc-java">
+        <javac destdir="${classes}" source="1.5" debug="true">
+            <classpath>
+                <pathelement location="${etch-java-runtime.jar}"/>
+            </classpath>
+            <src path="${src-main-java}"/>
+            <src path="${gensrc-main-etch-java}"/>
+        </javac>
+
+        <jar jarfile="${bin}/example.jar">
+            <manifest>
+                <attribute name="Class-Path" value="${etch-java-runtime-name}"/>
+            </manifest>
+            <fileset dir="${classes}"/>
+        </jar>
+
+        <copy todir="${bin}" file="${etch-java-runtime.jar}"/>
+    </target>
+
+    <target name="done">
+        <echo>
+     Build Java Complete!
+     ======================
+     To run java example, open a cmd window and run these commands:
+
+     > cd java\target\bin
+     > start java -cp helloworld.jar org.apache.etch.examples.helloworld.MainHelloWorldListener
+     > start java -cp helloworld.jar org.apache.etch.examples.helloworld.MainHelloWorldClient
+
+     You can mix and match the various clients and listeners.
+        </echo>
+    </target>
+
+    <target name="gensrc" depends="gensrc-java"/>
+
+    <target name="gensrc-java" depends="init">
+        <echo>Generating Java Sources...</echo>
+        <etch
+            home="${etch.home}"
+            binding="java"
+            quiet="true"
+            outputDir="${gensrc-main-etch-java}"
+            file="${src-main-etch}/HelloWorld.etch"/>
+    </target>
+
+    <target name="init">
+        <mkdir dir="${target}"/>
+        <mkdir dir="${generated-sources}"/>
+        <mkdir dir="${gensrc-main-etch-java}"/>
+        <mkdir dir="${classes}"/>
+        <mkdir dir="${bin}"/>
+    </target>
+
+    <target name="clean">
+        <delete dir="${target}"/>
+    </target>
+</project>

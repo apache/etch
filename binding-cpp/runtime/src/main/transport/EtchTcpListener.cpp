@@ -51,6 +51,7 @@ EtchTcpListener::~EtchTcpListener() {
     delete mSocket;
     mSocket = NULL;
   }
+  
 }
 
 capu::bool_t EtchTcpListener::isStarted() {

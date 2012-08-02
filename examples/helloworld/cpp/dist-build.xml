@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+ <!--
+ * Licensed to the Apache Software Foundation (ASF) under one   *
+ * or more contributor license agreements.  See the NOTICE file *
+ * distributed with this work for additional information        *
+ * regarding copyright ownership.  The ASF licenses this file   *
+ * to you under the Apache License, Version 2.0 (the            *
+ * "License"); you may not use this file except in compliance   *
+ * with the License.  You may obtain a copy of the License at   *
+ *                                                              *
+ *   http://www.apache.org/licenses/LICENSE-2.0                 *
+ *                                                              *
+ * Unless required by applicable law or agreed to in writing,   *
+ * software distributed under the License is distributed on an  *
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY       *
+ * KIND, either express or implied.  See the License for the    *
+ * specific language governing permissions and limitations      *
+ * under the License.                                           *
+ -->
+<project name="etch-helloworld-example-cpp" basedir="." default="build">
+    <description>HelloWorld Example Cpp</description>
+
+    <property name="etch.home" location="${basedir}/../../.."/>
+    <property name="etch.version" value="@EtchVersion@"/>
+    <property name="etch.longversion" value="@EtchLongVersion@"/>
+    <property name="etch-ant-plugin.jar"     location="${etch.home}/lib/apache-etch-ant-plugin-${etch.longversion}.jar"/>
+
+    <property name="src"               location="${basedir}/src"/>
+    <property name="example-base"      location="${basedir}/.." />
+    <property name="src-main-etch"     location="${example-base}/etch"/>
+    <property name="target"            location="${basedir}/target"/>
+    <property name="generated-sources" location="${target}/generated-sources"/>
+    <property name="gensrc-main-etch-java" location="${generated-sources}/java"/>
+    <property name="classes"           location="${target}/classes"/>
+    <property name="bin"               location="${target}/bin"/>
+
+    <target name="build" depends="build-cpp,done"/>
+
+    <taskdef
+        resource="org/apache/etch/tools/ant/etch.xml"
+        classpath="${etch-ant-plugin.jar}"/>
+
+    <target name="build-cpp" depends="gensrc-cpp" if="USE.cmake">
+     <cmake srcdir="${basedir}" bindir="${basedir}/target" buildtype="Debug" >
+      <variable name="ETCH_INCLUDE_CAPU_DIR" type="PATH" value="${Etch.basedir}/binding-cpp/runtime/lib/capu/deliverable/capu/include/capu" />
+      <variable name="ETCH_HOME" type="PATH" value="${etch.home}" />
+     </cmake>
+     <copy todir="${bin}" flatten="true">
+        <fileset dir="${basedir}/target/" >
+           <include name="helloworld-client" />
+           <include name="helloworld-server" />
+           <include name="debug/helloworld-client.exe" />
+           <include name="debug/helloworld-server.exe" />
+        </fileset>
+     </copy>
+     <delete file="helloworld-client" quiet="true" />
+     <delete file="helloworld-server" quiet="true" />
+     <delete file="debug/helloworld-client.exe" quiet="true" />
+     <delete file="debug/helloworld-server.exe" quiet="true" />
+   </target>
+
+    <target name="done">
+        <echo>
+     Build CPP Complete!
+     ======================
+     To run cpp example:
+
+     > cd cpp\target\bin
+     > ./helloworld-server.exe
+     > ./helloworld-client.exe
+
+     You can mix and match the various clients and listeners.
+        </echo>
+    </target>
+
+    <target name="gensrc" depends="gensrc-cpp"/>
+
+    <target name="gensrc-cpp" depends="init">
+        <echo>Generating Cpp Sources...</echo>
+        <etch home="${etch.home}"
+        file="${example-base}/etch/HelloWorld.etch"
+        what="all"
+        quiet="true"
+        binding="cpp"
+        outputDir="${gen-src-cpp}" />
+    </target>
+
+    <target name="init">
+        <mkdir dir="${target}"/>
+        <mkdir dir="${generated-sources}"/>
+        <mkdir dir="${gensrc-main-etch-java}"/>
+        <mkdir dir="${classes}"/>
+        <mkdir dir="${bin}"/>
+    </target>
+
+    <target name="clean">
+        <delete dir="${target}"/>
+    </target>
+</project>
