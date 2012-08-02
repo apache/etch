@@ -110,6 +110,8 @@ SET(MAIN_INCLUDES
     ${PROJECT_SOURCE_DIR}/include/support/EtchDeliveryService.h
     ${PROJECT_SOURCE_DIR}/include/support/EtchMailbox.h
     ${PROJECT_SOURCE_DIR}/include/support/EtchObjectSession.h
+    ${PROJECT_SOURCE_DIR}/include/support/EtchPool.h
+    ${PROJECT_SOURCE_DIR}/include/support/EtchPoolRunnable.h
     ${PROJECT_SOURCE_DIR}/include/support/EtchStubHelper.h
     ${PROJECT_SOURCE_DIR}/include/support/EtchStubBase.h
     ${PROJECT_SOURCE_DIR}/include/util/EtchUtil.h
@@ -137,6 +139,7 @@ SET(MAIN_SOURCES
     common/EtchArrayValue.cpp
     util/EtchURL.cpp
     util/EtchResources.cpp
+    util/EtchUtil.cpp
     transport/EtchFlexBuffer.cpp
     transport/EtchSession.cpp
     transport/EtchTcpConnection.cpp
@@ -144,6 +147,8 @@ SET(MAIN_SOURCES
     transport/EtchTcpOption.cpp
     transport/EtchPacketizer.cpp
     transport/EtchMessage.cpp
+    transport/EtchMessagizer.cpp
+    transport/EtchFormat.cpp
     serialization/EtchTypeValidator.cpp
     serialization/EtchValidatorBoolean.cpp
     serialization/EtchValidatorByte.cpp
@@ -176,10 +181,7 @@ SET(MAIN_SOURCES
     serialization/EtchBinaryTaggedData.cpp
     serialization/EtchBinaryTaggedDataInput.cpp
     serialization/EtchBinaryTaggedDataOutput.cpp
-    transport/EtchMessagizer.cpp
-    transport/EtchFormat.cpp
     support/EtchStubBase.cpp
-    util/EtchUtil.cpp
     )
 
 #Add source and header files to library so they are visible in the different IDEs (Visual Studio and Eclipse)
