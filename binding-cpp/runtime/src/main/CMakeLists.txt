@@ -113,8 +113,10 @@ SET(MAIN_INCLUDES
     ${PROJECT_SOURCE_DIR}/include/support/EtchObjectSession.h
     ${PROJECT_SOURCE_DIR}/include/support/EtchPool.h
     ${PROJECT_SOURCE_DIR}/include/support/EtchPoolRunnable.h
+    ${PROJECT_SOURCE_DIR}/include/support/EtchRemoteBase.h    
     ${PROJECT_SOURCE_DIR}/include/support/EtchStubHelper.h
-    ${PROJECT_SOURCE_DIR}/include/support/EtchStubBase.h
+    ${PROJECT_SOURCE_DIR}/include/support/EtchStubBase.h  
+    ${PROJECT_SOURCE_DIR}/include/support/EtchTransportHelper.h
     ${PROJECT_SOURCE_DIR}/include/util/EtchUtil.h
     )
 
@@ -184,6 +186,8 @@ SET(MAIN_SOURCES
     serialization/EtchBinaryTaggedDataOutput.cpp
     support/EtchFreePool.cpp
     support/EtchStubBase.cpp
+    support/EtchRemoteBase.cpp
+    support/EtchTransportHelper.cpp
     )
 
 #Add source and header files to library so they are visible in the different IDEs (Visual Studio and Eclipse)
