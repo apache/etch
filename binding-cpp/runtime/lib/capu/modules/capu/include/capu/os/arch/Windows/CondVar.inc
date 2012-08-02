@@ -101,7 +101,7 @@ private:
               } else {
                 ReleaseSemaphore(mSemaphore, 1, NULL);
               }
-            }
+            } else
             if (waitResult == WAIT_TIMEOUT) {
               mLockWaitCounter.lock();
               --mWaitCounter;
@@ -110,6 +110,7 @@ private:
               mutex->lock();
               return CAPU_ETIMEOUT;
             } else {
+              mutex->lock();
               return CAPU_ERROR;
             }
         }
