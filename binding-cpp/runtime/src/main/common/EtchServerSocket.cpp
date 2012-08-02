@@ -43,6 +43,8 @@ status_t EtchServerSocket::close() {
 
 EtchSocket* EtchServerSocket::accept() {
   capu::Socket *capu_soc = mServerSocket.accept();
+  if(capu_soc == NULL)
+    return NULL;
   EtchSocket *sock = new EtchSocket(capu_soc);
   return sock;
 }

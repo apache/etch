@@ -46,7 +46,11 @@ inline ServerSocket::~ServerSocket() {
 inline Socket* ServerSocket::accept() {
   int32_t clientAddrSize = sizeof (sockaddr_in);
   struct sockaddr_in serverAddr;
-  Socket *s = new Socket(::accept(mServerSock, (sockaddr *) &serverAddr, (socklen_t *) & clientAddrSize));
+  capu::int32_t socketHandle = ::accept(mServerSock, (sockaddr *) & serverAddr, (socklen_t *) & clientAddrSize);
+  if (socketHandle < 0) {
+    return NULL;
+  }
+  Socket *s = new Socket(socketHandle);
   s->mServerAddress = serverAddr;
   return s;
 }
