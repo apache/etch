@@ -37,7 +37,6 @@ public:
    * Destructor
    */
   virtual ~EtchTransport() {
-
   }
 
   /**
@@ -99,7 +98,7 @@ public:
   /**
    * Name of value factory in resources.
    */
-  static const EtchString VALUE_FACTORY;
+  const static EtchString VALUE_FACTORY;
 
   ///////////////////////////////////////////////
   // Well-known queries, controls, and events. //
