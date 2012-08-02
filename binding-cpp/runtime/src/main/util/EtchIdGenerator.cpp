@@ -15,6 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 #include "util/EtchIdGenerator.h"
 #include "capu/os/Mutex.h"
 
@@ -27,18 +28,20 @@ EtchIdGenerator::EtchIdGenerator()
 : mNextId(1), mStride(1) {
 }
 
-EtchIdGenerator::EtchIdGenerator(capu::int64_t nextId)
+EtchIdGenerator::EtchIdGenerator(capu::uint64_t nextId)
 : mNextId(nextId), mStride(1) {
 }
 
-EtchIdGenerator::EtchIdGenerator(capu::int64_t nextId, capu::uint32_t stride)
+EtchIdGenerator::EtchIdGenerator(capu::uint64_t nextId, capu::uint32_t stride)
 : mNextId(nextId), mStride(stride) {
 }
 
-capu::int64_t EtchIdGenerator::next() {
+capu::uint64_t EtchIdGenerator::next() {
   mMutex.lock();
-  capu::int64_t id = mNextId;
+
+  capu::uint64_t id = mNextId;
   mNextId += mStride;
+
   mMutex.unlock();
   return id;
 }

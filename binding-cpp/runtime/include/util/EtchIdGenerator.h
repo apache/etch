@@ -40,7 +40,7 @@ public:
    *
    * @param nextId
    */
-  EtchIdGenerator(capu::int64_t nextId);
+  EtchIdGenerator(capu::uint64_t nextId);
 
   /**
    * Constructs the IdGenerator with the specified starting point
@@ -48,8 +48,7 @@ public:
    * @param nextId
    * @param stride
    */
-  EtchIdGenerator(capu::int64_t nextId, capu::uint32_t stride);
-
+  EtchIdGenerator(capu::uint64_t nextId, capu::uint32_t stride);
   /**
    * Destructor
    */
@@ -58,14 +57,13 @@ public:
   /**
    * @return the next id in sequence.
    */
-  capu::int64_t next();
+  capu::uint64_t next();
 
 private:
 
-  capu::int64_t mNextId;
+  capu::uint64_t mNextId;
   const capu::uint32_t mStride;
   capu::Mutex mMutex;
 };
 
 #endif	/* ETCHIDGENERATOR_H */
-
