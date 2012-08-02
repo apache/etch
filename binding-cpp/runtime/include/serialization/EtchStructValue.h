@@ -52,7 +52,7 @@ public:
    * @param type the type of the struct.
    * @param vf the value factory.
    */
-  EtchStructValue(EtchType *type, EtchValueFactory *vf);
+  EtchStructValue(EtchType* type, EtchValueFactory* vf);
 
   /**
    * Constructs the StructValue.
@@ -62,7 +62,7 @@ public:
    * @param length the number of name / value pairs expected. 0 means use
    * default.
    */
-  EtchStructValue(EtchType *type, EtchValueFactory *vf, capu::uint32_t length);
+  EtchStructValue(EtchType* type, EtchValueFactory* vf, capu::uint32_t length);
 
   /**
    * Default Destructor
@@ -96,7 +96,7 @@ public:
    *         ETCH_ENOT_EXIST if there is no existing pair with specified key
    *
    */
-  status_t get(EtchField &key, capu::SmartPointer<EtchObject> *value);
+  status_t get(const EtchField &key, capu::SmartPointer<EtchObject> *value);
 
   /**
    * Remove value associated with key in the EtchStructValue.
@@ -135,16 +135,20 @@ public:
    * @return EtchLevel
    */
   EtchLevel getLevel();
-  
+
   typedef EtchHashTable<EtchField, capu::SmartPointer<EtchObject> >::Iterator Iterator;
   typedef EtchHashTable<EtchField, capu::SmartPointer<EtchObject> >::Pair Pair;
 
   /**
-   * 
-   * @return an iterator which is pointing the beginning of collection 
+   * @return an iterator which is pointing the beginning of collection
    */
   Iterator begin();
-  
+
+  /**
+   * @return true if the struct value is empty, otherwise false
+   */
+  capu::bool_t isEmpty();
+
 private:
 
   EtchType* mType;
@@ -154,9 +158,11 @@ private:
    * A bogus serial version uid.
    */
   static const capu::int64_t serialVersionUID = 1L;
+
   //Default size of mTable
   static const capu::int32_t DEFAULT_SIZE = 8;
 
 };
+
 
 #endif /* ETCHSTRUCTVALUE_H */

@@ -89,11 +89,20 @@ status_t EtchStructValue::clear() {
   return ETCH_OK;
 }
 
-status_t EtchStructValue::get(EtchField &key, capu::SmartPointer<EtchObject>  *value) {
+status_t EtchStructValue::get(const EtchField &key, capu::SmartPointer<EtchObject>  *value) {
   return mTable.get(key, value);
 }
 
 EtchStructValue::Iterator EtchStructValue::begin()
 {
   return mTable.begin();
+}
+
+
+capu::bool_t EtchStructValue::isEmpty()
+{
+  if(mTable.count() == 0) {
+    return true;
+  }
+  return false;
 }
