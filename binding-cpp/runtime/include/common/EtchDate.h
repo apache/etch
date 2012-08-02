@@ -67,5 +67,7 @@ private:
 
 };
 
+typedef capu::SmartPointer<EtchDate> EtchDatePtr;
+
 #endif /* ETCHDATE_H */
 

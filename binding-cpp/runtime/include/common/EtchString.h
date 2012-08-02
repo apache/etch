@@ -157,4 +157,6 @@ private:
   char* mData;
 };
 
+typedef capu::SmartPointer<EtchString> EtchStringPtr;
+
 #endif

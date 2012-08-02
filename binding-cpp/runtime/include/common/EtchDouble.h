@@ -70,4 +70,6 @@ private:
 
 };
 
+typedef capu::SmartPointer<EtchDouble> EtchDoublePtr;
+
 #endif

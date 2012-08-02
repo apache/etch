@@ -19,6 +19,7 @@
 #ifndef __ETCHOBJECT_H__
 #define __ETCHOBJECT_H__
 
+#include "capu/util/SmartPointer.h"
 #include "EtchConfig.h"
 
 class EtchObjectType;
@@ -72,5 +73,7 @@ private:
   const EtchObjectType* mType;
 
 };
+
+typedef capu::SmartPointer<EtchObject> EtchObjectPtr;
 
 #endif

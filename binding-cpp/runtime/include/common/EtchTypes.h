@@ -16,33 +16,20 @@
  * limitations under the License.
  */
 
-#ifndef __ETCHRUNTIMEEXCEPTION_H__
-#define __ETCHRUNTIMEEXCEPTION_H__
+#ifndef __ETCHTYPES_H__
+#define __ETCHTYPES_H__
 
-#include "common/EtchException.h"
-#include "common/EtchError.h"
+#include "EtchBool.h"
+#include "EtchByte.h"
+#include "EtchDate.h"
+#include "EtchDouble.h"
+#include "EtchFloat.h"
+#include "EtchInt32.h"
+#include "EtchList.h"
+#include "EtchLong.h"
+#include "EtchNative.h"
+#include "EtchNativeArray.h"
+#include "EtchShort.h"
+#include "EtchString.h"
 
-class EtchRuntimeException : public EtchException {
-public:
-
-  /**
-   * EtchObjectType for EtchRuntimeException.
-   */
-  static const EtchObjectType* TYPE();
-
-  //Default Constructor
-  EtchRuntimeException(EtchString &msg, status_t errcode);
-
-  /**
-   * Destructor
-   */
-  virtual ~EtchRuntimeException();
-
-  //Overridden
-  capu::bool_t equals(const EtchObject* other);
-
-};
-
-
-#endif /* ETCHRUNTIMEEXCEPTION_H */
-
+#endif

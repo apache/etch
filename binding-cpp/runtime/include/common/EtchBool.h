@@ -69,4 +69,6 @@ private:
   capu::bool_t mValue;
 };
 
+typedef capu::SmartPointer<EtchBool> EtchBoolPtr;
+
 #endif

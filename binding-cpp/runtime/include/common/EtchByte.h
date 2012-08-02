@@ -70,4 +70,6 @@ private:
 
 };
 
+typedef capu::SmartPointer<EtchByte> EtchBytePtr;
+
 #endif

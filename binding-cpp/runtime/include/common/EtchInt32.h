@@ -71,4 +71,6 @@ private:
 
 };
 
+typedef capu::SmartPointer<EtchInt32> EtchInt32Ptr;
+
 #endif
