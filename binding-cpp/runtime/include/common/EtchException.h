@@ -41,7 +41,7 @@ public:
    * EtchException
    * @param msg Exception Message
    */
-  EtchException(EtchString &msg, status_t errcode, EtchExceptionType type);
+  EtchException(EtchString msg, status_t errcode, EtchExceptionType type);
 
   //destructor
   virtual ~EtchException();
@@ -81,8 +81,7 @@ protected:
    * @param type    Exception Type such as EXCPTYPE_USERDEFINED etc.
    * @param type_id Typeid of Exception
    */
-  EtchException(EtchString &msg, status_t errcode, EtchExceptionType type, const EtchObjectType* type_id);
-
+  EtchException(EtchString msg, status_t errcode, EtchExceptionType type, const EtchObjectType* type_id);
 };
 
 #endif /* ETCHEXCEPTION_H */

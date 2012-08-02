@@ -24,7 +24,7 @@ const EtchObjectType* EtchRuntimeException::TYPE() {
 }
 
 
-EtchRuntimeException::EtchRuntimeException(EtchString &msg, status_t errcode)
+EtchRuntimeException::EtchRuntimeException(EtchString msg, status_t errcode)
 : EtchException(msg, errcode, EtchException::EXCPTYPE_BUILTIN, EtchRuntimeException::TYPE()) {
 
 }

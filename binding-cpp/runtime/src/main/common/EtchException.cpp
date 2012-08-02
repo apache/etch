@@ -27,12 +27,12 @@ EtchException::EtchException()
 
 }
 
-EtchException::EtchException(EtchString &msg, status_t errcode, EtchExceptionType type)
+EtchException::EtchException(EtchString msg, status_t errcode, EtchExceptionType type)
 : EtchObject(EtchException::TYPE()), mErrorMessage(msg), mErrorcode(errcode), mExcptype(type) {
 
 }
 
-EtchException::EtchException(EtchString &msg, status_t errcode, EtchExceptionType type, const EtchObjectType* type_id)
+EtchException::EtchException(EtchString msg, status_t errcode, EtchExceptionType type, const EtchObjectType* type_id)
 : EtchObject(type_id), mErrorMessage(msg), mErrorcode(errcode), mExcptype(type) {
 
 }

@@ -31,7 +31,7 @@ public:
   static const EtchObjectType* TYPE();
 
   //Default Constructor
-  EtchRuntimeException(EtchString &msg, status_t errcode);
+  EtchRuntimeException(EtchString msg, status_t errcode);
 
   /**
    * Destructor
