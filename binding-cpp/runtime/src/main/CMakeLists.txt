@@ -1,18 +1,18 @@
 #
-# Licensed to the Apache Software Foundation (ASF) under one or more 
-# contributor license agreements. See the NOTICE file distributed with  
-# this work for additional information regarding copyright ownership. 
-# The ASF licenses this file to you under the Apache License, Version  
-# 2.0 (the "License"); you may not use this file except in compliance  
-# with the License. You may obtain a copy of the License at 
-# 
-# http://www.apache.org/licenses/LICENSE-2.0 
-# 
-# Unless required by applicable law or agreed to in writing, software 
-# distributed under the License is distributed on an "AS IS" BASIS, 
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements. See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to you under the Apache License, Version
+# 2.0 (the "License"); you may not use this file except in compliance
+# with the License. You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and 
-# limitations under the License. 
+# See the License for the specific language governing permissions and
+# limitations under the License.
 #
 
 # set include dirs
@@ -58,6 +58,10 @@ SET(MAIN_INCLUDES
     ${PROJECT_SOURCE_DIR}/include/transport/EtchTransportData.h
     ${PROJECT_SOURCE_DIR}/include/transport/EtchTransportMessage.h
     ${PROJECT_SOURCE_DIR}/include/transport/EtchTransportPacket.h
+    ${PROJECT_SOURCE_DIR}/include/transport/EtchTransportFactory.h 
+    ${PROJECT_SOURCE_DIR}/include/transport/EtchMessagizer.h
+    ${PROJECT_SOURCE_DIR}/include/transport/EtchFormat.h
+    ${PROJECT_SOURCE_DIR}/include/transport/EtchTcpTransportFactory.h
     ${PROJECT_SOURCE_DIR}/include/common/EtchTypes.h
     ${PROJECT_SOURCE_DIR}/include/common/EtchException.h
     ${PROJECT_SOURCE_DIR}/include/common/EtchAuthenticationException.h
@@ -110,8 +114,7 @@ SET(MAIN_INCLUDES
     ${PROJECT_SOURCE_DIR}/include/serialization/EtchBinaryTaggedData.h
     ${PROJECT_SOURCE_DIR}/include/serialization/EtchBinaryTaggedDataInput.h
     ${PROJECT_SOURCE_DIR}/include/serialization/EtchBinaryTaggedDataOutput.h
-    ${PROJECT_SOURCE_DIR}/include/transport/EtchMessagizer.h
-    ${PROJECT_SOURCE_DIR}/include/transport/EtchFormat.h
+    ${PROJECT_SOURCE_DIR}/include/support/EtchRuntime.h
     ${PROJECT_SOURCE_DIR}/include/support/EtchAsyncResultBase.h
     ${PROJECT_SOURCE_DIR}/include/support/EtchDefaultServerFactory.h
     ${PROJECT_SOURCE_DIR}/include/support/EtchDeliveryService.h
@@ -125,12 +128,11 @@ SET(MAIN_INCLUDES
     ${PROJECT_SOURCE_DIR}/include/support/EtchServerFactory.h
     ${PROJECT_SOURCE_DIR}/include/support/EtchStubHelper.h
     ${PROJECT_SOURCE_DIR}/include/support/EtchStubBase.h
-    ${PROJECT_SOURCE_DIR}/include/transport/EtchTransportFactory.h
-    ${PROJECT_SOURCE_DIR}/include/transport/EtchTcpTransportFactory.h
     ${PROJECT_SOURCE_DIR}/include/support/EtchTransportHelper.h
     ${PROJECT_SOURCE_DIR}/include/support/EtchPlainMailbox.h
     ${PROJECT_SOURCE_DIR}/include/support/EtchMonitor.h
     ${PROJECT_SOURCE_DIR}/include/support/EtchStack.h
+    ${PROJECT_SOURCE_DIR}/include/support/EtchRuntime.h
     ${PROJECT_SOURCE_DIR}/include/support/EtchServerStack.h
     ${PROJECT_SOURCE_DIR}/include/support/EtchClientStack.h
     ${PROJECT_SOURCE_DIR}/include/util/EtchUtil.h
@@ -216,6 +218,7 @@ SET(MAIN_SOURCES
     support/EtchRemoteBase.cpp
     support/EtchTransportHelper.cpp
     support/EtchMonitor.cpp
+    support/EtchRuntime.cpp
     support/EtchServerStack.cpp
     support/EtchClientStack.cpp
     util/EtchCircularQueue.cpp

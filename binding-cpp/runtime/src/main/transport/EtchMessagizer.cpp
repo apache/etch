@@ -42,7 +42,8 @@ EtchMessagizer::EtchMessagizer(EtchTransportPacket* transport, EtchURL* uri, Etc
 }
 
 EtchMessagizer::~EtchMessagizer() {
-  mTransport->setSession(NULL);
+  if(mTransport != NULL)
+    delete mTransport;
   if (mTdi != NULL)
     delete mTdi;
   if (mTdo != NULL)
@@ -93,8 +94,7 @@ status_t EtchMessagizer::sessionPacket(capu::SmartPointer<EtchWho> sender, capu:
     return result;
   }
   result = mSession->sessionMessage(sender, message);
-  if (result != ETCH_OK)
-  {
+  if (result != ETCH_OK) {
     EtchString errmsg("Unwanted Message");
     mSession->sessionNotify(new EtchException(errmsg, ETCH_UNWANTED_MESSAGE, EtchException::EXCPTYPE_BUILTIN));
   }
@@ -109,6 +109,12 @@ status_t EtchMessagizer::transportMessage(capu::SmartPointer<EtchWho> recipient,
 
   // packetize the message.
   // leave space for the packet header
+  result = msgBuf->setLength(mTransport->getHeaderSize());
+  if (result != ETCH_OK) {
+    mutex.unlock();
+    return result;
+  }
+
   result = msgBuf->setIndex(mTransport->getHeaderSize());
   if (result != ETCH_OK) {
     mutex.unlock();

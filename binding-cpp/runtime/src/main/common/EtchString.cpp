@@ -201,7 +201,7 @@ capu::bool_t EtchString::equals(const EtchObject * other) const {
   return false;
 }
 
-capu::int32_t EtchString::rightFind(const char c) {
+capu::int32_t EtchString::rightFind(const char c) const {
   if (mEncoding == ENCODING_UTF8) {
     //utf8
     //TODO: Implementation needed
@@ -217,13 +217,13 @@ capu::int32_t EtchString::rightFind(const char c) {
   return index;
 }
 
-capu::int32_t EtchString::leftFind(const char c) {
+capu::int32_t EtchString::leftFind(const char c) const {
   if (mEncoding == ENCODING_UTF8) {
     //utf8
     //TODO: Implementation needed
     return -1;
   }
-  const char * str = this->c_str();
+  const char * str = c_str();
   capu::int32_t index = -1;
   char* ch = strchr((char*) str, c);
   //NOT FOUND
@@ -233,7 +233,7 @@ capu::int32_t EtchString::leftFind(const char c) {
   return index;
 }
 
-status_t EtchString::substring(capu::uint32_t start, capu::uint32_t length, EtchString * dest) {
+status_t EtchString::substring(capu::uint32_t start, capu::uint32_t length, EtchString * dest) const {
   if (mEncoding == ENCODING_UTF8) {
     //utf8
     //TODO: Implementation needed

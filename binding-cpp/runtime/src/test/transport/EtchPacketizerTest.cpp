@@ -31,8 +31,20 @@
 class MockListener3 : public virtual EtchSessionListener<EtchSocket> {
 public:
 
-  //This method is called
+  MockListener3(EtchTransport<EtchSessionListener<EtchSocket> >* transport) :
+    mTransport(transport) {
+    if(mTransport != NULL) {
+      mTransport->setSession(this);
+    }
+  }
 
+  virtual ~MockListener3() {
+    if(mTransport != NULL) {
+        delete mTransport;
+    }
+  }
+
+  //This method is called
   status_t sessionAccepted(EtchSocket* connection) {
     delete connection;
     return ETCH_OK;
@@ -45,6 +57,9 @@ public:
   status_t sessionNotify(capu::SmartPointer<EtchObject> event) {
     return ETCH_OK;
   }
+
+private:
+ EtchTransport<EtchSessionListener<EtchSocket> >* mTransport;
 };
 
 class MockMessagizer : public EtchSessionPacket {
@@ -63,41 +78,37 @@ public:
 
 TEST(EtchPacketizer, constructorTest) {
   EtchURL u("tcp://127.0.0.1:4001");
-  EtchTransportData* conn = new EtchTcpConnection(NULL, &u);
+  EtchTransportData* conn = new EtchTcpConnection(NULL, NULL, &u);
   EtchSessionData* packetizer = new EtchPacketizer(conn, &u);
   delete packetizer;
-  delete conn;
 }
 
 TEST(EtchPacketizer, TransportControlTest) {
   EtchURL u("tcp://127.0.0.1:4001");
-  EtchTransportData* conn = new EtchTcpConnection(NULL, &u);
-  EtchPacketizer* res = new EtchPacketizer(conn, &u);
+  EtchTransportData* conn = new EtchTcpConnection(NULL, NULL, &u);
+  EtchPacketizer* packetizer = new EtchPacketizer(conn, &u);
   MockMessagizer mes;
-  res->setSession(&mes);
-  EtchSessionListener<EtchSocket>* mSessionListener = new MockListener3();
-  EtchTcpListener* listener = new EtchTcpListener(&u);
+  packetizer->setSession(&mes);
+
+
+  EtchTcpListener* transport = new EtchTcpListener(&u);
+  EtchSessionListener<EtchSocket>* listener = new MockListener3(transport);
+
   //Start the mock listener
-  listener->setSession(mSessionListener);
-  listener->transportControl(new EtchString(EtchTcpListener::START_AND_WAIT_UP), new EtchInt32(1000));
-  res->transportControl(new EtchString(EtchPacketizer::START_AND_WAIT_UP), new EtchInt32(1000));
+  transport->transportControl(new EtchString(EtchTcpListener::START_AND_WAIT_UP), new EtchInt32(1000));
 
-  res->transportControl(new EtchString(EtchPacketizer::STOP_AND_WAIT_DOWN), new EtchInt32(1000));
-  listener->transportControl(new EtchString(EtchTcpListener::STOP_AND_WAIT_DOWN), new EtchInt32(1000));
+  packetizer->transportControl(new EtchString(EtchPacketizer::START_AND_WAIT_UP), new EtchInt32(1000));
+  packetizer->transportControl(new EtchString(EtchPacketizer::STOP_AND_WAIT_DOWN), new EtchInt32(1000));
 
-  conn->setSession(NULL);
-  res->setSession(NULL);
-  listener->setSession(NULL);
+  transport->transportControl(new EtchString(EtchTcpListener::STOP_AND_WAIT_DOWN), new EtchInt32(1000));
 
-  delete mSessionListener;
-  delete res;
-  delete conn;
+  delete packetizer;
   delete listener;
 }
 
 TEST(EtchPacketizer, TransportPacketTest) {
   EtchURL u("tcp://127.0.0.1:4001");
-  EtchTransportData* conn = new EtchTcpConnection(NULL, &u);
+  EtchTransportData* conn = new EtchTcpConnection(NULL, NULL, &u);
   EtchPacketizer* packetizer = new EtchPacketizer(conn, &u);
   MockMessagizer mes;
   packetizer->setSession(&mes);
@@ -109,20 +120,18 @@ TEST(EtchPacketizer, TransportPacketTest) {
   buffer->setIndex(0);
 
   EXPECT_TRUE(packetizer->transportPacket(NULL, buffer) == ETCH_ERROR);
-
   delete packetizer;
-  delete conn;
 }
 
 TEST(EtchPacketizer, SessionDataTest) {
   EtchURL u("tcp://127.0.0.1:4001");
-  EtchTransportData* conn = new EtchTcpConnection(NULL, &u);
+  EtchTransportData* conn = new EtchTcpConnection(NULL, NULL, &u);
   EtchPacketizer* packetizer = new EtchPacketizer(conn, &u);
   capu::SmartPointer<EtchFlexBuffer> buffer = new EtchFlexBuffer();
   //A packet is created
   capu::int32_t pktsize = 4;
-  buffer->put((capu::int8_t *) & packetizer->SIG, sizeof (capu::int32_t));
-  buffer->put((capu::int8_t *) & pktsize, sizeof (capu::int32_t));
+  buffer->putInt(packetizer->SIG);
+  buffer->putInt(pktsize);
   buffer->put((capu::int8_t *)"test", pktsize);
   buffer->setIndex(0);
   EXPECT_TRUE(buffer->getLength() == 12);
@@ -137,5 +146,4 @@ TEST(EtchPacketizer, SessionDataTest) {
   packetizer->setSession(NULL);
   delete mSessionPacker;
   delete packetizer;
-  delete conn;
 }

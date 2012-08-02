@@ -18,7 +18,8 @@
 
 #include "transport/EtchTcpConnection.h"
 
-EtchTcpConnection::EtchTcpConnection(EtchSocket* socket, EtchURL* uri) : mOptions(uri) {
+EtchTcpConnection::EtchTcpConnection(EtchRuntime* runtime, EtchSocket* socket, EtchURL* uri)
+: mRuntime(runtime), mOptions(uri) {
   if ((socket == NULL) && (uri != NULL)) {
     mHost = uri->getHost();
     mPort = uri->getPort();
@@ -38,6 +39,13 @@ EtchTcpConnection::~EtchTcpConnection() {
   if (mThread != NULL) {
     mThread->join();
     delete mThread;
+  }
+
+  if (mSocket != NULL) {
+    mSocket->close();
+    delete mSocket;
+    mSocket = NULL;
+    mIsStarted = false;
   }
 }
 
@@ -153,8 +161,6 @@ status_t EtchTcpConnection::transportControl(capu::SmartPointer<EtchObject> cont
   }
 
   if (control->equals(&EtchTcpConnection::START_AND_WAIT_UP)) {
-    if (mIsStarted)
-      return ETCH_OK;
     mMutex.lock();
     if (mIsStarted) {
       mMutex.unlock();
@@ -164,9 +170,8 @@ status_t EtchTcpConnection::transportControl(capu::SmartPointer<EtchObject> cont
     mMutex.unlock();
     mThread = new capu::Thread(this);
     mThread->start();
-    
-
     return waitUp(((EtchInt32*) value.get())->get());
+
   }
 
   if (control->equals(&EtchTcpConnection::STOP)) {
@@ -176,6 +181,7 @@ status_t EtchTcpConnection::transportControl(capu::SmartPointer<EtchObject> cont
       return ETCH_OK;
     }
     mIsStarted = false;
+
     mMutex.unlock();
     close();
     return ETCH_OK;
@@ -202,7 +208,6 @@ status_t EtchTcpConnection::transportControl(capu::SmartPointer<EtchObject> cont
     }
     mIsStarted = false;
     mMutex.unlock();
-
     close();
     return ETCH_OK;
   }

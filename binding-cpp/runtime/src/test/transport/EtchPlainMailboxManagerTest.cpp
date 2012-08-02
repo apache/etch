@@ -91,7 +91,7 @@ public:
 };
 
 TEST(EtchPlainMailboxManager, constructorTest) {
-  MockTransport transport;
+  MockTransport *transport = new MockTransport();
   MockSession session;
   MockDefaultValueFactory *factory;
   EtchString uri("tcp://127.0.0.1:4001");
@@ -99,7 +99,7 @@ TEST(EtchPlainMailboxManager, constructorTest) {
   //created value factory
   EtchURL u(uri);
   EtchMailboxManager * manager = NULL;
-  manager = new EtchPlainMailboxManager(&transport, &u, NULL);
+  manager = new EtchPlainMailboxManager(transport, NULL, NULL);
 
   EXPECT_TRUE(manager != NULL);
   manager->setSession(&session);
@@ -125,12 +125,12 @@ TEST(EtchPlainMailboxManager, transportMessageTest) {
   EXPECT_TRUE(ETCH_OK != message->getMessageId(id));
   EXPECT_TRUE(ETCH_OK != message->getInReplyToMessageId(id));
 
-  MockTransport transport;
+  MockTransport *transport = new MockTransport();
   MockSession session;
 
   EtchURL u(uri);
   EtchPlainMailboxManager * manager = NULL;
-  manager = new EtchPlainMailboxManager(&transport, &u, NULL);
+  manager = new EtchPlainMailboxManager(transport, NULL, NULL);
 
   manager->setSession(&session);
 
@@ -167,12 +167,12 @@ TEST(EtchPlainMailboxManager, transportResultMessageTest) {
 
   message->setInReplyToMessageId(1L);
 
-  MockTransport transport;
+  MockTransport *transport = new MockTransport();
   MockSession session;
 
   EtchURL u(uri);
   EtchPlainMailboxManager * manager = NULL;
-  manager = new EtchPlainMailboxManager(&transport, &u, NULL);
+  manager = new EtchPlainMailboxManager(transport, NULL, NULL);
 
   manager->setSession(&session);
 
@@ -206,12 +206,12 @@ TEST(EtchPlainMailboxManager, transportCallTest) {
   EXPECT_TRUE(ETCH_OK != message->getMessageId(id));
   EXPECT_TRUE(ETCH_OK != message->getInReplyToMessageId(id));
 
-  MockTransport transport;
+  MockTransport *transport = new MockTransport();
   MockSession session;
 
   EtchURL u(uri);
   EtchPlainMailboxManager * manager = NULL;
-  manager = new EtchPlainMailboxManager(&transport, &u, NULL);
+  manager = new EtchPlainMailboxManager(transport, NULL, NULL);
 
   manager->setSession(&session);
   //in order to notify upper layers that the connection is open
@@ -247,7 +247,7 @@ TEST(EtchPlainMailboxManager, replicatedTransportCallTest) {
   EXPECT_TRUE(ETCH_OK != message->getMessageId(id));
   EXPECT_TRUE(ETCH_OK != message->getInReplyToMessageId(id));
 
-  MockTransport transport;
+  MockTransport *transport = new MockTransport();
   MockSession session;
 
   // test sending a call message that has already been sent (has a message id)
@@ -255,7 +255,7 @@ TEST(EtchPlainMailboxManager, replicatedTransportCallTest) {
 
   EtchURL u(uri);
   EtchPlainMailboxManager * manager = NULL;
-  manager = new EtchPlainMailboxManager(&transport, &u, NULL);
+  manager = new EtchPlainMailboxManager(transport, NULL, NULL);
 
   manager->setSession(&session);
   //in order to notify upper layers that the connection is open
@@ -296,12 +296,12 @@ TEST(EtchPlainMailboxManager, sessionMessageTest) {
   EXPECT_TRUE(ETCH_OK != message->getMessageId(id));
   EXPECT_TRUE(ETCH_OK != message->getInReplyToMessageId(id));
 
-  MockTransport transport;
+  MockTransport *transport = new MockTransport();
   MockSession session;
 
   EtchURL u(uri);
   EtchPlainMailboxManager * manager = NULL;
-  manager = new EtchPlainMailboxManager(&transport, &u, NULL);
+  manager = new EtchPlainMailboxManager(transport, NULL, NULL);
 
   manager->setSession(&session);
   //in order to notify upper layers that the connection is open

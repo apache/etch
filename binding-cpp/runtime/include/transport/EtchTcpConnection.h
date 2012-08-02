@@ -33,11 +33,11 @@
 #include "transport/EtchSessionData.h"
 #include "transport/EtchTcpOption.h"
 
+class EtchRuntime;
 
 /**
  * Implementation of connection which handles a tcp connection.
  */
-
 class EtchTcpConnection : public EtchConnection<EtchSessionData>, public EtchTransportData, public capu::Runnable {
 public:
 
@@ -47,7 +47,7 @@ public:
    * @param uri
    * @param resources
    */
-  EtchTcpConnection(EtchSocket* socket, EtchURL* uri);
+  EtchTcpConnection(EtchRuntime* runtime, EtchSocket* socket, EtchURL* uri);
 
   /**
    * Destructor
@@ -57,54 +57,54 @@ public:
   /**
    * @see TransportData
    */
-  virtual status_t transportControl(capu::SmartPointer<EtchObject> control, capu::SmartPointer<EtchObject> value);
+  status_t transportControl(capu::SmartPointer<EtchObject> control, capu::SmartPointer<EtchObject> value);
 
 
   /**
    * @see TransportData
    */
-  virtual status_t transportData(capu::SmartPointer<EtchWho> recipient, capu::SmartPointer<EtchFlexBuffer> buf);
+  status_t transportData(capu::SmartPointer<EtchWho> recipient, capu::SmartPointer<EtchFlexBuffer> buf);
 
   /**
    * @see TransportData
    */
-  virtual status_t transportNotify(capu::SmartPointer<EtchObject> event);
+  status_t transportNotify(capu::SmartPointer<EtchObject> event);
 
   /**
    * @see TransportData
    */
-  virtual status_t transportQuery(capu::SmartPointer<EtchObject> query, capu::SmartPointer<EtchObject> *result);
+  status_t transportQuery(capu::SmartPointer<EtchObject> query, capu::SmartPointer<EtchObject> *result);
 
   /**
    * @return Session
    */
-  virtual EtchSessionData* getSession();
+  EtchSessionData* getSession();
 
   /**
    * Sets session
    */
-  virtual void setSession(EtchSessionData* session);
+  void setSession(EtchSessionData* session);
 
 
   /**
    * @see EtchConnection
    */
-  virtual capu::bool_t isStarted();
+  capu::bool_t isStarted();
 
   /**
    * @see capu::thread
    */
-  virtual void run();
+  void run();
 
   /**
    * @see EtchConnection
    */
-  virtual status_t close();
+  status_t close();
 
   /**
    * @see EtchConnection
    */
-  virtual status_t setupSocket();
+  status_t setupSocket();
 
   /**
    * Sends some data to the remote end. If the connection is buffered, the
@@ -128,19 +128,12 @@ public:
   void setNumAttempts(capu::uint8_t numAttempts);
 
 private:
-  //PORT
-  capu::uint16_t mPort;
-
-  //HOST ADDR
   EtchString mHost;
-
-  //SOCKET
+  capu::uint16_t mPort;
   EtchSocket* mSocket;
-
-  //SOCKET OPTIONS
   EtchTcpOption mOptions;
-
   capu::uint8_t mNumAttempts;
+  EtchRuntime *mRuntime;
 
 protected:
 

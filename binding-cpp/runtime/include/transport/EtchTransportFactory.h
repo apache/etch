@@ -34,6 +34,7 @@
  */
 class EtchTransportFactory {
 public:
+
   /**
    * Query term on the transport uri which defines a set of filters which
    * process messages as they move up and down the transport stack. Filter
@@ -51,7 +52,7 @@ public:
    * @return ETCH_ENOT_EXIST if the required transport method is not available or not implememted
              ETCH_OK otherwise
    */
-  static status_t getTransport(EtchString uri, EtchResources* resources, EtchTransportMessage*& result);
+  static status_t getTransport(EtchRuntime* runtime, EtchString uri, EtchResources* resources, EtchTransportMessage*& result);
 
   /**
    * Constructs a new Transport Listener which is used to construct
@@ -62,7 +63,7 @@ public:
    * @return ETCH_ENOT_EXIST if the required listener is not available or not implememted
              ETCH_OK otherwise
    */
-  static status_t getListener(EtchString uri, EtchResources* resources, EtchTransport<EtchServerFactory>*& result);
+  static status_t getListener(EtchRuntime* runtime, EtchString uri, EtchResources* resources, EtchTransport<EtchServerFactory>*& result);
 
 
 protected:
@@ -109,15 +110,24 @@ protected:
 
 private:
 
+  /**
+   * Adds any message filters specified on the uri. They are added in order
+   * from transport to session. The first filter is the session for Messagizer,
+   * the second is the session for the first, etc. The last filter added is
+   * returned, and becomes the TransportMessage for what follows.
+   * @param transport
+   * @param uri
+   * @param resources
+   * @param filter the newly added filter
+   * @return status
+   */
   status_t addFilter(EtchTransportMessage* transport, EtchString* name, EtchURL* uri, EtchResources* resources, EtchTransportMessage*& filter);
+
   /**
    * Gets the named transport factory.
    * @param name the name of a configured transport factory.
    * @param the named transport factory.
-   * @return ETCH_ENOT_EXIST if the requested transportfactory does not exist
-             ETCH_OK otherwise
    */
-  static status_t getTransportFactory(const EtchString& name, EtchTransportFactory*& result);
-
+   static status_t getTransportFactory(EtchRuntime* runtime, const EtchString& name, EtchTransportFactory*& result);
 };
 #endif /* __ETCHTRANSPORTFACTORY_H__ */

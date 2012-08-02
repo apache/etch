@@ -94,7 +94,7 @@ public:
    * @return ETCH_OK if the substring has been successfully stored into the dest
    *         ETCH_EINVAL if there are errors in the indexing or buffer is NULL
    */
-  status_t substring(capu::uint32_t start, capu::uint32_t length, EtchString *dest);
+  status_t substring(capu::uint32_t start, capu::uint32_t length, EtchString *dest) const;
 
   /**
    * Returns the index of the first occurrence of a character within given string
@@ -102,7 +102,7 @@ public:
    * @return index index of first occurrence of character
    *         -1 if the character is not found
    */
-  capu::int32_t leftFind(const char c);
+  capu::int32_t leftFind(const char c) const;
 
   /**
    * Returns the index of last occurrence of a character within given string
@@ -110,7 +110,7 @@ public:
    * @return index index of last occurrence of character
    *         -1 if the character is not found
    */
-  capu::int32_t rightFind(const char c);
+  capu::int32_t rightFind(const char c) const;
 
   /**
    * Check two string is equal or not

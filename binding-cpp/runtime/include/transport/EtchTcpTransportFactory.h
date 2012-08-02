@@ -23,6 +23,7 @@
 #include "common/EtchString.h"
 #include "common/EtchConfig.h"
 #include "support/EtchServerFactory.h"
+#include "util/EtchResources.h"
 #include "transport/EtchTransportMessage.h"
 #include "transport/EtchTransportData.h"
 #include "transport/EtchTcpConnection.h"
@@ -32,20 +33,23 @@
 #include "transport/EtchTcpListener.h"
 #include "transport/EtchMessagizer.h"
 #include "transport/EtchTransportFactory.h"
-#include "util/EtchResources.h"
 
-class EtchTcpTransportFactory : public EtchTransportFactory {
+class EtchTcpTransportFactory
+ : public EtchTransportFactory {
 public:
-  /**
-   * Constructor
-   */
-  EtchTcpTransportFactory();
 
   /**
    * Constructor
+   * @param runtime
+   */
+  EtchTcpTransportFactory(EtchRuntime* runtime);
+
+  /**
+   * Constructor
+   * @param runtime
    * @param secure indicates whether the connection should be secured by SSL or not
    */
-  EtchTcpTransportFactory(capu::bool_t secure);
+  EtchTcpTransportFactory(EtchRuntime* runtime, capu::bool_t secure);
 
   /**
    * Destructor
@@ -65,19 +69,20 @@ public:
 private:
   static const EtchString SOCKET;
   const capu::bool_t mIsSecure;
-
+  EtchRuntime* mRuntime;
 
   class MySessionListener : public EtchTransport<EtchServerFactory>, public EtchSessionListener<EtchSocket> {
   public:
 
     /**
      * Creates a new Session Listener
+     * @param runtime
      * @param transport
      * @param uri
      * @param resources
      */
-    MySessionListener(EtchTransport<EtchSessionListener<EtchSocket> > *transport,
-                      EtchString uri, EtchResources* resources, capu::bool_t secure);
+    MySessionListener(EtchRuntime* runtime, EtchTransport<EtchSessionListener<EtchSocket> > *transport,
+            EtchString uri, EtchResources* resources, capu::bool_t secure);
 
      /**
       * Destructor
@@ -134,12 +139,11 @@ private:
     EtchString mUri;
     EtchResources* mResources;
     EtchServerFactory* mSession;
+    EtchRuntime* mRuntime;
     capu::bool_t mIsSecure;
-
   };
 
 };
-
 
 #endif
 

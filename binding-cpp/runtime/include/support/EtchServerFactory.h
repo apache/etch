@@ -26,12 +26,13 @@
 #include "transport/EtchTransport.h"
 #include "transport/EtchTransportMessage.h"
 
+class EtchRuntime;
+
 /**
  * Interface to use for constructing new server instances by
  * TransportHelper.
  */
-class EtchServerFactory : public EtchSession, public EtchTransport<EtchSession>
-{
+class EtchServerFactory : public EtchSession, public EtchTransport<EtchSession> {
 public:
   /**
    * @param transport the TransportMessage to use with the new server instance.
@@ -39,14 +40,13 @@ public:
    * @param resources the resources to use for the new server instance.
    * @throws Exception
    */
-  virtual status_t newServer( EtchTransportMessage* transport, EtchString* uri,
-    EtchResources* resources ) = 0;
+  virtual status_t newServer(EtchTransportMessage* transport, const EtchString& uri, EtchResources* resources) = 0;
 
   /**
    * @param uri the uri to use to configure the new value factory.
    * @return a new instance of value factory for this connection.
    */
-  virtual status_t newValueFactory(EtchString* uri, EtchValueFactory *&vf) = 0;
+  virtual status_t newValueFactory(const EtchString& uri, EtchValueFactory *&vf) = 0;
 };
 
 #endif /* __ETCHSERVERFACTORY_H__ */

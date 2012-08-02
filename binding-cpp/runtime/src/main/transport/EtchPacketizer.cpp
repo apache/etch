@@ -31,7 +31,7 @@ EtchPacketizer::EtchPacketizer(EtchTransportData* transport, EtchString& uri)
 
   if (mTransport != NULL)
     mTransport->setSession(this);
-  
+
   EtchURL url(uri.c_str());
   EtchString value;
   url.getTerms().get((EtchString&) EtchPacketizer::MAX_PKT_SIZE_TERM, &value);
@@ -65,7 +65,8 @@ EtchPacketizer::EtchPacketizer(EtchTransportData* transport, EtchURL* uri)
 }
 
 EtchPacketizer::~EtchPacketizer() {
-  mTransport->setSession(NULL);
+  if(mTransport != NULL)
+    delete mTransport;
 }
 
 capu::int32_t EtchPacketizer::getHeaderSize() {
@@ -114,8 +115,8 @@ status_t EtchPacketizer::transportPacket(capu::SmartPointer<EtchWho> recipient, 
     return ETCH_ERANGE;
 
   capu::uint32_t index = buf->getIndex();
-  buf->put((capu::int8_t*) & EtchPacketizer::SIG, sizeof (EtchPacketizer::SIG));
-  buf->put((capu::int8_t*) & pktSize, sizeof (pktSize));
+  buf->putInt(EtchPacketizer::SIG);
+  buf->putInt(pktSize);
   buf->setIndex(index);
   return mTransport->transportData(recipient, buf);
 }
@@ -228,7 +229,7 @@ status_t EtchPacketizer::processHeader(EtchFlexBuffer* buf, capu::bool_t reset, 
   if (pktSize > mMaxPktSize) {
     return ETCH_ERROR;
   }
-  
+
   return ETCH_OK;
 }
 

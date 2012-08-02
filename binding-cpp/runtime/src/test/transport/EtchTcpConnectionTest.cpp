@@ -42,7 +42,6 @@ public:
 
   MOCK_METHOD2(sessionControl, status_t(capu::SmartPointer<EtchObject> control, capu::SmartPointer<EtchObject> value));
 
-  
   status_t sessionNotify(capu::SmartPointer<EtchObject> event) {
     return ETCH_OK;
   }
@@ -78,14 +77,14 @@ public:
 
 TEST(EtchTcpConnection, constructorTest) {
   EtchURL url("tcp://127.0.0.1:4001");
-  EtchTcpConnection * conn = new EtchTcpConnection(NULL, &url);
+  EtchTcpConnection * conn = new EtchTcpConnection(NULL, NULL, &url);
   EXPECT_TRUE(conn != NULL);
   delete conn;
 }
 
 TEST(EtchTcpConnection, isStartedTest) {
   EtchURL url("tcp://127.0.0.1:4001");
-  EtchTcpConnection * conn = new EtchTcpConnection(NULL, &url);
+  EtchTcpConnection * conn = new EtchTcpConnection(NULL, NULL, &url);
   EtchTcpListener *listener = new EtchTcpListener(&url);
   EXPECT_FALSE(conn->isStarted());
   EtchSessionListener<EtchSocket>* mSessionListener = new MockListener();
@@ -112,7 +111,7 @@ TEST(EtchTcpConnection, isStartedTest) {
 
 TEST(EtchTcpConnectionAndListener, SessionAcceptTest) {
   EtchURL url("tcp://127.0.0.1:4001");
-  EtchTcpConnection * conn = new EtchTcpConnection(NULL, &url);
+  EtchTcpConnection * conn = new EtchTcpConnection(NULL, NULL, &url);
   EtchSessionListener<EtchSocket>* mSessionListener = new MockListener();
   EtchSessionData* mPacketizer = new MockPacketizer();
   EtchTcpListener *listener = new EtchTcpListener(&url);

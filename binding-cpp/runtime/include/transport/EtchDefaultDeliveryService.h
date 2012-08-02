@@ -48,7 +48,7 @@ public:
    * @param transport the MailBoxManager implementation
    * @param uri as an EtchString object
    */
-  EtchDefaultDeliveryService(EtchMailboxManager* transport, EtchString uri);
+  EtchDefaultDeliveryService(EtchMailboxManager* transport, const EtchString& uri);
 
   /**
    * Constructor
@@ -57,6 +57,10 @@ public:
    */
   EtchDefaultDeliveryService(EtchMailboxManager* transport, EtchURL* uri);
 
+  /**
+   * Destructor
+   */
+  virtual ~EtchDefaultDeliveryService();
 
   /**
    * @return the transport interface

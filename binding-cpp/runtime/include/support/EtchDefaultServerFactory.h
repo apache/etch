@@ -23,32 +23,37 @@
 #define __ETCHDEFAULTSERVERFACTORY_H__
 
 
-#include "EtchServerFactory.h"
+#include "support/EtchServerFactory.h"
 
 /**
  * Default implementation of ServerFactory. Used by Etch generated Helper files
  * to provide listeners with backstop implementations of Session methods which
  * forward to user's implementation factory.
  */
-class EtchDefaultServerFactory : public EtchServerFactory
-{
+class EtchDefaultServerFactory
+  : public EtchServerFactory {
 public:
   /**
    * Constructs the DefaultServerFactory.
    * @param listener
    * @param implFactory
    */
-  EtchDefaultServerFactory( EtchTransport<EtchServerFactory>* listener, EtchSession* implFactory );
+  EtchDefaultServerFactory(EtchTransport<EtchServerFactory>* listener, EtchSession* implFactory);
+
+  /**
+   * Destructor
+   */
+  virtual ~EtchDefaultServerFactory();
 
   /**
    * @see EtchSession
    */
-  virtual status_t sessionQuery( capu::SmartPointer<EtchObject> query, capu::SmartPointer<EtchObject> &result );
+  virtual status_t sessionQuery(capu::SmartPointer<EtchObject> query, capu::SmartPointer<EtchObject> &result);
 
   /**
    * @see EtchSession
    */
-  virtual status_t sessionControl(capu::SmartPointer<EtchObject> control, capu::SmartPointer<EtchObject> value );
+  virtual status_t sessionControl(capu::SmartPointer<EtchObject> control, capu::SmartPointer<EtchObject> value);
 
   /**
    * @see EtchSession

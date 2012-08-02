@@ -50,6 +50,7 @@ add_executable (etch-cpp-test
     util/EtchURLTest.cpp
     util/EtchResourcesTest.cpp
     util/EtchUtilTest.cpp
+    util/EtchCircularQueueTest.cpp
     transport/EtchFlexBufferTest.cpp
     transport/EtchTcpConnectionTest.cpp
     transport/EtchTcpListenerTest.cpp
@@ -90,8 +91,7 @@ add_executable (etch-cpp-test
     support/EtchPlainMailboxTest.cpp
     support/EtchMonitorTest.cpp
     support/EtchRemoteBaseTest.cpp
-    util/EtchCircularQueueTest.cpp
-    util/EtchUtilTest.cpp
+    support/EtchRuntimeTest.cpp
     ${GTEST}/src/gtest-all.cc
     ${GMOCK}/src/gmock-all.cc
     main.cpp

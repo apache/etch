@@ -34,13 +34,13 @@ public:
    * @param uri
    * @param resources
    */
-  EtchPlainMailboxManager(EtchTransportMessage* transport, EtchURL* url, EtchResources* resources);
+  EtchPlainMailboxManager(EtchTransportMessage* transport, const EtchString& url, EtchResources* resources);
 
   /**
    * Destructure
    */
   virtual ~EtchPlainMailboxManager();
-  
+
   /**
    * @return the transport.
    */
@@ -109,7 +109,5 @@ private:
   capu::Mutex mMutex;
   EtchIdGenerator mIdGen;
 };
-
-
 
 #endif

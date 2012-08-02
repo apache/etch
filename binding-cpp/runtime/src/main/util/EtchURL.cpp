@@ -39,7 +39,7 @@ EtchURL::EtchURL(const char* urlStr) {
   }
 }
 
-EtchURL::EtchURL(EtchString& urlStr) {
+EtchURL::EtchURL(const EtchString& urlStr) {
   if (urlStr.c_str() == NULL) {
     //already initialized
   } else if (urlStr.length() > 0) {
@@ -60,7 +60,7 @@ EtchURL::~EtchURL() {
   terms.clear();
 }
 
-status_t EtchURL::parse(EtchString* s) {
+status_t EtchURL::parse(const EtchString* s) {
   if (s == NULL)
     return ETCH_EINVAL;
   // s is scheme:[//[user[:password]@]host[:port]/]uri[;params][?terms][#fragment]
@@ -177,7 +177,7 @@ status_t EtchURL::parse(EtchString* s) {
   return ETCH_OK;
 }
 
-status_t EtchURL::parseHost(EtchString* s) {
+status_t EtchURL::parseHost(const EtchString* s) {
   if (s == NULL) {
     return ETCH_EINVAL;
   }
@@ -197,7 +197,7 @@ status_t EtchURL::parseHost(EtchString* s) {
   return ETCH_OK;
 }
 
-status_t EtchURL::parseUserPassword(EtchString* s) {
+status_t EtchURL::parseUserPassword(const EtchString* s) {
   if (s == NULL) {
     return ETCH_EINVAL;
   }
@@ -219,7 +219,7 @@ status_t EtchURL::parseUserPassword(EtchString* s) {
   return ETCH_OK;
 }
 
-status_t EtchURL::parseHostPort(EtchString* s) {
+status_t EtchURL::parseHostPort(const EtchString* s) {
   if (s == NULL) {
     return ETCH_EINVAL;
   }
@@ -242,7 +242,7 @@ status_t EtchURL::parseHostPort(EtchString* s) {
   return ETCH_OK;
 }
 
-status_t EtchURL::parseParams(EtchString* s) {
+status_t EtchURL::parseParams(const EtchString* s) {
   // s is param[;param]*
   if (s == NULL) {
     return ETCH_EINVAL;
@@ -265,7 +265,7 @@ status_t EtchURL::parseParams(EtchString* s) {
   return ETCH_OK;
 }
 
-status_t EtchURL::parseTerms(EtchString* s) {
+status_t EtchURL::parseTerms(const EtchString* s) {
   if (s == NULL) {
     return ETCH_EINVAL;
   }
@@ -286,7 +286,7 @@ status_t EtchURL::parseTerms(EtchString* s) {
   return parseTerm(&_s);
 }
 
-status_t EtchURL::parseTerm(EtchString * s) {
+status_t EtchURL::parseTerm(const EtchString * s) {
   if (s == NULL) {
     return ETCH_EINVAL;
   }
@@ -308,7 +308,7 @@ EtchString& EtchURL::getScheme() {
   return scheme;
 }
 
-void EtchURL::setScheme(EtchString& scheme) {
+void EtchURL::setScheme(const EtchString& scheme) {
   this->scheme.set(scheme.c_str());
 }
 
@@ -324,7 +324,7 @@ EtchString& EtchURL::getUser() {
   return user;
 }
 
-void EtchURL::setUser(EtchString& user) {
+void EtchURL::setUser(const EtchString& user) {
   this->user.set(user.c_str());
 }
 
@@ -332,7 +332,7 @@ EtchString& EtchURL::getPassword() {
   return password;
 }
 
-void EtchURL::setPassword(EtchString& password) {
+void EtchURL::setPassword(const EtchString& password) {
   this->password.set(password.c_str());
 }
 
@@ -340,7 +340,7 @@ EtchString& EtchURL::getHost() {
   return host;
 }
 
-void EtchURL::setHost(EtchString& host) {
+void EtchURL::setHost(const EtchString& host) {
   this->host.set(host.c_str());
 }
 
@@ -348,7 +348,7 @@ capu::uint16_t EtchURL::getPort() {
   return port;
 }
 
-void EtchURL::setPort(capu::uint16_t port) {
+void EtchURL::setPort(const capu::uint16_t port) {
   this->port = port;
 }
 
@@ -356,7 +356,7 @@ EtchString& EtchURL::getUri() {
   return uri;
 }
 
-void EtchURL::setUri(EtchString& uri) {
+void EtchURL::setUri(const EtchString& uri) {
   this->uri.set(uri.c_str());
 }
 

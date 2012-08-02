@@ -28,6 +28,19 @@
 class MockSession1 : public EtchSessionMessage {
 public:
 
+  MockSession1(EtchTransportMessage* transport) 
+    : mTransport(transport) {
+    if(mTransport != NULL) {
+      mTransport->setSession(this);
+    }
+  }
+
+  virtual ~MockSession1() {
+    if(mTransport != NULL) {
+      delete mTransport;
+    }
+  }
+
   status_t sessionMessage(capu::SmartPointer<EtchWho> receipent, capu::SmartPointer<EtchMessage> buf) {
     return ETCH_OK;
   }
@@ -43,19 +56,20 @@ public:
   status_t sessionNotify(capu::SmartPointer<EtchObject> event) {
     return ETCH_OK;
   }
+private:
+  EtchTransportMessage* mTransport;
 };
 
 class MockTransport1 : public EtchTransportMessage {
 public:
 
-  status_t transportMessage(capu::SmartPointer<EtchWho> recipient, capu::SmartPointer<EtchMessage> message) {
+    status_t transportMessage(capu::SmartPointer<EtchWho> recipient, capu::SmartPointer<EtchMessage> message) {
     return ETCH_OK;
   }
 
   MOCK_METHOD0(getSession, EtchSessionMessage* ());
 
   void setSession(EtchSessionMessage* session) {
-
   }
 
   status_t transportQuery(capu::SmartPointer<EtchObject> query, capu::SmartPointer<EtchObject> *result) {
@@ -78,13 +92,13 @@ public:
   EtchDefaultValueFactory * factory;
   /**
    * Constructs the MyValueFactory.
-   * @param uriString
+   * @param uri
    */
 public:
 
-  MockDefaultValueFactory1(EtchString uriString) {
-    EtchDefaultValueFactory::Init(&types, &class2type);
-    factory = new EtchDefaultValueFactory(uriString, &types, &class2type);
+  MockDefaultValueFactory1(EtchString uri) {
+  EtchDefaultValueFactory::Init(&types, &class2type);
+  factory = new EtchDefaultValueFactory(uri, &types, &class2type);
   }
 
   ~MockDefaultValueFactory1() {
@@ -94,38 +108,28 @@ public:
 };
 
 TEST(EtchDeliveryServiceTest, constructorTest) {
-  MockTransport1 transport;
-  MockSession1 session;
-  MockDefaultValueFactory1 *factory;
-  EtchString uriString("tcp://127.0.0.1:4001");
-  factory = new MockDefaultValueFactory1(uriString);
-  //created value factory
-  EtchURL uri(uriString);
-  EtchPlainMailboxManager *manager = new EtchPlainMailboxManager(&transport, &uri, NULL);
-  EtchDefaultDeliveryService *service = new EtchDefaultDeliveryService(manager, uriString);
-  EtchDefaultDeliveryService *service2 = new EtchDefaultDeliveryService(manager, &uri);
 
-  EXPECT_TRUE(service != NULL);
-  manager->setSession(service);
-  service->setSession(&session);
+  EtchString uri("tcp://127.0.0.1:4001");
 
-  EXPECT_TRUE(service2 != NULL);
-  manager->setSession(service2);
-  service2->setSession(&session);
+// create mock layer for transport
+  MockTransport1* transport = new MockTransport1();
 
-  delete manager;
-  delete service;
-  delete service2;
-  delete factory;
+  EtchPlainMailboxManager* mailboxManager = new EtchPlainMailboxManager(transport, uri, NULL);
+  EtchDefaultDeliveryService* deliveryService = new EtchDefaultDeliveryService(mailboxManager, uri);
+
+  // create mock layer for session
+  MockSession1* session = new MockSession1(deliveryService);
+
+  delete session;
 }
 
 TEST(EtchDeliveryServiceTest, beginCallTest) {
-  EtchString uriString("tcp://127.0.0.1:4001");
-  EtchURL uri(uriString);
-  MockDefaultValueFactory1 *factory = new MockDefaultValueFactory1(uriString);
+  EtchString uri("tcp://127.0.0.1:4001");
 
+  // create value factory
+  MockDefaultValueFactory1* factory = new MockDefaultValueFactory1(uri);
   //set type and corresponding validator
-  EtchType * type;
+  EtchType * type = NULL;
   capu::SmartPointer<EtchValidator> val = NULL;
   EtchValidatorLong::Get(0, val);
 
@@ -139,44 +143,45 @@ TEST(EtchDeliveryServiceTest, beginCallTest) {
   EXPECT_TRUE(ETCH_OK != message->getMessageId(id));
   EXPECT_TRUE(ETCH_OK != message->getInReplyToMessageId(id));
 
-  //create transport and session layers
-  MockTransport1 transport;
-  MockSession1 session;
+  // create mock layer for transport
+  MockTransport1* transport = new MockTransport1();
 
-  //create mailbox manager
-  EtchPlainMailboxManager * manager = new EtchPlainMailboxManager(&transport, &uri, NULL);
+  EtchPlainMailboxManager* mailboxManager = new EtchPlainMailboxManager(transport, uri, NULL);
+  EtchDefaultDeliveryService* deliveryService = new EtchDefaultDeliveryService(mailboxManager, uri);
 
-  //create delivery service and set respective transport and session intefaces
-  EtchDefaultDeliveryService * service = new EtchDefaultDeliveryService(manager, &uri);
-  manager->setSession(service);
-  service->setSession(&session);
+  // create mock layer for session
+  MockSession1* session = new MockSession1(deliveryService);
 
   //put the stack up
-  manager->sessionNotify(new EtchString(EtchSession::UP));
+  mailboxManager->sessionNotify(new EtchString(EtchSession::UP));
 
   //test begincall
   EtchMailbox *mail = NULL;
-  EXPECT_TRUE(ETCH_OK == service->begincall(message, mail));
-  EXPECT_EQ(1, manager->count());
+  EXPECT_TRUE(ETCH_OK == deliveryService->begincall(message, mail));
+  EXPECT_EQ(1, mailboxManager->count());
   EXPECT_TRUE(ETCH_OK == message->getMessageId(id));
   EXPECT_TRUE(ETCH_OK != message->getInReplyToMessageId(id));
 
-  EXPECT_TRUE(ETCH_OK == manager->getMailbox(id, mail));
-
+  EXPECT_TRUE(ETCH_OK == mailboxManager->getMailbox(id, mail));
   message->clear();
-  delete service;
-  delete manager;
+
+  //put the stack down
+  mailboxManager->sessionNotify(new EtchString(EtchSession::DOWN));
+
+  delete session;
   delete factory;
 }
 
 TEST(EtchDeliveryServiceTest, endCallTest) {
-  EtchString uriString("tcp://127.0.0.1:4001");
-  EtchURL uri(uriString);
-  MockDefaultValueFactory1 *factory = new MockDefaultValueFactory1(uriString);
+  status_t status;
+  EtchString uri("tcp://127.0.0.1:4001");
+
+  // create value factory
+  MockDefaultValueFactory1* factory = new MockDefaultValueFactory1(uri);
 
   //set type and return type and the corresponding validators
-  EtchType * type;
-  EtchType * replyType;
+  EtchType * type = NULL;
+  EtchType * replyType = NULL;
   capu::SmartPointer<EtchValidator> val = NULL;
   EtchValidatorLong::Get(0, val);
 
@@ -194,52 +199,49 @@ TEST(EtchDeliveryServiceTest, endCallTest) {
   EXPECT_TRUE(ETCH_OK != message->getMessageId(id));
   EXPECT_TRUE(ETCH_OK != message->getInReplyToMessageId(id));
 
-  MockTransport1 transport;
-  MockSession1 session;
+  // create mock layer for transport
+  MockTransport1* transport = new MockTransport1();
 
-  //mailbox manager
-  EtchPlainMailboxManager *manager = new EtchPlainMailboxManager(&transport, &uri, NULL);
-  //delivery service
-  EtchDefaultDeliveryService *service = new EtchDefaultDeliveryService(manager, &uri);
+  EtchPlainMailboxManager* mailboxManager = new EtchPlainMailboxManager(transport, uri, NULL);
+  EtchDefaultDeliveryService* deliveryService = new EtchDefaultDeliveryService(mailboxManager, uri);
 
-  manager->setSession(service);
-  service->setSession(&session);
-  manager->sessionNotify(new EtchString(EtchSession::UP));
+  // create mock layer for session
+  MockSession1* session = new MockSession1(deliveryService);
+
+  //put the stack up
+  mailboxManager->sessionNotify(new EtchString(EtchSession::UP));
 
   //performed the call
   EtchMailbox *mail;
-  EXPECT_TRUE(ETCH_OK == service->begincall(message, mail));
-  EXPECT_EQ(1, manager->count());
+  EXPECT_TRUE(ETCH_OK == deliveryService->begincall(message, mail));
+  EXPECT_EQ(1, mailboxManager->count());
   EXPECT_TRUE(ETCH_OK == message->getMessageId(id));
   EXPECT_TRUE(ETCH_OK != message->getInReplyToMessageId(id));
-  EXPECT_TRUE(ETCH_OK == manager->getMailbox(id, mail));
-  capu::SmartPointer<EtchObject> result;
-
-  //simulate the response
-  capu::SmartPointer<EtchMessage> replymessage;
+  EXPECT_TRUE(ETCH_OK == mailboxManager->getMailbox(id, mail));
 
   //create a reply message
+  //simulate the response
+  capu::SmartPointer<EtchMessage> replymessage;
   message->createReplyMessage(replyType, replymessage);
   EXPECT_TRUE(ETCH_OK == replymessage->getInReplyToMessageId(id));
-  capu::SmartPointer<EtchMessage> replymess = replymessage;
   capu::SmartPointer<EtchObject> data = new EtchLong(123);
   capu::SmartPointer<EtchObject> old;
   EtchField field = replyType->getResponseField();
   replymessage->put(field, data, &old);
 
-  //call the sessionMessage of mailbox manager as if it is called from messagizer to deliver data from 
-  EXPECT_TRUE(ETCH_OK == manager->sessionMessage(NULL, replymess));
+  //call the sessionMessage of mailbox manager as if it is called from messagizer to deliver data from
+  status = mailboxManager->sessionMessage(NULL, replymessage);
+  EXPECT_EQ(ETCH_OK, status);
 
   //wait for the response
-  EXPECT_TRUE(ETCH_OK == service->endcall(mail, replyType, result));
-
+  capu::SmartPointer<EtchObject> result;
+  status = deliveryService->endcall(mail, replyType, result);
+  EXPECT_EQ(ETCH_OK, status);
+  delete mail;
+  
   //check the result
   EXPECT_TRUE(result->equals(data.get()));
 
-  replymessage->clear();
-  message->clear();
-  delete mail;
-  delete service;
-  delete manager;
+  delete session;
   delete factory;
 }

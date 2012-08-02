@@ -19,35 +19,38 @@
 
 const EtchString EtchTcpTransportFactory::SOCKET("TcpTransportFactory.socket");
 
-EtchTcpTransportFactory::EtchTcpTransportFactory()
-: mIsSecure(false) {
-
+EtchTcpTransportFactory::EtchTcpTransportFactory(EtchRuntime* runtime)
+: mRuntime(runtime)
+, mIsSecure(false) {
 }
 
-EtchTcpTransportFactory::EtchTcpTransportFactory(capu::bool_t secure)
-: mIsSecure(secure) {
+EtchTcpTransportFactory::EtchTcpTransportFactory(EtchRuntime* runtime, capu::bool_t secure)
+: mRuntime(runtime)
+, mIsSecure(secure) {
 
 }
 
 EtchTcpTransportFactory::~EtchTcpTransportFactory() {
-
 }
 
 status_t EtchTcpTransportFactory::newTransport(EtchString uri, EtchResources* resources, EtchTransportMessage*& result) {
   EtchURL u(uri);
 
+  status_t status;
   EtchObject* socket = NULL;
-  if (resources->get((EtchString &) SOCKET, socket) != ETCH_OK) {
-    return ETCH_ENOT_EXIST;
+  status = resources->get((EtchString &) SOCKET, socket);
+  if(status != ETCH_OK) {
+    return ETCH_ENOT_EXIST;;
   }
 
   EtchTransportData *c = NULL;
 
   if (mIsSecure) {
     //TODO : secure communication via ssl sockets
-    return ETCH_ENOT_EXIST;
+    return ETCH_EUNIMPL;
   } else {
-    c = new EtchTcpConnection((EtchSocket*) socket, &u);
+    // TODO add runtime
+    c = new EtchTcpConnection(NULL, (EtchSocket*) socket, &u);
   }
 
   EtchTransportPacket* p = new EtchPacketizer(c, &u);
@@ -57,6 +60,7 @@ status_t EtchTcpTransportFactory::newTransport(EtchString uri, EtchResources* re
   //TODO: ADD FILTERS HERE
 
   EtchObject* obj = NULL;
+  // TODO check why the string must be copied
   EtchString tmp(EtchTransport<EtchSocket>::VALUE_FACTORY);
   if (resources->get(tmp, obj) != ETCH_OK) {
     c->setSession(NULL);
@@ -80,27 +84,31 @@ status_t EtchTcpTransportFactory::newListener(EtchString uri, EtchResources* res
   EtchTransport<EtchSessionListener<EtchSocket> > *l = NULL;
   if (mIsSecure) {
     //TODO secure communication
-    return ETCH_ENOT_EXIST;
+    return ETCH_EUNIMPL;
   } else {
     l = new EtchTcpListener(&u);
   }
 
-  result = new MySessionListener(l, uri, resources, mIsSecure);
+  result = new MySessionListener(mRuntime, l, uri, resources, mIsSecure);
   if (result == NULL) {
-    return ETCH_ENOT_EXIST;
+    return ETCH_ERROR;
   }
   return ETCH_OK;
 }
 
-EtchTcpTransportFactory::MySessionListener::MySessionListener(EtchTransport<EtchSessionListener<EtchSocket> > *transport, EtchString uri, EtchResources* resources, capu::bool_t secure)
-: mTransport(transport), mUri(uri), mResources(resources), mIsSecure(secure) {
-  if (transport != NULL) {
-    transport->setSession(this);
-  }
+EtchTcpTransportFactory::MySessionListener::MySessionListener(EtchRuntime* runtime, EtchTransport<EtchSessionListener<EtchSocket> > *transport, EtchString uri, EtchResources* resources, capu::bool_t secure)
+: mRuntime(runtime), mTransport(transport), mUri(uri), mResources(resources), mIsSecure(secure) {
+  transport->setSession(this);
 }
 
 EtchServerFactory* EtchTcpTransportFactory::MySessionListener::getSession() {
   return mSession;
+}
+
+EtchTcpTransportFactory::MySessionListener::~MySessionListener() {
+  if(mTransport != NULL) {
+    delete mTransport;
+  }
 }
 
 void EtchTcpTransportFactory::MySessionListener::setSession(EtchServerFactory* session) {
@@ -137,27 +145,59 @@ status_t EtchTcpTransportFactory::MySessionListener::sessionAccepted(EtchSocket*
   }
 
   EtchResources *res = new EtchResources(mResources);
+
+  // put socket to the resources
   EtchObject *obj = NULL;
   if (res->put((EtchString &) SOCKET, connection, obj) != ETCH_OK) {
     delete res;
     return ETCH_ERROR;
   }
 
+  // create value vatory and put it to the resources
   EtchValueFactory* vf = NULL;
-  if (mSession->newValueFactory(&mUri, vf) != ETCH_OK) {
+  if(mSession->newValueFactory(mUri, vf) != ETCH_OK) {
     delete res;
     return ETCH_ERROR;
   }
-  if (res->put((EtchString &) VALUE_FACTORY, vf, obj)) {
-    delete res;
-    return ETCH_ERROR;
-  }
-
-  EtchTransportMessage *t = NULL;
-  if (getTransport(mUri, res, t) != ETCH_OK) {
+  if(res->put(EtchTransport<EtchSocket>::VALUE_FACTORY, vf, obj) != ETCH_OK)
+  {
+    delete vf;
     delete res;
     return ETCH_ERROR;
   }
 
-  return mSession->newServer(t, &mUri, res);
+  EtchURL u = EtchURL(mUri);
+
+  EtchObject* socket = NULL;
+  if (res->get(SOCKET, socket) != ETCH_OK) {
+    return ETCH_ENOT_EXIST;
+  }
+  // TODO check if we should register a new stack to the runtime
+  
+  EtchTransportData *c = NULL;
+  if (mIsSecure) {
+    //TODO : secure communication via ssl sockets
+    return ETCH_EUNIMPL;
+  } else {
+    c = new EtchTcpConnection(mRuntime, (EtchSocket*) socket, &u);
+  }
+
+  EtchTransportPacket* p = new EtchPacketizer(c, &u);
+
+  EtchTransportMessage* m = new EtchMessagizer(p, &u, res);
+
+  //TODO: ADD FILTERS HERE
+
+  if (res->get(EtchTransport<EtchSocket>::VALUE_FACTORY, obj) != ETCH_OK) {
+    c->setSession(NULL);
+    p->setSession(NULL);
+    m->setSession(NULL);
+    delete c;
+    delete p;
+    delete m;
+    return ETCH_ENOT_EXIST;
+  }
+  vf->lockDynamicTypes();
+
+  return mSession->newServer(m, mUri, res);
 }

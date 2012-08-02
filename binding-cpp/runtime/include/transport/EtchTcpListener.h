@@ -19,6 +19,7 @@
 
 #ifndef __ETCHTCPLISTENER_H__
 #define __ETCHTCPLISTENER_H__
+
 #include "common/EtchError.h"
 #include "common/EtchObject.h"
 #include "capu/util/SmartPointer.h"

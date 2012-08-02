@@ -89,7 +89,7 @@ TEST(EtchTcpListener, transportControlTest) {
 
 TEST(EtchTcpListener, isStartedTest) {
   EtchURL url("tcp://127.0.0.1:4001");
-  EtchTcpConnection * conn = new EtchTcpConnection(NULL, &url);
+  EtchTcpConnection * conn = new EtchTcpConnection(NULL, NULL, &url);
   EtchTcpListener *listener = new EtchTcpListener(&url);
   EtchSessionListener<EtchSocket>* mSessionListener = new MockListener2();
   EtchSessionData* mPacketizer = new MockPacketizer2();

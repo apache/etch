@@ -30,8 +30,20 @@
 class MockListener11 : public virtual EtchSessionListener<EtchSocket> {
 public:
 
-  //This method is called
+  MockListener11(EtchTransport<EtchSessionListener<EtchSocket> >* transport) 
+    : mTransport(transport) {
+    if(mTransport != NULL) {
+      mTransport->setSession(this);
+    }
+  }
 
+  virtual ~MockListener11() {
+    if(mTransport != NULL) {
+      delete mTransport;
+    }
+  }
+
+  //This method is called
   status_t sessionAccepted(EtchSocket* connection) {
     delete connection;
     return ETCH_OK;
@@ -44,6 +56,9 @@ public:
   status_t sessionNotify(capu::SmartPointer<EtchObject> event) {
     return ETCH_OK;
   }
+
+private:
+ EtchTransport<EtchSessionListener<EtchSocket> >* mTransport;
 };
 
 class MockMailboxManager : public EtchSessionMessage {
@@ -51,6 +66,7 @@ public:
 
   status_t sessionMessage(capu::SmartPointer<EtchWho> receipent, capu::SmartPointer<EtchMessage> buf) {
     EXPECT_TRUE(buf->count() == 1);
+    buf->clear();
     return ETCH_OK;
   }
 
@@ -75,13 +91,11 @@ TEST(EtchMessagizerTest, constructorTest) {
   EtchResources r;
   EtchObject *out;
   r.put((EtchString &) EtchTransport<EtchSessionMessage>::VALUE_FACTORY, factory, out);
-  EtchTransportData* conn = new EtchTcpConnection(NULL, &u);
+  EtchTransportData* conn = new EtchTcpConnection(NULL, NULL, &u);
   EtchTransportPacket* pac = new EtchPacketizer(conn, &u);
   EtchSessionPacket* mes = new EtchMessagizer(pac, &u, &r);
   //Created stack
   delete mes;
-  delete pac;
-  delete conn;
   delete factory;
   types.clear();
 }
@@ -99,27 +113,24 @@ TEST(EtchMessagizerTest, TransportControlTest) {
   EtchResources r;
   EtchObject *out;
   r.put((EtchString &) EtchTransport<EtchSessionMessage>::VALUE_FACTORY, factory, out);
-  EtchTransportData* conn = new EtchTcpConnection(NULL, &u);
+  EtchTransportData* conn = new EtchTcpConnection(NULL, NULL, &u);
   EtchPacketizer* pac = new EtchPacketizer(conn, &u);
   EtchMessagizer* mess = new EtchMessagizer(pac, &u, &r);
   mess->setSession(&manager);
 
-  EtchSessionListener<EtchSocket>* mSessionListener = new MockListener11();
-  EtchTcpListener* listener = new EtchTcpListener(&u);
-  //Start the mock listener
-  listener->setSession(mSessionListener);
-  listener->transportControl(new EtchString(EtchTcpListener::START_AND_WAIT_UP), new EtchInt32(1000));
+  EtchTcpListener* transport = new EtchTcpListener(&u);
+  EtchSessionListener<EtchSocket>* mSessionListener = new MockListener11(transport);
+
+  transport->transportControl(new EtchString(EtchTcpListener::START_AND_WAIT_UP), new EtchInt32(1000));
+  
   mess->transportControl(new EtchString(EtchPacketizer::START_AND_WAIT_UP), new EtchInt32(1000));
   //test transport commands
   mess->transportControl(new EtchString(EtchPacketizer::STOP_AND_WAIT_DOWN), new EtchInt32(1000));
-  listener->transportControl(new EtchString(EtchTcpListener::STOP_AND_WAIT_DOWN), new EtchInt32(1000));
-  listener->setSession(mSessionListener);
+
+  transport->transportControl(new EtchString(EtchTcpListener::STOP_AND_WAIT_DOWN), new EtchInt32(1000));
 
   delete mSessionListener;
   delete mess;
-  delete pac;
-  delete conn;
-  delete listener;
   delete factory;
   types.clear();
 }
@@ -138,7 +149,7 @@ TEST(EtchMessagizerTest, TransportMessageTest) {
   EtchObject *out;
   //add to the resource
   r.put((EtchString &) EtchTransport<EtchSessionMessage>::VALUE_FACTORY, factory, out);
-  EtchTransportData* conn = new EtchTcpConnection(NULL, &u);
+  EtchTransportData* conn = new EtchTcpConnection(NULL, NULL, &u);
   EtchPacketizer* pac = new EtchPacketizer(conn, &u);
   EtchMessagizer* mess = new EtchMessagizer(pac, &u, &r);
   mess->setSession(&manager);
@@ -154,11 +165,9 @@ TEST(EtchMessagizerTest, TransportMessageTest) {
   capu::SmartPointer<EtchMessage> msg = new EtchMessage(mt_foo, factory);
   msg->put(mf_x, data);
 
-  EXPECT_TRUE(mess->transportMessage(NULL, msg) == ETCH_EINVAL);
+  EXPECT_TRUE(mess->transportMessage(NULL, msg) == ETCH_ERROR);
 
   delete mess;
-  delete pac;
-  delete conn;
   delete factory;
   types.clear();
 }
@@ -193,7 +202,7 @@ TEST(EtchMessagizerTest, SessionDataTest) {
   //add the value factory to the resources
   r.put((EtchString &) EtchTransport<EtchSessionMessage>::VALUE_FACTORY, factory, out);
   //create stack
-  EtchTransportData* conn = new EtchTcpConnection(NULL, &u);
+  EtchTransportData* conn = new EtchTcpConnection(NULL, NULL, &u);
   EtchPacketizer* pac = new EtchPacketizer(conn, &u);
   EtchMessagizer* mess = new EtchMessagizer(pac, &u, &r);
   capu::SmartPointer<EtchFlexBuffer> buffer = new EtchFlexBuffer();
@@ -219,8 +228,6 @@ TEST(EtchMessagizerTest, SessionDataTest) {
   types.clear();
   delete mMailboxManager;
   delete mess;
-  delete pac;
-  delete conn;
   delete factory;
 }
 

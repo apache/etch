@@ -22,12 +22,21 @@
 
 const EtchString EtchDefaultDeliveryService::DISABLE_TIMEOUT("DefaultDeliveryService.disableTimeout");
 
-EtchDefaultDeliveryService::EtchDefaultDeliveryService(EtchMailboxManager* transport, EtchString uri)
+/**
+ * @param transport
+ * @param uri
+ * @param resources
+ */
+EtchDefaultDeliveryService::EtchDefaultDeliveryService(EtchMailboxManager* transport, const EtchString& uri)
 : mTransport(transport), mStatus(EtchString("session status"), EtchString("")) {
   EtchURL url(uri);
   init(&url);
 }
 
+/**
+ * @param transport
+ * @param uri
+ */
 EtchDefaultDeliveryService::EtchDefaultDeliveryService(EtchMailboxManager* transport, EtchURL* uri)
 : mTransport(transport), mStatus(EtchString("session status"), EtchString("")) {
   init(uri);
@@ -53,6 +62,15 @@ void EtchDefaultDeliveryService::init(EtchURL* uri) {
   }
 }
 
+EtchDefaultDeliveryService::~EtchDefaultDeliveryService() {
+  if(mTransport != NULL) {
+    delete mTransport;
+  }
+}
+
+/**
+ * @return the transport.
+ */
 const EtchMailboxManager* EtchDefaultDeliveryService::getTransport() {
   return mTransport;
 }
@@ -135,12 +153,12 @@ status_t EtchDefaultDeliveryService::begincall(capu::SmartPointer<EtchMessage> m
 }
 
 status_t EtchDefaultDeliveryService::endcall(EtchMailbox* mb, EtchType* responseType, capu::SmartPointer<EtchObject>& result) {
-  EtchMailbox::EtchElement* mbe = NULL;
 
   //get timeout
   capu::uint32_t timeout = mDisableTimeout ? 0 : responseType->getTimeout();
 
   //get message from mailbox
+  EtchMailbox::EtchElement* mbe = NULL;
   status_t res = mb->read(mbe, timeout);
   if (res != ETCH_OK) {
     mb->closeRead();

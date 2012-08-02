@@ -123,11 +123,10 @@ public:
   capu::bool_t isFull();
 
   /**
-   * 
-   * @return mailbox manager 
+   *
+   * @return mailbox manager
    */
   EtchMailboxManager* getMailboxManager();
-
 
 private:
   EtchMailboxManager* mMailboxManager;

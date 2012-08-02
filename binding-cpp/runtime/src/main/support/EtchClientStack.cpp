@@ -17,7 +17,6 @@
 
 #include "support/EtchClientStack.h"
 
-
 EtchClientStack::EtchClientStack(EtchRemoteBase* rb, EtchSessionMessage *helper, EtchResources *res, EtchValueFactory* vf)
 : mRemoteBase(rb), mStubHelper(helper),mResources(res), mVf(vf) {
 }

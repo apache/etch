@@ -17,19 +17,21 @@
  */
 #include "transport/EtchPlainMailboxManager.h"
 
-EtchPlainMailboxManager::EtchPlainMailboxManager(EtchTransportMessage* transport, EtchURL* url, EtchResources* resources)
-: mSession(NULL), mTransport(transport) {
+EtchPlainMailboxManager::EtchPlainMailboxManager(EtchTransportMessage* transport, const EtchString& uri, EtchResources* resources)
+: mSession(NULL), mTransport(transport), mUp(false) {
   mTransport->setSession(this);
 }
 
 EtchPlainMailboxManager::~EtchPlainMailboxManager() {
   EtchHashTable<EtchLong, EtchMailbox*>::Iterator it = mMailboxes.begin();
   EtchHashTable<EtchLong, EtchMailbox*>::Pair p;
+  // TODO check thread safety
   while (it.hasNext()) {
     it.next(&p);
     p.second->closeDelivery();
     delete p.second;
   }
+  delete mTransport;
 }
 
 EtchTransportMessage* EtchPlainMailboxManager::getTransport() {
@@ -138,11 +140,25 @@ status_t EtchPlainMailboxManager::transportMessage(capu::SmartPointer<EtchWho> r
 }
 
 status_t EtchPlainMailboxManager::sessionQuery(capu::SmartPointer<EtchObject> query, capu::SmartPointer<EtchObject> &result) {
-  return mSession->sessionQuery(query, result);
+  status_t status;
+  if(mSession != NULL) {
+    status = mSession->sessionQuery(query, result);
+  } else {
+    // TODO: add log message
+    status = ETCH_ERROR;
+  }
+  return status;
 }
 
 status_t EtchPlainMailboxManager::sessionControl(capu::SmartPointer<EtchObject> control, capu::SmartPointer<EtchObject> value) {
-  return mSession->sessionControl(control, value);
+  status_t status;
+  if(mSession != NULL) {
+    status = mSession->sessionControl(control, value);
+  } else {
+    // TODO: add log message
+    status = ETCH_ERROR;
+  }
+  return status;
 }
 
 status_t EtchPlainMailboxManager::sessionNotify(capu::SmartPointer<EtchObject> event) {
@@ -151,14 +167,23 @@ status_t EtchPlainMailboxManager::sessionNotify(capu::SmartPointer<EtchObject> e
   } else
   if(event->equals(&EtchSession::DOWN)) {
     mUp = false;
+    // TODO check thread safety
     EtchHashTable<EtchLong, EtchMailbox*>::Iterator it = mMailboxes.begin();
     EtchHashTable<EtchLong, EtchMailbox*>::Pair p;
     while (it.hasNext()) {
       it.next(&p);
       p.second->closeDelivery();
+      delete p.second;
     }
   }
-  return mSession->sessionNotify(event);
+  status_t status;
+  if(mSession != NULL) {
+    status = mSession->sessionNotify(event);
+  } else {
+    // TODO: add log message
+    status = ETCH_ERROR;
+  }
+  return status;
 }
 
 status_t EtchPlainMailboxManager::transportQuery(capu::SmartPointer<EtchObject> query, capu::SmartPointer<EtchObject> *result) {

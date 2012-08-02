@@ -44,7 +44,7 @@ public:
    * Constructs a url from a string.
    * @param urlStr
    */
-  EtchURL(EtchString& urlStr);
+  EtchURL(const EtchString& urlStr);
 
   /**
    * Deconstructor
@@ -61,7 +61,7 @@ public:
    *
    * @param scheme the scheme to set which may be null but not blank.
    */
-  void setScheme(EtchString& scheme);
+  void setScheme(const EtchString& scheme);
 
   /**
    * Sets the scheme.
@@ -93,7 +93,7 @@ public:
    *
    * @param user the user to set which may be null but not blank.
    */
-  void setUser(EtchString& user);
+  void setUser(const EtchString& user);
 
   //////////////
   // PASSWORD //
@@ -109,7 +109,7 @@ public:
    *
    * @param password the password to set which may be null but not blank.
    */
-  void setPassword(EtchString& password);
+  void setPassword(const EtchString& password);
 
   //////////
   // HOST //
@@ -125,7 +125,7 @@ public:
    *
    * @param host the host to set which may be null but not blank.
    */
-  void setHost(EtchString& host);
+  void setHost(const EtchString& host);
 
   //////////
   // PORT //
@@ -162,7 +162,7 @@ public:
    *
    * @param uri the uri to set which may be null or blank.
    */
-  void setUri(EtchString& uri);
+  void setUri(const EtchString& uri);
 
   ////////////
   // PARAMS //
@@ -280,19 +280,19 @@ private:
   EtchList<EtchString> params;
   EtchHashTable<EtchString, EtchString> terms;
 
-  status_t parse(EtchString* s);
+  status_t parse(const EtchString* s);
 
-  status_t parseHost(EtchString* s);
+  status_t parseHost(const EtchString* s);
 
-  status_t parseUserPassword(EtchString* s);
+  status_t parseUserPassword(const EtchString* s);
 
-  status_t parseHostPort(EtchString* s);
+  status_t parseHostPort(const EtchString* s);
 
-  status_t parseParams(EtchString* s);
+  status_t parseParams(const EtchString* s);
 
-  status_t parseTerms(EtchString* s);
+  status_t parseTerms(const EtchString* s);
 
-  status_t parseTerm(EtchString *s);
+  status_t parseTerm(const EtchString *s);
 
 };
 
