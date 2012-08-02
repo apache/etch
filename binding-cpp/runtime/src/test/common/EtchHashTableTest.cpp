@@ -27,7 +27,7 @@ TEST(EtchHashTableTest, Constructor_Default){
   EtchHashTable<EtchString, EtchInt32>* h1 = new EtchHashTable<EtchString, EtchInt32 > ();
   delete h1;
 
-  EtchHashTable<char*, int, EtchHashNative, EtchComparatorNative >* h2 = new EtchHashTable<char*, int, EtchHashNative, EtchComparatorNative > ();
+  EtchHashTable<char*, capu::int32_t, EtchHashNative, EtchComparatorNative >* h2 = new EtchHashTable<char*, capu::int32_t, EtchHashNative, EtchComparatorNative > ();
   delete h2;
 }
 
@@ -45,10 +45,10 @@ TEST(EtchHashTableTest, put){
   count = h1->count();
   EXPECT_TRUE(count == 1);
 
-  EtchHashTable<char*, int, EtchHashNative, EtchComparatorNative >* h2 = new EtchHashTable<char*, int, EtchHashNative, EtchComparatorNative > ();
+  EtchHashTable<char*, capu::int32_t, EtchHashNative, EtchComparatorNative >* h2 = new EtchHashTable<char*, capu::int32_t, EtchHashNative, EtchComparatorNative > ();
   // add new key
   char* key1 = const_cast<char*>("key1");
-  int value1 = 5;
+  capu::int32_t value1 = 5;
   status = h2->put(key1, value1);
   EXPECT_TRUE(status == ETCH_OK);
   // check count
@@ -111,11 +111,11 @@ TEST(EtchHashTableTest, get){
   status = h1->get(key2, &return_value);
   EXPECT_TRUE(status == ETCH_ENOT_EXIST);
 
-  EtchHashTable<char*, int, EtchHashNative, EtchComparatorNative >* h2 = new EtchHashTable<char*, int, EtchHashNative, EtchComparatorNative > ();
+  EtchHashTable<char*, capu::int32_t, EtchHashNative, EtchComparatorNative >* h2 = new EtchHashTable<char*, capu::int32_t, EtchHashNative, EtchComparatorNative > ();
   // add new key
   char* key1 = const_cast<char*>("key1");
-  int value1 = 5;
-  int return_value1;
+  capu::int32_t value1 = 5;
+  capu::int32_t return_value1;
   status = h2->put(key1, value1);
   EXPECT_TRUE(status == ETCH_OK);
   // get the added element
