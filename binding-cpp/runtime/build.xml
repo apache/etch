@@ -80,15 +80,30 @@
         <mkdir dir="${Etch.dist}/binding-cpp/include" />
         <mkdir dir="${Etch.dist}/binding-cpp/lib" />
 
-        <!-- copy etch library to dist folder -->
+        <!-- copy etch includes to dist folder -->
         <copy todir="${Etch.dist}/binding-cpp/include">
             <fileset dir="${proj}/include">
                 <exclude name="**/.svn" />
             </fileset>
         </copy>
 
+        <!-- copy etch library to dist folder -->
         <copy todir="${Etch.dist}/binding-cpp/lib" flatten="true">
             <fileset dir="${target}/src/main">
+            </fileset>
+        </copy>
+        
+        <!-- copy capu includes to dist folder -->
+        <copy todir="${Etch.dist}/binding-cpp/include">
+            <fileset dir="${proj}/lib/capu/deliverable/capu/include/capu">
+                <exclude name="**/.svn" />
+            </fileset>
+        </copy>
+    
+        <!-- copy capu lib to dist folder -->
+        <copy todir="${Etch.dist}/binding-cpp/lib">
+            <fileset dir="${proj}/lib/capu/deliverable/capu/lib">
+                <include name="**/*.lib" />
             </fileset>
         </copy>
 
