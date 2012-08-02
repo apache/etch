@@ -168,7 +168,12 @@ status_t EtchDefaultDeliveryService::endcall(EtchMailbox* mb, EtchType* response
   //get response field
   capu::SmartPointer<EtchObject> r;
   EtchField field = responseType->getResponseField();
-  if (rmsg->get(field, &r) != ETCH_OK) {
+  status_t err = rmsg->get(field, &r);
+  if (err == ETCH_ENOT_EXIST) {
+    //void return value
+    mb->closeRead();
+    return ETCH_OK;
+  } else if (err != ETCH_OK) {
     mb->closeRead();
     rmsg->clear();
     delete mbe;

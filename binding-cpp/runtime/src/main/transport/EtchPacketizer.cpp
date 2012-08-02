@@ -134,6 +134,8 @@ status_t EtchPacketizer::transportPacket(capu::SmartPointer<EtchWho> recipient, 
 }
 
 status_t EtchPacketizer::sessionData(capu::SmartPointer<EtchWho> sender, capu::SmartPointer<EtchFlexBuffer> buf) {
+//TODO: compare with java version
+
 
   // there are two options here. one is that we have no buffered data
   // and the entire packet is contained within the buf. in that case
@@ -141,7 +143,7 @@ status_t EtchPacketizer::sessionData(capu::SmartPointer<EtchWho> sender, capu::S
   // drop the packet on the handler.
 
   status_t result;
-  while (buf->getAvailableBytes() > 0) {
+  if (buf->getAvailableBytes() > 0) {
     if (mWantHeader) {
       // do we have enough to make a header?
 
@@ -167,9 +169,6 @@ status_t EtchPacketizer::sessionData(capu::SmartPointer<EtchWho> sender, capu::S
             return result;
         }
 
-        if (pktSize == 0)
-          continue;
-
         mBodyLen = pktSize;
         mWantHeader = false;
       } else // want header, but there's not enough to make it.
@@ -179,7 +178,8 @@ status_t EtchPacketizer::sessionData(capu::SmartPointer<EtchWho> sender, capu::S
         mSavedBuf->setIndex(mSavedBuf->getLength());
         mSavedBuf->put(*buf);
       }
-    } else if (mSavedBuf->getLength() + buf->getAvailableBytes() >= mBodyLen) {
+    }
+    if (!mWantHeader && mSavedBuf->getLength() + buf->getAvailableBytes() >= mBodyLen) {
       // want body, and there's enough to make it.
 
       // three possible cases: the body is entirely in savedBuf,
@@ -213,9 +213,10 @@ status_t EtchPacketizer::sessionData(capu::SmartPointer<EtchWho> sender, capu::S
         mSavedBuf->reset();
         mWantHeader = true;
       }
-    } else // want body, but there's not enough to make it.
+    } else if (!mWantHeader)// want body, but there's not enough to make it.
     {
       // save buf in savedBuf.
+      mSavedBuf->setIndex(mSavedBuf->getLength());
       mSavedBuf->put(*buf);
     }
   }
