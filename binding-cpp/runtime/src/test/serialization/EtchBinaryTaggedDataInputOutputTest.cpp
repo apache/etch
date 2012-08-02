@@ -433,6 +433,31 @@ TEST(EtchBinaryTaggedDataInputTest, int_serialization) {
   Utility::test(content4, val, false);
 }
 
+TEST(EtchBinaryTaggedDataInputTest, string_serialization) {
+  const capu::uint8_t utf8_1 [] = {0xF0, 0xA4, 0xAD, 0xA2, 0xE2, 0x82, 0xAC, 0xC2, 0xA2, 0x24, 0x0};
+  const capu::uint8_t utf8_2 [] = {0xF0, 0xA4, 0xAD, 0xA2, 0xE2, 0x82, 0xAC, 0xC2, 0xA2, 0x25, 0x0};
+  capu::SmartPointer<EtchNativeArray<capu::SmartPointer<EtchString> > > carray1 = new EtchNativeArray<capu::SmartPointer<EtchString> > (2, 2);
+  carray1->createArray(0, 2);
+  carray1->createArray(1, 2);
+  capu::SmartPointer<EtchString> content1 = new EtchString((capu::int8_t*)utf8_1, 11, "utf-8");
+  capu::SmartPointer<EtchString> content2 = new EtchString((capu::int8_t*)utf8_2, 11, "utf-8");
+  capu::SmartPointer<EtchString> content3 = new EtchString((capu::int8_t*)utf8_1, 11, "utf-8");
+  capu::SmartPointer<EtchString> content4 = new EtchString((capu::int8_t*)utf8_2, 11, "utf-8");
+  carray1->set(Pos(0, 0), content1);
+  carray1->set(Pos(0, 1), content2);
+  carray1->set(Pos(1, 0), content3);
+  carray1->set(Pos(1, 1), content4);
+
+  capu::SmartPointer<EtchValidator> val = NULL;
+  EtchValidatorString::Get(2, val);
+  Utility::test(carray1, val, false);
+  EtchValidatorString::Get(0, val);
+  Utility::test(content1, val, false);
+  Utility::test(content2, val, false);
+  Utility::test(content3, val, false);
+  Utility::test(content4, val, false);
+}
+
 TEST(EtchBinaryTaggedDataInputTest, long_serialization) {
   capu::SmartPointer<EtchNativeArray<capu::SmartPointer<EtchLong> > > carray1 = new EtchNativeArray<capu::SmartPointer<EtchLong> > (2, 2);
   carray1->createArray(0, 2);
@@ -535,7 +560,7 @@ TEST(EtchBinaryTaggedDataInputTest, double_serialization) {
 }
 
 TEST(EtchBinaryTaggedDataInputTest, empty_string_serialization) {
-  capu::SmartPointer<EtchString> str = new EtchString("");
+  capu::SmartPointer<EtchString> str = new EtchString(NULL, 0, "utf-8");
   capu::SmartPointer<EtchValidator> val = NULL;
   EtchValidatorString::Get(0, val);
   Utility::test(str, val, false);
@@ -777,9 +802,7 @@ TEST(EtchBinaryTaggedDataInputTest, btdo_date_write) {
 
 TEST(EtchBinaryTaggedDataInputTest, null_write) {
   capu::int8_t byte_pos[] = {3, 1, 0, -127};
-
   capu::SmartPointer<EtchValidator> val = NULL;
-
   EtchValidatorObject::Get(0, val);
   Utility::test_bto_write(NULL, byte_pos, val);
 }

@@ -19,9 +19,9 @@
 #ifndef __ETCHSTRING_H__
 #define __ETCHSTRING_H__
 
+#include "common/EtchError.h"
 #include "common/EtchObject.h"
 #include "common/EtchObjectType.h"
-#include "util/EtchUtil.h"
 
 /**
  * String type.
@@ -152,9 +152,15 @@ public:
    */
   capu::uint32_t getHashCode() const;
 
-private:
+  /**
+   * Returns number of bytes
+   */
+  capu::uint32_t getNumBytes() const;
 
+private:
   char* mData;
+  capu::uint32_t mDataSize;
+  capu::uint32_t mEncoding;
 };
 
 typedef capu::SmartPointer<EtchString> EtchStringPtr;

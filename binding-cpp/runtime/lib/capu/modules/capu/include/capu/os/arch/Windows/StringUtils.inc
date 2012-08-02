@@ -32,7 +32,7 @@ private:
   inline void StringUtils::Strncpy(char* dst, uint_t dstSize, const char* src)
   {
 
-    strcpy_s(dst, dstSize, src);
+    memcpy(dst, src, dstSize);
   }
 
   inline uint_t StringUtils::Strlen(const char* str)

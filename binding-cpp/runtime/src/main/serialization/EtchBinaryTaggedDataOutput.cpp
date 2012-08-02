@@ -327,19 +327,8 @@ status_t EtchBinaryTaggedDataOutput::writeValue(capu::SmartPointer<EtchValidator
     }
     case EtchTypeCode::STRING:
     {
-      status_t ret;
-      //UTF-8 SUPPORT IS NOT IMPLEMENTED YET
-      capu::int8_t *buffer = NULL;
-      capu::int32_t bufferSize = 0;
-      EtchString *tmp = (EtchString*) value.get();
-      ret = tmp->getBytes(&buffer,&bufferSize);
-      if (ret != ETCH_OK) {
-        delete[] buffer;
-        return ret;
-      }
-      ret = writeBytes(buffer,bufferSize);
-      delete[] buffer;
-      return ret;
+      capu::SmartPointer<EtchString> str = capu::smartpointer_cast<EtchString > (value);
+      return writeBytes((capu::int8_t*)str->c_str(), str->getNumBytes());
     }
     case EtchTypeCode::CUSTOM:
     {

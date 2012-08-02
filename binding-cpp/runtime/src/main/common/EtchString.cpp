@@ -16,73 +16,135 @@
  * limitations under the License.
  */
 
+#include "capu/os/StringUtils.h"
 #include "common/EtchString.h"
+#include "util/EtchUtil.h"
+
+static capu::uint32_t ENCODING_ASCII = 0;
+static capu::uint32_t ENCODING_UTF8  = 1;
 
 const EtchObjectType* EtchString::TYPE() {
   const static EtchObjectType TYPE(EOTID_STRING, NULL);
   return &TYPE;
 }
 
+// TODO: String should support UTF-8 by default
+
 EtchString::EtchString()
 : EtchObject(EtchString::TYPE())
-, mData(NULL) {
-  //ETCH_LOG("EtchString: ", EtchLogLevel::Error, "dies ist ein Test");
+, mData(NULL), mDataSize(0), mEncoding(ENCODING_ASCII) {
 }
 
 EtchString::EtchString(const char* string)
 : EtchObject(EtchString::TYPE())
-, mData(NULL) {
+, mData(NULL), mDataSize(0), mEncoding(ENCODING_ASCII) {
   if (string != NULL) {
-    capu::int32_t len = strlen(string);
+    capu::uint32_t len = capu::StringUtils::Strlen(string);
     mData = new char[len + 1];
+    // TODO: refactor this to use capu
     etch_strcpy_s(mData, len + 1, string);
   }
 }
 
 EtchString::EtchString(const capu::int8_t* buffer, const capu::int32_t bufferSize, EtchString encoding)
 : EtchObject(EtchString::TYPE())
-, mData(NULL) {
-  if (buffer != NULL) {
-    mData = new char[bufferSize + 1];
-    etch_strcpy_s(mData, bufferSize + 1, (char*)buffer);
+, mData(NULL), mDataSize(0), mEncoding(ENCODING_ASCII) {
+
+  EtchString enc("utf-8");
+  if (encoding.equals(&enc)) {
+    mEncoding = ENCODING_UTF8;
+    mDataSize = bufferSize;
+    if (buffer != NULL) {
+      //utf8
+      // TODO: refactor this an use a utf-8 strncpy function from capu
+      mData = new char[bufferSize + 1];
+      capu::StringUtils::Strncpy(mData, bufferSize, (const char*)buffer);
+      mData [bufferSize] = 0x0;
+    }
+  } else {
+    if (buffer != NULL) {
+      //ascii
+      capu::uint32_t len = capu::StringUtils::Strlen((const char*) buffer);
+      mData = new char[len + 1];
+      // TODO: refactor this to use capu
+      etch_strcpy_s(mData, len + 1, (const char*) buffer);
+    }
+  }
+}
+
+EtchString::EtchString(const EtchString &copy)
+: EtchObject(EtchString::TYPE()), mDataSize(copy.mDataSize), mEncoding(copy.mEncoding) {
+  if (copy.mData == NULL)
+    return;
+  if (mEncoding != ENCODING_UTF8) {
+    //ascii
+    capu::int32_t len = capu::StringUtils::Strlen(copy.mData);
+    mData = new char [len + 1];
+    // TODO: refactor this to use capu
+    etch_strcpy_s(mData, len + 1, copy.mData);
+  } else {
+    //utf8
+    // TODO: refactor this to use capu utf-8 strncpy
+    mData = new char [copy.mDataSize + 1];
+    capu::StringUtils::Strncpy(mData, copy.mDataSize, copy.mData);
+    mData[copy.mDataSize] = 0x0;
   }
 }
 
 
-EtchString::EtchString(const EtchString &copy)
-: EtchObject(EtchString::TYPE()) {
-  if (copy.mData == NULL)
-    return;
-  capu::int32_t len = strlen(copy.mData);
-  mData = new char [len + 1];
-  etch_strcpy_s(mData, len + 1, copy.mData);
-}
-
 EtchString& EtchString::operator=(const char *str) {
+  // TODO: refactor this
   if (this->mData != str) {
-    set(str);
+    if (mEncoding == ENCODING_UTF8) {
+      //utf8
+      if (mData != NULL) {
+        delete[] mData;
+        mData = NULL;
+      }
+      if (str != NULL) {
+        mDataSize = capu::StringUtils::Strlen(str);
+        mData = new char[mDataSize + 1];
+        capu::StringUtils::Strncpy(mData, mDataSize, str);
+        mData[mDataSize] = 0x0;
+      }
+    } else {
+      set(str);
+    }
   }
   return *this;
 }
 
 void EtchString::set(const char* string, capu::uint32_t len) {
+  // TODO: refactor this
   if (mData != NULL) {
     delete[] mData;
     mData = NULL;
   }
   if (string != NULL) {
-    if (strlen(string) < len)
+    if (capu::StringUtils::Strlen(string) < len)
       return;
     capu::int32_t length = len;
     mData = new char[length + 1];
     etch_strcpy_s(mData, length + 1, string);
   }
-
 }
 
 EtchString& EtchString::operator=(const EtchString &str) {
+  // TODO: refactor this
   if (this != &str) {
-    set(str.mData);
+    if (mEncoding == ENCODING_UTF8) {
+      //utf8
+      if (mData != NULL) {
+        delete[] mData;
+        mData = NULL;
+      }
+      mData = new char [str.mDataSize];
+      capu::StringUtils::Strncpy(mData, str.mDataSize, str.mData);
+      mDataSize = str.mDataSize;
+    } else {
+      //ascii
+      set(str.mData);
+    }
   }
   return *this;
 }
@@ -100,31 +162,51 @@ void EtchString::set(const char* string) {
     mData = NULL;
   }
   if (string != NULL) {
-    capu::int32_t len = strlen(string);
+    capu::int32_t len = capu::StringUtils::Strlen(string);
     mData = new char[len + 1];
     etch_strcpy_s(mData, len + 1, string);
   }
 }
 
 capu::int32_t EtchString::length() const {
-  return strlen(mData);
+  // TODO: refactor this
+  if (mEncoding != ENCODING_UTF8) {
+    return capu::StringUtils::Strlen(mData);
+  } else {
+    capu::int32_t result = 0;
+    etch_strlen_utf8(mData, result);
+    return result;
+  }
 }
 
-const char* EtchString::c_str() const{
+const char* EtchString::c_str() const {
   return mData;
 }
 
-capu::bool_t EtchString::equals(const EtchObject* other) const{
+capu::bool_t EtchString::equals(const EtchObject * other) const {
+  // TODO: refactor this
   if (other == NULL)
     return false;
   else if (!other->getObjectType()->equals(EtchString::TYPE()))
     return false;
-  if (strcmp(((EtchString*) other)->mData, this->mData) == 0)
-    return true;
+  if (mEncoding != ENCODING_UTF8 && (((EtchString*)other)->mEncoding != ENCODING_UTF8)) {
+    //ascii
+    if (capu::StringUtils::Strcmp(((EtchString*) other)->mData, this->mData) == 0)
+      return true;
+  } else if (mEncoding == ENCODING_UTF8 && (((EtchString*)other)->mEncoding == ENCODING_UTF8)) {
+    //utf8
+    if (strncmp(((EtchString*) other)->mData, this->mData, mDataSize) == 0)
+      return true;
+  }
   return false;
 }
 
 capu::int32_t EtchString::rightFind(const char c) {
+  if (mEncoding == ENCODING_UTF8) {
+    //utf8
+    //TODO: Implementation needed
+    return -1;
+  }
   const char * str = this->c_str();
   capu::int32_t index = -1;
   char* ch = strchr((char *) str, c);
@@ -136,6 +218,11 @@ capu::int32_t EtchString::rightFind(const char c) {
 }
 
 capu::int32_t EtchString::leftFind(const char c) {
+  if (mEncoding == ENCODING_UTF8) {
+    //utf8
+    //TODO: Implementation needed
+    return -1;
+  }
   const char * str = this->c_str();
   capu::int32_t index = -1;
   char* ch = strchr((char*) str, c);
@@ -146,8 +233,13 @@ capu::int32_t EtchString::leftFind(const char c) {
   return index;
 }
 
-status_t EtchString::substring(capu::uint32_t start, capu::uint32_t length, EtchString *dest) {
-  capu::uint32_t len = strlen(this->mData);
+status_t EtchString::substring(capu::uint32_t start, capu::uint32_t length, EtchString * dest) {
+  if (mEncoding == ENCODING_UTF8) {
+    //utf8
+    //TODO: Implementation needed
+    return ETCH_EUNIMPL;
+  }
+  capu::uint32_t len = capu::StringUtils::Strlen(this->mData);
   if (start >= len || len < (start + length) || dest == NULL) {
     return ETCH_EINVAL;
   } else {
@@ -156,9 +248,17 @@ status_t EtchString::substring(capu::uint32_t start, capu::uint32_t length, Etch
   }
 }
 
-capu::uint32_t EtchString::getHashCode() const{
+capu::uint32_t EtchString::getHashCode() const {
   capu::uint32_t result = 0;
-  capu::uint32_t len = strlen(mData);
+  capu::uint32_t len = 0;
+  if (mEncoding != ENCODING_UTF8) {
+    //ascii
+    len = capu::StringUtils::Strlen(mData);
+  } else {
+    //utf8
+    len = mDataSize;
+  }
+
   for (capu::uint32_t i = 0; i < len; i++) {
     result = (result + static_cast<capu::uint32_t> (mData[i]) * 13);
   }
@@ -172,8 +272,16 @@ status_t EtchString::getBytes(capu::int8_t** buffer, capu::int32_t *bufferSize, 
   }
 
   *buffer = new capu::int8_t[length() + 1];
-  memcpy(*buffer,mData,length() + 1);
+  memcpy(*buffer, mData, length() + 1);
   *bufferSize = length() + 1;
 
   return ETCH_OK;
+}
+
+capu::uint32_t EtchString::getNumBytes() const {
+  if (mEncoding == ENCODING_UTF8) {
+    return mDataSize;
+  } else {
+    return capu::StringUtils::Strlen(mData);
+  }
 }

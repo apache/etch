@@ -136,3 +136,66 @@ TEST(EtchStringTest, substringTest) {
   EXPECT_TRUE(result == ETCH_OK);
   EXPECT_TRUE(strcmp("3", tmp.c_str()) == 0);
 }
+
+TEST(EtchStringTest, UTF8_Constructor_Default) {
+  const capu::uint8_t utf8 [] = {0xF0, 0xA4, 0xAD, 0xA2, 0xE2, 0x82, 0xAC, 0xC2, 0xA2, 0x24};
+  EtchString* s1 = new EtchString((capu::int8_t*)utf8, 10, "utf-8");
+  EXPECT_TRUE(s1->getObjectType()->equals(EtchString::TYPE()));
+  EXPECT_TRUE(s1->c_str() != NULL);
+  delete s1;
+}
+
+TEST(EtchStringTest, UTF8_Assignment_Test) {
+  const capu::uint8_t utf8 [] = {0xF0, 0xA4, 0xAD, 0xA2, 0xE2, 0x82, 0xAC, 0xC2, 0xA2, 0x24};
+  EtchString* s1 = new EtchString(NULL, 0, "utf-8");
+  *s1 = (const char*)utf8;
+  EXPECT_TRUE(s1->c_str() != NULL);
+  EXPECT_TRUE(strncmp(s1->c_str(), (const char*)utf8, 10) == 0);
+  delete s1;
+}
+//
+
+TEST(EtchStringTest, UTF8_len_test) {
+  const capu::uint8_t utf8 [] = {0xF0, 0xA4, 0xAD, 0xA2, 0xE2, 0x82, 0xAC, 0xC2, 0xA2, 0x24};
+  EtchString *s = new EtchString((capu::int8_t*)utf8, 10, "utf-8");
+  EXPECT_TRUE(s->getNumBytes() == 10);
+  EXPECT_TRUE(s->length() == 4);
+  delete s;
+}
+
+TEST(EtchStringTest, UTF8_equalsTest) {
+  const capu::uint8_t utf8_1 [] = {0xF0, 0xA4, 0xAD, 0xA2, 0xE2, 0x82, 0xAC, 0xC2, 0xA2, 0x24};
+  const capu::uint8_t utf8_2 [] = {0xF0, 0xA4, 0xAD, 0xA2, 0xE2, 0x82, 0xAC, 0xC2, 0xA2, 0x24};
+  const capu::uint8_t utf8_3 [] = {0xF0, 0xA4, 0xAD, 0xA2, 0xE2, 0x82, 0xAC, 0xC2, 0xA2, 0x25};
+  EtchString str1((capu::int8_t*)utf8_1, 10, "utf-8");
+  EtchString str2((capu::int8_t*)utf8_2, 10, "utf-8");
+  EtchString str3((capu::int8_t*)utf8_3, 10, "utf-8");
+
+  EXPECT_TRUE(str1.equals(&str2));
+  EXPECT_FALSE(str1.equals(&str3));
+}
+
+TEST(EtchStringTest, UTF8_leftFindTest) {
+  //not supported
+  const capu::uint8_t utf8_1 [] = {0xF0, 0xA4, 0xAD, 0xA2, 0xE2, 0x82, 0xAC, 0xC2, 0xA2, 0x24};
+  EtchString str1((capu::int8_t*)utf8_1, 10, "utf-8");
+  capu::int32_t index = str1.leftFind(':');
+  EXPECT_TRUE(index == -1);
+}
+
+TEST(EtchStringTest, UTF8_rightFindTest) {
+  const capu::uint8_t utf8_1 [] = {0xF0, 0xA4, 0xAD, 0xA2, 0xE2, 0x82, 0xAC, 0xC2, 0xA2, 0x24};
+  EtchString str1((capu::int8_t*)utf8_1, 10, "utf-8");
+  capu::int32_t index = str1.rightFind(':');
+  EXPECT_TRUE(index == -1);
+}
+
+TEST(EtchStringTest, UTF8_substringTest) {
+  const capu::uint8_t utf8_1 [] = {0xF0, 0xA4, 0xAD, 0xA2, 0xE2, 0x82, 0xAC, 0xC2, 0xA2, 0x24};
+  EtchString str1((capu::int8_t*)utf8_1, 10, "utf-8");
+
+  EtchString tmp;
+  status_t result;
+  result = str1.substring(0, 5, &tmp);
+  EXPECT_TRUE(result == ETCH_EUNIMPL);
+}

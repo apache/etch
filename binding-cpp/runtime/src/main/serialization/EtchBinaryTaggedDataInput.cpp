@@ -249,8 +249,8 @@ status_t EtchBinaryTaggedDataInput::readType(EtchType *&type) {
   if (obj->getObjectType()->equals(EtchInt32::TYPE())) {
     EtchInt32* id = (EtchInt32*) obj.get();
     if (mVf->getType(id->get(), type) != ETCH_OK) {
-      char num[11];
-      capu::StringUtils::Sprintf(num, 11, "%d", id->get());
+      char num[100];
+      capu::StringUtils::Sprintf(num, 100, "%d", id->get());
       EtchString str(num);
       type = new EtchType(id->get(), str);
       //TODO: Enhance memory management. We need smartpointers here because we create new object sometimes
@@ -284,8 +284,8 @@ status_t EtchBinaryTaggedDataInput::readField(EtchType *type, EtchField& field) 
     EtchInt32* id = (EtchInt32*) obj.get();
 
     if (type->getField(id->get(), &field) != ETCH_OK) {
-      char num[11];
-      capu::StringUtils::Sprintf(num, 11, "%d", id->get());
+      char num[100];
+      capu::StringUtils::Sprintf(num, 100, "%d", id->get());
       EtchString str(num);
       EtchField f(id->get(), str);
       //TODO: Create field on heap and use smartpointers
@@ -549,7 +549,7 @@ status_t EtchBinaryTaggedDataInput::readValue(capu::SmartPointer<EtchValidator> 
     }
     case EtchTypeCode::EMPTY_STRING:
     {
-      EtchString *str = new EtchString("");
+      EtchString *str = new EtchString(NULL, 0, mVf->getStringEncoding());
       if (validateValue(v, str, result) != ETCH_OK) {
         delete str;
         return ETCH_ERROR;
@@ -570,6 +570,7 @@ status_t EtchBinaryTaggedDataInput::readValue(capu::SmartPointer<EtchValidator> 
         return ETCH_ERROR;
 
       capu::SmartPointer<EtchString> str = new EtchString(buffer, bufferSize, mVf->getStringEncoding());
+      delete [] buffer;
       ret = validateValue(v, str, result);
       if (ret != ETCH_OK) {
         return ETCH_ERROR;
