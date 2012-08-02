@@ -16,46 +16,46 @@
  * limitations under the License.
  */
 
-#ifndef __ETCHMAILBOX_H__
-#define __ETCHMAILBOX_H__
+#ifndef __ETCHPLAINMAILBOX_H__
+#define __ETCHPLAINMAILBOX_H__
 
-#include "common/EtchBool.h"
-#include "common/EtchLong.h"
-#include "transport/EtchWho.h"
-#include "transport/EtchMessage.h"
+#include "capu/os/Mutex.h"
+#include "support/EtchMailbox.h"
+#include "util/EtchCircularQueue.h"
+#include "transport/EtchMailboxManager.h"
 
-/**
- * Adapter between remote and message source.
- */
-class EtchMailbox {
+class EtchPlainMailbox : public EtchMailbox{
 public:
-  class EtchElement;
-  class EtchNotify;
 
   /**
-   * Destructure
+   * Default Constructor
+   * @param mailboxManager
+   * @param messageId
    */
-  virtual ~EtchMailbox() {
-  }
+
+  EtchPlainMailbox(EtchMailboxManager* mailboxManager, EtchLong messageId);
+
+  /**
+   * Destructor
+   */
+  virtual ~EtchPlainMailbox();
 
   /**
    * @return the message id of this mailbox.
    */
-  virtual EtchLong getMessageId() = 0;
+  EtchLong getMessageId();
 
   /**
-   * Queues the message to the mailbox.
-   * @param sender
-   * @param msg
+   * @See EtchMailbox
    */
+  status_t message(capu::SmartPointer<EtchWho> sender, capu::SmartPointer<EtchMessage> msg);
 
-  virtual status_t message(capu::SmartPointer<EtchWho> sender, capu::SmartPointer<EtchMessage> msg) = 0;
   /**
    * @param the next message to be read from the mailbox, or null if
    * the mailbox is empty and closed. Wait forever for such a message
    * to be delivered.
    */
-  virtual status_t read(EtchElement *&result) = 0;
+  status_t read(EtchMailbox::EtchElement*& result);
 
   /**
    * @param maxDelay the maximum amount of time in milliseconds to
@@ -64,20 +64,26 @@ public:
    * @param the message read from the mailbox, or null if the mailbox
    * is empty and closed, or if the time limit was exceeeded.
    */
-  virtual status_t read(EtchElement *&result, capu::int32_t maxDelay) = 0;
+  status_t read(EtchMailbox::EtchElement *& result, capu::int32_t maxDelay);
 
   /**
    * Closes the mailbox so that no more messages can be delivered.
-   * Queued messages remain to be read.
+   * Queued messages remain to be read. Reading an empty closed
+   * mailbox returns null.
+   * @param true if this call closed the mailbox (that is, if action was
+   * taken), false if the mailbox was already closed.
    */
-  virtual status_t closeDelivery() = 0;
+  status_t closeDelivery();
 
   /**
    * Closes the mailbox so that no more messages will be delivered or
    * read. Any remaining queued messages are delivered to a default
    * handler.
+   * @return ETCH_OK if this call closed the mailbox (that is, if action was
+   * taken), ETCH_ERROR if the mailbox was already closed.
    */
-  virtual status_t closeRead() = 0;
+  status_t closeRead();
+
   /**
    * Registers a Notify interface implementation to receive a callback
    * when a mailbox's status is changed.
@@ -88,79 +94,51 @@ public:
    * @param maxDelay the maximum amount of time in milliseconds to
    * wait for delivery of a message to the mailbox. 0 means wait
    * forever. The mailbox is closed upon timeout.
-   * @throws IllegalStateException notify already registered.
+   * @return ETCH_OK registration was successfully, ETCH_ERROR otherwise
    */
-  virtual status_t registerNotify(EtchNotify* notify, EtchObject* state, capu::int32_t maxDelay) = 0;
+  status_t registerNotify(EtchMailbox::EtchNotify* notify, EtchObject* state, capu::int32_t maxDelay);
 
   /**
    * Unregisters a Notify interface implementation from receiving a callback
    * when a mailbox's status is changed. Cancels any timeout.
    * @param notify a Notify interface implementation which was previously
    * registered.
+   * @return ETCH_OK unregistration was successfully, ETCH_ERROR otherwise
    */
-  virtual status_t unregisterNotify(EtchNotify* notify) = 0;
+  status_t unregisterNotify(EtchMailbox::EtchNotify* notify);
 
   /**
    * @return true if the mailbox is empty.
    */
-  virtual capu::bool_t isEmpty() = 0;
+  capu::bool_t isEmpty();
 
   /**
    * @return true if the mailbox is closed.
    */
-  virtual capu::bool_t isClosed() = 0;
+  capu::bool_t isClosed();
 
   /**
    * @return true if the mailbox is full.
    */
-  virtual capu::bool_t isFull() = 0;
+  capu::bool_t isFull();
 
   /**
-   * The message as queued, including src and sender.
+   * 
+   * @return mailbox manager 
    */
-  class EtchElement {
-  public:
+  EtchMailboxManager* getMailboxManager();
 
-    /**
-     * @param sender the message sender.
-     * @param msg the message.
-     */
-    EtchElement(capu::SmartPointer<EtchWho> sender, capu::SmartPointer<EtchMessage> msg)
-    : mSender(sender), mMsg(msg) {
-    }
 
-    /**
-     * Destructor
-     */
-    virtual ~EtchElement() {
-    }
+private:
+  EtchMailboxManager* mMailboxManager;
+  EtchMailbox::EtchNotify* mNotify;
+  EtchObject* mState;
+  EtchLong mMessageId;
+  capu::bool_t mAlarmSet;
+  EtchCircularQueue mQueue;
+  capu::Mutex mMutex;
 
-    /**
-     * The message sender.
-     */
-    capu::SmartPointer<EtchWho> mSender;
-    /**
-     * the message.
-     */
-    capu::SmartPointer<EtchMessage> mMsg;
-  };
-
-  /**
-   * Interface used to notify of mailbox status.
-   */
-  class EtchNotify {
-  public:
-    /**
-     * Notifies of mailbox status change.
-     * @param mb the mailbox whose status has changed.
-     * @param state the state object passed in the register
-     * method.
-     * @param closed true if the mailbox timeout has expired and
-     * the mailbox is now closed to delivery, false if a message
-     * has arrived.
-     */
-    virtual status_t mailboxStatus(EtchMailbox* mb, EtchObject* state, capu::bool_t closed) = 0;
-  };
+  void fireNotify();
 };
 
-#endif
+#endif /* ETCHPLAINMAILBOX_H */

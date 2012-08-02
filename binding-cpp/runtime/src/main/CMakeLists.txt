@@ -69,7 +69,11 @@ SET(MAIN_INCLUDES
     ${PROJECT_SOURCE_DIR}/include/transport/EtchTcpOption.h
     ${PROJECT_SOURCE_DIR}/include/transport/EtchPacketizer.h
     ${PROJECT_SOURCE_DIR}/include/transport/EtchMessage.h
+    ${PROJECT_SOURCE_DIR}/include/transport/EtchMailboxManager.h
+    ${PROJECT_SOURCE_DIR}/include/transport/EtchPlainMailboxManager.h
     ${PROJECT_SOURCE_DIR}/include/serialization/EtchValidator.h
+    ${PROJECT_SOURCE_DIR}/include/serialization/EtchAsyncMode.h
+    ${PROJECT_SOURCE_DIR}/include/serialization/EtchDirection.h
     ${PROJECT_SOURCE_DIR}/include/serialization/EtchTypeValidator.h
     ${PROJECT_SOURCE_DIR}/include/serialization/EtchTypeCodes.h
     ${PROJECT_SOURCE_DIR}/include/serialization/EtchValidatorBoolean.h
@@ -119,6 +123,7 @@ SET(MAIN_INCLUDES
     ${PROJECT_SOURCE_DIR}/include/support/EtchStubHelper.h
     ${PROJECT_SOURCE_DIR}/include/support/EtchStubBase.h  
     ${PROJECT_SOURCE_DIR}/include/support/EtchTransportHelper.h
+    ${PROJECT_SOURCE_DIR}/include/support/EtchPlainMailbox.h
     ${PROJECT_SOURCE_DIR}/include/util/EtchUtil.h
     ${PROJECT_SOURCE_DIR}/include/util/EtchCircularQueue.h
     ${PROJECT_SOURCE_DIR}/include/util/EtchIdGenerator.h
@@ -156,6 +161,7 @@ SET(MAIN_SOURCES
     transport/EtchMessage.cpp
     transport/EtchMessagizer.cpp
     transport/EtchFormat.cpp
+    transport/EtchPlainMailboxManager.cpp
     serialization/EtchTypeValidator.cpp
     serialization/EtchValidatorBoolean.cpp
     serialization/EtchValidatorByte.cpp
@@ -188,6 +194,7 @@ SET(MAIN_SOURCES
     serialization/EtchBinaryTaggedData.cpp
     serialization/EtchBinaryTaggedDataInput.cpp
     serialization/EtchBinaryTaggedDataOutput.cpp
+    support/EtchPlainMailbox.cpp
     support/EtchFreePool.cpp
     support/EtchDefaultServerFactory.cpp
     support/EtchStubBase.cpp

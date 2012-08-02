@@ -56,6 +56,7 @@ add_executable (etch-cpp-test
     transport/EtchPacketizerTest.cpp
     transport/EtchMessageTest.cpp
     transport/EtchMessagizerTest.cpp
+    transport/EtchPlainMailboxManagerTest.cpp
     serialization/EtchValidatorBooleanTest.cpp
     serialization/EtchValidatorByteTest.cpp
     serialization/EtchValidatorIntTest.cpp
@@ -83,6 +84,7 @@ add_executable (etch-cpp-test
     serialization/EtchValidatorStructValueTest.cpp
     serialization/EtchBinaryTaggedDataInputOutputTest.cpp
     support/EtchFreePoolTest.cpp
+    support/EtchPlainMailboxTest.cpp
     util/EtchCircularQueueTest.cpp
     util/EtchUtilTest.cpp
     ${GTEST}/src/gtest-all.cc
