@@ -31,6 +31,10 @@
     <target name="clean"         depends="init-clean,component-all,post-clean" />
     <target name="realclean"     depends="clean,extra-clean" />
     <target name="maven-install" depends="init-maven,release" />
+    <target name="debug-binding" depends="init-debug">
+        <antcall target="component-binding-${binding}"/>
+        <antcall target="post-debug"/>
+    </target>
 
     <!-- Execute a clean, then 'debug' build -->
     <target name="rebuild-debug">
@@ -189,9 +193,34 @@
         <build_component dir="binding-go" />
         <build_component dir="binding-xml" />
     </target>
+    
+    <!-- Individual Bindings -->
+    <target name="component-binding-java" depends="component-core">
+        <build_component dir="binding-java" />
+    </target>
+    
+    <target name="component-binding-csharp" depends="component-core">
+        <build_component dir="binding-csharp" />
+    </target>
+    
+    <target name="component-binding-c" depends="component-core">
+        <build_component dir="binding-c" />
+    </target>
+    
+    <target name="component-binding-cpp" depends="component-core">
+        <build_component dir="binding-cpp" />
+    </target>
+    
+    <target name="component-binding-go" depends="component-core">
+        <build_component dir="binding-go" />
+    </target>
+    
+    <target name="component-binding-xml" depends="component-core">
+        <build_component dir="binding-xml" />
+    </target>
 
+    <!-- Examples -->
     <target name="component-examples" unless="build.skip.examples">
-        <!-- Examples -->
         <build_component dir="examples" />
     </target>
 
@@ -199,8 +228,8 @@
           <build_component dir="tests" />
     </target>
 
+    <!-- Installer/zip Bundles -->
     <target name="component-bundles">
-        <!-- Installer/zip Bundles -->
         <build_component dir="installers" />
     </target>
 </project>
