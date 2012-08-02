@@ -50,6 +50,16 @@ namespace capu {
   }
 
   template<>
+  inline capu::uint32_t NumericLimitMax<capu::uint32_t>() {
+    return 0xFFFFFFFF;
+  }
+
+  template<>
+  inline capu::uint32_t NumericLimitMin<capu::uint32_t>() {
+    return 0x0;
+  }
+
+  template<>
   inline capu::int16_t NumericLimitMin<capu::int16_t>() {
     return -32768;
   }
