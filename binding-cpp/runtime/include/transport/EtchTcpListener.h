@@ -50,7 +50,7 @@ public:
   /**
    * Destructor
    */
-  ~EtchTcpListener();
+  virtual ~EtchTcpListener();
 
   virtual capu::bool_t isStarted();
 

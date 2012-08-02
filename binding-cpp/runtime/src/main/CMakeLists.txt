@@ -115,6 +115,7 @@ SET(MAIN_INCLUDES
     ${PROJECT_SOURCE_DIR}/include/serialization/EtchBinaryTaggedData.h
     ${PROJECT_SOURCE_DIR}/include/serialization/EtchBinaryTaggedDataInput.h
     ${PROJECT_SOURCE_DIR}/include/serialization/EtchBinaryTaggedDataOutput.h
+	${PROJECT_SOURCE_DIR}/include/serialization/EtchValidators.h
     ${PROJECT_SOURCE_DIR}/include/support/EtchRuntime.h
     ${PROJECT_SOURCE_DIR}/include/support/EtchAsyncResultBase.h
     ${PROJECT_SOURCE_DIR}/include/support/EtchDefaultServerFactory.h

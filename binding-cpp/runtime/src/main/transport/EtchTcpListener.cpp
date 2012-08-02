@@ -43,6 +43,7 @@ EtchTcpListener::EtchTcpListener(EtchURL *url)
 
 EtchTcpListener::~EtchTcpListener() {
   if (mThread != NULL) {
+    mThread->join();
     delete mThread;
   }
   if (mSocket != NULL) {
@@ -131,9 +132,7 @@ status_t EtchTcpListener::transportControl(capu::SmartPointer<EtchObject> contro
     mMutex.unlock();
     mThread = new capu::Thread(this);
     mThread->start();
-    waitUp(((EtchInt32*) value.get())->get());
-    //TODO: Wait handling in one of the next releases
-    return ETCH_OK;
+    return waitUp(((EtchInt32*) value.get())->get());
   }
 
   if (control->equals(&EtchTcpListener::STOP())) {
@@ -152,10 +151,10 @@ status_t EtchTcpListener::transportControl(capu::SmartPointer<EtchObject> contro
     mMutex.lock();
     mIsStarted = false;
     mMutex.unlock();
+    status_t ret = waitDown(((EtchInt32*) value.get())->get());
     close();
-    waitDown(((EtchInt32*) value.get())->get());
     //TODO: Wait handling in one of the next releases
-    return ETCH_OK;
+    return ret;
   }
 
   if (control->equals(&EtchTcpListener::RESET())) {

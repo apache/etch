@@ -96,6 +96,7 @@ inline status_t Socket::close() {
   if (mSocket == -1) {
     return CAPU_SOCKET_ESOCKET;
   } else {
+    shutdown(mSocket, SHUT_RDWR);
     if (::close(mSocket) < 0)
       return CAPU_SOCKET_ECLOSE;
     mSocket = -1;

@@ -157,25 +157,31 @@ status_t EtchConnection<S>::waitDown(capu::int32_t maxDelay) {
 
 template <class S>
 status_t EtchConnection<S>::fireUp() {
+  mMutex.lock();
   EtchString tmp;
   mStatus.set(EtchSession::UP(), tmp);
 
   if (mSession != NULL) {
     //TODO: run this in seperate thread
-    mSession->sessionNotify(new EtchString(EtchSession::UP()));
+	mMutex.unlock();
+    return mSession->sessionNotify(new EtchString(EtchSession::UP()));
   }
+  mMutex.unlock();
   return ETCH_ERROR;
 }
 
 template <class S>
 status_t EtchConnection<S>::fireDown() {
+  mMutex.lock();
   EtchString tmp;
-  mStatus.set((EtchString &) EtchSession::DOWN(), tmp);
+  mStatus.set(EtchSession::DOWN(), tmp);
 
   if (mSession != NULL) {
     //TODO: run this in seperate thread
+	mMutex.unlock();
     return mSession->sessionNotify(new EtchString(EtchSession::DOWN()));
   }
+  mMutex.unlock();
   return ETCH_ERROR;
 }
 

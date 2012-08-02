@@ -47,6 +47,9 @@ public:
    * @return a new instance of value factory for this connection.
    */
   virtual status_t newValueFactory(const EtchString& uri, EtchValueFactory *&vf) = 0;
+
 };
+
+  typedef capu::SmartPointer<EtchServerFactory> EtchServerFactoryPtr;
 
 #endif /* __ETCHSERVERFACTORY_H__ */

@@ -84,6 +84,12 @@ public:
    */
   capu::int32_t size();
 
+  
+  /**
+   * @return the iterator
+   */
+  EtchHashTable<EtchString, EtchField>::Iterator begin();
+
 private:
 
   EtchHashTable<capu::int32_t, EtchField, capu::Hash, capu::Comparator> mById;

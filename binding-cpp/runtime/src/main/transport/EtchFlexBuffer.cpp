@@ -22,7 +22,7 @@ EtchFlexBuffer::EtchFlexBuffer() :
 INIT_BUFFER_LEN(32), MAX_BUFFER_LEN(4 * 1024 * 1024),
 TRIM_BUFFER_LEN(16 * 1024), mBuffer(NULL),
 mSize(INIT_BUFFER_LEN), mIndex(0),
-mLength(0), mByteRepresentation(ETCH_LITTLE_ENDIAN) {
+mLength(0), mByteRepresentation(ETCH_BIG_ENDIAN) {
 
   mBuffer = new capu::int8_t[INIT_BUFFER_LEN];
 }
@@ -32,7 +32,7 @@ INIT_BUFFER_LEN(32),
 MAX_BUFFER_LEN(4 * 1024 * 1024),
 TRIM_BUFFER_LEN(16 * 1024),
 mBuffer(buf), mSize(size), mIndex(0),
-mLength(size), mByteRepresentation(ETCH_LITTLE_ENDIAN) {
+mLength(size), mByteRepresentation(ETCH_BIG_ENDIAN) {
 
 }
 

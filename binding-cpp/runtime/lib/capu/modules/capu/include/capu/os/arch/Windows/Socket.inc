@@ -119,6 +119,7 @@ inline status_t Socket::close() {
   if (mSocket == INVALID_SOCKET) {
     returnValue = CAPU_SOCKET_ESOCKET;
   } else {
+    shutdown(mSocket, SD_BOTH);
     int32_t result = closesocket(mSocket);
     if (result != 0) {
       result = WSAGetLastError();

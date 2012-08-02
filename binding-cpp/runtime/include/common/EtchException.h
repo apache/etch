@@ -53,7 +53,7 @@ public:
    *
    * @return Message of Exception
    */
-  EtchString getErrorMessage();
+  virtual EtchString getErrorMessage();
 
   /**
    *
