@@ -28,7 +28,7 @@
 * @param implFactory
 */
 EtchDefaultServerFactory::EtchDefaultServerFactory( EtchTransport<EtchServerFactory>* listener, EtchSession* implFactory )
-  : mListener(listener) {
+  : mListener(listener), mSession(NULL) {
     if(implFactory != NULL) {
       setSession( implFactory );
     }

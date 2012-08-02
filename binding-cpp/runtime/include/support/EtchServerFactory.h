@@ -21,10 +21,11 @@
 #ifndef __ETCHSERVERFACTORY_H__
 #define __ETCHSERVERFACTORY_H__
 
-#include "util/EtchResources.h"
+#include "support/EtchRuntime.h"
 #include "transport/EtchSession.h"
 #include "transport/EtchTransport.h"
 #include "transport/EtchTransportMessage.h"
+#include "util/EtchResources.h"
 
 class EtchRuntime;
 
@@ -40,7 +41,7 @@ public:
    * @param resources the resources to use for the new server instance.
    * @throws Exception
    */
-  virtual status_t newServer(EtchTransportMessage* transport, const EtchString& uri, EtchResources* resources) = 0;
+  virtual status_t newServer(EtchRuntime *runtime, EtchTransportMessage* transport, const EtchString& uri, EtchResources* resources) = 0;
 
   /**
    * @param uri the uri to use to configure the new value factory.

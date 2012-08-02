@@ -23,7 +23,7 @@ EtchClientStack::EtchClientStack(EtchRemoteBase* rb, EtchSessionMessage *helper,
 
 EtchClientStack::~EtchClientStack() {
   status_t status;
-  status = EtchTransportHelper::destroyResources(mResources);
+  status = EtchTransportHelper::DestroyResources(mResources);
   if(status != ETCH_OK) {
     // Log error
   }

@@ -42,9 +42,6 @@ status_t EtchTcpTransportFactory::newTransport(EtchString uri, EtchResources* re
   status_t status;
   EtchObject* socket = NULL;
   status = resources->get(SOCKET(), socket);
-  if(status != ETCH_OK) {
-    return ETCH_ENOT_EXIST;;
-  }
 
   EtchTransportData *c = NULL;
 
@@ -203,5 +200,5 @@ status_t EtchTcpTransportFactory::MySessionListener::sessionAccepted(EtchSocket*
   }
   vf->lockDynamicTypes();
 
-  return mSession->newServer(m, mUri, res);
+  return mSession->newServer(mRuntime, m, mUri, res);
 }

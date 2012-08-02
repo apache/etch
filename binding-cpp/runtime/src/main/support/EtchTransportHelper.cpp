@@ -39,7 +39,7 @@ const EtchString& EtchTransportHelper::XML() {
   return type;
 }
 
-status_t EtchTransportHelper::initResources(EtchResources* resources, EtchResources*& result) {
+status_t EtchTransportHelper::InitResources(EtchResources* resources, EtchResources*& result) {
   if(resources == NULL) {
     resources = new EtchResources();
   } else {
@@ -64,7 +64,7 @@ status_t EtchTransportHelper::initResources(EtchResources* resources, EtchResour
   return ETCH_OK;
 }
 
-status_t EtchTransportHelper::destroyResources(EtchResources* resources) {
+status_t EtchTransportHelper::DestroyResources(EtchResources* resources) {
   status_t result; 
   if (resources == NULL) {
     return ETCH_EINVAL;

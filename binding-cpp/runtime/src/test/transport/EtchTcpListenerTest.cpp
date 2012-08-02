@@ -88,6 +88,8 @@ TEST(EtchTcpListener, transportControlTest) {
 }
 
 TEST(EtchTcpListener, isStartedTest) {
+  // TODO refactor this test
+  
   EtchURL url("tcp://127.0.0.1:4001");
   EtchTcpConnection * conn = new EtchTcpConnection(NULL, NULL, &url);
   EtchTcpListener *listener = new EtchTcpListener(&url);
@@ -106,11 +108,10 @@ TEST(EtchTcpListener, isStartedTest) {
   //STOP THE LISTENER
   listener->transportControl(new EtchString(EtchTcpListener::STOP_AND_WAIT_DOWN()), new EtchInt32(1000));
   EXPECT_FALSE(listener->isStarted());
-  listener->setSession(NULL);
   conn->setSession(NULL);
 
-  delete mSessionListener;
-  delete mPacketizer;
   delete listener;
+  delete mSessionListener;
   delete conn;
+  delete mPacketizer;
 }

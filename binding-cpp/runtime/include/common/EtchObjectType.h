@@ -71,6 +71,7 @@ enum EtchObjectTypeIds {
   EOTID_STUBHELPER,
   EOTID_VALIDATOR_CUSTOM,
   EOTID_VALIDATOR_CUSTOM_KEY,
+  EOTID_DYNAMIC_START
 };
 
 class EtchObjectType : public EtchObject {

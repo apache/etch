@@ -24,7 +24,6 @@
 #include "support/EtchStubHelper.h"
 #include "support/EtchFreePool.h"
 #include "support/EtchQueuedPool.h"
-#include "support/EtchStubHelperArgs.h"
 #include "transport/EtchWho.h"
 #include "transport/EtchMessage.h"
 
@@ -33,16 +32,17 @@
  * @param <T> The type of object used to implement stub.
  */
 template<typename T>
-class EtchStubBase
-  : public EtchSessionMessage {
+class EtchStubBase : public EtchSessionMessage {
 public:
+  template <typename T>
+  friend class EtchStubPoolRunnable;
 
   /**
    * Constructs the StubBase.
    * @param svc the message source.
    * @param obj the target of decoded messages.
    */
-  EtchStubBase(EtchDeliveryService* svc, T* obj, EtchFreePool* pool, EtchQueuedPool* queue);
+  EtchStubBase(EtchDeliveryService* svc, T* obj, EtchQueuedPool* queue,  EtchFreePool* pool);
 
   /**
    * Destructor
@@ -62,7 +62,7 @@ public:
   /**
    *@see EtchSessionMessage
    */
-  status_t sessionQuery(capu::SmartPointer<EtchObject> query, capu::SmartPointer<EtchObject> result);
+  status_t sessionQuery(capu::SmartPointer<EtchObject> query, capu::SmartPointer<EtchObject> &result);
 
   /**
    *@see EtchSessionMessage
@@ -85,7 +85,8 @@ protected:
 };
 
 template<typename T>
-class EtchStubPoolRunnable : EtchPoolRunnable {
+class EtchStubPoolRunnable : public EtchPoolRunnable {
+public:
 
   /**
    * Constructs the StubPoolRunnable.
@@ -122,8 +123,8 @@ private:
 };
 
 template<typename T>
-EtchStubBase<T>::EtchStubBase(EtchDeliveryService* svc, T* obj, EtchFreePool* pool, EtchQueuedPool* queue)
-: mSvc(svc), mObj(obj), mFreePool(pool), mQueuedPool(queue) {
+EtchStubBase<T>::EtchStubBase(EtchDeliveryService* svc, T* obj, EtchQueuedPool* queued, EtchFreePool* free)
+: mSvc(svc), mObj(obj), mQueuedPool(queued), mFreePool(free) {
   mSvc->setSession(this);
 }
 
@@ -143,16 +144,16 @@ status_t EtchStubBase<T>::sessionMessage(capu::SmartPointer<EtchWho> sender, cap
   }
 
   capu::status_t res;
-  EtchPoolRunnable* runnable = NULL;
+  EtchStubPoolRunnable<T>* runnable = NULL;
   switch (type->getAsyncMode()) {
     case QUEUED:
-      runnable = new EtchPoolRunnable<T>(this, helper, mSvc, mObj, sender, msg);
+      runnable = new EtchStubPoolRunnable<T>(this, sender, msg, helper);
       res = mQueuedPool->add(runnable);
       if (res != ETCH_OK)
         sessionNotify(NULL); //TODO Exception Handling
       return res;
     case FREE:
-      runnable = new EtchPoolRunnable<T>(this, helper, mSvc, mObj, sender, msg);
+      runnable = new EtchStubPoolRunnable<T>(this, sender, msg, helper);
       res = mFreePool->add(runnable);
       if (res != ETCH_OK)
         sessionNotify(NULL); //TODO Exception Handling
@@ -171,16 +172,19 @@ status_t EtchStubBase<T>::sessionMessage(capu::SmartPointer<EtchWho> sender, cap
 
 template<typename T>
 status_t EtchStubBase<T>::sessionNotify(capu::SmartPointer<EtchObject> event) {
+  //TODO: add implementation
   return ETCH_EUNIMPL;
 }
 
 template<typename T>
 status_t EtchStubBase<T>::sessionControl(capu::SmartPointer<EtchObject> control, capu::SmartPointer<EtchObject> value) {
+  //TODO: add implementation, check if it is a control for ObjectSession
   return ETCH_EUNIMPL;
 }
 
 template<class T>
-status_t EtchStubBase<T>::sessionQuery(capu::SmartPointer<EtchObject> query, capu::SmartPointer<EtchObject> result) {
+status_t EtchStubBase<T>::sessionQuery(capu::SmartPointer<EtchObject> query, capu::SmartPointer<EtchObject> &result) {
+   //TODO: add implementation, check if it is a control for ObjectSession
   return ETCH_EUNIMPL;
 }
 
