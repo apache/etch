@@ -87,6 +87,7 @@ add_executable (etch-cpp-test
     support/EtchFreePoolTest.cpp
     support/EtchPlainMailboxTest.cpp
     support/EtchMonitorTest.cpp
+    support/EtchRemoteBaseTest.cpp
     util/EtchCircularQueueTest.cpp
     util/EtchUtilTest.cpp
     ${GTEST}/src/gtest-all.cc

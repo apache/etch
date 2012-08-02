@@ -82,7 +82,7 @@ public:
    * send process overwrites any value the user might set here. So
    * don't bother trying to set it.
    */
-  void setMessageId(capu::int64_t msgid);
+  status_t setMessageId(capu::int64_t msgid);
 
   /**
    * @param the message-id of the message that this is a response to.

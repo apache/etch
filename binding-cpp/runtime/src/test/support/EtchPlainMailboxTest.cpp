@@ -47,7 +47,7 @@ public:
 
   MOCK_METHOD2(transportMessage, status_t(capu::SmartPointer<EtchWho> recipient, capu::SmartPointer<EtchMessage> message));
 
-  MOCK_METHOD2(transportQuery, status_t(capu::SmartPointer<EtchObject> query, capu::SmartPointer<EtchObject> &result));
+  MOCK_METHOD2(transportQuery, status_t(capu::SmartPointer<EtchObject> query, capu::SmartPointer<EtchObject> *result));
 
   MOCK_METHOD2(transportControl, status_t(capu::SmartPointer<EtchObject> control, capu::SmartPointer<EtchObject> value));
 

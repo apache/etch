@@ -52,6 +52,4 @@ public:
   virtual status_t endcall(EtchMailbox* mb, EtchType* responseType, capu::SmartPointer<EtchObject>& result) = 0;
 };
 
-
-
 #endif

@@ -91,7 +91,7 @@ status_t EtchDefaultDeliveryService::transportMessage(capu::SmartPointer<EtchWho
   return mTransport->transportMessage(recipient, message);
 }
 
-status_t EtchDefaultDeliveryService::transportQuery(capu::SmartPointer<EtchObject> query, capu::SmartPointer<EtchObject> &result) {
+status_t EtchDefaultDeliveryService::transportQuery(capu::SmartPointer<EtchObject> query, capu::SmartPointer<EtchObject> *result) {
   if (query->getObjectType()->equals(WaitUp::TYPE())) {
     waitUp(((WaitUp*) query.get())->mMaxDelay);
     result = NULL;

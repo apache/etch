@@ -104,14 +104,15 @@ status_t EtchPlainMailboxManager::transportCall(capu::SmartPointer<EtchWho> reci
   }
 
   capu::int64_t msgid = mIdGen.next();
-  msg->setMessageId(msgid);
+  if (msg->setMessageId(msgid) != ETCH_OK) {
+    return ETCH_ERROR;
+  }
 
   EtchMailbox *mb = new EtchPlainMailbox(this, msgid);
   if (registerMailbox(mb) != ETCH_OK) {
     delete mb;
     return ETCH_ERROR;
   }
-  //Log.report( "MailboxManager.send", "msg", msg );
 
   if (mTransport->transportMessage(recipient, msg) == ETCH_OK) {
     result = mb;
@@ -130,8 +131,9 @@ status_t EtchPlainMailboxManager::transportMessage(capu::SmartPointer<EtchWho> r
     return ETCH_ERROR;
   }
 
-  message->setMessageId(mIdGen.next());
-
+  if(message->setMessageId(mIdGen.next()) != ETCH_OK) {
+    return ETCH_ERROR;
+  }
   return mTransport->transportMessage(recipient, message);
 }
 
@@ -159,7 +161,7 @@ status_t EtchPlainMailboxManager::sessionNotify(capu::SmartPointer<EtchObject> e
   return mSession->sessionNotify(event);
 }
 
-status_t EtchPlainMailboxManager::transportQuery(capu::SmartPointer<EtchObject> query, capu::SmartPointer<EtchObject> &result) {
+status_t EtchPlainMailboxManager::transportQuery(capu::SmartPointer<EtchObject> query, capu::SmartPointer<EtchObject> *result) {
   return mTransport->transportQuery(query, result);
 }
 

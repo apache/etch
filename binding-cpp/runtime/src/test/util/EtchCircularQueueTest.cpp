@@ -154,6 +154,7 @@ TEST(EtchCirclerQueueTest, closeTest) {
   delete queue;
 }
 
+namespace {
 
 class R1 : public capu::Runnable {
 public:
@@ -170,7 +171,7 @@ public:
   }
 
 private:
-EtchCircularQueue* mQueue;
+  EtchCircularQueue* mQueue;
 };
 
 class R2 : public capu::Runnable {
@@ -189,8 +190,10 @@ public:
   }
 
 private:
-EtchCircularQueue* mQueue;
+  EtchCircularQueue* mQueue;
 };
+
+}
 
 TEST(EtchCirclerQueueTest, concurrency) {
   EtchCircularQueue* queue = new EtchCircularQueue(5);

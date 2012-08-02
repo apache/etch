@@ -92,7 +92,7 @@ public:
   ////////////////////
   // Source methods //
   ////////////////////
-  status_t transportQuery(capu::SmartPointer<EtchObject> query, capu::SmartPointer<EtchObject> &result);
+  status_t transportQuery(capu::SmartPointer<EtchObject> query, capu::SmartPointer<EtchObject> *result);
   status_t transportControl(capu::SmartPointer<EtchObject> control, capu::SmartPointer<EtchObject> value);
   status_t transportNotify(capu::SmartPointer<EtchObject> event);
   EtchSessionMessage* getSession();

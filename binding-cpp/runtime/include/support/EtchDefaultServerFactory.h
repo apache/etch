@@ -78,7 +78,7 @@ public:
   /**
    * @see EtchTransport<EtchSession>
    */
-  virtual status_t transportQuery(capu::SmartPointer<EtchObject> query, capu::SmartPointer<EtchObject> &result);
+  virtual status_t transportQuery(capu::SmartPointer<EtchObject> query, capu::SmartPointer<EtchObject> *result);
 
 private:
   EtchSession* mSession;

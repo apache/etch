@@ -80,7 +80,7 @@ status_t EtchPacketizer::transportNotify(capu::SmartPointer<EtchObject> event) {
   return mTransport->transportNotify(event);
 }
 
-status_t EtchPacketizer::transportQuery(capu::SmartPointer<EtchObject> query, capu::SmartPointer<EtchObject> &result) {
+status_t EtchPacketizer::transportQuery(capu::SmartPointer<EtchObject> query, capu::SmartPointer<EtchObject> *result) {
   return mTransport->transportQuery(query, result);
 }
 

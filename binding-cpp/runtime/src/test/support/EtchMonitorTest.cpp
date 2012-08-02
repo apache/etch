@@ -20,6 +20,7 @@
 
 
 #include <gtest/gtest.h>
+#include "capu/os/Thread.h"
 #include "support/EtchMonitor.h"
 
 TEST(EtchMonitorTest, constructorTest) {
@@ -67,6 +68,26 @@ TEST(EtchMonitorTest, waitUntilEqTest) {
   delete m;
 }
 
+namespace {
+
+class R1 : public capu::Runnable {
+public:
+  R1(EtchMonitor *monitor) {
+    mMonitor = monitor;
+  }
+
+  void operator()(void* param) {
+    capu::Thread::Sleep(2000);
+    EtchString str;
+    mMonitor->set("tmp1", str);
+  }
+
+private:
+  EtchMonitor *mMonitor;
+};
+
+}
+
 TEST(EtchMonitorTest, waitUntilNotEqTest) {
   EtchString init("init");
   EtchMonitor *m = new EtchMonitor(EtchString("desc"), init);
@@ -80,10 +101,18 @@ TEST(EtchMonitorTest, waitUntilNotEqTest) {
   EXPECT_EQ(ETCH_OK, m->waitUntilNotEq(tmp2, current));
   EXPECT_EQ(ETCH_OK, m->waitUntilNotEq(tmp2, 0, current));
 
+  // blocking test
   m->set(tmp2, current);
-  EXPECT_EQ(ETCH_TIMEOUT, m->waitUntilNotEq(tmp2, current));
-  EXPECT_EQ(ETCH_TIMEOUT, m->waitUntilNotEq(tmp2, 2000, current));
-  EXPECT_EQ(ETCH_OK, m->waitUntilNotEq(tmp1, 2000, current));
+  R1* r1 = new R1(m);
+  capu::Thread* t1 = new capu::Thread(r1);
+  EXPECT_EQ(ETCH_OK, m->waitUntilNotEq(tmp2, current));
+  t1->join();
+  delete r1;
+  delete t1;
+
+  // blocking timeout test
+  EXPECT_EQ(ETCH_OK, m->waitUntilNotEq(tmp2, 2000, current));
+  EXPECT_EQ(ETCH_TIMEOUT, m->waitUntilNotEq(tmp1, 2000, current));
 
   delete m;
 }
@@ -102,7 +131,15 @@ TEST(EtchMonitorTest, waitUntilEqAndSetTest) {
   EXPECT_EQ(ETCH_OK, m->waitUntilEqAndSet(tmp2, 0, tmp2, current));
 
   m->set(tmp2, current);
-  EXPECT_EQ(ETCH_TIMEOUT, m->waitUntilEqAndSet(tmp1, tmp2, current));
+  // blocking test
+  m->set(tmp2, current);
+  R1* r1 = new R1(m);
+  capu::Thread* t1 = new capu::Thread(r1);
+  EXPECT_EQ(ETCH_OK, m->waitUntilEqAndSet(tmp1, tmp2, current));
+  t1->join();
+  delete r1;
+  delete t1;
+
   EXPECT_EQ(ETCH_TIMEOUT, m->waitUntilEqAndSet(init, 2000, tmp2, current));
   EXPECT_EQ(ETCH_OK, m->waitUntilEqAndSet(tmp2, 2000, tmp2, current));
 
@@ -123,9 +160,17 @@ TEST(EtchMonitorTest, waitUntilNotEqAndSetTest) {
   EXPECT_EQ(ETCH_OK, m->waitUntilNotEqAndSet(tmp2, 0, tmp2, current));
 
   m->set(tmp2, current);
-  EXPECT_EQ(ETCH_TIMEOUT, m->waitUntilNotEqAndSet(tmp2, tmp1, current));
-  EXPECT_EQ(ETCH_TIMEOUT, m->waitUntilNotEqAndSet(tmp2, 2000, tmp2, current));
-  EXPECT_EQ(ETCH_OK, m->waitUntilNotEqAndSet(tmp1, 2000, tmp2, current));
+  // blocking test
+  m->set(tmp2, current);
+  R1* r1 = new R1(m);
+  capu::Thread* t1 = new capu::Thread(r1);
+  EXPECT_EQ(ETCH_OK, m->waitUntilNotEqAndSet(tmp2, tmp1, current));
+  t1->join();
+  delete r1;
+  delete t1;
+
+  EXPECT_EQ(ETCH_OK, m->waitUntilNotEqAndSet(tmp2, 2000, tmp2, current));
+  EXPECT_EQ(ETCH_TIMEOUT, m->waitUntilNotEqAndSet(tmp2, 2000, tmp1, current));
 
   delete m;
 }

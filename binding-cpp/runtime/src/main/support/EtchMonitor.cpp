@@ -19,7 +19,7 @@
 #include "capu/os/NumericLimits.h"
 #include "support/EtchMonitor.h"
 
-EtchMonitor::EtchMonitor(EtchString& description, EtchString& initialValue) {
+EtchMonitor::EtchMonitor(EtchString description, EtchString initialValue) {
   mDescription = description;
   mValue = initialValue;
 }
@@ -34,7 +34,7 @@ EtchString EtchMonitor::get() {
   return mValue;
 }
 
-status_t EtchMonitor::set(EtchString& value, EtchString& oldValue) {
+status_t EtchMonitor::set(EtchString value, EtchString& oldValue) {
   mMutex.lock();
   oldValue = mValue;
   mValue = value;
@@ -49,7 +49,7 @@ status_t EtchMonitor::waitUntilEqAndSet(EtchString& desiredValue, EtchString& ne
 
 status_t EtchMonitor::waitUntilEqAndSet(EtchString& desiredValue, capu::int32_t maxDelay, EtchString& newValue, EtchString &old) {
   mMutex.lock();
-  if (waitUntilEq(desiredValue, maxDelay) != ETCH_OK) {
+  if (waitUntilEqIntern(desiredValue, maxDelay) != ETCH_OK) {
     mMutex.unlock();
     return ETCH_TIMEOUT;
   }
@@ -58,30 +58,33 @@ status_t EtchMonitor::waitUntilEqAndSet(EtchString& desiredValue, capu::int32_t 
   return ETCH_OK;
 }
 
-status_t EtchMonitor::waitUntilEq(EtchString& desiredValue) {
-  return waitUntilEq(desiredValue, 0);
-}
+status_t EtchMonitor::waitUntilEqIntern(EtchString& desiredValue, capu::int32_t maxDelay) {
+  capu::uint64_t now = capu::Time::GetMilliseconds();
+  capu::uint64_t end = (maxDelay > 0) ? now + maxDelay : capu::NumericLimitMax<capu::uint32_t>();
 
-status_t EtchMonitor::waitUntilEq(EtchString& desiredValue, capu::int32_t maxDelay) {
-  mMutex.lock();
-  
-  capu::uint32_t now = capu::Time::GetMilliseconds();
-  capu::uint32_t end = (maxDelay > 0) ? now + maxDelay : capu::NumericLimitMax<capu::uint32_t>();
-
-  capu::int32_t d = end - now;
+  capu::int64_t d = end - now;
   while (!eq(mValue, desiredValue) && d > 0) {
-    mCv.wait(&mMutex, d);
+    mCv.wait(&mMutex, static_cast<capu::uint32_t>(d));
     now = capu::Time::GetMilliseconds();
     d = end - now;
   }
 
   if (!eq(mValue, desiredValue)) {
-    mMutex.unlock();
     return ETCH_TIMEOUT;
   }
-
-  mMutex.unlock();
   return ETCH_OK;
+}
+
+status_t EtchMonitor::waitUntilEq(EtchString& desiredValue) {
+  return waitUntilEq(desiredValue, 0);
+}
+
+status_t EtchMonitor::waitUntilEq(EtchString& desiredValue, capu::int32_t maxDelay) {
+  status_t status;
+  mMutex.lock();
+  status = waitUntilEqIntern(desiredValue, maxDelay);
+  mMutex.unlock();
+  return status;
 }
 
 status_t EtchMonitor::waitUntilNotEqAndSet(EtchString& undesiredValue, EtchString& newValue, EtchString& old) {
@@ -91,7 +94,7 @@ status_t EtchMonitor::waitUntilNotEqAndSet(EtchString& undesiredValue, EtchStrin
 status_t EtchMonitor::waitUntilNotEqAndSet(EtchString& undesiredValue, capu::int32_t maxDelay, EtchString& newValue, EtchString& old) {
   mMutex.lock();
   EtchString str;
-  if (waitUntilNotEq(undesiredValue, maxDelay, str) != ETCH_OK) {
+  if (waitUntilNotEqIntern(undesiredValue, maxDelay, str) != ETCH_OK) {
     mMutex.unlock();
     return ETCH_TIMEOUT;
   }
@@ -105,28 +108,33 @@ status_t EtchMonitor::waitUntilNotEq(EtchString& undesiredValue, EtchString& cur
 }
 
 status_t EtchMonitor::waitUntilNotEq(EtchString& undesiredValue, capu::uint32_t maxDelay, EtchString& current) {
+  status_t status;
   mMutex.lock();
+  status = waitUntilNotEqIntern(undesiredValue, maxDelay, current);
+  mMutex.unlock();
+  return status;
+}
 
-  capu::uint32_t now = capu::Time::GetMilliseconds();
-  capu::uint32_t end = (maxDelay > 0) ? now + maxDelay : capu::NumericLimitMax<capu::uint32_t>();
+status_t EtchMonitor::waitUntilNotEqIntern(EtchString& undesiredValue, capu::uint32_t maxDelay, EtchString& current) {
+  capu::uint64_t now = capu::Time::GetMilliseconds();
+  capu::uint64_t end = (maxDelay > 0) ? now + maxDelay : capu::NumericLimitMax<capu::uint32_t>();
 
-  capu::int32_t d = end - now;
+  capu::int64_t d = end - now;
   while (eq(mValue, undesiredValue) && d > 0) {
-    mCv.wait(&mMutex, d);
+    mCv.wait(&mMutex, static_cast<capu::uint32_t>(d));
 
     now = capu::Time::GetMilliseconds();
     d = end - now;
   }
 
   if (eq(mValue, undesiredValue)) {
-    mMutex.unlock();
     return ETCH_TIMEOUT;
   }
 
   current = mValue;
-  mMutex.unlock();
   return ETCH_OK;
 }
+
 
 capu::bool_t EtchMonitor::eq(EtchString& v1, EtchString& v2) {
   return v1.equals(&v2);

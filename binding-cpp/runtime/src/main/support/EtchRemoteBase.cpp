@@ -17,10 +17,13 @@
  */
 
 #include "support/EtchRemoteBase.h"
+#include "transport/EtchTransportData.h"
 
-EtchRemoteBase::EtchRemoteBase(EtchDeliveryService* svc, EtchValueFactory* vf )
- : mSvc(svc)
- , mVf(vf) {
+EtchRemoteBase::EtchRemoteBase(EtchDeliveryService* svc, EtchValueFactory* vf) 
+  : mSvc(svc), mVf(vf) {
+}
+
+EtchRemoteBase::~EtchRemoteBase() {
 }
 
 status_t EtchRemoteBase::newMessage( EtchType* type, capu::SmartPointer<EtchMessage> *message) {
@@ -32,54 +35,55 @@ status_t EtchRemoteBase::newMessage( EtchType* type, capu::SmartPointer<EtchMess
 }
 
 status_t EtchRemoteBase::send(capu::SmartPointer<EtchMessage> msg) {
-  return ETCH_EUNIMPL;
+  return mSvc->transportMessage(NULL, msg);
 }
 
-
-status_t EtchRemoteBase::beginCall(EtchMessage* msg, EtchMailbox** result) {
-  return ETCH_EUNIMPL;
+status_t EtchRemoteBase::begincall(capu::SmartPointer<EtchMessage> msg, EtchMailbox *&result) {
+  return mSvc->begincall(msg, result);
 }
 
-status_t EtchRemoteBase::endCall(EtchMailbox* mb, EtchType* responseType, EtchObject** result) {
-  return ETCH_EUNIMPL;
+status_t EtchRemoteBase::endcall(EtchMailbox* mb, EtchType* responseType, capu::SmartPointer<EtchObject> &result) {
+  return mSvc->endcall(mb, responseType, result);
 }
 
-status_t EtchRemoteBase::transportQuery(capu::SmartPointer<EtchObject> query, capu::SmartPointer<EtchObject> &result) {
-  return ETCH_EUNIMPL;
+status_t EtchRemoteBase::transportQuery(capu::SmartPointer<EtchObject> query, capu::SmartPointer<EtchObject> *result) {
+  return mSvc->transportQuery(query, result);
 }
 
 status_t EtchRemoteBase::transportControl(capu::SmartPointer<EtchObject> control, capu::SmartPointer<EtchObject> value) {
-  return ETCH_EUNIMPL;
+  return mSvc->transportControl(control, value);
 }
 
-status_t EtchRemoteBase::transportNotify(capu::SmartPointer<EtchObject> event ) {
-  return ETCH_EUNIMPL;
+status_t EtchRemoteBase::transportNotify(capu::SmartPointer<EtchObject> event) {
+  return mSvc->transportNotify(event);
 }
-
-////////////////////////////
-// Convenience operations //
-////////////////////////////
 
 status_t EtchRemoteBase::start() {
-  return ETCH_EUNIMPL;
+  return transportControl(new EtchString(EtchTransportData::START), NULL);
 }
 
 status_t EtchRemoteBase::waitUp(capu::int32_t maxDelay) {
-  return ETCH_EUNIMPL;
+  return transportQuery(new WaitUp(maxDelay), NULL);
 }
 
 status_t EtchRemoteBase::startAndWaitUp(capu::int32_t maxDelay) {
-  return ETCH_EUNIMPL;
+  status_t res = start();
+  if (res != ETCH_OK)
+    return res;
+  return waitUp(maxDelay);
 }
 
 status_t EtchRemoteBase::stop() {
-  return ETCH_EUNIMPL;
+  return transportControl(new EtchString(EtchTransportData::STOP), NULL);
 }
 
 status_t EtchRemoteBase::waitDown(capu::int32_t maxDelay) {
-  return ETCH_EUNIMPL;
+  return transportQuery(new WaitDown(maxDelay), NULL);
 }
 
 status_t EtchRemoteBase::stopAndWaitDown(capu::int32_t maxDelay) {
-  return ETCH_EUNIMPL;
+  status_t res = stop();
+  if (res != ETCH_OK)
+    return res;
+  return waitDown(maxDelay);
 }

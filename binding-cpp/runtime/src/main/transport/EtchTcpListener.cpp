@@ -170,7 +170,7 @@ status_t EtchTcpListener::transportNotify(capu::SmartPointer<EtchObject> event) 
   return ETCH_OK;
 }
 
-status_t EtchTcpListener::transportQuery(capu::SmartPointer<EtchObject> query, capu::SmartPointer<EtchObject> &result) {
+status_t EtchTcpListener::transportQuery(capu::SmartPointer<EtchObject> query, capu::SmartPointer<EtchObject> *result) {
   //Nothing to do
   return ETCH_EUNIMPL;
 }

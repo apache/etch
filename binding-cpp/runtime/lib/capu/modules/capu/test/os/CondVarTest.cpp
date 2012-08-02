@@ -149,3 +149,5 @@ TEST(CondVar,TimedWaitTest)
     EXPECT_TRUE(condvar.wait(&mutex, 2000) == capu::CAPU_ETIMEOUT);
     mutex.unlock();
 }
+
+//TODO add recursive mutext condvar test

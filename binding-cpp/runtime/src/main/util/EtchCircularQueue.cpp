@@ -124,10 +124,10 @@ status_t EtchCircularQueue::get(EtchMailbox::EtchElement** element, capu::int32_
   }
 
   // the queue is empty, not closed, and caller has requested a delay...
-  capu::uint32_t now = capu::Time::GetMilliseconds();
-  capu::uint32_t end = (maxDelay > 0) ? now + maxDelay : capu::NumericLimitMax<capu::uint32_t>();
+  capu::int64_t now = capu::Time::GetMilliseconds();
+  capu::int64_t end = (maxDelay > 0) ? now + maxDelay : capu::NumericLimitMax<capu::uint32_t>();
 
-  capu::int32_t d;
+  capu::int64_t d;
   while ((d = end - now) > 0) {
     // the queue is empty, not closed, and delay has not run out...
     if(!isEmpty() || isClosed() || d <= 0) {
@@ -136,7 +136,7 @@ status_t EtchCircularQueue::get(EtchMailbox::EtchElement** element, capu::int32_
       return ETCH_ERROR;
     }
     // wait
-    mCondVar.wait(&mMutex, d);
+    mCondVar.wait(&mMutex, static_cast<capu::uint32_t>(d));
 
     if (!isEmpty()) {
       status = getAndNotify(element);
@@ -191,10 +191,10 @@ capu::status_t EtchCircularQueue::put(EtchMailbox::EtchElement* obj, capu::int32
   }
 
   // the queue is full, not closed, and the caller has requested a delay...
-  capu::uint32_t now = capu::Time::GetMilliseconds();
-  capu::uint32_t end = (maxDelay > 0) ? now + maxDelay : capu::NumericLimitMax<capu::uint32_t>();
+  capu::uint64_t now = capu::Time::GetMilliseconds();
+  capu::uint64_t end = (maxDelay > 0) ? now + maxDelay : capu::NumericLimitMax<capu::uint32_t>();
 
-  capu::int32_t d;
+  capu::int64_t d;
   while((d = end - now) > 0) {
     // the queue is full, not closed, and delay has not run out...
     if (!isFull() || isClosed() || d <= 0) {
@@ -202,7 +202,7 @@ capu::status_t EtchCircularQueue::put(EtchMailbox::EtchElement* obj, capu::int32
       return ETCH_ERROR;
     }
     // wait
-    mCondVar.wait(&mMutex, d);
+    mCondVar.wait(&mMutex, static_cast<capu::uint32_t>(d));
 
     if(isClosed()) {
       mMutex.unlock();

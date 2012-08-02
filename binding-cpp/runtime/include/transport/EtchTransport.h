@@ -28,7 +28,6 @@
  * Out-of-band query, control, and notification interface for transports.
  * @param <S> the subclass of Session for this Transport.
  */
-
 template <class S>
 class EtchTransport {
 public:
@@ -59,12 +58,11 @@ public:
    * @param query an object representing a query, which could be as
    * simple as a string, integer, or enum, or more complex such as
    * a class with instance variables for query terms.
-   *
    * @param result contains the result of given query
    * @return ETCH_EUNIMPL if unimplemented
    *
    */
-  virtual status_t transportQuery(capu::SmartPointer<EtchObject> query, capu::SmartPointer<EtchObject> &result) = 0;
+  virtual status_t transportQuery(capu::SmartPointer<EtchObject> query, capu::SmartPointer<EtchObject> *result) = 0;
 
   /**
    * Sets a configuration or operational value in the transport. The
@@ -154,7 +152,7 @@ public:
   /**
    * EtchObjectType for WaitUp
    */
-  static const EtchObjectType* WaitUp::TYPE() {
+  static const EtchObjectType* TYPE() {
     const static EtchObjectType TYPE(EOTID_WAIT_UP, NULL);
     return &TYPE;
   }
@@ -162,7 +160,8 @@ public:
   /**
    * @param maxDelay max delay in milliseconds.
    */
-  WaitUp(capu::int32_t maxDelay) : EtchObject(WaitUp::TYPE()), mMaxDelay(maxDelay) {
+  WaitUp(capu::int32_t maxDelay)
+    : EtchObject(WaitUp::TYPE()), mMaxDelay(maxDelay) {
   }
 
   /**
@@ -180,7 +179,7 @@ public:
   /**
    * EtchObjectType for WaitUp
    */
-  static const EtchObjectType* WaitDown::TYPE() {
+  static const EtchObjectType* TYPE() {
     const static EtchObjectType TYPE(EOTID_WAIT_DOWN, NULL);
     return &TYPE;
   }
@@ -189,7 +188,8 @@ public:
   /**
    * @param maxDelay max delay in milliseconds.
    */
-  WaitDown(capu::int32_t maxDelay) : EtchObject(WaitDown::TYPE()), mMaxDelay(maxDelay) {
+  WaitDown(capu::int32_t maxDelay)
+    : EtchObject(WaitDown::TYPE()), mMaxDelay(maxDelay) {
   }
 
   /**

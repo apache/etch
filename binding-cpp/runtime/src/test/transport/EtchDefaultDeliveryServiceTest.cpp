@@ -58,7 +58,7 @@ public:
 
   }
 
-  status_t transportQuery(capu::SmartPointer<EtchObject> query, capu::SmartPointer<EtchObject> &result) {
+  status_t transportQuery(capu::SmartPointer<EtchObject> query, capu::SmartPointer<EtchObject> *result) {
     return ETCH_OK;
   }
 

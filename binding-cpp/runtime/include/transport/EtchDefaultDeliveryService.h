@@ -101,7 +101,7 @@ public:
   /**
    * @see EtchTransportMessage
    */
-  virtual status_t transportQuery(capu::SmartPointer<EtchObject> query, capu::SmartPointer<EtchObject> &result);
+  virtual status_t transportQuery(capu::SmartPointer<EtchObject> query, capu::SmartPointer<EtchObject> *result);
 
   /**
    * @see EtchTransportMessage

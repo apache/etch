@@ -288,7 +288,10 @@ status_t EtchDefaultValueFactory::setMessageId(EtchMessage* msg, capu::int64_t m
   if (msg == NULL)
     return ETCH_EINVAL;
   capu::SmartPointer<EtchObject> value = new EtchLong(msgid);
-  msg->put((EtchField&) _mf__messageId, value);
+  status_t res = msg->put((EtchField&) _mf__messageId, value);
+  if (res != ETCH_OK) {
+    return res;
+  }
   return ETCH_OK;
 }
 
@@ -310,7 +313,10 @@ status_t EtchDefaultValueFactory::setInReplyToMessageId(EtchMessage* msg, capu::
   if (msg == NULL)
     return ETCH_EINVAL;
   capu::SmartPointer<EtchObject> value = new EtchLong(msgid);
-  msg->put((EtchField&) _mf__inReplyTo, value);
+  status_t res = msg->put((EtchField&) _mf__inReplyTo, value);
+  if (res != ETCH_OK) {
+    return res;
+  }
   return ETCH_OK;
 }
 
@@ -340,4 +346,3 @@ EtchLevel EtchDefaultValueFactory::setLevel(EtchLevel level) {
 void EtchDefaultValueFactory::addMixin(EtchValueFactory* vf) {
   mMixins->add(vf);
 }
-

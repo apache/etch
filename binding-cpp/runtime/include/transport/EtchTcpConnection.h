@@ -18,18 +18,21 @@
 
 #ifndef __ETCHTCPCONNECTION_H__
 #define __ETCHTCPCONNECTION_H__
-#include "transport/EtchConnection.h"
+
+#include "capu/util/Runnable.h"
+
 #include "common/EtchObject.h"
 #include "common/EtchError.h"
 #include "common/EtchString.h"
+#include "common/EtchSocket.h"
 #include "util/EtchURL.h"
 #include "util/EtchResources.h"
+#include "transport/EtchConnection.h"
 #include "transport/EtchTransportData.h"
-#include "common/EtchSocket.h"
 #include "transport/EtchFlexBuffer.h"
 #include "transport/EtchSessionData.h"
 #include "transport/EtchTcpOption.h"
-#include "capu/util/Runnable.h"
+
 
 /**
  * Implementation of connection which handles a tcp connection.
@@ -70,7 +73,7 @@ public:
   /**
    * @see TransportData
    */
-  virtual status_t transportQuery(capu::SmartPointer<EtchObject> query, capu::SmartPointer<EtchObject> &result);
+  virtual status_t transportQuery(capu::SmartPointer<EtchObject> query, capu::SmartPointer<EtchObject> *result);
 
   /**
    * @return Session

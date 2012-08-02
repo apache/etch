@@ -36,7 +36,7 @@ public:
    * @param description a description of this monitor.
    * @param initialValue the initial value of this monitor.
    */
-  EtchMonitor(EtchString& description, EtchString& initialValue);
+  EtchMonitor(EtchString description, EtchString initialValue);
 
   /**
    * Destructor
@@ -59,7 +59,7 @@ public:
    * @param newValue the value to be set.
    * @param the old value.
    */
-  status_t set(EtchString& value, EtchString& oldValue);
+  status_t set(EtchString value, EtchString& oldValue);
 
   /**
    * Waits until value equals the desired value and
@@ -154,6 +154,16 @@ private:
   /////////////////////
   // PRIVATE METHODS //
   /////////////////////
+
+  /**
+   * waitUntilEq internal
+   */
+  status_t waitUntilEqIntern(EtchString& desiredValue, capu::int32_t maxDelay);
+
+  /**
+   * waitUntilNotEq internal
+   */
+  status_t waitUntilNotEqIntern(EtchString& undesiredValue, capu::uint32_t maxDelay, EtchString& current);
 
   /**
    * Compares the specified values.

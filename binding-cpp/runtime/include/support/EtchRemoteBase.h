@@ -29,8 +29,7 @@
 /**
  * Base class for call to message translators.
  */
-class EtchRemoteBase
-{
+class EtchRemoteBase {
 public:
   /**
    * Constructs the RemoteBase.
@@ -43,7 +42,7 @@ public:
   /**
    * Destructor
    */
-  virtual ~EtchRemoteBase() {};
+  virtual ~EtchRemoteBase();
 
   /**
    * Constructs a new message to send using {@link #send(Message)} or
@@ -69,7 +68,7 @@ public:
    * @return a mailbox which can be used to read the response, using
    * {@link #endcall(Mailbox, Type)}.
    */
-  status_t beginCall(EtchMessage* msg, EtchMailbox** result);
+  status_t begincall(capu::SmartPointer<EtchMessage> msg, EtchMailbox *&result);
 
   /**
    * Finishes a call sequence by waiting for the response message.
@@ -81,7 +80,7 @@ public:
    * @return an error if there is a problem sending or a timeout waiting or
    *         if the result value was an exception.
    */
-  status_t endCall(EtchMailbox* mb, EtchType* responseType, EtchObject** result);
+  status_t endcall(EtchMailbox* mb, EtchType* responseType, capu::SmartPointer<EtchObject> &result);
 
   /**
    * Gets a configuration or operational value from the source. The
@@ -96,7 +95,7 @@ public:
    *
    * @return an error if there is a problem
    */
-  status_t transportQuery(capu::SmartPointer<EtchObject> query, capu::SmartPointer<EtchObject> &result);
+  status_t transportQuery(capu::SmartPointer<EtchObject> query, capu::SmartPointer<EtchObject> *result);
 
   /**
    * Sets a configuration or operational value in the source. The
@@ -126,7 +125,7 @@ public:
    *
    * @return an error if there is a problem
    */
-  status_t transportNotify(capu::SmartPointer<EtchObject> event );
+  status_t transportNotify(capu::SmartPointer<EtchObject> event);
 
   ////////////////////////////
   // Convenience operations //
@@ -186,7 +185,7 @@ public:
   status_t stopAndWaitDown(capu::int32_t maxDelay);
 
 private:
-  EtchDeliveryService* mSvc;
+  EtchDeliveryService * mSvc;
   EtchValueFactory* mVf;
 };
 

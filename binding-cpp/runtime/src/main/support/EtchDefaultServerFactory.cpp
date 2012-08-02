@@ -80,7 +80,7 @@ status_t EtchDefaultServerFactory::transportNotify( capu::SmartPointer<EtchObjec
   return mListener->transportNotify( event );
 }
 
-status_t EtchDefaultServerFactory::transportQuery( capu::SmartPointer<EtchObject> query, capu::SmartPointer<EtchObject> &result ) {
+status_t EtchDefaultServerFactory::transportQuery( capu::SmartPointer<EtchObject> query, capu::SmartPointer<EtchObject> *result ) {
   if(mListener == NULL) {
     return ETCH_ERANGE;
   }

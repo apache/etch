@@ -62,8 +62,8 @@ status_t EtchMessage::getMessageId(capu::int64_t &result) {
   return mVf->getMessageId(this, result);
 }
 
-void EtchMessage::setMessageId(capu::int64_t msgid) {
-  mVf->setMessageId(this, msgid);
+status_t EtchMessage::setMessageId(capu::int64_t msgid) {
+  return mVf->setMessageId(this, msgid);
 }
 
 status_t EtchMessage::getInReplyToMessageId(capu::int64_t &result) {

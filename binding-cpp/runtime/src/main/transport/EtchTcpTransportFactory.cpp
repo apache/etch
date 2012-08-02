@@ -107,7 +107,7 @@ void EtchTcpTransportFactory::MySessionListener::setSession(EtchServerFactory* s
   mSession = session;
 }
 
-status_t EtchTcpTransportFactory::MySessionListener::transportQuery(capu::SmartPointer<EtchObject> query, capu::SmartPointer<EtchObject> &result) {
+status_t EtchTcpTransportFactory::MySessionListener::transportQuery(capu::SmartPointer<EtchObject> query, capu::SmartPointer<EtchObject> *result) {
   return mTransport->transportQuery(query, result);
 }
 
