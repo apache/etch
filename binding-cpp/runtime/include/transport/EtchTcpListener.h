@@ -100,15 +100,8 @@ protected:
   virtual status_t readSocket();
 
 private:
-  /**
-   * The session for the connection.
-   */
-  EtchSessionListener<EtchSocket>* mSession;
-
   EtchServerSocket* mSocket;
-
   capu::uint16_t mPort;
-
   capu::uint8_t mBackLog;
 
 

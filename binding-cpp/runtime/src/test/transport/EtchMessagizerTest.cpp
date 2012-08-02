@@ -41,7 +41,9 @@ public:
 
   MOCK_METHOD2(sessionControl, status_t(capu::SmartPointer<EtchObject> control, capu::SmartPointer<EtchObject> value));
 
-  MOCK_METHOD1(sessionNotify, status_t(capu::SmartPointer<EtchObject> event));
+  status_t sessionNotify(capu::SmartPointer<EtchObject> event) {
+    return ETCH_OK;
+  }
 };
 
 class MockMailboxManager : public EtchSessionMessage {
@@ -56,7 +58,9 @@ public:
 
   MOCK_METHOD2(sessionControl, status_t(capu::SmartPointer<EtchObject> control, capu::SmartPointer<EtchObject> value));
 
-  MOCK_METHOD1(sessionNotify, status_t(capu::SmartPointer<EtchObject> event));
+  status_t sessionNotify(capu::SmartPointer<EtchObject> event) {
+    return ETCH_OK;
+  }
 };
 
 TEST(EtchMessagizerTest, constructorTest) {
@@ -86,6 +90,7 @@ TEST(EtchMessagizerTest, TransportControlTest) {
   EtchTypeMap types;
   EtchClass2TypeMap class2type;
   EtchDefaultValueFactory * factory;
+  MockMailboxManager manager;
   EtchDefaultValueFactory::Init(&types, &class2type);
   EtchString uri("tcp://127.0.0.1:4001");
   factory = new EtchDefaultValueFactory(uri, &types, &class2type);
@@ -97,6 +102,7 @@ TEST(EtchMessagizerTest, TransportControlTest) {
   EtchTransportData* conn = new EtchTcpConnection(NULL, &u);
   EtchPacketizer* pac = new EtchPacketizer(conn, &u);
   EtchMessagizer* mess = new EtchMessagizer(pac, &u, &r);
+  mess->setSession(&manager);
 
   EtchSessionListener<EtchSocket>* mSessionListener = new MockListener11();
   EtchTcpListener* listener = new EtchTcpListener(&u);
@@ -122,6 +128,7 @@ TEST(EtchMessagizerTest, TransportMessageTest) {
   EtchTypeMap types;
   EtchClass2TypeMap class2type;
   EtchDefaultValueFactory * factory;
+  MockMailboxManager manager;
   EtchDefaultValueFactory::Init(&types, &class2type);
   EtchString uri("tcp://127.0.0.1:4001");
   factory = new EtchDefaultValueFactory(uri, &types, &class2type);
@@ -134,7 +141,7 @@ TEST(EtchMessagizerTest, TransportMessageTest) {
   EtchTransportData* conn = new EtchTcpConnection(NULL, &u);
   EtchPacketizer* pac = new EtchPacketizer(conn, &u);
   EtchMessagizer* mess = new EtchMessagizer(pac, &u, &r);
-
+  mess->setSession(&manager);
   //creation of example message which will be serialized
   EtchType *mt_foo = NULL;
   EtchField mf_x("x");

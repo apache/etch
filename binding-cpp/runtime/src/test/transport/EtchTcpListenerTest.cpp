@@ -40,7 +40,9 @@ public:
 
   MOCK_METHOD2(sessionControl, status_t(capu::SmartPointer<EtchObject> control, capu::SmartPointer<EtchObject> value));
 
-  MOCK_METHOD1(sessionNotify, status_t(capu::SmartPointer<EtchObject> event));
+  status_t sessionNotify(capu::SmartPointer<EtchObject> event) {
+    return ETCH_OK;
+  }
 };
 
 class MockListener2 : public virtual EtchSessionListener<EtchSocket> {
@@ -61,7 +63,9 @@ public:
 
   MOCK_METHOD2(sessionControl, status_t(capu::SmartPointer<EtchObject> control, capu::SmartPointer<EtchObject> value));
 
-  MOCK_METHOD1(sessionNotify, status_t(capu::SmartPointer<EtchObject> event));
+  status_t sessionNotify(capu::SmartPointer<EtchObject> event) {
+    return ETCH_OK;
+  }
 
 };
 
@@ -73,8 +77,10 @@ TEST(EtchTcpListener, constructorTest) {
 }
 
 TEST(EtchTcpListener, transportControlTest) {
+  MockListener2 mock;
   EtchURL url("tcp://127.0.0.1:4001");
   EtchTcpListener * tcpListener = new EtchTcpListener(&url);
+  tcpListener->setSession(&mock);
   tcpListener->transportControl(new EtchString(EtchTcpListener::START_AND_WAIT_UP), new EtchInt32(1000));
   EXPECT_TRUE(tcpListener->isStarted());
   tcpListener->transportControl(new EtchString(EtchTcpListener::STOP_AND_WAIT_DOWN), new EtchInt32(1000));

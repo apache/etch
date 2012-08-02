@@ -128,11 +128,6 @@ public:
   void setNumAttempts(capu::uint8_t numAttempts);
 
 private:
-  /**
-   * The session for the connection.
-   */
-  EtchSessionData* mSession;
-
   //PORT
   capu::uint16_t mPort;
 

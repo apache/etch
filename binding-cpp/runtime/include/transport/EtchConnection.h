@@ -18,18 +18,27 @@
 
 #ifndef __ETCHCONNECTION_H__
 #define __ETCHCONNECTION_H__
-#include "transport/EtchTransport.h"
-#include "common/EtchString.h"
-#include "common/EtchObject.h"
+
+#include "capu/os/Mutex.h"
 #include "capu/os/Thread.h"
 #include "capu/util/SmartPointer.h"
 #include "common/EtchError.h"
+#include "common/EtchException.h"
 #include "common/EtchInt32.h"
-#include "capu/os/Mutex.h"
+#include "common/EtchObject.h"
+#include "common/EtchString.h"
+#include "support/EtchMonitor.h"
+#include "transport/EtchSession.h"
+#include "transport/EtchTransport.h"
 
 template <class S>
 class EtchConnection : public virtual EtchTransport<S> {
 public:
+
+  /**
+   * Default Constructor
+   */
+  EtchConnection();
 
   /** Source query to get the local address. */
   static const EtchString LOCAL_ADDRESS;
@@ -66,7 +75,7 @@ public:
    * options and opening input and output streams.
    */
   virtual status_t setupSocket() = 0;
-  
+
 protected:
 
   /**
@@ -86,13 +95,34 @@ protected:
    */
   virtual status_t readSocket() = 0;
 
+  /**
+   * Waits until the connection is up.
+   * @param maxDelay time in milliseconds to wait.
+   */
+  virtual status_t waitUp(capu::int32_t maxDelay);
+
+  /**
+   * Waits until the connection is down.
+   * @param maxDelay time in milliseconds to wait.
+   */
+  virtual status_t waitDown(capu::int32_t maxDelay);
+
+  /**
+   * fire up
+   */
+  virtual status_t fireUp();
+
+  /**
+   * fire down
+   */
+  virtual status_t fireDown();
+
+  S *mSession;
   capu::Thread *mThread;
-
   capu::bool_t mIsStarted;
-
   static capu::Mutex mMutex;
-
   static capu::Mutex mMutexConnection;
+  EtchMonitor mStatus;
 };
 
 template <class S>
@@ -110,6 +140,44 @@ capu::Mutex EtchConnection<S>::mMutex;
 template <class S>
 capu::Mutex EtchConnection<S>::mMutexConnection;
 
+template <class S>
+EtchConnection<S>::EtchConnection()
+: mStatus(EtchString("status"), (EtchString&) EtchSession::DOWN) {
+}
+
+template <class S>
+status_t EtchConnection<S>::waitUp(capu::int32_t maxDelay) {
+  return mStatus.waitUntilEq((EtchString&) EtchSession::UP, maxDelay);
+}
+
+template <class S>
+status_t EtchConnection<S>::waitDown(capu::int32_t maxDelay) {
+  return mStatus.waitUntilEq((EtchString&) EtchSession::DOWN, maxDelay);
+}
+
+template <class S>
+status_t EtchConnection<S>::fireUp() {
+  EtchString tmp;
+  mStatus.set((EtchString &) EtchSession::UP, tmp);
+
+  if (mSession != NULL) {
+    //TODO: run this in seperate thread
+    mSession->sessionNotify(new EtchString(EtchSession::UP));
+  }
+  return ETCH_ERROR;
+}
+
+template <class S>
+status_t EtchConnection<S>::fireDown() {
+  EtchString tmp;
+  mStatus.set((EtchString &) EtchSession::DOWN, tmp);
+
+  if (mSession != NULL) {
+    //TODO: run this in seperate thread
+    return mSession->sessionNotify(new EtchString(EtchSession::DOWN));
+  }
+  return ETCH_ERROR;
+}
 
 #endif /* ETCHCONNECTION_H */
 

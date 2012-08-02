@@ -42,7 +42,10 @@ public:
 
   MOCK_METHOD2(sessionControl, status_t(capu::SmartPointer<EtchObject> control, capu::SmartPointer<EtchObject> value));
 
-  MOCK_METHOD1(sessionNotify, status_t(capu::SmartPointer<EtchObject> event));
+  
+  status_t sessionNotify(capu::SmartPointer<EtchObject> event) {
+    return ETCH_OK;
+  }
 
 };
 
@@ -67,13 +70,14 @@ public:
 
   MOCK_METHOD2(sessionControl, status_t(capu::SmartPointer<EtchObject> control, capu::SmartPointer<EtchObject> value));
 
-  MOCK_METHOD1(sessionNotify, status_t(capu::SmartPointer<EtchObject> event));
+  status_t sessionNotify(capu::SmartPointer<EtchObject> event) {
+    return ETCH_OK;
+  }
 
 };
 
 TEST(EtchTcpConnection, constructorTest) {
   EtchURL url("tcp://127.0.0.1:4001");
-  EtchResources resources;
   EtchTcpConnection * conn = new EtchTcpConnection(NULL, &url);
   EXPECT_TRUE(conn != NULL);
   delete conn;
@@ -98,13 +102,12 @@ TEST(EtchTcpConnection, isStartedTest) {
   //STOP THE LISTENER
   listener->transportControl(new EtchString(EtchTcpListener::STOP_AND_WAIT_DOWN), new EtchInt32(1000));
   EXPECT_FALSE(conn->isStarted());
-  listener->setSession(NULL);
   conn->setSession(NULL);
 
-  delete mSessionListener;
-  delete mPacketizer;
   delete listener;
   delete conn;
+  delete mSessionListener;
+  delete mPacketizer;
 }
 
 TEST(EtchTcpConnectionAndListener, SessionAcceptTest) {
@@ -112,11 +115,11 @@ TEST(EtchTcpConnectionAndListener, SessionAcceptTest) {
   EtchTcpConnection * conn = new EtchTcpConnection(NULL, &url);
   EtchSessionListener<EtchSocket>* mSessionListener = new MockListener();
   EtchSessionData* mPacketizer = new MockPacketizer();
-  EtchTcpListener listener(&url);
+  EtchTcpListener *listener = new EtchTcpListener(&url);
 
   //START THE LISTENER
-  listener.setSession(mSessionListener);
-  listener.transportControl(new EtchString(EtchTcpListener::START_AND_WAIT_UP), new EtchInt32(1000));
+  listener->setSession(mSessionListener);
+  listener->transportControl(new EtchString(EtchTcpListener::START_AND_WAIT_UP), new EtchInt32(1000));
 
   //START THE TRANSPORT
   conn->setSession(mPacketizer);
@@ -124,12 +127,11 @@ TEST(EtchTcpConnectionAndListener, SessionAcceptTest) {
 
   conn->transportControl(new EtchString(EtchTcpConnection::STOP_AND_WAIT_DOWN), new EtchInt32(1000));
   //STOP THE LISTENER
-  listener.transportControl(new EtchString(EtchTcpListener::STOP_AND_WAIT_DOWN), new EtchInt32(1000));
-
-  listener.setSession(NULL);
+  listener->transportControl(new EtchString(EtchTcpListener::STOP_AND_WAIT_DOWN), new EtchInt32(1000));
   conn->setSession(NULL);
 
+  delete conn;
+  delete listener;
   delete mSessionListener;
   delete mPacketizer;
-  delete conn;
 }

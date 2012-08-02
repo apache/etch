@@ -98,7 +98,6 @@ status_t EtchTcpListener::readSocket() {
     if (s == NULL)
       break;
     if (mSession != NULL) {
-
       mSession->sessionAccepted(s);
     } else {
       delete s;
@@ -129,7 +128,7 @@ status_t EtchTcpListener::transportControl(capu::SmartPointer<EtchObject> contro
     mMutex.unlock();
     mThread = new capu::Thread(this);
     mThread->start();
-    capu::Thread::Sleep(((EtchInt32*) value.get())->get());
+    waitUp(((EtchInt32*) value.get())->get());
     //TODO: Wait handling in one of the next releases
     return ETCH_OK;
   }
@@ -151,7 +150,7 @@ status_t EtchTcpListener::transportControl(capu::SmartPointer<EtchObject> contro
     mIsStarted = false;
     mMutex.unlock();
     close();
-    capu::Thread::Sleep(((EtchInt32*) value.get())->get());
+    waitDown(((EtchInt32*) value.get())->get());
     //TODO: Wait handling in one of the next releases
     return ETCH_OK;
   }
@@ -194,10 +193,13 @@ void EtchTcpListener::run() {
     if (openSocket(!first) != ETCH_OK) {
       break;
     }
+    fireUp();
     if (readSocket() != ETCH_OK) {
       close();
       break;
     }
+
+    fireDown();
     close();
     first = false;
   }
@@ -207,3 +209,4 @@ void EtchTcpListener::run() {
 status_t EtchTcpListener::setupSocket() {
   return ETCH_EUNIMPL;
 }
+

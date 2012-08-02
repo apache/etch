@@ -163,7 +163,7 @@ status_t EtchTcpConnection::transportControl(capu::SmartPointer<EtchObject> cont
     mMutex.unlock();
     mThread = new capu::Thread(this);
     mThread->start();
-    capu::Thread::Sleep(((EtchInt32*) value.get())->get());
+    waitUp(((EtchInt32*) value.get())->get());
     //TODO: Wait handling in one of the next releases
     return ETCH_OK;
   }
@@ -185,7 +185,7 @@ status_t EtchTcpConnection::transportControl(capu::SmartPointer<EtchObject> cont
     mIsStarted = false;
     mMutex.unlock();
     close();
-    capu::Thread::Sleep(((EtchInt32*) value.get())->get());
+    waitDown(((EtchInt32*) value.get())->get());
     //TODO: Wait handling in one of the next releases
     return ETCH_OK;
   }
@@ -236,11 +236,12 @@ void EtchTcpConnection::run() {
       close();
       break;
     }
-
+    fireUp();
     if (readSocket() != ETCH_OK) {
       close();
       break;
     }
+    fireDown();
     close();
     first = false;
   }

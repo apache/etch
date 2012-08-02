@@ -42,7 +42,9 @@ public:
 
   MOCK_METHOD2(sessionControl, status_t(capu::SmartPointer<EtchObject> control, capu::SmartPointer<EtchObject> value));
 
-  MOCK_METHOD1(sessionNotify, status_t(capu::SmartPointer<EtchObject> event));
+  status_t sessionNotify(capu::SmartPointer<EtchObject> event) {
+    return ETCH_OK;
+  }
 };
 
 class MockMessagizer : public EtchSessionPacket {
@@ -54,7 +56,9 @@ public:
 
   MOCK_METHOD2(sessionControl, status_t(capu::SmartPointer<EtchObject> control, capu::SmartPointer<EtchObject> value));
 
-  MOCK_METHOD1(sessionNotify, status_t(capu::SmartPointer<EtchObject> event));
+  status_t sessionNotify(capu::SmartPointer<EtchObject> event) {
+    return ETCH_OK;
+  }
 };
 
 TEST(EtchPacketizer, constructorTest) {
@@ -69,7 +73,8 @@ TEST(EtchPacketizer, TransportControlTest) {
   EtchURL u("tcp://127.0.0.1:4001");
   EtchTransportData* conn = new EtchTcpConnection(NULL, &u);
   EtchPacketizer* res = new EtchPacketizer(conn, &u);
-
+  MockMessagizer mes;
+  res->setSession(&mes);
   EtchSessionListener<EtchSocket>* mSessionListener = new MockListener3();
   EtchTcpListener* listener = new EtchTcpListener(&u);
   //Start the mock listener
@@ -78,7 +83,7 @@ TEST(EtchPacketizer, TransportControlTest) {
   res->transportControl(new EtchString(EtchPacketizer::START_AND_WAIT_UP), new EtchInt32(1000));
 
   res->transportControl(new EtchString(EtchPacketizer::STOP_AND_WAIT_DOWN), new EtchInt32(1000));
-  listener->transportControl(new EtchString(EtchTcpListener::STOP_AND_WAIT_DOWN),new EtchInt32(1000));
+  listener->transportControl(new EtchString(EtchTcpListener::STOP_AND_WAIT_DOWN), new EtchInt32(1000));
 
   conn->setSession(NULL);
   res->setSession(NULL);
@@ -94,6 +99,8 @@ TEST(EtchPacketizer, TransportPacketTest) {
   EtchURL u("tcp://127.0.0.1:4001");
   EtchTransportData* conn = new EtchTcpConnection(NULL, &u);
   EtchPacketizer* packetizer = new EtchPacketizer(conn, &u);
+  MockMessagizer mes;
+  packetizer->setSession(&mes);
   capu::SmartPointer<EtchFlexBuffer> buffer = new EtchFlexBuffer();
 
   //A packet is try to transmit data through not started transport
@@ -112,7 +119,6 @@ TEST(EtchPacketizer, SessionDataTest) {
   EtchTransportData* conn = new EtchTcpConnection(NULL, &u);
   EtchPacketizer* packetizer = new EtchPacketizer(conn, &u);
   capu::SmartPointer<EtchFlexBuffer> buffer = new EtchFlexBuffer();
-
   //A packet is created
   capu::int32_t pktsize = 4;
   buffer->put((capu::int8_t *) & packetizer->SIG, sizeof (capu::int32_t));
