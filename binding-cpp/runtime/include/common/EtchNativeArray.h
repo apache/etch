@@ -20,9 +20,11 @@
 #define __ETCHNATIVEARRAY_H__
 
 #include "capu/util/SmartPointer.h"
+#include "common/EtchError.h"
 #include "common/EtchObject.h"
 #include "common/EtchObjectType.h"
-#include "common/EtchError.h"
+#include "common/EtchTypes.h"
+
 
 class Pos {
 public:
@@ -160,7 +162,7 @@ public:
      */
     virtual status_t resize(capu::int32_t newSize) = 0;
 
-    
+
   protected:
     capu::int32_t mLength;
     capu::int32_t mDim;
@@ -275,7 +277,7 @@ public:
     status_t createArray(Pos pos, capu::int32_t index, capu::int32_t length, capu::int32_t dim) {
       return ETCH_ERANGE;
     }
-    
+
     /**
      *@see EtchArrayBase
      */
@@ -303,7 +305,7 @@ public:
     /**
      * Creats a new instance of the EtchArray class
      */
-    EtchArray(capu::int32_t length, capu::int32_t dim) 
+    EtchArray(capu::int32_t length, capu::int32_t dim)
       : EtchArrayBase<T>(length, dim) {
       mData = new capu::SmartPointer<EtchArrayBase<T> >[EtchArrayBase<T>::mLength];
     }
@@ -808,5 +810,20 @@ status_t EtchNativeArray<T>::resize(capu::int32_t newSize) {
     } \
   break; \
 }
+
+typedef capu::SmartPointer<EtchNativeArray<EtchObjectPtr>    > EtchNativeArrayObjectPtr;
+typedef capu::SmartPointer<EtchNativeArray<EtchBoolPtr>      > EtchNativeArrayBoolPtr;
+typedef capu::SmartPointer<EtchNativeArray<EtchShortPtr>     > EtchNativeArrayShortPtr;
+typedef capu::SmartPointer<EtchNativeArray<capu::int8_t>     > EtchNativeArrayBytePtr;
+typedef capu::SmartPointer<EtchNativeArray<EtchInt32Ptr>     > EtchNativeArrayIntPtr;
+typedef capu::SmartPointer<EtchNativeArray<EtchLongPtr>      > EtchNativeArrayLongPtr;
+typedef capu::SmartPointer<EtchNativeArray<EtchFloatPtr>     > EtchNativeArrayFloatPtr;
+typedef capu::SmartPointer<EtchNativeArray<EtchDoublePtr>    > EtchNativeArrayDoublePtr;
+typedef capu::SmartPointer<EtchNativeArray<EtchStringPtr>    > EtchNativeArrayStringPtr;
+typedef capu::SmartPointer<EtchNativeArray<EtchHashSetPtr>   > EtchNativeArrayHashSetPtr;
+typedef capu::SmartPointer<EtchNativeArray<EtchListPtr>      > EtchNativeArrayListPtr;
+typedef capu::SmartPointer<EtchNativeArray<EtchHashTablePtr> > EtchNativeArrayHashTablePtr;
+
+
 #endif //__ETCHNATIVEARRAY_H__
 

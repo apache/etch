@@ -19,16 +19,18 @@
 #ifndef __ETCHTYPES_H__
 #define __ETCHTYPES_H__
 
-#include "EtchBool.h"
-#include "EtchByte.h"
-#include "EtchDate.h"
-#include "EtchDouble.h"
-#include "EtchFloat.h"
-#include "EtchInt32.h"
-#include "EtchList.h"
-#include "EtchLong.h"
-#include "EtchNativeArray.h"
-#include "EtchShort.h"
-#include "EtchString.h"
-
+#include "common/EtchBool.h"
+#include "common/EtchByte.h"
+#include "common/EtchDate.h"
+#include "common/EtchDouble.h"
+#include "common/EtchFloat.h"
+#include "common/EtchHashTable.h"
+#include "common/EtchHashSet.h"
+#include "common/EtchInt32.h"
+#include "common/EtchList.h"
+#include "common/EtchLong.h"
+#include "common/EtchList.h"
+#include "common/EtchString.h"
+#include "common/EtchShort.h"
+#include "common/EtchNativeArray.h"
 #endif

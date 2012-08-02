@@ -150,6 +150,7 @@ inline typename EtchHashSet<T, H, C>::Iterator EtchHashSet<T, H, C>::begin() {
   return mHashSet.begin();
 }
 
+typedef capu::SmartPointer<EtchHashSet<EtchObjectPtr> > EtchHashSetPtr;
 
 #endif /* ETCHSET_H */
 

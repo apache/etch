@@ -218,5 +218,8 @@ template<class T, class C>
 capu::int32_t EtchList<T, C>::set(capu::int32_t index, const T &element, T* elementOld) {
   return mList.set(index, element, elementOld);
 }
+
+typedef capu::SmartPointer<EtchList<EtchObjectPtr> > EtchListPtr;
+
 #endif /* ETCHDOUBLELINKEDLIST_H */
 

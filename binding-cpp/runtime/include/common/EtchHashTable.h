@@ -166,4 +166,6 @@ inline typename EtchHashTable<Key, T, H, C>::Iterator EtchHashTable<Key, T, H, C
   return mHashTable.begin();
 }
 
+typedef capu::SmartPointer<EtchHashTable<EtchObjectPtr, EtchObjectPtr> > EtchHashTablePtr;
+
 #endif
