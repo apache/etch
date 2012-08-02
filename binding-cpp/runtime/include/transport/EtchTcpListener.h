@@ -80,7 +80,7 @@ public:
    */
   virtual void setSession(EtchSessionListener<EtchSocket>* session);
 
-  virtual void operator()(void * param);
+  virtual void run();
 
   /**
    * @see EtchConnection

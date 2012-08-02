@@ -21,21 +21,30 @@
 
 #ifdef THREAD_INC_MEMBER
 private:
+  class ThreadRunnable {
+  public:
+    Thread* thread;
+    Runnable* runnable;
+  };
+
   DWORD  mThreadId;
   HANDLE mThreadHandle;
+  ThreadState mState;
+  ThreadRunnable *mRunnable;
 
-  class ThreadParam
-  {
-  public:
-    Runnable* object;
-    void* param;
-  };
+  /**
+  * sets the current thread state
+  */
+  void setState(ThreadState state);
 
   static DWORD WINAPI run(LPVOID arg)
   {
-    ThreadParam* args= (ThreadParam*) arg;
-    (*args->object)(args->param);
-    delete args;
+    ThreadRunnable* tr = (ThreadRunnable*) arg;
+    tr->thread->setState(TS_RUNNING);
+    if (tr->runnable != NULL) {
+      tr->runnable->run();
+    }
+    tr->thread->setState(TS_TERMINATED);
     return NULL;
   }
 
@@ -44,21 +53,33 @@ private:
 
 #ifdef THREAD_INC_IMPL
 
-inline Thread::Thread(Runnable *object,void* args)
-{
-  if (object == NULL)
-  {
-    return;
-  }
-  ThreadParam *param = new ThreadParam();
-  param->object=object;
-  param->param=args;
-  mThreadHandle = CreateThread(NULL, 0, Thread::run, param, 0, &mThreadId);
+
+
+inline Thread::Thread(Runnable *runnable) : mState(TS_NEW) {
+  mRunnable = new ThreadRunnable();
+  mRunnable->thread = this;
+  mRunnable->runnable = runnable;
 }
 
 inline Thread::~Thread()
 {
   join();
+  delete mRunnable;
+}
+
+inline status_t Thread::start()
+{
+  if (mRunnable == NULL) {
+    return CAPU_EINVAL;
+  }
+
+  mThreadHandle = CreateThread(NULL, 0, Thread::run, mRunnable, 0, &mThreadId);
+  //TODO: check thread handle and return appropriate error code
+  if (mThreadHandle == NULL) {
+    return CAPU_ERROR;
+  }
+  
+  return CAPU_OK;
 }
 
 inline status_t Thread::join()
@@ -70,10 +91,20 @@ inline status_t Thread::join()
   }
 }
 
+inline ThreadState Thread::getState() {
+  return mState;
+}
+
+inline void Thread::setState(ThreadState state) {
+  mState = state;
+}
+
 inline status_t Thread::Sleep(uint32_t millis)
 {
   ::Sleep(millis);
   return CAPU_OK;
 }
+
+
 
 #endif

@@ -198,7 +198,6 @@ namespace capu
     return *this;
   }
 
-
   template<typename T>
   Array<T>::~Array(void)
   {

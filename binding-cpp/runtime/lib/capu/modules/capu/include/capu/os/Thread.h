@@ -29,6 +29,16 @@
 namespace capu
 {
 
+  /**
+   * Thread states
+   */
+  enum ThreadState {
+    TS_NEW,
+    TS_RUNNING,
+    TS_TERMINATED
+  };
+
+
   class Thread
   {
 
@@ -37,13 +47,19 @@ namespace capu
 #undef THREAD_INC_MEMBER
 
   public:
+
+    /**
+    * Default constructor
+    */
+    inline Thread() {}
+
     /**
     * Constructor
     * Creates a thread which will execute the given function
-    * @param func function object that will be executed
+    * @param Runnable object that will be executed
     * @param arguments
     */
-    inline Thread(Runnable* object,void* args=NULL);
+    inline Thread(Runnable* runnable);
 
     /**
     * Destructor
@@ -51,11 +67,25 @@ namespace capu
     inline ~Thread();
 
     /**
+    * Starts the thread
+    * @param Runnable object that will be executed
+    * @return CAPU_OK if thread has been started successfully
+    *         CAPU_ERROR otherwise
+    */
+    inline status_t start();
+
+    /**
     * Waits the thread completeness
     * @return CAPU_OK if thread is currently waiting for completeness
     *         CAPU_ERROR otherwise
     */
     inline status_t join();
+
+    /**
+    * Return the current thread state
+    * @return state of the thread
+    */
+    inline ThreadState getState();
 
     /**
     * Suspend the current thread for specific amount of time

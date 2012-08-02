@@ -24,11 +24,14 @@ namespace capu
   class Runnable
   {
   public:
+
     virtual ~Runnable() {}
+
     /**
      * Thread Execution Function
      */
-    virtual void operator()(void* args) = 0;
+    virtual void run() = 0;
+
   };
 }
 

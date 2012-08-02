@@ -116,7 +116,8 @@ status_t EtchTcpListener::transportControl(capu::SmartPointer<EtchObject> contro
     mMutex.lock();
     mIsStarted = true;
     mMutex.unlock();
-    mThread = new capu::Thread(this, NULL);
+    mThread = new capu::Thread(this);
+    mThread->start();
     return ETCH_OK;
   }
 
@@ -126,7 +127,8 @@ status_t EtchTcpListener::transportControl(capu::SmartPointer<EtchObject> contro
     mMutex.lock();
     mIsStarted = true;
     mMutex.unlock();
-    mThread = new capu::Thread(this, NULL);
+    mThread = new capu::Thread(this);
+    mThread->start();
     capu::Thread::Sleep(((EtchInt32*) value.get())->get());
     //TODO: Wait handling in one of the next releases
     return ETCH_OK;
@@ -183,7 +185,7 @@ void EtchTcpListener::setSession(EtchSessionListener<EtchSocket>* session) {
   mSession = session;
 }
 
-void EtchTcpListener::operator() (void* param) {
+void EtchTcpListener::run() {
 
   capu::bool_t first = true;
 

@@ -24,18 +24,20 @@ class ThreadTest : public capu::Runnable
   public:
     static capu::int32_t variable;
 
-    ThreadTest()
+    ThreadTest(capu::int32_t val)
     {
-        variable=0;
+        variable = 0;
+        mVal = val;
     }
 
-    inline void operator()(void * param)
+    void run()
     {
-        capu::int32_t * val =(capu::int32_t*) param;
         //1 second delay
         EXPECT_TRUE(capu::Thread::Sleep(1000)==capu::CAPU_OK);
-        variable = *val;
+        variable = mVal;
     }
+  private:
+    capu::int32_t mVal;
 };
 
 class ThreadTest2 : public capu::Runnable
@@ -46,8 +48,9 @@ class ThreadTest2 : public capu::Runnable
     {
     }
 
-    inline void operator()(void * param)
+    void run()
     {
+      capu::Thread::Sleep(1000);
       return;
     }
 };
@@ -57,27 +60,29 @@ capu::int32_t ThreadTest::variable;
 
 TEST(Thread,startAndJoinTest)
 {
-    ThreadTest _test;
+    ThreadTest _test(6);
     ThreadTest2 _test2;
-    capu::int32_t newval = 6;
     //CREATE THREAD
-    capu::Thread * CAPU_thread = new capu::Thread(&_test,(void *)&newval);
+    capu::Thread * CAPU_thread = new capu::Thread(&_test);
+    CAPU_thread->start();
     //WAIT UNTIL IT FINISH
     EXPECT_TRUE(CAPU_thread->join()==capu::CAPU_OK);
     //CHECK THE VALUE CALCULATED IN THREAD
-    EXPECT_TRUE(ThreadTest::variable == newval);
+    EXPECT_TRUE(ThreadTest::variable == 6);
     delete CAPU_thread;
-    capu::Thread * CAPU_thread2 = new capu::Thread(&_test2,NULL);
+    capu::Thread * CAPU_thread2 = new capu::Thread(&_test2);
+    CAPU_thread2->start();
     EXPECT_TRUE(CAPU_thread2->join()==capu::CAPU_OK);
     delete CAPU_thread2;
 }
 
 TEST(Thread,startAndDestructorTest)
 {
-    ThreadTest _test;
     capu::int32_t newval = 6;
+    ThreadTest _test(newval);
 
-    capu::Thread * CAPU_thread = new capu::Thread(&_test,(void *)&newval);
+    capu::Thread * CAPU_thread = new capu::Thread(&_test);
+    CAPU_thread->start();
     delete CAPU_thread;
 
     EXPECT_TRUE(ThreadTest::variable == newval);
@@ -86,10 +91,11 @@ TEST(Thread,startAndDestructorTest)
 
 TEST(Thread,sleepTest)
 {
-    capu::int32_t newval=5;
-    ThreadTest _test;
+    capu::int32_t newval = 5;
+    ThreadTest _test(newval);
     //CREATE THREAD
-    capu::Thread * CAPU_thread = new capu::Thread(&_test,(void *)&newval);
+    capu::Thread * CAPU_thread = new capu::Thread(&_test);
+    CAPU_thread->start();
     //WAIT UNTIL IT FINISH
     EXPECT_TRUE(CAPU_thread->join()==capu::CAPU_OK);
     EXPECT_TRUE(ThreadTest::variable == newval);
@@ -98,10 +104,26 @@ TEST(Thread,sleepTest)
 
 TEST(Thread,contextTest)
 {
-    ThreadTest _test;
-    capu::int32_t newval =4;
-    {
-        capu::Thread thread(&_test,(void*)&newval);
-    }
-    EXPECT_TRUE(ThreadTest::variable == newval);
+  capu::int32_t newval = 4;
+  ThreadTest _test(newval);
+  {
+    capu::Thread thread(&_test);
+    thread.start();
+  }
+  EXPECT_TRUE(ThreadTest::variable == newval);
+}
+
+TEST(Thread, getState)
+{
+    ThreadTest2 r1;
+    capu::Thread thread(&r1);
+    capu::ThreadState state = thread.getState();
+    EXPECT_EQ(capu::TS_NEW, state);
+    thread.start();
+    capu::Thread::Sleep(500);
+    state = thread.getState();
+    EXPECT_EQ(capu::TS_RUNNING, state);
+    thread.join();
+    state = thread.getState();
+    EXPECT_EQ(capu::TS_TERMINATED, state);
 }

@@ -122,10 +122,9 @@ namespace capu {
 
   template <typename T>
   status_t Queue<T>::next(T* element) {
-    if (mCurrent->mData == NULL) {
+    if (mCurrent == NULL) {
       return CAPU_ERANGE;
     }
-
     T tmp = mCurrent->mData;
     QueueNode* del = mCurrent;
     mCurrent = mCurrent->mNext;

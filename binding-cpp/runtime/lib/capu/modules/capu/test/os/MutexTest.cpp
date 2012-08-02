@@ -26,17 +26,23 @@ public:
   static capu::Mutex lock;
   static capu::int32_t variable;
 
-  void operator()(void * param)
+  ThreadLockTest(capu::int32_t sleepTime) {
+    mSleepTime = sleepTime;
+  }
+
+  void run() 
   {
     for(capu::int32_t i = 0; i<100; i++) {
-      capu::int32_t* sleepTime = (capu::int32_t *) param;
       lock.lock();
       capu::int32_t temp = variable;
-      capu::Thread::Sleep(*sleepTime) ;
+      capu::Thread::Sleep(mSleepTime) ;
       variable = ++temp;
       lock.unlock();
     }
   }
+
+private:
+  capu::int32_t mSleepTime;
 };
 class ThreadNoLockTest : public capu::Runnable
 {
@@ -86,17 +92,21 @@ TEST(Mutex,TrylockTest)
 
 TEST(Mutex,lockAndUnlockTest)
 {
-  ThreadLockTest _testLock;
-  ThreadLockTest _testNoLock;
-  //add some sleep times
-  capu::int32_t newval = 5;
-  capu::int32_t newval2 = 10;
-  capu::int32_t newval3 = 15;
+  ThreadLockTest _testLock(5);
+  ThreadLockTest _testLock2(10);
+  ThreadLockTest _testLock3(15);
+  ThreadLockTest _testNoLock(5);
+  ThreadLockTest _testNoLock2(10);
+  ThreadLockTest _testNoLock3(15);
+
 
   //EXECUTE 3 THREAD WITH A RACE CONDITION
-  capu::Thread * _thread = new capu::Thread(&_testLock,&newval);
-  capu::Thread * _thread2 = new capu::Thread(&_testLock,&newval2);
-  capu::Thread * _thread3 = new capu::Thread(&_testLock,&newval3);
+  capu::Thread * _thread = new capu::Thread(&_testLock);
+  _thread->start();
+  capu::Thread * _thread2 = new capu::Thread(&_testLock2);
+  _thread2->start();
+  capu::Thread * _thread3 = new capu::Thread(&_testLock3);
+  _thread3->start();
 
   _thread->join();
   _thread2->join();
@@ -104,9 +114,12 @@ TEST(Mutex,lockAndUnlockTest)
   EXPECT_EQ(300, ThreadLockTest::variable);
 
 //EXECUTE 3 THREAD WITH A RACE CONDITION
-  capu::Thread * _thread4 = new capu::Thread(&_testNoLock,&newval);
-  capu::Thread * _thread5 = new capu::Thread(&_testNoLock,&newval2);
-  capu::Thread * _thread6 = new capu::Thread(&_testNoLock,&newval3);
+  capu::Thread * _thread4 = new capu::Thread(&_testNoLock);
+  _thread4->start();
+  capu::Thread * _thread5 = new capu::Thread(&_testNoLock2);
+  _thread5->start();
+  capu::Thread * _thread6 = new capu::Thread(&_testNoLock3);
+  _thread6->start();
 
   _thread4->join();
   _thread5->join();

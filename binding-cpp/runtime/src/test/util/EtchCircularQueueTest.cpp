@@ -162,7 +162,7 @@ public:
     mQueue = queue;
   }
 
-  void operator()(void* param) {
+  void run() {
     // Producer
     for(capu::int32_t i = 0; i < 2000; i++) {
       EtchMailbox::EtchElement * e1 = new EtchMailbox::EtchElement(NULL, NULL);
@@ -180,7 +180,7 @@ public:
     mQueue = queue;
   }
 
-  void operator()(void* param) {
+  void run() {
     // Consumer
     for(capu::int32_t i = 0; i < 2000; i++) {
       EtchMailbox::EtchElement * e1 = NULL;
@@ -200,9 +200,11 @@ TEST(EtchCirclerQueueTest, concurrency) {
 
   R1* r1 = new R1(queue);
   capu::Thread* t1 = new capu::Thread(r1);
+  t1->start();
 
   R2* r2 = new R2(queue);
   capu::Thread* t2 = new capu::Thread(r2);
+  t2->start();
 
   t1->join();
   t2->join();

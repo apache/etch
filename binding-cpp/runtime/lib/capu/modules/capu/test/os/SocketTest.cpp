@@ -46,7 +46,7 @@ public:
   //client thread to test data exchange between client and server
   ThreadClientTest(capu::int16_t port) : port(port) {}
 
-  void operator()(void * param) {
+  void run() {
     capu::int32_t communication_variable;
     capu::int32_t numBytes = 0;
     //ALLOCATION AND SYNCH OF cient and  server
@@ -101,7 +101,7 @@ public:
   //timeout test
   ThreadTimeoutClientTest(capu::int16_t port) : port(port) {}
 
-  void operator()(void * param) {
+  void run() {
     capu::int32_t communication_variable;
     capu::int32_t numBytes = 0;
     capu::Socket *cli_socket = new capu::Socket();
@@ -145,7 +145,7 @@ public:
   //SERVER thread to test data exchange between client and server
   ThreadServerTest(capu::int16_t port) : port(port) {}
 
-  void operator()(void * param) {
+  void run() {
     capu::int32_t communication_variable;
     capu::int32_t numBytes = 0;
     //server socket allocation
@@ -199,7 +199,7 @@ class ThreadTimeoutServerTest : public capu::Runnable {
 public:
   //timeout test
   ThreadTimeoutServerTest(capu::int16_t port) : port(port) {}
-  inline void operator()(void * param) {
+  inline void run() {
     capu::int32_t communication_variable;
     capu::int32_t numBytes = 0;
     //server socket allocation
@@ -347,8 +347,10 @@ TEST(SocketAndServerSocket, CommunicationTest) {
   capu::uint16_t port = RandomPort::get();
   ThreadServerTest server(port);
   ThreadClientTest client(port);
-  capu::Thread * server_thread = new capu::Thread(&server, NULL);
-  capu::Thread * client_thread = new capu::Thread(&client, NULL);
+  capu::Thread * server_thread = new capu::Thread(&server);
+  server_thread->start();
+  capu::Thread * client_thread = new capu::Thread(&client);
+  client_thread->start();
 
   //Create two threads which will behave like client and server to test functionality
   server_thread->join();
@@ -363,9 +365,11 @@ TEST(SocketAndServerSocket, TimeoutTest) {
   capu::uint16_t port = RandomPort::get();
   ThreadTimeoutServerTest server(port);
   ThreadTimeoutClientTest client(port);
-  capu::Thread * server_thread = new capu::Thread(&server, NULL);
-  capu::Thread * client_thread = new capu::Thread(&client, NULL);
-  //Create two threads which will behave like client and server to test functionality
+  capu::Thread * server_thread = new capu::Thread(&server);
+  server_thread->start();
+  capu::Thread * client_thread = new capu::Thread(&client);
+  client_thread->start();
+  //client_thread two threads which will behave like client and server to test functionality
   server_thread->join();
   client_thread->join();
 

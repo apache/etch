@@ -94,7 +94,7 @@ public:
   /**
    * @see capu::thread
    */
-  virtual void operator()(void * param);
+  virtual void run();
 
   /**
    * @see EtchConnection

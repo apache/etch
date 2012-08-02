@@ -45,6 +45,7 @@ ADD_FILE(util/Logger)
 ADD_FILE(util/Appender)
 ADD_FILE(util/Runnable)
 ADD_FILE(util/Traits)
+ADD_FILE(util/ThreadPool)
 
 REQUIRED_PACKAGE(Thread)
 REQUIRED_PACKAGE(LibRt)

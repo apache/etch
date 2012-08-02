@@ -23,52 +23,68 @@
 
 #ifdef THREAD_INC_MEMBER
 private:
+  class ThreadRunnable {
+  public:
+    Thread* thread;
+    Runnable* runnable;
+  };
+
   pthread_t mThread;
   pthread_attr_t mAttr;
+  ThreadState mState;
+  ThreadRunnable *mRunnable;
 
-  static void * run(void* param)
+  /**
+  * sets the current thread state
+  */
+  void setState(ThreadState state);
+
+  static void * run(void* arg)
   {
-    ThreadParam* args= (ThreadParam*) param;
-    (*args->object)(args->param);
-    delete args;
+    ThreadRunnable* tr = (ThreadRunnable*) arg;
+    tr->thread->setState(TS_RUNNING);
+    if (tr->runnable != NULL) {
+      tr->runnable->run();
+    }
+    tr->thread->setState(TS_TERMINATED);
     pthread_exit(NULL);
   }
 
-  class ThreadParam
-  {
-  public:
-/*    ~ThreadParam()
-    {
-      if(object != NULL)
-        delete object;
-    }*/
-    Runnable* object;
-    void* param;
-  };
 
 #endif
 
 #ifdef THREAD_INC_IMPL
 
-inline Thread::Thread(Runnable *object,void* args)
+inline Thread::Thread(Runnable *runnable) : mState(TS_NEW)
 {
   pthread_attr_init(&mAttr);
   pthread_attr_setdetachstate(&mAttr,PTHREAD_CREATE_JOINABLE);
-  if (object == NULL)
-  {
-    return;
-  }
-  ThreadParam *param = new ThreadParam();
-  param->object=object;
-  param->param=args;
-  pthread_create(&mThread, &mAttr, Thread::run, param);
+  mRunnable = new ThreadRunnable();
+  mRunnable->thread = this;
+  mRunnable->runnable = runnable;
+  
 }
 
 inline Thread::~Thread()
 {
   join();
   pthread_attr_destroy(&mAttr);
+  delete mRunnable;
 }
+
+inline status_t Thread::start()
+{
+  if (mRunnable == NULL) {
+    return CAPU_EINVAL;
+  }
+
+  int32_t result = pthread_create(&mThread, &mAttr, Thread::run, mRunnable);
+  if (result != 0) {
+    return CAPU_ERROR;
+  }   
+  return CAPU_OK;
+}
+
 
 inline status_t Thread::join ()
 {
@@ -87,6 +103,14 @@ inline status_t Thread::Sleep(uint32_t millis)
   if(usleep(millis*1000)==0)
     return CAPU_OK;
   return CAPU_ERROR;
+}
+
+inline ThreadState Thread::getState() {
+  return mState;
+}
+
+inline void Thread::setState(ThreadState state) {
+  mState = state;
 }
 
 #endif

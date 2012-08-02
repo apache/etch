@@ -150,7 +150,8 @@ status_t EtchTcpConnection::transportControl(capu::SmartPointer<EtchObject> cont
     mMutex.lock();
     mIsStarted = true;
     mMutex.unlock();
-    mThread = new capu::Thread(this, NULL);
+    mThread = new capu::Thread(this);
+    mThread->start();
     return ETCH_OK;
   }
 
@@ -160,7 +161,8 @@ status_t EtchTcpConnection::transportControl(capu::SmartPointer<EtchObject> cont
     mMutex.lock();
     mIsStarted = true;
     mMutex.unlock();
-    mThread = new capu::Thread(this, NULL);
+    mThread = new capu::Thread(this);
+    mThread->start();
     capu::Thread::Sleep(((EtchInt32*) value.get())->get());
     //TODO: Wait handling in one of the next releases
     return ETCH_OK;
@@ -219,7 +221,7 @@ capu::bool_t EtchTcpConnection::isStarted() {
   return mIsStarted;
 }
 
-void EtchTcpConnection::operator() (void* param) {
+void EtchTcpConnection::run() {
 
   capu::bool_t first = true;
 

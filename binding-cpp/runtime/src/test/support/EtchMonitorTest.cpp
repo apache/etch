@@ -76,7 +76,7 @@ public:
     mMonitor = monitor;
   }
 
-  void operator()(void* param) {
+  void run() {
     capu::Thread::Sleep(2000);
     EtchString str;
     mMonitor->set("tmp1", str);
@@ -105,6 +105,7 @@ TEST(EtchMonitorTest, waitUntilNotEqTest) {
   m->set(tmp2, current);
   R1* r1 = new R1(m);
   capu::Thread* t1 = new capu::Thread(r1);
+  t1->start();
   EXPECT_EQ(ETCH_OK, m->waitUntilNotEq(tmp2, current));
   t1->join();
   delete r1;
@@ -135,6 +136,7 @@ TEST(EtchMonitorTest, waitUntilEqAndSetTest) {
   m->set(tmp2, current);
   R1* r1 = new R1(m);
   capu::Thread* t1 = new capu::Thread(r1);
+  t1->start();
   EXPECT_EQ(ETCH_OK, m->waitUntilEqAndSet(tmp1, tmp2, current));
   t1->join();
   delete r1;
@@ -164,6 +166,7 @@ TEST(EtchMonitorTest, waitUntilNotEqAndSetTest) {
   m->set(tmp2, current);
   R1* r1 = new R1(m);
   capu::Thread* t1 = new capu::Thread(r1);
+  t1->start();
   EXPECT_EQ(ETCH_OK, m->waitUntilNotEqAndSet(tmp2, tmp1, current));
   t1->join();
   delete r1;

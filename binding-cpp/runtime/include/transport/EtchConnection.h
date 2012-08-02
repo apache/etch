@@ -54,7 +54,7 @@ public:
    * Main function that will be executed by thread
    * @param param parameter that will be passed to the thread
    */
-  virtual void operator()(void * param) = 0;
+  virtual void run() = 0;
 
   /**
    * Terminates operations on the socket.

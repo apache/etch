@@ -37,7 +37,7 @@ capu::int32_t GlobalVariables::buffer = 0;
 class ThreadCondVarConsumer : public capu::Runnable
 {
 public:
-    void operator()(void * param)
+    void run()
     {
       for(capu::int32_t i = 0; i < GlobalVariables::loops; i++) {
         EXPECT_TRUE(GlobalVariables::mutex.lock()== capu::CAPU_OK);
@@ -54,7 +54,7 @@ public:
 class ThreadCondVarProducerBroadcast : public capu::Runnable
 {
  public:
-    void operator()(void * param)
+    void run()
     {
       for(capu::int32_t i = 0; i < GlobalVariables::loops * 3; i++) {
         EXPECT_TRUE(GlobalVariables::mutex.lock()== capu::CAPU_OK);
@@ -71,7 +71,7 @@ class ThreadCondVarProducerBroadcast : public capu::Runnable
 class ThreadCondVarProducerSignal : public capu::Runnable
 {
  public:
-    void operator()(void * param)
+    void run()
     {
       for(capu::int32_t i = 0; i < GlobalVariables::loops; i++) {
         EXPECT_TRUE(GlobalVariables::mutex.lock()== capu::CAPU_OK);
@@ -105,9 +105,13 @@ TEST(CondVar,WaitAndBroadcastTest)
     ThreadCondVarProducerBroadcast producer;
     //create two thread
     capu::Thread * CAPU_thread = new capu::Thread(&consumer);
+    CAPU_thread->start();
     capu::Thread * CAPU_thread2 = new capu::Thread(&consumer);
+    CAPU_thread2->start();
     capu::Thread * CAPU_thread3 = new capu::Thread(&consumer);
+    CAPU_thread3->start();
     capu::Thread * CAPU_thread4 = new capu::Thread(&producer);
+    CAPU_thread4->start();
 
     //wait for them to finish
     CAPU_thread->join();
@@ -129,7 +133,9 @@ TEST(CondVar,WaitAndSignalTest)
     ThreadCondVarProducerSignal producer;
     //create two thread
     capu::Thread * CAPU_thread = new capu::Thread(&consumer);
+    CAPU_thread->start();
     capu::Thread * CAPU_thread2 = new capu::Thread(&producer);
+    CAPU_thread2->start();
     //wait for them to finish
     CAPU_thread->join();
     CAPU_thread2->join();
