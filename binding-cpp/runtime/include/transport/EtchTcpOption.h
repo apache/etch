@@ -80,14 +80,12 @@ public:
 private:
 
   capu::bool_t isValidNumber(const char * str, capu::int32_t len);
-  
+
   capu::bool_t checkBufferSize(capu::int32_t size);
 
   capu::bool_t checkLingerTime(capu::int32_t lingertime);
 
   capu::bool_t checkReconnectDelay(capu::int32_t delay);
-
-public:
 
   capu::int32_t mBufferSize;
 
@@ -98,6 +96,19 @@ public:
   capu::int32_t mKeepAlive;
 
   capu::int32_t mNoDelay;
+
+public:
+  capu::int32_t getBufferSize();
+
+  capu::int32_t getLingerTime();
+
+  capu::int32_t getReconnectDelay();
+
+  capu::int32_t getKeepAlive();
+
+  capu::int32_t getNoDelay();
+
+
 
 };
 

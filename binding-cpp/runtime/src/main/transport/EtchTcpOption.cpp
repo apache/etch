@@ -127,3 +127,24 @@ capu::bool_t EtchTcpOption::isValidNumber(const char * str, capu::int32_t len) {
   }
   return true;
 }
+
+
+capu::int32_t EtchTcpOption::getBufferSize() {
+  return mBufferSize;
+}
+
+capu::int32_t EtchTcpOption::getLingerTime() {
+  return mLingerTime;
+}
+
+capu::int32_t EtchTcpOption::getReconnectDelay()  {
+  return mReconnectDelay;
+}
+
+capu::int32_t EtchTcpOption::getKeepAlive() {
+  return mKeepAlive;
+}
+
+capu::int32_t EtchTcpOption::getNoDelay() {
+  return mNoDelay;
+}

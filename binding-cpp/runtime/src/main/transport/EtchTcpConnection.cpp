@@ -33,18 +33,11 @@ EtchTcpConnection::EtchTcpConnection(EtchSocket* socket, EtchURL* uri) : mOption
 }
 
 EtchTcpConnection::~EtchTcpConnection() {
-
-
+  mIsStarted = false;
+  close();
   if (mThread != NULL) {
     mThread->join();
     delete mThread;
-  }
-
-  if (mSocket != NULL) {
-    mSocket->close();
-    delete mSocket;
-    mSocket = NULL;
-    mIsStarted = false;
   }
 }
 
@@ -55,7 +48,7 @@ status_t EtchTcpConnection::send(capu::int8_t* buf, capu::uint32_t off, capu::ui
 }
 
 status_t EtchTcpConnection::readSocket() {
-  capu::SmartPointer<EtchFlexBuffer> buf = new EtchFlexBuffer(new capu::int8_t[8192], 8192);
+  capu::SmartPointer<EtchFlexBuffer> buf = new EtchFlexBuffer(new capu::int8_t[ETCH_DEFAULT_SOCKET_INPUT_BUFFER_SIZE], ETCH_DEFAULT_SOCKET_INPUT_BUFFER_SIZE);
 
   while (mIsStarted) {
     capu::int32_t n;
@@ -75,19 +68,19 @@ status_t EtchTcpConnection::readSocket() {
 status_t EtchTcpConnection::openSocket(capu::bool_t reconnect) {
 
   mMutexConnection.lock();
-  // if a one time connection from a server socket listener, just
-  // return the existing socket.
+  // if a one time connection from a socket listener, just
+  // keep the existing socket.
   if (!reconnect && (mSocket != NULL)) {
     mMutexConnection.unlock();
     return ETCH_OK;
   }
   //temporary socket in a listener
-  if ((reconnect == false) && (mPort == 0) && (mHost.length() == 0)) {
+  if ((!reconnect) && (mPort == 0) && (mHost.length() == 0)) {
     mMutexConnection.unlock();
     return ETCH_ERROR;
   }
-  // if a reconnect but no retries allowed, then bail.
-  if (reconnect && (mOptions.mReconnectDelay == 0)) {
+  // if a reconnect but no retries allowed, then fail.
+  if (reconnect && (mOptions.getReconnectDelay() == 0)) {
     mMutexConnection.unlock();
     return ETCH_ERROR;
   }
@@ -100,11 +93,11 @@ status_t EtchTcpConnection::openSocket(capu::bool_t reconnect) {
     // have already failed at least once.
 
     if (reconnect || !first) {
-      if (mOptions.mReconnectDelay == 0) {
+      if (mOptions.getReconnectDelay() == 0) {
         mMutexConnection.unlock();
         return ETCH_ERROR;
       }
-      capu::Thread::Sleep(mOptions.mReconnectDelay);
+      capu::Thread::Sleep(mOptions.getReconnectDelay());
 
       if (!mIsStarted) {
         mMutexConnection.unlock();
@@ -126,7 +119,7 @@ status_t EtchTcpConnection::openSocket(capu::bool_t reconnect) {
   }
 
   mMutexConnection.unlock();
-  return ETCH_ERROR;
+  return ETCH_SOCKET_ECONNECT;
 }
 
 status_t EtchTcpConnection::transportData(capu::SmartPointer<EtchWho> recipient, capu::SmartPointer<EtchFlexBuffer> buf) {
@@ -145,13 +138,17 @@ status_t EtchTcpConnection::transportQuery(capu::SmartPointer<EtchObject> query,
 status_t EtchTcpConnection::transportControl(capu::SmartPointer<EtchObject> control, capu::SmartPointer<EtchObject> value) {
 
   if (control->equals(&EtchTcpConnection::START)) {
-    if (mIsStarted)
-      return ETCH_OK;
     mMutex.lock();
+    if (mIsStarted) {
+      mMutex.unlock();
+      return ETCH_OK;
+    }
     mIsStarted = true;
     mMutex.unlock();
+
     mThread = new capu::Thread(this);
     mThread->start();
+
     return ETCH_OK;
   }
 
@@ -159,19 +156,25 @@ status_t EtchTcpConnection::transportControl(capu::SmartPointer<EtchObject> cont
     if (mIsStarted)
       return ETCH_OK;
     mMutex.lock();
+    if (mIsStarted) {
+      mMutex.unlock();
+      return ETCH_OK;
+    }
     mIsStarted = true;
     mMutex.unlock();
     mThread = new capu::Thread(this);
     mThread->start();
-    waitUp(((EtchInt32*) value.get())->get());
-    //TODO: Wait handling in one of the next releases
-    return ETCH_OK;
+    
+
+    return waitUp(((EtchInt32*) value.get())->get());
   }
 
   if (control->equals(&EtchTcpConnection::STOP)) {
-    if (!mIsStarted)
-      return ETCH_OK;
     mMutex.lock();
+    if (!mIsStarted) {
+      mMutex.unlock();
+      return ETCH_OK;
+    }
     mIsStarted = false;
     mMutex.unlock();
     close();
@@ -179,23 +182,27 @@ status_t EtchTcpConnection::transportControl(capu::SmartPointer<EtchObject> cont
   }
 
   if (control->equals(&EtchTcpConnection::STOP_AND_WAIT_DOWN)) {
-    if (!mIsStarted)
-      return ETCH_OK;
     mMutex.lock();
+    if (!mIsStarted) {
+      mMutex.unlock();
+      return ETCH_OK;
+    }
     mIsStarted = false;
     mMutex.unlock();
+
     close();
-    waitDown(((EtchInt32*) value.get())->get());
-    //TODO: Wait handling in one of the next releases
-    return ETCH_OK;
+    return waitDown(((EtchInt32*) value.get())->get());
   }
 
   if (control->equals(&EtchTcpConnection::RESET)) {
-    if (!mIsStarted)
-      return ETCH_OK;
     mMutex.lock();
+    if (!mIsStarted) {
+      mMutex.unlock();
+      return ETCH_OK;
+    }
     mIsStarted = false;
     mMutex.unlock();
+
     close();
     return ETCH_OK;
   }
@@ -211,10 +218,11 @@ void EtchTcpConnection::setSession(EtchSessionData* session) {
 }
 
 status_t EtchTcpConnection::close() {
-  if (mSocket != NULL)
+  if (mSocket != NULL) {
     return mSocket->close();
-  else
+  } else {
     return ETCH_ERROR;
+  }
 }
 
 capu::bool_t EtchTcpConnection::isStarted() {
@@ -249,13 +257,13 @@ void EtchTcpConnection::run() {
 }
 
 status_t EtchTcpConnection::setupSocket() {
-  if (mSocket->setBufferSize(mOptions.mBufferSize) != ETCH_OK)
+  if (mSocket->setBufferSize(mOptions.getBufferSize()) != ETCH_OK)
     return ETCH_ERROR;
-  if (mSocket->setKeepAlive((mOptions.mKeepAlive != 0)) != ETCH_OK)
+  if (mSocket->setKeepAlive((mOptions.getKeepAlive() != 0)) != ETCH_OK)
     return ETCH_ERROR;
-  if (mSocket->setLingerOption((mOptions.mLingerTime >= 0), mOptions.mLingerTime) != ETCH_OK)
+  if (mSocket->setLingerOption((mOptions.getLingerTime() >= 0), mOptions.getLingerTime()) != ETCH_OK)
     return ETCH_ERROR;
-  if (mSocket->setNoDelay((mOptions.mNoDelay != 0)) != ETCH_OK)
+  if (mSocket->setNoDelay((mOptions.getNoDelay() != 0)) != ETCH_OK)
     return ETCH_ERROR;
   return ETCH_OK;
 }

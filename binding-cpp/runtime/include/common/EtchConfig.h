@@ -24,6 +24,11 @@
 #include "string.h"
 
 #include "capu/Config.h"
+
+//Hash table size
 #define ETCH_DEFAULT_HASH_TABLE_SIZE 1000
+
+//Socket input buffer size (bytes)
+#define ETCH_DEFAULT_SOCKET_INPUT_BUFFER_SIZE 8192
 
 #endif
