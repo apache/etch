@@ -58,6 +58,7 @@ SET(MAIN_INCLUDES
     ${PROJECT_SOURCE_DIR}/include/transport/EtchTransportData.h
     ${PROJECT_SOURCE_DIR}/include/transport/EtchTransportMessage.h
     ${PROJECT_SOURCE_DIR}/include/transport/EtchTransportPacket.h
+    ${PROJECT_SOURCE_DIR}/include/common/EtchTypes.h
     ${PROJECT_SOURCE_DIR}/include/common/EtchException.h
     ${PROJECT_SOURCE_DIR}/include/common/EtchAuthenticationException.h
     ${PROJECT_SOURCE_DIR}/include/common/EtchRuntimeException.h
@@ -105,6 +106,12 @@ SET(MAIN_INCLUDES
     ${PROJECT_SOURCE_DIR}/include/serialization/EtchBinaryTaggedDataOutput.h
     ${PROJECT_SOURCE_DIR}/include/transport/EtchMessagizer.h
     ${PROJECT_SOURCE_DIR}/include/transport/EtchFormat.h
+    ${PROJECT_SOURCE_DIR}/include/support/EtchAsyncResultBase.h
+    ${PROJECT_SOURCE_DIR}/include/support/EtchDeliveryService.h
+    ${PROJECT_SOURCE_DIR}/include/support/EtchMailbox.h
+    ${PROJECT_SOURCE_DIR}/include/support/EtchObjectSession.h
+    ${PROJECT_SOURCE_DIR}/include/support/EtchStubHelper.h
+    ${PROJECT_SOURCE_DIR}/include/support/EtchStubBase.h
     ${PROJECT_SOURCE_DIR}/include/util/EtchUtil.h
     )
 
@@ -171,6 +178,7 @@ SET(MAIN_SOURCES
     serialization/EtchBinaryTaggedDataOutput.cpp
     transport/EtchMessagizer.cpp
     transport/EtchFormat.cpp
+    support/EtchStubBase.cpp
     util/EtchUtil.cpp
     )
 

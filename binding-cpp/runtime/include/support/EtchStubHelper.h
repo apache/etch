@@ -16,19 +16,38 @@
  * limitations under the License.
  */
 
-#ifndef __ETCHTYPES_H__
-#define __ETCHTYPES_H__
 
-#include "EtchBool.h"
-#include "EtchByte.h"
-#include "EtchDate.h"
-#include "EtchDouble.h"
-#include "EtchFloat.h"
-#include "EtchInt32.h"
-#include "EtchList.h"
-#include "EtchLong.h"
-#include "EtchNativeArray.h"
-#include "EtchShort.h"
-#include "EtchString.h"
+#ifndef __ETCHSTUBHELPER_H__
+#define __ETCHSTUBHELPER_H__
+
+#include "support/EtchDeliveryService.h"
+
+/**
+* Generated code to dispatch method from message.
+* @param <T> the service interface type.
+*/
+
+template <typename T>
+class EtchStubHelper
+{
+ /**
+  * Constructs a StubHelper which uses synchronous mode to dispatch
+  * method from message.
+  */
+public:
+  EtchStubHelper()
+  {
+    // nothing to do.
+  }
+
+ /**
+  * Dispatches the method from message.
+  * @param svc
+  * @param obj
+  * @param sender
+  * @param msg
+  */
+  virtual status_t run(capu::SmartPointer<EtchDeliveryService> svc, capu::SmartPointer<T> obj, capu::SmartPointer<EtchWho> sender, capu::SmartPointer<EtchMessage> msg);
+};
 
 #endif

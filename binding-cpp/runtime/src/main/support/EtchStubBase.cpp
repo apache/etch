@@ -16,19 +16,28 @@
  * limitations under the License.
  */
 
-#ifndef __ETCHTYPES_H__
-#define __ETCHTYPES_H__
+#include "support/EtchStubBase.h"
 
-#include "EtchBool.h"
-#include "EtchByte.h"
-#include "EtchDate.h"
-#include "EtchDouble.h"
-#include "EtchFloat.h"
-#include "EtchInt32.h"
-#include "EtchList.h"
-#include "EtchLong.h"
-#include "EtchNativeArray.h"
-#include "EtchShort.h"
-#include "EtchString.h"
+/**
+ * Constructs the StubBase.
+ * @param svc the message source.
+ * @param obj the target of decoded messages.
+ */
+template<typename T>
+EtchStubBase<T>::EtchStubBase(capu::SmartPointer<EtchDeliveryService> svc, capu::SmartPointer<T> obj )
+{
+  this->svc = svc;
+  this->obj = obj;
 
-#endif
+  if (svc.get() != NULL) {
+    svc->setSession(this);
+  }
+}
+
+template<typename T>
+status_t EtchStubBase<T>::sessionMessage(capu::SmartPointer<EtchWho> sender, capu::SmartPointer<EtchMessage> msg, capu::bool_t &result)
+{
+  //TODO
+  return ETCH_EUNIMPL;
+}
+
