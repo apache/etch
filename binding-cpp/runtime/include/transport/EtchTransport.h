@@ -118,24 +118,6 @@ public:
   const static EtchString START_AND_WAIT_UP;
 
   /**
-   * Transport query which waits for the transport stack to come up.
-   */
-  class WaitUp {
-
-    /**
-     * @param maxDelay max delay in milliseconds.
-     */
-    WaitUp(capu::int32_t maxDelay) {
-      this.mMaxDelay = maxDelay;
-    }
-
-    /**
-     * max delay in milliseconds.
-     */
-    const capu::int32_t mMaxDelay;
-  };
-
-  /**
    * Transport control which stops the transport stack. The argument
    * should be null, or a Boolean reset (true for instant close,
    * false for a nicer, gentler close).
@@ -162,25 +144,58 @@ public:
    * is this a client initiated connection.
    */
   static const EtchString IS_SERVER;
+};
+
+/**
+ * Class for transport query which waits for the transport stack to come up.
+ */
+class WaitUp : public EtchObject {
+public:
+  /**
+   * EtchObjectType for WaitUp
+   */
+  static const EtchObjectType* WaitUp::TYPE() {
+    const static EtchObjectType TYPE(EOTID_WAIT_UP, NULL);
+    return &TYPE;
+  }
 
   /**
-   * Transport query which waits for the transport stack to go down.
+   * @param maxDelay max delay in milliseconds.
    */
-  class WaitDown {
+  WaitUp(capu::int32_t maxDelay) : EtchObject(WaitUp::TYPE()), mMaxDelay(maxDelay) {
+  }
 
-    /**
-     * @param maxDelay max delay in milliseconds.
-     */
-    WaitDown(capu::int32_t maxDelay) {
-      this.mMaxDelay = maxDelay;
-    }
+  /**
+   * max delay in milliseconds.
+   */
+  const capu::int32_t mMaxDelay;
+};
 
-    /**
-     * max delay in milliseconds.
-     */
-    const capu::int32_t mMaxDelay;
-  };
+/**
+ * Class for transport query which waits for the transport stack to go down.
+ */
+class WaitDown : public EtchObject {
+public:
 
+  /**
+   * EtchObjectType for WaitUp
+   */
+  static const EtchObjectType* WaitDown::TYPE() {
+    const static EtchObjectType TYPE(EOTID_WAIT_DOWN, NULL);
+    return &TYPE;
+  }
+
+
+  /**
+   * @param maxDelay max delay in milliseconds.
+   */
+  WaitDown(capu::int32_t maxDelay) : EtchObject(WaitDown::TYPE()), mMaxDelay(maxDelay) {
+  }
+
+  /**
+   * max delay in milliseconds.
+   */
+  const capu::int32_t mMaxDelay;
 };
 
 template <class S>
@@ -204,6 +219,4 @@ const EtchString EtchTransport<S>::START("START");
 template <class S>
 const EtchString EtchTransport<S>::START_AND_WAIT_UP("START_AND_WAIT_UP");
 
-
 #endif
-

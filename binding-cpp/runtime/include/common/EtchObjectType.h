@@ -64,7 +64,9 @@ enum EtchObjectTypeIds {
   EOTID_AUTH_EXCEPTION,
   EOTID_RUNTIME_EXCEPTION,
   EOTID_ARRAY_VALUE,
-  EOTID_FREEPOOL
+  EOTID_FREEPOOL,
+  EOTID_WAIT_UP,
+  EOTID_WAIT_DOWN
 };
 
 class EtchObjectType : public EtchObject {

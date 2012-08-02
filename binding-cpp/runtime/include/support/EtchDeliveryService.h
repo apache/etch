@@ -20,9 +20,9 @@
 #define __ETCHDELIVERYSERVICE_H__
 
 #include "serialization/EtchType.h"
+#include "support/EtchMailbox.h"
 #include "transport/EtchSessionMessage.h"
 #include "transport/EtchTransportMessage.h"
-#include "support/EtchMailbox.h"
 
 /**
  * Adapter between remote and message source.
@@ -33,25 +33,23 @@ public:
   /**
    * Sends the message which begins a call sequence.
    *
-   * @param msg the message to send.
-   * @param result a mailbox which can be used to read the response, using
-   * {@link #endcall(EtchMailbox*, EtchType*, EtchObject*)}.
+   * @param msg The message to send.
+   * @param result The mailbox which can be used to read the response
    * @return ETCH_OK if the message was send.
    *         ETCH_ERROR if there is a problem sending.
    */
-  virtual status_t begincall(capu::SmartPointer<EtchMessage> msg, capu::SmartPointer<EtchMailbox> &result );
+  virtual status_t begincall(capu::SmartPointer<EtchMessage> msg, EtchMailbox*& result) = 0;
 
   /**
    * Finishes a call sequence by waiting for the response message.
    *
-   * @param mb a mailbox which will be used to read the response, returned by
-   * {@link #begincall(EtchMessage*, EtchMailbox*)}.
-   * @param responseType the type of the expected response.
-   * @param result the value of the response field if it isn't an exception.
+   * @param mb A mailbox which will be used to read the response
+   * @param responseType The type of the expected response.
+   * @param result The value of the response field if it isn't an exception.
    * @return ETCH_OK if the response message is successful received.
    *         ETCH_TIMEOUT if there is a timeout.
    */
-  virtual status_t endcall(capu::SmartPointer<EtchMailbox> mb, EtchType* responseType, capu::SmartPointer<EtchObject> &result );
+  virtual status_t endcall(EtchMailbox* mb, EtchType* responseType, capu::SmartPointer<EtchObject>& result) = 0;
 };
 
 
