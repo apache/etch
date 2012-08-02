@@ -17,29 +17,37 @@
 */
 
 #ifdef BUILD_CHECK_MEMORY
-#ifdef ARCH_WIN32
+#ifdef OS_WINDOWS
 #include "vld.h"
 #endif
 #endif
 
 #include <iostream>
 #include "gtest/gtest.h"
+#include "capu/os/Time.h"
 
 GTEST_API_ int main(int argc, char **argv) {
   std::cout << "Running main() from capu-test\n";
- 
-  bool insideIde = false;
-  if(argc > 1) {
-    insideIde = true;
+
+  //initialize pseudo random generate used for all the tests
+  srand(capu::Time::GetMilliseconds());
+
+  bool wait = false;
+  // special wait command
+  for(int i = 0; i < argc; i++) {
+    if(strcmp(argv[i], "--gtest_pause") == 0) {
+      wait = true;
+      argv[i] = const_cast<char*>("");
+    }
   }
 
   testing::InitGoogleTest(&argc, argv);
-  int result = RUN_ALL_TESTS();
+  int testResult = RUN_ALL_TESTS();
 
-  if(insideIde) {
-    printf("press <enter> to exit.\n");
+  if(wait) {
+    printf("press <enter> to exit!");
     getchar();
   }
 
-  return result;
+  return testResult;
 }

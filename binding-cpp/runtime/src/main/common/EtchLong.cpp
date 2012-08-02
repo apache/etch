@@ -41,8 +41,9 @@ capu::int64_t EtchLong::get(){
   return mValue;
 }
 
-capu::uint64_t EtchLong::getHashCode() const{
-  return static_cast <capu::uint64_t> (mValue);
+capu::uint32_t EtchLong::getHashCode() const{
+  //first 32 bit xor second 32 bit of long
+  return static_cast<capu::uint32_t>(mValue ^ mValue >> 32);
 }
 
 capu::bool_t EtchLong::equals(const EtchObject * other) const{

@@ -41,7 +41,7 @@ namespace capu
     * @param dstSize number of chars to be copied
     * @param src source buffer
     */
-    inline static void Strncpy(char* dst, uint32_t dstSize, const char* src);
+    inline static void Strncpy(char* dst, uint_t dstSize, const char* src);
 
     /**
     * Static method to write a C string according to the given format into the array pointed by buffer.
@@ -51,7 +51,7 @@ namespace capu
     * @param format the format of the string
     * @param arguments 
     */
-    inline static void Sprintf(char* buffer, uint32_t bufferSize, const char* format, ...);
+    inline static void Sprintf(char* buffer, uint_t bufferSize, const char* format, ...);
     
     /**
     * Static method to write a C string according to the given format into the array pointed by buffer.
@@ -61,14 +61,22 @@ namespace capu
     * @param format the format of the string
     * @param values arguments for the format 
     */
-    inline static void Vsprintf(char* buffer, uint32_t bufferSize, const char* format, va_list values);
+    inline static void Vsprintf(char* buffer, uint_t bufferSize, const char* format, va_list values);
 
+    /**
+    * Static method to count the bytes according to the given format
+    * The arguments specified in the format have to be passed by the values parameter.
+    * @param format the format of the string
+    * @param values arguments for the format 
+    */
+    inline static int32_t Vscprintf(const char* format, va_list values);
+    
     /**
     * Static method to return the length of the given String
     * @param str the string
     * @return length of the string
     */
-    inline static uint32_t Strlen(const char* str); 
+    inline static uint_t Strlen(const char* str); 
 
     /**
     * Static method to compare two C strings.
@@ -78,7 +86,7 @@ namespace capu
     *         > 0 if the first character which does not match has a greater value in str1
     *         < 0 otherwise
     */
-    inline static int32_t Strcmp(const char* str1, const char* str2);
+    inline static int_t Strcmp(const char* str1, const char* str2);
 
   };
 

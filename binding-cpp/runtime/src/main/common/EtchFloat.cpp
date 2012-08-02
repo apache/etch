@@ -41,8 +41,8 @@ capu::float_t EtchFloat::get(){
   return mValue;
 }
 
-capu::uint64_t EtchFloat::getHashCode() const{
-  capu::uint64_t result = 0;
+capu::uint32_t EtchFloat::getHashCode() const{
+  capu::uint32_t result = 0;
   memcpy(&result, &mValue, sizeof(capu::float_t));
   return result;
 }

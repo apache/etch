@@ -16,10 +16,12 @@
  * limitations under the License.
  */
 
-
-
-#ifdef ARCH_LINUX
+#if defined(OS_LINUX)
     #include "Linux/Thread.inc"
-#elif ARCH_WIN32
-    #include "Win32/Thread.inc"
+#elif defined(OS_WINDOWS)
+    #include "Windows/Thread.inc"
+#elif defined(OS_INTEGRITY)
+    #include "Linux/Thread.inc"
+#elif defined(OS_QNX)
+    #include "Linux/Thread.inc"
 #endif

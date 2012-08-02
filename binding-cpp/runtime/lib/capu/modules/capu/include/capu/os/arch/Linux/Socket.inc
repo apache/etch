@@ -83,7 +83,7 @@ inline status_t Socket::receive(unsigned char * buffer, int32_t length, int32_t 
   if (res == -1) {
     numBytes = 0;
     if (errno == EAGAIN)
-      return CAPU_TIMEOUT;
+      return CAPU_ETIMEOUT;
     else
       return CAPU_ERROR;
   }

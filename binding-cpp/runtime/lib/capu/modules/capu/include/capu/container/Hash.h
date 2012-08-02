@@ -24,43 +24,118 @@
 
 namespace capu {
 
-  class Hash {
+  template<typename T>
+  class HashCalculator;
+
+  template<>
+  class HashCalculator<uint32_t>
+  {
+  private:
+    static const uint32_t prime = 16777619UL;
+    static const uint32_t offset_base = 2166136261UL;
   public:
+    static uint32_t Hash(void* key, uint32_t len)
+    {
+      uint32_t result = offset_base;
+      uint8_t* ptr = static_cast<uint8_t*>(key);
+      do
+      {
+        result = (result^*ptr) * prime;
+        ++ptr;
+      }while(--len);
 
-    template <typename T>
-    static uint64_t Digest(const T &key) {
-      uint64_t result = 0;
-      for (uint64_t i = 0; i < 10; ++i) {
-        result = (result + static_cast<uint64_t> (key) * 13);
-      }
-      return static_cast<uint64_t> (result);
-    }
-
-    static uint64_t Digest(char* key) {
-      uint64_t result = 0;
-      char * keyStart = key;
-      char * keyEnd = key + strlen(key);
-      while (keyStart != keyEnd) {
-        result = (result + static_cast<uint64_t> (*keyStart) * 13);
-        ++keyStart;
-      }
       return result;
     }
 
-    static uint64_t Digest(const char* key) {
-      uint64_t result = 0;
-      const char * keyStart = key;
-      const char * keyEnd = key + strlen(key);
-      while (keyStart != keyEnd) {
-        result = (result + static_cast<uint64_t> (*keyStart) * 13);
-        ++keyStart;
-      }
+    static uint32_t Hash(char* key)
+    {
+      uint32_t result = offset_base;
+      do
+      {
+        result = (result^*key) * prime;
+      }while(*(++key));
+
       return result;
     }
 
-    
+    static uint32_t Hash(const char* key)
+    {
+      uint32_t result = offset_base;
+      do
+      {
+        result = (result^*key) * prime;
+      }while(*(++key));
+
+      return result;
+    }
 
   };
+
+  template<>
+  class HashCalculator<uint64_t>
+  {
+  private:
+    static const uint64_t prime = 1099511628211ULL;
+    static const uint64_t offset_base = 14695981039346656037ULL;
+  public:
+    static uint64_t Hash(void* key, uint32_t len)
+    {
+      uint64_t result = offset_base;
+      uint8_t* ptr = static_cast<uint8_t*>(key);
+      do
+      {
+        result = (result^*ptr) * prime;
+        ++ptr;
+      }while(--len);
+
+      return result;
+    }  
+
+    static uint64_t Hash(char* key)
+    {
+      uint64_t result = offset_base;
+      do
+      {
+        result = (result^*key) * prime;
+      }while(*(++key));
+
+      return result;
+    }
+
+    static uint64_t Hash(const char* key)
+    {
+      uint64_t result = offset_base;
+      do
+      {
+        result = (result^*key) * prime;
+      }while(*(++key));
+
+      return result;
+    }
+ 
+  };
+
+  class Hash
+  {
+  public:
+
+    static uint_t Digest(char* key)
+    {
+      return HashCalculator<uint_t>::Hash(key);
+    }
+
+    static uint_t Digest(const char* key)
+    {
+      return HashCalculator<uint_t>::Hash(key);
+    }
+    
+    template<typename T>
+    static uint_t Digest(T key)
+    {
+      return HashCalculator<uint_t>::Hash(&key, sizeof(T));
+    }
+  };
+
 }
 #endif /* HASH_H */
 

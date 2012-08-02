@@ -19,20 +19,19 @@
 #include <gtest/gtest.h>
 #include "capu/os/AtomicOperation.h"
 
+//include tests depending on architecture
+#include "arch/AtomicOperation.inc"
+
 TEST(AtomicOperation,Add) {
-  capu::uint32_t val = 4294967295u;
+  capu::uint32_t val = 100;
   capu::AtomicOperation::AtomicAdd32(val, 3);
-  EXPECT_EQ((capu::uint32_t) 2,val);
+  EXPECT_EQ((capu::uint32_t) 103,val);
 }
 
 TEST(AtomicOperation,Sub) {
   capu::uint32_t val = 13;
   capu::AtomicOperation::AtomicSub32(val, 5);
   EXPECT_EQ((capu::uint32_t) 8,val);
-
-  val = 0;
-  capu::AtomicOperation::AtomicSub32(val, 5);
-  EXPECT_EQ((capu::uint32_t) 4294967291u,val);
 }
 
 TEST(AtomicOperation,Inc) {

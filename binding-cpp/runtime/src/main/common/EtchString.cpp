@@ -156,11 +156,11 @@ status_t EtchString::substring(capu::uint32_t start, capu::uint32_t length, Etch
   }
 }
 
-capu::uint64_t EtchString::getHashCode() const{
-  capu::uint64_t result = 0;
+capu::uint32_t EtchString::getHashCode() const{
+  capu::uint32_t result = 0;
   capu::uint32_t len = strlen(mData);
   for (capu::uint32_t i = 0; i < len; i++) {
-    result = (result + static_cast<capu::uint64_t> (mData[i]) * 13);
+    result = (result + static_cast<capu::uint32_t> (mData[i]) * 13);
   }
   return result;
 }

@@ -26,15 +26,15 @@ class EtchHashNative {
 public:
 
   template<class T>
-  static capu::uint64_t Digest(T &key) {
+  static capu::uint32_t Digest(T &key) {
     return capu::Hash::Digest<T>(key);
   }
 
-  static capu::uint64_t Digest(char* key) {
+  static capu::uint32_t Digest(char* key) {
     return capu::Hash::Digest(key);
   }
 
-  static capu::uint64_t Digest(const char* key) {
+  static capu::uint32_t Digest(const char* key) {
     return capu::Hash::Digest(key);
   }
 

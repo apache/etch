@@ -60,7 +60,7 @@ public:
   /**
    * Returns hash code
    */
-  virtual capu::uint64_t getHashCode() const;
+  virtual capu::uint32_t getHashCode() const;
 
   /**
    * @return true if two object is equal

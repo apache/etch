@@ -75,7 +75,7 @@ status_t EtchStructValue::remove(EtchField &key, capu::SmartPointer<EtchObject> 
   return mTable.remove(key, value_old);
 }
 
-capu::uint64_t EtchStructValue::count() {
+capu::uint32_t EtchStructValue::count() {
   return mTable.count();
 }
 

@@ -122,7 +122,7 @@ public:
    * Returns count of the EtchStructValue.
    * @return number of element in hash table
    */
-  capu::uint64_t count();
+  capu::uint32_t count();
 
   /**
    * Clear all key and values of the EtchStructValue.

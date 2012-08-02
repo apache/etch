@@ -29,12 +29,13 @@
 #include "transport/EtchFlexBuffer.h"
 #include "transport/EtchSessionData.h"
 #include "transport/EtchTcpOption.h"
+#include "capu/util/Runnable.h"
 
 /**
  * Implementation of connection which handles a tcp connection.
  */
 
-class EtchTcpConnection : public EtchConnection<EtchSessionData>, public EtchTransportData {
+class EtchTcpConnection : public EtchConnection<EtchSessionData>, public EtchTransportData, public capu::Runnable {
 public:
 
   /**

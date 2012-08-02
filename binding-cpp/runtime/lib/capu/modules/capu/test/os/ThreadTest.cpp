@@ -19,7 +19,7 @@
 #include "capu/os/Thread.h"
 
 
-class ThreadTest
+class ThreadTest : public capu::Runnable
 {
   public:
     static capu::int32_t variable;
@@ -38,10 +38,10 @@ class ThreadTest
     }
 };
 
-class ThreadTest2
+class ThreadTest2 : public capu::Runnable
 {
   public:
-   
+
     ThreadTest2()
     {
     }

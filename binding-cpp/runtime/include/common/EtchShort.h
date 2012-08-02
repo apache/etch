@@ -56,7 +56,7 @@ public:
   /**
    * Returns hash code
    */
-  capu::uint64_t getHashCode() const;
+  capu::uint32_t getHashCode() const;
 
   /**
    * @return true if two object is equal

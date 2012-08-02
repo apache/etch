@@ -38,8 +38,8 @@ const EtchObjectType* EtchObject::getObjectType() const{
 EtchObject::~EtchObject() {
 }
 
-capu::uint64_t EtchObject::getHashCode() const{
-  return (capu::uint64_t) this;
+capu::uint32_t EtchObject::getHashCode() const{
+  return (capu::uint32_t) this;
 }
 
 capu::bool_t EtchObject::equals(const EtchObject* other) const{

@@ -48,7 +48,7 @@ public:
   /**
    * Constructs EtchHashTable.
    */
-  inline EtchHashTable(capu::uint64_t size);
+  inline EtchHashTable(capu::uint32_t size);
 
   /**
    * Destructure.
@@ -96,7 +96,7 @@ public:
    * Returns count of the EtchHashTable.
    * @return number of element in hash table
    */
-  inline capu::uint64_t count();
+  inline capu::uint32_t count();
 
   /**
    * Clear all key and values of the EtchHashTable.
@@ -126,7 +126,7 @@ inline EtchHashTable<Key, T, H, C>::EtchHashTable()
 }
 
 template <class Key, class T, class H, class C>
-inline EtchHashTable<Key, T, H, C>::EtchHashTable(capu::uint64_t size)
+inline EtchHashTable<Key, T, H, C>::EtchHashTable(capu::uint32_t size)
 : EtchObject(EtchHashTable<Key, T, H, C>::TYPE()), mHashTable(size) {
 
 }
@@ -152,7 +152,7 @@ inline status_t EtchHashTable<Key, T, H, C>::remove(const Key &key, T* value_old
 }
 
 template <class Key, class T, class H, class C>
-inline capu::uint64_t EtchHashTable<Key, T, H, C>::count() {
+inline capu::uint32_t EtchHashTable<Key, T, H, C>::count() {
   return mHashTable.count();
 }
 

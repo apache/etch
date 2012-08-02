@@ -31,13 +31,14 @@
 #include "common/EtchServerSocket.h"
 #include "util/EtchURL.h"
 #include "util/EtchResources.h"
+#include "capu/util/Runnable.h"
 
 /**
  * Implementation of a connection which handles a socket listener.
  */
 class EtchTcpListener
 : public EtchConnection<EtchSessionListener<EtchSocket> >,
-public virtual EtchTransport<EtchSessionListener<EtchSocket> > {
+public virtual EtchTransport<EtchSessionListener<EtchSocket> >, public capu::Runnable {
 public:
 
   /**

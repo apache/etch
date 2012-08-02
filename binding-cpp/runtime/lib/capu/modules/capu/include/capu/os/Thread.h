@@ -24,6 +24,7 @@
 #undef THREAD_INC_HEADER
 
 #include "capu/Error.h"
+#include "capu/util/Runnable.h"
 
 namespace capu
 {
@@ -42,8 +43,7 @@ namespace capu
     * @param func function object that will be executed
     * @param arguments
     */
-    template <typename T>
-    inline Thread(T* object,void* args=NULL);
+    inline Thread(Runnable* object,void* args=NULL);
 
     /**
     * Destructor

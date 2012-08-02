@@ -38,7 +38,7 @@ EtchField::EtchField()
 : EtchObject(EtchField::TYPE()), mId(0), mName("") {
 }
 
-capu::uint64_t EtchField::getHashCode() const{
+capu::uint32_t EtchField::getHashCode() const{
   return mId.getHashCode() ^ mName.getHashCode();
 }
 

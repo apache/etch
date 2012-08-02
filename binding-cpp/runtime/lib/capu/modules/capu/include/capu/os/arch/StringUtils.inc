@@ -16,10 +16,12 @@
  * limitations under the License.
  */
 
-
-
-#ifdef ARCH_LINUX
+#if defined(OS_LINUX)
     #include "Linux/StringUtils.inc"
-#elif ARCH_WIN32
-    #include "Win32/StringUtils.inc"
+#elif defined(OS_WINDOWS)
+    #include "Windows/StringUtils.inc"
+#elif defined(OS_INTEGRITY)
+    #include "Linux/StringUtils.inc"
+#elif defined(OS_QNX)
+    #include "Qnx/StringUtils.inc"
 #endif

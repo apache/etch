@@ -24,7 +24,7 @@
 namespace capu {
   typedef int32_t status_t;
 
-  enum {
+  enum Errors{
     CAPU_OK = 0,
     CAPU_EUNIMPL = 1,
     CAPU_ERANGE = 2,
@@ -37,7 +37,7 @@ namespace capu {
     CAPU_SOCKET_ECLOSE = 9,
     CAPU_SOCKET_EADDR = 10,
     CAPU_ENO_MEMORY = 11,
-    CAPU_TIMEOUT = 12,
+    CAPU_ETIMEOUT = 12,
     CAPU_ENOT_EXIST = 13,
     CAPU_ENOT_SUPPORTED = 14,
     CAPU_EIO = 15

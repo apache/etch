@@ -29,7 +29,7 @@ TEST(EtchUtilTest, etch_strcpy_s) {
   status_t retval = etch_strcpy_s(dst, dstSize, src);
   EXPECT_TRUE(retval == ETCH_EINVAL);
 
-  src = "Test";
+  src = const_cast<char*>("Test");
   dst = new char[5];
   retval = etch_strcpy_s(dst, dstSize, src);
   EXPECT_TRUE(retval == ETCH_ERANGE);

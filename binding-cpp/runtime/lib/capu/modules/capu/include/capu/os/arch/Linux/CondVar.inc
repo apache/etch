@@ -19,6 +19,8 @@
 
 #ifdef CONDVAR_INC_HEADER
 #include <pthread.h>
+#include <time.h>
+#include <errno.h>
 #endif
 
 #ifdef CONDVAR_INC_MEMBER
@@ -40,7 +42,7 @@ private:
   }
   inline status_t CondVar::signal()
   {
-    if(pthread_cond_signal(&mCond)==0)
+    if(pthread_cond_signal(&mCond) == 0)
     {
       return CAPU_OK;
     }
@@ -51,7 +53,7 @@ private:
   }
   inline status_t CondVar::broadcast()
   {
-    if(pthread_cond_broadcast(&mCond)==0)
+    if(pthread_cond_broadcast(&mCond) == 0)
     {
       return CAPU_OK;
     }
@@ -60,19 +62,44 @@ private:
       return CAPU_ERROR;
     }
   }
-  inline status_t CondVar::wait(Mutex *mutex)
+  inline status_t CondVar::wait(Mutex *mutex, uint32_t millisec)
   {
     if(mutex == NULL)
     {
       return CAPU_EINVAL;
     }
-    if (pthread_cond_wait(&mCond, &mutex->mLock)==0)
+
+    if(millisec != 0)
     {
-      return CAPU_OK;
+      timespec _time;
+      if(clock_gettime(CLOCK_REALTIME, &_time) < 0)
+      {
+        return CAPU_ERROR;
+      }
+      _time.tv_sec += (millisec/1000);
+      _time.tv_nsec += ((millisec%1000)* 1000000);
+      int32_t ret = pthread_cond_timedwait(&mCond, &mutex->mLock, &_time);
+
+      switch(ret)
+      {
+        case 0:
+          return CAPU_OK;
+        case ETIMEDOUT:
+          return CAPU_ETIMEOUT;
+        default:
+          return CAPU_ERROR;
+      }
     }
     else
     {
-      return CAPU_ERROR;
+      if(pthread_cond_wait(&mCond, &mutex->mLock) == 0)
+      {
+        return CAPU_OK;
+      }
+      else
+      {
+        return CAPU_ERROR;
+      }
     }
   }
 #endif

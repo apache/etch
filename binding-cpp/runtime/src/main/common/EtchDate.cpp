@@ -53,6 +53,6 @@ void EtchDate::set(capu::time_t value) {
   mValue = value;
 }
 
-capu::uint64_t EtchDate::getHashCode() const{
-  return mValue;
+capu::uint32_t EtchDate::getHashCode() const{
+  return static_cast<capu::uint32_t>(mValue ^ mValue >> 32);;
 }

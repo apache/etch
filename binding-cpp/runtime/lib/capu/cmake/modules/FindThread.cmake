@@ -5,38 +5,44 @@
 # The ASF licenses this file to you under the Apache License, Version
 # 2.0 (the "License"); you may not use this file except in compliance
 # with the License. You may obtain a copy of the License at
-#
-# http://www.apache.org/licenses/LICENSE-2.0
-#
+# 
+# http://www.apache.org/licenses/LICENSE-2.0 
+# 
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
-IF("${TARGET_ARCH}" STREQUAL "Win32")
+# To specify your package use the following variables
+# ${PACKAGE_NAME}_INCLUDE_DIRS
+# ${PACKAGE_NAME}_LIBRARY_DIRS
+# ${PACKAGE_NAME}_LIBNAMES
+# ${PACKAGE_NAME}_DEPENDENT_DEFINITIONS
+# ${PACKAGE_NAME}_DEPENDENT_DEBUG_DEFINITIONS
+# ${PACKAGE_NAME}_DEPENDENT_RELEASE_DEFINITIONS 
 
-	SET(Thread_INCLUDE_DIR "")
-	SET(Thread_LIBRARIES "")
+SET(PACKAGE_NAME Thread)
 
-ELSEIF("${TARGET_ARCH}" STREQUAL "Linux")
+IF("${TARGET_OS}" STREQUAL "Windows")
+    
+	SET(${PACKAGE_NAME}_INCLUDE_DIRS "")
+	SET(${PACKAGE_NAME}_LIBRARIES  "" )
+            
+ELSEIF("${TARGET_OS}" STREQUAL "Linux")
 
-	FIND_PATH(Thread_INCLUDE_DIR pthread.h /usr/include )
-	FIND_LIBRARY(Thread_LIBRARIES NAMES pthread PATHS /usr/lib )
+	FIND_PATH(${PACKAGE_NAME}_INCLUDE_DIRS pthread.h /usr/include )
+	FIND_LIBRARY(${PACKAGE_NAME}_LIBRARIES NAMES pthread PATHS /usr/lib )
 
+ELSEIF("${TARGET_OS}" STREQUAL "Integrity")	
+
+	FIND_PATH(${PACKAGE_NAME}_INCLUDE_DIRS pthread.h /INTEGRITY-include )
+	FIND_LIBRARY(${PACKAGE_NAME}_LIBRARIES NAMES posix PATHS /intarmv7a_vfp_common )
+	
+ELSEIF("${TARGET_OS}" STREQUAL "QNX")	
+
+	FIND_PATH(${PACKAGE_NAME}_INCLUDE_DIRS pthread.h /include )
+	FIND_LIBRARY(${PACKAGE_NAME}_LIBRARIES NAMES c PATHS /x86/lib )
+	
 ENDIF()
-
-SET( Thread_FOUND "NO" )
-IF(DEFINED Thread_LIBRARIES)
-    SET( Thread_FOUND "YES" )
-    message(STATUS "Found Thread libs: ${Thread_LIBRARIES}")
-    message(STATUS "Found Thread includes: ${Thread_INCLUDE_DIR}")
-ENDIF(DEFINED Thread_LIBRARIES)
-
-MARK_AS_ADVANCED(
-  Thread_INCLUDE_DIR
-  Thread_ARCH_INCLUDE_DIR
-  Thread_LIBRARIES
-)
 

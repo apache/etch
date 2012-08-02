@@ -20,28 +20,74 @@
 #include "capu/os/ServerSocket.h"
 #include "capu/os/Thread.h"
 #include "capu/os/Socket.h"
+#include "capu/os/Mutex.h"
+#include "capu/os/CondVar.h"
 
-class ThreadClientTest {
+capu::Mutex mutex;
+capu::CondVar cv;
+capu::bool_t cond = false;
+
+class RandomPort
+{
+public:
+  /**
+   * Gets a Random Port between 1024 and 10024
+   */
+  static capu::uint16_t get()
+  {
+    return (rand() % 10000) + 40000; // 0-1023 = Well Known, 1024-49151 = User, 49152 - 65535 = Dynamic
+  }
+};
+
+class ThreadClientTest : public capu::Runnable {
+
+capu::int16_t port;
 public:
   //client thread to test data exchange between client and server
+  ThreadClientTest(capu::int16_t port) : port(port) {}
 
-  inline void operator()(void * param) {
+  void operator()(void * param) {
     capu::int32_t communication_variable;
     capu::int32_t numBytes = 0;
     //ALLOCATION AND SYNCH OF cient and  server
     capu::Socket *cli_socket = new capu::Socket();
-    capu::Thread::Sleep(2000);
+
     //TRY TO CONNECT TO IPV6
-    EXPECT_TRUE(cli_socket->connect((unsigned char *) "::1", 5000) == capu::CAPU_SOCKET_EADDR);
+    EXPECT_TRUE(cli_socket->connect((unsigned char *) "::1", port) == capu::CAPU_SOCKET_EADDR);
     //connects to he given id
-    EXPECT_TRUE(cli_socket->connect((unsigned char *) "localhost", 5000) == capu::CAPU_OK);
+    capu::status_t result = capu::CAPU_ERROR;
+    //wait for server to start up
+    mutex.lock();
+    while (!cond) { 
+      cv.wait(&mutex);
+    }
+    cond = false;
+    mutex.unlock();
+    result = capu::CAPU_ERROR;
+    capu::int32_t attemps = 0;
+    while (result != capu::CAPU_OK && attemps < 10) {
+      result = cli_socket->connect((unsigned char *) "localhost", port);
+      attemps++;
+      capu::Thread::Sleep(50);
+    }
+    EXPECT_TRUE(result == capu::CAPU_OK);
+
     capu::int32_t i = 5;
     //send data
     EXPECT_TRUE(cli_socket->send((unsigned char*) &i, sizeof (capu::int32_t)) == capu::CAPU_OK);
+
     //receive
-    EXPECT_TRUE(cli_socket->receive((unsigned char *) &communication_variable, sizeof (capu::int32_t), numBytes) == capu::CAPU_OK);
+    capu::status_t res = cli_socket->receive((unsigned char *) &communication_variable, sizeof (capu::int32_t), numBytes);
+    EXPECT_EQ(capu::CAPU_OK,res);
+
     //CHECK VALUE
-    EXPECT_TRUE(communication_variable == 6);
+    EXPECT_EQ(6,communication_variable);
+    
+    mutex.lock();
+    cond = true;
+    cv.signal();
+    mutex.unlock();
+
     //socket close
     EXPECT_TRUE(cli_socket->close() == capu::CAPU_OK);
     //deallocating
@@ -49,27 +95,43 @@ public:
   }
 };
 
-class ThreadTimeoutClientTest {
+class ThreadTimeoutClientTest : public capu::Runnable {
+  capu::int16_t port;
 public:
   //timeout test
+  ThreadTimeoutClientTest(capu::int16_t port) : port(port) {}
 
-  inline void operator()(void * param) {
+  void operator()(void * param) {
     capu::int32_t communication_variable;
     capu::int32_t numBytes = 0;
-    //ALLOCATION AND SYNCH OF cient and  server
     capu::Socket *cli_socket = new capu::Socket();
-    capu::Thread::Sleep(2000);
-    //timeout is 5 second;
-    cli_socket->setTimeout(5);
-    //TRY TO CONNECT TO IPV6
-    EXPECT_TRUE(cli_socket->connect((unsigned char *) "::1", 5000) == capu::CAPU_SOCKET_EADDR);
+    //timeout is 2 second;
+    cli_socket->setTimeout(2);
     //connects to he given id
-    EXPECT_TRUE(cli_socket->connect((unsigned char *) "localhost", 5000) == capu::CAPU_OK);
+    capu::status_t result = capu::CAPU_ERROR;
+    //wait for server to start up
+    mutex.lock();
+    while (!cond) { 
+      cv.wait(&mutex);
+    }
+    cond = false;
+    mutex.unlock();
+    result = cli_socket->connect((unsigned char *) "localhost", port);
+    EXPECT_TRUE(result == capu::CAPU_OK);
+
     capu::int32_t i = 5;
+
     //send data
     EXPECT_TRUE(cli_socket->send((unsigned char*) &i, sizeof (capu::int32_t)) == capu::CAPU_OK);
+
     //receive
-    EXPECT_TRUE(cli_socket->receive((unsigned char *) &communication_variable, sizeof (capu::int32_t), numBytes) == capu::CAPU_TIMEOUT);
+    EXPECT_EQ(capu::CAPU_ETIMEOUT, cli_socket->receive((unsigned char *) &communication_variable, sizeof (capu::int32_t), numBytes));
+
+    //client has received timeout, server can close socket
+    mutex.lock();
+    cond = true;
+    cv.signal();
+    mutex.unlock();
     //socket close
     EXPECT_TRUE(cli_socket->close() == capu::CAPU_OK);
     //deallocating
@@ -77,31 +139,51 @@ public:
   }
 };
 
-class ThreadServerTest {
+class ThreadServerTest : public capu::Runnable {
+  capu::int16_t port;
 public:
   //SERVER thread to test data exchange between client and server
+  ThreadServerTest(capu::int16_t port) : port(port) {}
 
-  inline void operator()(void * param) {
+  void operator()(void * param) {
     capu::int32_t communication_variable;
     capu::int32_t numBytes = 0;
     //server socket allocation
     capu::ServerSocket *socket = new capu::ServerSocket();
 
     //bind to given address
-    EXPECT_TRUE(socket->bind(5000, "0.0.0.0") == capu::CAPU_OK);
+    EXPECT_TRUE(socket->bind(port, "0.0.0.0") == capu::CAPU_OK);
     //start listening
     EXPECT_TRUE(socket->listen(5) == capu::CAPU_OK);
     //accept connection
+
+    //server is ready to accept clients
+    mutex.lock();
+    cond = true;
+    cv.signal();
+    mutex.unlock();
     capu::Socket *new_socket = socket->accept();
+
     //receive data
-    EXPECT_TRUE(new_socket->receive((unsigned char *) &communication_variable, sizeof (capu::int32_t), numBytes) != -1);
+    capu::status_t result = capu::CAPU_ERROR;
+
+    result = new_socket->receive((unsigned char *) &communication_variable, sizeof (capu::int32_t), numBytes);
+    EXPECT_TRUE(result == capu::CAPU_OK);
     //CHECK VALUE
     EXPECT_TRUE(communication_variable == 5);
     //update data
     communication_variable++;
+
     //send it back
-    capu::Thread::Sleep(4000);
     EXPECT_TRUE(new_socket->send((unsigned char *) &communication_variable, sizeof (capu::int32_t)) == capu::CAPU_OK);
+
+    //wait with close until client has received data
+    mutex.lock();
+    while (!cond) { 
+      cv.wait(&mutex);
+    }
+    cond = false;
+    mutex.unlock();
     //close session
     EXPECT_TRUE(new_socket->close() == capu::CAPU_OK);
     //deallocate session identifier
@@ -111,10 +193,12 @@ public:
   }
 };
 
-class ThreadTimeoutServerTest {
+class ThreadTimeoutServerTest : public capu::Runnable {
+  capu::int16_t port;
+
 public:
   //timeout test
-
+  ThreadTimeoutServerTest(capu::int16_t port) : port(port) {}
   inline void operator()(void * param) {
     capu::int32_t communication_variable;
     capu::int32_t numBytes = 0;
@@ -122,19 +206,32 @@ public:
     capu::ServerSocket *socket = new capu::ServerSocket();
 
     //bind to given address
-    EXPECT_TRUE(socket->bind(5000, "0.0.0.0") == capu::CAPU_OK);
+    EXPECT_TRUE(socket->bind(port, "0.0.0.0") == capu::CAPU_OK);
     //start listening
     EXPECT_TRUE(socket->listen(5) == capu::CAPU_OK);
+
+    //server is ready to accept clients
+    mutex.lock();
+    cond = true;
+    cv.signal();
+    mutex.unlock();
     //accept connection
     capu::Socket *new_socket = socket->accept();
-    //receive data
-    EXPECT_TRUE(new_socket->receive((unsigned char *) &communication_variable, sizeof (capu::int32_t), numBytes) != -1);
+    capu::status_t result = capu::CAPU_ERROR;
+    
+    result = new_socket->receive((unsigned char *) &communication_variable, sizeof (capu::int32_t), numBytes);
+    EXPECT_EQ(capu::CAPU_OK, result);
     //CHECK VALUE
     EXPECT_TRUE(communication_variable == 5);
-    //update data
-    communication_variable++;
-    //send it back
-    capu::Thread::Sleep(9000);
+    
+    //wait for timeout on client side
+    mutex.lock();
+    while (!cond) { 
+    cv.wait(&mutex);
+    }
+    cond = false;
+    mutex.unlock();
+
     //close session
     EXPECT_TRUE(new_socket->close() == capu::CAPU_OK);
     //deallocate session identifier
@@ -147,10 +244,11 @@ public:
 TEST(Socket, ConnectTest) {
   capu::Socket *socket = new capu::Socket();
   //pass null
-  EXPECT_TRUE(socket->connect(NULL, 5) == capu::CAPU_EINVAL);
+  capu::uint16_t port = RandomPort::get();
+  EXPECT_TRUE(socket->connect(NULL, port) == capu::CAPU_EINVAL);
 
-  EXPECT_TRUE(socket->connect((unsigned char *)"www.test", 5) == capu::CAPU_SOCKET_EADDR);
-  
+  EXPECT_TRUE(socket->connect((unsigned char *)"www.test", port) == capu::CAPU_SOCKET_EADDR);
+
   delete socket;
 }
 
@@ -169,6 +267,7 @@ TEST(Socket, CloseReceiveAndSendTest) {
 
 TEST(Socket, SetAndGetPropertiesTest) {
   capu::Socket *socket = new capu::Socket();
+  capu::uint16_t port = RandomPort::get();
   capu::ServerSocket *serverSocket = new capu::ServerSocket();
   //TRY TO CHANGE THE PROPERTIES OF NOT CONNECTED SOCKET
   EXPECT_TRUE(socket->setBufferSize(1024) == capu::CAPU_OK);
@@ -198,10 +297,10 @@ TEST(Socket, SetAndGetPropertiesTest) {
   EXPECT_TRUE(int_tmp == 90);
 
 
-  serverSocket->bind(5000, "0.0.0.0");
+  serverSocket->bind(port, "0.0.0.0");
   serverSocket->listen(3);
 
-  socket->connect((unsigned char *) "127.0.0.1", 5000);
+  socket->connect((unsigned char *) "127.0.0.1", port);
 
   //TRY TO CHANGE THE PROPERTIES OF CONNECTED SOCKET
   EXPECT_TRUE(socket->setBufferSize(2024) == capu::CAPU_OK);
@@ -244,10 +343,13 @@ TEST(Socket, SetAndGetPropertiesTest) {
 }
 
 TEST(SocketAndServerSocket, CommunicationTest) {
-  ThreadServerTest server;
-  ThreadClientTest client;
+  cond = false;
+  capu::uint16_t port = RandomPort::get();
+  ThreadServerTest server(port);
+  ThreadClientTest client(port);
   capu::Thread * server_thread = new capu::Thread(&server, NULL);
   capu::Thread * client_thread = new capu::Thread(&client, NULL);
+
   //Create two threads which will behave like client and server to test functionality
   server_thread->join();
   client_thread->join();
@@ -257,8 +359,10 @@ TEST(SocketAndServerSocket, CommunicationTest) {
 }
 
 TEST(SocketAndServerSocket, TimeoutTest) {
-  ThreadTimeoutServerTest server;
-  ThreadTimeoutClientTest client;
+  cond = false;
+  capu::uint16_t port = RandomPort::get();
+  ThreadTimeoutServerTest server(port);
+  ThreadTimeoutClientTest client(port);
   capu::Thread * server_thread = new capu::Thread(&server, NULL);
   capu::Thread * client_thread = new capu::Thread(&client, NULL);
   //Create two threads which will behave like client and server to test functionality

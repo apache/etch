@@ -85,7 +85,7 @@ public:
   /**
    * @return the capacity of the array.
    */
-  capu::int32_t getSize();
+  capu::uint32_t getSize();
 
   /**
    * @return the number of elements in the array.

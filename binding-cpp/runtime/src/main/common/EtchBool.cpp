@@ -51,7 +51,7 @@ capu::bool_t EtchBool::equals(const EtchObject * other) const{
   return (a->mValue == this->mValue);
 }
 
-capu::uint64_t EtchBool::getHashCode() const{
+capu::uint32_t EtchBool::getHashCode() const{
   if (mValue)
     return 0;
   return 1;

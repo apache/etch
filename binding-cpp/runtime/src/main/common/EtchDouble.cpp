@@ -41,8 +41,8 @@ capu::double_t EtchDouble::get(){
   return mValue;
 }
 
-capu::uint64_t EtchDouble::getHashCode() const{
-   capu::uint64_t result = 0;
+capu::uint32_t EtchDouble::getHashCode() const{
+  capu::uint32_t result = 0;
   memcpy(&result, &mValue, sizeof(capu::double_t));
   return result;
 }

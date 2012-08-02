@@ -51,11 +51,12 @@ namespace capu
          /**
          * Wait for a condition variable
          * @param  mutex
+         * @param timeout (default is infinite)
          * @return CAPU_OK if the condition variable is correctly waited
          *         CAPU_EINVAL if the given mutex is NULL
          *         CAPU_ERROR otherwise
          */
-        inline status_t wait(Mutex *mutex);
+        inline status_t wait(Mutex *mutex, uint32_t millisec = 0);
 
         /**
          * Wake up all threads that is waiting for this condition variable

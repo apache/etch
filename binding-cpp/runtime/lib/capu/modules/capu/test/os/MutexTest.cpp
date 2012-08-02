@@ -20,14 +20,13 @@
 #include "capu/os/Mutex.h"
 #include "capu/os/Thread.h"
 
-
-class ThreadLockTest
+class ThreadLockTest : public capu::Runnable
 {
 public:
   static capu::Mutex lock;
   static capu::int32_t variable;
 
-  inline void operator()(void * param)
+  void operator()(void * param)
   {
     for(capu::int32_t i = 0; i<100; i++) {
       capu::int32_t* sleepTime = (capu::int32_t *) param;
@@ -39,13 +38,13 @@ public:
     }
   }
 };
-class ThreadNoLockTest
+class ThreadNoLockTest : public capu::Runnable
 {
 public:
   static capu::int32_t variable2;
   static capu::Mutex lock2;
 
-  inline void operator()(void * param)
+  void operator()(void * param)
   {
     for(capu::int32_t i = 0; i<100; i++) {
       capu::int32_t* sleepTime = (capu::int32_t *) param;

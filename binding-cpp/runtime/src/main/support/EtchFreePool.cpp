@@ -17,6 +17,7 @@
  */
 
 #include "support/EtchFreePool.h"
+#include "capu/util/Runnable.h"
 
 const EtchObjectType* EtchFreePool::TYPE() {
   const static EtchObjectType TYPE(EOTID_FREEPOOL, NULL);

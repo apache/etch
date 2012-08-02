@@ -35,6 +35,9 @@ namespace capu {
             return (strcmp(x,y) == 0);
         }
 
+        bool_t operator () (char* x, char* y) const {
+            return (strcmp(x,y) == 0);
+        }
     };
 }
 

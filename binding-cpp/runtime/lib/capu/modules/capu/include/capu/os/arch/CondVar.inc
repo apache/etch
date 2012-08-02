@@ -16,9 +16,13 @@
  * limitations under the License.
  */
 
-#ifdef ARCH_LINUX
+#if defined(OS_LINUX)
     #include "Linux/CondVar.inc"
-#elif ARCH_WIN32
-    #include "Win32/CondVar.inc"
+#elif defined(OS_WINDOWS)
+    #include "Windows/CondVar.inc"
+#elif defined(OS_INTEGRITY)
+    #include "Linux/CondVar.inc"
+#elif defined(OS_QNX)
+    #include "Linux/CondVar.inc"
 #endif
 

@@ -16,9 +16,27 @@
  * limitations under the License.
  */
 
-#ifdef ARCH_LINUX
-#include "Linux/AtomicOperation.inc"
-#elif ARCH_WIN32
-#include "Win32/AtomicOperation.inc"
+#if defined(OS_LINUX)
+  #if defined(ARCH_X86_32)
+    #include "Linux_X86_32/AtomicOperation.inc"
+  #elif defined(ARCH_X86_64)
+    #include "Linux_X86_64/AtomicOperation.inc"
+  #elif defined(ARCH_ARMV7L)
+    #include "Linux_ARM_V7L/AtomicOperation.inc"
+  #endif
+#elif defined(OS_WINDOWS)
+  #if defined(ARCH_X86_32)
+    #include "Windows_X86_32/AtomicOperation.inc"
+  #elif defined(ARCH_X86_64)
+    #include "Windows_X86_64/AtomicOperation.inc"
+  #endif
+#elif defined(OS_INTEGRITY)
+  #if defined(ARCH_ARMV7L)
+    #include "Integrity_ARM_V7L/AtomicOperation.inc"
+  #endif
+#elif defined(OS_QNX)
+  #if defined(ARCH_X86_32)
+    #include "Linux_X86_32/AtomicOperation.inc"
+  #endif
 #endif
 

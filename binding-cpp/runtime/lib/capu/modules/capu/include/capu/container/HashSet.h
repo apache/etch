@@ -23,9 +23,6 @@
 #include "capu/container/Hash.h"
 #include "capu/container/List.h"
 
-#define DEFAULT_HASH_SET_SIZE 1000
-
-
 namespace capu {
 
   template <class T, class C = Comparator, class H = Hash >
@@ -41,7 +38,7 @@ namespace capu {
        * @param list     array of linked list which provide channing for hash set
        * @param listSize size of hash set (size of linked list array)
        */
-      HashSetIterator(List<T, C> * list, uint64_t listSize);
+      HashSetIterator(List<T, C> * list, uint_t listSize);
 
       /**
        * destructor
@@ -65,10 +62,10 @@ namespace capu {
       status_t next(T* value);
 
     private:
-      uint64_t mCurrentListIndex;
+      uint_t mCurrentListIndex;
       typename List<T, C>::Iterator mCurrentListIterator;
       List<T, C> * mList;
-      uint64_t mMaxListSize;
+      uint_t mMaxListSize;
     };
 
   public:
@@ -84,7 +81,7 @@ namespace capu {
      * Parameterized Constructor
      * @param size size of initial HashSet
      */
-    HashSet(uint64_t size);
+    HashSet(uint_t size);
 
     /**
      * Destructor
@@ -114,10 +111,21 @@ namespace capu {
     status_t remove(const T &value);
 
     /**
+     * Checks if the provided value is already contained in the hash set.
+     *
+     * @param value             value that will be checked
+     *
+     * @return true if element is already contained in the hash set
+     *         false otherwise
+     *
+     */
+    bool_t hasElement(const T &value);
+
+    /**
      * Returns count of the hash set.
      * @return number of element in hash set
      */
-    uint64_t count();
+    uint_t count();
 
     /**
      * Clear all values of the hash set.
@@ -142,8 +150,8 @@ namespace capu {
      * @return -1 if the key is unique
      *          otherwise the index in the linked list
      */
-    int32_t __check_duplicate_value(uint64_t index, T k) {
-      int32_t count = 0;
+    int_t __check_duplicate_value(uint_t index, T k) {
+      int_t count = 0;
       typename List<T, C>::Iterator it = mLists[index].begin();
       T tmp;
       C compare;
@@ -159,13 +167,13 @@ namespace capu {
     }
 
     List<T, C> *mLists;
-    uint32_t mSize;
-    uint32_t mCount;
+    uint_t mSize;
+    uint_t mCount;
   };
 
   template <class T, class C, class H>
   HashSet<T, C, H>::HashSet()
-  : mSize(DEFAULT_HASH_SET_SIZE)
+  : mSize(HASH_SET_DEFAULT_SIZE)
   , mCount(0) {
     mLists = new List<T, C>[mSize];
   }
@@ -176,7 +184,7 @@ namespace capu {
   }
 
   template <class T, class C, class H>
-  HashSet<T, C, H>::HashSet(uint64_t size)
+  HashSet<T, C, H>::HashSet(uint_t size)
   : mSize(size)
   , mCount(0) {
     mLists = new List<T, C>[mSize];
@@ -185,7 +193,7 @@ namespace capu {
   template <class T, class C, class H>
   status_t HashSet< T, C, H>::put(const T &value) {
     status_t result;
-    uint64_t index = H::Digest(value) % mSize;
+    uint_t index = H::Digest(value) % mSize;
     if (mLists[index].isEmpty()) {
       result = mLists[index].add(value);
       if (result != CAPU_OK) {
@@ -194,7 +202,7 @@ namespace capu {
       mCount++;
       //THERE IS NO OLD VALUE
     } else {
-      int32_t key_duplicate_index = this->__check_duplicate_value(index, value);
+      int_t key_duplicate_index = this->__check_duplicate_value(index, value);
       if (key_duplicate_index < 0) {
         result = mLists[index].add(value);
         if (result != CAPU_OK) {
@@ -213,9 +221,9 @@ namespace capu {
   template <class T, class C, class H>
   status_t HashSet< T, C, H>::remove(const T &value) {
     status_t result;
-    uint64_t index = H::Digest(value) % mSize;
+    uint_t index = H::Digest(value) % mSize;
 
-    int32_t key_index = this->__check_duplicate_value(index, value);
+    int_t key_index = this->__check_duplicate_value(index, value);
     if (key_index < 0) {
       return CAPU_ERANGE;
     } else {
@@ -229,14 +237,28 @@ namespace capu {
     return CAPU_OK;
   }
 
+  
   template <class T, class C, class H>
-  uint64_t HashSet< T, C, H>::count() {
+  bool_t HashSet< T, C, H>::hasElement(const T &value) {
+    uint_t index = H::Digest(value) % mSize;
+
+    int_t key_index = this->__check_duplicate_value(index, value);
+    if (key_index < 0) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+
+  template <class T, class C, class H>
+  uint_t HashSet< T, C, H>::count() {
     return mCount;
   }
 
   template <class T, class C, class H>
   status_t HashSet< T, C, H>::clear() {
-    for (uint64_t i = 0; i < mSize; ++i) {
+    for (uint_t i = 0; i < mSize; ++i) {
       mLists[i].clear();
     }
     mCount = 0;
@@ -244,14 +266,14 @@ namespace capu {
   }
 
   template <class T, class C, class H>
-  HashSet< T, C, H>::HashSetIterator::HashSetIterator(List<T, C> * list, uint64_t list_size) {
+  HashSet< T, C, H>::HashSetIterator::HashSetIterator(List<T, C> * list, uint_t list_size) {
     mCurrentListIndex = 0;
     this->mList = list;
     mMaxListSize = list_size;
     this->mCurrentListIterator = list[mCurrentListIndex].begin();
 
     //to point the first non-empty one
-    for (uint64_t i = 0; i < list_size; ++i) {
+    for (uint_t i = 0; i < list_size; ++i) {
       if (!mList[i].isEmpty()) {
         mCurrentListIndex = i;
         this->mCurrentListIterator = list[i].begin();
@@ -314,7 +336,7 @@ namespace capu {
 
   template <class T, class C, class H>
   typename HashSet<T, C, H>::Iterator HashSet<T, C, H>::begin() {
-    return HashSet<T, C, H>::Iterator(mLists, mSize);
+    return typename HashSet<T, C, H>::Iterator(mLists, mSize);
   }
 
 }

@@ -228,8 +228,10 @@ TEST(HashtableIterator, next) {
   capu::int32_t key2 = 12;
 
   capu::int32_t value = 5;
+  capu::int32_t value2 = 6;
   capu::status_t status = capu::CAPU_OK;
   capu::Pair<capu::int32_t, capu::int32_t> pair;
+  capu::Pair<capu::int32_t, capu::int32_t> pair2;
   capu::HashTable<capu::int32_t, capu::int32_t>* h1 = new capu::HashTable<capu::int32_t, capu::int32_t > ();
 
   //create iterator
@@ -245,16 +247,18 @@ TEST(HashtableIterator, next) {
   EXPECT_TRUE(status == capu::CAPU_OK);
 
   //add new value
-  status = h1->put(key2, value);
+  status = h1->put(key2, value2);
   EXPECT_TRUE(status == capu::CAPU_OK);
   it = h1->begin();
 
   it.next(&pair);
-  EXPECT_TRUE(pair.first == key);
-  EXPECT_TRUE(pair.second == value);
-
-  it.next(&pair);
-  EXPECT_TRUE(pair.first == key2);
-  EXPECT_TRUE(pair.second == value);
+  //we don't know the order the pairs have been added in the hashtable
+  EXPECT_TRUE((pair.first == key &&  pair.second == value) || (pair.first == key2 &&  pair.second == value2));
+  
+  it.next(&pair2);
+  EXPECT_TRUE((pair2.first == key &&  pair2.second == value) || (pair2.first == key2 &&  pair2.second == value2));
+    
+  EXPECT_FALSE(pair == pair2);
+  
   delete h1;
 }

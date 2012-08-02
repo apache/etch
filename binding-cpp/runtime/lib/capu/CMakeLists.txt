@@ -19,9 +19,8 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.8)  # Must be first line
 
 PROJECT(capu)                        # Must be second line
 
-INCLUDE(cmake/acme.cmake)            # Must be third line
+INCLUDE(cmake/acme/acme.cmake)       # Must be third line
 
 ADD_SUBDIRECTORY(modules)
 
-BUILD_UNIT_TESTS()
-REPORT()
+FINALIZE()

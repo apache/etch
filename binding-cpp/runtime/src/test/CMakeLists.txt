@@ -89,12 +89,16 @@ add_executable (etch-cpp-test
 )
 
 IF (UNIX)
-  target_link_libraries (etch-cpp-test ${CAPU/lib/Linux})
+  target_link_libraries (etch-cpp-test ${CAPU/lib/Linux_X86_32})
 ELSEIF(WIN32)
-  target_link_libraries (etch-cpp-test ${CAPU/lib/Win32})
+  target_link_libraries (etch-cpp-test ${CAPU/lib/Windows_x86_32})
 ENDIF()
 
-target_link_libraries (etch-cpp-test etch-cpp)
+IF (UNIX)
+  target_link_libraries (etch-cpp-test etch-cpp pthread rt)
+ELSEIF(WIN32)
+  target_link_libraries (etch-cpp-test etch-cpp)
+ENDIF()
 
 IF (WIN32 AND BUILD_CHECK_MEMORY)
   file (COPY ${VLD}/vld.ini DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE})
@@ -105,7 +109,7 @@ IF (WIN32 AND BUILD_CHECK_MEMORY)
 ENDIF (WIN32 AND BUILD_CHECK_MEMORY)
 
 IF (UNIX)
-  set_target_properties (etch-cpp-test PROPERTIES COMPILE_FLAGS "-m32 -g" LINK_FLAGS "-m32 -pthread")
+  set_target_properties (etch-cpp-test PROPERTIES COMPILE_FLAGS "-m32" LINK_FLAGS "-m32")
 ENDIF (UNIX)
 
 add_dependencies (etch-cpp Capu)

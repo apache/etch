@@ -16,8 +16,12 @@
  * limitations under the License.
  */
 
-#ifdef ARCH_LINUX
-#include "Linux/Mutex.inc"
-#elif ARCH_WIN32
-#include "Win32/Mutex.inc"
+#if defined(OS_LINUX)
+    #include "Linux/Mutex.inc"
+#elif defined(OS_WINDOWS)
+    #include "Windows/Mutex.inc"
+#elif defined(OS_INTEGRITY)
+    #include "Linux/Mutex.inc"
+#elif defined(OS_QNX)
+    #include "Linux/Mutex.inc"
 #endif

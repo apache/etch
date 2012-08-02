@@ -53,7 +53,7 @@ public:
    * returns the hash code
    * @return hash value
    */
-  capu::uint64_t getHashCode() const;
+  capu::uint32_t getHashCode() const;
 
   /**
    * Compares two fields

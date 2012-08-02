@@ -51,3 +51,21 @@ TEST(StringUtils,Sprintf)
   EXPECT_EQ(0,capu::StringUtils::Strcmp("12345 12.450000",string1));
 }
 
+class VscprintfTest {
+  public:
+    static capu::int32_t Vscprintf(const char* format, ...) {
+      capu::int32_t length = 0;
+      va_list args;
+      va_start(args, format);
+      length = capu::StringUtils::Vscprintf("This is a test! %d", args);
+      va_end(args);
+      return length;
+    }
+};
+
+TEST(StringUtils,Vscprintf)
+{
+  capu::int32_t length = VscprintfTest::Vscprintf("This is a test! %d", 12345);
+  EXPECT_EQ(21, length);
+}
+

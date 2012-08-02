@@ -53,7 +53,7 @@ capu::int32_t EtchArrayValue::getDim() {
   return mDim;
 }
 
-capu::int32_t EtchArrayValue::getSize() {
+capu::uint32_t EtchArrayValue::getSize() {
   return mSize;
 }
 

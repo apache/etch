@@ -119,11 +119,11 @@ public:
   }
 
   static capu::int64_t* testLong() {
-    capu::int64_t n = 65536 + 2 + 6;
-    capu::int64_t k = 65536 + 2;
-    capu::int64_t min = capu::NumericLimitMin<capu::int16_t > () - 1;
+    capu::int32_t n = 65536 + 2 + 6;
+    capu::int32_t k = 65536 + 2;
+    capu::int32_t min = capu::NumericLimitMin<capu::int16_t > () - 1;
     capu::int64_t* vals = new capu::int64_t[n];
-    capu::int64_t i = 0;
+    capu::int32_t i = 0;
     while (k > 0) {
       vals[i++] = min++;
       k--;
@@ -761,9 +761,9 @@ TEST(EtchBinaryTaggedDataInputTest, btdo_date_write) {
   capu::SmartPointer<EtchDate> date = new EtchDate();
   date->set(1234567890L);
   capu::SmartPointer<EtchDate> content1 = new EtchDate();
-  content1->set(1234567890L);
+  content1->set(1234567890UL);
   capu::SmartPointer<EtchDate> content2 = new EtchDate();
-  content2->set(2345678901L);
+  content2->set(2345678901UL);
   carray->set(0, content1);
   carray->set(1, content2);
 

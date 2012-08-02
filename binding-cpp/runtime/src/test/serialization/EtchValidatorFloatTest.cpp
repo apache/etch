@@ -47,7 +47,7 @@ TEST(EtchValidatorFloatTest, validateTest) {
   capu::SmartPointer<EtchObject> floatTmp = new EtchFloat(capu::NumericLimitMin<capu::float_t>());
   capu::SmartPointer<EtchObject> floatTmp1 = new EtchFloat(0);
   capu::SmartPointer<EtchObject> floatTmp2 = new EtchFloat(capu::NumericLimitMax<capu::float_t>());
-  capu::SmartPointer<EtchObject> floatTmp3 = new EtchFloat(897.12);
+  capu::SmartPointer<EtchObject> floatTmp3 = new EtchFloat(static_cast<capu::float_t>(897.12));
 
   //incompatible type
   capu::SmartPointer<EtchObject> str = new EtchString();
@@ -68,9 +68,9 @@ TEST(EtchValidatorFloatTest, validateTest) {
 TEST(EtchValidatorFloatTest, validateValueTest) {
   capu::SmartPointer<EtchObject> byte = NULL;
   capu::SmartPointer<EtchObject> result;
-  capu::SmartPointer<EtchObject> floatTmp = new EtchFloat(-128.12);
-  capu::SmartPointer<EtchObject> floatTmp2 = new EtchFloat(5.13);
-  capu::SmartPointer<EtchObject> floatTmp3 = new EtchFloat(127.54);
+  capu::SmartPointer<EtchObject> floatTmp = new EtchFloat(static_cast<capu::float_t>(-128.12));
+  capu::SmartPointer<EtchObject> floatTmp2 = new EtchFloat(static_cast<capu::float_t>(5.13));
+  capu::SmartPointer<EtchObject> floatTmp3 = new EtchFloat(static_cast<capu::float_t>(127.54));
   capu::SmartPointer<EtchValidator> ptr = NULL;
   EXPECT_TRUE(EtchValidatorFloat::Get(0, ptr) == ETCH_OK);
   EXPECT_TRUE(ptr->validateValue(byte, result) == ETCH_ERROR);
@@ -91,7 +91,7 @@ TEST(EtchValidatorFloatTest, elementValidatorTest) {
   capu::SmartPointer<EtchObject> floatTmp = new EtchFloat(capu::NumericLimitMin<capu::float_t>());
   capu::SmartPointer<EtchObject> floatTmp1 = new EtchFloat(0);
   capu::SmartPointer<EtchObject> floatTmp2 = new EtchFloat(capu::NumericLimitMax<capu::float_t>());
-  capu::SmartPointer<EtchObject> floatTmp3 = new EtchFloat(897.12);
+  capu::SmartPointer<EtchObject> floatTmp3 = new EtchFloat(static_cast<capu::float_t>(897.12));
 
   //incompatible type
   capu::SmartPointer<EtchObject> str = new EtchString();

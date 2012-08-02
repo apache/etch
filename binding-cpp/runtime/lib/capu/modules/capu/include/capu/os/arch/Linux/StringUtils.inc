@@ -27,27 +27,33 @@ private:
 
 #ifdef STRINGUTILS_INC_IMPL
 
-  inline void StringUtils::Strncpy(char* dst, uint32_t dstSize, const char* src)
+  inline void StringUtils::Strncpy(char* dst, uint_t dstSize, const char* src)
   {
     strncpy(dst, src, dstSize);
   }
 
-  inline uint32_t StringUtils::Strlen(const char* str)
+  inline uint_t StringUtils::Strlen(const char* str)
   {
     return strlen(str);
   }
 
-  inline int32_t StringUtils::Strcmp(const char* str1, const char* str2)
+  inline int_t StringUtils::Strcmp(const char* str1, const char* str2)
   {
     return strcmp(str1, str2);
   }
 
-  inline void StringUtils::Vsprintf(char* buffer, uint32_t bufferSize,const char* format, va_list values)
+  inline void StringUtils::Vsprintf(char* buffer, uint_t bufferSize,const char* format, va_list values)
   {
     vsnprintf(buffer, bufferSize, format, values);
   }
   
-  inline void StringUtils::Sprintf(char* buffer, uint32_t bufferSize, const char* format, ...) 
+  
+  inline int32_t StringUtils::Vscprintf(const char* format, va_list values) {
+    char c;
+    return vsnprintf(&c, 1, format, values);
+  }
+  
+  inline void StringUtils::Sprintf(char* buffer, uint_t bufferSize, const char* format, ...) 
   {
     va_list argptr;
     va_start(argptr,format);

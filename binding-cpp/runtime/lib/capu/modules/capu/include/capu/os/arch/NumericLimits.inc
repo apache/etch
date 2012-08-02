@@ -16,8 +16,12 @@
  * limitations under the License.
  */
 
-#ifdef ARCH_LINUX
-#include "Linux/NumericLimits.inc"
-#elif ARCH_WIN32
-#include "Win32/NumericLimits.inc"
+#if defined(OS_LINUX)
+    #include "Linux/NumericLimits.inc"
+#elif defined(OS_WINDOWS)
+    #include "Windows/NumericLimits.inc"
+#elif defined(OS_INTEGRITY)
+    #include "Linux/NumericLimits.inc"
+#elif defined(OS_QNX)
+    #include "Linux/NumericLimits.inc"
 #endif

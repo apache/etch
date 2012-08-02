@@ -54,8 +54,8 @@ TEST(EtchHashSet, put){
   EtchHashSet<char*, EtchHashNative, EtchComparatorNative >* h2 = new EtchHashSet<char*, EtchHashNative, EtchComparatorNative > ();
 
   // add new key
-  char* value3 = "val1";
-  char* value4 = "val2";
+  char* value3 = const_cast<char*>("val1");
+  char* value4 = const_cast<char*>("val2");
   status = h2->put(value3);
   EXPECT_TRUE(status == ETCH_OK);
 

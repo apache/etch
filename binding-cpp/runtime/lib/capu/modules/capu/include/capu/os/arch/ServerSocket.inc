@@ -16,8 +16,12 @@
  * limitations under the License.
  */
 
-#ifdef ARCH_LINUX
-#include "Linux/ServerSocket.inc"
-#elif ARCH_WIN32
-#include "Win32/ServerSocket.inc"
+ #if defined(OS_LINUX)
+    #include "Linux/ServerSocket.inc"
+#elif defined(OS_WINDOWS)
+    #include "Windows/ServerSocket.inc"
+#elif defined(OS_INTEGRITY)
+    #include "Linux/ServerSocket.inc"
+#elif defined(OS_QNX)
+    #include "Linux/ServerSocket.inc"
 #endif

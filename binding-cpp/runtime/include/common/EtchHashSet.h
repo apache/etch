@@ -81,7 +81,7 @@ public:
    * Returns count of the hashset.
    * @return number of element in hash table
    */
-  inline capu::uint64_t count();
+  inline capu::uint32_t count();
 
   /**
    * Clear all values of the hashset.
@@ -131,7 +131,7 @@ inline status_t EtchHashSet<T, H, C>::clear() {
 }
 
 template <class T, class H, class C>
-inline capu::uint64_t EtchHashSet<T, H, C>::count() {
+inline capu::uint32_t EtchHashSet<T, H, C>::count() {
   return mHashSet.count();
 }
 

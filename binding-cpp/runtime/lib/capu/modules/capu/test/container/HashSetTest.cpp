@@ -19,7 +19,7 @@
 #include <gtest/gtest.h>
 #include "capu/container/HashSet.h"
 #include "capu/Error.h"
-#include "capu/capu/Config.h"
+#include "capu/Config.h"
 
 TEST(HashSet, Constructor_Default) {
   capu::HashSet<capu::int32_t>* list = new capu::HashSet<capu::int32_t > ();
@@ -144,6 +144,31 @@ TEST(HashSet, remove) {
   delete h1;
 }
 
+TEST(HashSet, hasElement) {
+  capu::int32_t value = 5;
+  capu::int32_t value2 = 6;
+  capu::status_t status = capu::CAPU_OK;
+  capu::bool_t isElementinHashSet;
+
+  capu::HashSet<capu::int32_t>* h1 = new capu::HashSet<capu::int32_t > ();
+  // add new keys
+  status = h1->put(value);
+  EXPECT_TRUE(status == capu::CAPU_OK);
+
+  isElementinHashSet = h1->hasElement(value2);
+  EXPECT_TRUE(isElementinHashSet == false);
+
+  //add new value
+  status = h1->put(value2);
+  EXPECT_TRUE(status == capu::CAPU_OK);
+
+  //delete existing value
+  isElementinHashSet = h1->hasElement(value2);
+  EXPECT_TRUE(isElementinHashSet == true);
+
+  delete h1;
+}
+
 TEST(HashSetIterator, hasNext) {
   capu::int32_t value = 10;
   capu::int32_t value2 = 12;
@@ -171,7 +196,7 @@ TEST(HashSetIterator, hasNext) {
   delete h1;
 }
 
-TEST(HashSetIterator, NEXT) {
+TEST(HashSetIterator, next) {
   capu::int32_t value = 10;
   capu::int32_t value2 = 12;
 
@@ -179,6 +204,7 @@ TEST(HashSetIterator, NEXT) {
   capu::HashSet<capu::int32_t>* h1 = new capu::HashSet<capu::int32_t > ();
 
   capu::int32_t check_value = 0;
+  capu::int32_t check_value2 = 0;
   //create iterator
   capu::HashSet<capu::int32_t>::Iterator it = h1->begin();
 
@@ -197,9 +223,11 @@ TEST(HashSetIterator, NEXT) {
   it = h1->begin();
 
   it.next(&check_value);
-  EXPECT_TRUE(check_value == value);
+  EXPECT_TRUE(check_value == value || check_value == value2);
 
-  it.next(&check_value);
-  EXPECT_TRUE(check_value == value2);
+  it.next(&check_value2);
+  EXPECT_TRUE(check_value == value || check_value == value2);
+
+  EXPECT_FALSE(check_value == check_value2);
   delete h1;
 }

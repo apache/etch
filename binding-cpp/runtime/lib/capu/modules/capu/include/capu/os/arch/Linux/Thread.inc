@@ -26,14 +26,23 @@ private:
   pthread_t mThread;
   pthread_attr_t mAttr;
 
-  template <typename T>
-  static void * run(void* param);
+  static void * run(void* param)
+  {
+    ThreadParam* args= (ThreadParam*) param;
+    (*args->object)(args->param);
+    delete args;
+    pthread_exit(NULL);
+  }
 
-  template <class K>
   class ThreadParam
   {
   public:
-    K* object;
+/*    ~ThreadParam()
+    {
+      if(object != NULL)
+        delete object;
+    }*/
+    Runnable* object;
     void* param;
   };
 
@@ -41,17 +50,7 @@ private:
 
 #ifdef THREAD_INC_IMPL
 
-template <typename T>
-void * Thread::run(void* param)
-{
-  ThreadParam<T>* args= (ThreadParam<T>*) param;
-  (*args->object)(args->param);
-  delete args;
-  pthread_exit(NULL);
-}
-
-template <typename T>
-inline Thread::Thread(T *object,void* args)
+inline Thread::Thread(Runnable *object,void* args)
 {
   pthread_attr_init(&mAttr);
   pthread_attr_setdetachstate(&mAttr,PTHREAD_CREATE_JOINABLE);
@@ -59,10 +58,10 @@ inline Thread::Thread(T *object,void* args)
   {
     return;
   }
-  ThreadParam<T> *param = new ThreadParam<T>();
+  ThreadParam *param = new ThreadParam();
   param->object=object;
   param->param=args;
-  pthread_create(&mThread,&mAttr,Thread::run<T>,param);
+  pthread_create(&mThread, &mAttr, Thread::run, param);
 }
 
 inline Thread::~Thread()
@@ -76,21 +75,18 @@ inline status_t Thread::join ()
   if (mThread == 0) {
     return CAPU_ERROR;
   }
-  if(pthread_join(mThread,NULL) == 0) {
+  if(pthread_join(mThread, NULL) == 0) {
     mThread = 0;
     return CAPU_OK;
   }
-  else {
-    return CAPU_ERROR;
-  }
+  return CAPU_ERROR;
 }
 
 inline status_t Thread::Sleep(uint32_t millis)
 {
   if(usleep(millis*1000)==0)
     return CAPU_OK;
-  else
-    return CAPU_ERROR;
+  return CAPU_ERROR;
 }
 
 #endif

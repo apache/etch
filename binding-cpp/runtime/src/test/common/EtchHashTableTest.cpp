@@ -47,7 +47,7 @@ TEST(EtchHashTableTest, put){
 
   EtchHashTable<char*, int, EtchHashNative, EtchComparatorNative >* h2 = new EtchHashTable<char*, int, EtchHashNative, EtchComparatorNative > ();
   // add new key
-  char* key1 = "key1";
+  char* key1 = const_cast<char*>("key1");
   int value1 = 5;
   status = h2->put(key1, value1);
   EXPECT_TRUE(status == ETCH_OK);
@@ -113,7 +113,7 @@ TEST(EtchHashTableTest, get){
 
   EtchHashTable<char*, int, EtchHashNative, EtchComparatorNative >* h2 = new EtchHashTable<char*, int, EtchHashNative, EtchComparatorNative > ();
   // add new key
-  char* key1 = "key1";
+  char* key1 = const_cast<char*>("key1");
   int value1 = 5;
   int return_value1;
   status = h2->put(key1, value1);

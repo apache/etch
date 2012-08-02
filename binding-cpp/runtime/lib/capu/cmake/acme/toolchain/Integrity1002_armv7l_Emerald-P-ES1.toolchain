@@ -1,0 +1,63 @@
+#
+# Licensed to the Apache Software Foundation (ASF) under one or more 
+# contributor license agreements. See the NOTICE file distributed with  
+# this work for additional information regarding copyright ownership. 
+# The ASF licenses this file to you under the Apache License, Version  
+# 2.0 (the "License"); you may not use this file except in compliance  
+# with the License. You may obtain a copy of the License at 
+# 
+# http://www.apache.org/licenses/LICENSE-2.0 
+# 
+# Unless required by applicable law or agreed to in writing, software 
+# distributed under the License is distributed on an "AS IS" BASIS, 
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and 
+# limitations under the License. 
+
+INCLUDE(CMakeForceCompiler)
+
+# this one is important
+SET(CMAKE_SYSTEM_NAME Integrity)
+
+SET(TARGET_OS Integrity)
+SET(TARGET_ARCH ARMV7L)
+SET(TARGET_COMPILER MULTI)
+
+#set(MAKE_OS "Integrity" CACHE STRING "Defines the target operating system." FORCE)
+SET(CGIDEVICE_NAME "Emerald")
+SET(CGIDEVICE_TARGET_BUILD "ON")
+SET(CGISTUDIO_COMPILER "MULTI")
+
+##### setup for Integrity Multi target compiler
+SET(integrity_cflags_shared "-bsp=emerald-p-evb -os_dir=C:/ghs/int1002 -cpu=cortexa9 -Ospeed -DMQ -DCHECKED_BUILD --link_once_templates -w")
+SET(integrity_cflag_optimizer "-O2")
+
+SET(CMAKE_C_FLAGS "${integrity_cflags_shared}" CACHE STRING "C Flags" FORCE)
+SET(CMAKE_CXX_FLAGS "${integrity_cflags_shared}" CACHE STRING "CXX Flags" FORCE)
+
+SET(CMAKE_C_FLAGS_DEBUG "${integrity_cflags_shared} -G -D_DEBUG" CACHE STRING "C Debug Flags" FORCE)
+SET(CMAKE_CXX_FLAGS_DEBUG "${integrity_cflags_shared} -G -D_DEBUG" CACHE STRING "CXX Debug Flags" FORCE)
+
+#### Change Compiler to MULTI
+SET(INTEGRITY_TOOLCHAIN_PATH "C:\\ghs\\multi524" CACHE PATH "Root path to MULTI tool chain.")
+SET(CMAKE_C_COMPILER "${INTEGRITY_TOOLCHAIN_PATH}/ccintarm.exe")
+SET(CMAKE_CXX_COMPILER "${INTEGRITY_TOOLCHAIN_PATH}/cxintarm.exe")
+
+#### Change other tools in toolchain
+SET(CMAKE_AR "${INTEGRITY_TOOLCHAIN_PATH}/ax.exe" CACHE FILEPATH "MULTI AR" FORCE)
+SET(CMAKE_LINKER "${INTEGRITY_TOOLCHAIN_PATH}/elxr.exe" CACHE FILEPATH "MULTI LINKER" FORCE)
+SET(CMAKE_NM "${INTEGRITY_TOOLCHAIN_PATH}/gnm.exe" CACHE FILEPATH "MULTI NM" FORCE)
+SET(CMAKE_STRIP "${INTEGRITY_TOOLCHAIN_PATH}/gstrip.exe" CACHE FILEPATH "MULTI STRIP" FORCE)
+
+# where is the target environment 
+SET(CMAKE_FIND_ROOT_PATH "C:\\ghs\\int1002\\")
+
+# search for programs in the build host directories
+#SET(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
+# for libraries and headers in the target directories
+SET(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
+SET(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
+
+ADD_DEFINITIONS("-DOS_INTEGRITY")
+ADD_DEFINITIONS("-DARCH_ARMV7L")
+

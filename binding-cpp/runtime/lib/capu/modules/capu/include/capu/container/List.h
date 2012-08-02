@@ -97,7 +97,7 @@ namespace capu {
 
     ListNode *mHead;
     ListNode *mTail;
-    int32_t mSize;
+    int_t mSize;
 
   public:
 
@@ -132,7 +132,7 @@ namespace capu {
      *         CAPU_OK if the element is successfully added
      *         CAPU_ERROR otherwise
      */
-    status_t add(int32_t index, const T &element);
+    status_t add(int_t index, const T &element);
 
     /**
      * Add element to specified position
@@ -153,7 +153,7 @@ namespace capu {
      * @return CAPU_EINVAL invalid index
      *         CAPU_OK if the element is successfully removed
      */
-    status_t removeAt(int32_t index, T* elementOld = NULL);
+    status_t removeAt(int_t index, T* elementOld = NULL);
 
     /**
      * remove the element in the specified iterator position and if the element_old
@@ -173,13 +173,13 @@ namespace capu {
      * @return CAPU_EINVAL invalid index
      *         CAPU_OK otherwise
      */
-    status_t get(int32_t index, T* result);
+    status_t get(int_t index, T* result);
 
     /**
      * return size of list
      * @return return the size of list
      */
-    int32_t size();
+    int_t size();
 
     /**
      * check the list is empty or not
@@ -202,7 +202,7 @@ namespace capu {
      * @return -1 if the value either does not exist or given value is NULL
      *          otherwise index of value on linked list
      */
-    int32_t find(const T &element);
+    int_t find(const T &element);
 
     /**
      *
@@ -212,7 +212,7 @@ namespace capu {
      * @return CAPU_EINVAL if the index is not valid
      *         CAPU_OK otherwise
      */
-    status_t set(int32_t index, const T &element, T* elementOld = NULL);
+    status_t set(int_t index, const T &element, T* elementOld = NULL);
 
     /**
      * check that if the list contains the given parameter or not
@@ -263,8 +263,8 @@ namespace capu {
   }
 
   template <class T, class C>
-  int32_t List<T, C>::find(const T &element) {
-    int32_t counter = 0;
+  int_t List<T, C>::find(const T &element) {
+    int_t counter = 0;
     ListNode * cursor = mHead;
     C comparator;
     while (cursor != NULL) {
@@ -308,7 +308,7 @@ namespace capu {
   }
 
   template <class T, class C>
-  status_t List<T, C>::add(int32_t index, const T &element) {
+  status_t List<T, C>::add(int_t index, const T &element) {
     if ((index > mSize) || (index < 0)) {
       return CAPU_EINVAL;
     }
@@ -320,7 +320,7 @@ namespace capu {
       return CAPU_ENO_MEMORY;
     }
 
-    int32_t counter = 0;
+    int_t counter = 0;
     ListNode * cursor = mHead;
     if (cursor == NULL) {
       //empty list
@@ -376,6 +376,11 @@ namespace capu {
     if (mHead == NULL && mTail == NULL) {
       mHead = listElem;
       mTail = mHead;
+    } else if (iter.mNextPosition == NULL){
+      listElem->mNext = NULL;
+      listElem->mPrev = mTail;
+      mTail->mNext = listElem;
+      mTail = listElem;
     } else if (iter.mNextPosition->mNext == NULL) {
       listElem->mNext = NULL;
       listElem->mPrev = iter.mNextPosition;
@@ -389,7 +394,7 @@ namespace capu {
       listElem->mPrev = iter.mNextPosition->mPrev;
       listElem->mNext = iter.mNextPosition;
       iter.mNextPosition->mPrev->mNext = listElem;
-    }
+    }   
     iter.mNextPosition = listElem;
 
     ++mSize;
@@ -399,7 +404,7 @@ namespace capu {
 
   //remove the specific element indicated by the index in the list
   template <class T, class C>
-  status_t List<T, C>::removeAt(int32_t index, T* elementOld) {
+  status_t List<T, C>::removeAt(int_t index, T* elementOld) {
     if ((index < 0) || (index >= mSize)) {
       return CAPU_EINVAL;
     }
@@ -419,7 +424,7 @@ namespace capu {
       mTail->mNext = NULL;
     } else {
       tmp = mHead;
-      for (int32_t i = 0; i < index; ++i) {
+      for (int_t i = 0; i < index; ++i) {
         tmp = tmp->mNext;
       }
       tmp->mNext->mPrev = tmp->mPrev;
@@ -476,7 +481,7 @@ namespace capu {
   //get the specified element from list
 
   template <class T, class C>
-  status_t List<T, C>::get(int32_t index, T* result) {
+  status_t List<T, C>::get(int_t index, T* result) {
     if (((index < 0) || (index >= mSize)) || (result == NULL)) {
       return CAPU_EINVAL;
     }
@@ -490,7 +495,7 @@ namespace capu {
     }
 
     ListNode *cursor = mHead;
-    for (int32_t i = 0; i < index; ++i) {
+    for (int_t i = 0; i < index; ++i) {
       cursor = cursor->mNext;
     }
     *result = cursor->mData;
@@ -498,12 +503,12 @@ namespace capu {
   }
 
   template <class T, class C>
-  status_t List<T, C>::set(int32_t index, const T &element, T* elementOld) {
+  status_t List<T, C>::set(int_t index, const T &element, T* elementOld) {
     if ((index < 0) || (index >= mSize))
       return CAPU_EINVAL;
 
     ListNode *cursor = mHead;
-    for (int32_t i = 0; i < index; ++i) {
+    for (int_t i = 0; i < index; ++i) {
       cursor = cursor->mNext;
     }
     if (elementOld != NULL)
@@ -515,7 +520,7 @@ namespace capu {
   //Return element count of list
 
   template <class T, class C>
-  int32_t List<T, C>::size() {
+  int_t List<T, C>::size() {
     return mSize;
   }
 
