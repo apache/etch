@@ -16,3 +16,45 @@
 # KIND, either express or implied. See the License for the
 # specific language governing permissions and limitations
 # under the License.
+
+true
+false
+NULL
+abstract
+continue
+for
+new
+switch
+default
+goto
+bool
+do
+if
+private
+this
+break
+double
+protected
+throw
+byte
+else
+include
+public
+throws
+case
+enum
+return
+catch
+int
+short
+try
+char
+static
+void
+class
+finally
+long
+volatile
+const
+float
+while
