@@ -26,7 +26,7 @@ namespace capu {
 
   template <class T, class C = Comparator >
   class List {
-  
+
     class ListNode {
     public:
 
@@ -286,8 +286,7 @@ namespace capu {
 
   template <class T, class C>
   status_t List<T, C>::add(const T &element) {
-    ListNode *listElem = NULL;
-    listElem = new ListNode(element);
+    ListNode *listElem = new ListNode(element);
     //NOT ALLOCATED
     if (listElem == NULL) {
       return CAPU_ENO_MEMORY;
@@ -313,8 +312,7 @@ namespace capu {
       return CAPU_EINVAL;
     }
 
-    ListNode *listElem = NULL;
-    listElem = new ListNode(element);
+    ListNode *listElem = new ListNode(element);
     //NOT ALLOCATED
     if (listElem == NULL) {
       return CAPU_ENO_MEMORY;
@@ -338,23 +336,22 @@ namespace capu {
       mTail->mNext = NULL;
       ++mSize;
       return CAPU_OK;
+    } else if (index == 0) {
+      //add it to beginning of the list
+      listElem->mNext = mHead;
+      mHead->mPrev = listElem;
+      listElem->mPrev = NULL;
+      mHead = listElem;
+      ++mSize;
+      return CAPU_OK;
     }
     while (cursor != NULL) {
       if (index == counter) {
-
-        if (cursor == mHead) // add to the front of list
-        {
-          listElem->mNext = mHead;
-          mHead->mPrev = listElem;
-          listElem->mPrev = NULL;
-          mHead = listElem;
-        } else {
-          listElem->mNext = cursor;
-          listElem->mPrev = cursor->mPrev;
-          if (cursor->mPrev != NULL)
-            cursor->mPrev->mNext = listElem;
-          cursor->mPrev = listElem;
-        }
+        listElem->mNext = cursor;
+        listElem->mPrev = cursor->mPrev;
+        if (cursor->mPrev != NULL)
+          cursor->mPrev->mNext = listElem;
+        cursor->mPrev = listElem;
         ++mSize;
         return CAPU_OK;
       }
@@ -376,7 +373,7 @@ namespace capu {
     if (mHead == NULL && mTail == NULL) {
       mHead = listElem;
       mTail = mHead;
-    } else if (iter.mNextPosition == NULL){
+    } else if (iter.mNextPosition == NULL) {
       listElem->mNext = NULL;
       listElem->mPrev = mTail;
       mTail->mNext = listElem;
@@ -394,7 +391,7 @@ namespace capu {
       listElem->mPrev = iter.mNextPosition->mPrev;
       listElem->mNext = iter.mNextPosition;
       iter.mNextPosition->mPrev->mNext = listElem;
-    }   
+    }
     iter.mNextPosition = listElem;
 
     ++mSize;
@@ -403,6 +400,7 @@ namespace capu {
   }
 
   //remove the specific element indicated by the index in the list
+
   template <class T, class C>
   status_t List<T, C>::removeAt(int_t index, T* elementOld) {
     if ((index < 0) || (index >= mSize)) {
