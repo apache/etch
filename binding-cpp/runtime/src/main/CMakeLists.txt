@@ -120,6 +120,7 @@ SET(MAIN_INCLUDES
     ${PROJECT_SOURCE_DIR}/include/support/EtchStubBase.h  
     ${PROJECT_SOURCE_DIR}/include/support/EtchTransportHelper.h
     ${PROJECT_SOURCE_DIR}/include/util/EtchUtil.h
+    ${PROJECT_SOURCE_DIR}/include/util/EtchCircularQueue.h
     )
 
 #Add cpp files
@@ -191,6 +192,8 @@ SET(MAIN_SOURCES
     support/EtchStubBase.cpp
     support/EtchRemoteBase.cpp
     support/EtchTransportHelper.cpp
+    util/EtchCircularQueue.cpp
+    util/EtchUtil.cpp
     )
 
 #Add source and header files to library so they are visible in the different IDEs (Visual Studio and Eclipse)

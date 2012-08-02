@@ -83,6 +83,8 @@ add_executable (etch-cpp-test
     serialization/EtchValidatorStructValueTest.cpp
     serialization/EtchBinaryTaggedDataInputOutputTest.cpp
     support/EtchFreePoolTest.cpp
+    util/EtchCircularQueueTest.cpp
+    util/EtchUtilTest.cpp
     ${GTEST}/src/gtest-all.cc
     ${GMOCK}/src/gmock-all.cc
     main.cpp
