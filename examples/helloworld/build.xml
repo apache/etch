@@ -46,13 +46,25 @@
         <build_component dir="java" />
         <build_component dir="csharp" />
         <build_component dir="c" />
-        <build_component dir="cpp" />
+        <antcall target="component-bindings-experimental" />
     </target>
 
     <target name="do-postbuild">
     </target>
 
     <target name="do-help">
+    </target>
+    
+    <!-- Experimental Binding examples -->
+    <target name="component-bindings-experimental" depends="component-bindings-experimental-if, component-bindings-experimental-then">
+    </target>
+    <target name="component-bindings-experimental-if">
+        <condition property="is-build-type-experimental">
+            <equals arg1="${build.type}" arg2="experimental" />
+        </condition>
+    </target>
+    <target name="component-bindings-experimental-then" if="is-build-type-experimental">
+        <build_component dir="cpp" />
     </target>
 
 </project>
