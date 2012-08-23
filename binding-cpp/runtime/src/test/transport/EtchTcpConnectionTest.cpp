@@ -50,18 +50,22 @@ public:
 
 class MockListener : public virtual EtchSessionListener<EtchSocket> {
 public:
+  MockListener() : socket(NULL) {}
 
-  //Communication Test Between Peers
+  ~MockListener() {
+    delete socket;
+  }
 
   EtchResources resources;
+  EtchSocket* socket;
 
+  //Communication Test Between Peers
   status_t sessionAccepted(EtchSocket* connection) {
     EtchString _socket("socket");
     EtchObject *tmp;
     resources.put(_socket, connection, tmp);
     connection->send((unsigned char *) "mock", 4);
-    capu::Thread::Sleep(1000);
-    delete connection;
+    socket = connection;
     return ETCH_OK;
   }
 
@@ -113,15 +117,15 @@ TEST_F(EtchTcpConnectionTest, isStartedTest) {
   EtchSessionData* mPacketizer = new MockPacketizer();
   //START THE LISTENER
   listener->setSession(mSessionListener);
-  listener->transportControl(new EtchString(EtchTcpListener::START_AND_WAIT_UP()), new EtchInt32(2000));
+  EXPECT_EQ(ETCH_OK, listener->transportControl(new EtchString(EtchTcpListener::START_AND_WAIT_UP()), new EtchInt32(400000)));
   //START THE TRANSPORT
   conn->setSession(mPacketizer);
-  conn->transportControl(new EtchString(EtchTcpConnection::START_AND_WAIT_UP()), new EtchInt32(2000));
+  EXPECT_EQ(ETCH_OK, conn->transportControl(new EtchString(EtchTcpConnection::START_AND_WAIT_UP()), new EtchInt32(400000)));
   EXPECT_TRUE(conn->isStarted());
   //STOP THE TRANSPORT
-  conn->transportControl(new EtchString(EtchTcpConnection::STOP_AND_WAIT_DOWN()), new EtchInt32(2000));
+  EXPECT_EQ(ETCH_OK, conn->transportControl(new EtchString(EtchTcpConnection::STOP_AND_WAIT_DOWN()), new EtchInt32(400000)));
   //STOP THE LISTENER
-  listener->transportControl(new EtchString(EtchTcpListener::STOP_AND_WAIT_DOWN()), new EtchInt32(2000));
+  EXPECT_EQ(ETCH_OK, listener->transportControl(new EtchString(EtchTcpListener::STOP_AND_WAIT_DOWN()), new EtchInt32(400000)));
   EXPECT_FALSE(conn->isStarted());
   conn->setSession(NULL);
 

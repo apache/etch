@@ -257,46 +257,49 @@ capu::bool_t EtchTcpConnection::isStarted() {
 
 void EtchTcpConnection::run() {
 
+  status_t status;
   capu::bool_t first = true;
 
   while (mIsStarted) {
 
-    if (openSocket(!first) != ETCH_OK) {
+    status = openSocket(!first);
+    if (status != ETCH_OK) {
       CAPU_LOG_ERROR(mRuntime->getLogger(), "EtchTcpConnection", "%s : %d => Socket has not been successfully opened", mHost.c_str(), mPort);
       break;
     }
-    status_t res = setupSocket();
 
-    if (res != ETCH_OK) {
+    status = setupSocket();
+    if (status != ETCH_OK) {
       close();
       break;
     }
     CAPU_LOG_DEBUG(mRuntime->getLogger(), "EtchTcpConnection", "%s : %d => Socket has been opened and connection has been successfully established and start reading", mHost.c_str(), mPort);
     fireUp();
     CAPU_LOG_DEBUG(mRuntime->getLogger(), "EtchTcpConnection", "%s : %d => FireUp was send to the Stack", mHost.c_str(), mPort);
-    if (readSocket() != ETCH_OK) {
-      close();
-      CAPU_LOG_TRACE(mRuntime->getLogger(), "EtchTcpConnection", "%s : %d => Connection closing", mHost.c_str(), mPort);
-      break;
-    }
+    status = readSocket();
     CAPU_LOG_TRACE(mRuntime->getLogger(), "EtchTcpConnection", "%s : %d => Connection closing", mHost.c_str(), mPort);
     fireDown();
     CAPU_LOG_DEBUG(mRuntime->getLogger(), "EtchTcpConnection", "%s : %d => FireDown was send to the Stack", mHost.c_str(), mPort);
     close();
     first = false;
   }
-  mIsStarted = false;
 }
 
 status_t EtchTcpConnection::setupSocket() {
-  if (mSocket->setBufferSize(mOptions.getBufferSize()) != ETCH_OK)
+  if (mOptions.getBufferSize() != 0) {
+    if (mSocket->setBufferSize(mOptions.getBufferSize()) != ETCH_OK) {
+      return ETCH_ERROR;
+    }
+  }
+  if (mSocket->setKeepAlive((mOptions.getKeepAlive() != 0)) != ETCH_OK) {
     return ETCH_ERROR;
-  if (mSocket->setKeepAlive((mOptions.getKeepAlive() != 0)) != ETCH_OK)
+  }
+  if (mSocket->setLingerOption((mOptions.getLingerTime() >= 0), mOptions.getLingerTime()) != ETCH_OK) {
     return ETCH_ERROR;
-  if (mSocket->setLingerOption((mOptions.getLingerTime() >= 0), mOptions.getLingerTime()) != ETCH_OK)
+  }
+  if (mSocket->setNoDelay((mOptions.getNoDelay() != 0)) != ETCH_OK) {
     return ETCH_ERROR;
-  if (mSocket->setNoDelay((mOptions.getNoDelay() != 0)) != ETCH_OK)
-    return ETCH_ERROR;
+  }
   CAPU_LOG_TRACE(mRuntime->getLogger(), "EtchTcpConnection", "%s : %d => Settings for socket has been successfully configured", mHost.c_str(), mPort);
   return ETCH_OK;
 }

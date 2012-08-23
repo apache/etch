@@ -65,7 +65,7 @@ status_t EtchTcpTransportFactory::newTransport(EtchString uri, EtchResources* re
     return ETCH_EUNIMPL;
   } else {
     // TODO add runtime
-    c = new EtchTcpConnection(NULL, (EtchSocket*) socket, &u);
+    c = new EtchTcpConnection(mRuntime, (EtchSocket*) socket, &u);
   }
   stack->setTransportData(c);
 

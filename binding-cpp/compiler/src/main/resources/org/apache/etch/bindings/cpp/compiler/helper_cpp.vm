@@ -182,6 +182,7 @@ status_t $clname::newListener(EtchRuntime* runtime, EtchString uri, EtchResource
     
     //create valuefactory instance
     ValueFactory${i}* vf = new ValueFactory${i}(uri);
+    stack->setValueFactory(vf);
     EtchObject* vfobj = (EtchObject*) vf;
     EtchObject* resobj = NULL;
     res->put(EtchTransport<ValueFactory${i}>::VALUE_FACTORY(), vfobj, resobj);

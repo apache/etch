@@ -95,7 +95,7 @@
 
    <target name="build-cpp" depends="generate-sources" if="USE.cmake">
      <cmake srcdir="${basedir}" bindir="${basedir}/target" buildtype="Debug" >
-	  <generator name="Visual Studio 8 2005" platform="windows" />
+     <!-- <generator name="Visual Studio 8 2005" platform="windows" />-->
       <variable name="ETCH_INCLUDE_CAPU_DIR" type="PATH" value="${Etch.basedir}/binding-cpp/runtime/lib/capu/deliverable/capu/include/capu" />
       <variable name="ETCH_HOME" type="PATH" value="${etch.home}" />
      </cmake>
@@ -103,14 +103,10 @@
         <fileset dir="${target}" >
            <include name="helloworld-client" />
            <include name="helloworld-server" />
-           <include name="debug/helloworld-client.exe" />
-           <include name="debug/helloworld-server.exe" />
+           <include name="Debug/helloworld-client.exe" />
+           <include name="Debug/helloworld-server.exe" />
         </fileset>
      </copy>
-     <delete file="${target}/helloworld-client" quiet="true" />
-     <delete file="${target}/helloworld-server" quiet="true" />
-     <delete file="${target}/debug/helloworld-client.exe" quiet="true" />
-     <delete file="${target}/debug/helloworld-server.exe" quiet="true" />
      <chmod perm="+x">
         <fileset dir="${bin}">
            <include name="helloworld-client" />
