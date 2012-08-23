@@ -19,9 +19,61 @@
 #include <gtest/gtest.h>
 #include "common/EtchString.h"
 
+class EtchObjectMy1Object : public EtchObject {
+public:
+
+   /**
+   * EtchObjectType for EtchObjectMyObject.
+   */
+  static const EtchObjectType* TYPE() {
+    const static EtchObjectType TYPE(11, NULL);
+    return &TYPE;
+  }
+
+  /**
+   * Constructor
+   */
+  EtchObjectMy1Object()
+    : EtchObject() {
+      EtchObject::addObjectType(TYPE());
+  }
+
+};
+
+class EtchObjectMy2Object : public EtchObject {
+public:
+
+   /**
+   * EtchObjectType for EtchObjectMyObject.
+   */
+  static const EtchObjectType* TYPE() {
+    const static EtchObjectType TYPE(12, NULL);
+    return &TYPE;
+  }
+
+  /**
+   * Constructor
+   */
+  EtchObjectMy2Object()
+    : EtchObject() {
+      EtchObject::addObjectType(TYPE());
+  }
+
+};
+
+
 TEST(EtchObjectTest, getTypeTrait) {
   EXPECT_EQ(EtchObjectType::VALUE, EtchObjectType::getTypeTrait<EtchString>());
   EXPECT_EQ(EtchObjectType::POINTER, EtchObjectType::getTypeTrait<EtchString*>());
   EXPECT_EQ(EtchObjectType::SMART_POINTER, EtchObjectType::getTypeTrait<capu::SmartPointer<EtchString> >());
 
+}
+
+TEST(EtchObjectTest, isInstanceOf) {
+  EtchObjectMy1Object* o1 = new EtchObjectMy1Object();
+  EXPECT_EQ(true, o1->isInstanceOf(EtchObjectMy1Object::TYPE()));
+  EXPECT_EQ(true, o1->isInstanceOf(EtchObject::TYPE()));
+  EXPECT_EQ(false, o1->isInstanceOf(EtchObjectMy2Object::TYPE()));
+
+  delete o1;
 }

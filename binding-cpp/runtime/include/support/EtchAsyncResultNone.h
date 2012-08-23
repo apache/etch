@@ -62,7 +62,7 @@ public:
   /**
    * @see EtchNotify
    */
-  virtual status_t mailboxStatus(EtchMailbox* mb, EtchObject* state, capu::bool_t closed);
+  virtual status_t mailboxStatus(EtchMailbox* mb, EtchObject* state, capu::bool_t closed) {return ETCH_OK;};
 
 protected:
   EtchRuntime* mRuntime;

@@ -75,15 +75,14 @@ public:
   /**
    * Returns the result
    */
-  status_t getResult(capu::SmartPointer<T> &result) {
+  capu::SmartPointer<T> getResult() {
     if(hasException()) {
-      return ETCH_ERROR;
-    }
+      return NULL;
+    } else
     if(hasResult()) {
-      result = mResult;
-      return ETCH_OK;
+      return mResult;
     }
-    return ETCH_OK;
+    return NULL;
   }
 
 private:

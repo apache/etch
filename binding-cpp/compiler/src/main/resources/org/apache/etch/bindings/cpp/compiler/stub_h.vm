@@ -80,9 +80,7 @@ public:
     // create result message
 #if($mthd.hasReturn())
     if(ar->hasResult()) {
-        capu::SmartPointer<$helper.getEtchTypeName($mthd.type(), false)> result;
-        ar->getResult(result);
-        _rmsg->put(ValueFactory$i::_mf_result(), result);
+        _rmsg->put(ValueFactory$i::_mf_result(), ar->getResult());
     } else
 #end
     if(ar->hasException()) {

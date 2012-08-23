@@ -16,7 +16,7 @@
 
 using namespace org_apache_etch_examples_helloworld_HelloWorld;
 
-HelloWorldClient* MainHelloWorldClient::newHelloWorldClient(RemoteHelloWorldServer* server)
+HelloWorldClient* MainHelloWorldClientFactory::newHelloWorldClient(RemoteHelloWorldServer* server)
 {
   return new ImplHelloWorldClient(server);
 }
@@ -35,15 +35,14 @@ capu::int32_t main(int argc, const char* argv[])
   // TODO Change to correct URI
   EtchString uri("tcp://127.0.0.1:4001");
 
-  MainHelloWorldClient mc;
-  status_t result;
+  MainHelloWorldClientFactory mc;
 
+  status_t result;
   RemoteHelloWorldServer *remote = NULL;
   result = HelloWorldHelper::newServer(runtime, uri, NULL, mc, remote);
   if (result != ETCH_OK) {
     //TODO Handle error
   }
-
 
   // Connect to the service
   result = remote->transportControl(new EtchString(EtchTransportData::START_AND_WAIT_UP()), new EtchInt32(4000));
@@ -52,8 +51,16 @@ capu::int32_t main(int argc, const char* argv[])
   }
 
   HelloWorld::userPtr myUser = new HelloWorld::user(new EtchInt32(1),new EtchString("World"));
-  remote->say_hello(myUser);
-  
+  HelloWorldServer::say_helloAsyncResultPtr say_helloResult = remote->say_hello(myUser);
+  if(say_helloResult->hasException()) {
+    capu::SmartPointer<EtchException> exception = say_helloResult->getException();
+    printf("say_hello FAILED: exception=%s \n", exception->getErrorMessage().c_str());
+  }
+  if(say_helloResult->hasResult()) {
+    capu::SmartPointer<EtchString> result = say_helloResult->getResult();
+    printf("say_hello OK: result=%s\n", result->c_str());
+  }
+
   // Disconnect from the service
   remote->transportControl(new EtchString(EtchTransportData::STOP_AND_WAIT_DOWN()), new EtchInt32(4000));
 

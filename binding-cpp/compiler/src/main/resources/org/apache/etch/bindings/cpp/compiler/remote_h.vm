@@ -64,7 +64,7 @@ namespace $namespace {
       /**
        * Create a new instance from $clname class
        */
-      $n.name()AsyncResultRemote(EtchRuntime* runtime, EtchMailbox* mailbox);
+      $n.name()AsyncResultRemote($clname* base, EtchMailbox* mailbox);
 
       /**
        * Destructor
@@ -80,6 +80,9 @@ namespace $namespace {
        * Create a new instance from $clname class
        */
        static $n.name()AsyncResultPtr Begin($clname* base, #set($sep = "")#foreach($p in $n.iterator())$sep$helper.getEtchTypeName($p.type(), true) $p.name()#set($sep = ", ")#end);
+
+    private:
+        $clname* mBase;
     };
 
 #end

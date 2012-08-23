@@ -35,8 +35,9 @@ using namespace $namespace;
 #foreach($n in $intf.iterator())
 #if($n.isMsgDir($mc))
 #if(!$n.isHidden())
-$clname::$n.name()AsyncResultRemote::$n.name()AsyncResultRemote(EtchRuntime* runtime, EtchMailbox* mailbox) 
-  : #if($n.hasReturn())EtchAsyncResult<$helper.getEtchTypeName($n.type(), false)>(runtime, mailbox)#{else}EtchAsyncResultNone(runtime, mailbox)#end {
+$clname::$n.name()AsyncResultRemote::$n.name()AsyncResultRemote($clname* base, EtchMailbox* mailbox) 
+  : #if($n.hasReturn())EtchAsyncResult<$helper.getEtchTypeName($n.type(), false)>(base->mRuntime, mailbox)#{else}EtchAsyncResultNone(base->mRuntime, mailbox)#end {
+  mBase = base;
 }
 
 $clname::$n.name()AsyncResultRemote::~$n.name()AsyncResultRemote() {
@@ -44,7 +45,28 @@ $clname::$n.name()AsyncResultRemote::~$n.name()AsyncResultRemote() {
 
 
 status_t $clname::$n.name()AsyncResultRemote::mailboxStatus(EtchMailbox* mb, EtchObject* state, capu::bool_t closed) {
-  //TODO implemented callback
+#if(!$n.isOneway())
+  status_t status;
+
+  if(!closed) {
+    capu::SmartPointer<EtchObject> result;
+    status = mBase->endcall(mb, $vfname::$n.getResultMessage().vname($helper), result);
+    if(status != ETCH_OK) {
+      // TODO set result to a runtime exception 
+      return ETCH_OK;
+    }
+    if(result->isInstanceOf(EtchException::TYPE())) {
+      setException(result);
+    }
+#if($n.hasReturn())
+    else {
+      setResult(result);
+    }
+#end
+
+  }
+
+#end
   return ETCH_OK;
 }
 
@@ -70,7 +92,7 @@ $intfname::$n.name()AsyncResultPtr $clname::$n.name()AsyncResultRemote::Begin($c
     // TODO log error
   }
 
-  $n.name()AsyncResultRemote* result = new $n.name()AsyncResultRemote(base->mRuntime, mb); 
+  $n.name()AsyncResultRemote* result = new $n.name()AsyncResultRemote(base, mb); 
   return result;
 }
 
@@ -103,26 +125,17 @@ $clname::~$clname() {
 #if(!$methodList.contains($n.name().name()))
 #set ( $addMethodListStatus = $methodList.add($n.name().name()))
 
-#if(!$n.isMsgDirBoth())
-#if($n.isOneway())
-$intfname::$n.name()AsyncResultPtr $clname::$n.name()(#set( $sep = "" )#foreach( $p in $n.iterator() )$sep$helper.getEtchTypeName( $p.type(), true ) $p.name() #set( $sep = ", " )#end) {
-  $n.name()AsyncResultPtr result = $clname::$n.name()AsyncResultRemote::Begin(this, #set($sep = "")#foreach($p in $n.iterator())$p.name() #set( $sep = ", ")#end);
-  return result;
-}
-
-#else
-$intfname::$n.name()AsyncResultPtr $clname::$n.name()(#set( $sep = "" )#foreach( $p in $n.iterator() )$sep$helper.getEtchTypeName( $p.type(), true ) $p.name() #set( $sep = ", " )#end) {
-  $n.name()AsyncResultPtr result = $clname::$n.name()AsyncResultRemote::Begin(this, #set($sep = "")#foreach($p in $n.iterator())$p.name() #set( $sep = ", ")#end);
-  return result;
-}
-
-#end
-#else
+#if($hasBaseClass && $n.isMsgDirBoth())
 $intfname::$n.name()AsyncResultPtr $clname::$n.name()(#set( $sep = "" )#foreach( $p in $n.iterator() )$sep$helper.getEtchTypeName( $p.type(), true ) $p.name() #set( $sep = ", " )#end) {
   return Remote$i::$n.name()(#set( $sep = "" )#foreach( $p in $n.iterator() )$sep$p.name() #set( $sep = ", " )#end);
 }
-#end
+#else
+$intfname::$n.name()AsyncResultPtr $clname::$n.name()(#set( $sep = "" )#foreach( $p in $n.iterator() )$sep$helper.getEtchTypeName( $p.type(), true ) $p.name() #set( $sep = ", " )#end) {
+  $n.name()AsyncResultPtr result = $clname::$n.name()AsyncResultRemote::Begin(this, #set($sep = "")#foreach($p in $n.iterator())$p.name() #set( $sep = ", ")#end);
+  return result;
+}
 
+#end
 #end
 #end
 #end

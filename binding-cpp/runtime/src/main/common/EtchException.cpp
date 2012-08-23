@@ -23,13 +23,17 @@ const EtchObjectType* EtchException::TYPE() {
 }
 
 EtchException::EtchException()
-: EtchObject(EtchException::TYPE()), mErrorMessage(""), mErrorcode(0), mExcptype(0) {
-
+: EtchObject(), mErrorMessage(""), mErrorcode(0), mExcptype(0) {
+  EtchObject::addObjectType(EtchException::TYPE());
+  // TODO change object hierachy
+  EtchObject::setObjectType(EtchException::TYPE());
 }
 
 EtchException::EtchException(EtchString msg, status_t errcode, EtchExceptionType type)
-: EtchObject(EtchException::TYPE()), mErrorMessage(msg), mErrorcode(errcode), mExcptype(type) {
-
+: EtchObject(), mErrorMessage(msg), mErrorcode(errcode), mExcptype(type) {
+  EtchObject::addObjectType(EtchException::TYPE());
+  // TODO change object hierachy
+  EtchObject::setObjectType(EtchException::TYPE());
 }
 
 EtchException::EtchException(EtchString msg, status_t errcode, EtchExceptionType type, const EtchObjectType* type_id)

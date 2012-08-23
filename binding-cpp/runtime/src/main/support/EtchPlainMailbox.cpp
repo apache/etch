@@ -66,12 +66,12 @@ void EtchPlainMailbox::fireNotify() {
   n = mNotify;
   s = mState;
   c = mQueue.isClosed();
+  
+  mMutex.unlock();
 
   if (n != NULL) {
     n->mailboxStatus(this, s, c);
   }
-  // TODO: check if the unlock must be so late
-  mMutex.unlock();
 }
 
 status_t EtchPlainMailbox::read(EtchMailbox::EtchElement*& result) {
@@ -120,11 +120,60 @@ status_t EtchPlainMailbox::closeRead() {
 }
 
 status_t EtchPlainMailbox::registerNotify(EtchMailbox::EtchNotify* notify, EtchObject* state, capu::int32_t maxDelay) {
-  return ETCH_EUNIMPL;
+  if(notify == NULL) {
+    return ETCH_EINVAL;
+  }
+
+  if(maxDelay < 0) {
+    return ETCH_EINVAL;
+  }
+
+  capu::bool_t isNotEmptyOrIsClosed;
+
+  mMutex.lock();
+
+  if(mNotify != NULL) {
+    mMutex.unlock();
+    return ETCH_EINVAL;
+  }
+
+  mNotify = notify;
+  mState = state;
+
+  isNotEmptyOrIsClosed = !mQueue.isEmpty() || mQueue.isClosed();
+
+  mMutex.unlock();
+
+  if(isNotEmptyOrIsClosed) {
+    fireNotify();
+  }
+
+  return ETCH_OK;
 }
 
 status_t EtchPlainMailbox::unregisterNotify(EtchMailbox::EtchNotify* notify) {
-  return ETCH_EUNIMPL;
+
+  if(mNotify == NULL) {
+    return ETCH_EINVAL;
+  }
+
+  if(notify == NULL) {
+    return ETCH_OK;
+  }
+
+  mMutex.lock();
+
+  if(mNotify !=  notify) {
+    mMutex.unlock();
+    return ETCH_EINVAL;
+  }
+
+  mNotify = NULL;
+  mState = NULL;
+
+  mMutex.unlock();
+
+  return ETCH_OK;
 }
 
 capu::bool_t EtchPlainMailbox::isEmpty() {

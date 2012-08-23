@@ -19,11 +19,11 @@ namespace org_apache_etch_examples_helloworld_HelloWorld {
    * Main program for HelloWorldClient. This program makes a connection to the
    * listener created by MainHelloWorldListener.
    */
-  class MainHelloWorldClient
+  class MainHelloWorldClientFactory
    : public HelloWorldHelper::HelloWorldClientFactory
   {
   public:
-    virtual ~MainHelloWorldClient() {}
+    virtual ~MainHelloWorldClientFactory() {}
     HelloWorldClient* newHelloWorldClient(RemoteHelloWorldServer* server);
   };
 }

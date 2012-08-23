@@ -38,8 +38,6 @@ EtchAsyncResultNone::~EtchAsyncResultNone() {
 capu::bool_t EtchAsyncResultNone::hasException() {
   mMutex.lock();
   while(!mHasMailboxStatus) {
-    // TODO wait
-    break;
     mCond.wait(&mMutex);
   }
   mMutex.unlock();
@@ -60,18 +58,4 @@ void EtchAsyncResultNone::setException(capu::SmartPointer<EtchException> excepti
   mHasMailboxStatus = true;
   mCond.signal();
   mMutex.unlock();
-}
-
-status_t EtchAsyncResultNone::mailboxStatus(EtchMailbox* mb, EtchObject* state, capu::bool_t closed) {
-
-  // TODO get data or exception from mailbox
-  // TODO call onResult( EtchObject* state);
-  // TODO call onEception( EtchObject* state);
-  // TODO setException(NULL);
-  // TODO call delegate
-  mMutex.lock();
-  mHasMailboxStatus = true;
-  mCond.signal();
-  mMutex.unlock();
-  return ETCH_OK;
 }
