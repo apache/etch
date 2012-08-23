@@ -104,6 +104,7 @@
         <copy todir="${Etch.dist}/binding-cpp/lib">
             <fileset dir="${proj}/lib/capu/deliverable/capu/lib">
                 <include name="**/*.lib" />
+		<include name="**/*.a" />
             </fileset>
         </copy>
 

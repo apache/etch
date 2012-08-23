@@ -34,7 +34,7 @@
 template<typename T>
 class EtchStubBase : public EtchSessionMessage {
 public:
-  template <typename T>
+  template <typename Class>
   friend class EtchStubPoolRunnable;
 
   /**
@@ -95,7 +95,7 @@ public:
    * @param msg the message.
    * @param helper the StubHelper which will dispatch the message.
    */
-  EtchStubPoolRunnable(EtchStubBase<T>* stub, capu::SmartPointer<EtchWho> sender, capu::SmartPointer<EtchMessage> msg, EtchStubHelper<T>* helper) 
+  EtchStubPoolRunnable(EtchStubBase<T>* stub, capu::SmartPointer<EtchWho> sender, capu::SmartPointer<EtchMessage> msg, EtchStubHelper<T>* helper)
     : mStub(stub)
     , mSender(sender)
     , mMsg(msg)

@@ -110,6 +110,12 @@
      <delete file="${target}/helloworld-server" quiet="true" />
      <delete file="${target}/debug/helloworld-client.exe" quiet="true" />
      <delete file="${target}/debug/helloworld-server.exe" quiet="true" />
+     <chmod perm="+x">
+        <fileset dir="${bin}">
+           <include name="helloworld-client" />
+           <include name="helloworld-server" />
+        </fileset>
+     </chmod>
    </target>
 
     <target name="build" depends="build-c" />
