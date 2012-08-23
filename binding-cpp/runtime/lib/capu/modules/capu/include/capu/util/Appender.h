@@ -19,10 +19,16 @@
 #ifndef __APPENDER_H__
 #define __APPENDER_H__
 
+#include "capu/util/Logger.h"
+
 namespace capu {
 
   class Appender {
+  protected:
+    capu::LoggerLevel mLvl;
   public:
+
+    virtual ~Appender() {}
 
     /**
      * open logger appender
@@ -39,6 +45,18 @@ namespace capu {
      * close logger appender
      */
     virtual status_t close() = 0;
+
+    /**
+     * set Logging Level               /\
+     * Error Logging = CLL_ERROR,     /||\
+     * Waring Logging = CLL_WARN,      || CLL_WARN includes CLL_ERROR etc.
+     * Info Logging = CLL_INFO,        ||
+     * Debug Logging = CLL_DEBUG,      ||
+     * Trace Logging = CLL_TRACE,      ||
+     */
+    void setLoggingLevel(LoggerLevel level) {
+      mLvl = level;
+    }
 
   };
 

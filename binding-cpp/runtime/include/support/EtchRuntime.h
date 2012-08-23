@@ -26,6 +26,8 @@ class EtchRuntime;
 class EtchRuntimeListener {
 public:
 
+  virtual ~EtchRuntimeListener() {}
+
   /**
    * Called if the runtime changed its state
    */

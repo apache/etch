@@ -13,6 +13,8 @@
 #include "MainHelloWorldListener.h"
 #include "ImplHelloWorldServer.h"
 #include "transport/EtchTransportData.h"
+#include "util/EtchLogger.h"
+
 
 
 using namespace org_apache_etch_examples_helloworld_HelloWorld;
@@ -34,6 +36,13 @@ int main(int argc, const char* argv[])
   EtchRuntime* runtime = new EtchRuntime();
   status = runtime->start();
 
+  EtchLogger* logger = new EtchLogger();
+  EtchAppender* appender = new EtchConsoleAppender();
+  appender->setLoggingLevel(capu::CLL_TRACE);
+  logger->setAppender(appender);
+  EtchRuntime::setLogger(logger);
+
+
   // TODO Change to correct URI
   EtchString uri("tcp://0.0.0.0:4001");
 
@@ -45,7 +54,7 @@ int main(int argc, const char* argv[])
 
   // Start the Listener
   status = listener->transportControl(new EtchString(EtchTransportData::START_AND_WAIT_UP()), new EtchInt32(4000));
-  
+
   //Wait for finish...
   capu::Thread::Sleep(200000);
 
@@ -54,8 +63,10 @@ int main(int argc, const char* argv[])
 
   //delete runtime
   status = runtime->shutdown();
-  
+
   delete runtime;
+  delete logger;
+  delete appender;
   return 0;
 }
 
