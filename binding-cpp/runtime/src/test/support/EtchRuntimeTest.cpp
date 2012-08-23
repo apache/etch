@@ -32,9 +32,9 @@ TEST(EtchRuntime, getId) {
 
 TEST(EtchRuntime, isClosed) {
   EtchRuntime* runtime = new EtchRuntime();
-  ASSERT_EQ(false, runtime->isClosed());
+  EXPECT_FALSE(runtime->isClosed());
   runtime->shutdown();
-  ASSERT_EQ(true, runtime->isClosed());
+  EXPECT_TRUE(runtime->isClosed());
   delete runtime;
 }
 
@@ -43,7 +43,7 @@ public:
   /**
    * Constructor
    */
-  EtchRuntimeTestListener() 
+  EtchRuntimeTestListener()
     : mId(0) {
   }
 
@@ -61,22 +61,22 @@ public:
 TEST(EtchRuntime, registerListener) {
   status_t status;
   EtchRuntime* runtime = new EtchRuntime();
-  
+
   status = runtime->registerListener(NULL);
-  ASSERT_EQ(ETCH_EINVAL, status);
+  EXPECT_EQ(ETCH_EINVAL, status);
 
   EtchRuntimeTestListener listener;
   status = runtime->registerListener(&listener);
-  ASSERT_EQ(ETCH_OK, status);
+  EXPECT_EQ(ETCH_OK, status);
 
   // a shutdown leads to a runtime change
   runtime->shutdown();
 
   status = runtime->unregisterListener(&listener);
-  ASSERT_EQ(ETCH_OK, status);
+  EXPECT_EQ(ETCH_OK, status);
 
   // check if callback was fired
-  ASSERT_EQ(1, listener.mId);
+  EXPECT_EQ(1, listener.mId);
 
   delete runtime;
 }
