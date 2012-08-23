@@ -41,7 +41,6 @@ TEST(EtchTypeMapTest, addTest) {
   test->lock();
   //try to add new type
   EXPECT_EQ(ETCH_EINVAL, test->add(type));
-  delete type;
   delete test;
 }
 
@@ -81,8 +80,6 @@ TEST(EtchTypeMapTest, getTest) {
   EXPECT_EQ(ETCH_OK, test->get("testtype2", tmp1));
 
   delete test;
-  delete type;
-  delete tmp1;
 }
 
 TEST(EtchTypeMapTest, sizeTest) {
@@ -101,7 +98,6 @@ TEST(EtchTypeMapTest, sizeTest) {
   //check size
   EXPECT_EQ(1, test->size());
   delete test;
-  delete type;
 }
 
 TEST(EtchTypeMapTest, lockTest) {
@@ -122,7 +118,6 @@ TEST(EtchTypeMapTest, lockTest) {
   //check size again
   EXPECT_EQ(1, test->size());
   delete test;
-  delete type;
 }
 
 TEST(EtchTypeMapTest, getAllTest) {
@@ -149,5 +144,4 @@ TEST(EtchTypeMapTest, getAllTest) {
   }
 
   delete test;
-  delete type;
 }

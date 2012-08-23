@@ -24,6 +24,14 @@ EtchTypeMap::EtchTypeMap()
 }
 
 EtchTypeMap::~EtchTypeMap() {
+  EtchHashTable<capu::int32_t, EtchType*, capu::Hash, capu::Comparator >::Iterator it = mById.begin();
+  while (it.hasNext()) {
+    capu::Pair<capu::int32_t, EtchType*> pair;
+    it.next(&pair);
+    delete pair.second;
+  }
+  mById.clear();
+  mByName.clear();
 }
 
 status_t EtchTypeMap::add(EtchType *type) {

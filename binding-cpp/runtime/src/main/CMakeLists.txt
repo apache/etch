@@ -58,7 +58,7 @@ SET(MAIN_INCLUDES
     ${PROJECT_SOURCE_DIR}/include/transport/EtchTransportData.h
     ${PROJECT_SOURCE_DIR}/include/transport/EtchTransportMessage.h
     ${PROJECT_SOURCE_DIR}/include/transport/EtchTransportPacket.h
-    ${PROJECT_SOURCE_DIR}/include/transport/EtchTransportFactory.h 
+    ${PROJECT_SOURCE_DIR}/include/transport/EtchTransportFactory.h
     ${PROJECT_SOURCE_DIR}/include/transport/EtchMessagizer.h
     ${PROJECT_SOURCE_DIR}/include/transport/EtchFormat.h
     ${PROJECT_SOURCE_DIR}/include/transport/EtchTcpTransportFactory.h
@@ -127,7 +127,7 @@ SET(MAIN_INCLUDES
     ${PROJECT_SOURCE_DIR}/include/support/EtchPoolRunnable.h
     ${PROJECT_SOURCE_DIR}/include/support/EtchFreePool.h
     ${PROJECT_SOURCE_DIR}/include/support/EtchQueuedPool.h
-    ${PROJECT_SOURCE_DIR}/include/support/EtchRemoteBase.h    
+    ${PROJECT_SOURCE_DIR}/include/support/EtchRemoteBase.h
     ${PROJECT_SOURCE_DIR}/include/support/EtchServerFactory.h
     ${PROJECT_SOURCE_DIR}/include/support/EtchStubHelper.h
     ${PROJECT_SOURCE_DIR}/include/support/EtchStubBase.h
@@ -135,9 +135,9 @@ SET(MAIN_INCLUDES
     ${PROJECT_SOURCE_DIR}/include/support/EtchPlainMailbox.h
     ${PROJECT_SOURCE_DIR}/include/support/EtchMonitor.h
     ${PROJECT_SOURCE_DIR}/include/support/EtchStack.h
+    ${PROJECT_SOURCE_DIR}/include/support/EtchStackClient.h
+    ${PROJECT_SOURCE_DIR}/include/support/EtchStackServer.h
     ${PROJECT_SOURCE_DIR}/include/support/EtchRuntime.h
-    ${PROJECT_SOURCE_DIR}/include/support/EtchServerStack.h
-    ${PROJECT_SOURCE_DIR}/include/support/EtchClientStack.h
     ${PROJECT_SOURCE_DIR}/include/util/EtchUtil.h
     ${PROJECT_SOURCE_DIR}/include/util/EtchCircularQueue.h
     ${PROJECT_SOURCE_DIR}/include/util/EtchIdGenerator.h
@@ -223,8 +223,9 @@ SET(MAIN_SOURCES
     support/EtchTransportHelper.cpp
     support/EtchMonitor.cpp
     support/EtchRuntime.cpp
-    support/EtchServerStack.cpp
-    support/EtchClientStack.cpp
+    support/EtchStack.cpp
+  support/EtchStackClient.cpp
+  support/EtchStackServer.cpp
     support/EtchAsyncResultNone.cpp
     util/EtchCircularQueue.cpp
     util/EtchUtil.cpp

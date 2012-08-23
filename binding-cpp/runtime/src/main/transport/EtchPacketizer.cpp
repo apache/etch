@@ -85,8 +85,7 @@ EtchPacketizer::EtchPacketizer(EtchTransportData* transport, EtchURL* uri)
 }
 
 EtchPacketizer::~EtchPacketizer() {
-  if (mTransport != NULL)
-    delete mTransport;
+
 }
 
 capu::int32_t EtchPacketizer::getHeaderSize() {

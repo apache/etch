@@ -15,35 +15,22 @@
  * limitations under the License.
  */
 
-#ifndef __ETCHSERVERSTACK_H__
-#define __ETCHSERVERSTACK_H__
-
-#include "support/EtchStack.h"
-#include "support/EtchRemoteBase.h"
-#include "transport/EtchSessionMessage.h"
+#include "support/EtchStackClient.h"
 #include "support/EtchTransportHelper.h"
 
-// TODO: Refactoring of stack lifecycle ETCH-240
+const EtchObjectType* EtchStackClient::TYPE() {
+   const static EtchObjectType TYPE(EOTID_STACK_CLIENT, NULL);
+   return &TYPE;
+}
 
-//Entry for EtchRuntime
-class EtchServerStack : public EtchStack {
-public:
+EtchStackClient::EtchStackClient() : EtchStack(), mStaticResources(NULL) {
+  EtchObject::addObjectType(EtchStackClient::TYPE());
+  EtchObject::setObjectType(EtchStackClient::TYPE());
+}
 
-  /**
-   * Constructs the EtchClientStack.
-   */
-  EtchServerStack(EtchRemoteBase* rb, EtchSessionMessage *helper, EtchResources *res, EtchValueFactory* vf);
+EtchStackClient::~EtchStackClient() {
+  if (mStaticResources != NULL) {
+    EtchTransportHelper::DestroyResources(mStaticResources);
+  }
+}
 
-  /**
-   * Destructor
-   */
-  virtual ~EtchServerStack();
-
-private:
-  EtchValueFactory *mVf;
-  EtchRemoteBase *mRemoteBase;
-  EtchSessionMessage *mStubHelper;
-  EtchResources *mResources;
-};
-
-#endif	/* ETCHSERVERSTACK_H */

@@ -6,16 +6,18 @@
 // overwritten once it exists! Please edit this file as necessary to implement
 // your service logic.
 
+#include "MainHelloWorldListener.h"
+#include "ImplHelloWorldServer.h"
+#include "RemoteHelloWorldClient.h"
+
 #include "capu/os/Thread.h"
 #include "common/EtchTypes.h"
 #include "support/EtchRuntime.h"
-#include "RemoteHelloWorldClient.h"
-#include "MainHelloWorldListener.h"
-#include "ImplHelloWorldServer.h"
 #include "transport/EtchTransportData.h"
-#include "util/EtchLogger.h"
 
-
+#ifdef BUILD_CHECK_MEMORY
+#include "vld.h"
+#endif
 
 using namespace org_apache_etch_examples_helloworld_HelloWorld;
 
@@ -36,13 +38,6 @@ int main(int argc, const char* argv[])
   EtchRuntime* runtime = new EtchRuntime();
   status = runtime->start();
 
-  EtchLogger* logger = new EtchLogger();
-  EtchAppender* appender = new EtchConsoleAppender();
-  appender->setLoggingLevel(capu::CLL_TRACE);
-  logger->setAppender(appender);
-  EtchRuntime::setLogger(logger);
-
-
   // TODO Change to correct URI
   EtchString uri("tcp://0.0.0.0:4001");
 
@@ -52,21 +47,29 @@ int main(int argc, const char* argv[])
   status = HelloWorldHelper::newListener(runtime, uri, NULL, &mainHelloWorldlistener, listener);
 
 
-  // Start the Listener
+  //start the Listener
   status = listener->transportControl(new EtchString(EtchTransportData::START_AND_WAIT_UP()), new EtchInt32(4000));
+  if (status == ETCH_OK) {
+    printf("Hello World Server started successfully. Listening on port 4001\n\n");
+  } else {
+    printf("Error while starting Hello World Server. Errorcode %d \n\n", status);
+    return -1;
+  }
+  
+  //waiting
+  printf("press any key to stop server\n");
+  getchar();
 
-  //Wait for finish...
-  capu::Thread::Sleep(200000);
-
-  //Stop the Listener
+  //stop the Listener
   listener->transportControl(new EtchString(EtchTransportData::STOP_AND_WAIT_DOWN()), new EtchInt32(4000));
+
+  //delete listener
+  delete listener;
 
   //delete runtime
   status = runtime->shutdown();
-
+  
   delete runtime;
-  delete logger;
-  delete appender;
   return 0;
 }
 

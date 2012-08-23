@@ -70,7 +70,7 @@ status_t $clname::$n.name()AsyncResultRemote::mailboxStatus(EtchMailbox* mb, Etc
   return ETCH_OK;
 }
 
-$intfname::$n.name()AsyncResultPtr $clname::$n.name()AsyncResultRemote::Begin($clname* base, #set($sep = "")#foreach($p in $n.iterator())$sep$helper.getEtchTypeName($p.type(), true) $p.name()#set($sep = ", ")#end) {
+$intfname::$n.name()AsyncResultPtr $clname::$n.name()AsyncResultRemote::Begin($clname* base#set($sep = ", ")#foreach($p in $n.iterator())$sep$helper.getEtchTypeName($p.type(), true) $p.name()#end) {
   status_t status;
 
   capu::SmartPointer<EtchMessage> msg;
@@ -108,11 +108,11 @@ $intfname::$n.name()AsyncResultPtr $clname::$n.name()AsyncResultRemote::Begin($c
  * @param vf
  */
 #if($hasBaseClass)
-$clname::$clname(EtchRuntime* runtime, EtchDeliveryService* svc, EtchValueFactory* vf )
-  : Remote${i}(runtime, svc, vf) {
+$clname::$clname(EtchRuntime* runtime, EtchDeliveryService* svc, EtchValueFactory* vf, EtchStack* stack )
+  : Remote${i}(runtime, svc, vf, stack) {
 #else
-$clname::$clname(EtchRuntime* runtime, EtchDeliveryService* svc, EtchValueFactory* vf )
-  : EtchRemoteBase(svc, vf), mRuntime(runtime) {
+$clname::$clname(EtchRuntime* runtime, EtchDeliveryService* svc, EtchValueFactory* vf, EtchStack* stack )
+  : EtchRemoteBase(svc, vf, stack), mRuntime(runtime) {
 #end
 }
 
@@ -131,7 +131,7 @@ $intfname::$n.name()AsyncResultPtr $clname::$n.name()(#set( $sep = "" )#foreach(
 }
 #else
 $intfname::$n.name()AsyncResultPtr $clname::$n.name()(#set( $sep = "" )#foreach( $p in $n.iterator() )$sep$helper.getEtchTypeName( $p.type(), true ) $p.name() #set( $sep = ", " )#end) {
-  $n.name()AsyncResultPtr result = $clname::$n.name()AsyncResultRemote::Begin(this, #set($sep = "")#foreach($p in $n.iterator())$p.name() #set( $sep = ", ")#end);
+  $n.name()AsyncResultPtr result = $clname::$n.name()AsyncResultRemote::Begin(this#set( $sep = ", ")#foreach($p in $n.iterator())$sep$p.name()#end);
   return result;
 }
 

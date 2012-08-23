@@ -76,21 +76,35 @@ status_t EtchRuntimeExceptionSerializer::Init(EtchType* type, EtchClass2TypeMap*
   EtchRuntime* runtime = EtchRuntime::getRuntime();
 
   status_t result;
-  EtchField field_ptr;
-  result = type->getField(FIELD_NAME(), &field_ptr);
-  if (result != ETCH_OK)
+
+  EtchField field;
+  result = type->getField(FIELD_NAME(), &field);
+  if (result != ETCH_OK) {
     return result;
-  class2type->put(EtchRuntimeException::TYPE(), type);
+  }
+
+  result = class2type->put(EtchRuntimeException::TYPE(), type);
+  if (result != ETCH_OK) {
+    return result;
+  }
+
   type->setComponentType(EtchRuntimeException::TYPE());
+
   //set the import export helper
-  type->setImportExportHelper(new EtchRuntimeExceptionSerializer(type, &field_ptr));
+  type->setImportExportHelper(new EtchRuntimeExceptionSerializer(type, &field));
+
+  //get validator
   capu::SmartPointer<EtchValidator> tmp;
   result = EtchValidatorString::Get(0, tmp);
-  if (result != ETCH_OK)
+  if (result != ETCH_OK) {
     return result;
-  result = type->putValidator(field_ptr, tmp);
-  if (result != ETCH_OK)
+  }
+  result = type->putValidator(field, tmp);
+  if (result != ETCH_OK) {
     return result;
+  }
+
+  //lock type
   type->lock();
   CAPU_LOG_TRACE(runtime->getLogger(), TAG, "EtchRuntimeExceptionSerializer has been initialized");
   return ETCH_OK;

@@ -72,22 +72,34 @@ status_t EtchDateSerializer::Init(EtchType* type, EtchClass2TypeMap* class2type)
   EtchRuntime* runtime = EtchRuntime::getRuntime();
   
   status_t result;
-  EtchField field_ptr;
-  result = type->getField(FIELD_NAME(), &field_ptr);
-  if (result != ETCH_OK)
+
+  EtchField field;
+  result = type->getField(FIELD_NAME(), &field);
+  if (result != ETCH_OK) {
     return result;
-  class2type->put(EtchDate::TYPE(), type);
+  }
+
+  result = class2type->put(EtchDate::TYPE(), type);
+  if (result != ETCH_OK) {
+    return result;
+  }
+
   type->setComponentType(EtchDate::TYPE());
 
   //set the import export helper
-  type->setImportExportHelper(new EtchDateSerializer(type, &field_ptr));
+  type->setImportExportHelper(new EtchDateSerializer(type, &field));
+
+  //get validator
   capu::SmartPointer<EtchValidator> val;
   result = EtchValidatorLong::Get(0, val);
-  if (result != ETCH_OK)
+  if (result != ETCH_OK) {
     return result;
-  result = type->putValidator(field_ptr, val);
-  if (result != ETCH_OK)
+  }
+  result = type->putValidator(field, val);
+  if (result != ETCH_OK) {
     return result;
+  }
+
   type->lock();
   CAPU_LOG_TRACE(runtime->getLogger(), TAG, "EtchDateSerializer has been initialized");
   return ETCH_OK;

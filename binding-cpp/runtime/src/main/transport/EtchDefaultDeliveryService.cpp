@@ -67,9 +67,7 @@ void EtchDefaultDeliveryService::init(EtchURL* uri) {
 }
 
 EtchDefaultDeliveryService::~EtchDefaultDeliveryService() {
-  if(mTransport != NULL) {
-    delete mTransport;
-  }
+
 }
 
 const EtchMailboxManager* EtchDefaultDeliveryService::getTransport() {

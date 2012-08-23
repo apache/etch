@@ -16,11 +16,133 @@
  */
 
 #ifndef ETCHSTACK_H
-#define	ETCHSTACK_H
+#define ETCHSTACK_H
 
-class EtchStack {
+#include "support/EtchStubBase.h"
+#include "transport/EtchTransportData.h"
+#include "transport/EtchTransportPacket.h"
+#include "transport/EtchTransportMessage.h"
+#include "transport/EtchPlainMailboxManager.h"
+#include "transport/EtchDefaultDeliveryService.h"
+#include "serialization/EtchValueFactory.h"
+#include "util/EtchResources.h"
+
+/* *
+ * This class serves as a container for all layers created during the setup of a new stack (connection, packetizer, messagizer, ...).
+ */
+class EtchStack : public EtchObject{
 public:
-  virtual ~EtchStack() {}
+
+  /**
+   * EtchObjectType for EtchStack.
+   */
+  static const EtchObjectType* TYPE();
+
+  /**
+   * Resource identifier
+   */
+  const static EtchString& STACK();
+
+  /**
+   * Default Constructor
+   */
+  EtchStack();
+
+  /**
+   * Destructor which cleans the whole stack
+   */
+  virtual ~EtchStack();
+
+  /**
+   * sets the transport interface
+   */
+  void setTransportData(EtchTransportData* transportData);
+
+  /**
+   * sets the packet interface
+   */
+  void setTransportPacket(EtchTransportPacket* transportPacket);
+
+  /**
+   * sets the message interface
+   */
+  void setTransportMessage(EtchTransportMessage* transportMessage);
+
+  /**
+   * sets the resources
+   */
+  void setResources(EtchResources* resources);
+
+  /**
+   * sets the value factory
+   */
+  void setValueFactory(EtchValueFactory* valuefactory);
+
+  /**
+   * sets the mailbox manager
+   */
+  void setMailboxManager(EtchMailboxManager* mailboxmanager);
+
+  /**
+   * sets the delivery service
+   */
+  void setDeliveryService(EtchDeliveryService* deliveryservice);
+  
+  /**
+   * sets the stub implemenation
+   */
+  void setStub(EtchSessionMessage* stub);
+
+  /**
+   * returns the transport interface
+   */
+  EtchTransportData* getTransportData();
+
+  /**
+   * returns the packet interface
+   */
+  EtchTransportPacket* getTransportPacket();
+
+  /**
+   * returns the message interface
+   */
+  EtchTransportMessage* getTransportMessage();
+
+  /**
+   * returns the resources
+   */
+  EtchResources* getResources();
+
+  /**
+   * returns the value factory
+   */
+  EtchValueFactory* getValueFactory();
+
+  /**
+   * returns the mailbox manager
+   */
+  EtchMailboxManager* getMailboxManager();
+
+  /**
+   * returns the delivery service
+   */
+  EtchDeliveryService* getDeliveryService();
+
+  /**
+   * returns the stub implemenatation
+   */
+  EtchSessionMessage* getStub();
+
+private:
+  EtchTransportData* mTransportData;
+  EtchTransportPacket* mTransportPacket;
+  EtchTransportMessage* mTransportMessage;
+  EtchResources* mResources;
+  EtchValueFactory* mValueFactory;
+  EtchMailboxManager* mMailboxManager;
+  EtchDeliveryService* mDeliveryService;
+  EtchSessionMessage* mStub;
+
 };
 
 #endif /* ETCHSTACK_H */

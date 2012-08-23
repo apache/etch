@@ -15,22 +15,37 @@
  * limitations under the License.
  */
 
-#include "support/EtchClientStack.h"
+#ifndef __ETCHSTACKCLIENT_H__
+#define __ETCHSTACKCLIENT_H__
 
-EtchClientStack::EtchClientStack(EtchRemoteBase* rb, EtchSessionMessage *helper, EtchResources *res, EtchValueFactory* vf)
-: mRemoteBase(rb), mStubHelper(helper),mResources(res), mVf(vf) {
-}
+#include "support/EtchStack.h"
+#include "util/EtchResources.h"
 
-EtchClientStack::~EtchClientStack() {
-  status_t status;
-  status = EtchTransportHelper::DestroyResources(mResources);
-  if(status != ETCH_OK) {
-    // Log error
-  }
-  if(mStubHelper != NULL) {
-    delete mStubHelper;
-  }
-  if(mVf != NULL) {
-    delete mVf;
-  }
-}
+/* *
+ * This class serves as a container for all layers created during the setup of a new stack (connection, packetizer, messagizer, ...).
+ */
+class EtchStackClient : public EtchStack {
+public:
+
+  /**
+   * EtchObjectType for EtchStackClient.
+   */
+  static const EtchObjectType* TYPE();
+
+  /**
+   * Default Constructor
+   */
+  EtchStackClient();
+
+  /**
+   * Destructor which cleans the whole stack
+   */
+  virtual ~EtchStackClient();
+
+public:
+  EtchResources* mStaticResources;
+
+
+};
+
+#endif /* __ETCHSTACKCLIENT_H__ */

@@ -20,7 +20,29 @@
 #include "serialization/EtchValidatorString.h"
 #include "serialization/EtchValidatorInt.h"
 
-TEST(EtchComboValidatorTest, createTest) {
+class EtchComboValidatorTest
+  : public ::testing::Test {
+protected:
+  virtual void SetUp() {
+    mRuntime = new EtchRuntime();
+    mRuntime->setLogger(new EtchLogger());
+    mRuntime->start();
+  }
+
+  virtual void TearDown() {
+    mRuntime->shutdown();
+    EtchLogger* logger = mRuntime->getLogger();
+    if(logger != NULL) {
+      delete logger;
+    }
+    delete mRuntime;
+    mRuntime = NULL;
+  }
+
+  EtchRuntime* mRuntime;
+};
+
+TEST_F(EtchComboValidatorTest, createTest) {
   capu::SmartPointer<EtchValidator> ptr;
   capu::SmartPointer<EtchValidator> ptr2;
 
@@ -32,7 +54,7 @@ TEST(EtchComboValidatorTest, createTest) {
   delete combo;
 }
 
-TEST(EtchComboValidatorTest, validateTest) {
+TEST_F(EtchComboValidatorTest, validateTest) {
   capu::SmartPointer<EtchObject> byte = NULL;
 
   capu::SmartPointer<EtchObject> integer = new EtchInt32(capu::NumericLimitMin<capu::int32_t>());
@@ -92,7 +114,7 @@ TEST(EtchComboValidatorTest, validateTest) {
   delete ptr;
 }
 
-TEST(EtchComboValidatorTest, validateValueTest) {
+TEST_F(EtchComboValidatorTest, validateValueTest) {
 
   capu::SmartPointer<EtchObject> byte = NULL;
   capu::SmartPointer<EtchObject> result = NULL;
@@ -127,7 +149,7 @@ TEST(EtchComboValidatorTest, validateValueTest) {
   delete ptr;
 }
 
-TEST(EtchComboValidatorTest, elementValidatorTest) {
+TEST_F(EtchComboValidatorTest, elementValidatorTest) {
   //create combo validator
   EtchComboValidator *ptr = NULL;
   capu::SmartPointer<EtchValidator> ptr1;

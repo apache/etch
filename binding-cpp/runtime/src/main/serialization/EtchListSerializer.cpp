@@ -104,11 +104,18 @@ status_t EtchListSerializer::Init(EtchType* type, EtchClass2TypeMap * class2type
     return result;
   }
 
-  class2type->put(EtchNativeArray<capu::SmartPointer<EtchObject> >::TYPE(), type);
+  result = class2type->put(EtchNativeArray<capu::SmartPointer<EtchObject> >::TYPE(), type);
+  if (result != ETCH_OK) {
+    return result;
+  }
+
   type->setComponentType(EtchList<capu::SmartPointer<EtchObject> >::TYPE());
+
   //set the import export helper
   // TODO memory EtchField
   type->setImportExportHelper(new EtchListSerializer(type, &field));
+  
+  //get validator
   capu::SmartPointer<EtchValidator> validator;
   result = EtchValidatorObject::Get(1, validator);
   if (result != ETCH_OK) {

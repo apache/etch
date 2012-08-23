@@ -26,16 +26,36 @@
 #set( $vf = "ValueFactory$intf.name()" )
 
 \#include "$inc"
+\#include "${intf.name()}.h"
+\#include "Stub${i}Server.h"
+\#include "Stub${i}Client.h"
 \#include "common/EtchError.h"
 \#include "serialization/EtchField.h"
 \#include "serialization/EtchAsyncMode.h"
 \#include "serialization/EtchDirection.h"
-\#include "${intf.name()}.h"
 \#include "serialization/EtchValidators.h"
-\#include "Stub${i}Server.h"
-\#include "Stub${i}Client.h"
 
 using namespace $namespace;
+
+status_t $vf::Etch${intf.name()}RuntimeListener::onRuntimeChanged(EtchRuntime* runtime) {
+  capu::int_t index = $vf::SRuntimes.find(runtime->getId());
+  if (index == -1) {
+    return ETCH_ERROR;
+  }
+  if (runtime->isClosed()) {
+    //the runtime is closed and is removed
+    $vf::SRuntimes.removeAt(index);
+  }
+  if ($vf::SRuntimes.isEmpty()) {
+    //clean up all static members
+    $vf::DestroyValueFactory();
+  }
+  return ETCH_OK;
+}
+
+capu::Mutex $vf::SRuntimesMutex;
+capu::List<capu::uint64_t> $vf::SRuntimes;
+$vf::Etch${intf.name()}RuntimeListener $vf::S${intf.name()}RuntimeListener;
 
 ##--------------------------------------------------------------
 ## Classes that represent anonym creation in java
@@ -90,7 +110,7 @@ class ImportExportHelper$n.vname( $helper )
      switch (v->Value)
      {
 #foreach ($p in $n.iterator())
-       case $tname::$p.name(): _struct->put($vf::$p.vname($helper)(), new EtchBool(true) ); break;
+       case $tname::${tname}_$p.name(): _struct->put($vf::$p.vname($helper)(), new EtchBool(true) ); break;
 #end
      }
      result = _struct;
@@ -105,11 +125,14 @@ class ImportExportHelper$n.vname( $helper )
        return ETCH_EINVAL;
 
      // there should only be a single key, so take the first one
-     EtchField key = value->getFirstField();
+     EtchHashTable<EtchField, capu::SmartPointer<EtchObject> >::Iterator it = value->begin();
+     EtchHashTable<EtchField, capu::SmartPointer<EtchObject> >::Pair pair;
+     it.next(&pair);
+     EtchField key = pair.first;
 #foreach ($p in $n.iterator())
      if (key.equals(&$vf::$p.vname($helper)()))
      {
-       result = new ${tname}(${tname}::$p.name());
+       result = new ${tname}(${tname}::${tname}_$p.name());
        return ETCH_OK;
      }
 #end
@@ -170,16 +193,17 @@ ${vf}::${vf}( EtchString uri ) : EtchDefaultValueFactory(uri, types(), class2typ
 #end
 }
 
-void ${vf}::initTypes()
+status_t ${vf}::InitTypes()
 {
 #foreach ( $n in $intf.iterator() )
 #if ($n.isEnumx() || $n.isStruct() || $n.isExtern() || $n.isExcept() || $n.isMessage())
   types()->get(EtchString("$n.fqname()"), ${vf}::${n.vname( $helper )});
 #end
 #end
+  return ETCH_OK;
 }
 
-void ${vf}::initResults()
+status_t ${vf}::InitResults()
 {
 //AF: TO-REVIEW: finde die Verwendung von Anonymer Enum bei EchtDirection und bei EtchAsyncMode unschoen
 
@@ -202,10 +226,11 @@ void ${vf}::initResults()
 #end
 #end
 #end
+  return ETCH_OK;
 }
 
 ## ----------------------------- import / export -----------------------------
-void ${vf}::initImportExport()
+status_t ${vf}::InitImportExport()
 {
 #foreach ( $n in $intf.iterator() )
 #if ($n.isStruct() || $n.isExcept())
@@ -225,11 +250,13 @@ void ${vf}::initImportExport()
   $vf::${n.vname( $helper )}->setImportExportHelper(new ImportExportHelper$n.vname($helper)());
 #end
 #end
+
+  return ETCH_OK;
 }
 
 ## ----------------------------- fields -----------------------------
 
-void ${vf}::initFields()
+status_t ${vf}::InitFields()
 {
 #set( $x = $params.clear() )
 ## standard params from DefaultValueFactory
@@ -245,24 +272,17 @@ void ${vf}::initFields()
 #end
 #end
 #end
+  return ETCH_OK;
 }
 
 
 #set( $ctr = 0 )
-void $vf::initParams()
+status_t $vf::InitParams()
 {
   capu::SmartPointer<EtchValidator> tmpValue;
 #foreach( $n in $intf.iterator() )
 #if ($n.isEnumx() || $n.isStruct() || $n.isExcept() || $n.isMessage())
-#if ($ctr > 0 && $ctr % 100 == 0)
 
-  initParams${ctr}();
-}
-
-void $vf::initParams${ctr}()
-{
-  capu::SmartPointer<EtchValidator> tmpValue;
-#end
 #set( $ctr = $ctr + 1 )
   // params for $n.name()
 #if ($n.isStruct() || $n.isExcept())
@@ -270,14 +290,14 @@ void $vf::initParams${ctr}()
   $helper.getValidator($param);
   $vf::${n.vname( $helper )}->putValidator($vf::$param.vname($helper)(), tmpValue);
 
-#end
+#end ## -- foreach --
 #else
 #foreach( $param in $n.iterator() )
   $helper.getValidator($param);
   $vf::${n.vname( $helper )}->putValidator($vf::$param.vname($helper)(), tmpValue);
 
-#end
-#end
+#end ## -- foreach --
+#end ## -- else --
 #if ($n.isMessage())
   EtchValidatorLong::Get(0, tmpValue);
   ${n.vname( $helper )}->putValidator($vf::_mf__messageId(), tmpValue);
@@ -289,52 +309,104 @@ void $vf::initParams${ctr}()
   $helper.getValidator($t)
   $vf::${n.vname( $helper )}->putValidator($vf::$param.vname($helper)(), tmpValue); // thrown $t.name()
 
-#end
+#end ## -- foreach --
   EtchValidatorRuntimeException::Get(tmpValue);
   $vf::${n.vname( $helper )}->putValidator($vf::$param.vname($helper)(), tmpValue); // thrown RuntimeException
   EtchValidatorLong::Get(0, tmpValue);
   $vf::${n.vname( $helper )}->putValidator($vf::_mf__inReplyTo(), tmpValue);
+#end ## -- isHidden --
+#end ## -- isMessage --
+#end ## -- $n.isEnumx() || $n.isStruct() || $n.isExcept() || $n.isMessage() --
+#end ## -- foreach --
 
-#end
-#end
-#end
-#end
+  return ETCH_OK;
 }
 
-void $vf::__ShutDown()
+status_t $vf::InitValueFactory(EtchRuntime* runtime)
 {
-  $vf::types()->clear();
-  delete $vf::types();
-  delete $vf::class2type();
-}
+  status_t status;
+  SRuntimesMutex.lock();
+  if (SRuntimes.find(runtime->getId()) != -1) {
+    //runtime is already in list
+    return ETCH_OK;
+  }
 
-/**
- * Static Initialization-Helper
- */
-bool $vf::INIT = false;
-void $vf::__INIT(EtchRuntime* runtime)
-{
-  if(INIT)
-    return;
-  INIT = true;
-  $vf::Init( types(), class2type() );
-  $vf::initTypes();
-  $vf::initResults();
-  $vf::initFields();
+  status = SRuntimes.add(runtime->getId());
+  runtime->registerListener(&S${i}RuntimeListener);
+  if (status != ETCH_OK) {
+    return status;
+  }
+
+  if (SRuntimes.size() > 1) {
+    //Valuefactory is already initialized
+    SRuntimesMutex.unlock();
+    return ETCH_OK;
+  }
+  SRuntimesMutex.unlock();
+  
+  status = $vf::Init( types(), class2type() );
+  if (status != ETCH_OK) {
+    return status;
+  }
+  
+  status = $vf::InitTypes();
+  if (status != ETCH_OK) {
+    return status;
+  }
+  
+  status = $vf::InitResults();
+  if (status != ETCH_OK) {
+    return status;
+  }
+  
+  status = $vf::InitFields();
+  if (status != ETCH_OK) {
+    return status;
+  }
 #foreach( $n in $intf.iterator() )
 #if ($n.isExtern())
-    ${n.sname( $helper )}.init( ${n.vname($helper)}(), class2type );
+    status = ${n.sname( $helper )}.Init( ${n.vname($helper)}(), class2type );
+    if (status != ETCH_OK) {
+      return status;
+    }
 #end
 #end
-  $vf::initParams();
-  $vf::initImportExport();
+  status = $vf::InitParams();
+  if (status != ETCH_OK) {
+    return status;
+  }
+  
+  status = $vf::InitImportExport();
+  if (status != ETCH_OK) {
+    return status;
+  }
 
-  Stub${i}<void>::__INIT();
-  Stub${i}Server::__INIT();
-  Stub${i}Client::__INIT();
+  status = Stub${i}<void>::Init();
+  if (status != ETCH_OK) {
+    return status;
+  }
+  
+  status = Stub${i}Server::Init();
+  if (status != ETCH_OK) {
+    return status;
+  }
+  
+  status = Stub${i}Client::Init();
+  if (status != ETCH_OK) {
+    return status;
+  }
 
   // done updating types, and class2type: lock them.
   types()->lock();
   class2type()->lock();
+  
+  return ETCH_OK;
+}
 
+status_t $vf::DestroyValueFactory()
+{
+  $vf::types()->clear();
+  delete $vf::types();
+  delete $vf::class2type();
+  return ETCH_OK;
 }

@@ -61,7 +61,7 @@ status_t EtchTransportFactory::getListener(EtchRuntime* runtime, EtchString uri,
   }
 
   status_t ret = f->newListener(uri, resources, result);
-  delete f;
+
   return ret;
 }
 

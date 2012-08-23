@@ -103,21 +103,34 @@ status_t EtchHashTableSerializer::Init(EtchType* type, EtchClass2TypeMap* class2
   EtchRuntime* runtime = EtchRuntime::getRuntime();
 
   status_t result;
-  EtchField field_ptr;
-  result = type->getField(FIELD_NAME(), &field_ptr);
-  if (result != ETCH_OK)
+
+  EtchField field;
+  result = type->getField(FIELD_NAME(), &field);
+  if (result != ETCH_OK) {
     return result;
-  class2type->put(EtchNativeArray<capu::SmartPointer<EtchObject> >::TYPE(), type);
+  }
+  
+  result = class2type->put(EtchNativeArray<capu::SmartPointer<EtchObject> >::TYPE(), type);
+  if (result != ETCH_OK) {
+    return result;
+  }
+  
   type->setComponentType(EtchHashTable<capu::SmartPointer<EtchObject>, capu::SmartPointer<EtchObject> >::TYPE());
+  
   //set the import export helper
-  type->setImportExportHelper(new EtchHashTableSerializer(type, &field_ptr));
+  type->setImportExportHelper(new EtchHashTableSerializer(type, &field));
+  
+  //get validator
   capu::SmartPointer<EtchValidator> tmp;
   result = EtchValidatorObject::Get(1, tmp);
-  if (result != ETCH_OK)
+  if (result != ETCH_OK) {
     return result;
-  result = type->putValidator(field_ptr, tmp);
-  if (result != ETCH_OK)
+  }
+  result = type->putValidator(field, tmp);
+  if (result != ETCH_OK) {
     return result;
+  }
+
   type->lock();
   CAPU_LOG_TRACE(runtime->getLogger(), TAG, "EtchHashTableSerializer has been initialized");
   return ETCH_OK;

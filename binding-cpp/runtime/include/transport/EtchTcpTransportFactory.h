@@ -23,6 +23,7 @@
 #include "common/EtchString.h"
 #include "common/EtchConfig.h"
 #include "support/EtchServerFactory.h"
+#include "support/EtchStack.h"
 #include "transport/EtchTransportMessage.h"
 #include "transport/EtchTransportData.h"
 #include "transport/EtchTcpConnection.h"
@@ -38,6 +39,7 @@ class EtchTcpTransportFactory
  : public EtchTransportFactory {
 public:
 
+  friend class MySessionListener;
   /**
    * Constructor
    * @param runtime
@@ -81,7 +83,7 @@ private:
      * @param uri
      * @param resources
      */
-    MySessionListener(EtchRuntime* runtime, EtchTransport<EtchSessionListener<EtchSocket> > *transport,
+    MySessionListener(EtchRuntime* runtime, EtchTcpTransportFactory* factory, EtchTransport<EtchSessionListener<EtchSocket> > *transport,
             EtchString uri, EtchResources* resources, capu::bool_t secure);
 
      /**
@@ -141,6 +143,8 @@ private:
     EtchServerFactory* mSession;
     EtchRuntime* mRuntime;
     capu::bool_t mIsSecure;
+    capu::List<EtchStack*>* mConnectionStacks;
+    EtchTcpTransportFactory* mFactory;
 
   };
 

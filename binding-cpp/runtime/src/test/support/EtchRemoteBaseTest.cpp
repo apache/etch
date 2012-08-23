@@ -129,13 +129,15 @@ TEST_F(EtchRemoteBaseTest, constructorTest) {
   EtchDeliveryService * service = NULL;
   service = new EtchDefaultDeliveryService(manager, &u);
   EtchRemoteBase * remote = NULL;
-  remote = new EtchRemoteBase(service, factory->factory);
+  remote = new EtchRemoteBase(service, factory->factory, NULL);
 
   EXPECT_TRUE(remote != NULL);
   manager->setSession(service);
   service->setSession(&session);
 
   delete remote;
+  delete transport;
+  delete manager;
   delete service;
   delete factory;
 }
@@ -154,7 +156,7 @@ TEST_F(EtchRemoteBaseTest, newMessageTest) {
   EtchDeliveryService * service = NULL;
   service = new EtchDefaultDeliveryService(manager, &u);
   EtchRemoteBase * remote = NULL;
-  remote = new EtchRemoteBase(service, factory->factory);
+  remote = new EtchRemoteBase(service, factory->factory, NULL);
 
   EXPECT_TRUE(remote != NULL);
   manager->setSession(service);
@@ -173,7 +175,9 @@ TEST_F(EtchRemoteBaseTest, newMessageTest) {
   //check the assigned factory
   EXPECT_TRUE(factory->factory == msg->getValueFactory());
 
+  delete transport;
   delete remote;
+  delete manager;
   delete service;
   delete factory;
 }
@@ -192,7 +196,7 @@ TEST_F(EtchRemoteBaseTest, sendTest) {
   EtchDeliveryService * service = NULL;
   service = new EtchDefaultDeliveryService(manager, &u);
   EtchRemoteBase * remote = NULL;
-  remote = new EtchRemoteBase(service, factory->factory);
+  remote = new EtchRemoteBase(service, factory->factory, NULL);
 
   EXPECT_TRUE(remote != NULL);
   manager->setSession(service);
@@ -215,7 +219,10 @@ TEST_F(EtchRemoteBaseTest, sendTest) {
   EXPECT_TRUE(remote->send(msg) == ETCH_OK);
 
   factory->types.clear();
+
+  delete transport;
   delete remote;
+  delete manager;
   delete service;
   delete factory;
 }
@@ -234,7 +241,7 @@ TEST_F(EtchRemoteBaseTest, beginCallTest) {
   EtchDeliveryService * service = NULL;
   service = new EtchDefaultDeliveryService(manager, &u);
   EtchRemoteBase * remote = NULL;
-  remote = new EtchRemoteBase(service, factory->factory);
+  remote = new EtchRemoteBase(service, factory->factory, NULL);
 
   EXPECT_TRUE(remote != NULL);
   manager->setSession(service);
@@ -262,7 +269,10 @@ TEST_F(EtchRemoteBaseTest, beginCallTest) {
   EXPECT_TRUE(mail != NULL);
 
   factory->types.clear();
+
+  delete transport;
   delete remote;
+  delete manager;
   delete service;
   delete factory;
 }
@@ -281,7 +291,7 @@ TEST_F(EtchRemoteBaseTest, endCallTest) {
   EtchDeliveryService * service = NULL;
   service = new EtchDefaultDeliveryService(manager, &u);
   EtchRemoteBase * remote = NULL;
-  remote = new EtchRemoteBase(service, factory->factory);
+  remote = new EtchRemoteBase(service, factory->factory, NULL);
 
   EXPECT_TRUE(remote != NULL);
   manager->setSession(service);
@@ -331,8 +341,11 @@ TEST_F(EtchRemoteBaseTest, endCallTest) {
   EXPECT_TRUE(result == data);
 
   factory->types.clear();
+  
+  delete transport;
   delete mail;
   delete remote;
+  delete manager;
   delete service;
   delete factory;
 }

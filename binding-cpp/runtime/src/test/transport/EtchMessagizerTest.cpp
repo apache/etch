@@ -116,8 +116,11 @@ TEST_F(EtchMessagizerTest, constructorTest) {
   EtchTransportData* conn = new EtchTcpConnection(mRuntime, NULL, &u);
   EtchTransportPacket* pac = new EtchPacketizer(conn, &u);
   EtchSessionPacket* mes = new EtchMessagizer(pac, &u, &r);
-  //Created stack
+  
+  //Delete created stack
+  delete conn;
   delete mes;
+  delete pac;
   delete factory;
   types.clear();
 }
@@ -151,7 +154,9 @@ TEST_F(EtchMessagizerTest, TransportControlTest) {
 
   transport->transportControl(new EtchString(EtchTcpListener::STOP_AND_WAIT_DOWN()), new EtchInt32(1000));
 
+  delete conn;
   delete mSessionListener;
+  delete pac;
   delete mess;
   delete factory;
   types.clear();
@@ -189,7 +194,9 @@ TEST_F(EtchMessagizerTest, TransportMessageTest) {
 
   EXPECT_TRUE(mess->transportMessage(NULL, msg) == ETCH_ERROR);
 
+  delete conn;
   delete mess;
+  delete pac;
   delete factory;
   types.clear();
 }
@@ -248,7 +255,9 @@ TEST_F(EtchMessagizerTest, SessionDataTest) {
 
   mess->setSession(NULL);
   types.clear();
+  delete conn;
   delete mMailboxManager;
+  delete pac;
   delete mess;
   delete factory;
 }

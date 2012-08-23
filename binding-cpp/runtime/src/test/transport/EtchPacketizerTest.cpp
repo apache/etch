@@ -102,7 +102,10 @@ TEST_F(EtchPacketizerTest, constructorTest) {
   EtchURL u("tcp://127.0.0.1:4001");
   EtchTransportData* conn = new EtchTcpConnection(mRuntime, NULL, &u);
   EtchSessionData* packetizer = new EtchPacketizer(conn, &u);
+
+  delete conn;
   delete packetizer;
+  
 }
 
 TEST_F(EtchPacketizerTest, TransportControlTest) {
@@ -111,7 +114,6 @@ TEST_F(EtchPacketizerTest, TransportControlTest) {
   EtchPacketizer* packetizer = new EtchPacketizer(conn, &u);
   MockMessagizer mes;
   packetizer->setSession(&mes);
-
 
   EtchTcpListener* transport = new EtchTcpListener(&u);
   EtchSessionListener<EtchSocket>* listener = new MockListener3(transport);
@@ -124,6 +126,7 @@ TEST_F(EtchPacketizerTest, TransportControlTest) {
 
   transport->transportControl(new EtchString(EtchTcpListener::STOP_AND_WAIT_DOWN()), new EtchInt32(1000));
 
+  delete conn;
   delete packetizer;
   delete listener;
 }
@@ -142,6 +145,8 @@ TEST_F(EtchPacketizerTest, TransportPacketTest) {
   buffer->setIndex(0);
 
   EXPECT_TRUE(packetizer->transportPacket(NULL, buffer) == ETCH_ERROR);
+
+  delete conn;
   delete packetizer;
 }
 
@@ -168,4 +173,5 @@ TEST_F(EtchPacketizerTest, SessionDataTest) {
   packetizer->setSession(NULL);
   delete mSessionPacker;
   delete packetizer;
+  delete conn;
 }

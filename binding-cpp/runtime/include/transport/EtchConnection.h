@@ -168,7 +168,7 @@ status_t EtchConnection<S>::fireUp() {
 
   if (mSession != NULL) {
     //TODO: run this in seperate thread
-	mMutex.unlock();
+    mMutex.unlock();
     return mSession->sessionNotify(new EtchString(EtchSession::UP()));
   }
   mMutex.unlock();

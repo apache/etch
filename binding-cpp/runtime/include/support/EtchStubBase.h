@@ -34,7 +34,7 @@
 template<typename T>
 class EtchStubBase : public EtchSessionMessage {
 public:
-  template <typename Class>
+  template <typename U>
   friend class EtchStubPoolRunnable;
 
   /**
@@ -84,7 +84,7 @@ protected:
   T* mObj;
 };
 
-template<typename T>
+template<typename U>
 class EtchStubPoolRunnable : public EtchPoolRunnable {
 public:
 
@@ -97,7 +97,7 @@ public:
    * @param msg the message.
    * @param helper the StubHelper which will dispatch the message.
    */
-  EtchStubPoolRunnable(EtchStubBase<T>* stub, capu::SmartPointer<EtchWho> sender, capu::SmartPointer<EtchMessage> msg, EtchStubHelper<T>* helper)
+  EtchStubPoolRunnable(EtchStubBase<U>* stub, capu::SmartPointer<EtchWho> sender, capu::SmartPointer<EtchMessage> msg, EtchStubHelper<U>* helper)
     : mStub(stub)
     , mSender(sender)
     , mMsg(msg)
@@ -118,10 +118,10 @@ public:
   }
 
 private:
-  EtchStubBase<T>* mStub;
+  EtchStubBase<U>* mStub;
   capu::SmartPointer<EtchWho> mSender;
   capu::SmartPointer<EtchMessage> mMsg;
-  EtchStubHelper<T>* mHelper;
+  EtchStubHelper<U>* mHelper;
 };
 
 template<typename T>
@@ -133,7 +133,6 @@ EtchStubBase<T>::EtchStubBase(EtchDeliveryService* svc, T* obj, EtchQueuedPool* 
 template<typename T>
 EtchStubBase<T>::~EtchStubBase() {
   delete mObj;
-  delete mSvc;
 }
 
 template<typename T>
@@ -190,4 +189,4 @@ status_t EtchStubBase<T>::sessionQuery(capu::SmartPointer<EtchObject> query, cap
   return ETCH_EUNIMPL;
 }
 
-#endif
+#endif /* __ETCHSTUBBASE_H__ */

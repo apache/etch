@@ -1186,7 +1186,7 @@ public class Compiler extends Backend {
     Token t = type.type();
     switch (t.kind) {
     case EtchGrammarConstants.BOOLEAN:
-      return "EtchBool";
+      return "Bool";
     case EtchGrammarConstants.BYTE:
       return "Byte";
     case EtchGrammarConstants.SHORT:
@@ -1202,7 +1202,7 @@ public class Compiler extends Backend {
     case EtchGrammarConstants.STRING:
       return "String";
     case EtchGrammarConstants.OBJECT:
-      return "";
+      return "Object";
     default: {
       // we have to use a fully qualified name here.
       // find the actual type...
@@ -1258,7 +1258,11 @@ public class Compiler extends Backend {
     // TODO Auto-generated method stub
     if(pointer)
       return "EtchNativeArray" + this.getNativeArrayTypeName( type ) + "Ptr";
-    return "EtchNativeArray" + this.getNativeArrayTypeName( type ) + "Obj";
+    if (type.type().kind == EtchGrammarConstants.BYTE) {
+      return "EtchNativeArray<" + this.getNativeTypeName( type, true ) + "> ";
+    } else {
+      return "EtchNativeArray<" + this.getNativeTypeName( type, true ) + "Ptr> ";
+    }
   }
 
   public String getNativeTypeName(TypeRef type, boolean etch_type) {
@@ -1269,7 +1273,7 @@ public class Compiler extends Backend {
     case EtchGrammarConstants.BOOLEAN:
       return (etch_type ? "EtchBool" : "capu::bool_t");
     case EtchGrammarConstants.BYTE:
-      return (etch_type ? "EtchByte" : "capu::int8_t");
+      return (etch_type ? "capu::int8_t" : "capu::int8_t");
     case EtchGrammarConstants.SHORT:
       return (etch_type ? "EtchShort" : "capu::int16_t");
     case EtchGrammarConstants.INT:
@@ -1295,7 +1299,10 @@ public class Compiler extends Backend {
       if (n.isBuiltin()) {
         Builtin b = (Builtin) n;
         if (n.efqname(this).equals("EtchDate")) return b.className();
-        return b.className() + "Obj";
+        if (n.efqname(this).equals("EtchHashTable")) return b.className()+"<EtchObjectPtr, EtchObjectPtr> ";
+        if (n.efqname(this).equals("EtchHashSet")) return b.className()+"<EtchObjectPtr> ";
+        throw new IllegalArgumentException(String.format(
+                "unable to find correct Etch data type for type at line %d: %s", t.beginLine, n.efqname(this)));
       }
       if (n.isEnumx()) {
         return n.efqname(this);
@@ -1494,8 +1501,13 @@ public class Compiler extends Backend {
         Builtin b = (Builtin) n;
 
         String cn = b.className();
-        if (!n.efqname(this).equals("EtchDate"))
-          cn += "Obj";
+        if (n.efqname(this).equals("EtchHashTable")) {
+          cn += "<EtchObjectPtr, EtchObjectPtr>";
+        }
+        if (n.efqname(this).equals("EtchHashSet")) {
+          cn += "<EtchObjectPtr>";
+        }
+
 
         /*
          * int i = cn.indexOf( '<' ); if (i >= 0) cn = cn.substring( 0, i );

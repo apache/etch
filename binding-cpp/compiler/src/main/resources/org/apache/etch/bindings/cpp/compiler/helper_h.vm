@@ -147,7 +147,7 @@ private:
 #end
 
 #if($helper.isClient($mc) || $helper.isBoth($mc))
-    static status_t newServer(EtchRuntime* runtime, EtchString uri, EtchResources* resources, ${i}ClientFactory& implFactory, RemoteHelloWorldServer*& server);
+    static status_t newServer(EtchRuntime* runtime, EtchString uri, EtchResources* resources, ${i}ClientFactory& implFactory, Remote${i}Server*& server);
 #end
   };
 }

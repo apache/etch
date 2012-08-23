@@ -98,7 +98,7 @@ namespace $namespace {
       * $s
 #end
       */
-      $i.name()#if($enumHelper < $count),#end
+      $n.name()_$i.name()#if($enumHelper < $count),#end
 
 #end
 

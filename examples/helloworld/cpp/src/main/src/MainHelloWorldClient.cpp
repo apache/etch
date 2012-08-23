@@ -12,7 +12,9 @@
 #include "MainHelloWorldClient.h"
 #include "ImplHelloWorldClient.h"
 #include "transport/EtchTransportData.h"
-
+#ifdef BUILD_CHECK_MEMORY
+#include "vld.h"
+#endif
 
 using namespace org_apache_etch_examples_helloworld_HelloWorld;
 
@@ -63,6 +65,9 @@ capu::int32_t main(int argc, const char* argv[])
 
   // Disconnect from the service
   remote->transportControl(new EtchString(EtchTransportData::STOP_AND_WAIT_DOWN()), new EtchInt32(4000));
+
+  //delete remote
+  delete remote;
 
   //delete runtime
   result = runtime->shutdown();

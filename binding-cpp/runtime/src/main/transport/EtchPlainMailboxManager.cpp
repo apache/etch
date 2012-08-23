@@ -36,7 +36,6 @@ EtchPlainMailboxManager::~EtchPlainMailboxManager() {
     p.second->closeDelivery();
     delete p.second;
   }
-  delete mTransport;
 }
 
 EtchTransportMessage* EtchPlainMailboxManager::getTransport() {

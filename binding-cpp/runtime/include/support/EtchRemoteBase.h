@@ -24,6 +24,7 @@
 
 #include "common/EtchTypes.h"
 #include "support/EtchDeliveryService.h"
+#include "support/EtchStack.h"
 #include "serialization/EtchValueFactory.h"
 
 class EtchRuntime;
@@ -39,7 +40,7 @@ public:
    * @param svc the delivery service used to send messages.
    * @param vf the value factory used to create messages and encode/decode types.
    */
-  EtchRemoteBase(EtchDeliveryService* svc, EtchValueFactory* vf);
+  EtchRemoteBase(EtchDeliveryService* svc, EtchValueFactory* vf, EtchStack* stack);
 
   /**
    * Destructor
@@ -189,6 +190,7 @@ public:
 private:
   EtchRuntime* mRuntime;
   EtchDeliveryService * mSvc;
+  EtchStack* mStack;
   EtchValueFactory* mVf;
 };
 

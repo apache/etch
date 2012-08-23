@@ -126,6 +126,7 @@ TEST_F(EtchPlainMailboxManagerTest, constructorTest) {
   EXPECT_TRUE(manager != NULL);
   manager->setSession(&session);
 
+  delete transport;
   delete manager;
   delete factory;
 }
@@ -165,6 +166,8 @@ TEST_F(EtchPlainMailboxManagerTest, transportMessageTest) {
   EXPECT_TRUE(ETCH_OK != manager->getMailbox(id, mail));
 
   message->clear();
+
+  delete transport;
   delete manager;
   delete factory;
 }
@@ -207,6 +210,8 @@ TEST_F(EtchPlainMailboxManagerTest, transportResultMessageTest) {
   EXPECT_TRUE(ETCH_OK != manager->getMailbox(id, mail));
 
   message->clear();
+
+  delete transport;
   delete manager;
   delete factory;
 }
@@ -248,6 +253,8 @@ TEST_F(EtchPlainMailboxManagerTest, transportCallTest) {
   EXPECT_TRUE(ETCH_OK == manager->getMailbox(id, mail));
 
   message->clear();
+
+  delete transport;
   delete manager;
   delete factory;
 }
@@ -293,6 +300,8 @@ TEST_F(EtchPlainMailboxManagerTest, replicatedTransportCallTest) {
   EXPECT_TRUE(ETCH_OK != manager->getMailbox(id, mail));
 
   message->clear();
+
+  delete transport;
   delete manager;
   delete factory;
 }
@@ -354,6 +363,7 @@ TEST_F(EtchPlainMailboxManagerTest, sessionMessageTest) {
 
   //deallocations
   delete x;
+  delete transport;
   delete manager;
   delete factory;
 }

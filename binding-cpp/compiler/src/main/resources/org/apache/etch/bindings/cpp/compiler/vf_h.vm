@@ -26,6 +26,8 @@
 #ifndef __$helper.getVfName($intf).toUpperCase()_H__
 \#define __$helper.getVfName($intf).toUpperCase()_H__
 
+\#include "capu/os/Mutex.h"
+\#include "capu/container/List.h"
 \#include "common/EtchTypes.h"
 \#include "serialization/EtchDefaultValueFactory.h"
 \#include "support/EtchRuntime.h"
@@ -74,29 +76,44 @@ namespace $namespace {
     static EtchTypeMap* types();
     static EtchClass2TypeMap* class2type();
 
-    static void initTypes();
-    static void initResults();
-    static void initFields();
-    static void initParams();
+    static status_t InitTypes();
+    static status_t InitResults();
+    static status_t InitFields();
+    static status_t InitParams();
 #set( $ctr = 0 )
 #foreach( $n in $intf.iterator() )
 #if ($n.isEnumx() || $n.isStruct() || $n.isExcept() || $n.isMessage())
 #if ($ctr > 0 && $ctr % 100 == 0)
-    static void initParams${ctr}();
+    static status_t InitParams${ctr}();
 #end
 #set( $ctr = $ctr + 1 )
 #end
 #end
-    static void initImportExport();
+    static status_t InitImportExport();
 
     /**
      * Static Initialization-Helper
      */
   private:
+    /**
+     * Listener which reacts to changes in runtime
+     * Destroys the statically initialized members if the last runtime has been deleted 
+     */
+    class Etch${i}RuntimeListener : public EtchRuntimeListener {
+      /**
+       * @see EtchRuntime
+       */
+      status_t onRuntimeChanged(EtchRuntime* runtime);
+    };
+  
     friend class ${i}Helper;
-    static void __ShutDown();
-    static bool INIT;
-    static void __INIT(EtchRuntime* runtime);
+    friend class Etch${i}RuntimeListener;
+    static status_t InitValueFactory(EtchRuntime* runtime);
+    static status_t DestroyValueFactory();
+    static capu::Mutex SRuntimesMutex;
+    static capu::List<capu::uint64_t> SRuntimes;
+    static Etch${i}RuntimeListener S${i}RuntimeListener;
+    
   };
 }
 #endif

@@ -35,12 +35,8 @@
 #end
 
 \#include "support/EtchRuntime.h"
-#if($helper.isServer($mc) || $helper.isBoth($mc))
-\#include "support/EtchServerStack.h"
-#end
-#if($helper.isClient($mc) || $helper.isBoth($mc))
-\#include "support/EtchClientStack.h"
-#end
+\#include "support/EtchStackClient.h"
+\#include "support/EtchStackServer.h"
 \#include "support/EtchPool.h"
 \#include "transport/EtchPlainMailboxManager.h"
 \#include "transport/EtchDefaultDeliveryService.h"
@@ -61,6 +57,10 @@ $clname::Listener${i}Server::~Listener${i}Server()
 
 status_t $clname::Listener${i}Server::newServer(EtchRuntime* runtime, EtchTransportMessage* transport, const EtchString& uri, EtchResources* resources)
 {
+  //get stack instance
+  EtchStackServer* stack = NULL;
+  resources->get(EtchStack::STACK(), (EtchObject*&)stack );
+
   //get value factory
   EtchObject* obj;
   resources->get( EtchTransport<EtchValueFactory*>::VALUE_FACTORY(), obj );
@@ -68,8 +68,11 @@ status_t $clname::Listener${i}Server::newServer(EtchRuntime* runtime, EtchTransp
   
   //create stack layers
   EtchMailboxManager* mbm = new EtchPlainMailboxManager(transport, uri, resources);
+  stack->setMailboxManager(mbm);
   EtchDeliveryService* dvs = new EtchDefaultDeliveryService(mbm, uri);
-  Remote${i}Client* client = new Remote${i}Client(runtime, dvs, vf);
+  stack->setDeliveryService(dvs);
+  Remote${i}Client* client = new Remote${i}Client(runtime, dvs, vf, stack);
+  stack->setRemote(client);
   ${i}Server* server = mFactory->new${i}Server(client);
   
   //get thread pools
@@ -81,7 +84,9 @@ status_t $clname::Listener${i}Server::newServer(EtchRuntime* runtime, EtchTransp
   
   //create stub
   Stub${i}Server* tmp${i}Server = new Stub${i}Server(dvs, server, qp, fp);
-  EtchStack* stack = new EtchServerStack(client, tmp${i}Server, resources, vf);
+  stack->setStub(tmp${i}Server);
+  
+  //start remote client
   client->start();
   return ETCH_OK;
 }
@@ -117,7 +122,7 @@ status_t $clname::newListener(EtchRuntime* runtime, EtchString uri, EtchResource
   status_t status = ETCH_OK;
 
   //static initialization of value factory
-  ValueFactory${i}::__INIT(runtime);
+  ValueFactory${i}::InitValueFactory(runtime);
 
   //init resources
   EtchResources *res;
@@ -159,8 +164,10 @@ status_t $clname::newListener(EtchRuntime* runtime, EtchString uri, EtchResource
   {
     status_t status = ETCH_OK;
 
+    EtchStackClient* stack = new EtchStackClient();
+
     //static initialization of value factory
-    ValueFactory${i}::__INIT(runtime);
+    ValueFactory${i}::InitValueFactory(runtime);
 
     //init resources
     EtchResources* res;
@@ -168,6 +175,10 @@ status_t $clname::newListener(EtchRuntime* runtime, EtchString uri, EtchResource
     if (status != ETCH_OK) {
       return status;
     }
+    
+    EtchObject* tmp = NULL;
+    res->put(EtchStack::STACK(),stack, tmp);
+    stack->mStaticResources = res;
     
     //create valuefactory instance
     ValueFactory${i}* vf = new ValueFactory${i}(uri);
@@ -180,8 +191,10 @@ status_t $clname::newListener(EtchRuntime* runtime, EtchString uri, EtchResource
     EtchTransportMessage* m;
     EtchTransportFactory::getTransport(runtime, uri, res, m);
     EtchMailboxManager* mbm = new EtchPlainMailboxManager(m, uri, res);
+    stack->setMailboxManager(mbm);
     EtchDeliveryService* dvs = new EtchDefaultDeliveryService(mbm, uri);
-    Remote${i}Server* _server = new Remote${i}Server(runtime, dvs, vf);
+    stack->setDeliveryService(dvs);
+    Remote${i}Server* _server = new Remote${i}Server(runtime, dvs, vf, stack);
     ${i}Client* client = implFactory.new${i}Client( server );
     
     //get pools
@@ -193,7 +206,7 @@ status_t $clname::newListener(EtchRuntime* runtime, EtchString uri, EtchResource
     
     //init stub
     Stub${i}Client* tmpStub${i}Client = new Stub${i}Client(dvs, client, qp, fp);
-    EtchStack* stack = new EtchClientStack(server, tmpStub${i}Client, res, vf);
+    stack->setStub(tmpStub${i}Client);
     
     //return server
     server = _server;

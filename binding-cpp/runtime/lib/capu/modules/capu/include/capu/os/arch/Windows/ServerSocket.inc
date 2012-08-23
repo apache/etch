@@ -60,7 +60,11 @@ inline ServerSocket::~ServerSocket()
 
 inline Socket* ServerSocket::accept()
 {
-  Socket *clientSocket = new Socket(::accept(mServerSocket, NULL, NULL));
+  SOCKET handle = ::accept(mServerSocket, NULL, NULL);
+  if (handle == INVALID_SOCKET) {
+    return NULL;
+  }
+  Socket *clientSocket = new Socket(handle);
   return clientSocket;
 }
 

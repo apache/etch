@@ -68,17 +68,12 @@ TEST(EtchClass2TypeMapTest, putTest) {
   //Try to add existing field
   EXPECT_EQ(ETCH_OK, test->put(EtchString::TYPE(), type));
 
-  //Try to add a new field
-  EtchType* type2 = new EtchType(EtchString("string2"));
-  EXPECT_EQ(ETCH_ERANGE, test->put(EtchString::TYPE(), type2));
-
   //lock the collection
   test->lock();
   //try to add new field
   EXPECT_EQ(ETCH_EINVAL, test->put(EtchString::TYPE(), type));
   delete test;
   delete type;
-  delete type2;
 }
 
 TEST(EtchClass2TypeMapTest, lockTest) {

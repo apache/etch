@@ -142,6 +142,8 @@ TEST_F(EtchDefaultDeliveryServiceTest, constructorTest) {
   // create mock layer for session
   MockSession1* session = new MockSession1(deliveryService);
 
+  delete transport;
+  delete mailboxManager;
   delete session;
 }
 
@@ -190,6 +192,8 @@ TEST_F(EtchDefaultDeliveryServiceTest, beginCallTest) {
   //put the stack down
   mailboxManager->sessionNotify(new EtchString(EtchSession::DOWN()));
 
+  delete transport;
+  delete mailboxManager;
   delete session;
   delete factory;
 }
@@ -264,6 +268,8 @@ TEST_F(EtchDefaultDeliveryServiceTest, endCallTest) {
   //check the result
   EXPECT_TRUE(result->equals(data.get()));
 
+  delete transport;
+  delete mailboxManager;
   delete session;
   delete factory;
 }

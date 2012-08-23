@@ -51,8 +51,6 @@ EtchMessagizer::EtchMessagizer(EtchTransportPacket* transport, EtchURL* uri, Etc
 }
 
 EtchMessagizer::~EtchMessagizer() {
-  if(mTransport != NULL)
-    delete mTransport;
   if (mTdi != NULL)
     delete mTdi;
   if (mTdo != NULL)

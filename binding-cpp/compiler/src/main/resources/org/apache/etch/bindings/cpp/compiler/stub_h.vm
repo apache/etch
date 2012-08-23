@@ -143,33 +143,33 @@ namespace $namespace {
     {
     }
     virtual ~Stub$i$suffix() {}
-    static void init()
-    {
-    // nothing to do.
-    }
-
+    
 
 ##if($notEmpty)
-   /*
-    * Static Initialization-Helper
-    */
+   
   private:
     friend class ValueFactory${i};
-    static void __INIT()
+    
+    /**
+     * Static Initialization-Helper
+     */
+    static status_t Init()
     {
-#foreach( $mthd in $intf.iterator() )
-#if ($mthd.isMsgDir($mc))
-#if (!$mthd.isHidden())
-    ValueFactory$i::${mthd.vname( $helper )}->setStubHelper(new Run${mthd.vname($helper)}());
-#end
-#end
-#if( $n.isMixin() )
-#set( $m = $n.getModule() )
-#set( $z = $m.iterator().next() )
-    ${m.name()}::Stub${z.name()}${suffix}::init();
-#end
-#end
+      #foreach( $mthd in $intf.iterator() )
+      #if ($mthd.isMsgDir($mc))
+      #if (!$mthd.isHidden())
+          ValueFactory$i::${mthd.vname( $helper )}->setStubHelper(new Run${mthd.vname($helper)}());
+      #end
+      #end
+      #if( $n.isMixin() )
+      #set( $m = $n.getModule() )
+      #set( $z = $m.iterator().next() )
+          ${m.name()}::Stub${z.name()}${suffix}::Init();
+      #end
+      #end
+      return ETCH_OK;
     }
+
 ##end
   };
 }

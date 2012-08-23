@@ -15,6 +15,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include "support/EtchTransportHelper.h"
+#include "support/EtchStackServer.h"
 #include "transport/EtchTcpTransportFactory.h"
 
 static const char* TAG = "EtchTcpTransportFactory";
@@ -39,9 +41,20 @@ EtchTcpTransportFactory::~EtchTcpTransportFactory() {
 }
 
 status_t EtchTcpTransportFactory::newTransport(EtchString uri, EtchResources* resources, EtchTransportMessage*& result) {
+  status_t status;
+
+  if (resources == NULL) {
+    return ETCH_ERROR;
+  }
+
+  EtchStack* stack = NULL;
+  status = resources->get(EtchStack::STACK(), (EtchObject*&)stack);
+  if (status != ETCH_OK) {
+    return status;
+  }
+
   EtchURL u(uri);
 
-  status_t status;
   EtchObject* socket = NULL;
   status = resources->get(SOCKET(), socket);
 
@@ -54,22 +67,20 @@ status_t EtchTcpTransportFactory::newTransport(EtchString uri, EtchResources* re
     // TODO add runtime
     c = new EtchTcpConnection(NULL, (EtchSocket*) socket, &u);
   }
+  stack->setTransportData(c);
 
   EtchTransportPacket* p = new EtchPacketizer(c, &u);
+  stack->setTransportPacket(p);
 
   EtchTransportMessage* m = new EtchMessagizer(p, &u, resources);
+  stack->setTransportMessage(m);
 
   //TODO: ADD FILTERS HERE
 
   EtchObject* obj = NULL;
 
   if (resources->get(EtchTransport<EtchSocket>::VALUE_FACTORY(), obj) != ETCH_OK) {
-    c->setSession(NULL);
-    p->setSession(NULL);
-    m->setSession(NULL);
-    delete c;
-    delete p;
-    delete m;
+    delete stack;
     return ETCH_ENOT_EXIST;
   }
   EtchValueFactory *vf = (EtchValueFactory*) obj;
@@ -90,18 +101,19 @@ status_t EtchTcpTransportFactory::newListener(EtchString uri, EtchResources* res
     l = new EtchTcpListener(&u);
   }
 
-  result = new MySessionListener(mRuntime, l, uri, resources, mIsSecure);
+  result = new MySessionListener(mRuntime, this, l, uri, resources, mIsSecure);
   if (result == NULL) {
     return ETCH_ERROR;
   }
   return ETCH_OK;
 }
 
-EtchTcpTransportFactory::MySessionListener::MySessionListener(EtchRuntime* runtime, EtchTransport<EtchSessionListener<EtchSocket> > *transport, EtchString uri, EtchResources* resources, capu::bool_t secure)
-: mRuntime(runtime), mTransport(transport), mUri(uri), mResources(resources), mIsSecure(secure) {
+EtchTcpTransportFactory::MySessionListener::MySessionListener(EtchRuntime* runtime, EtchTcpTransportFactory* factory, EtchTransport<EtchSessionListener<EtchSocket> > *transport, EtchString uri, EtchResources* resources, capu::bool_t secure)
+: mRuntime(runtime), mFactory(factory), mTransport(transport), mUri(uri), mResources(resources), mIsSecure(secure) {
   if (mTransport != NULL) {
     mTransport->setSession(this);
   }
+  mConnectionStacks = new capu::List<EtchStack*>();
 }
 
 EtchServerFactory* EtchTcpTransportFactory::MySessionListener::getSession() {
@@ -112,6 +124,22 @@ EtchTcpTransportFactory::MySessionListener::~MySessionListener() {
   if(mTransport != NULL) {
     delete mTransport;
   }
+  if(mFactory != NULL) {
+    delete mFactory;
+  }
+  if (mResources != NULL) {
+    EtchTransportHelper::DestroyResources(mResources);
+  }
+
+  capu::List<EtchStack*>::Iterator it = mConnectionStacks->begin();
+  while (it.hasNext()) {
+    EtchStack* st = NULL;
+    it.next(&st);
+    if (st != NULL) {
+      delete st;
+    }
+  }
+  delete mConnectionStacks;
 }
 
 void EtchTcpTransportFactory::MySessionListener::setSession(EtchServerFactory* session) {
@@ -139,7 +167,30 @@ status_t EtchTcpTransportFactory::MySessionListener::sessionControl(capu::SmartP
 }
 
 status_t EtchTcpTransportFactory::MySessionListener::sessionNotify(capu::SmartPointer<EtchObject> event) {
+  if (event->equals(&EtchTcpListener::CONNECTION_CHECK())) {
+    //go through the list of connection and check if the connection is still dead and we have to clean the stack up 
+    capu::List<EtchStack*>::Iterator it = mConnectionStacks->begin();
+    while (it.hasNext()) {
+      EtchStack* stack = NULL;
+      status_t res = it.current(&stack);
+      if (res == ETCH_OK) {
+        EtchTcpConnection* con = (EtchTcpConnection*) stack->getTransportData();
+        if (con != NULL) {
+          if (!con->isStarted()) {
+            //delete all instances for this stack
+            delete stack;
+            //remote stack from list
+            mConnectionStacks->removeAt(it);
+          }
+        }
+      }
+      it.next();
+    }
+    return ETCH_OK;
+  }
+
   return mSession->sessionNotify(event);
+  
 }
 
 status_t EtchTcpTransportFactory::MySessionListener::sessionAccepted(EtchSocket* connection) {
@@ -147,60 +198,56 @@ status_t EtchTcpTransportFactory::MySessionListener::sessionAccepted(EtchSocket*
     return ETCH_ERROR;
   }
 
+  status_t status;
+
+  EtchStackServer *stack = new EtchStackServer();
+
   EtchResources *res = new EtchResources(mResources);
+  stack->setResources(res);
 
   // put socket to the resources
   EtchObject *obj = NULL;
-  if (res->put(SOCKET(), connection, obj) != ETCH_OK) {
-    delete res;
+  status = res->put(SOCKET(), connection, obj);
+  if (status != ETCH_OK) {
+    delete stack;
     return ETCH_ERROR;
   }
 
   // create value vatory and put it to the resources
   EtchValueFactory* vf = NULL;
-  if(mSession->newValueFactory(mUri, vf) != ETCH_OK) {
-    delete res;
+  status = mSession->newValueFactory(mUri, vf);
+  if(status != ETCH_OK) {
+    delete stack;
     return ETCH_ERROR;
   }
-  if(res->put(EtchTransport<EtchSocket>::VALUE_FACTORY(), vf, obj) != ETCH_OK)
-  {
-    delete vf;
-    delete res;
+  stack->setValueFactory(vf);
+
+  status = res->put(EtchTransport<EtchSocket>::VALUE_FACTORY(), vf, obj);
+  if(status != ETCH_OK) {
+    delete stack;
     return ETCH_ERROR;
   }
 
-  EtchURL u = EtchURL(mUri);
-
-  EtchObject* socket = NULL;
-  if (res->get(SOCKET(), socket) != ETCH_OK) {
-    return ETCH_ENOT_EXIST;
+  EtchObject* old = NULL;
+  status = res->put(EtchStack::STACK(), stack, old);
+  if (status != ETCH_OK) {
+    delete stack;
+    return ETCH_ERROR;
   }
-  // TODO check if we should register a new stack to the runtime
-  
-  EtchTransportData *c = NULL;
-  if (mIsSecure) {
-    //TODO : secure communication via ssl sockets
-    return ETCH_EUNIMPL;
-  } else {
-    c = new EtchTcpConnection(mRuntime, (EtchSocket*) socket, &u);
+  if (old != NULL) {
+    delete old;
   }
 
-  EtchTransportPacket* p = new EtchPacketizer(c, &u);
+  //add stack container to list
+  mConnectionStacks->add(stack);
 
-  EtchTransportMessage* m = new EtchMessagizer(p, &u, res);
-
-  //TODO: ADD FILTERS HERE
-
-  if (res->get(EtchTransport<EtchSocket>::VALUE_FACTORY(), obj) != ETCH_OK) {
-    c->setSession(NULL);
-    p->setSession(NULL);
-    m->setSession(NULL);
-    delete c;
-    delete p;
-    delete m;
-    return ETCH_ENOT_EXIST;
+  EtchTransportMessage *m = NULL;
+  status = mFactory->newTransport(mUri, res, m);
+  if (status != ETCH_OK) {
+    delete stack;
+    return status;
   }
-  vf->lockDynamicTypes();
   CAPU_LOG_DEBUG(mRuntime->getLogger(), TAG, "New stack for the accepted connection has been created");
+
   return mSession->newServer(mRuntime, m, mUri, res);
 }

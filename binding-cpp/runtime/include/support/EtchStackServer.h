@@ -15,36 +15,48 @@
  * limitations under the License.
  */
 
+#ifndef __ETCHSTACKSERVER_H__
+#define __ETCHSTACKSERVER_H__
 
-#ifndef __ETCHCLIENTSTACK_H__
-#define __ETCHCLIENTSTACK_H__
-
-#include "support/EtchStack.h"
 #include "support/EtchRemoteBase.h"
-#include "transport/EtchSessionMessage.h"
-#include "support/EtchTransportHelper.h"
 
-// TODO: Refactoring of stack lifecycle ETCH-240
-
-//Entry for EtchRuntime
-class EtchClientStack : public EtchStack {
+/* *
+ * This class serves as a container for all layers created during the setup of a new stack (connection, packetizer, messagizer, ...).
+ */
+class EtchStackServer : public EtchStack{
 public:
 
   /**
-   * Constructs the EtchClientStack.
+   * EtchObjectType for EtchStackServer.
    */
-  EtchClientStack(EtchRemoteBase* rb, EtchSessionMessage *helper, EtchResources *res, EtchValueFactory* vf);
+  static const EtchObjectType* TYPE();
 
   /**
-   * Destructor
+   * Default Constructor
    */
-  virtual ~EtchClientStack();
+  EtchStackServer();
+
+  /**
+   * Destructor which cleans the whole stack
+   */
+  virtual ~EtchStackServer();
+
+
+  /**
+   * sets the remote implementation
+   */
+  void setRemote(EtchRemoteBase* remote);
+
+  /**
+   * returns the remote implementation
+   */
+  EtchRemoteBase* getRemote();
 
 private:
-  EtchValueFactory *mVf;
-  EtchRemoteBase *mRemoteBase;
-  EtchSessionMessage *mStubHelper;
-  EtchResources *mResources;
+  EtchRemoteBase* mRemote;
+
+
+
 };
 
-#endif /* ETCHCLIENTSTACK_H */
+#endif /* __ETCHSTACKSERVER_H__ */

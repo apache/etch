@@ -39,9 +39,6 @@ status_t EtchClass2TypeMap::put(const EtchObjectType* classType, EtchType *type)
 
   EtchType* tmp = NULL;
   if (mC2T.get(classType, &tmp) == ETCH_OK) {
-    if (!tmp->equals(type)) {
-      return ETCH_ERANGE;
-    }
     return ETCH_OK;
   }
 

@@ -21,6 +21,9 @@
 cmake_minimum_required (VERSION 2.8)
 project (etch-cpp-helloworld)
 
+IF (EXISTS "${CMAKE_SOURCE_DIR}/CMakeLists_local.txt")
+  INCLUDE ("${CMAKE_SOURCE_DIR}/CMakeLists_local.txt" OPTIONAL)
+ENDIF()
 
 IF(UNIX)
   add_definitions("-DOS_LINUX")
@@ -116,6 +119,12 @@ target_link_libraries(etch-cpp-helloworld-server ${ETCH_LIBRARY} ${CAPU_LIBRARY}
 set_target_properties(etch-cpp-helloworld-server PROPERTIES COMPILE_FLAGS "-m32 -g" LINK_FLAGS "-m32")
 ELSEIF(WIN32)
 target_link_libraries(etch-cpp-helloworld-server ${ETCH_LIBRARY} ${CAPU_LIBRARY})
+IF (BUILD_CHECK_MEMORY)
+  file (COPY ${VLD}/vld.ini DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE})
+  file (COPY ${VLD}/bin/dbghelp.dll DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE})
+  file (COPY ${VLD}/bin/vld.dll DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE})
+  target_link_libraries (etch-cpp-helloworld-server ${VLD}/lib/vld.lib)
+ENDIF (BUILD_CHECK_MEMORY)
 ENDIF ()
 set_target_properties(etch-cpp-helloworld-server PROPERTIES OUTPUT_NAME "helloworld-server")
 
@@ -147,6 +156,12 @@ target_link_libraries(etch-cpp-helloworld-client ${ETCH_LIBRARY} ${CAPU_LIBRARY}
 set_target_properties(etch-cpp-helloworld-client PROPERTIES COMPILE_FLAGS "-m32 -g" LINK_FLAGS "-m32")
 ELSEIF(WIN32)
 target_link_libraries(etch-cpp-helloworld-client ${ETCH_LIBRARY} ${CAPU_LIBRARY})
+IF (BUILD_CHECK_MEMORY)
+  file (COPY ${VLD}/vld.ini DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE})
+  file (COPY ${VLD}/bin/dbghelp.dll DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE})
+  file (COPY ${VLD}/bin/vld.dll DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE})
+  target_link_libraries (etch-cpp-helloworld-client ${VLD}/lib/vld.lib)
+ENDIF (BUILD_CHECK_MEMORY)
 ENDIF ()
 
 set_target_properties(etch-cpp-helloworld-client PROPERTIES OUTPUT_NAME "helloworld-client")

@@ -20,16 +20,22 @@
 #include "transport/EtchTransportData.h"
 #include "support/EtchRuntime.h"
 #include "util/EtchLogger.h"
+#include "support/EtchStackClient.h"
 
 static char* TAG = "EtchRemoteBase";
 
-EtchRemoteBase::EtchRemoteBase(EtchDeliveryService* svc, EtchValueFactory* vf) 
-  : mSvc(svc), mVf(vf) {
+EtchRemoteBase::EtchRemoteBase(EtchDeliveryService* svc, EtchValueFactory* vf, EtchStack* stack) 
+  : mSvc(svc), mVf(vf), mStack(stack) {
   //TODO refactor this
   mRuntime = EtchRuntime::getRuntime();
 }
 
 EtchRemoteBase::~EtchRemoteBase() {
+  if (mStack != NULL) {
+    if (mStack->isInstanceOf(EtchStackClient::TYPE())) {
+      delete mStack;
+    }
+  }
 }
 
 status_t EtchRemoteBase::newMessage( EtchType* type, capu::SmartPointer<EtchMessage> *message) {

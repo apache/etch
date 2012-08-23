@@ -15,15 +15,31 @@
  * limitations under the License.
  */
 
-#include "support/EtchServerStack.h"
+#include "support/EtchStackServer.h"
 
-EtchServerStack::EtchServerStack(EtchRemoteBase* rb, EtchSessionMessage *helper, EtchResources *res, EtchValueFactory* vf)
-: mRemoteBase(rb), mStubHelper(helper),mResources(res), mVf(vf) {
+const EtchObjectType* EtchStackServer::TYPE() {
+   const static EtchObjectType TYPE(EOTID_STACK_SERVER, NULL);
+   return &TYPE;
 }
 
-EtchServerStack::~EtchServerStack() {
-  delete mResources;
-  delete mRemoteBase;
-  delete mStubHelper;
-  delete mVf;
+EtchStackServer::EtchStackServer()
+: EtchStack()
+  , mRemote(NULL)
+{
+  EtchObject::addObjectType(EtchStackServer::TYPE());
+  EtchObject::setObjectType(EtchStackServer::TYPE());
+}
+
+EtchStackServer::~EtchStackServer() {
+  if (mRemote != NULL) {
+    delete mRemote;
+  }
+}
+
+void EtchStackServer::setRemote(EtchRemoteBase* remote) {
+  mRemote = remote;
+}
+
+EtchRemoteBase* EtchStackServer::getRemote() {
+  return mRemote;
 }

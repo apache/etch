@@ -122,7 +122,9 @@ status_t EtchTcpConnection::openSocket(capu::bool_t reconnect) {
       }
     }
     // try to open a socket.
-    mSocket = new EtchSocket();
+    if (mSocket == NULL) {
+      mSocket = new EtchSocket();
+    }
     if (mSocket->connect((unsigned char *) mHost.c_str(), mPort) == ETCH_OK) {
       mMutexConnection.unlock();
       CAPU_LOG_TRACE(mRuntime->getLogger(), "EtchTcpConnection", "%s : %d => Connection established", mHost.c_str(), mPort);
@@ -131,6 +133,7 @@ status_t EtchTcpConnection::openSocket(capu::bool_t reconnect) {
       mSocket->close();
       delete mSocket;
       mSocket = NULL;
+      first = false;
     }
     CAPU_LOG_WARN(mRuntime->getLogger(), "EtchTcpConnection", "%s : %d => Connection could not be established for stack %d", mHost.c_str(), mPort);
   }

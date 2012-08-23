@@ -33,7 +33,7 @@
 #if(!$hasBaseClass)
 \#include "support/EtchRemoteBase.h"
 #else
-\#include "ValueFactoryHelloWorld.h"
+\#include "${vfname}.h"
 \#include "$inc"
 \#include "Remote${i}.h"
 #end
@@ -79,7 +79,7 @@ namespace $namespace {
       /**
        * Create a new instance from $clname class
        */
-       static $n.name()AsyncResultPtr Begin($clname* base, #set($sep = "")#foreach($p in $n.iterator())$sep$helper.getEtchTypeName($p.type(), true) $p.name()#set($sep = ", ")#end);
+       static $n.name()AsyncResultPtr Begin($clname* base#set($sep = ", ")#foreach($p in $n.iterator())$sep$helper.getEtchTypeName($p.type(), true) $p.name()#end);
 
     private:
         $clname* mBase;
@@ -94,8 +94,9 @@ namespace $namespace {
      *
      * @param svc
      * @param vf
+     * @param stack
      */
-    $clname(EtchRuntime* runtime, EtchDeliveryService* svc, EtchValueFactory* vf );
+    $clname(EtchRuntime* runtime, EtchDeliveryService* svc, EtchValueFactory* vf, EtchStack* stack );
     
     /**
      * Destructor

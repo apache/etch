@@ -21,8 +21,30 @@
 
 
 
+EtchTcpListener::ConnectionChecker::ConnectionChecker(EtchTcpListener* listener) : mListener(listener){ }
+
+EtchTcpListener::ConnectionChecker::~ConnectionChecker() {}
+
+void EtchTcpListener::ConnectionChecker::run() {
+  status_t result;
+  while (mListener->mIsStarted) {
+    if (mListener->mSession != NULL) {
+      result = mListener->mSession->sessionNotify(new EtchString(EtchTcpListener::CONNECTION_CHECK()));
+      if (result != ETCH_OK) {
+        //TODO handle error
+      }
+      capu::Thread::Sleep(1000);
+    }
+  }
+}
+
 const EtchString& EtchTcpListener::BACKLOG() {
   static const EtchString name("TcpTransportFactory.socket");
+  return name;
+}
+
+const EtchString& EtchTcpListener::CONNECTION_CHECK() {
+  static const EtchString name("connection.check");
   return name;
 }
 
@@ -45,6 +67,8 @@ EtchTcpListener::EtchTcpListener(EtchURL *url)
   mIsStarted = false;
   mThread = NULL;
   mSocket = NULL;
+  mConnectionCheckerThread = NULL;
+  mConnectionChecker = NULL;
 }
 
 EtchTcpListener::~EtchTcpListener() {
@@ -52,11 +76,17 @@ EtchTcpListener::~EtchTcpListener() {
     mThread->join();
     delete mThread;
   }
+  if (mConnectionCheckerThread != NULL) {
+    mConnectionCheckerThread->join();
+    delete mConnectionCheckerThread;
+  }
   if (mSocket != NULL) {
     mSocket->close();
     delete mSocket;
     mSocket = NULL;
   }
+
+  delete mConnectionChecker;
 
 }
 
@@ -65,8 +95,9 @@ capu::bool_t EtchTcpListener::isStarted() {
 }
 
 status_t EtchTcpListener::close() {
-  if (mSocket != NULL)
+  if (mSocket != NULL) {
     return mSocket->close();
+  }
   return ETCH_ERROR;
 }
 
@@ -74,18 +105,19 @@ status_t EtchTcpListener::openSocket(capu::bool_t reconnect) {
   // if a one time connection from a server socket listener, just
   // return the existing socket.
   mMutexConnection.lock();
-  if (!reconnect && (mSocket != NULL)) {
+  if (reconnect && (mSocket != NULL)) {
     mMutexConnection.unlock();
     return ETCH_OK;
   }
-  while (isStarted()) {
+  while (mIsStarted) {
     // if reconnect is false and first is true, this is our
     // very first attempt to connect. otherwise, we are trying
     // to reconnect a broken link or establish a link where we
     // have already failed at least once.
     // try to open a socket.
-
-    mSocket = new EtchServerSocket();
+    if (mSocket == NULL) {
+      mSocket = new EtchServerSocket();
+    }
     if (mSocket->bind(mPort) == ETCH_OK) {
       if (mSocket->listen(mBackLog) == ETCH_OK) {
         mMutexConnection.unlock();
@@ -97,7 +129,6 @@ status_t EtchTcpListener::openSocket(capu::bool_t reconnect) {
         CAPU_LOG_ERROR(mRuntime->getLogger(), "EtchTcpListener", "Listening on specified port has failed");
       }
     } else {
-      mSocket->close();
       delete mSocket;
       mSocket = NULL;
       CAPU_LOG_ERROR(mRuntime->getLogger(), "EtchTcpListener", "Binding to specified port has failed");
@@ -110,7 +141,7 @@ status_t EtchTcpListener::openSocket(capu::bool_t reconnect) {
 
 status_t EtchTcpListener::readSocket() {
   EtchSocket* s = NULL;
-  while (isStarted()) {
+  while (mIsStarted) {
     s = mSocket->accept();
     if (s == NULL)
       break;
@@ -136,8 +167,11 @@ status_t EtchTcpListener::transportControl(capu::SmartPointer<EtchObject> contro
     mIsStarted = true;
     mMutex.unlock();
     mThread = new capu::Thread(this);
+    mConnectionChecker = new ConnectionChecker(this);
+    mConnectionCheckerThread = new capu::Thread(mConnectionChecker);
     mThread->start();
     CAPU_LOG_DEBUG(mRuntime->getLogger(), "EtchTcpListener", "Start command received and EtchTcpListener starts listening on port %d", mPort);
+    mConnectionCheckerThread->start();
     return ETCH_OK;
   }
 
@@ -150,8 +184,11 @@ status_t EtchTcpListener::transportControl(capu::SmartPointer<EtchObject> contro
     mIsStarted = true;
     mMutex.unlock();
     mThread = new capu::Thread(this);
+    mConnectionChecker = new ConnectionChecker(this);
+    mConnectionCheckerThread = new capu::Thread(mConnectionChecker);
     mThread->start();
     CAPU_LOG_DEBUG(mRuntime->getLogger(), "EtchTcpListener", "Start and wait up command received and EtchTcpListener starts listening on port %d", mPort);
+    mConnectionCheckerThread->start();
     return waitUp(((EtchInt32*) value.get())->get());
   }
 
@@ -175,10 +212,9 @@ status_t EtchTcpListener::transportControl(capu::SmartPointer<EtchObject> contro
     mMutex.lock();
     mIsStarted = false;
     mMutex.unlock();
-    status_t ret = waitDown(((EtchInt32*) value.get())->get());
     close();
     CAPU_LOG_DEBUG(mRuntime->getLogger(), "EtchTcpListener", "Stop and wait command received and EtchTcpListener sets the stop flag");
-    //TODO: Wait handling in one of the next releases
+    status_t ret = waitDown(((EtchInt32*) value.get())->get());
     return ret;
   }
 
@@ -223,7 +259,7 @@ void EtchTcpListener::run() {
 
   while (mIsStarted) {
 
-    if (openSocket(!first) != ETCH_OK) {
+    if (openSocket(first) != ETCH_OK) {
       CAPU_LOG_ERROR(mRuntime->getLogger(), "EtchTcpListener", "Socket has not been created");
       break;
     }

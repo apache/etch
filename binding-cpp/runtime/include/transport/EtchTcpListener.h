@@ -103,13 +103,6 @@ protected:
    */
   virtual status_t readSocket();
 
-private:
-  EtchRuntime* mRuntime;
-  EtchServerSocket* mSocket;
-  capu::uint16_t mPort;
-  capu::uint8_t mBackLog;
-
-
 public:
   /**
    * Query term for URI to specify backlog value to ServerSocket. The value
@@ -122,6 +115,40 @@ public:
    * @see #TcpListener(String, Resources)
    */
   const static EtchString& BACKLOG();
+
+  const static EtchString& CONNECTION_CHECK();
+
+private:
+  class ConnectionChecker : public capu::Runnable {
+  public:
+    /**
+     * Constructor
+     * @param instance of TcpListener
+     */
+    ConnectionChecker(EtchTcpListener* listener);
+
+    /**
+     * Destructor
+     */
+    virtual ~ConnectionChecker();
+
+    /**
+     * @see Runnable
+     */
+    void run();
+  private:
+    EtchTcpListener *mListener;
+  };
+
+  friend class ConnectionChecker;
+
+  EtchRuntime* mRuntime;
+  EtchServerSocket* mSocket;
+  capu::uint16_t mPort;
+  capu::uint8_t mBackLog;
+  capu::Thread* mConnectionCheckerThread;
+  ConnectionChecker* mConnectionChecker;
+
 };
 
 #endif /* ETCHTCPLISTENER_H */
