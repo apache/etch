@@ -74,7 +74,7 @@ enum EtchObjectTypeIds {
   EOTID_DYNAMIC_START
 };
 
-class EtchObjectType : public EtchObject {
+class EtchObjectType {
 public:
   /**
    * TypeIds for native types
@@ -132,6 +132,12 @@ public:
    *         false otherwise
    */
   capu::bool_t isArray() const;
+
+  /**
+     * returns the hash code of the object
+     * @return hash code
+     */
+  capu::uint32_t getHashCode() const;
 
   /**
    * @return NULL if this is not a collection type

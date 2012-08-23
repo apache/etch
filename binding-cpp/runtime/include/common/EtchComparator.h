@@ -29,6 +29,10 @@ public:
   inline capu::bool_t operator() (const EtchObject &first, const EtchObject &second) {
     return first.equals(&second);
   }
+
+  inline capu::bool_t operator() (const EtchObjectType &first, const EtchObjectType &second) {
+	return first.equals(&second);
+  }
 };
 
 template <class T>
@@ -38,6 +42,10 @@ public:
   inline capu::bool_t operator() (const EtchObject* first, const EtchObject* second) {
     return first->equals(second);
   }
+
+  inline capu::bool_t operator() (const EtchObjectType* first, const EtchObjectType* second) {
+    return first->equals(second);
+  }
 };
 
 template <class T>
@@ -45,6 +53,10 @@ class EtchComparator <capu::SmartPointer<T> > {
 public:
 
   inline capu::bool_t operator() (const capu::SmartPointer<EtchObject>& first, const capu::SmartPointer<EtchObject>& second) {
+    return first->equals(second.get());
+  }
+
+  inline capu::bool_t operator() (const capu::SmartPointer<EtchObjectType>& first, const capu::SmartPointer<EtchObjectType>& second) {
     return first->equals(second.get());
   }
 };

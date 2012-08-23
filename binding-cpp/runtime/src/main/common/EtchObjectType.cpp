@@ -76,6 +76,10 @@ capu::int32_t EtchObjectType::getTypeId() const {
   return mTypeId;
 }
 
+capu::uint32_t EtchObjectType::getHashCode() const {
+  return (capu::uint32_t) this;
+}
+
 capu::bool_t EtchObjectType::equals(const EtchObjectType* type) const {
   if (this->mTypeId == type->mTypeId) {
     if ((mComponentType == NULL) && (type->mComponentType == NULL)) {
