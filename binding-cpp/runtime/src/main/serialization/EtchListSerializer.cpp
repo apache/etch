@@ -17,6 +17,9 @@
  */
 
 #include "serialization/EtchListSerializer.h"
+#include "support/EtchRuntime.h"
+
+static char* TAG = "EtchListSerializer";
 
 const EtchString& EtchListSerializer::FIELD_NAME() {
   static const EtchString name("values");
@@ -27,6 +30,8 @@ const EtchString& EtchListSerializer::FIELD_NAME() {
 
 EtchListSerializer::EtchListSerializer(EtchType* type, EtchField* field)
 : mField(*field), mType(type) {
+  //TODO refactor this
+  mRuntime = EtchRuntime::getRuntime();
 }
 
 EtchListSerializer::~EtchListSerializer() {
@@ -53,6 +58,7 @@ status_t EtchListSerializer::exportValue(EtchValueFactory* vf, capu::SmartPointe
   result = new EtchStructValue(mType, vf);
   if (result->put(mField, values) != ETCH_OK)
     return ETCH_ERROR;
+  CAPU_LOG_TRACE(mRuntime->getLogger(), TAG, "List has been serialized");
   return ETCH_OK;
 }
 
@@ -65,8 +71,10 @@ status_t EtchListSerializer::importValue(EtchStructValue* value, capu::SmartPoin
   }
 
   capu::SmartPointer<EtchObject> tmp = NULL;
-  if (value->get(mField, &tmp) != ETCH_OK)
+  if (value->get(mField, &tmp) != ETCH_OK) {
+    CAPU_LOG_ERROR(mRuntime->getLogger(), TAG, "Values Field could not be found");
     return ETCH_ERROR;
+  }
 
   capu::SmartPointer<EtchNativeArray<capu::SmartPointer<EtchObject> > > values = capu::smartpointer_cast<EtchNativeArray<capu::SmartPointer<EtchObject> > >(tmp);
 
@@ -80,10 +88,14 @@ status_t EtchListSerializer::importValue(EtchStructValue* value, capu::SmartPoin
       return res;
   }
   result = (EtchObject*) list;
+  CAPU_LOG_TRACE(mRuntime->getLogger(), TAG, "List has been deserialized");
   return ETCH_OK;
 }
 
 status_t EtchListSerializer::Init(EtchType* type, EtchClass2TypeMap * class2type) {
+  //TODO rafactor this
+  EtchRuntime* runtime = EtchRuntime::getRuntime();
+  
   status_t result;
 
   EtchField field;
@@ -108,5 +120,6 @@ status_t EtchListSerializer::Init(EtchType* type, EtchClass2TypeMap * class2type
   }
   type->lock();
 
+  CAPU_LOG_TRACE(runtime->getLogger(), TAG, "EtchListSerializer has been initialized");
   return ETCH_OK;
 }

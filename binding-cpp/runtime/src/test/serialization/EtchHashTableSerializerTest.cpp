@@ -66,7 +66,29 @@ public:
 
 };
 
-TEST(EtchHashTableSerializerTest, initTest) {
+class EtchHashTableSerializerTest
+  : public ::testing::Test {
+protected:
+  virtual void SetUp() {
+    mRuntime = new EtchRuntime();
+    mRuntime->setLogger(new EtchLogger());
+    mRuntime->start();
+  }
+
+  virtual void TearDown() {
+    mRuntime->shutdown();
+    EtchLogger* logger = mRuntime->getLogger();
+    if(logger != NULL) {
+      delete logger;
+    }
+    delete mRuntime;
+    mRuntime = NULL;
+  }
+
+  EtchRuntime* mRuntime;
+};
+
+TEST_F(EtchHashTableSerializerTest, initTest) {
   EtchClass2TypeMap* c2type = new EtchClass2TypeMap();
   EtchString typeName("type1");
   EtchType* type = new EtchType(10, typeName);
@@ -92,7 +114,7 @@ TEST(EtchHashTableSerializerTest, initTest) {
   delete c2type;
 }
 
-TEST(EtchHashTableSerializerTest, exportTest) {
+TEST_F(EtchHashTableSerializerTest, exportTest) {
   EtchClass2TypeMap* c2type = new EtchClass2TypeMap();
   EtchString typeName("type1");
   EtchValueFactory* factory = new MockValueFactory4();
@@ -144,7 +166,7 @@ TEST(EtchHashTableSerializerTest, exportTest) {
   delete result;
 }
 
-TEST(EtchHashTableSerializerTest, importTest) {
+TEST_F(EtchHashTableSerializerTest, importTest) {
   EtchClass2TypeMap* c2type = new EtchClass2TypeMap();
   EtchString typeName("type1");
   EtchValueFactory* factory = new MockValueFactory4();

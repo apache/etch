@@ -19,9 +19,31 @@
 
 #include <gtest/gtest.h>
 #include "serialization/EtchDefaultValueFactory.h"
+#include "support/EtchRuntime.h"
 
+class EtchDefaultValueFactoryTest
+  : public ::testing::Test {
+protected:
+  virtual void SetUp() {
+    mRuntime = new EtchRuntime();
+    mRuntime->setLogger(new EtchLogger());
+    mRuntime->start();
+  }
 
-TEST(EtchDefaultValueFactoryTest, createTest) {
+  virtual void TearDown() {
+    mRuntime->shutdown();
+    EtchLogger* logger = mRuntime->getLogger();
+    if(logger != NULL) {
+      delete logger;
+    }
+    delete mRuntime;
+    mRuntime = NULL;
+  }
+
+  EtchRuntime* mRuntime;
+};
+
+TEST_F(EtchDefaultValueFactoryTest, createTest) {
   EtchType *_mt_x;
   EtchType *_mt_y;
   EtchField *_mf_a = new EtchField("a");
@@ -51,7 +73,7 @@ TEST(EtchDefaultValueFactoryTest, createTest) {
   delete class2type;
 }
 
-TEST(EtchDefaultValueFactoryTest, typeTest) {
+TEST_F(EtchDefaultValueFactoryTest, typeTest) {
   EtchType *_mt_x;
   EtchType *_mt_y;
   EtchField *_mf_a = new EtchField("a");
@@ -134,7 +156,7 @@ TEST(EtchDefaultValueFactoryTest, typeTest) {
   delete class2type;
 }
 
-TEST(EtchDefaultValueFactoryTest, exportCustomValueTest) {
+TEST_F(EtchDefaultValueFactoryTest, exportCustomValueTest) {
   EtchType *_mt_x;
   EtchType *_mt_y;
   EtchField *_mf_a = new EtchField("a");
@@ -186,7 +208,7 @@ TEST(EtchDefaultValueFactoryTest, exportCustomValueTest) {
   delete class2type;
 }
 
-TEST(EtchDefaultValueFactoryTest, importCustomValueTest) {
+TEST_F(EtchDefaultValueFactoryTest, importCustomValueTest) {
   EtchType *_mt_x;
   EtchType *_mt_y;
   EtchField *_mf_a = new EtchField("a");
@@ -241,7 +263,7 @@ TEST(EtchDefaultValueFactoryTest, importCustomValueTest) {
   delete class2type;
 }
 
-TEST(EtchDefaultValueFactoryTest, lockTest) {
+TEST_F(EtchDefaultValueFactoryTest, lockTest) {
   EtchType *_mt_x;
   EtchType *_mt_y;
   EtchField *_mf_a = new EtchField("a");
@@ -284,7 +306,7 @@ TEST(EtchDefaultValueFactoryTest, lockTest) {
   delete class2type;
 }
 
-TEST(EtchDefaultValueFactoryTest, messageIdTest) {
+TEST_F(EtchDefaultValueFactoryTest, messageIdTest) {
   EtchType *_mt_x;
   EtchType *_mt_y;
   EtchField *_mf_a = new EtchField("a");
@@ -334,7 +356,7 @@ TEST(EtchDefaultValueFactoryTest, messageIdTest) {
   delete mt_foo;
 }
 
-TEST(EtchDefaultValueFactoryTest, inReplyToTest) {
+TEST_F(EtchDefaultValueFactoryTest, inReplyToTest) {
   EtchType *_mt_x;
   EtchType *_mt_y;
   EtchField *_mf_a = new EtchField("a");

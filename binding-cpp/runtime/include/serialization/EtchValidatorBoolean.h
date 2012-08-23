@@ -18,9 +18,12 @@
 
 #ifndef __ETCHVALIDATORBOOLEAN_H__
 #define __ETCHVALIDATORBOOLEAN_H__
+
 #include "serialization/EtchTypeValidator.h"
 #include "common/EtchBool.h"
 #include "common/EtchNativeArray.h"
+
+class EtchRuntime;
 
 class EtchValidatorBoolean : public EtchTypeValidator {
 public:
@@ -56,7 +59,8 @@ protected:
   EtchValidatorBoolean(capu::uint32_t ndim);
 
 private:
-  static capu::SmartPointer<EtchValidator>* Validators();
+  EtchRuntime* mRuntime;
+  static capu::SmartPointer<EtchValidator>* Validators(EtchRuntime* runtime);
 };
 
 

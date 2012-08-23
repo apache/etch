@@ -42,13 +42,13 @@ namespace capu {
       delete mThreadId;
     }
     if(mTag != NULL) {
-      delete mTag;
+      delete [] mTag;
     }
     if(mFile != NULL) {
-      delete mFile;
+      delete [] mFile;
     }
     if(mMessage != NULL) {
-      delete mMessage;
+      delete [] mMessage;
     }
   }
 
@@ -98,7 +98,7 @@ namespace capu {
     return CAPU_OK;
   }
 
-  status_t Logger::vlog(LoggerLevel level, const char *tag, const char *file, int32_t line,const char *msgFormat, va_list args) {
+  status_t Logger::vlog(LoggerLevel level, const char *tag, const char *file, int32_t line, const char *msgFormat, va_list args) {
 
     LoggerMessage *msg = new LoggerMessage();
     msg->setId(mId);
@@ -113,7 +113,7 @@ namespace capu {
     char* buffer = new char[size + 1];
     StringUtils::Vsprintf(buffer, size + 1, msgFormat, args);
     msg->setMessage(buffer);
-    delete buffer;
+    delete [] buffer;
 
     // log message
     for(int i = 0; i < LOGGER_APPENDER_MAX; i++) {

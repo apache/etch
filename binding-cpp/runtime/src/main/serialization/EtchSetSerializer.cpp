@@ -17,6 +17,9 @@
  */
 
 #include "serialization/EtchSetSerializer.h"
+#include "support/EtchRuntime.h"
+
+static const char* TAG = "EtchSetSerializer";
 
 const EtchString& EtchSetSerializer::FIELD_NAME() {
   static const EtchString name("keys");
@@ -25,11 +28,11 @@ const EtchString& EtchSetSerializer::FIELD_NAME() {
 
 EtchSetSerializer::EtchSetSerializer(EtchType* type, EtchField* field)
 : mField(*field), mType(type) {
-
+  // TODO refactoring
+  mRuntime = EtchRuntime::getRuntime();
 }
 
 EtchSetSerializer::~EtchSetSerializer() {
-
 }
 
 status_t EtchSetSerializer::exportValue(EtchValueFactory* vf, capu::SmartPointer<EtchObject> value, EtchStructValue*& result) {
@@ -54,7 +57,7 @@ status_t EtchSetSerializer::exportValue(EtchValueFactory* vf, capu::SmartPointer
   result = new EtchStructValue(mType, vf);
   if (result->put(mField, array) != ETCH_OK)
     return ETCH_ERROR;
-
+  CAPU_LOG_TRACE(mRuntime->getLogger(), TAG, "Set has been serialized");
   return ETCH_OK;
 }
 
@@ -65,8 +68,10 @@ status_t EtchSetSerializer::importValue(EtchStructValue* value, capu::SmartPoint
     return ETCH_EINVAL;
   }
   capu::SmartPointer<EtchObject> tmp;
-  if (value->get(mField, &tmp) != ETCH_OK)
+  if (value->get(mField, &tmp) != ETCH_OK) {
+    CAPU_LOG_ERROR(mRuntime->getLogger(), TAG, "Keys Field could not be found");
     return ETCH_ERROR;
+  }
 
   EtchHashSet<capu::SmartPointer<EtchObject> >* set = new EtchHashSet<capu::SmartPointer<EtchObject> >();
 
@@ -80,10 +85,14 @@ status_t EtchSetSerializer::importValue(EtchStructValue* value, capu::SmartPoint
       return res;
   }
   result = (capu::SmartPointer<EtchObject>) set;
+  CAPU_LOG_TRACE(mRuntime->getLogger(), TAG, "Set has been deserialized");
   return ETCH_OK;
 }
 
 status_t EtchSetSerializer::Init(EtchType* type, EtchClass2TypeMap* class2type) {
+  //TODO refactoring
+  EtchRuntime* runtime = EtchRuntime::getRuntime();
+
   status_t result;
   EtchField field_ptr;
   result = type->getField(FIELD_NAME(), &field_ptr);
@@ -101,5 +110,6 @@ status_t EtchSetSerializer::Init(EtchType* type, EtchClass2TypeMap* class2type) 
   if (result != ETCH_OK)
     return result;
   type->lock();
+  CAPU_LOG_TRACE(runtime->getLogger(), TAG, "EtchSetSerializer has been initialized");
   return ETCH_OK;
 }

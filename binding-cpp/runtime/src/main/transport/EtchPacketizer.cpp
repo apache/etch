@@ -17,6 +17,9 @@
  */
 
 #include "transport/EtchPacketizer.h"
+#include "support/EtchRuntime.h"
+
+static const char* TAG = "EtchPacketizer";
 
 const capu::uint32_t& EtchPacketizer::HEADER_SIZE() {
   static const capu::uint32_t headerSize(8);
@@ -40,6 +43,8 @@ const EtchString& EtchPacketizer::MAX_PKT_SIZE_TERM() {
 
 EtchPacketizer::EtchPacketizer(EtchTransportData* transport, EtchString& uri)
 : mTransport(transport), mBodyLen(0), mWantHeader(true) {
+  //TODO rafactor this
+  mRuntime = EtchRuntime::getRuntime();
 
   if (mTransport != NULL)
     mTransport->setSession(this);
@@ -60,6 +65,9 @@ EtchPacketizer::EtchPacketizer(EtchTransportData* transport, EtchString& uri)
 
 EtchPacketizer::EtchPacketizer(EtchTransportData* transport, EtchURL* uri)
 : mTransport(transport), mBodyLen(0), mWantHeader(true) {
+  //TODO rafactor this
+  mRuntime = EtchRuntime::getRuntime();
+
   EtchString value("");
   if (mTransport != NULL)
     transport->setSession(this);
@@ -77,7 +85,7 @@ EtchPacketizer::EtchPacketizer(EtchTransportData* transport, EtchURL* uri)
 }
 
 EtchPacketizer::~EtchPacketizer() {
-  if(mTransport != NULL)
+  if (mTransport != NULL)
     delete mTransport;
 }
 
@@ -130,6 +138,8 @@ status_t EtchPacketizer::transportPacket(capu::SmartPointer<EtchWho> recipient, 
   buf->putInt(EtchPacketizer::SIG());
   buf->putInt(pktSize);
   buf->setIndex(index);
+  CAPU_LOG_DEBUG(mRuntime->getLogger(), TAG, "Header is constructed and raw data has been sent to Transport for transmission");
+
   return mTransport->transportData(recipient, buf);
 }
 
@@ -193,7 +203,7 @@ status_t EtchPacketizer::sessionData(capu::SmartPointer<EtchWho> sender, capu::S
         capu::uint32_t length = buf->getLength();
         capu::uint32_t index = buf->getIndex();
         buf->setLength(index + mBodyLen);
-
+        CAPU_LOG_DEBUG(mRuntime->getLogger(), TAG, "Header is parsed and the body of message is sent to Messagizer");
         mSession->sessionPacket(sender, buf);
 
         buf->setLength(length);
@@ -208,6 +218,7 @@ status_t EtchPacketizer::sessionData(capu::SmartPointer<EtchWho> sender, capu::S
         mSavedBuf->put(*buf, needFromBuf);
         mSavedBuf->setIndex(0);
 
+        CAPU_LOG_DEBUG(mRuntime->getLogger(), TAG, "Header is parsed and the body of message is sent to Messagizer");
         mSession->sessionPacket(sender, mSavedBuf);
 
         mSavedBuf->reset();
@@ -231,6 +242,7 @@ status_t EtchPacketizer::processHeader(EtchFlexBuffer* buf, capu::bool_t reset, 
   buf->getInteger(sig);
 
   if (sig != SIG()) {
+    CAPU_LOG_ERROR(mRuntime->getLogger(), TAG, "SIG is not correct, message will be discarded");
     return ETCH_ERROR;
   }
 
@@ -240,9 +252,9 @@ status_t EtchPacketizer::processHeader(EtchFlexBuffer* buf, capu::bool_t reset, 
     buf->reset();
 
   if (pktSize > mMaxPktSize) {
+    CAPU_LOG_ERROR(mRuntime->getLogger(), TAG, "Packet size exceeds the maximum packet size, message will be discarded");
     return ETCH_ERROR;
   }
-
   return ETCH_OK;
 }
 

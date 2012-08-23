@@ -40,6 +40,11 @@ public:
    */
   EtchConnection();
 
+  /**
+   * Destructor
+   */
+  virtual ~EtchConnection() {}
+
   /** Source query to get the local address. */
   static const EtchString LOCAL_ADDRESS;
 

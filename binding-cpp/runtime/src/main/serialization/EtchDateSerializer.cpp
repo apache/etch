@@ -17,6 +17,9 @@
  */
 
 #include "serialization/EtchDateSerializer.h"
+#include "support/EtchRuntime.h"
+
+static char* TAG = "EtchDateSerializer";
 
 const EtchString& EtchDateSerializer::FIELD_NAME() {
   static const EtchString name("dateTime");
@@ -25,11 +28,11 @@ const EtchString& EtchDateSerializer::FIELD_NAME() {
 
 EtchDateSerializer::EtchDateSerializer(EtchType* type, EtchField* field)
 : mField(*field), mType(type) {
-
+  //TODO refactor this
+  mRuntime = EtchRuntime::getRuntime();
 }
 
 EtchDateSerializer::~EtchDateSerializer() {
-
 }
 
 status_t EtchDateSerializer::importValue(EtchStructValue* value, capu::SmartPointer<EtchObject> &result) {
@@ -40,11 +43,14 @@ status_t EtchDateSerializer::importValue(EtchStructValue* value, capu::SmartPoin
   }
 
   capu::SmartPointer<EtchObject> tmp;
-  if (value->get(mField, &tmp) != ETCH_OK)
+  if (value->get(mField, &tmp) != ETCH_OK) {
+    CAPU_LOG_ERROR(mRuntime->getLogger(), TAG, "DateTime Field could not be found");
     return ETCH_ERROR;
+  }
 
   EtchLong date = *((EtchLong*) tmp.get());
   result = new EtchDate((capu::time_t)date.get());
+  CAPU_LOG_TRACE(mRuntime->getLogger(), TAG, "Date has been deserialized");
   return ETCH_OK;
 }
 
@@ -57,11 +63,14 @@ status_t EtchDateSerializer::exportValue(EtchValueFactory* vf, capu::SmartPointe
   EtchLong *date = new EtchLong(((EtchDate*) value.get())->get());
   if (result->put(mField, date) != ETCH_OK)
     return ETCH_ERROR;
-
+  CAPU_LOG_TRACE(mRuntime->getLogger(), TAG, "Date has been serialized");
   return ETCH_OK;
 }
 
 status_t EtchDateSerializer::Init(EtchType* type, EtchClass2TypeMap* class2type) {
+  //TODO refactoring
+  EtchRuntime* runtime = EtchRuntime::getRuntime();
+  
   status_t result;
   EtchField field_ptr;
   result = type->getField(FIELD_NAME(), &field_ptr);
@@ -80,5 +89,6 @@ status_t EtchDateSerializer::Init(EtchType* type, EtchClass2TypeMap* class2type)
   if (result != ETCH_OK)
     return result;
   type->lock();
+  CAPU_LOG_TRACE(runtime->getLogger(), TAG, "EtchDateSerializer has been initialized");
   return ETCH_OK;
 }

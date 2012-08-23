@@ -17,11 +17,13 @@
  */
 
 #include "serialization/EtchValidatorDouble.h"
+#include "support/EtchRuntime.h"
 
-capu::SmartPointer<EtchValidator>* EtchValidatorDouble::Validators()
-{
-  static capu::SmartPointer<EtchValidator> ret[MAX_CACHED];
-  return &(ret[0]);
+static const char* TAG = "EtchValidatorDouble";
+
+capu::SmartPointer<EtchValidator>* EtchValidatorDouble::Validators(EtchRuntime* runtime) {
+  static EtchValidatorCaches validators;
+  return validators.get(runtime);
 }
 const EtchObjectType* EtchValidatorDouble::TYPE() {
   const static EtchObjectType TYPE(EOTID_VALIDATOR_DOUBLE, NULL);
@@ -30,11 +32,11 @@ const EtchObjectType* EtchValidatorDouble::TYPE() {
 
 EtchValidatorDouble::EtchValidatorDouble(capu::uint32_t ndim)
 : EtchTypeValidator(EtchValidatorDouble::TYPE(), EtchDouble::TYPE(), EtchDouble::TYPE(), ndim) {
-
+  //TODO rafactor this
+  mRuntime = EtchRuntime::getRuntime();
 }
 
 EtchValidatorDouble::~EtchValidatorDouble() {
-
 }
 
 capu::bool_t EtchValidatorDouble::validate(capu::SmartPointer<EtchObject> value) {
@@ -63,13 +65,18 @@ capu::bool_t EtchValidatorDouble::validate(capu::SmartPointer<EtchObject> value)
 status_t EtchValidatorDouble::validateValue(capu::SmartPointer<EtchObject> value, capu::SmartPointer<EtchObject>& result) {
   if (validate(value)) {
     result = value;
+    CAPU_LOG_TRACE(mRuntime->getLogger(), TAG, "Object has been validated");
     return ETCH_OK;
   } else {
+    CAPU_LOG_WARN(mRuntime->getLogger(), TAG, "Object has not been validated");
     return ETCH_ERROR;
   }
 }
 
 status_t EtchValidatorDouble::Get(capu::uint32_t ndim, capu::SmartPointer<EtchValidator> &val) {
+    //TODO rafactor this
+  EtchRuntime* runtime = EtchRuntime::getRuntime();
+
   if (ndim > MAX_NDIMS) {
     return ETCH_EINVAL;
   }
@@ -77,10 +84,11 @@ status_t EtchValidatorDouble::Get(capu::uint32_t ndim, capu::SmartPointer<EtchVa
     val = new EtchValidatorDouble(ndim);
     return ETCH_OK;
   }
-  if (Validators()[ndim].get() == NULL) {
-    Validators()[ndim] = new EtchValidatorDouble(ndim);
+  if (Validators(runtime)[ndim].get() == NULL) {
+    Validators(runtime)[ndim] = new EtchValidatorDouble(ndim);
+    CAPU_LOG_TRACE(runtime->getLogger(), TAG, "EtchValidatorDouble has been created");
   }
-  val = Validators()[ndim];
+  val = Validators(runtime)[ndim];
   return ETCH_OK;
 }
 

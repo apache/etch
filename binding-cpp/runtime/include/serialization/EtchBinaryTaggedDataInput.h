@@ -26,6 +26,7 @@
 #include "serialization/EtchValidatorString.h"
 #include "serialization/EtchValidatorObject.h"
 
+class EtchRuntime;
 
 class EtchBinaryTaggedDataInput : public EtchBinaryTaggedData, public EtchTaggedDataInput {
 public:
@@ -50,7 +51,7 @@ public:
   status_t readMessage(capu::SmartPointer<EtchFlexBuffer> buf, capu::SmartPointer<EtchMessage> &message);
 
 private:
-
+  EtchRuntime* mRuntime;
   capu::SmartPointer<EtchFlexBuffer> mBuffer;
   capu::int32_t mLengthBudget;
   capu::SmartPointer<EtchValidator> mIntOrStrValidator;
@@ -82,6 +83,4 @@ private:
   status_t readBytes(capu::int8_t*& array, capu::uint32_t &length);
 };
 
-
 #endif
-

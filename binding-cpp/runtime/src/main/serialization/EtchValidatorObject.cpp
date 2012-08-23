@@ -17,12 +17,11 @@
  */
 
 #include "serialization/EtchValidatorObject.h"
+#include "support/EtchRuntime.h"
 
-
-capu::SmartPointer<EtchValidator>* EtchValidatorObject::Validators()
-{
-  static capu::SmartPointer<EtchValidator> ret[MAX_CACHED];
-  return &(ret[0]);
+capu::SmartPointer<EtchValidator>* EtchValidatorObject::Validators(EtchRuntime* runtime) {
+  static EtchValidatorCaches validators;
+  return validators.get(runtime);
 }
 
 const EtchObjectType* EtchValidatorObject::TYPE() {
@@ -32,11 +31,12 @@ const EtchObjectType* EtchValidatorObject::TYPE() {
 
 EtchValidatorObject::EtchValidatorObject(capu::uint32_t ndim)
 : EtchTypeValidator(EtchValidatorObject::TYPE(), EtchObject::TYPE(), EtchObject::TYPE(), ndim) {
+  //TODO rafactor this
+  mRuntime = EtchRuntime::getRuntime();
   mSubclass = true;
 }
 
 EtchValidatorObject::~EtchValidatorObject() {
-
 }
 
 capu::bool_t EtchValidatorObject::validate(capu::SmartPointer<EtchObject> value) {
@@ -52,23 +52,30 @@ capu::bool_t EtchValidatorObject::validate(capu::SmartPointer<EtchObject> value)
 status_t EtchValidatorObject::validateValue(capu::SmartPointer<EtchObject> value, capu::SmartPointer<EtchObject>& result) {
   if (validate(value)) {
     result = value;
+    CAPU_LOG_TRACE(mRuntime->getLogger(), "EtchValidatorObject", "Object has been validated");
     return ETCH_OK;
   } else {
+    CAPU_LOG_WARN(mRuntime->getLogger(), "EtchValidatorObject", "Object has not been validated");
     return ETCH_ERROR;
   }
 }
 
 status_t EtchValidatorObject::Get(capu::uint32_t ndim, capu::SmartPointer<EtchValidator> &val) {
+  //TODO rafactor this
+  EtchRuntime* runtime = EtchRuntime::getRuntime();
+  
   if (ndim > MAX_NDIMS)
     return ETCH_EINVAL;
   if (ndim >= MAX_CACHED) {
     val = new EtchValidatorObject(ndim);
     return ETCH_OK;
   }
-  if (Validators()[ndim].get() == NULL) {
-    Validators()[ndim] = new EtchValidatorObject(ndim);
+  //TODO thread safety
+  if (Validators(runtime)[ndim].get() == NULL) {
+    CAPU_LOG_TRACE(runtime->getLogger(), "EtchValidatorObject", "EtchValidatorObject has been created");
+    Validators(runtime)[ndim] = new EtchValidatorObject(ndim);
   }
-  val = Validators()[ndim];
+  val = Validators(runtime)[ndim];
   return ETCH_OK;
 }
 

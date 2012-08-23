@@ -18,7 +18,9 @@
 
 
 #include "serialization/EtchHashTableSerializer.h"
+#include "support/EtchRuntime.h"
 
+static char* TAG = "EtchHashTableSerializer";
 
 const EtchString& EtchHashTableSerializer::FIELD_NAME() {
   static const EtchString name("keysAndValues");
@@ -27,11 +29,11 @@ const EtchString& EtchHashTableSerializer::FIELD_NAME() {
 
 EtchHashTableSerializer::EtchHashTableSerializer(EtchType* type, EtchField* field)
 : mField(*field), mType(type) {
-
+  //TODO refactoring
+  mRuntime = EtchRuntime::getRuntime();
 }
 
 EtchHashTableSerializer::~EtchHashTableSerializer() {
-
 }
 
 status_t EtchHashTableSerializer::exportValue(EtchValueFactory* vf, capu::SmartPointer<EtchObject> value, EtchStructValue*& result) {
@@ -42,10 +44,10 @@ status_t EtchHashTableSerializer::exportValue(EtchValueFactory* vf, capu::SmartP
 
   capu::SmartPointer<EtchHashTable<capu::SmartPointer<EtchObject>, capu::SmartPointer<EtchObject> > > table = capu::smartpointer_cast<EtchHashTable<capu::SmartPointer<EtchObject>, capu::SmartPointer<EtchObject> > > (value);
 
-  EtchHashTable<capu::SmartPointer<EtchObject> , capu::SmartPointer<EtchObject> >::Iterator it = table->begin();
+  EtchHashTable<capu::SmartPointer<EtchObject>, capu::SmartPointer<EtchObject> >::Iterator it = table->begin();
   capu::SmartPointer<EtchNativeArray<capu::SmartPointer<EtchObject> > > keysAndValuesArray = new EtchNativeArray<capu::SmartPointer<EtchObject> > (table->count()*2);
   capu::int32_t i = 0;
-  EtchHashTable<capu::SmartPointer<EtchObject> , capu::SmartPointer<EtchObject> >::Pair ptr;
+  EtchHashTable<capu::SmartPointer<EtchObject>, capu::SmartPointer<EtchObject> >::Pair ptr;
 
   while (it.hasNext()) {
     it.next(&ptr);
@@ -59,7 +61,7 @@ status_t EtchHashTableSerializer::exportValue(EtchValueFactory* vf, capu::SmartP
   if (result->put(mField, keysAndValuesArray) != ETCH_OK) {
     return ETCH_ERROR;
   }
-
+  CAPU_LOG_TRACE(mRuntime->getLogger(), TAG, "HashTable has been serialized");
   return ETCH_OK;
 }
 
@@ -70,10 +72,12 @@ status_t EtchHashTableSerializer::importValue(EtchStructValue* value, capu::Smar
     return ETCH_EINVAL;
   }
   capu::SmartPointer<EtchObject> tmp;
-  if (value->get(mField, &tmp) != ETCH_OK)
+  if (value->get(mField, &tmp) != ETCH_OK) {
+    CAPU_LOG_ERROR(mRuntime->getLogger(), TAG, "KeysAndValues Field could not be found");
     return ETCH_ERROR;
+  }
 
-  EtchHashTable<capu::SmartPointer<EtchObject> , capu::SmartPointer<EtchObject> >* table = new EtchHashTable<capu::SmartPointer<EtchObject> , capu::SmartPointer<EtchObject> >();
+  EtchHashTable<capu::SmartPointer<EtchObject>, capu::SmartPointer<EtchObject> >* table = new EtchHashTable<capu::SmartPointer<EtchObject>, capu::SmartPointer<EtchObject> >();
 
   capu::SmartPointer<EtchNativeArray<capu::SmartPointer<EtchObject> > > keysAndValuesArray = capu::smartpointer_cast<EtchNativeArray<capu::SmartPointer<EtchObject> > > (tmp);
 
@@ -90,10 +94,14 @@ status_t EtchHashTableSerializer::importValue(EtchStructValue* value, capu::Smar
       return res;
   }
   result = (EtchObject*) table;
+  CAPU_LOG_TRACE(mRuntime->getLogger(), TAG, "HashTable has been deserialized");
   return ETCH_OK;
 }
 
 status_t EtchHashTableSerializer::Init(EtchType* type, EtchClass2TypeMap* class2type) {
+  //TODO rafactor this
+  EtchRuntime* runtime = EtchRuntime::getRuntime();
+
   status_t result;
   EtchField field_ptr;
   result = type->getField(FIELD_NAME(), &field_ptr);
@@ -111,5 +119,6 @@ status_t EtchHashTableSerializer::Init(EtchType* type, EtchClass2TypeMap* class2
   if (result != ETCH_OK)
     return result;
   type->lock();
+  CAPU_LOG_TRACE(runtime->getLogger(), TAG, "EtchHashTableSerializer has been initialized");
   return ETCH_OK;
 }

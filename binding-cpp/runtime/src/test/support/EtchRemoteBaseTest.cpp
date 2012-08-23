@@ -23,6 +23,7 @@
 #include "serialization/EtchDefaultValueFactory.h"
 #include "support/EtchPlainMailbox.h"
 #include "transport/EtchPlainMailboxManager.h"
+#include "support/EtchRuntime.h"
 
 class MockSession2 : public EtchSessionMessage {
 public:
@@ -93,7 +94,29 @@ public:
   }
 };
 
-TEST(EtchRemoteBaseTest, constructorTest) {
+class EtchRemoteBaseTest
+  : public ::testing::Test {
+protected:
+  virtual void SetUp() {
+    mRuntime = new EtchRuntime();
+    mRuntime->setLogger(new EtchLogger());
+    mRuntime->start();
+  }
+
+  virtual void TearDown() {
+    mRuntime->shutdown();
+    EtchLogger* logger = mRuntime->getLogger();
+    if(logger != NULL) {
+      delete logger;
+    }
+    delete mRuntime;
+    mRuntime = NULL;
+  }
+
+  EtchRuntime* mRuntime;
+};
+
+TEST_F(EtchRemoteBaseTest, constructorTest) {
   MockSession2 session;
   MockTransport2 *transport = new MockTransport2();
   MockDefaultValueFactory2 *factory;
@@ -117,7 +140,7 @@ TEST(EtchRemoteBaseTest, constructorTest) {
   delete factory;
 }
 
-TEST(EtchRemoteBaseTest, newMessageTest) {
+TEST_F(EtchRemoteBaseTest, newMessageTest) {
   MockSession2 session;
   MockTransport2 *transport = new MockTransport2();
   MockDefaultValueFactory2 *factory;
@@ -155,7 +178,7 @@ TEST(EtchRemoteBaseTest, newMessageTest) {
   delete factory;
 }
 
-TEST(EtchRemoteBaseTest, sendTest) {
+TEST_F(EtchRemoteBaseTest, sendTest) {
   MockSession2 session;
   MockTransport2 *transport = new MockTransport2();
   MockDefaultValueFactory2 *factory;
@@ -197,7 +220,7 @@ TEST(EtchRemoteBaseTest, sendTest) {
   delete factory;
 }
 
-TEST(EtchRemoteBaseTest, beginCallTest) {
+TEST_F(EtchRemoteBaseTest, beginCallTest) {
   MockSession2 session;
   MockTransport2 *transport = new MockTransport2();
   MockDefaultValueFactory2 *factory;
@@ -244,7 +267,7 @@ TEST(EtchRemoteBaseTest, beginCallTest) {
   delete factory;
 }
 
-TEST(EtchRemoteBaseTest, endCallTest) {
+TEST_F(EtchRemoteBaseTest, endCallTest) {
   MockSession2 session;
   MockTransport2 *transport = new MockTransport2();
   MockDefaultValueFactory2 *factory;

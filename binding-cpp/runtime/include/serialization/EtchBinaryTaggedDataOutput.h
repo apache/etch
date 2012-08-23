@@ -26,6 +26,8 @@
 #include "serialization/EtchValidatorString.h"
 #include "serialization/EtchValidatorNone.h"
 
+class EtchRuntime;
+
 class EtchBinaryTaggedDataOutput : public EtchTaggedDataOutput, public EtchBinaryTaggedData {
 public:
 
@@ -34,7 +36,6 @@ public:
    * for types and fields.
    */
   static const EtchString& STRING_TYPE_AND_FIELD();
-
 
   /**
    * Constructs the BinaryTaggedDataInput with a null buffer.
@@ -56,6 +57,7 @@ public:
   status_t writeMessage(capu::SmartPointer<EtchMessage> msg, capu::SmartPointer<EtchFlexBuffer> buf);
 
 private:
+  EtchRuntime* mRuntime;
   capu::SmartPointer<EtchFlexBuffer> mBuffer;
   EtchLevel mLevel;
   capu::bool_t mStringTypeAndField;

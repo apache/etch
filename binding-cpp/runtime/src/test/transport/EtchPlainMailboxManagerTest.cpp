@@ -90,7 +90,29 @@ public:
   }
 };
 
-TEST(EtchPlainMailboxManager, constructorTest) {
+class EtchPlainMailboxManagerTest
+  : public ::testing::Test {
+protected:
+  virtual void SetUp() {
+    mRuntime = new EtchRuntime();
+    mRuntime->setLogger(new EtchLogger());
+    mRuntime->start();
+  }
+
+  virtual void TearDown() {
+    mRuntime->shutdown();
+    EtchLogger* logger = mRuntime->getLogger();
+    if(logger != NULL) {
+      delete logger;
+    }
+    delete mRuntime;
+    mRuntime = NULL;
+  }
+
+  EtchRuntime* mRuntime;
+};
+
+TEST_F(EtchPlainMailboxManagerTest, constructorTest) {
   MockTransport *transport = new MockTransport();
   MockSession session;
   MockDefaultValueFactory *factory;
@@ -108,7 +130,7 @@ TEST(EtchPlainMailboxManager, constructorTest) {
   delete factory;
 }
 
-TEST(EtchPlainMailboxManager, transportMessageTest) {
+TEST_F(EtchPlainMailboxManagerTest, transportMessageTest) {
   EtchString uri("tcp://127.0.0.1:4001");
   MockDefaultValueFactory *factory;
   factory = new MockDefaultValueFactory(uri);
@@ -147,7 +169,7 @@ TEST(EtchPlainMailboxManager, transportMessageTest) {
   delete factory;
 }
 
-TEST(EtchPlainMailboxManager, transportResultMessageTest) {
+TEST_F(EtchPlainMailboxManagerTest, transportResultMessageTest) {
   EtchString uri("tcp://127.0.0.1:4001");
   MockDefaultValueFactory *factory;
   factory = new MockDefaultValueFactory(uri);
@@ -189,7 +211,7 @@ TEST(EtchPlainMailboxManager, transportResultMessageTest) {
   delete factory;
 }
 
-TEST(EtchPlainMailboxManager, transportCallTest) {
+TEST_F(EtchPlainMailboxManagerTest, transportCallTest) {
   EtchString uri("tcp://127.0.0.1:4001");
   MockDefaultValueFactory *factory;
   factory = new MockDefaultValueFactory(uri);
@@ -230,7 +252,7 @@ TEST(EtchPlainMailboxManager, transportCallTest) {
   delete factory;
 }
 
-TEST(EtchPlainMailboxManager, replicatedTransportCallTest) {
+TEST_F(EtchPlainMailboxManagerTest, replicatedTransportCallTest) {
   EtchString uri("tcp://127.0.0.1:4001");
   MockDefaultValueFactory *factory;
   factory = new MockDefaultValueFactory(uri);
@@ -275,7 +297,7 @@ TEST(EtchPlainMailboxManager, replicatedTransportCallTest) {
   delete factory;
 }
 
-TEST(EtchPlainMailboxManager, sessionMessageTest) {
+TEST_F(EtchPlainMailboxManagerTest, sessionMessageTest) {
   EtchString uri("tcp://127.0.0.1:4001");
   MockDefaultValueFactory *factory;
   factory = new MockDefaultValueFactory(uri);

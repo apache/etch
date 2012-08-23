@@ -20,6 +20,7 @@
 #include <gmock/gmock.h>
 #include "transport/EtchMessage.h"
 #include "serialization/EtchValidatorBoolean.h"
+#include "support/EtchRuntime.h"
 
 class MockValueFactory7 : public virtual EtchValueFactory {
 public:
@@ -71,7 +72,31 @@ private:
   capu::int64_t tmp;
 };
 
-TEST(EtchMessageTest, createTest) {
+class EtchMessageTest
+  : public ::testing::Test {
+protected:
+  virtual void SetUp() {
+    mRuntime = new EtchRuntime();
+    mRuntime->setLogger(new EtchLogger());
+    mRuntime->start();
+  }
+
+  virtual void TearDown() {
+    mRuntime->shutdown();
+    EtchLogger* logger = mRuntime->getLogger();
+    if(logger != NULL) {
+      delete logger;
+    }
+    delete mRuntime;
+    mRuntime = NULL;
+
+  }
+private:
+  EtchRuntime* mRuntime;
+};
+
+
+TEST_F(EtchMessageTest, createTest) {
   EtchType *type = new EtchType("test");
   EtchValueFactory *factory = new MockValueFactory7();
   EtchMessage *message = new EtchMessage(type, factory);
@@ -81,7 +106,7 @@ TEST(EtchMessageTest, createTest) {
   delete factory;
 }
 
-TEST(EtchMessageTest, getMessageIdTests) {
+TEST_F(EtchMessageTest, getMessageIdTests) {
   EtchType *type = new EtchType("test");
   EtchValueFactory *factory = new MockValueFactory7();
   EtchMessage *message = new EtchMessage(type, factory);
@@ -94,7 +119,7 @@ TEST(EtchMessageTest, getMessageIdTests) {
   delete factory;
 }
 
-TEST(EtchMessage, getTypeTest) {
+TEST_F(EtchMessageTest, getTypeTest) {
   EtchField field1("type1");
   EtchField field2("type2");
 
@@ -120,7 +145,7 @@ TEST(EtchMessage, getTypeTest) {
   delete comp;
 }
 
-TEST(EtchMessageTest, isType) {
+TEST_F(EtchMessageTest, isType) {
   //Type 1
   EtchField field1("type1");
   EtchField field2("type2");
@@ -149,7 +174,7 @@ TEST(EtchMessageTest, isType) {
   delete comp2;
 }
 
-TEST(EtchMessageTest, putTest) {
+TEST_F(EtchMessageTest, putTest) {
   EtchString fieldtype1("type1");
   EtchString fieldtype2("type2");
   EtchString typeName("comp");
@@ -192,7 +217,7 @@ TEST(EtchMessageTest, putTest) {
   delete comp;
 }
 
-TEST(EtchMessageTest, getTest) {
+TEST_F(EtchMessageTest, getTest) {
   EtchString fieldtype1("type1");
   EtchString fieldtype2("type2");
   EtchField field1(fieldtype1);
@@ -231,7 +256,7 @@ TEST(EtchMessageTest, getTest) {
   delete comp;
 }
 
-TEST(EtchMessageTest, removeTest) {
+TEST_F(EtchMessageTest, removeTest) {
   EtchString fieldtype1("type1");
   EtchString typeName("comp");
   EtchField field1(fieldtype1);
@@ -275,4 +300,3 @@ TEST(EtchMessageTest, removeTest) {
   delete comp;
   delete factory;
 }
-

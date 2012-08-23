@@ -20,8 +20,31 @@
 #include "serialization/EtchValidatorShort.h"
 #include "capu/util/SmartPointer.h"
 #include "common/EtchString.h"
+#include "support/EtchRuntime.h"
 
-TEST(EtchValidatorShortTest, createTest) {
+class EtchValidatorShortTest
+  : public ::testing::Test {
+protected:
+  virtual void SetUp() {
+    mRuntime = new EtchRuntime();
+    mRuntime->setLogger(new EtchLogger());
+    mRuntime->start();
+  }
+
+  virtual void TearDown() {
+    mRuntime->shutdown();
+    EtchLogger* logger = mRuntime->getLogger();
+    if(logger != NULL) {
+      delete logger;
+    }
+    delete mRuntime;
+    mRuntime = NULL;
+  }
+
+  EtchRuntime* mRuntime;
+};
+
+TEST_F(EtchValidatorShortTest, createTest) {
   capu::SmartPointer<EtchValidatorShort> ptr = NULL;
   capu::SmartPointer<EtchValidator> val;
   EXPECT_TRUE(EtchValidatorShort::Get(0, val) == ETCH_OK);
@@ -37,7 +60,7 @@ TEST(EtchValidatorShortTest, createTest) {
   EXPECT_TRUE(ptr->getNDims() == 2);
 }
 
-TEST(EtchValidatorShortTest, validateTest) {
+TEST_F(EtchValidatorShortTest, validateTest) {
   capu::SmartPointer<EtchObject> byte = NULL;
 
   capu::SmartPointer<EtchObject> integer = new EtchInt32(capu::NumericLimitMin<capu::int16_t>());
@@ -92,7 +115,7 @@ TEST(EtchValidatorShortTest, validateTest) {
   EXPECT_TRUE(ptr->validate(shortInteger4));
 }
 
-TEST(EtchValidatorShortTest, validateValueTest) {
+TEST_F(EtchValidatorShortTest, validateValueTest) {
   capu::SmartPointer<EtchObject> byte = NULL;
   capu::SmartPointer<EtchObject> result;
   capu::SmartPointer<EtchObject> integer = new EtchInt32(-128);
@@ -112,7 +135,7 @@ TEST(EtchValidatorShortTest, validateValueTest) {
   EXPECT_TRUE(((EtchShort*) result.get())->get() == ((EtchByte*) byte2.get())->get());
 }
 
-TEST(EtchValidatorShortTest, elementValidatorTest) {
+TEST_F(EtchValidatorShortTest, elementValidatorTest) {
   capu::SmartPointer<EtchValidator> ptr = NULL;
   EXPECT_TRUE(EtchValidatorShort::Get(1, ptr) == ETCH_OK);
   capu::SmartPointer<EtchValidator> elementValidator;

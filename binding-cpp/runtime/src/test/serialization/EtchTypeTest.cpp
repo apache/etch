@@ -22,14 +22,36 @@
 #include "serialization/EtchValidatorLong.h"
 #include "serialization/EtchValidatorByte.h"
 
-TEST(EtchTypeTest, createTest) {
+class EtchTypeTest
+  : public ::testing::Test {
+protected:
+  virtual void SetUp() {
+    mRuntime = new EtchRuntime();
+    mRuntime->setLogger(new EtchLogger());
+    mRuntime->start();
+  }
+
+  virtual void TearDown() {
+    mRuntime->shutdown();
+    EtchLogger* logger = mRuntime->getLogger();
+    if(logger != NULL) {
+      delete logger;
+    }
+    delete mRuntime;
+    mRuntime = NULL;
+  }
+
+  EtchRuntime* mRuntime;
+};
+
+TEST_F(EtchTypeTest, createTest) {
   EtchString str("one");
   EtchType *type = new EtchType(1, str);
   EXPECT_TRUE(type != NULL);
   delete type;
 }
 
-TEST(EtchTypeTest, putValidatorTest) {
+TEST_F(EtchTypeTest, putValidatorTest) {
   EtchString str1("one");
   EtchString str2("two");
   EtchString str3("three");
@@ -49,7 +71,7 @@ TEST(EtchTypeTest, putValidatorTest) {
   EXPECT_EQ(v2, v1);
 }
 
-TEST(EtchTypeTest, getValidatorTest) {
+TEST_F(EtchTypeTest, getValidatorTest) {
   EtchString str1("one");
   EtchString str2("two");
   EtchString str3("three");
@@ -65,7 +87,7 @@ TEST(EtchTypeTest, getValidatorTest) {
   EXPECT_EQ(t.getValidator(g, result), ETCH_ENOT_EXIST);
 }
 
-TEST(EtchTypeTest, clearTest) {
+TEST_F(EtchTypeTest, clearTest) {
   EtchString str1("one");
   EtchString str2("two");
   EtchString str3("three");
@@ -83,7 +105,7 @@ TEST(EtchTypeTest, clearTest) {
   EXPECT_EQ(t.clearValidator(g), ETCH_ERANGE);
 }
 
-TEST(EtchTypeTest, setAndGetTest) {
+TEST_F(EtchTypeTest, setAndGetTest) {
   EtchString str1("one");
   EtchString str2("two");
   EtchString str3("three");
@@ -104,7 +126,7 @@ TEST(EtchTypeTest, setAndGetTest) {
   EXPECT_TRUE(t.getSuperType() == NULL);
 }
 
-TEST(EtchTypeTest, lockTest) {
+TEST_F(EtchTypeTest, lockTest) {
   EtchString str1("one");
   EtchString str2("two");
   EtchString str3("three");

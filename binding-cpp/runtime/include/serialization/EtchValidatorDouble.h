@@ -25,6 +25,8 @@
 #include "capu/os/NumericLimits.h"
 #include "common/EtchNativeArray.h"
 
+class EtchRuntime;
+
 class EtchValidatorDouble : public EtchTypeValidator {
 public:
 
@@ -59,10 +61,9 @@ protected:
   EtchValidatorDouble(capu::uint32_t ndim);
 
 private:
-  static capu::SmartPointer<EtchValidator>* Validators();
+  EtchRuntime* mRuntime;
+  static capu::SmartPointer<EtchValidator>* Validators(EtchRuntime* runtime);
 
 };
 
-
 #endif /* __ETCHVALIDATORDOUBLE_H__ */
-

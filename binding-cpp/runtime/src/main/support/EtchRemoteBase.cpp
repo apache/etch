@@ -18,9 +18,15 @@
 
 #include "support/EtchRemoteBase.h"
 #include "transport/EtchTransportData.h"
+#include "support/EtchRuntime.h"
+#include "util/EtchLogger.h"
+
+static char* TAG = "EtchRemoteBase";
 
 EtchRemoteBase::EtchRemoteBase(EtchDeliveryService* svc, EtchValueFactory* vf) 
   : mSvc(svc), mVf(vf) {
+  //TODO refactor this
+  mRuntime = EtchRuntime::getRuntime();
 }
 
 EtchRemoteBase::~EtchRemoteBase() {
@@ -39,10 +45,12 @@ status_t EtchRemoteBase::send(capu::SmartPointer<EtchMessage> msg) {
 }
 
 status_t EtchRemoteBase::begincall(capu::SmartPointer<EtchMessage> msg, EtchMailbox *&result) {
+  CAPU_LOG_DEBUG(mRuntime->getLogger(), TAG, "Begin call for the message is initiated");  
   return mSvc->begincall(msg, result);
 }
 
 status_t EtchRemoteBase::endcall(EtchMailbox* mb, EtchType* responseType, capu::SmartPointer<EtchObject> &result) {
+  CAPU_LOG_DEBUG(mRuntime->getLogger(), TAG, "End call for the message is initiated");
   return mSvc->endcall(mb, responseType, result);
 }
 

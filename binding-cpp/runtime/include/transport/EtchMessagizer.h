@@ -35,6 +35,7 @@
 #include "util/EtchResources.h"
 #include "util/EtchURL.h"
 
+class EtchRuntime;
 
 class EtchMessagizer : public EtchSessionPacket, public EtchTransportMessage {
 public:
@@ -117,6 +118,7 @@ public:
   status_t sessionPacket(capu::SmartPointer<EtchWho> sender, capu::SmartPointer<EtchFlexBuffer> buf);
 
 private:
+  EtchRuntime* mRuntime;
   static capu::Mutex mutex;
   EtchTransportPacket* mTransport;
   EtchTaggedDataInput* mTdi;

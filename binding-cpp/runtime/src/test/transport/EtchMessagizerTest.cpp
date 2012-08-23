@@ -79,7 +79,29 @@ public:
   }
 };
 
-TEST(EtchMessagizerTest, constructorTest) {
+class EtchMessagizerTest
+  : public ::testing::Test {
+protected:
+  virtual void SetUp() {
+    mRuntime = new EtchRuntime();
+    mRuntime->setLogger(new EtchLogger());
+    mRuntime->start();
+  }
+
+  virtual void TearDown() {
+    mRuntime->shutdown();
+    EtchLogger* logger = mRuntime->getLogger();
+    if(logger != NULL) {
+      delete logger;
+    }
+    delete mRuntime;
+    mRuntime = NULL;
+  }
+
+  EtchRuntime* mRuntime;
+};
+
+TEST_F(EtchMessagizerTest, constructorTest) {
   EtchTypeMap types;
   EtchClass2TypeMap class2type;
   EtchDefaultValueFactory * factory;
@@ -91,7 +113,7 @@ TEST(EtchMessagizerTest, constructorTest) {
   EtchResources r;
   EtchObject *out;
   r.put(EtchTransport<EtchSessionMessage>::VALUE_FACTORY(), factory, out);
-  EtchTransportData* conn = new EtchTcpConnection(NULL, NULL, &u);
+  EtchTransportData* conn = new EtchTcpConnection(mRuntime, NULL, &u);
   EtchTransportPacket* pac = new EtchPacketizer(conn, &u);
   EtchSessionPacket* mes = new EtchMessagizer(pac, &u, &r);
   //Created stack
@@ -100,7 +122,7 @@ TEST(EtchMessagizerTest, constructorTest) {
   types.clear();
 }
 
-TEST(EtchMessagizerTest, TransportControlTest) {
+TEST_F(EtchMessagizerTest, TransportControlTest) {
   EtchTypeMap types;
   EtchClass2TypeMap class2type;
   EtchDefaultValueFactory * factory;
@@ -113,7 +135,7 @@ TEST(EtchMessagizerTest, TransportControlTest) {
   EtchResources r;
   EtchObject *out;
   r.put(EtchTransport<EtchSessionMessage>::VALUE_FACTORY(), factory, out);
-  EtchTransportData* conn = new EtchTcpConnection(NULL, NULL, &u);
+  EtchTransportData* conn = new EtchTcpConnection(mRuntime, NULL, &u);
   EtchPacketizer* pac = new EtchPacketizer(conn, &u);
   EtchMessagizer* mess = new EtchMessagizer(pac, &u, &r);
   mess->setSession(&manager);
@@ -135,7 +157,7 @@ TEST(EtchMessagizerTest, TransportControlTest) {
   types.clear();
 }
 
-TEST(EtchMessagizerTest, TransportMessageTest) {
+TEST_F(EtchMessagizerTest, TransportMessageTest) {
   EtchTypeMap types;
   EtchClass2TypeMap class2type;
   EtchDefaultValueFactory * factory;
@@ -149,7 +171,7 @@ TEST(EtchMessagizerTest, TransportMessageTest) {
   EtchObject *out;
   //add to the resource
   r.put(EtchTransport<EtchSessionMessage>::VALUE_FACTORY(), factory, out);
-  EtchTransportData* conn = new EtchTcpConnection(NULL, NULL, &u);
+  EtchTransportData* conn = new EtchTcpConnection(mRuntime, NULL, &u);
   EtchPacketizer* pac = new EtchPacketizer(conn, &u);
   EtchMessagizer* mess = new EtchMessagizer(pac, &u, &r);
   mess->setSession(&manager);
@@ -172,7 +194,7 @@ TEST(EtchMessagizerTest, TransportMessageTest) {
   types.clear();
 }
 
-TEST(EtchMessagizerTest, SessionDataTest) {
+TEST_F(EtchMessagizerTest, SessionDataTest) {
   //creation of an example message to compare the deserialized messageMyValueFactory vf("tcp:");
   EtchTypeMap types;
   EtchClass2TypeMap class2type;
@@ -202,7 +224,7 @@ TEST(EtchMessagizerTest, SessionDataTest) {
   //add the value factory to the resources
   r.put(EtchTransport<EtchSessionMessage>::VALUE_FACTORY(), factory, out);
   //create stack
-  EtchTransportData* conn = new EtchTcpConnection(NULL, NULL, &u);
+  EtchTransportData* conn = new EtchTcpConnection(mRuntime, NULL, &u);
   EtchPacketizer* pac = new EtchPacketizer(conn, &u);
   EtchMessagizer* mess = new EtchMessagizer(pac, &u, &r);
   capu::SmartPointer<EtchFlexBuffer> buffer = new EtchFlexBuffer();
@@ -230,7 +252,3 @@ TEST(EtchMessagizerTest, SessionDataTest) {
   delete mess;
   delete factory;
 }
-
-
-
-

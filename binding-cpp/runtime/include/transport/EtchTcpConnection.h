@@ -25,13 +25,15 @@
 #include "common/EtchError.h"
 #include "common/EtchString.h"
 #include "common/EtchSocket.h"
-#include "util/EtchURL.h"
-#include "util/EtchResources.h"
+#include "support/EtchRuntime.h"
 #include "transport/EtchConnection.h"
 #include "transport/EtchTransportData.h"
 #include "transport/EtchFlexBuffer.h"
 #include "transport/EtchSessionData.h"
 #include "transport/EtchTcpOption.h"
+#include "util/EtchURL.h"
+#include "util/EtchResources.h"
+#include "util/EtchLogger.h"
 
 class EtchRuntime;
 

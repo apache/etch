@@ -26,6 +26,8 @@
 #include "support/EtchDeliveryService.h"
 #include "serialization/EtchValueFactory.h"
 
+class EtchRuntime;
+
 /**
  * Base class for call to message translators.
  */
@@ -185,6 +187,7 @@ public:
   status_t stopAndWaitDown(capu::int32_t maxDelay);
 
 private:
+  EtchRuntime* mRuntime;
   EtchDeliveryService * mSvc;
   EtchValueFactory* mVf;
 };

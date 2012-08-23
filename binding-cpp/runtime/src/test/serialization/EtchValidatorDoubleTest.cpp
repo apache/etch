@@ -20,8 +20,31 @@
 #include "serialization/EtchValidatorDouble.h"
 #include "capu/util/SmartPointer.h"
 #include "common/EtchString.h"
+#include "support/EtchRuntime.h"
 
-TEST(EtchValidatorDoubleTest, createTest) {
+class EtchValidatorDoubleTest
+  : public ::testing::Test {
+protected:
+  virtual void SetUp() {
+    mRuntime = new EtchRuntime();
+    mRuntime->setLogger(new EtchLogger());
+    mRuntime->start();
+  }
+
+  virtual void TearDown() {
+    mRuntime->shutdown();
+    EtchLogger* logger = mRuntime->getLogger();
+    if(logger != NULL) {
+      delete logger;
+    }
+    delete mRuntime;
+    mRuntime = NULL;
+  }
+
+  EtchRuntime* mRuntime;
+};
+
+TEST_F(EtchValidatorDoubleTest, createTest) {
   capu::SmartPointer<EtchValidatorDouble> ptr = NULL;
 
   capu::SmartPointer<EtchValidator> val;
@@ -40,7 +63,7 @@ TEST(EtchValidatorDoubleTest, createTest) {
   EXPECT_TRUE(ptr->getNDims() == 2);
 }
 
-TEST(EtchValidatorDoubleTest, validateTest) {
+TEST_F(EtchValidatorDoubleTest, validateTest) {
   capu::SmartPointer<EtchObject> byte = NULL;
 
   capu::SmartPointer<EtchObject> doubleTmp = new EtchDouble(capu::NumericLimitMax<capu::float_t>());
@@ -66,7 +89,7 @@ TEST(EtchValidatorDoubleTest, validateTest) {
   EXPECT_TRUE(ptr->validate(doubleTmp4_true));
 }
 
-TEST(EtchValidatorDoubleTest, validateValueTest) {
+TEST_F(EtchValidatorDoubleTest, validateValueTest) {
   capu::SmartPointer<EtchObject> byte = NULL;
   capu::SmartPointer<EtchObject> result;
   capu::SmartPointer<EtchObject> doubleTmp = new EtchDouble(-128.12);
@@ -83,7 +106,7 @@ TEST(EtchValidatorDoubleTest, validateValueTest) {
   EXPECT_TRUE(((EtchDouble*) result.get())->get() == ((EtchDouble*) doubleTmp3.get())->get());
 }
 
-TEST(EtchValidatorDoubleTest, elementValidatorTest) {
+TEST_F(EtchValidatorDoubleTest, elementValidatorTest) {
   capu::SmartPointer<EtchValidator> ptr = NULL;
   EXPECT_TRUE(EtchValidatorDouble::Get(1, ptr) == ETCH_OK);
   capu::SmartPointer<EtchValidator> elementValidator;

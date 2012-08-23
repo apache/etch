@@ -18,6 +18,7 @@
 
 #ifndef __ETCHPACKETIZER_H__
 #define __ETCHPACKETIZER_H__
+
 #include "capu/util/SmartPointer.h"
 #include "transport/EtchSessionData.h"
 #include "transport/EtchTransportPacket.h"
@@ -27,6 +28,8 @@
 #include "util/EtchURL.h"
 #include "util/EtchResources.h"
 #include "common/EtchString.h"
+
+class EtchRuntime;
 
 /**
  * Packetizes a stream data source. Reads a packet header:
@@ -135,6 +138,7 @@ public:
   status_t sessionNotify(capu::SmartPointer<EtchObject> event);
 
 private:
+  EtchRuntime* mRuntime;
 
   EtchTransportData* mTransport;
 

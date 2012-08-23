@@ -19,12 +19,20 @@
 #include "common/EtchRuntimeException.h"
 #include "support/EtchRuntime.h"
 #include "support/EtchTransportHelper.h"
+#include "util/EtchLogger.h"
 
-EtchRuntime::EtchRuntime() 
-  : mIsClosed(false){
+//TODO remove this after refactoring
+EtchRuntime* EtchRuntime::sRuntime = NULL;
+
+EtchRuntime::EtchRuntime()
+  : mIsClosed(false)
+  , mLogger(NULL) {
   mMutex.lock();
   mId = getNextId();
   mMutex.unlock();
+
+  //TODO remove this after refactoring
+  sRuntime = this;
 }
 
 EtchRuntime::~EtchRuntime() {
@@ -42,7 +50,7 @@ status_t EtchRuntime::registerListener(EtchRuntimeListener* listener) {
   if(listener == NULL) {
     return ETCH_EINVAL;
   }
-  
+
   mMutex.lock();
   mListeners.add(listener);
   mMutex.unlock();
@@ -92,3 +100,20 @@ capu::uint64_t EtchRuntime::getNextId() {
   static capu::uint64_t sId = 0;
   return sId++;
 }
+
+status_t EtchRuntime::setLogger(EtchLogger* logger) {
+  if(logger == NULL) {
+    return ETCH_EINVAL;
+  }
+  mLogger = logger;
+  return ETCH_OK;
+}
+
+EtchLogger* EtchRuntime::getLogger() {
+  return mLogger;
+}
+
+EtchRuntime* EtchRuntime::getRuntime() {
+  return sRuntime;
+}
+

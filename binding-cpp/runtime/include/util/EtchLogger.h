@@ -16,12 +16,15 @@
  * limitations under the License.
  */
 
-#ifdef OS_LINUX
-    #include "Linux/File.inc"
-#elif OS_WINDOWS
-    #include "Windows/File.inc"
-#elif defined(OS_INTEGRITY)
-    #include "Linux/File.inc"
-#elif defined(OS_QNX)
-    #include "Linux/File.inc"
-#endif
+#ifndef __ETCHLOGGER_H__
+#define __ETCHLOGGER_H__
+
+#include "capu/util/Appender.h"
+#include "capu/util/Logger.h"
+#include "capu/util/ConsoleAppender.h"
+
+typedef capu::Appender EtchAppender;
+typedef capu::ConsoleAppender EtchConsoleAppender;
+typedef capu::Logger EtchLogger;
+
+#endif /* ETCHLOGGER_H */

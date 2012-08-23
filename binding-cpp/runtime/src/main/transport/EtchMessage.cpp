@@ -17,6 +17,7 @@
  */
 
 #include "transport/EtchMessage.h"
+#include "support/EtchRuntime.h"
 
 EtchMessage::EtchMessage(EtchType* type, EtchValueFactory* vf)
 : EtchStructValue(type, vf), mVf(vf) {

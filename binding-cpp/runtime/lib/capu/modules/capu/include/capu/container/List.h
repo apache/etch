@@ -192,7 +192,7 @@ namespace capu {
      * returns an iterator pointing to the beginning of list
      * @return iterator
      */
-    Iterator begin();
+    Iterator begin() const;
 
     /**
      * finds the index of given element in the link list
@@ -533,7 +533,7 @@ namespace capu {
   }
 
   template <class T, class C>
-  typename List<T, C>::Iterator List<T, C>::begin() {
+  typename List<T, C>::Iterator List<T, C>::begin() const {
     return ListIterator(mHead);
   }
 

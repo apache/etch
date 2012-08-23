@@ -28,8 +28,31 @@
 #include "common/EtchString.h"
 #include "serialization/EtchTypeCodes.h"
 #include "capu/os/NumericLimits.h"
+#include "support/EtchRuntime.h"
 
-TEST(EtchValidatorObjectTest, createTest) {
+class EtchValidatorObjectTest
+  : public ::testing::Test {
+protected:
+  virtual void SetUp() {
+    mRuntime = new EtchRuntime();
+    mRuntime->setLogger(new EtchLogger());
+    mRuntime->start();
+  }
+
+  virtual void TearDown() {
+    mRuntime->shutdown();
+    EtchLogger* logger = mRuntime->getLogger();
+    if(logger != NULL) {
+      delete logger;
+    }
+    delete mRuntime;
+    mRuntime = NULL;
+  }
+
+  EtchRuntime* mRuntime;
+};
+
+TEST_F(EtchValidatorObjectTest, createTest) {
   capu::SmartPointer<EtchValidatorObject> ptr = NULL;
   capu::SmartPointer<EtchValidator> val;
   EXPECT_TRUE(EtchValidatorObject::Get(0, val) == ETCH_OK);
@@ -41,7 +64,7 @@ TEST(EtchValidatorObjectTest, createTest) {
   EXPECT_TRUE(ptr->getNDims() == 2);
 }
 
-TEST(EtchValidatorObjectTest, validateTest) {
+TEST_F(EtchValidatorObjectTest, validateTest) {
   capu::SmartPointer<EtchObject> boolean = NULL;
   capu::SmartPointer<EtchObject> integer = new EtchInt32(4);
   capu::SmartPointer<EtchObject> boolean2 = new EtchBool(false);
@@ -53,7 +76,7 @@ TEST(EtchValidatorObjectTest, validateTest) {
   EXPECT_TRUE(ptr->validate(boolean2));
 }
 
-TEST(EtchValidatorObjectTest, validateValueTest) {
+TEST_F(EtchValidatorObjectTest, validateValueTest) {
   capu::SmartPointer<EtchObject> byte = NULL;
   capu::SmartPointer<EtchObject> result = NULL;
   capu::SmartPointer<EtchObject> integer = new EtchInt32(capu::NumericLimitMin<capu::int16_t > ());
@@ -108,7 +131,7 @@ TEST(EtchValidatorObjectTest, validateValueTest) {
   EXPECT_TRUE(ptr->validateValue(shortInteger4, result) == ETCH_OK);
 }
 
-TEST(EtchValidatorObjectTest, elementValidatorTest) {
+TEST_F(EtchValidatorObjectTest, elementValidatorTest) {
   capu::SmartPointer<EtchValidator> ptr = NULL;
   EXPECT_TRUE(EtchValidatorObject::Get(1, ptr) == ETCH_OK);
   capu::SmartPointer<EtchValidator> elementValidator;

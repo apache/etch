@@ -17,11 +17,13 @@
  */
 
 #include "serialization/EtchValidatorFloat.h"
+#include "support/EtchRuntime.h"
 
-capu::SmartPointer<EtchValidator>* EtchValidatorFloat::Validators()
-{
-  static capu::SmartPointer<EtchValidator> ret[MAX_CACHED];
-  return &(ret[0]);
+static const char* TAG = "EtchValidatorFloat";
+
+capu::SmartPointer<EtchValidator>* EtchValidatorFloat::Validators(EtchRuntime* runtime) {
+  static EtchValidatorCaches validators;
+  return validators.get(runtime);
 }
 
 const EtchObjectType* EtchValidatorFloat::TYPE() {
@@ -31,11 +33,11 @@ const EtchObjectType* EtchValidatorFloat::TYPE() {
 
 EtchValidatorFloat::EtchValidatorFloat(capu::uint32_t ndim)
 : EtchTypeValidator(EtchValidatorFloat::TYPE(), EtchFloat::TYPE(), EtchFloat::TYPE(), ndim) {
-
+  //TODO rafactor this
+  mRuntime = EtchRuntime::getRuntime();
 }
 
 EtchValidatorFloat::~EtchValidatorFloat() {
-
 }
 
 capu::bool_t EtchValidatorFloat::validate(capu::SmartPointer<EtchObject> value) {
@@ -63,13 +65,18 @@ capu::bool_t EtchValidatorFloat::validate(capu::SmartPointer<EtchObject> value) 
 status_t EtchValidatorFloat::validateValue(capu::SmartPointer<EtchObject> value, capu::SmartPointer<EtchObject>& result) {
   if (validate(value)) {
     result = value;
+    CAPU_LOG_TRACE(mRuntime->getLogger(), TAG, "Object has been validated");
     return ETCH_OK;
   } else {
+    CAPU_LOG_WARN(mRuntime->getLogger(), TAG, "Object has not been validated");
     return ETCH_ERROR;
   }
 }
 
 status_t EtchValidatorFloat::Get(capu::uint32_t ndim, capu::SmartPointer<EtchValidator> &val) {
+  //TODO rafactor this
+  EtchRuntime* runtime = EtchRuntime::getRuntime();
+
   if (ndim > MAX_NDIMS) {
     return ETCH_EINVAL;
   }
@@ -77,10 +84,11 @@ status_t EtchValidatorFloat::Get(capu::uint32_t ndim, capu::SmartPointer<EtchVal
     val = new EtchValidatorFloat(ndim);
     return ETCH_OK;
   }
-  if (Validators()[ndim].get() == NULL) {
-    Validators()[ndim] = new EtchValidatorFloat(ndim);
+  if (Validators(runtime)[ndim].get() == NULL) {
+    Validators(runtime)[ndim] = new EtchValidatorFloat(ndim);
+    CAPU_LOG_TRACE(runtime->getLogger(), TAG, "EtchValidatorFloat has been created");
   }
-  val = Validators()[ndim];
+  val = Validators(runtime)[ndim];
   return ETCH_OK;
 }
 

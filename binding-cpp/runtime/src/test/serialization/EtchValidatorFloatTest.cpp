@@ -17,12 +17,35 @@
  */
 
 #include <gtest/gtest.h>
-#include "serialization/EtchValidatorFloat.h"
-#include "capu/util/SmartPointer.h"
-#include "common/EtchString.h"
 #include "capu/os/NumericLimits.h"
+#include "capu/util/SmartPointer.h"
+#include "serialization/EtchValidatorFloat.h"
+#include "common/EtchString.h"
+#include "support/EtchRuntime.h"
 
-TEST(EtchValidatorFloatTest, createTest) {
+class EtchValidatorFloatTest
+  : public ::testing::Test {
+protected:
+  virtual void SetUp() {
+    mRuntime = new EtchRuntime();
+    mRuntime->setLogger(new EtchLogger());
+    mRuntime->start();
+  }
+
+  virtual void TearDown() {
+    mRuntime->shutdown();
+    EtchLogger* logger = mRuntime->getLogger();
+    if(logger != NULL) {
+      delete logger;
+    }
+    delete mRuntime;
+    mRuntime = NULL;
+  }
+
+  EtchRuntime* mRuntime;
+};
+
+TEST_F(EtchValidatorFloatTest, createTest) {
   capu::SmartPointer<EtchValidatorFloat> ptr = NULL;
 
   capu::SmartPointer<EtchValidator> val;
@@ -41,7 +64,7 @@ TEST(EtchValidatorFloatTest, createTest) {
   EXPECT_TRUE(ptr->getNDims() == 2);
 }
 
-TEST(EtchValidatorFloatTest, validateTest) {
+TEST_F(EtchValidatorFloatTest, validateTest) {
   capu::SmartPointer<EtchObject> byte = NULL;
 
   capu::SmartPointer<EtchObject> floatTmp = new EtchFloat(capu::NumericLimitMin<capu::float_t>());
@@ -65,7 +88,7 @@ TEST(EtchValidatorFloatTest, validateTest) {
   EXPECT_TRUE(ptr->validate(floatTmp3));
 }
 
-TEST(EtchValidatorFloatTest, validateValueTest) {
+TEST_F(EtchValidatorFloatTest, validateValueTest) {
   capu::SmartPointer<EtchObject> byte = NULL;
   capu::SmartPointer<EtchObject> result;
   capu::SmartPointer<EtchObject> floatTmp = new EtchFloat(static_cast<capu::float_t>(-128.12));
@@ -82,7 +105,7 @@ TEST(EtchValidatorFloatTest, validateValueTest) {
   EXPECT_TRUE(((EtchFloat*) result.get())->get() == ((EtchFloat*) floatTmp3.get())->get());
 }
 
-TEST(EtchValidatorFloatTest, elementValidatorTest) {
+TEST_F(EtchValidatorFloatTest, elementValidatorTest) {
   capu::SmartPointer<EtchValidator> ptr = NULL;
   EXPECT_TRUE(EtchValidatorFloat::Get(1, ptr) == ETCH_OK);
   capu::SmartPointer<EtchValidator> elementValidator;

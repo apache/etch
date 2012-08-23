@@ -29,7 +29,7 @@ public:
   /**
    * EtchObjectType for EtchSocket.
    */
-  static const EtchObjectType* TYPE();;
+  static const EtchObjectType* TYPE();
 
   /**
    * Default Constructor

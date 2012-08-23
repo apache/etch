@@ -28,6 +28,8 @@
 #include "common/EtchNativeArray.h"
 #include "capu/os/NumericLimits.h"
 
+class EtchRuntime;
+
 class EtchValidatorInt : public EtchTypeValidator {
 public:
 
@@ -62,7 +64,8 @@ protected:
   EtchValidatorInt(capu::uint32_t ndim);
 
 private:
-  static capu::SmartPointer<EtchValidator>* Validators();
+  EtchRuntime* mRuntime;
+  static capu::SmartPointer<EtchValidator>* Validators(EtchRuntime* runtime);
 
 };
 

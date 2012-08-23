@@ -22,6 +22,8 @@
 
 #include "serialization/EtchTypeValidator.h"
 
+class EtchRuntime;
+
 class EtchValidatorObject : public EtchTypeValidator {
 public:
 
@@ -56,7 +58,8 @@ protected:
   EtchValidatorObject(capu::uint32_t ndim);
 
 private:
-  static capu::SmartPointer<EtchValidator>* Validators();
+  EtchRuntime* mRuntime;
+  static capu::SmartPointer<EtchValidator>* Validators(EtchRuntime* runtime);
 
 };
 

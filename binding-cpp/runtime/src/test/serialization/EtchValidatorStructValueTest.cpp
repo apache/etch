@@ -28,6 +28,7 @@
 #include "serialization/EtchTypeCodes.h"
 #include "serialization/EtchStructValue.h"
 #include "capu/os/NumericLimits.h"
+#include "support/EtchRuntime.h"
 
 class MockValueFactory8 : public virtual EtchValueFactory {
 public:
@@ -73,7 +74,29 @@ public:
 
 };
 
-TEST(EtchValidatorStructValueTest, createTest) {
+class EtchValidatorStructValueTest
+  : public ::testing::Test {
+protected:
+  virtual void SetUp() {
+    mRuntime = new EtchRuntime();
+    mRuntime->setLogger(new EtchLogger());
+    mRuntime->start();
+  }
+
+  virtual void TearDown() {
+    mRuntime->shutdown();
+    EtchLogger* logger = mRuntime->getLogger();
+    if(logger != NULL) {
+      delete logger;
+    }
+    delete mRuntime;
+    mRuntime = NULL;
+  }
+
+  EtchRuntime* mRuntime;
+};
+
+TEST_F(EtchValidatorStructValueTest, createTest) {
   EtchString str("typename");
   EtchType *type = new EtchType(str);
   capu::SmartPointer<EtchValidatorStructValue> ptr = NULL;
@@ -97,7 +120,7 @@ TEST(EtchValidatorStructValueTest, createTest) {
   delete type;
 }
 
-TEST(EtchValidatorStructValueTest, elementValidator) {
+TEST_F(EtchValidatorStructValueTest, elementValidator) {
   EtchString str("typename");
   EtchType *type = new EtchType(str);
   capu::SmartPointer<EtchValidator> elementValidator;
@@ -167,7 +190,7 @@ TEST(EtchValidatorStructValueTest, elementValidator) {
   delete type;
 }
 
-TEST(EtchValidatorStructValueTest, validateTest) {
+TEST_F(EtchValidatorStructValueTest, validateTest) {
 
   EtchString str("typename");
   EtchType *type = new EtchType(str);
@@ -235,7 +258,7 @@ TEST(EtchValidatorStructValueTest, validateTest) {
   delete type;
 }
 
-TEST(EtchValidatorStructValueTest, validateValueTest) {
+TEST_F(EtchValidatorStructValueTest, validateValueTest) {
   EtchString str("typename");
   EtchType *type = new EtchType(str);
   capu::SmartPointer<EtchValidator> ptr = NULL;

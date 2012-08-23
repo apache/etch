@@ -16,8 +16,6 @@
  * limitations under the License.
  */
 
-
-
 #include "gtest/gtest.h"
 #include "gmock/gmock.h"
 #include "serialization/EtchTypeCodes.h"
@@ -32,6 +30,7 @@
 #include "serialization/EtchValidatorByte.h"
 #include "serialization/EtchValidatorFloat.h"
 #include "serialization/EtchValidatorDouble.h"
+#include "support/EtchRuntime.h"
 
 class MockValueFactory9 : public virtual EtchValueFactory {
 public:
@@ -249,14 +248,36 @@ public:
 
 };
 
-TEST(EtchBinaryTaggedDataInputTest, createTest) {
+class EtchBinaryTaggedDataInputOutputTest
+  : public ::testing::Test {
+protected:
+  virtual void SetUp() {
+    mRuntime = new EtchRuntime();
+    mRuntime->setLogger(new EtchLogger());
+    mRuntime->start();
+  }
+
+  virtual void TearDown() {
+    mRuntime->shutdown();
+    EtchLogger* logger = mRuntime->getLogger();
+    if(logger != NULL) {
+      delete logger;
+    }
+    delete mRuntime;
+    mRuntime = NULL;
+  }
+
+  EtchRuntime* mRuntime;
+};
+
+TEST_F(EtchBinaryTaggedDataInputOutputTest, createTest) {
   MockValueFactory9 *factory = new MockValueFactory9();
   EtchBinaryTaggedDataInput* dataIn = new EtchBinaryTaggedDataInput(factory);
   delete dataIn;
   delete factory;
 }
 
-TEST(EtchBinaryTaggedDataInputTest, checkTest) {
+TEST_F(EtchBinaryTaggedDataInputOutputTest, checkTest) {
   MockValueFactory9 *factory = new MockValueFactory9();
   EtchBinaryTaggedDataInput* dataIn = new EtchBinaryTaggedDataInput(factory);
 
@@ -386,7 +407,7 @@ TEST(EtchBinaryTaggedDataInputTest, checkTest) {
   delete factory;
 }
 
-TEST(EtchBinaryTaggedDataInputTest, boolean_serialization) {
+TEST_F(EtchBinaryTaggedDataInputOutputTest, boolean_serialization) {
   capu::SmartPointer<EtchNativeArray<capu::SmartPointer<EtchBool> > > carray1 = new EtchNativeArray<capu::SmartPointer<EtchBool> > (2, 2);
   carray1->createArray(0, 2);
   carray1->createArray(1, 2);
@@ -410,7 +431,7 @@ TEST(EtchBinaryTaggedDataInputTest, boolean_serialization) {
 }
 //
 
-TEST(EtchBinaryTaggedDataInputTest, int_serialization) {
+TEST_F(EtchBinaryTaggedDataInputOutputTest, int_serialization) {
   capu::SmartPointer<EtchNativeArray<capu::SmartPointer<EtchInt32> > > carray1 = new EtchNativeArray<capu::SmartPointer<EtchInt32> > (2, 2);
   carray1->createArray(0, 2);
   carray1->createArray(1, 2);
@@ -433,7 +454,7 @@ TEST(EtchBinaryTaggedDataInputTest, int_serialization) {
   Utility::test(content4, val, false);
 }
 
-TEST(EtchBinaryTaggedDataInputTest, string_serialization) {
+TEST_F(EtchBinaryTaggedDataInputOutputTest, string_serialization) {
   const capu::uint8_t utf8_1 [] = {0xF0, 0xA4, 0xAD, 0xA2, 0xE2, 0x82, 0xAC, 0xC2, 0xA2, 0x24, 0x0};
   const capu::uint8_t utf8_2 [] = {0xF0, 0xA4, 0xAD, 0xA2, 0xE2, 0x82, 0xAC, 0xC2, 0xA2, 0x25, 0x0};
   capu::SmartPointer<EtchNativeArray<capu::SmartPointer<EtchString> > > carray1 = new EtchNativeArray<capu::SmartPointer<EtchString> > (2, 2);
@@ -458,7 +479,7 @@ TEST(EtchBinaryTaggedDataInputTest, string_serialization) {
   Utility::test(content4, val, false);
 }
 
-TEST(EtchBinaryTaggedDataInputTest, long_serialization) {
+TEST_F(EtchBinaryTaggedDataInputOutputTest, long_serialization) {
   capu::SmartPointer<EtchNativeArray<capu::SmartPointer<EtchLong> > > carray1 = new EtchNativeArray<capu::SmartPointer<EtchLong> > (2, 2);
   carray1->createArray(0, 2);
   carray1->createArray(1, 2);
@@ -481,7 +502,7 @@ TEST(EtchBinaryTaggedDataInputTest, long_serialization) {
   Utility::test(content4, val, false);
 }
 
-TEST(EtchBinaryTaggedDataInputTest, byte_serialization) {
+TEST_F(EtchBinaryTaggedDataInputOutputTest, byte_serialization) {
   //  EtchNativeArray<EtchByte*> carray(2, &EtchByte::TYPE);
   capu::SmartPointer<EtchByte> content1 = new EtchByte(90);
   //array can not be tested because it is optimized as native
@@ -490,7 +511,7 @@ TEST(EtchBinaryTaggedDataInputTest, byte_serialization) {
   Utility::test(content1, val, false);
 }
 
-TEST(EtchBinaryTaggedDataInputTest, short_serialization) {
+TEST_F(EtchBinaryTaggedDataInputOutputTest, short_serialization) {
   capu::SmartPointer<EtchNativeArray<capu::SmartPointer<EtchShort> > > carray1 = new EtchNativeArray<capu::SmartPointer<EtchShort> > (2, 2);
   carray1->createArray(0, 2);
   carray1->createArray(1, 2);
@@ -513,7 +534,7 @@ TEST(EtchBinaryTaggedDataInputTest, short_serialization) {
   Utility::test(content4, val, false);
 }
 
-TEST(EtchBinaryTaggedDataInputTest, float_serialization) {
+TEST_F(EtchBinaryTaggedDataInputOutputTest, float_serialization) {
   capu::SmartPointer<EtchNativeArray<capu::SmartPointer<EtchFloat> > > carray1 = new EtchNativeArray<capu::SmartPointer<EtchFloat> > (2, 2);
   carray1->createArray(0, 2);
   carray1->createArray(1, 2);
@@ -536,7 +557,7 @@ TEST(EtchBinaryTaggedDataInputTest, float_serialization) {
   Utility::test(content4, val, false);
 }
 
-TEST(EtchBinaryTaggedDataInputTest, double_serialization) {
+TEST_F(EtchBinaryTaggedDataInputOutputTest, double_serialization) {
   capu::SmartPointer<EtchNativeArray<capu::SmartPointer<EtchDouble> > > carray1 = new EtchNativeArray<capu::SmartPointer<EtchDouble> > (2, 2);
   carray1->createArray(0, 2);
   carray1->createArray(1, 2);
@@ -559,14 +580,14 @@ TEST(EtchBinaryTaggedDataInputTest, double_serialization) {
   Utility::test(content4, val, false);
 }
 
-TEST(EtchBinaryTaggedDataInputTest, empty_string_serialization) {
+TEST_F(EtchBinaryTaggedDataInputOutputTest, empty_string_serialization) {
   capu::SmartPointer<EtchString> str = new EtchString(NULL, 0, "utf-8");
   capu::SmartPointer<EtchValidator> val = NULL;
   EtchValidatorString::Get(0, val);
   Utility::test(str, val, false);
 }
 
-TEST(EtchBinaryTaggedDataInputTest, date_serialization) {
+TEST_F(EtchBinaryTaggedDataInputOutputTest, date_serialization) {
   capu::SmartPointer<EtchNativeArray<capu::SmartPointer<EtchDate> > > carray1 = new EtchNativeArray<capu::SmartPointer<EtchDate> > (2, 2);
   carray1->createArray(0, 2);
   carray1->createArray(1, 2);
@@ -593,7 +614,7 @@ TEST(EtchBinaryTaggedDataInputTest, date_serialization) {
   Utility::test(content4, val, false);
 }
 
-TEST(EtchBinaryTaggedDataInputTest, btdo_object_serialization) {
+TEST_F(EtchBinaryTaggedDataInputOutputTest, btdo_object_serialization) {
   capu::int8_t byte_array[] = {3, 1, 1, 2, -111, -106, 1, 2, 90, -126, -127, -127};
   capu::SmartPointer<EtchNativeArray<capu::SmartPointer<EtchObject> > > carray1 = new EtchNativeArray<capu::SmartPointer<EtchObject> > (2);
 
@@ -607,7 +628,7 @@ TEST(EtchBinaryTaggedDataInputTest, btdo_object_serialization) {
   Utility::test_bto_write(carray1, byte_array, val);
 }
 
-TEST(EtchBinaryTaggedDataInputTest, btdo_boolean_write) {
+TEST_F(EtchBinaryTaggedDataInputOutputTest, btdo_boolean_write) {
 
   capu::int8_t byte_array[] = {3, 1, 1, 2, -111, -125, 1, 2, -125, -126, -127, -127};
   capu::int8_t byte_false[] = {3, 1, 1, 2, -126, -127};
@@ -626,7 +647,7 @@ TEST(EtchBinaryTaggedDataInputTest, btdo_boolean_write) {
 
 }
 
-TEST(EtchBinaryTaggedDataInputTest, btdo_byte_write) {
+TEST_F(EtchBinaryTaggedDataInputOutputTest, btdo_byte_write) {
 
   capu::int8_t byte_array[] = {3, 1, 1, 2, -117, 3, 1, 2, 3, -127};
   capu::int8_t byte_pos[] = {3, 1, 1, 2, 1, -127};
@@ -658,7 +679,7 @@ TEST(EtchBinaryTaggedDataInputTest, btdo_byte_write) {
 
 }
 
-TEST(EtchBinaryTaggedDataInputTest, btdo_short_write) {
+TEST_F(EtchBinaryTaggedDataInputOutputTest, btdo_short_write) {
 
   capu::int8_t byte_array[] = {3, 1, 1, 2, -111, -123, 1, 3, 1, 2, 3, -127, -127};
   capu::int8_t byte_pos[] = {3, 1, 1, 2, -123, 39, 16, -127};
@@ -683,7 +704,7 @@ TEST(EtchBinaryTaggedDataInputTest, btdo_short_write) {
 
 }
 
-TEST(EtchBinaryTaggedDataInputTest, btdo_int_write) {
+TEST_F(EtchBinaryTaggedDataInputOutputTest, btdo_int_write) {
 
   capu::int8_t byte_array[] = {3, 1, 1, 2, -111, -122, 1, 3, 1, 2, 3, -127, -127};
   capu::int8_t byte_pos[] = {3, 1, 1, 2, -122, 59, -102, -54, 0, -127};
@@ -707,7 +728,7 @@ TEST(EtchBinaryTaggedDataInputTest, btdo_int_write) {
   Utility::test_bto_write(carray, byte_array, val);
 }
 
-TEST(EtchBinaryTaggedDataInputTest, btdo_long_write) {
+TEST_F(EtchBinaryTaggedDataInputOutputTest, btdo_long_write) {
 
   capu::int8_t byte_array[] = {3, 1, 1, 2, -111, -121, 1, 3, 1, 2, 3, -127, -127};
   capu::int8_t byte_pos[] = {3, 1, 1, 2, -121, 13, -32, -74, -77, -89, 100, 0, 0, -127};
@@ -731,7 +752,7 @@ TEST(EtchBinaryTaggedDataInputTest, btdo_long_write) {
   Utility::test_bto_write(carray, byte_array, val);
 }
 
-TEST(EtchBinaryTaggedDataInputTest, btdo_float_write) {
+TEST_F(EtchBinaryTaggedDataInputOutputTest, btdo_float_write) {
   capu::int8_t byte_array[] = {3, 1, 1, 2, -111, -120, 1, 3, -120, 63, -128, 0, 0, -120, 64, 0, 0, 0, -120, 64, 64, 0, 0, -127, -127};
   capu::int8_t byte_pos[] = {3, 1, 1, 2, -120, 70, 64, -28, 0, -127};
   capu::SmartPointer<EtchNativeArray<capu::SmartPointer<EtchFloat> > > carray = new EtchNativeArray<capu::SmartPointer<EtchFloat> > (3);
@@ -751,7 +772,7 @@ TEST(EtchBinaryTaggedDataInputTest, btdo_float_write) {
   Utility::test_bto_write(carray, byte_array, val);
 }
 
-TEST(EtchBinaryTaggedDataInputTest, btdo_double_write) {
+TEST_F(EtchBinaryTaggedDataInputOutputTest, btdo_double_write) {
   capu::int8_t byte_array[] = {3, 1, 1, 2, -111, -119, 1, 3, -119, 63, -16, 0, 0, 0, 0, 0, 0, -119, 64, 0, 0, 0, 0, 0, 0, 0, -119, 64, 8, 0, 0, 0, 0, 0, 0, -127, -127};
   capu::int8_t byte_pos[] = {3, 1, 1, 2, -119, 64, -42, -24, 0, 0, 0, 0, 0, -127};
   capu::SmartPointer<EtchNativeArray<capu::SmartPointer<EtchDouble> > > carray = new EtchNativeArray<capu::SmartPointer<EtchDouble> > (3);
@@ -771,7 +792,7 @@ TEST(EtchBinaryTaggedDataInputTest, btdo_double_write) {
   Utility::test_bto_write(carray, byte_array, val);
 }
 
-TEST(EtchBinaryTaggedDataInputTest, btdo_empty_string_write) {
+TEST_F(EtchBinaryTaggedDataInputOutputTest, btdo_empty_string_write) {
   capu::int8_t byte_pos[] = {3, 1, 1, 2, -110, -127};
   capu::SmartPointer<EtchString> content0 = new EtchString("");
   capu::SmartPointer<EtchValidator> val = NULL;
@@ -779,7 +800,7 @@ TEST(EtchBinaryTaggedDataInputTest, btdo_empty_string_write) {
   Utility::test_bto_write(content0, byte_pos, val);
 }
 
-TEST(EtchBinaryTaggedDataInputTest, btdo_date_write) {
+TEST_F(EtchBinaryTaggedDataInputOutputTest, btdo_date_write) {
   capu::int8_t byte_array[] = {3, 1, 1, 2, -111, -107, -122, 43, 57, 107, -52, 1, 2, -107, -122, 43, 57, 107, -52, 1, -122, 102, 0, 26, 64, -122, 73, -106, 2, -46, -127, -107, -122, 43, 57, 107, -52, 1, -122, 102, 0, 26, 64, -121, 0, 0, 0, 0, -117, -48, 56, 53, -127, -127, -127};
   capu::int8_t byte_pos[] = {3, 1, 1, 2, -107, -122, 43, 57, 107, -52, 1, -122, 102, 0, 26, 64, -122, 73, -106, 2, -46, -127, -127};
   capu::SmartPointer<EtchNativeArray<capu::SmartPointer<EtchDate> > > carray = new EtchNativeArray<capu::SmartPointer<EtchDate> >(2);
@@ -800,14 +821,14 @@ TEST(EtchBinaryTaggedDataInputTest, btdo_date_write) {
   Utility::test_bto_write(date, byte_pos, val);
 }
 
-TEST(EtchBinaryTaggedDataInputTest, null_write) {
+TEST_F(EtchBinaryTaggedDataInputOutputTest, null_write) {
   capu::int8_t byte_pos[] = {3, 1, 0, -127};
   capu::SmartPointer<EtchValidator> val = NULL;
   EtchValidatorObject::Get(0, val);
   Utility::test_bto_write(NULL, byte_pos, val);
 }
 
-TEST(EtchBinaryTaggedDataInputTest, multi_dimension_test) {
+TEST_F(EtchBinaryTaggedDataInputOutputTest, multi_dimension_test) {
   capu::int8_t byte_pos[] = {3, 1, 1, 2, -111, -125, 2, 2, -111, -125, 1, 2, -126, -125, -127, -111, -125, 1, 2, -126, -125, -127, -127, -127};
   capu::SmartPointer<EtchNativeArray<capu::SmartPointer<EtchBool> > > carray1 = new EtchNativeArray<capu::SmartPointer<EtchBool> >(2, 2);
   carray1->createArray(0, 2);
@@ -825,7 +846,7 @@ TEST(EtchBinaryTaggedDataInputTest, multi_dimension_test) {
   Utility::test_bto_write(carray1, byte_pos, val);
 }
 
-TEST(EtchBinaryTaggedDataInputTest, btdo_multi_array_write) {
+TEST_F(EtchBinaryTaggedDataInputOutputTest, btdo_multi_array_write) {
   capu::int8_t byte_array[] = {3, 1, 1, 2, -111, -106, 2, 2, -111, -106, 1, 2, -125, -126, -127, -111, -106, 1, 2, -126, -125, -127, -127, -127};
   capu::SmartPointer<EtchNativeArray<capu::SmartPointer<EtchObject> > > carray1 = new EtchNativeArray<capu::SmartPointer<EtchObject> >(2, 2);
   carray1->createArray(0, 2);

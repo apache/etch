@@ -17,11 +17,13 @@
  */
 
 #include "serialization/EtchValidatorBoolean.h"
+#include "support/EtchRuntime.h"
 
-capu::SmartPointer<EtchValidator>* EtchValidatorBoolean::Validators()
-{
-  static capu::SmartPointer<EtchValidator> ret[MAX_CACHED];
-  return &(ret[0]);
+static const char* TAG = "EtchValidatorBoolean";
+
+capu::SmartPointer<EtchValidator>* EtchValidatorBoolean::Validators(EtchRuntime* runtime) {
+  static EtchValidatorCaches validators;
+  return validators.get(runtime);
 }
 
 const EtchObjectType* EtchValidatorBoolean::TYPE() {
@@ -31,7 +33,8 @@ const EtchObjectType* EtchValidatorBoolean::TYPE() {
 
 EtchValidatorBoolean::EtchValidatorBoolean(capu::uint32_t ndim)
 : EtchTypeValidator(EtchValidatorBoolean::TYPE(), EtchBool::TYPE(), EtchBool::TYPE(), ndim) {
-
+  //TODO rafactor this
+  mRuntime = EtchRuntime::getRuntime();
 }
 
 EtchValidatorBoolean::~EtchValidatorBoolean() {
@@ -63,14 +66,19 @@ capu::bool_t EtchValidatorBoolean::validate(capu::SmartPointer<EtchObject> value
 
 status_t EtchValidatorBoolean::validateValue(capu::SmartPointer<EtchObject> value, capu::SmartPointer<EtchObject>& result) {
   if (validate(value)) {
+    CAPU_LOG_TRACE(mRuntime->getLogger(), TAG, "Object has been validated");
     result = value;
     return ETCH_OK;
   } else {
+    CAPU_LOG_WARN(mRuntime->getLogger(), TAG, "Object has not been validated");
     return ETCH_ERROR;
   }
 }
 
 status_t EtchValidatorBoolean::Get(capu::uint32_t ndim, capu::SmartPointer<EtchValidator> &val) {
+  //TODO rafactor this
+  EtchRuntime* runtime = EtchRuntime::getRuntime();
+
   if (ndim > MAX_NDIMS) {
     return ETCH_EINVAL;
   }
@@ -78,10 +86,11 @@ status_t EtchValidatorBoolean::Get(capu::uint32_t ndim, capu::SmartPointer<EtchV
     val = new EtchValidatorBoolean(ndim);
     return ETCH_OK;
   }
-  if (Validators()[ndim].get() == NULL) {
-    Validators()[ndim] = new EtchValidatorBoolean(ndim);
+  if (Validators(runtime)[ndim].get() == NULL) {
+    Validators(runtime)[ndim] = new EtchValidatorBoolean(ndim);
+    CAPU_LOG_TRACE(runtime->getLogger(), TAG, "EtchValidatorBoolean has been created");
   }
-  val = Validators()[ndim];
+  val = Validators(runtime)[ndim];
   return ETCH_OK;
 }
 

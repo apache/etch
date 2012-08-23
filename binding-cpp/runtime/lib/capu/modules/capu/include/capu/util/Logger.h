@@ -24,12 +24,21 @@
 #include "capu/os/StringUtils.h"
 #include <stdarg.h>
 
-#define CAPU_LOG(logger, level, tag, format, ...) logger->log(level, tag, __FILE__, __LINE__, format, ##__VA_ARGS__)
-#define CAPU_LOG_TRACE(logger, tag, format, ...) logger->log(capu::CLL_TRACE, tag, __FILE__, __LINE__, format, ##__VA_ARGS__)
-#define CAPU_LOG_DEBUG(logger, tag, format, ...) logger->log(capu::CLL_DEBUG, tag, __FILE__, __LINE__, format, ##__VA_ARGS__)
-#define CAPU_LOG_INFO(logger, tag, format, ...) logger->log(capu::CLL_INFO, tag, __FILE__, __LINE__, format, ##__VA_ARGS__)
-#define CAPU_LOG_WARN(logger, tag, format, ...) logger->log(capu::CLL_WARN, tag, __FILE__, __LINE__, format, ##__VA_ARGS__)
-#define CAPU_LOG_ERROR(logger, tag, format, ...) logger->log(capu::CLL_ERROR, tag, __FILE__, __LINE__, format, ##__VA_ARGS__)
+#if CAPU_LOGGING_ENABLED
+#define CAPU_LOG(logger, level, tag, format, ...) if(logger != NULL) logger->log(level, tag, __FILE__, __LINE__, format, ##__VA_ARGS__)
+#define CAPU_LOG_TRACE(logger, tag, format, ...) if(logger != NULL) logger->log(capu::CLL_TRACE, tag, __FILE__, __LINE__, format, ##__VA_ARGS__)
+#define CAPU_LOG_DEBUG(logger, tag, format, ...) if(logger != NULL) logger->log(capu::CLL_DEBUG, tag, __FILE__, __LINE__, format, ##__VA_ARGS__)
+#define CAPU_LOG_INFO(logger, tag, format, ...) if(logger != NULL) logger->log(capu::CLL_INFO, tag, __FILE__, __LINE__, format, ##__VA_ARGS__)
+#define CAPU_LOG_WARN(logger, tag, format, ...) if(logger != NULL) logger->log(capu::CLL_WARN, tag, __FILE__, __LINE__, format, ##__VA_ARGS__)
+#define CAPU_LOG_ERROR(logger, tag, format, ...) if(logger != NULL) logger->log(capu::CLL_ERROR, tag, __FILE__, __LINE__, format, ##__VA_ARGS__)
+#else
+#define CAPU_LOG(logger, level, tag, format, ...)
+#define CAPU_LOG_TRACE(logger, tag, format, ...)
+#define CAPU_LOG_DEBUG(logger, tag, format, ...)
+#define CAPU_LOG_INFO(logger, tag, format, ...)
+#define CAPU_LOG_WARN(logger, tag, format, ...)
+#define CAPU_LOG_ERROR(logger, tag, format, ...)
+#endif
 
 namespace capu {
 

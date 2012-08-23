@@ -16,9 +16,14 @@
  * limitations under the License.
  */
 #include "transport/EtchPlainMailboxManager.h"
+#include "support/EtchRuntime.h"
+#include "capu/os/Debug.h"
 
 EtchPlainMailboxManager::EtchPlainMailboxManager(EtchTransportMessage* transport, const EtchString& uri, EtchResources* resources)
 : mSession(NULL), mTransport(transport), mUp(false) {
+  //TODO rafactor this
+  mRuntime = EtchRuntime::getRuntime();
+  capu::Debug::Assert(mRuntime != NULL);
   mTransport->setSession(this);
 }
 
@@ -63,6 +68,7 @@ status_t EtchPlainMailboxManager::registerMailbox(EtchMailbox* mb) {
 
   mMailboxes.put(msgid, mb);
   mMutex.unlock();
+  CAPU_LOG_TRACE(mRuntime->getLogger(), "EtchPlainMailboxManager", "A new mailbox is registered");
   return ETCH_OK;
 }
 
@@ -84,12 +90,16 @@ status_t EtchPlainMailboxManager::sessionMessage(capu::SmartPointer<EtchWho> sen
   capu::int64_t msgid;
   if(msg->getInReplyToMessageId(msgid) == ETCH_OK) {
     EtchMailbox* mb = NULL;
-    if (getMailbox(msgid, mb) == ETCH_OK) {
-      return mb->message(sender, msg);
+    CAPU_LOG_DEBUG(mRuntime->getLogger(), "EtchPlainMailboxManager", "A message has been received as answer to message identified by %d", msgid);
+    if (getMailbox(msgid, mb) != ETCH_OK) {
+      CAPU_LOG_ERROR(mRuntime->getLogger(), "EtchPlainMailboxManager", "Unable to get Mailbox");
+      return ETCH_ERROR;
     }
-    return ETCH_ERROR;
+    CAPU_LOG_DEBUG(mRuntime->getLogger(), "EtchPlainMailboxManager", "Message has been sent to respective mailbox");
+    return mb->message(sender, msg);
   }
   // no msgid - pass off to session
+  CAPU_LOG_DEBUG(mRuntime->getLogger(), "EtchPlainMailboxManager", "Message has been sent to upper layer directly");
   return mSession->sessionMessage(sender, msg);
 }
 
@@ -110,12 +120,15 @@ status_t EtchPlainMailboxManager::transportCall(capu::SmartPointer<EtchWho> reci
     return ETCH_ERROR;
   }
 
+  CAPU_LOG_DEBUG(mRuntime->getLogger(), "EtchPlainMailboxManager", "A mailbox has been created for message id %d", msgid);
   EtchMailbox *mb = new EtchPlainMailbox(this, msgid);
   if (registerMailbox(mb) != ETCH_OK) {
     delete mb;
     return ETCH_ERROR;
+    CAPU_LOG_ERROR(mRuntime->getLogger(), "EtchPlainMailboxManager", "Registration has been failed");
   }
 
+  CAPU_LOG_DEBUG(mRuntime->getLogger(), "EtchPlainMailboxManager", "Message has been sent to Messagizer with registering a respective mailbox");
   if (mTransport->transportMessage(recipient, msg) == ETCH_OK) {
     result = mb;
     return ETCH_OK;
@@ -136,6 +149,7 @@ status_t EtchPlainMailboxManager::transportMessage(capu::SmartPointer<EtchWho> r
   if(message->setMessageId(mIdGen.next()) != ETCH_OK) {
     return ETCH_ERROR;
   }
+  CAPU_LOG_DEBUG(mRuntime->getLogger(), "EtchPlainMailboxManager", "Message has been sent to Messagizer without registering a mailbox");
   return mTransport->transportMessage(recipient, message);
 }
 
@@ -164,6 +178,7 @@ status_t EtchPlainMailboxManager::sessionControl(capu::SmartPointer<EtchObject> 
 status_t EtchPlainMailboxManager::sessionNotify(capu::SmartPointer<EtchObject> event) {
   if (event->equals(&EtchSession::UP())) {
     mUp = true;
+    CAPU_LOG_TRACE(mRuntime->getLogger(), "EtchPlainMailboxManager", "Connection is up");
   } else if (event->equals(&EtchSession::DOWN())) {
     mUp = false;
     // TODO check thread safety
@@ -174,6 +189,7 @@ status_t EtchPlainMailboxManager::sessionNotify(capu::SmartPointer<EtchObject> e
       p.second->closeDelivery();
       delete p.second;
     }
+    CAPU_LOG_TRACE(mRuntime->getLogger(), "EtchPlainMailboxManager", "Connection is down");
   }
   status_t status;
   if(mSession != NULL) {

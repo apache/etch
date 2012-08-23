@@ -21,8 +21,7 @@
 #include "serialization/EtchValidatorCustom.h"
 #include "capu/util/SmartPointer.h"
 #include "common/EtchString.h"
-
-
+#include "support/EtchRuntime.h"
 
 class MockGeneratedClass : public EtchObject {
 public:
@@ -45,8 +44,29 @@ const EtchObjectType* MockGeneratedClass::TYPE() {
   return &TYPE;
 }
 
+class EtchValidatorCustomTest
+  : public ::testing::Test {
+protected:
+  virtual void SetUp() {
+    mRuntime = new EtchRuntime();
+    mRuntime->setLogger(new EtchLogger());
+    mRuntime->start();
+  }
 
-TEST(EtchValidatorCustomTest, createTest) {
+  virtual void TearDown() {
+    mRuntime->shutdown();
+    EtchLogger* logger = mRuntime->getLogger();
+    if(logger != NULL) {
+      delete logger;
+    }
+    delete mRuntime;
+    mRuntime = NULL;
+  }
+
+  EtchRuntime* mRuntime;
+};
+
+TEST_F(EtchValidatorCustomTest, createTest) {
   EtchValidatorCustom *ptr = NULL;
 
   status_t status;
@@ -70,7 +90,7 @@ TEST(EtchValidatorCustomTest, createTest) {
   EXPECT_TRUE(ptr->getNDims() == 2);
 }
 
-TEST(EtchValidatorCustomTest, validateTest) {
+TEST_F(EtchValidatorCustomTest, validateTest) {
   status_t status;
   capu::SmartPointer<EtchObject> byte = NULL;
 
@@ -116,7 +136,7 @@ TEST(EtchValidatorCustomTest, validateTest) {
   EXPECT_TRUE(val->validate(generatedClass));
 }
 
-TEST(EtchValidatorCustomTest, validateValueTest) {
+TEST_F(EtchValidatorCustomTest, validateValueTest) {
   status_t status;
   capu::SmartPointer<EtchObject> byte = NULL;
   capu::SmartPointer<EtchObject> result;
@@ -142,7 +162,7 @@ TEST(EtchValidatorCustomTest, validateValueTest) {
 
 
 
-TEST(EtchValidatorCustomTest, elementValidatorTest) {
+TEST_F(EtchValidatorCustomTest, elementValidatorTest) {
   status_t status;
   capu::SmartPointer<EtchValidator> ptr = NULL;
   

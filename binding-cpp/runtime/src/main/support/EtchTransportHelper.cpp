@@ -19,6 +19,9 @@
 #include "support/EtchFreePool.h"
 #include "support/EtchQueuedPool.h"
 #include "support/EtchTransportHelper.h"
+#include "support/EtchRuntime.h"
+#include "util/EtchLogger.h"
+
 
 const EtchString& EtchTransportHelper::QUEUED_POOL() {
   static const EtchString pool("QUEUED_POOL");
@@ -46,6 +49,9 @@ status_t EtchTransportHelper::InitResources(EtchResources* resources, EtchResour
     resources = new EtchResources(*resources);
   }
 
+  //TODO rafactor this
+  EtchRuntime* runtime = EtchRuntime::getRuntime();
+
   EtchObject* obj = NULL;
   EtchObject* objOld = NULL;
   // Queued Pool
@@ -61,6 +67,8 @@ status_t EtchTransportHelper::InitResources(EtchResources* resources, EtchResour
     resources->put( EtchTransportHelper::FREE_POOL(), obj, objOld);
   }
   result = resources;
+  CAPU_LOG_TRACE(runtime->getLogger(), "EtchTransportHelper", "Resources and pools have been allocated initialized");
+
   return ETCH_OK;
 }
 
@@ -69,6 +77,9 @@ status_t EtchTransportHelper::DestroyResources(EtchResources* resources) {
   if (resources == NULL) {
     return ETCH_EINVAL;
   } else {
+    //TODO rafactor this
+    EtchRuntime* runtime = EtchRuntime::getRuntime();
+
     EtchObject* returnValue = NULL;
     
     //get queued pool and delete it
@@ -92,7 +103,7 @@ status_t EtchTransportHelper::DestroyResources(EtchResources* resources) {
 
     //delete resource
     delete resources;
-
+    CAPU_LOG_TRACE(runtime->getLogger(), "EtchTransportHelper", "Resources and pools have been deallocated");
     return ETCH_OK;
   }
 }

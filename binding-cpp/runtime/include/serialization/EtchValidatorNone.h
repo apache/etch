@@ -22,6 +22,8 @@
 #include "serialization/EtchValidator.h"
 #include "serialization/EtchBinaryTaggedData.h"
 
+class EtchRuntime;
+
 class EtchValidatorNone : public EtchValidator {
 public:
   virtual ~EtchValidatorNone();
@@ -52,7 +54,8 @@ protected:
   EtchValidatorNone();
 
 private:
-  static capu::SmartPointer<EtchValidator>& Validators();
+  EtchRuntime* mRuntime;
+  static capu::SmartPointer<EtchValidator>* Validators(EtchRuntime* runtime);
 
 };
 

@@ -17,10 +17,11 @@
  */
 
 #include "serialization/EtchValidatorNone.h"
+#include "support/EtchRuntime.h"
 
-capu::SmartPointer<EtchValidator>& EtchValidatorNone::Validators() {
-  static capu::SmartPointer<EtchValidator> ret = NULL;
-  return ret;
+capu::SmartPointer<EtchValidator>* EtchValidatorNone::Validators(EtchRuntime* runtime) {
+  static EtchValidatorCaches validators;
+  return validators.get(runtime);
 }
 
 const EtchObjectType* EtchValidatorNone::TYPE() {
@@ -30,10 +31,11 @@ const EtchObjectType* EtchValidatorNone::TYPE() {
 
 EtchValidatorNone::EtchValidatorNone()
 : EtchValidator(EtchValidatorNone::TYPE()) {
+  //TODO rafactor this
+  mRuntime = EtchRuntime::getRuntime();
 }
 
 EtchValidatorNone::~EtchValidatorNone() {
-
 }
 
 capu::bool_t EtchValidatorNone::validate(capu::SmartPointer<EtchObject> value) {
@@ -43,17 +45,23 @@ capu::bool_t EtchValidatorNone::validate(capu::SmartPointer<EtchObject> value) {
 status_t EtchValidatorNone::validateValue(capu::SmartPointer<EtchObject> value, capu::SmartPointer<EtchObject>& result) {
   if (validate(value)) {
     result = value;
+    CAPU_LOG_TRACE(mRuntime->getLogger(), "EtchValidatorNone", "NONE has been validated");
     return ETCH_OK;
   } else {
+    CAPU_LOG_WARN(mRuntime->getLogger(), "EtchValidatorNone", "NONE has not been validated");
     return ETCH_ERROR;
   }
 }
 
 status_t EtchValidatorNone::Get(capu::SmartPointer<EtchValidator> &val) {
-  if (Validators().get() == NULL) {
-    Validators() = new EtchValidatorNone();
+  //TODO rafactor this
+  EtchRuntime* runtime = EtchRuntime::getRuntime();
+
+  if (Validators(runtime)[0].get() == NULL) {
+    Validators(runtime)[0] = new EtchValidatorNone();
+    CAPU_LOG_TRACE(runtime->getLogger(), "EtchValidatorNone", "EtchValidatorNone has been created");
   }
-  val = Validators();
+  val = Validators(runtime)[0];
   return ETCH_OK;
 }
 

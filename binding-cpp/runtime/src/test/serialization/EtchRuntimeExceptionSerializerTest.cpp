@@ -68,7 +68,29 @@ public:
 
 };
 
-TEST(EtchRuntimeExceptionSerializationTest, initTest) {
+class EtchRuntimeExceptionSerializationTest
+  : public ::testing::Test {
+protected:
+  virtual void SetUp() {
+    mRuntime = new EtchRuntime();
+    mRuntime->setLogger(new EtchLogger());
+    mRuntime->start();
+  }
+
+  virtual void TearDown() {
+    mRuntime->shutdown();
+    EtchLogger* logger = mRuntime->getLogger();
+    if(logger != NULL) {
+      delete logger;
+    }
+    delete mRuntime;
+    mRuntime = NULL;
+  }
+
+  EtchRuntime* mRuntime;
+};
+
+TEST_F(EtchRuntimeExceptionSerializationTest, initTest) {
   EtchClass2TypeMap* c2type = new EtchClass2TypeMap();
   EtchString typeName("type1");
   EtchType* type = new EtchType(10, typeName);
@@ -95,7 +117,7 @@ TEST(EtchRuntimeExceptionSerializationTest, initTest) {
   delete c2type;
 }
 
-TEST(EtchRuntimeExceptionSerializationTest, exportTest) {
+TEST_F(EtchRuntimeExceptionSerializationTest, exportTest) {
   EtchClass2TypeMap* c2type = new EtchClass2TypeMap();
   EtchString typeName("type1");
   EtchString message("message");
@@ -136,7 +158,7 @@ TEST(EtchRuntimeExceptionSerializationTest, exportTest) {
   delete result;
 }
 
-TEST(EtchRuntimeExceptionSerializationTest, importTest) {
+TEST_F(EtchRuntimeExceptionSerializationTest, importTest) {
   EtchClass2TypeMap* c2type = new EtchClass2TypeMap();
   EtchString typeName("type1");
   EtchString message("message");

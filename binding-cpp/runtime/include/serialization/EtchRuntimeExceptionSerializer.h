@@ -29,6 +29,8 @@
 #include "serialization/EtchClass2TypeMap.h"
 #include "serialization/EtchValidatorString.h"
 
+class EtchRuntime;
+
 class EtchRuntimeExceptionSerializer : public EtchImportExportHelper {
 public:
 
@@ -60,7 +62,7 @@ public:
   static status_t Init(EtchType* type, EtchClass2TypeMap* class2type);
 
 private:
-
+  EtchRuntime* mRuntime;
   EtchType* mType;
   EtchField mField;
   const static EtchString& FIELD_NAME();

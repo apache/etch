@@ -25,9 +25,9 @@ TEST(File, ConstructorTest) {
   EXPECT_FALSE(f1->isOpen());
   delete f1;
 
-  capu::File* f2 = new capu::File("test.txt", "w");
-  EXPECT_TRUE(f1 != NULL);
-  EXPECT_TRUE(f1->isOpen());
+  capu::File* f2 = new capu::File("test.txt", "w+");
+  EXPECT_TRUE(f2 != NULL);
+  EXPECT_TRUE(f2->isOpen());
   delete f2;
 }
 
@@ -37,7 +37,7 @@ TEST(File, IsOpenTest) {
   EXPECT_FALSE(f1->isOpen());
   delete f1;
 
-  capu::File* f2 = new capu::File("test.txt", "w");
+  capu::File* f2 = new capu::File("test.txt", "w+");
   EXPECT_TRUE(f2 != NULL);
   EXPECT_TRUE(f2->isOpen());
   delete f2;
@@ -47,7 +47,7 @@ TEST(File, WriteTest) {
   char buf1[15] = "This is a test";
   capu::status_t status;
 
-  capu::File* f1 = new capu::File("test.txt", "w");
+  capu::File* f1 = new capu::File("test.txt", "w+");
   EXPECT_TRUE(f1 != NULL);
   EXPECT_TRUE(f1->isOpen());
 
@@ -81,7 +81,7 @@ TEST(File, ReadTest) {
   delete f1;
 
   // write data
-  capu::File* f2 = new capu::File("test.txt", "w");
+  capu::File* f2 = new capu::File("test.txt", "w+");
   EXPECT_TRUE(f2 != NULL);
   EXPECT_TRUE(f2->isOpen());
 

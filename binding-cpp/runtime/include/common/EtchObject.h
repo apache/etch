@@ -20,7 +20,8 @@
 #define __ETCHOBJECT_H__
 
 #include "capu/util/SmartPointer.h"
-#include "EtchConfig.h"
+#include "capu/container/List.h"
+#include "EtchError.h"
 
 class EtchObjectType;
 
@@ -50,12 +51,15 @@ public:
   /**
   * Returns object type id of this type.
   */
-  const EtchObjectType* GetObjectType() const;
+  virtual const EtchObjectType* getObjectType() const;
 
   /**
-   * Returns object type id of this object.
+   * Returns true if the type hierarchy of this instance
+   * is from the given type.
+   * @param type to check
+   * @return true if the instance is compatible to the given type
    */
-  const EtchObjectType* getObjectType() const;
+   virtual capu::bool_t isInstanceOf(const EtchObjectType* type) const;
 
   /**
    * Returns hash code
@@ -68,10 +72,19 @@ public:
    */
   virtual capu::bool_t equals(const EtchObject * other) const;
 
-private:
+  protected:
+    /**
+     * Adds the object type to the type hierachy of this instance.
+     * @param type that should be added to type hierachy of this instance.
+     */
+    virtual status_t addObjectType(const EtchObjectType* type);
 
-  const EtchObjectType* mType;
+    // TODO remove me if object hierachy was refactored
+    virtual status_t setObjectType(const EtchObjectType* type);
 
+  private:
+    const EtchObjectType* mType;
+    capu::List<const EtchObjectType*> mTypes;
 };
 
 typedef capu::SmartPointer<EtchObject> EtchObjectPtr;

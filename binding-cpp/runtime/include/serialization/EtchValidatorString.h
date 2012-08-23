@@ -23,6 +23,8 @@
 #include "common/EtchString.h"
 #include "common/EtchNativeArray.h"
 
+class EtchRuntime;
+
 class EtchValidatorString : public EtchTypeValidator {
 public:
 
@@ -57,7 +59,8 @@ protected:
   EtchValidatorString(capu::uint32_t ndim);
 
 private:
-  static capu::SmartPointer<EtchValidator>* Validators();
+  EtchRuntime* mRuntime;
+  static capu::SmartPointer<EtchValidator>* Validators(EtchRuntime* runtime);
 
 };
 

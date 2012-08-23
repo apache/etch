@@ -16,6 +16,9 @@
  * limitations under the License.
  */
 #include "serialization/EtchBinaryTaggedDataOutput.h"
+#include "support/EtchRuntime.h"
+
+static char* TAG = "EtchBinaryTaggedDataOutput";
 
 const EtchString& EtchBinaryTaggedDataOutput::STRING_TYPE_AND_FIELD() {
   static const EtchString name("BinaryTaggedDataOutput.stringTypeAndField");
@@ -24,6 +27,9 @@ const EtchString& EtchBinaryTaggedDataOutput::STRING_TYPE_AND_FIELD() {
 
 EtchBinaryTaggedDataOutput::EtchBinaryTaggedDataOutput(EtchValueFactory *vf, EtchURL* uri)
 : EtchBinaryTaggedData(vf), mLevel(vf->getLevel()), mBuffer(NULL) {
+  // TODO refactoring
+  mRuntime = EtchRuntime::getRuntime();
+
   EtchString tmp;
   if (uri->getTerms().get(STRING_TYPE_AND_FIELD(), &tmp) == ETCH_OK) {
     mStringTypeAndField = atoi(tmp.c_str()) > 0;
@@ -37,7 +43,6 @@ EtchBinaryTaggedDataOutput::EtchBinaryTaggedDataOutput(EtchValueFactory *vf, Etc
 }
 
 EtchBinaryTaggedDataOutput::~EtchBinaryTaggedDataOutput() {
-
 }
 
 status_t EtchBinaryTaggedDataOutput::writeMessage(capu::SmartPointer<EtchMessage> msg, capu::SmartPointer<EtchFlexBuffer> buf) {
@@ -50,16 +55,19 @@ status_t EtchBinaryTaggedDataOutput::writeMessage(capu::SmartPointer<EtchMessage
 
   ret = startMessage(msg);
   if (ret != ETCH_OK) {
+    CAPU_LOG_ERROR(mRuntime->getLogger(), TAG, "Serialization of Message header has failed");
     return ETCH_ERROR;
   }
 
   ret = writeKeysAndValues(msg);
   if (ret != ETCH_OK) {
+    CAPU_LOG_ERROR(mRuntime->getLogger(), TAG, "Serialization of Message body has failed");
     return ETCH_ERROR;
   }
 
   ret = endMessage(msg);
   if (ret != ETCH_OK) {
+    CAPU_LOG_ERROR(mRuntime->getLogger(), TAG, "Serialization of Message end has failed");
     return ETCH_ERROR;
   }
 
@@ -71,16 +79,19 @@ status_t EtchBinaryTaggedDataOutput::writeStruct(capu::SmartPointer<EtchStructVa
 
   ret = startStruct(sv);
   if (ret != ETCH_OK) {
+    CAPU_LOG_ERROR(mRuntime->getLogger(), TAG, "Serialization of struct header has failed");
     return ETCH_ERROR;
   }
 
   ret = writeKeysAndValues(sv);
   if (ret != ETCH_OK) {
+    CAPU_LOG_ERROR(mRuntime->getLogger(), TAG, "Serialization of struct body has failed");
     return ETCH_ERROR;
   }
 
   ret = endStruct(sv);
   if (ret != ETCH_OK) {
+    CAPU_LOG_ERROR(mRuntime->getLogger(), TAG, "Serialization of struct end has failed");
     return ETCH_ERROR;
   }
 
@@ -92,16 +103,19 @@ status_t EtchBinaryTaggedDataOutput::writeArray(EtchArrayValue* av, EtchValidato
 
   ret = startArray(av);
   if (ret != ETCH_OK) {
+    CAPU_LOG_ERROR(mRuntime->getLogger(), TAG, "Serialization of array header has failed");
     return ETCH_ERROR;
   }
 
   ret = writeValues(av, v);
   if (ret != ETCH_OK) {
+    CAPU_LOG_ERROR(mRuntime->getLogger(), TAG, "Serialization of array body has failed");
     return ETCH_ERROR;
   }
 
   ret = endArray(av);
   if (ret != ETCH_OK) {
+    CAPU_LOG_ERROR(mRuntime->getLogger(), TAG, "Serialization of array end has failed");
     return ETCH_ERROR;
   }
 
@@ -157,7 +171,7 @@ status_t EtchBinaryTaggedDataOutput::writeValues(EtchArrayValue* av, EtchValidat
   capu::int32_t size = av->getIndex();
   for (capu::int32_t i = 0; i < size; i++) {
     capu::SmartPointer<EtchObject> tmp;
-    av->get(i,tmp);
+    av->get(i, tmp);
     if (writeValue(validatorElement, tmp) != ETCH_OK)
       return ETCH_ERROR;
   }
@@ -180,10 +194,13 @@ status_t EtchBinaryTaggedDataOutput::endMessage(capu::SmartPointer<EtchMessage> 
 status_t EtchBinaryTaggedDataOutput::startStruct(capu::SmartPointer<EtchStructValue> _struct) {
   // the caller has already written a type code to indicate a
   // struct is starting. this code is shared by startMessage().
-  if (writeType(_struct->getType()) != ETCH_OK)
+  if (writeType(_struct->getType()) != ETCH_OK) {
+    CAPU_LOG_ERROR(mRuntime->getLogger(), TAG, "Serialization of struct type information has failed");
     return ETCH_ERROR;
-  else if (writeIntValue(_struct->count()) != ETCH_OK)
+  } else if (writeIntValue(_struct->count()) != ETCH_OK) {
+    CAPU_LOG_ERROR(mRuntime->getLogger(), TAG, "Serialization of field number on struct has failed");
     return ETCH_ERROR;
+  }
   return ETCH_OK;
 }
 
@@ -207,17 +224,20 @@ status_t EtchBinaryTaggedDataOutput::startArray(EtchArrayValue* array) {
   if (type == EtchTypeCode::CUSTOM) {
     ret = writeType(array->getCustomStructType());
     if (ret != ETCH_OK) {
-        return ETCH_ERROR;
+      CAPU_LOG_ERROR(mRuntime->getLogger(), TAG, "Serialization of array type information has failed");
+      return ETCH_ERROR;
     }
   }
 
   ret = writeIntValue(array->getDim());
   if (ret != ETCH_OK) {
+    CAPU_LOG_ERROR(mRuntime->getLogger(), TAG, "Serialization of array dimension information has failed");
     return ETCH_ERROR;
   }
 
   ret = writeIntValue(array->getSize());
   if (ret != ETCH_OK) {
+    CAPU_LOG_ERROR(mRuntime->getLogger(), TAG, "Serialization of array size information has failed");
     return ETCH_ERROR;
   }
 
@@ -283,33 +303,41 @@ status_t EtchBinaryTaggedDataOutput::writeValue(capu::SmartPointer<EtchValidator
       return ETCH_OK;
 
     case EtchTypeCode::BYTE:
+      CAPU_LOG_TRACE(mRuntime->getLogger(), TAG, "Byte has been serialized");
       return mBuffer->putByte(((EtchByte*) value.get())->get());
 
     case EtchTypeCode::SHORT:
+      CAPU_LOG_TRACE(mRuntime->getLogger(), TAG, "Short has been serialized");
       return mBuffer->putShort(((EtchShort*) value.get())->get());
 
     case EtchTypeCode::INT:
+      CAPU_LOG_TRACE(mRuntime->getLogger(), TAG, "Int has been serialized");
       return mBuffer->putInt(((EtchInt32*) value.get())->get());
 
     case EtchTypeCode::LONG:
+      CAPU_LOG_TRACE(mRuntime->getLogger(), TAG, "Long has been serialized");
       return mBuffer->putLong(((EtchLong*) value.get())->get());
 
     case EtchTypeCode::FLOAT:
+      CAPU_LOG_TRACE(mRuntime->getLogger(), TAG, "Float has been serialized");
+
       return mBuffer->putFloat(((EtchFloat*) value.get())->get());
 
     case EtchTypeCode::DOUBLE:
+      CAPU_LOG_TRACE(mRuntime->getLogger(), TAG, "Double has been serialized");
       return mBuffer->putDouble(((EtchDouble*) value.get())->get());
 
 
     case EtchTypeCode::BYTES:
-      {
+    {
       EtchNativeArray<capu::int8_t> *na = (EtchNativeArray<capu::int8_t> *)value.get();
       capu::int8_t *data = new capu::int8_t[na->getLength()];
-      na->get(Pos(0),data,na->getLength(),0,na->getLength());
+      na->get(Pos(0), data, na->getLength(), 0, na->getLength());
       status_t ret = writeBytes(data, na->getLength());
       delete[] data;
+      CAPU_LOG_TRACE(mRuntime->getLogger(), TAG, "Byte Array has been serialized");
       return ret;
-      }
+    }
 
 
       //			reserved for future use:
@@ -324,31 +352,37 @@ status_t EtchBinaryTaggedDataOutput::writeValue(capu::SmartPointer<EtchValidator
     {
       EtchArrayValue *val = NULL;
       if (toArrayValue(value, v.get(), val) != ETCH_OK) {
+        CAPU_LOG_ERROR(mRuntime->getLogger(), TAG, "Array couldn't be serialized");
         return ETCH_ERROR;
       }
+      CAPU_LOG_TRACE(mRuntime->getLogger(), TAG, "Array has been serialized");
       return writeArray(val, v.get());
     }
     case EtchTypeCode::STRING:
     {
       capu::SmartPointer<EtchString> str = capu::smartpointer_cast<EtchString > (value);
+      CAPU_LOG_TRACE(mRuntime->getLogger(), TAG, "String has been serialized");
       return writeBytes((capu::int8_t*)str->c_str(), str->getNumBytes());
     }
     case EtchTypeCode::CUSTOM:
     {
       EtchStructValue* _struct;
       if (mVf->exportCustomValue(value, _struct) != ETCH_OK) {
+        CAPU_LOG_ERROR(mRuntime->getLogger(), TAG, "Custom Data Type couldn't be serialized");
         return ETCH_ERROR;
       }
-
+      CAPU_LOG_TRACE(mRuntime->getLogger(), TAG, "Custom Data Type has been serialized");
       return writeStruct(_struct);
     }
 
     default:
       // type is either "tiny" integer or unused
       if (typeCode >= EtchTypeCode::MIN_TINY_INT && typeCode <= EtchTypeCode::MAX_TINY_INT) {
+        CAPU_LOG_TRACE(mRuntime->getLogger(), TAG, "Tiny Int has been serialized");
         return ETCH_OK;
       }
       //invalid type
+      CAPU_LOG_ERROR(mRuntime->getLogger(), TAG, "Attempted serialization of an invalid Data Type");
       return ETCH_EINVAL;
   }
   return ETCH_ERROR;

@@ -18,6 +18,7 @@
 
 #ifndef __ETCHVALIDATORBYTE_H__
 #define __ETCHVALIDATORBYTE_H__
+
 #include "serialization/EtchTypeValidator.h"
 #include "common/EtchByte.h"
 #include "common/EtchShort.h"
@@ -26,6 +27,8 @@
 #include "serialization/EtchTypeCodes.h"
 #include "common/EtchNativeArray.h"
 #include "capu/os/NumericLimits.h"
+
+class EtchRuntime;
 
 class EtchValidatorByte : public EtchTypeValidator {
 public:
@@ -61,7 +64,8 @@ protected:
   EtchValidatorByte(capu::uint32_t ndim);
 
 private:
-  static capu::SmartPointer<EtchValidator>* Validators();
+  EtchRuntime* mRuntime;
+  static capu::SmartPointer<EtchValidator>* Validators(EtchRuntime* runtime);
 
 };
 

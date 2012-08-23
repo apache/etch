@@ -24,6 +24,7 @@
 #include "serialization/EtchType.h"
 #include "serialization/EtchStructValue.h"
 
+class EtchRuntime;
 
 class EtchValidatorStructValue : public EtchTypeValidator {
 public:
@@ -62,7 +63,7 @@ protected:
   EtchValidatorStructValue(EtchType* type, capu::uint32_t ndim);
 
 private:
-
+  EtchRuntime* mRuntime;
   EtchType* mType;
 
 };

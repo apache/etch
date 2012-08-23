@@ -21,6 +21,8 @@
 #include "serialization/EtchValidator.h"
 #include "common/EtchRuntimeException.h"
 
+class EtchRuntime;
+
 class EtchValidatorRuntimeException : public EtchValidator {
 public:
 
@@ -55,7 +57,8 @@ protected:
   EtchValidatorRuntimeException();
 
 private:
-  static capu::SmartPointer<EtchValidator>& Validators();
+  EtchRuntime* mRuntime;
+  static capu::SmartPointer<EtchValidator>* Validators(EtchRuntime* runtime);
 };
 
 #endif

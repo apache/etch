@@ -20,19 +20,22 @@
 #ifndef __ETCHTCPLISTENER_H__
 #define __ETCHTCPLISTENER_H__
 
-#include "common/EtchError.h"
-#include "common/EtchObject.h"
-#include "capu/util/SmartPointer.h"
-#include "transport/EtchTransport.h"
-#include "transport/EtchSessionListener.h"
-#include "common/EtchSocket.h"
-#include "transport/EtchConnection.h"
 #include "capu/os/ServerSocket.h"
 #include "capu/os/Socket.h"
+#include "capu/util/Runnable.h"
+#include "capu/util/SmartPointer.h"
+
+#include "common/EtchError.h"
+#include "common/EtchObject.h"
+#include "common/EtchSocket.h"
 #include "common/EtchServerSocket.h"
+#include "transport/EtchTransport.h"
+#include "transport/EtchSessionListener.h"
+#include "transport/EtchConnection.h"
 #include "util/EtchURL.h"
 #include "util/EtchResources.h"
-#include "capu/util/Runnable.h"
+
+class EtchRuntime;
 
 /**
  * Implementation of a connection which handles a socket listener.
@@ -101,6 +104,7 @@ protected:
   virtual status_t readSocket();
 
 private:
+  EtchRuntime* mRuntime;
   EtchServerSocket* mSocket;
   capu::uint16_t mPort;
   capu::uint8_t mBackLog;

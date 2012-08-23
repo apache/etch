@@ -107,7 +107,29 @@ public:
   }
 };
 
-TEST(EtchDeliveryServiceTest, constructorTest) {
+class EtchDefaultDeliveryServiceTest
+  : public ::testing::Test {
+protected:
+  virtual void SetUp() {
+    mRuntime = new EtchRuntime();
+    mRuntime->setLogger(new EtchLogger());
+    mRuntime->start();
+  }
+
+  virtual void TearDown() {
+    mRuntime->shutdown();
+    EtchLogger* logger = mRuntime->getLogger();
+    if(logger != NULL) {
+      delete logger;
+    }
+    delete mRuntime;
+    mRuntime = NULL;
+  }
+
+  EtchRuntime* mRuntime;
+};
+
+TEST_F(EtchDefaultDeliveryServiceTest, constructorTest) {
 
   EtchString uri("tcp://127.0.0.1:4001");
 
@@ -123,7 +145,7 @@ TEST(EtchDeliveryServiceTest, constructorTest) {
   delete session;
 }
 
-TEST(EtchDeliveryServiceTest, beginCallTest) {
+TEST_F(EtchDefaultDeliveryServiceTest, beginCallTest) {
   EtchString uri("tcp://127.0.0.1:4001");
 
   // create value factory
@@ -172,7 +194,7 @@ TEST(EtchDeliveryServiceTest, beginCallTest) {
   delete factory;
 }
 
-TEST(EtchDeliveryServiceTest, endCallTest) {
+TEST_F(EtchDefaultDeliveryServiceTest, endCallTest) {
   status_t status;
   EtchString uri("tcp://127.0.0.1:4001");
 

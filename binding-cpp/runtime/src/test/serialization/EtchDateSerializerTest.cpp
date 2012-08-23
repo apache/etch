@@ -66,7 +66,29 @@ public:
 
 };
 
-TEST(EtchDateSerializationTest, initTest) {
+class EtchDateSerializationTest
+  : public ::testing::Test {
+protected:
+  virtual void SetUp() {
+    mRuntime = new EtchRuntime();
+    mRuntime->setLogger(new EtchLogger());
+    mRuntime->start();
+  }
+
+  virtual void TearDown() {
+    mRuntime->shutdown();
+    EtchLogger* logger = mRuntime->getLogger();
+    if(logger != NULL) {
+      delete logger;
+    }
+    delete mRuntime;
+    mRuntime = NULL;
+  }
+
+  EtchRuntime* mRuntime;
+};
+
+TEST_F(EtchDateSerializationTest, initTest) {
   EtchClass2TypeMap* c2type = new EtchClass2TypeMap();
   EtchString typeName("type1");
   EtchType* type = new EtchType(10, typeName);
@@ -93,7 +115,7 @@ TEST(EtchDateSerializationTest, initTest) {
   delete c2type;
 }
 
-TEST(EtchDateSerializationTest, exportTest) {
+TEST_F(EtchDateSerializationTest, exportTest) {
   EtchClass2TypeMap* c2type = new EtchClass2TypeMap();
   EtchString typeName("type1");
   EtchValueFactory* factory = new MockValueFactory6();
@@ -136,7 +158,7 @@ TEST(EtchDateSerializationTest, exportTest) {
   delete result;
 }
 
-TEST(EtchDateSerializationTest, importTest) {
+TEST_F(EtchDateSerializationTest, importTest) {
   EtchClass2TypeMap* c2type = new EtchClass2TypeMap();
   EtchString typeName("type1");
   EtchValueFactory* factory = new MockValueFactory6();

@@ -16,12 +16,11 @@
  * limitations under the License.
  */
 
-
-
 #include "gtest/gtest.h"
 #include "gmock/gmock.h"
 #include "serialization/EtchValueFactory.h"
 #include "serialization/EtchAuthenticationExceptionSerializer.h"
+#include "support/EtchRuntime.h"
 
 class MockValueFactory3 : public virtual EtchValueFactory {
 public:
@@ -67,7 +66,29 @@ public:
 
 };
 
-TEST(EtchAuthenticationExceptionSerializationTest, initTest) {
+class EtchAuthenticationExceptionSerializationTest
+  : public ::testing::Test {
+protected:
+  virtual void SetUp() {
+    mRuntime = new EtchRuntime();
+    mRuntime->setLogger(new EtchLogger());
+    mRuntime->start();
+  }
+
+  virtual void TearDown() {
+    mRuntime->shutdown();
+    EtchLogger* logger = mRuntime->getLogger();
+    if(logger != NULL) {
+      delete logger;
+    }
+    delete mRuntime;
+    mRuntime = NULL;
+  }
+
+  EtchRuntime* mRuntime;
+};
+
+TEST_F(EtchAuthenticationExceptionSerializationTest, initTest) {
   EtchClass2TypeMap* c2type = new EtchClass2TypeMap();
   EtchString typeName("type1");
   EtchType* type = new EtchType(10, typeName);
@@ -94,7 +115,7 @@ TEST(EtchAuthenticationExceptionSerializationTest, initTest) {
   delete c2type;
 }
 
-TEST(EtchAuthenticationExceptionSerializationTest, exportTest) {
+TEST_F(EtchAuthenticationExceptionSerializationTest, exportTest) {
   EtchClass2TypeMap* c2type = new EtchClass2TypeMap();
   EtchString typeName("type1");
   EtchString message("message");
@@ -135,7 +156,7 @@ TEST(EtchAuthenticationExceptionSerializationTest, exportTest) {
   delete result;
 }
 
-TEST(EtchAuthenticationExceptionSerializationTest, importTest) {
+TEST_F(EtchAuthenticationExceptionSerializationTest, importTest) {
   EtchClass2TypeMap* c2type = new EtchClass2TypeMap();
   EtchString typeName("type1");
   EtchString message("message");

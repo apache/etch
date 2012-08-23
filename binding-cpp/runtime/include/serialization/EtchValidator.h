@@ -23,6 +23,7 @@
 #include "common/EtchObject.h"
 #include "common/EtchObjectType.h"
 #include "common/EtchError.h"
+#include "support/EtchRuntime.h"
 
 class EtchValidator : public EtchObject {
 public:
@@ -76,6 +77,61 @@ public:
    */
   virtual status_t validateValue(capu::SmartPointer<EtchObject> value, capu::SmartPointer<EtchObject>& result) = 0;
 
+};
+
+/**
+ * Etch validator chaches for each runtime
+ */
+class EtchValidatorCaches : public EtchRuntimeListener {
+public:
+  /**
+   * Validator cache
+   */
+  struct ValidatorCache {
+    capu::uint64_t id;
+    capu::SmartPointer<EtchValidator> validators[EtchValidator::MAX_CACHED];
+  };
+
+  /**
+   * Construct a new instance from the Validators class.
+   */
+  EtchValidatorCaches() {
+  }
+
+  /**
+   * Destructor
+   */
+  virtual ~EtchValidatorCaches() {
+    capu::List<ValidatorCache*>::Iterator iter = mValidatorsCache.begin();
+    while(iter.hasNext()) {
+      ValidatorCache* entry = NULL;
+      iter.next(&entry);
+      delete entry;
+    }
+    mValidatorsCache.clear();
+  }
+
+  status_t onRuntimeChanged(EtchRuntime* runtime) {
+    return ETCH_OK;
+  }
+
+  capu::SmartPointer<EtchValidator>* get(EtchRuntime* runtime) {
+    capu::List<ValidatorCache*>::Iterator iter = mValidatorsCache.begin();
+    while(iter.hasNext()) {
+      ValidatorCache* entry = NULL;
+      iter.next(&entry);
+      if(entry->id == runtime->getId()) {
+        return entry->validators;
+      }
+    }
+    ValidatorCache* entry = new ValidatorCache();
+    entry->id = runtime->getId();
+    mValidatorsCache.add(entry);
+    return entry->validators;
+  }
+
+private:
+  capu::List<ValidatorCache*> mValidatorsCache;
 };
 
 #endif /* ETCHVALIDATOR_H */

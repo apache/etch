@@ -17,6 +17,9 @@
  */
 
 #include "serialization/EtchAuthenticationExceptionSerializer.h"
+#include "support/EtchRuntime.h"
+
+static const char* TAG = "EtchAuthenticationExceptionSerializer";
 
 const EtchString& EtchAuthenticationExceptionSerializer::FIELD_NAME() {
   static const EtchString name("msg");
@@ -25,11 +28,11 @@ const EtchString& EtchAuthenticationExceptionSerializer::FIELD_NAME() {
 
 EtchAuthenticationExceptionSerializer::EtchAuthenticationExceptionSerializer(EtchType* type, EtchField* field)
 : mField(*field), mType(type) {
-
+  // TODO refactor
+  mRuntime = EtchRuntime::getRuntime();
 }
 
 EtchAuthenticationExceptionSerializer::~EtchAuthenticationExceptionSerializer() {
-
 }
 
 status_t EtchAuthenticationExceptionSerializer::importValue(EtchStructValue* value, capu::SmartPointer<EtchObject> &result) {
@@ -40,11 +43,13 @@ status_t EtchAuthenticationExceptionSerializer::importValue(EtchStructValue* val
   }
 
   capu::SmartPointer<EtchObject> tmp;
-  if (value->get(mField, &tmp) != ETCH_OK)
+  if (value->get(mField, &tmp) != ETCH_OK) {
+    CAPU_LOG_ERROR(mRuntime->getLogger(), TAG, "Msg Field could not be found");
     return ETCH_ERROR;
-
+  }
   EtchString str = *((EtchString*) tmp.get());
   result = new EtchAuthenticationException(str);
+  CAPU_LOG_TRACE(mRuntime->getLogger(), TAG, "Exception has been deserialized");
   return ETCH_OK;
 }
 
@@ -57,11 +62,14 @@ status_t EtchAuthenticationExceptionSerializer::exportValue(EtchValueFactory* vf
   EtchString *str = new EtchString(((EtchAuthenticationException*) value.get())->getErrorMessage());
   if (result->put(mField, str) != ETCH_OK)
     return ETCH_ERROR;
-
+  CAPU_LOG_TRACE(mRuntime->getLogger(), TAG, "Exception has been serialized");
   return ETCH_OK;
 }
 
 status_t EtchAuthenticationExceptionSerializer::Init(EtchType* type, EtchClass2TypeMap* class2type) {
+  // TODO refactor this
+  EtchRuntime* runtime = EtchRuntime::getRuntime();
+
   status_t result;
   EtchField field_ptr;
   result = type->getField(FIELD_NAME(), &field_ptr);
@@ -79,5 +87,6 @@ status_t EtchAuthenticationExceptionSerializer::Init(EtchType* type, EtchClass2T
   if (result != ETCH_OK)
     return result;
   type->lock();
+  CAPU_LOG_TRACE(runtime->getLogger(), TAG, "EtchAuthenticationExceptionSerializer has been initialized");
   return ETCH_OK;
 }

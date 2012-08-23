@@ -31,6 +31,8 @@
 #include "util/EtchURL.h"
 #include "util/EtchResources.h"
 
+class EtchRuntime;
+
 /**
  * Default implementation of DeliveryService.
  */
@@ -128,6 +130,7 @@ public:
   virtual status_t endcall(EtchMailbox* mb, EtchType* responseType, capu::SmartPointer<EtchObject>& result);
 
 private:
+  EtchRuntime* mRuntime;
   status_t waitUp(capu::int32_t maxDelay);
   status_t waitDown(capu::int32_t maxDelay);
   void init(EtchURL* url);

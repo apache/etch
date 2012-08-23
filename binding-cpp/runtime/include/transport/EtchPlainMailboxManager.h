@@ -20,12 +20,15 @@
 #define __ETCHPLAINMAILBOXMANAGER_H__
 
 #include "capu/os/Mutex.h"
+
+#include "common/EtchString.h"
+#include "transport/EtchMailboxManager.h"
+#include "support/EtchPlainMailbox.h"
 #include "util/EtchURL.h"
 #include "util/EtchResources.h"
 #include "util/EtchIdGenerator.h"
-#include "transport/EtchMailboxManager.h"
-#include "support/EtchPlainMailbox.h"
-#include "common/EtchString.h"
+
+class EtchRuntime;
 
 class EtchPlainMailboxManager : public EtchMailboxManager {
 public:
@@ -102,6 +105,7 @@ public:
 
 
 private:
+  EtchRuntime* mRuntime;
   EtchSessionMessage* mSession;
   EtchTransportMessage* mTransport;
   capu::bool_t mUp;

@@ -21,8 +21,31 @@
 #include "capu/util/SmartPointer.h"
 #include "common/EtchInt32.h"
 #include "common/EtchNativeArray.h"
+#include "support/EtchRuntime.h"
 
-TEST(EtchValidatorBooleanTest, createTest) {
+class EtchValidatorBooleanTest
+  : public ::testing::Test {
+protected:
+  virtual void SetUp() {
+    mRuntime = new EtchRuntime();
+    mRuntime->setLogger(new EtchLogger());
+    mRuntime->start();
+  }
+
+  virtual void TearDown() {
+    mRuntime->shutdown();
+    EtchLogger* logger = mRuntime->getLogger();
+    if(logger != NULL) {
+      delete logger;
+    }
+    delete mRuntime;
+    mRuntime = NULL;
+  }
+
+  EtchRuntime* mRuntime;
+};
+
+TEST_F(EtchValidatorBooleanTest, createTest) {
   capu::SmartPointer<EtchValidator> val2;
   EXPECT_TRUE(EtchValidatorBoolean::Get(0, val2) == ETCH_OK);
 
@@ -42,7 +65,7 @@ TEST(EtchValidatorBooleanTest, createTest) {
 
 }
 
-TEST(EtchValidatorBooleanTest, validateTest) {
+TEST_F(EtchValidatorBooleanTest, validateTest) {
   capu::SmartPointer<EtchObject> boolean = NULL;
   capu::SmartPointer<EtchObject> integer = new EtchInt32(4);
   capu::SmartPointer<EtchObject> boolean2 = new EtchBool(false);
@@ -55,7 +78,7 @@ TEST(EtchValidatorBooleanTest, validateTest) {
 
 }
 
-TEST(EtchValidatorBooleanTest, validateValueTest) {
+TEST_F(EtchValidatorBooleanTest, validateValueTest) {
   capu::SmartPointer<EtchObject> boolean = NULL;
   capu::SmartPointer<EtchObject> result;
   capu::SmartPointer<EtchObject> integer = new EtchInt32(4);
@@ -68,7 +91,7 @@ TEST(EtchValidatorBooleanTest, validateValueTest) {
   EXPECT_TRUE(val->validateValue(boolean2, result) == ETCH_OK);
 }
 
-TEST(EtchValidatorBooleanTest, elementValidatorTest) {
+TEST_F(EtchValidatorBooleanTest, elementValidatorTest) {
   capu::SmartPointer<EtchValidator> val2;
   EXPECT_TRUE(EtchValidatorBoolean::Get(1, val2) == ETCH_OK);
   capu::SmartPointer<EtchValidatorBoolean> val = capu::smartpointer_cast<EtchValidatorBoolean>(val2);

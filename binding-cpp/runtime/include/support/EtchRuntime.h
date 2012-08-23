@@ -20,6 +20,7 @@
 #include "capu/os/Mutex.h"
 #include "capu/container/List.h"
 #include "common/EtchError.h"
+#include "util/EtchLogger.h"
 
 class EtchRuntime;
 
@@ -84,9 +85,28 @@ public:
    */
   status_t shutdown();
 
+  /**
+   * Sets Logger
+   * @param logger
+   */
+  status_t setLogger(EtchLogger* logger);
+
+  /**
+   * Gets Logger
+   * @return logger if exists
+   */
+  EtchLogger* getLogger();
+
+  /**
+   * TODO: Remove this after refactoring! A instance to the runtime shoulde be injected to each class
+   */
+  static EtchRuntime* getRuntime();
+
 private:
+  static EtchRuntime* sRuntime;
   static capu::uint64_t sId;
   capu::uint64_t mId;
+  EtchLogger* mLogger;
   capu::bool_t mIsClosed;
   capu::Mutex mMutex;
   capu::List<EtchRuntimeListener*> mListeners;
@@ -100,5 +120,6 @@ private:
    * Fire onRuntimeChanged callback
    */
   status_t fireOnRuntimeChanged();
+
 };
 #endif /* ETCHRUNTIME_H */

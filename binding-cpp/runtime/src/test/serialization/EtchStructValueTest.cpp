@@ -156,7 +156,29 @@ public:
 
 };
 
-TEST(EtchStructValue, createTest) {
+class EtchStructValueTest
+  : public ::testing::Test {
+protected:
+  virtual void SetUp() {
+    mRuntime = new EtchRuntime();
+    mRuntime->setLogger(new EtchLogger());
+    mRuntime->start();
+  }
+
+  virtual void TearDown() {
+    mRuntime->shutdown();
+    EtchLogger* logger = mRuntime->getLogger();
+    if(logger != NULL) {
+      delete logger;
+    }
+    delete mRuntime;
+    mRuntime = NULL;
+  }
+
+  EtchRuntime* mRuntime;
+};
+
+TEST_F(EtchStructValueTest, createTest) {
   EtchString fieldtype1("type1");
   EtchString fieldtype2("type2");
   EtchField field1(fieldtype1);
@@ -183,7 +205,7 @@ TEST(EtchStructValue, createTest) {
   delete comp;
 }
 
-TEST(EtchStructValue, getTypeTest) {
+TEST_F(EtchStructValueTest, getTypeTest) {
   EtchString fieldtype1("type1");
   EtchString fieldtype2("type2");
   EtchField field1(fieldtype1);
@@ -208,7 +230,7 @@ TEST(EtchStructValue, getTypeTest) {
   delete comp;
 }
 
-TEST(EtchStructValue, isType) {
+TEST_F(EtchStructValueTest, isType) {
   //Type 1
   EtchString fieldtype1("type1");
   EtchString fieldtype2("type2");
@@ -240,7 +262,7 @@ TEST(EtchStructValue, isType) {
   delete comp2;
 }
 
-TEST(EtchStructValue, putTest_FULL) {
+TEST_F(EtchStructValueTest, putTest_FULL) {
   EtchString fieldtype1("type1");
   EtchString fieldtype2("type2");
   EtchString fieldtype3("type3");
@@ -290,7 +312,7 @@ TEST(EtchStructValue, putTest_FULL) {
   delete comp;
 }
 
-TEST(EtchStructValue, putTest_MISSING_OK) {
+TEST_F(EtchStructValueTest, putTest_MISSING_OK) {
   EtchString fieldtype1("type1");
   EtchString fieldtype2("type2");
   EtchString fieldtype3("type3");
@@ -340,7 +362,7 @@ TEST(EtchStructValue, putTest_MISSING_OK) {
   delete comp;
 }
 
-TEST(EtchStructValue, putTest_NONE) {
+TEST_F(EtchStructValueTest, putTest_NONE) {
   EtchString fieldtype1("type1");
   EtchString fieldtype2("type2");
   EtchString fieldtype3("type3");
@@ -390,7 +412,7 @@ TEST(EtchStructValue, putTest_NONE) {
   delete comp;
 }
 
-TEST(EtchStructValue, getTest) {
+TEST_F(EtchStructValueTest, getTest) {
   EtchString fieldtype1("type1");
   EtchString fieldtype2("type2");
   EtchField field1(fieldtype1);
@@ -431,7 +453,7 @@ TEST(EtchStructValue, getTest) {
   delete comp;
 }
 
-TEST(EtchStructValue, removeTest) {
+TEST_F(EtchStructValueTest, removeTest) {
   EtchString fieldtype1("type1");
   EtchString typeName("comp");
   EtchField field1(fieldtype1);

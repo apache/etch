@@ -21,15 +21,38 @@
 #include "capu/util/SmartPointer.h"
 #include "common/EtchInt32.h"
 #include "common/EtchRuntimeException.h"
+#include "support/EtchRuntime.h"
 
-TEST(EtchValidatorRuntimeExceptionTest, createTest) {
+class EtchValidatorRuntimeExceptionTest
+  : public ::testing::Test {
+protected:
+  virtual void SetUp() {
+    mRuntime = new EtchRuntime();
+    mRuntime->setLogger(new EtchLogger());
+    mRuntime->start();
+  }
+
+  virtual void TearDown() {
+    mRuntime->shutdown();
+    EtchLogger* logger = mRuntime->getLogger();
+    if(logger != NULL) {
+      delete logger;
+    }
+    delete mRuntime;
+    mRuntime = NULL;
+  }
+
+  EtchRuntime* mRuntime;
+};
+
+TEST_F(EtchValidatorRuntimeExceptionTest, createTest) {
   capu::SmartPointer<EtchValidatorRuntimeException> ptr = NULL;
   capu::SmartPointer<EtchValidator> val;
   EXPECT_TRUE(EtchValidatorRuntimeException::Get(val) == ETCH_OK);
   ptr = capu::smartpointer_cast<EtchValidatorRuntimeException>(val);
 }
 
-TEST(EtchValidatorRuntimeExceptionTest, validateTest) {
+TEST_F(EtchValidatorRuntimeExceptionTest, validateTest) {
   EtchString excepmess("test");
   capu::SmartPointer<EtchObject> boolean = NULL;
   capu::SmartPointer<EtchObject> integer = new EtchInt32(4);
@@ -42,7 +65,7 @@ TEST(EtchValidatorRuntimeExceptionTest, validateTest) {
 
 }
 
-TEST(EtchValidatorRuntimeExceptionTest, validateValueTest) {
+TEST_F(EtchValidatorRuntimeExceptionTest, validateValueTest) {
   EtchString excepmess("test");
 
   capu::SmartPointer<EtchObject> boolean = NULL;

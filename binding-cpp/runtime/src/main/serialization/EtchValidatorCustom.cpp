@@ -18,6 +18,63 @@
 
 #include "serialization/EtchValidatorCustom.h"
 
+/**
+ * Etch validator chaches for each runtime
+ */
+class EtchValidatorCustomCaches : public EtchRuntimeListener {
+public:
+  /**
+   * Validator cache
+   */
+  struct ValidatorCache {
+    capu::uint64_t id;
+    EtchHashTable<EtchValidatorCustomKey, capu::SmartPointer<EtchValidator> > validators;
+  };
+
+  /**
+   * Construct a new instance from the Validators class.
+   */
+  EtchValidatorCustomCaches() {
+  }
+
+  /**
+   * Destructor
+   */
+  virtual ~EtchValidatorCustomCaches() {
+    capu::List<ValidatorCache*>::Iterator iter = mValidatorsCache.begin();
+    while(iter.hasNext()) {
+      ValidatorCache* entry = NULL;
+      iter.next(&entry);
+      delete entry;
+    }
+    mValidatorsCache.clear();
+  }
+
+  status_t onRuntimeChanged(EtchRuntime* runtime) {
+    return ETCH_OK;
+  }
+
+  EtchHashTable<EtchValidatorCustomKey, capu::SmartPointer<EtchValidator> >& get(EtchRuntime* runtime) {
+    capu::List<ValidatorCache*>::Iterator iter = mValidatorsCache.begin();
+    while(iter.hasNext()) {
+      ValidatorCache* entry = NULL;
+      iter.next(&entry);
+      if(entry->id == runtime->getId()) {
+        return entry->validators;
+      }
+    }
+    ValidatorCache* entry = new ValidatorCache();
+    entry->id = runtime->getId();
+    mValidatorsCache.add(entry);
+    return entry->validators;
+  }
+
+private:
+  capu::List<ValidatorCache*> mValidatorsCache;
+};
+
+
+
 
 const EtchObjectType* EtchValidatorCustomKey::TYPE() {
   const static EtchObjectType TYPE(EOTID_VALIDATOR_CUSTOM_KEY, NULL);
@@ -94,14 +151,17 @@ status_t EtchValidatorCustom::validateValue(capu::SmartPointer<EtchObject> value
 }
 
 status_t EtchValidatorCustom::Get(capu::uint32_t ndim, const EtchObjectType *type, capu::bool_t sub, capu::SmartPointer<EtchValidator> &val) {
+  //TODO rafactor this
+  EtchRuntime* runtime = EtchRuntime::getRuntime();
+
   if (ndim > MAX_NDIMS) {
     return ETCH_EINVAL;
   }
 
   EtchValidatorCustomKey key(type, ndim, sub);
-  if (Validators().get(key, &val) == ETCH_ENOT_EXIST) {
+  if (Validators(runtime).get(key, &val) == ETCH_ENOT_EXIST) {
     val = new EtchValidatorCustom(type, ndim, sub);
-    Validators().put(key, val);
+    Validators(runtime).put(key, val);
   }
   return ETCH_OK;
 }
@@ -110,7 +170,7 @@ status_t EtchValidatorCustom::getElementValidator(capu::SmartPointer<EtchValidat
   return EtchValidatorCustom::Get(mNDims - 1, mExpectedType->getObjectComponentType(), mSubclass, val);
 }
 
-EtchHashTable<EtchValidatorCustomKey, capu::SmartPointer<EtchValidator> >& EtchValidatorCustom::Validators() {
-  static EtchHashTable<EtchValidatorCustomKey, capu::SmartPointer<EtchValidator> > ret;
-  return ret;
+EtchHashTable<EtchValidatorCustomKey, capu::SmartPointer<EtchValidator> >& EtchValidatorCustom::Validators(EtchRuntime* runtime) {
+  static EtchValidatorCustomCaches validators;
+  return validators.get(runtime);
 }

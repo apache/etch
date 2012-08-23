@@ -18,11 +18,14 @@
 
 #ifndef __ETCHVALIDATORFLOAT_H__
 #define __ETCHVALIDATORFLOAT_H__
+
 #include "serialization/EtchTypeValidator.h"
 #include "common/EtchDouble.h"
 #include "common/EtchFloat.h"
 #include "serialization/EtchTypeCodes.h"
 #include "common/EtchNativeArray.h"
+
+class EtchRuntime;
 
 class EtchValidatorFloat : public EtchTypeValidator {
 public:
@@ -58,7 +61,8 @@ protected:
   EtchValidatorFloat(capu::uint32_t ndim);
 
 private:
-  static capu::SmartPointer<EtchValidator>* Validators();
+  EtchRuntime* mRuntime;
+  static capu::SmartPointer<EtchValidator>* Validators(EtchRuntime* runtime);
 
 };
 

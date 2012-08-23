@@ -88,6 +88,8 @@ template<typename T>
 class EtchStubPoolRunnable : public EtchPoolRunnable {
 public:
 
+  virtual ~EtchStubPoolRunnable() {}
+
   /**
    * Constructs the StubPoolRunnable.
    * @param stub the stub of this service

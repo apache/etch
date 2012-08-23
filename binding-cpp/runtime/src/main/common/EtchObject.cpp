@@ -24,18 +24,32 @@ const EtchObjectType* EtchObject::TYPE() {
   return &TYPE;
 }
 
-EtchObject::EtchObject() {
+EtchObject::EtchObject()
+  : mType(TYPE()) {
+  addObjectType(TYPE());
 }
 
 EtchObject::EtchObject(const EtchObjectType* type){
   mType = type;
 }
 
+EtchObject::~EtchObject() {
+}
+
 const EtchObjectType* EtchObject::getObjectType() const{
   return mType;
 }
 
-EtchObject::~EtchObject() {
+capu::bool_t EtchObject::isInstanceOf(const EtchObjectType* type) const {
+  capu::List<const EtchObjectType*>::Iterator iter = mTypes.begin();
+  while(iter.hasNext()) {
+    const EtchObjectType* t = NULL;
+    iter.next(&t);
+    if(t->equals(type)) {
+      return true;
+    }
+  }
+  return false;
 }
 
 capu::uint32_t EtchObject::getHashCode() const{
@@ -44,5 +58,15 @@ capu::uint32_t EtchObject::getHashCode() const{
 
 capu::bool_t EtchObject::equals(const EtchObject* other) const{
   return (other == this);
+}
+
+status_t EtchObject::addObjectType(const EtchObjectType* type) {
+  mTypes.add(type);
+  return ETCH_OK;
+}
+
+status_t EtchObject::setObjectType(const EtchObjectType* type) {
+  mType = type;
+  return ETCH_OK;
 }
 
