@@ -102,9 +102,6 @@ status_t EtchArrayValue::get(capu::uint32_t index, capu::SmartPointer<EtchObject
 }
 
 status_t EtchArrayValue::add(capu::SmartPointer<EtchObject> value) {
-  if (value.get() == NULL) {
-    return ETCH_EINVAL;
-  }
 
   //check if we have to resize the array
   capu::int32_t n = mSize;
