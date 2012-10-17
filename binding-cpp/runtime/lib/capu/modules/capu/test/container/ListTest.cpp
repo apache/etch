@@ -30,13 +30,11 @@ TEST(List, Constructor_Default) {
 
 TEST(List, addTest) {
   capu::List<capu::int32_t>* list = new capu::List<capu::int32_t > ();
-  capu::int32_t data1;
-  capu::int32_t data2;
-  capu::int32_t data3;
+  capu::int32_t data1 = 32;
+  capu::int32_t data2 = 43;
+  capu::int32_t data3 = 0;
   capu::status_t result;
 
-  data1 = 32;
-  data2 = 43;
   //append element to the linked list
   result = list->add(data1);
   EXPECT_TRUE(result == capu::CAPU_OK);
@@ -57,13 +55,12 @@ TEST(List, addTest) {
 
 TEST(List, addIndexTest) {
   capu::List<capu::int32_t>* list = new capu::List<capu::int32_t > ();
-  capu::int32_t data1;
-  capu::int32_t data2;
-  capu::int32_t data3;
+  capu::int32_t data1 = 32;
+  capu::int32_t data2 = 43;
+  capu::int32_t data3 = 0;
   capu::status_t result;
 
-  data1 = 32;
-  data2 = 43;
+
 
   result = list->add(10, data1);
   EXPECT_TRUE(result == capu::CAPU_EINVAL);
@@ -93,9 +90,9 @@ TEST(List, addIndexTest) {
 
 TEST(List, removeAt) {
   capu::List<capu::int32_t>* list = new capu::List<capu::int32_t > ();
-  capu::int32_t data1;
-  capu::int32_t data2;
-  capu::int32_t data3;
+  capu::int32_t   data1 = 32;
+  capu::int32_t data2 = 43;
+  capu::int32_t data3 = 56;
   capu::status_t result;
 
   data1 = 32;
@@ -134,18 +131,59 @@ TEST(List, removeAt) {
   delete list;
 }
 
-TEST(List, get) {
-  capu::List<capu::int32_t>* list = new capu::List<capu::int32_t > ();
+TEST(List, getElementInConstList) {
+  capu::List<capu::int32_t>* normalList = new capu::List<capu::int32_t > ();
+  const capu::List<capu::int32_t>* constantList = normalList;
   capu::int32_t data1;
-  capu::int32_t data2;
-  capu::int32_t data3;
-  capu::int32_t data4;
 
   capu::status_t result;
 
   data1 = 32;
-  data2 = 43;
-  data3 = 56;
+
+  result = normalList->add(data1);
+  EXPECT_TRUE(result == capu::CAPU_OK);
+
+  result = constantList->get(0, &data1);
+  EXPECT_TRUE(result == capu::CAPU_OK);
+
+  delete normalList;
+}
+
+
+
+TEST(List, loopThroughConstList) {
+  capu::List<capu::int32_t>* normalList = new capu::List<capu::int32_t > ();
+  const capu::List<capu::int32_t>* constantList = normalList;
+  capu::int32_t data1;
+
+  capu::status_t result;
+
+  data1 = 32;
+
+  result = normalList->add(data1);
+  EXPECT_TRUE(result == capu::CAPU_OK);
+
+
+  capu::List<capu::int32_t>::Iterator iterator = constantList->begin();
+  while (iterator.hasNext())
+  {
+    capu::int32_t* temp=0;;
+    iterator.next(temp);
+  }
+
+  delete normalList;
+}
+
+TEST(List, get) {
+  capu::List<capu::int32_t>* list = new capu::List<capu::int32_t > ();
+  capu::int32_t data1 = 32;
+  capu::int32_t data2 = 43;
+  capu::int32_t data3 = 56;
+  capu::int32_t data4 = 0;
+
+  capu::status_t result;
+
+
 
   //add some element to the linked list
   result = list->add(data1);
@@ -178,11 +216,9 @@ TEST(List, get) {
 
 TEST(List, size) {
   capu::List<capu::int32_t>* list = new capu::List<capu::int32_t > ();
-  capu::int32_t data1;
-
   capu::int_t result;
+  capu::int32_t data1 = 32;;
 
-  data1 = 32;
   //size of empty list
   result = list->size();
   EXPECT_TRUE(result == 0);
@@ -213,11 +249,10 @@ TEST(List, size) {
 
 TEST(List, empty) {
   capu::List<capu::int32_t>* list = new capu::List<capu::int32_t > ();
-  capu::int32_t data1;
-
+  capu::int32_t data1 = 32;
+  capu::int32_t data2 = 43;
+  capu::int32_t data3 = 44;
   capu::bool_t result;
-
-  data1 = 32;
 
   //check the empty list
   result = list->isEmpty();
@@ -233,14 +268,12 @@ TEST(List, empty) {
 
 TEST(List, find) {
   capu::List<capu::int32_t>* list = new capu::List<capu::int32_t > ();
-  capu::int32_t data1;
-  capu::int32_t data2;
-  capu::int32_t data3;
+  capu::int32_t data1 = 32;
+  capu::int32_t data2 = 43;
+  capu::int32_t data3 = 44;
   capu::int_t result;
 
-  data1 = 32;
-  data2 = 43;
-  data3 = 44;
+
 
   //check empty list
   result = list->find(data1);
@@ -266,9 +299,9 @@ TEST(List, find) {
 
 TEST(List, contains) {
   capu::List<capu::int32_t>* list = new capu::List<capu::int32_t > ();
-  capu::int32_t data1;
-  capu::int32_t data2;
-  capu::int32_t data3;
+  capu::int32_t data1 = 32;
+  capu::int32_t data2 = 43;
+  capu::int32_t data3 = 44;
 
   capu::int32_t check_value = 0;
   capu::bool_t result;
@@ -297,16 +330,51 @@ TEST(List, contains) {
   delete list;
 }
 
+TEST(List, copyConstructor1) {
+  capu::List<capu::int32_t> list;
+  capu::int32_t data1 = 32;
+  capu::int32_t data2 = 43;
+  capu::int32_t data3 = 44;
+
+  //add some dummy values to the linked list
+  list.add(data1);
+  list.add(data2);
+  list.add(data3);
+
+  capu::List<capu::int32_t> copy(list);
+
+  EXPECT_EQ(list.size(), copy.size());
+  list.clear();
+
+  EXPECT_EQ(0, copy.find(data1));
+  EXPECT_EQ(1, copy.find(data2));
+  EXPECT_EQ(2, copy.find(data3));
+}
+
+TEST(List, copyConstructor2) {
+  // copy empty list and add values afterwards to original list
+  capu::List<capu::int32_t> list;
+  capu::List<capu::int32_t> copy(list);
+  capu::int32_t data1 = 32;
+  capu::int32_t data2 = 43;
+  capu::int32_t data3 = 44;
+
+  copy.add(data1);
+  copy.add(data2);
+  copy.add(data3);
+
+  EXPECT_EQ(0, copy.find(data1));
+  EXPECT_EQ(1, copy.find(data2));
+  EXPECT_EQ(2, copy.find(data3));
+  EXPECT_TRUE(list.isEmpty());
+}
+
 TEST(List, clear) {
   capu::List<capu::int32_t>* list = new capu::List<capu::int32_t > ();
-  capu::int32_t data1;
-  capu::int32_t data2;
-  capu::int32_t data3;
+  capu::int32_t data1 = 32;
+  capu::int32_t data2 = 43;
+  capu::int32_t data3 = 44;
   capu::status_t result;
-
-  data1 = 32;
-  data2 = 43;
-  data3 = 44;
 
   //add some dummy values to the linked list
   list->add(data1);
@@ -328,11 +396,8 @@ TEST(List, clear) {
 
 TEST(List, set) {
   capu::List<capu::int32_t>* list = new capu::List<capu::int32_t > ();
-  capu::int32_t data1;
-  capu::int32_t data2;
-
-  data1 = 32;
-  data2 = 43;
+  capu::int32_t data1 = 32;
+  capu::int32_t data2 = 43;
 
   EXPECT_TRUE(list->add(data1) == capu::CAPU_OK);
   EXPECT_TRUE(list->add(data2) == capu::CAPU_OK);
@@ -346,13 +411,10 @@ TEST(List, set) {
 
 TEST(ListIterator, hasNext) {
   capu::List<capu::int32_t>* list = new capu::List<capu::int32_t > ();
-  capu::int32_t data1;
-  capu::int32_t data2;
+  capu::int32_t data1 = 32;
+  capu::int32_t data2 = 43;
   capu::List<capu::int32_t>::Iterator it = list->begin();
   EXPECT_TRUE(it.hasNext() == false);
-
-  data1 = 32;
-  data2 = 43;
 
   list->add(data1);
   list->add(data2);
@@ -365,14 +427,13 @@ TEST(ListIterator, hasNext) {
 
 TEST(ListIterator, next) {
   capu::List<capu::int32_t>* list = new capu::List<capu::int32_t > ();
-  capu::int32_t data1;
-  capu::int32_t data2;
-  capu::int32_t data3;
+  capu::int32_t data1 = 32;
+  capu::int32_t data2 = 43;
+  capu::int32_t data3 = 0;
   capu::List<capu::int32_t>::Iterator it = list->begin();
   capu::int32_t cnt = 0;
   EXPECT_TRUE(it.hasNext() == false);
-  data1 = 32;
-  data2 = 43;
+
   list->add(data1);
   list->add(data2);
   it = list->begin();
@@ -456,8 +517,8 @@ TEST(ListIterator, removeAt){
 }
 
 TEST(ListIterator, add){
-    capu::List<capu::int32_t> list;
-  capu::List<capu::int32_t>::Iterator iter;
+  capu::List<capu::int32_t> list;
+  capu::List<capu::int32_t>::Iterator iter = list.begin();
   capu::int32_t data1 = 0;
 
   list.add(iter, 1);
@@ -514,10 +575,29 @@ TEST(ListIterator, add){
 
 }
 
+TEST(ListIterator, currentIndex){
+  capu::List<capu::int32_t> list;
+  capu::int32_t data1 = 32;
+  capu::int32_t data2 = 43;
+  capu::int32_t data3 = 44;
+
+  //add some dummy values to the linked list
+  list.add(data1);
+  list.add(data2);
+  list.add(data3);
+
+  capu::List<capu::int32_t>::Iterator iter = list.begin();
+
+  EXPECT_EQ(0u, iter.currentIndex());
+  iter.next();
+  EXPECT_EQ(1u, iter.currentIndex());
+  iter.next();
+  EXPECT_EQ(2u, iter.currentIndex());
+}
 
 TEST(ListIterator, loopAdd){
   capu::List<capu::int32_t> list;
-  capu::List<capu::int32_t>::Iterator iter;
+  capu::List<capu::int32_t>::Iterator iter = list.begin();
   capu::int32_t data1 = 0;
 
   list.add(iter, 1);
@@ -525,7 +605,7 @@ TEST(ListIterator, loopAdd){
   iter = list.begin();
   while(iter.hasNext())
   {
-      iter.next(&data1);
+    iter.next(&data1);
   }
 
   list.add(iter, 2);
@@ -540,10 +620,10 @@ TEST(ListIterator, loopAdd){
   capu::int32_t i = 1;
   while(i <= 3)
   {
-      EXPECT_TRUE(iter.current(&data1) == capu::CAPU_OK);
-      EXPECT_EQ(i, data1);
-      iter.next();
-      i++;
+    EXPECT_TRUE(iter.current(&data1) == capu::CAPU_OK);
+    EXPECT_EQ(i, data1);
+    iter.next();
+    i++;
   }
 
 }

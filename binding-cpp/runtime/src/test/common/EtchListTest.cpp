@@ -225,13 +225,13 @@ TEST(EtchList, find) {
 
   //find the elements
   result = list->find(data1);
-  EXPECT_TRUE(result == 0);
+  EXPECT_EQ(0, result);
 
   result = list->find(data2);
-  EXPECT_TRUE(result == 1);
+  EXPECT_EQ(1, result);
 
   result = list->find(data3);
-  EXPECT_TRUE(result == 2);
+  EXPECT_EQ(2, result);
 
   delete list;
 }

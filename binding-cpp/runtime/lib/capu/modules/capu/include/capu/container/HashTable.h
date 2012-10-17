@@ -84,6 +84,12 @@ namespace capu {
      */
     HashTable(uint_t size);
 
+
+    /**
+     * Constructs a copy of HashTable.
+     */
+    HashTable(const HashTable& other);
+
     /**
      * Destructure.
      */
@@ -111,7 +117,7 @@ namespace capu {
      *         CAPU_EINVAL if value is null
      *         CAPU_ENOT_EXIST if there is no pair with specified key
      */
-    status_t get(const Key &key, T* value);
+    status_t get(const Key &key, T* value) const;
 
     /**
      * Remove value associated with key in the hashtable.
@@ -143,7 +149,7 @@ namespace capu {
      * Return iterator for iterating key value tuples.
      * @return Iterator
      */
-    Iterator begin();
+    Iterator begin() const;
 
   private:
 
@@ -155,7 +161,7 @@ namespace capu {
      * @return -1 if the key is unique
      *          otherwise the index in the linked list
      */
-    int_t getKeyIndexFromBucket(uint_t index, const Key &k) {
+    int_t getKeyIndexFromBucket(uint_t index, const Key &k) const {
       int_t count = 0;
       typename List<Pair<Key, T> >::Iterator it = mLists[index].begin();
       Pair<Key, T> pair;
@@ -179,8 +185,7 @@ namespace capu {
 
   template <class Key, class T, class C, class Hash>
   HashTable<Key, T, C, Hash>::HashTable()
-  : mSize(HASH_TABLE_DEFAULT_SIZE)
-  , mCount(0) {
+  : mSize(HASH_TABLE_DEFAULT_SIZE), mCount(0) {
     mLists = new List<Pair<Key, T>, Comparator >[mSize];
   }
 
@@ -193,6 +198,19 @@ namespace capu {
       mSize = size;
     }
     mLists = new List<Pair<Key, T>, Comparator >[mSize];
+  }
+
+  template <class Key, class T, class C, class Hash>
+  HashTable<Key, T, C, Hash>::HashTable(const HashTable& other)
+   : mSize(other.mSize), mCount(0) {
+    mLists = new List<Pair<Key, T>, Comparator >[mSize];
+    typename HashTable<Key, T, C, Hash>::Iterator iterator = other.begin();
+    Pair<Key, T> pair;
+    while(iterator.hasNext())
+    {
+      iterator.next(&pair);
+      put(pair.first, pair.second, NULL);
+    }
   }
 
   template <class Key, class T, class C, class Hash>
@@ -245,7 +263,7 @@ namespace capu {
   }
 
   template <class Key, class T, class C, class Hash>
-  status_t HashTable<Key, T, C, Hash>::get(const Key &key, T* value) {
+  status_t HashTable<Key, T, C, Hash>::get(const Key &key, T* value) const {
     if (value == NULL)
       return CAPU_EINVAL;
 
@@ -312,17 +330,13 @@ namespace capu {
   }
 
   template <class Key, class T, class C, class Hash>
-  typename HashTable<Key, T, C, Hash>::Iterator HashTable<Key, T, C, Hash>::begin() {
+  typename HashTable<Key, T, C, Hash>::Iterator HashTable<Key, T, C, Hash>::begin() const {
     return typename HashTable<Key, T, C, Hash>::Iterator(mLists, mSize);
   }
 
   template <class Key, class T, class C, class Hash>
-  HashTable<Key, T, C, Hash>::HashTableIterator::HashTableIterator(List<Pair<Key, T> > * list, uint_t list_size) {
-    mCurrentListIndex = 0;
-    this->mList = list;
-    mMaxListSize = list_size;
-    this->mCurrentListIterator = list[mCurrentListIndex].begin();
-
+  HashTable<Key, T, C, Hash>::HashTableIterator::HashTableIterator(List<Pair<Key, T> > * list, uint_t list_size)
+   : mCurrentListIndex(0), mCurrentListIterator(list[0].begin()), mList(list), mMaxListSize(list_size) {
     //to point the first non-empty one
     for (uint_t i = 0; i < list_size; ++i) {
       if (!mList[i].isEmpty()) {

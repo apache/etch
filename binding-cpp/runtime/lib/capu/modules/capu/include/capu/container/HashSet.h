@@ -237,7 +237,7 @@ namespace capu {
     return CAPU_OK;
   }
 
-  
+
   template <class T, class C, class H>
   bool_t HashSet< T, C, H>::hasElement(const T &value) {
     uint_t index = H::Digest(value) % mSize;
@@ -266,12 +266,8 @@ namespace capu {
   }
 
   template <class T, class C, class H>
-  HashSet< T, C, H>::HashSetIterator::HashSetIterator(List<T, C> * list, uint_t list_size) {
-    mCurrentListIndex = 0;
-    this->mList = list;
-    mMaxListSize = list_size;
-    this->mCurrentListIterator = list[mCurrentListIndex].begin();
-
+  HashSet< T, C, H>::HashSetIterator::HashSetIterator(List<T, C> * list, uint_t list_size)
+   : mCurrentListIndex(0), mCurrentListIterator(list[0].begin()), mList(list), mMaxListSize(list_size) {
     //to point the first non-empty one
     for (uint_t i = 0; i < list_size; ++i) {
       if (!mList[i].isEmpty()) {

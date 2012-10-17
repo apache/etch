@@ -100,13 +100,13 @@ public:
    * @return true if empty
    *         false otherwise
    */
-  capu::bool_t isEmpty();
+  capu::bool_t isEmpty() const;
 
   /**
    * returns an iterator pointing to the beginning of list
    * @return iterator
    */
-  Iterator begin();
+  Iterator begin() const;
 
   /**
    * finds the index of given element in the link list
@@ -116,7 +116,7 @@ public:
    * @return -1 if the value either does not exist or given value is NULL
    *          otherwise index of value on linked list
    */
-  capu::int32_t find(const T &element);
+  capu::int32_t find(const T &element) const;
 
   /**
    *
@@ -175,7 +175,7 @@ status_t EtchList<T, C>::add(capu::int32_t index, const T &element) {
 }
 
 template<class T, class C>
-typename EtchList<T, C>::Iterator EtchList<T, C>::begin() {
+typename EtchList<T, C>::Iterator EtchList<T, C>::begin() const {
   return mList.begin();
 }
 
@@ -190,7 +190,7 @@ capu::bool_t EtchList<T, C>::contains(const T &element) {
 }
 
 template<class T, class C>
-capu::int32_t EtchList<T, C>::find(const T &element) {
+capu::int32_t EtchList<T, C>::find(const T &element) const {
   return mList.find(element);
 }
 
@@ -200,7 +200,7 @@ status_t EtchList<T, C>::get(capu::int32_t index, T* result) {
 }
 
 template<class T, class C>
-capu::bool_t EtchList<T, C>::isEmpty() {
+capu::bool_t EtchList<T, C>::isEmpty() const {
   return mList.isEmpty();
 }
 
