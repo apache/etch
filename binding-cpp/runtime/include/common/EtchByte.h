@@ -70,6 +70,16 @@ public:
   capu::uint32_t getHashCode() const;
 
   /**
+   * Operator= for numeric Values
+   */
+  capu::int8_t& operator=(capu::int8_t const& other);
+
+  /**
+   * Operator= for EtchByte Objects
+   */
+  EtchByte& operator=(EtchByte const& other);
+
+  /**
    * @see EtchNumber
    */
   capu::int64_t getLongValue() const;

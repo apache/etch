@@ -55,6 +55,24 @@ capu::bool_t EtchByte::equals(const EtchObject * other) const{
   return (a->mValue == this->mValue);
 }
 
+capu::int8_t& EtchByte::operator=(capu::int8_t const& other)
+{
+  if(mValue != other)
+  {
+    mValue = other;
+  }
+  return mValue;
+}
+
+EtchByte& EtchByte::operator=(EtchByte const& other)
+{
+  if(mValue != other.mValue)
+  {
+    mValue = other.mValue;
+  }
+  return *this;
+}
+
 capu::uint32_t EtchByte::getHashCode() const{
   //For better distribution
   capu::uint32_t result = mValue + 128;
