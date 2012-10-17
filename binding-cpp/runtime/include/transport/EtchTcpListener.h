@@ -55,7 +55,15 @@ public:
    */
   virtual ~EtchTcpListener();
 
+  /**
+   * @see EtchConnection
+   */
   virtual capu::bool_t isStarted();
+
+  /**
+   * @see EtchConnection
+   */
+  virtual capu::bool_t isTerminated();
 
   virtual status_t close();
 

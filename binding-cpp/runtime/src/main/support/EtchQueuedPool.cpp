@@ -44,7 +44,7 @@ public:
   void run() {
     if(mRunnable.get() != NULL) {
       if(ETCH_OK != mRunnable->run()) {
-        // Log exception
+        //TODO: Log exception
         if(mRunnable->hasException()) {
           capu::SmartPointer<EtchException> exception;
           mRunnable->getException(&exception);
@@ -67,7 +67,7 @@ const EtchObjectType* EtchQueuedPool::TYPE() {
 EtchQueuedPool::EtchQueuedPool(capu::int32_t size)
 : mSizeMax(size), mIsOpen(true) {
   addObjectType(TYPE());
-  mPool = new capu::ThreadPool(mSizeMax);
+  mPool = new capu::ThreadPool(1);
 }
 
 EtchQueuedPool::~EtchQueuedPool() {
@@ -90,6 +90,7 @@ status_t EtchQueuedPool::add(capu::SmartPointer<EtchPoolRunnable> runnable) {
   }
 
   EtchQueuedPoolRunnable* pr = new EtchQueuedPoolRunnable(this, runnable);
+  //TODO: check max Size before adding a new Runnable
   capu::status_t status = mPool->add(pr);
   if(status != capu::CAPU_OK) {
     return ETCH_ERROR;

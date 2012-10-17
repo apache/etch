@@ -65,6 +65,7 @@ EtchTcpListener::EtchTcpListener(EtchURL *url)
   }
   mSession = NULL;
   mIsStarted = false;
+  mIsTerminated = false;
   mThread = NULL;
   mSocket = NULL;
   mConnectionCheckerThread = NULL;
@@ -92,6 +93,10 @@ EtchTcpListener::~EtchTcpListener() {
 
 capu::bool_t EtchTcpListener::isStarted() {
   return mIsStarted;
+}
+
+capu::bool_t EtchTcpListener::isTerminated() {
+  return mIsTerminated;
 }
 
 status_t EtchTcpListener::close() {
@@ -276,6 +281,7 @@ void EtchTcpListener::run() {
     first = false;
   }
   mIsStarted = false;
+  mIsTerminated = true;
 }
 
 status_t EtchTcpListener::setupSocket() {

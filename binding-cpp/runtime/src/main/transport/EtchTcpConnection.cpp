@@ -32,6 +32,7 @@ EtchTcpConnection::EtchTcpConnection(EtchRuntime* runtime, EtchSocket* socket, E
   }
   mThread = NULL;
   mIsStarted = false;
+  mIsTerminated = false;
   mSession = NULL;
   mSocket = socket;
 }
@@ -96,7 +97,7 @@ status_t EtchTcpConnection::openSocket(capu::bool_t reconnect) {
     mMutexConnection.unlock();
     return ETCH_ERROR;
   }
-  // if a reconnect but no retries allowed, then fail.
+  // if a reconnect but retries not allowed, then fail.
   if (reconnect && (mOptions.getReconnectDelay() == 0)) {
     mMutexConnection.unlock();
     return ETCH_ERROR;
@@ -255,6 +256,10 @@ capu::bool_t EtchTcpConnection::isStarted() {
   return mIsStarted;
 }
 
+capu::bool_t EtchTcpConnection::isTerminated() {
+  return mIsTerminated;
+}
+
 void EtchTcpConnection::run() {
 
   status_t status;
@@ -270,6 +275,7 @@ void EtchTcpConnection::run() {
 
     status = setupSocket();
     if (status != ETCH_OK) {
+      CAPU_LOG_ERROR(mRuntime->getLogger(), "EtchTcpConnection", "%s : %d => Socket has not been successfully opened", mHost.c_str(), mPort);
       close();
       break;
     }
@@ -283,21 +289,26 @@ void EtchTcpConnection::run() {
     close();
     first = false;
   }
+   mIsTerminated = true;
 }
 
 status_t EtchTcpConnection::setupSocket() {
   if (mOptions.getBufferSize() != 0) {
     if (mSocket->setBufferSize(mOptions.getBufferSize()) != ETCH_OK) {
+      CAPU_LOG_ERROR(mRuntime->getLogger(), "EtchTcpConnection", "%s : %d => setupSocket: Error while setting buffer size", mHost.c_str(), mPort);
       return ETCH_ERROR;
     }
   }
   if (mSocket->setKeepAlive((mOptions.getKeepAlive() != 0)) != ETCH_OK) {
+    CAPU_LOG_ERROR(mRuntime->getLogger(), "EtchTcpConnection", "%s : %d => setupSocket: Error while setting keep alive", mHost.c_str(), mPort);
     return ETCH_ERROR;
   }
   if (mSocket->setLingerOption((mOptions.getLingerTime() >= 0), mOptions.getLingerTime()) != ETCH_OK) {
+    CAPU_LOG_ERROR(mRuntime->getLogger(), "EtchTcpConnection", "%s : %d => setupSocket: Error while setting linger time", mHost.c_str(), mPort);
     return ETCH_ERROR;
   }
   if (mSocket->setNoDelay((mOptions.getNoDelay() != 0)) != ETCH_OK) {
+    CAPU_LOG_ERROR(mRuntime->getLogger(), "EtchTcpConnection", "%s : %d => setupSocket: Error while setting delay", mHost.c_str(), mPort);
     return ETCH_ERROR;
   }
   CAPU_LOG_TRACE(mRuntime->getLogger(), "EtchTcpConnection", "%s : %d => Settings for socket has been successfully configured", mHost.c_str(), mPort);

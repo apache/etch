@@ -21,7 +21,7 @@
 #define MAILBOX_NOTIFY_TIMEOUT 2000
 
 EtchAsyncResultNone::EtchAsyncResultNone(EtchRuntime* runtime, EtchMailbox* mailbox)
-  : mRuntime(runtime), mMailbox(mailbox), mHasMailboxStatus(false), mHasException(false) {
+  : mRuntime(runtime), mMailbox(mailbox), mHasMailboxStatus(false), mHasException(false), mException(NULL) {
     if(mailbox != NULL) {
       mMailbox->registerNotify(this, NULL, MAILBOX_NOTIFY_TIMEOUT);
     }
@@ -31,13 +31,14 @@ EtchAsyncResultNone::EtchAsyncResultNone(EtchRuntime* runtime, EtchMailbox* mail
 EtchAsyncResultNone::~EtchAsyncResultNone() {
   if(mMailbox != NULL) {
     mMailbox->unregisterNotify(this);
+    mMailbox->closeDelivery();
     delete mMailbox;
   }
 }
 
 capu::bool_t EtchAsyncResultNone::hasException() {
   mMutex.lock();
-  while(!mHasMailboxStatus) {
+  while(mMailbox != NULL && !mHasMailboxStatus) {
     mCond.wait(&mMutex);
   }
   mMutex.unlock();
@@ -53,7 +54,10 @@ capu::SmartPointer<EtchException> EtchAsyncResultNone::getException() {
 void EtchAsyncResultNone::setException(capu::SmartPointer<EtchException> exception) {
   mException = exception;
   mHasException = true;
+  setMailboxStatus();
+}
 
+void EtchAsyncResultNone::setMailboxStatus() {
   mMutex.lock();
   mHasMailboxStatus = true;
   mCond.signal();

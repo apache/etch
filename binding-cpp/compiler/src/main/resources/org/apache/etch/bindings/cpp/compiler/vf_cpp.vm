@@ -46,10 +46,6 @@ status_t $vf::Etch${intf.name()}RuntimeListener::onRuntimeChanged(EtchRuntime* r
     //the runtime is closed and is removed
     $vf::SRuntimes.removeAt(index);
   }
-  if ($vf::SRuntimes.isEmpty()) {
-    //clean up all static members
-    $vf::DestroyValueFactory();
-  }
   return ETCH_OK;
 }
 
@@ -148,13 +144,13 @@ class ImportExportHelper$n.vname( $helper )
 
 //Static Variable Initialization
 EtchTypeMap* $vf::types() {
-static EtchTypeMap* ret = new EtchTypeMap();
-return ret;
+static EtchTypeMap ret;
+return &ret;
 }
 
 EtchClass2TypeMap* $vf::class2type() {
-static EtchClass2TypeMap* ret = new EtchClass2TypeMap();
-return ret;
+static EtchClass2TypeMap ret;
+return &ret;
 }
 
 #foreach ( $n in $intf.iterator() )
@@ -398,13 +394,5 @@ status_t $vf::InitValueFactory(EtchRuntime* runtime)
   types()->lock();
   class2type()->lock();
   
-  return ETCH_OK;
-}
-
-status_t $vf::DestroyValueFactory()
-{
-  $vf::types()->clear();
-  delete $vf::types();
-  delete $vf::class2type();
   return ETCH_OK;
 }

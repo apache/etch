@@ -149,20 +149,30 @@ status_t EtchStubBase<T>::sessionMessage(capu::SmartPointer<EtchWho> sender, cap
   switch (type->getAsyncMode()) {
     case QUEUED:
       runnable = new EtchStubPoolRunnable<T>(this, sender, msg, helper);
+      //TODO: inject runtime and enable logging
+      //CAPU_LOG_TRACE(mRuntime->getLogger(), "EtchStubBase", "Adding stub pool runnable to queued pool");
       res = mQueuedPool->add(runnable);
-      if (res != ETCH_OK)
+      if (res != ETCH_OK) {
+        //CAPU_LOG_ERROR(mRuntime->getLogger(), "EtchStubBase", "Error while adding runnable to pool");
         sessionNotify(NULL); //TODO Exception Handling
+      }
       return res;
     case FREE:
       runnable = new EtchStubPoolRunnable<T>(this, sender, msg, helper);
+      //CAPU_LOG_TRACE(mRuntime->getLogger(), "EtchStubBase", "Adding stub pool runnable to free pool");
       res = mFreePool->add(runnable);
-      if (res != ETCH_OK)
+      if (res != ETCH_OK) {
+        //CAPU_LOG_ERROR(mRuntime->getLogger(), "EtchStubBase", "Error while adding runnable to pool");
         sessionNotify(NULL); //TODO Exception Handling
+      }
       return res;
     case NONE:
+      //CAPU_LOG_TRACE(mRuntime->getLogger(), "EtchStubBase", "Executing function in receiver thread");
       res = helper->run(this, mSvc, mObj, sender, msg);
-      if (res != ETCH_OK)
+      if (res != ETCH_OK) {
+        //CAPU_LOG_ERROR(mRuntime->getLogger(), "EtchStubBase", "Error while executing function");
         sessionNotify(NULL); //TODO Exception Handling
+      }
       return res;
     default:
       //  throw new IllegalArgumentException("unknown async mode "+type.getAsyncMode());

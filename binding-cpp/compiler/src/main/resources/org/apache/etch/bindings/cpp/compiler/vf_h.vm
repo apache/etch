@@ -105,15 +105,13 @@ namespace $namespace {
        */
       status_t onRuntimeChanged(EtchRuntime* runtime);
     };
-  
+
     friend class ${i}Helper;
     friend class Etch${i}RuntimeListener;
     static status_t InitValueFactory(EtchRuntime* runtime);
-    static status_t DestroyValueFactory();
     static capu::Mutex SRuntimesMutex;
     static capu::List<capu::uint64_t> SRuntimes;
     static Etch${i}RuntimeListener S${i}RuntimeListener;
-    
   };
 }
 #endif

@@ -65,6 +65,11 @@ public:
   virtual status_t mailboxStatus(EtchMailbox* mb, EtchObject* state, capu::bool_t closed) {return ETCH_OK;};
 
 protected:
+  /**
+   * Sets the mailbox status to true and signals waiting threads
+   */
+  void setMailboxStatus();
+
   EtchRuntime* mRuntime;
   EtchMailbox* mMailbox;
   capu::Mutex mMutex;

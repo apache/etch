@@ -65,6 +65,13 @@ public:
   virtual capu::bool_t isStarted() = 0;
 
   /**
+   * Check whether the receiving thread is terminated or not
+   * @return true if it is terminated
+   *         false otherwise
+   */
+  virtual capu::bool_t isTerminated() = 0;
+
+  /**
    * Main function that will be executed by thread
    * @param param parameter that will be passed to the thread
    */
@@ -125,6 +132,7 @@ protected:
   S *mSession;
   capu::Thread *mThread;
   capu::bool_t mIsStarted;
+  capu::bool_t mIsTerminated;
   static capu::Mutex mMutex;
   static capu::Mutex mMutexConnection;
   EtchMonitor mStatus;

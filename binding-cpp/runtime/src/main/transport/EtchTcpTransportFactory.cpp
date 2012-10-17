@@ -176,7 +176,7 @@ status_t EtchTcpTransportFactory::MySessionListener::sessionNotify(capu::SmartPo
       if (res == ETCH_OK) {
         EtchTcpConnection* con = (EtchTcpConnection*) stack->getTransportData();
         if (con != NULL) {
-          if (!con->isStarted()) {
+          if (con->isTerminated()) {
             //delete all instances for this stack
             delete stack;
             //remote stack from list

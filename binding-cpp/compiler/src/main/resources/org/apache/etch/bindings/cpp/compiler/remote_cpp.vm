@@ -55,14 +55,21 @@ status_t $clname::$n.name()AsyncResultRemote::mailboxStatus(EtchMailbox* mb, Etc
       // TODO set result to a runtime exception 
       return ETCH_OK;
     }
-    if(result->isInstanceOf(EtchException::TYPE())) {
-      setException(result);
-    }
+    
+    //result is NULL if it was a void call and no exception has been set
+    if (result.get() != NULL) {
+      if(result->isInstanceOf(EtchException::TYPE())) {
+        setException(result);
+      }
 #if($n.hasReturn())
-    else {
-      setResult(result);
-    }
+      else {
+        setResult(result);
+      }
 #end
+    } else {
+      setMailboxStatus();
+    }
+
 
   }
 

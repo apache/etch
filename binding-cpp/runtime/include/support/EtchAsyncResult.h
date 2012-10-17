@@ -50,8 +50,6 @@ public:
   capu::bool_t hasResult() {
     mMutex.lock();
     while(!mHasMailboxStatus) {
-      // TODO wait
-      break;
       mCond.wait(&mMutex);
     }
     mMutex.unlock();
@@ -64,11 +62,8 @@ public:
   status_t setResult(capu::SmartPointer<T> result) {
     mResult = result;
     mHasResult = true;
-    
-    mMutex.lock();
-    mHasMailboxStatus = true;
-    mCond.signal();
-    mMutex.unlock();
+
+    setMailboxStatus();
     return ETCH_OK;
   }
 

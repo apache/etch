@@ -94,6 +94,11 @@ public:
   capu::bool_t isStarted();
 
   /**
+   * @see EtchConnection
+   */
+  capu::bool_t isTerminated();
+
+  /**
    * @see capu::thread
    */
   void run();
