@@ -1184,25 +1184,26 @@ public class Compiler extends Backend {
 
   private String getNativeArrayTypeName(TypeRef type) {
     Token t = type.type();
+    String nativeArrayName = "EtchNativeArray";
     switch (t.kind) {
     case EtchGrammarConstants.BOOLEAN:
-      return "Bool";
+      return nativeArrayName + "Bool";
     case EtchGrammarConstants.BYTE:
-      return "Byte";
+      return nativeArrayName + "Byte";
     case EtchGrammarConstants.SHORT:
-      return "Short";
+      return nativeArrayName + "Short";
     case EtchGrammarConstants.INT:
-      return "Int";
+      return nativeArrayName + "Int";
     case EtchGrammarConstants.LONG:
-      return "Long";
+      return nativeArrayName + "Long";
     case EtchGrammarConstants.FLOAT:
-      return "Float";
+      return nativeArrayName + "Float";
     case EtchGrammarConstants.DOUBLE:
-      return "Double";
+      return nativeArrayName + "Double";
     case EtchGrammarConstants.STRING:
-      return "String";
+      return nativeArrayName + "String";
     case EtchGrammarConstants.OBJECT:
-      return "Object";
+      return nativeArrayName + "Object";
     default: {
       // we have to use a fully qualified name here.
       // find the actual type...
@@ -1213,12 +1214,12 @@ public class Compiler extends Backend {
             "undefined or ambiguous name at line %d: %s", t.beginLine, t.image));
       if (n.isBuiltin()) {
         Builtin b = (Builtin) n;
-        return b.className().substring(4);
+        return nativeArrayName + b.className().substring(4);
       }
       if (n.isEnumx()) {
-        return n.efqname(this);
+        return nativeArrayName + n.efqname(this);
       } else {
-        return type.intf().name() + "::" + n.efqname(this);
+        return type.intf().name() + "::" + nativeArrayName + n.efqname(this);
       }
     }
     }
@@ -1257,9 +1258,9 @@ public class Compiler extends Backend {
   private String getArrayTypeName(TypeRef type, boolean pointer) {
     // TODO Auto-generated method stub
     if(pointer)
-      return "EtchNativeArray" + this.getNativeArrayTypeName( type ) + "Ptr";
+      return this.getNativeArrayTypeName( type ) + "Ptr";
     if (type.type().kind == EtchGrammarConstants.BYTE) {
-      return "EtchNativeArray<" + this.getNativeTypeName( type, true ) + "> ";
+      return "EtchNativeArray<" + this.getNativeTypeName( type, false ) + "> ";
     } else {
       return "EtchNativeArray<" + this.getNativeTypeName( type, true ) + "Ptr> ";
     }
@@ -1273,7 +1274,7 @@ public class Compiler extends Backend {
     case EtchGrammarConstants.BOOLEAN:
       return (etch_type ? "EtchBool" : "capu::bool_t");
     case EtchGrammarConstants.BYTE:
-      return (etch_type ? "capu::int8_t" : "capu::int8_t");
+      return (etch_type ? "EtchByte" : "capu::int8_t");
     case EtchGrammarConstants.SHORT:
       return (etch_type ? "EtchShort" : "capu::int16_t");
     case EtchGrammarConstants.INT:
@@ -1299,6 +1300,7 @@ public class Compiler extends Backend {
       if (n.isBuiltin()) {
         Builtin b = (Builtin) n;
         if (n.efqname(this).equals("EtchDate")) return b.className();
+        if (n.efqname(this).equals("EtchList")) return b.className()+"<EtchObjectPtr> ";
         if (n.efqname(this).equals("EtchHashTable")) return b.className()+"<EtchObjectPtr, EtchObjectPtr> ";
         if (n.efqname(this).equals("EtchHashSet")) return b.className()+"<EtchObjectPtr> ";
         throw new IllegalArgumentException(String.format(
@@ -1507,7 +1509,9 @@ public class Compiler extends Backend {
         if (n.efqname(this).equals("EtchHashSet")) {
           cn += "<EtchObjectPtr>";
         }
-
+        if (n.efqname(this).equals("EtchList")) {
+          cn += "<EtchObjectPtr>";
+        }
 
         /*
          * int i = cn.indexOf( '<' ); if (i >= 0) cn = cn.substring( 0, i );

@@ -106,9 +106,16 @@ public:
 #elseif ($n.isEnumx())
 #set( $tname = $n.efqname( $helper ) )
     
-class ImportExportHelper$n.vname( $helper )
-  : public EtchImportExportHelper {
-  public:
+class ImportExportHelper$n.vname( $helper ) 
+: public EtchImportExportHelper {  
+public:
+  ImportExportHelper$n.vname($helper)(EtchRuntime* runtime) 
+  : EtchImportExportHelper(runtime) {
+  }
+
+  virtual ~ImportExportHelper$n.vname($helper)() {
+  }
+
   status_t exportValue(EtchValueFactory* vf, EtchObjectPtr value, EtchStructValue *&result)
   {
      EtchStructValue* _struct = new EtchStructValue( $vf::${n.vname( $helper )}, vf );

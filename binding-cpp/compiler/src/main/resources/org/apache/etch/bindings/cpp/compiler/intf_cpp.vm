@@ -83,7 +83,7 @@ $class::$n.name()::$n.name()()
  */
 $class::$n.name()::$n.name()(#set($sep = "")#foreach($i in $n.getAllParameters())$sep$helper.getEtchTypeName($i.type(), true) $i.name() #set( $sep = ", " )#end)
 #if($n.hasExtends())
-  : $n.name()(#set($sep = "")#foreach($i in $n.getExtends().getAllParameters())$sep$i.name()#set( $sep = ", " ))#end
+  : $n.getExtends().name()(#set($sep = "")#foreach($i in $n.getExtends().getAllParameters())$sep$i.name()#set( $sep = ", " )#end)
 #else
 #if($n.isExcept())
   : EtchException("${n.name()}", ETCH_ERROR, EXCPTYPE_USERDEFINED)

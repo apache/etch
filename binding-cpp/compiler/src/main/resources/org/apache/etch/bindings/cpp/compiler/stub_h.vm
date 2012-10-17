@@ -80,11 +80,12 @@ public:
     $helper.getEtchTypeName($param.type(), true) val$count = capu::smartpointer_cast<$helper.getEtchTypeName($param.type(), false)>(obj$count);
 
 #end
+## TODO: ADD AUTHENTICATION CODE HERE! ############################
     $intfname::$mthd.name()AsyncResultPtr ar;
 #set($sep = "")
 #set($count = 0)
     CAPU_LOG_TRACE(mRuntime->getLogger(), "Stub$i$suffix", "${namespace}: Calling implementation of \"$mthd.name()\" function.");
-    ar = _obj->$mthd.name()(#foreach($param in $mthd.iterator())#if($mthd.hasAuth())${sep}$param.name()#else#set($count = $count + 1)${sep}val$count#end#set($sep = ", ")#end);
+    ar = _obj->$mthd.name()(#foreach($param in $mthd.iterator())#set($count = $count + 1)${sep}val$count#set($sep = ", ")#end);
 
     // create result message
 #if($mthd.hasReturn())
