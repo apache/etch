@@ -47,9 +47,7 @@ capu::int16_t EtchShort::get() {
 }
 
 capu::uint32_t EtchShort::getHashCode() const {
-  //for better distribution
-  capu::uint32_t result = mValue + 32768;
-  return result;
+  return static_cast<capu::uint32_t>(mValue);
 }
 
 capu::bool_t EtchShort::equals(const EtchObject * other) const {

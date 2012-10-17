@@ -74,9 +74,7 @@ EtchByte& EtchByte::operator=(EtchByte const& other)
 }
 
 capu::uint32_t EtchByte::getHashCode() const{
-  //For better distribution
-  capu::uint32_t result = mValue + 128;
-  return result;
+  return static_cast<capu::uint32_t>(mValue);
 }
 
 capu::int64_t EtchByte::getLongValue() const {
