@@ -83,7 +83,7 @@ public:
 private:
 
   EtchResources *mRelated;
-  EtchHashTable <EtchString, EtchObject*> res;
+  EtchHashTable <EtchString, EtchObject*> mRes;
 
 };
 

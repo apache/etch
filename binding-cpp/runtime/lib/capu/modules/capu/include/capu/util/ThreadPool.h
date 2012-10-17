@@ -114,8 +114,8 @@ namespace capu
 
       class PoolWorker {
       public:
-        PoolWorker() {
-          mPool = NULL;
+        PoolWorker()
+        : mPool(NULL), mPoolRunnable(NULL), mThread(NULL) {
         }
 
         PoolWorker(ThreadPool *pool, int32_t id)
@@ -144,7 +144,7 @@ namespace capu
         ThreadPool *mPool;
         PoolRunnable *mPoolRunnable;
         Thread *mThread;
-        
+
       };
 
       status_t init();
@@ -159,7 +159,7 @@ namespace capu
 
       bool_t isClosed();
 
-      
+
   };
 
 

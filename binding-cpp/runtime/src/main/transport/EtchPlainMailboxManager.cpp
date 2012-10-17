@@ -20,7 +20,7 @@
 #include "capu/os/Debug.h"
 
 EtchPlainMailboxManager::EtchPlainMailboxManager(EtchRuntime* runtime, EtchTransportMessage* transport, const EtchString& uri, EtchResources* resources)
-: mRuntime(runtime), mSession(NULL), mTransport(transport), mUp(false) {
+: mRuntime(runtime), mSession(NULL), mTransport(transport), mUp(false), mMailboxes(ETCH_DEFAULT_MAILBOXMANAGER_HASH_SIZE) {
   capu::Debug::Assert(mRuntime != NULL);
   mTransport->setSession(this);
 }

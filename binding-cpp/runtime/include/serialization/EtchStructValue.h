@@ -22,6 +22,7 @@
 #include "capu/util/SmartPointer.h"
 #include "common/EtchHashTable.h"
 #include "common/EtchObject.h"
+#include "common/EtchConfig.h"
 #include "serialization/EtchType.h"
 #include "serialization/EtchLevel.h"
 
@@ -165,7 +166,7 @@ private:
   static const capu::int64_t serialVersionUID = 1L;
 
   //Default size of mTable
-  static const capu::int32_t DEFAULT_SIZE = 8;
+  static const capu::int32_t DEFAULT_SIZE = ETCH_DEFAULT_STRUCTVALUE_HASH_SIZE;
 
 };
 

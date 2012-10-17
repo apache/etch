@@ -15,10 +15,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+#include "common/EtchConfig.h"
 #include "serialization/EtchFieldMap.h"
 
 EtchFieldMap::EtchFieldMap()
-: mLocked(false) {
+: mById(ETCH_DEFAULT_FIELDMAP_HASH_SIZE), mByName(ETCH_DEFAULT_FIELDMAP_HASH_SIZE), mLocked(false) {
 
 }
 

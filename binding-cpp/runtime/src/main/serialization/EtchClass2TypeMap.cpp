@@ -17,11 +17,12 @@
  */
 
 #include "common/EtchHashTable.h"
+#include "common/EtchConfig.h"
 #include "serialization/EtchType.h"
 #include "serialization/EtchClass2TypeMap.h"
 
 EtchClass2TypeMap::EtchClass2TypeMap()
-: mLocked(false) {
+: mC2T(ETCH_DEFAULT_C2TYPEMAP_HASH_SIZE), mLocked(false) {
 }
 
 EtchClass2TypeMap::~EtchClass2TypeMap() {

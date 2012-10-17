@@ -19,7 +19,7 @@
 #include "util/EtchResources.h"
 
 EtchResources::EtchResources()
-: mRelated(NULL) {
+: mRelated(NULL), mRes(ETCH_DEFAULT_RESOURCES_HASH_SIZE) {
 
 }
 
@@ -32,7 +32,7 @@ EtchResources::~EtchResources() {
 
 capu::bool_t EtchResources::containsKey(const EtchString& key) {
   EtchObject* ptr = NULL;
-  if (res.get(key, &ptr) == ETCH_OK)
+  if (mRes.get(key, &ptr) == ETCH_OK)
     return true;
   else {
     if (mRelated == NULL)
@@ -46,7 +46,7 @@ capu::bool_t EtchResources::containsKey(const EtchString& key) {
 }
 
 status_t EtchResources::get(const EtchString& key, EtchObject*& result) {
-  if (res.get(key, &result) != ETCH_OK) {
+  if (mRes.get(key, &result) != ETCH_OK) {
 
     if (mRelated == NULL)
       return ETCH_ENOT_EXIST;
@@ -58,12 +58,12 @@ status_t EtchResources::get(const EtchString& key, EtchObject*& result) {
 }
 
 status_t EtchResources::put(const EtchString& key, EtchObject* value, EtchObject*& result) {
-  return res.put(key, value, &result);
+  return mRes.put(key, value, &result);
 }
 
 status_t EtchResources::remove(const EtchString& key, EtchObject*& result) {
 
-  return res.remove(key, &result);
+  return mRes.remove(key, &result);
 }
 
 EtchResources* EtchResources::getRelated() {

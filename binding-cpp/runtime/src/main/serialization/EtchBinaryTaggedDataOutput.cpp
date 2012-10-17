@@ -293,9 +293,15 @@ status_t EtchBinaryTaggedDataOutput::writeValue(capu::SmartPointer<EtchValidator
   switch (typeCode) {
     case EtchTypeCode::Null:
     case EtchTypeCode::NONE:
+      return ETCH_OK;
     case EtchTypeCode::BOOLEAN_FALSE:
+      CAPU_LOG_TRACE(mRuntime->getLogger(), TAG, "Boolean False has been serialized. (No Data send - encoded via TypeId)");
+      return ETCH_OK;
     case EtchTypeCode::BOOLEAN_TRUE:
+      CAPU_LOG_TRACE(mRuntime->getLogger(), TAG, "Boolean True has been serialized. (No Data send - encoded via TypeId)");
+      return ETCH_OK;
     case EtchTypeCode::EMPTY_STRING:
+      CAPU_LOG_TRACE(mRuntime->getLogger(), TAG, "Empty String has been serialized. (No Data send - encoded via TypeId)");
       return ETCH_OK;
 
     case EtchTypeCode::BYTE:

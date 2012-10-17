@@ -27,7 +27,7 @@ public:
    * Validator cache
    */
   struct ValidatorCache {
-    ValidatorCache() : id(0), validators(100) {}
+    ValidatorCache() : id(0), validators(ETCH_DEFAULT_CUSTOMVALIDATORCACHE_HASH_SIZE) {}
     capu::uint64_t id;
     EtchHashTable<EtchValidatorCustomKey, capu::SmartPointer<EtchValidator> > validators;
   };

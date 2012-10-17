@@ -278,7 +278,6 @@ status_t EtchBinaryTaggedDataInput::readType(EtchType *&type) {
       capu::StringUtils::Sprintf(num, 100, "%d", id->get());
       EtchString str(num);
       type = new EtchType(id->get(), str);
-      //TODO: Enhance memory management. We need smartpointers here because we create new object sometimes
     }
     return ETCH_OK;
   }
@@ -287,7 +286,6 @@ status_t EtchBinaryTaggedDataInput::readType(EtchType *&type) {
     EtchString* name = (EtchString*) obj.get();
     if (mVf->getType(*name, type) != ETCH_OK) {
       type = new EtchType(*name);
-      //TODO: Enhance memory management. We need smartpointers here because we create new object sometimes
     }
     return ETCH_OK;
   }
@@ -436,7 +434,7 @@ status_t EtchBinaryTaggedDataInput::readValue(capu::SmartPointer<EtchValidator> 
       if (validateValue(v, boolean, result) != ETCH_OK) {
         return ETCH_ERROR;
       } else {
-        CAPU_LOG_TRACE(mRuntime->getLogger(), TAG, "Boolean false value has been received");
+        CAPU_LOG_TRACE(mRuntime->getLogger(), TAG, "Boolean true value has been received");
 
         return ETCH_OK;
       }
@@ -580,7 +578,7 @@ status_t EtchBinaryTaggedDataInput::readValue(capu::SmartPointer<EtchValidator> 
         return ETCH_ERROR;
       } else {
         result = array;
-        CAPU_LOG_TRACE(mRuntime->getLogger(), TAG, "Array hhas been received");
+        CAPU_LOG_TRACE(mRuntime->getLogger(), TAG, "Array has been received");
         return ETCH_OK;
       }
     }

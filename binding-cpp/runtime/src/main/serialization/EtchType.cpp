@@ -24,26 +24,26 @@ const EtchObjectType* EtchType::TYPE() {
   return &TYPE;
 }
 EtchType::EtchType()
-: mId(0), mTimeout(0), mName(""), mSuperType(NULL), mResultType(NULL),
+: mValidatorMap(ETCH_DEFAULT_TYPEVALIDATOR_HASH_SIZE), mId(0), mTimeout(0), mName(""), mSuperType(NULL), mResultType(NULL),
   mDirection(BOTH), mAsyncMode(NONE), mLocked(false), mComponentType(NULL), mHelper(NULL), mStubHelper(NULL) {
   addObjectType(TYPE());
 }
 
 EtchType::EtchType(EtchString name)
-: mTimeout(0), mName(name), mSuperType(NULL),
+: mValidatorMap(ETCH_DEFAULT_TYPEVALIDATOR_HASH_SIZE), mTimeout(0), mName(name), mSuperType(NULL),
 mResultType(NULL), mDirection(BOTH), mAsyncMode(NONE), mLocked(false), mComponentType(NULL), mHelper(NULL), mStubHelper(NULL) {
   mId = EtchHashEx::Digest(mName);
   addObjectType(TYPE());
 }
 
 EtchType::EtchType(capu::uint32_t id, EtchString name)
-: mId(id), mTimeout(0), mName(name), mSuperType(NULL),
+: mValidatorMap(ETCH_DEFAULT_TYPEVALIDATOR_HASH_SIZE), mId(id), mTimeout(0), mName(name), mSuperType(NULL),
 mResultType(NULL), mDirection(BOTH), mAsyncMode(NONE), mLocked(false), mComponentType(NULL), mHelper(NULL), mStubHelper(NULL) {
   addObjectType(TYPE());
 }
 
 EtchType::EtchType(const EtchType& other)
- : EtchObject(other), mId(other.mId), mTimeout(other.mTimeout), mName(other.mName), mSuperType(other.mSuperType),
+ : EtchObject(other), mValidatorMap(ETCH_DEFAULT_TYPEVALIDATOR_HASH_SIZE), mId(other.mId), mTimeout(other.mTimeout), mName(other.mName), mSuperType(other.mSuperType),
    mResultType(other.mResultType), mDirection(other.mDirection), mAsyncMode(other.mAsyncMode), mLocked(other.mLocked),
    mComponentType(other.mComponentType), mHelper(other.mHelper), mStubHelper(other.mStubHelper) {
 }

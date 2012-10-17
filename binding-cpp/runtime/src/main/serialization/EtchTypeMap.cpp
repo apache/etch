@@ -15,12 +15,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+#include "common/EtchConfig.h"
 #include "serialization/EtchTypeMap.h"
 
 // TODO: Check memory handling
 
 EtchTypeMap::EtchTypeMap()
-: mLocked(false) {
+: mById(ETCH_DEFAULT_TYPEMAP_HASH_SIZE), mByName(ETCH_DEFAULT_TYPEMAP_HASH_SIZE), mLocked(false) {
 }
 
 EtchTypeMap::~EtchTypeMap() {
@@ -28,7 +30,9 @@ EtchTypeMap::~EtchTypeMap() {
   while (it.hasNext()) {
     capu::Pair<capu::int32_t, EtchType*> pair;
     it.next(&pair);
-    delete pair.second;
+    if (pair.second != NULL) {
+      delete pair.second;
+    }
   }
   mById.clear();
   mByName.clear();

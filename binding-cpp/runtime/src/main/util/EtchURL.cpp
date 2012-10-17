@@ -18,7 +18,8 @@
 #include "util/EtchURL.h"
 #include "capu/os/StringUtils.h"
 
-EtchURL::EtchURL() {
+EtchURL::EtchURL()
+ : terms(ETCH_DEFAULT_URL_TERMS_HASH_SIZE) {
 
 }
 

@@ -30,7 +30,7 @@ const EtchString& EtchDefaultDeliveryService::DISABLE_TIMEOUT() {
 }
 
 EtchDefaultDeliveryService::EtchDefaultDeliveryService(EtchRuntime* runtime, EtchMailboxManager* transport, const EtchString& uri)
-: mTransport(transport), mStatus(EtchString("session status"), EtchString("")) {
+: mRuntime(runtime), mTransport(transport), mStatus(EtchString("session status"), EtchString("")) {
   EtchURL url(uri);
   init(&url);
 }

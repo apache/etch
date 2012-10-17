@@ -32,6 +32,9 @@
 class EtchObjectSession
 {
 public:
+
+  virtual ~EtchObjectSession() {}
+
   /**
   * Gets a configuration or operational value from the handler. The
   * request is passed up the chain of sessions until some session
