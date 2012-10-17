@@ -19,10 +19,10 @@
 #ifndef __ETCHINT32_H__
 #define __ETCHINT32_H__
 
-#include "common/EtchObject.h"
+#include "common/EtchNumber.h"
 
 class EtchInt32 :
-public EtchObject {
+public EtchNumber {
 
 public:
 
@@ -113,6 +113,26 @@ public:
    * returns true if two objects are not equal
    */
   capu::bool_t operator!=(const EtchObject& other) const;
+
+  /**
+   * @see EtchNumber
+   */
+  capu::int64_t getLongValue() const;
+
+  /**
+   * @see EtchNumber
+   */
+  capu::int32_t getInt32Value() const;
+
+  /**
+   * @see EtchNumber
+   */
+  capu::int16_t getShortValue() const;
+
+  /**
+   * @see EtchNumber
+   */
+  capu::int8_t getByteValue() const;
 
 private:
   capu::int32_t mValue;

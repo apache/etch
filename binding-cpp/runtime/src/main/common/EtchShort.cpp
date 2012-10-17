@@ -34,7 +34,8 @@ EtchShort::EtchShort(capu::int16_t value)
 }
 
 EtchShort::EtchShort(const EtchShort& other)
- : EtchObject(other), mValue(other.mValue) {
+ : mValue(other.mValue) {
+  addObjectType(TYPE());
 }
 
 void EtchShort::set(capu::int16_t value) {
@@ -58,4 +59,20 @@ capu::bool_t EtchShort::equals(const EtchObject * other) const {
     return false;
   EtchShort * a = (EtchShort*) other;
   return (a->mValue == this->mValue);
+}
+
+capu::int64_t EtchShort::getLongValue() const {
+  return static_cast<capu::int64_t>(mValue);
+}
+
+capu::int32_t EtchShort::getInt32Value() const {
+  return static_cast<capu::int32_t>(mValue);
+}
+
+capu::int16_t EtchShort::getShortValue() const {
+  return mValue;
+}
+
+capu::int8_t EtchShort::getByteValue() const {
+  return static_cast<capu::int8_t>(mValue);
 }

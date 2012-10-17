@@ -19,12 +19,12 @@
 #ifndef __ETCHLONG_H__
 #define __ETCHLONG_H__
 
-#include "common/EtchObject.h"
+#include "common/EtchNumber.h"
 #include "common/EtchObjectType.h"
 #include "common/EtchError.h"
 
 class EtchLong :
-public EtchObject {
+public EtchNumber {
 
 public:
 
@@ -69,6 +69,26 @@ public:
    *         false otherwise
    */
   capu::bool_t equals(const EtchObject * other) const;
+
+  /**
+   * @see EtchNumber
+   */
+  capu::int64_t getLongValue() const;
+
+  /**
+   * @see EtchNumber
+   */
+  capu::int32_t getInt32Value() const;
+
+  /**
+   * @see EtchNumber
+   */
+  capu::int16_t getShortValue() const;
+
+  /**
+   * @see EtchNumber
+   */
+  capu::int8_t getByteValue() const;
 
 private:
 

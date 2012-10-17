@@ -24,6 +24,7 @@ SET(MAIN_INCLUDES
     ${PROJECT_SOURCE_DIR}/include/common/EtchObject.h
     ${PROJECT_SOURCE_DIR}/include/common/EtchObjectType.h
     ${PROJECT_SOURCE_DIR}/include/common/EtchString.h
+    ${PROJECT_SOURCE_DIR}/include/common/EtchNumber.h
     ${PROJECT_SOURCE_DIR}/include/common/EtchInt32.h
     ${PROJECT_SOURCE_DIR}/include/common/EtchBool.h
     ${PROJECT_SOURCE_DIR}/include/common/EtchByte.h

@@ -19,12 +19,12 @@
 #ifndef __ETCHBYTE_H__
 #define __ETCHBYTE_H__
 
-#include "common/EtchObject.h"
+#include "common/EtchNumber.h"
 #include "common/EtchObjectType.h"
 #include "common/EtchError.h"
 
 class EtchByte :
-public EtchObject {
+public EtchNumber {
 
 public:
 
@@ -68,6 +68,27 @@ public:
    * Returns hash code
    */
   capu::uint32_t getHashCode() const;
+
+  /**
+   * @see EtchNumber
+   */
+  capu::int64_t getLongValue() const;
+
+  /**
+   * @see EtchNumber
+   */
+  capu::int32_t getInt32Value() const;
+
+  /**
+   * @see EtchNumber
+   */
+  capu::int16_t getShortValue() const;
+
+  /**
+   * @see EtchNumber
+   */
+  capu::int8_t getByteValue() const;
+
 
 private:
 

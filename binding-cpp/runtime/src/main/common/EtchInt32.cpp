@@ -36,7 +36,8 @@ EtchInt32::EtchInt32(capu::int32_t value)
 }
 
 EtchInt32::EtchInt32(const EtchInt32& other)
- : EtchObject(other), mValue(other.mValue) {
+ : mValue(other.mValue) {
+  addObjectType(TYPE());
 }
 
 EtchInt32::~EtchInt32() {
@@ -115,4 +116,20 @@ capu::bool_t EtchInt32::operator==(const EtchObject& other) const
 capu::bool_t EtchInt32::operator!=(const EtchObject& other) const
 {
   return !(*this == other);
+}
+
+capu::int64_t EtchInt32::getLongValue() const {
+  return static_cast<capu::int64_t>(mValue);
+}
+
+capu::int32_t EtchInt32::getInt32Value() const {
+  return mValue;
+}
+
+capu::int16_t EtchInt32::getShortValue() const {
+  return static_cast<capu::int16_t>(mValue);
+}
+
+capu::int8_t EtchInt32::getByteValue() const {
+  return static_cast<capu::int8_t>(mValue);
 }

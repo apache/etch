@@ -30,7 +30,8 @@ IF (WIN32 AND BUILD_CHECK_MEMORY)
 ENDIF (WIN32 AND BUILD_CHECK_MEMORY)
 
 add_executable (etch-cpp-test
-    common/EtchInt32Test.cpp
+    common/EtchNumberTest.cpp
+	common/EtchInt32Test.cpp
     common/EtchBoolTest.cpp
     common/EtchByteTest.cpp
     common/EtchShortTest.cpp

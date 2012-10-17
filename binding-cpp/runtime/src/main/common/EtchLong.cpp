@@ -34,7 +34,8 @@ EtchLong::EtchLong(capu::int64_t value)
 }
 
 EtchLong::EtchLong(const EtchLong& other)
- : EtchObject(other), mValue(other.mValue) {
+ : mValue(other.mValue) {
+  addObjectType(TYPE());
 }
 
 void EtchLong::set(capu::int64_t value) {
@@ -57,4 +58,20 @@ capu::bool_t EtchLong::equals(const EtchObject * other) const {
     return false;
   EtchLong * a = (EtchLong*) other;
   return (a->mValue == this->mValue);
+}
+
+capu::int64_t EtchLong::getLongValue() const {
+  return mValue;
+}
+
+capu::int32_t EtchLong::getInt32Value() const {
+  return static_cast<capu::int32_t>(mValue);
+}
+
+capu::int16_t EtchLong::getShortValue() const {
+  return static_cast<capu::int16_t>(mValue);
+}
+
+capu::int8_t EtchLong::getByteValue() const {
+  return static_cast<capu::int8_t>(mValue);
 }

@@ -34,7 +34,8 @@ EtchByte::EtchByte(capu::int8_t value)
 }
 
 EtchByte::EtchByte(const EtchByte &other)
- : EtchObject(other), mValue(other.mValue) {
+ : mValue(other.mValue) {
+  addObjectType(TYPE());
 }
 
 void EtchByte::set(capu::int8_t value){
@@ -58,4 +59,20 @@ capu::uint32_t EtchByte::getHashCode() const{
   //For better distribution
   capu::uint32_t result = mValue + 128;
   return result;
+}
+
+capu::int64_t EtchByte::getLongValue() const {
+  return static_cast<capu::int64_t>(mValue);
+}
+
+capu::int32_t EtchByte::getInt32Value() const {
+  return static_cast<capu::int32_t>(mValue);
+}
+
+capu::int16_t EtchByte::getShortValue() const {
+  return static_cast<capu::int16_t>(mValue);
+}
+
+capu::int8_t EtchByte::getByteValue() const {
+  return mValue;
 }

@@ -27,6 +27,7 @@
 
 enum EtchObjectTypeIds {
   EOTID_OBJECT = 0,
+  EOTID_NUMBER,
   EOTID_INT32,
   EOTID_BOOL,
   EOTID_BYTE,

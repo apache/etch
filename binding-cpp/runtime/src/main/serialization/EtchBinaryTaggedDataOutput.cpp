@@ -304,19 +304,19 @@ status_t EtchBinaryTaggedDataOutput::writeValue(capu::SmartPointer<EtchValidator
 
     case EtchTypeCode::BYTE:
       CAPU_LOG_TRACE(mRuntime->getLogger(), TAG, "Byte has been serialized");
-      return mBuffer->putByte(((EtchByte*) value.get())->get());
+      return mBuffer->putByte(((EtchNumber*) value.get())->getByteValue());
 
     case EtchTypeCode::SHORT:
       CAPU_LOG_TRACE(mRuntime->getLogger(), TAG, "Short has been serialized");
-      return mBuffer->putShort(((EtchShort*) value.get())->get());
+      return mBuffer->putShort(((EtchNumber*) value.get())->getShortValue());
 
     case EtchTypeCode::INT:
       CAPU_LOG_TRACE(mRuntime->getLogger(), TAG, "Int has been serialized");
-      return mBuffer->putInt(((EtchInt32*) value.get())->get());
+      return mBuffer->putInt(((EtchNumber*) value.get())->getInt32Value());
 
     case EtchTypeCode::LONG:
       CAPU_LOG_TRACE(mRuntime->getLogger(), TAG, "Long has been serialized");
-      return mBuffer->putLong(((EtchLong*) value.get())->get());
+      return mBuffer->putLong(((EtchNumber*) value.get())->getLongValue());
 
     case EtchTypeCode::FLOAT:
       CAPU_LOG_TRACE(mRuntime->getLogger(), TAG, "Float has been serialized");
