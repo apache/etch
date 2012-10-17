@@ -88,9 +88,10 @@ status_t EtchQueuedPool::add(capu::SmartPointer<EtchPoolRunnable> runnable) {
   if(!mIsOpen) {
     return ETCH_EINVAL;
   }
+  if(mPool->getSize() + 1 > mSizeMax)
+    return ETCH_ENOT_SUPPORTED;
 
   EtchQueuedPoolRunnable* pr = new EtchQueuedPoolRunnable(this, runnable);
-  //TODO: check max Size before adding a new Runnable
   capu::status_t status = mPool->add(pr);
   if(status != capu::CAPU_OK) {
     return ETCH_ERROR;
