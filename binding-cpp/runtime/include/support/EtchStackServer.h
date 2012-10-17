@@ -37,6 +37,11 @@ public:
   EtchStackServer();
 
   /**
+   * Copy Constructor
+   */
+  EtchStackServer(const EtchStackServer& other);
+
+  /**
    * Destructor which cleans the whole stack
    */
   virtual ~EtchStackServer();

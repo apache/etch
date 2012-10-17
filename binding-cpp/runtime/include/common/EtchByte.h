@@ -44,6 +44,11 @@ public:
   EtchByte(capu::int8_t value);
 
   /**
+   * Constructs a copy of EtchByte.
+   */
+  EtchByte(const EtchByte &value);
+
+  /**
    * Sets byte value.
    */
   void set(capu::int8_t value);

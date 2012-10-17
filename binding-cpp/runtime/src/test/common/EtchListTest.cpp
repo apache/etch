@@ -19,6 +19,7 @@
 #include <gtest/gtest.h>
 #include "common/EtchInt32.h"
 #include "common/EtchList.h"
+#include "common/EtchString.h"
 
 TEST(EtchList, Constructor_Default) {
   //create an empty linked list
@@ -366,6 +367,26 @@ TEST(EtchListIterator, next) {
     cnt++;
   }
   delete list;
+}
+
+
+TEST(EtchList, copyTest) {
+  EtchList<EtchInt32> o1;
+  o1.add(EtchInt32(2));
+  o1.add(EtchInt32(3));
+  EtchList<EtchInt32> o2(o1);
+  EtchList<EtchInt32> o3 = o2;
+
+  EXPECT_EQ(o1.size(), o2.size());
+  EXPECT_EQ(o2.size(), o3.size());
+}
+
+TEST(EtchList, isInstanceOf) {
+  EtchObject* o1 = new EtchList<EtchInt32>();
+  EXPECT_TRUE(o1->isInstanceOf(EtchObject::TYPE()));
+  EXPECT_TRUE(o1->isInstanceOf(EtchList<EtchInt32>::TYPE()));
+  EXPECT_FALSE(o1->isInstanceOf(EtchString::TYPE()));
+  delete o1;
 }
 
 

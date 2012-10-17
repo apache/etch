@@ -32,6 +32,11 @@ EtchValidatorStructValue::EtchValidatorStructValue(EtchType* type, capu::uint32_
   mRuntime = EtchRuntime::getRuntime();
 }
 
+EtchValidatorStructValue::EtchValidatorStructValue(const EtchValidatorStructValue& other)
+: EtchTypeValidator(other), mType(other.mType), mRuntime(other.mRuntime) {
+
+}
+
 EtchValidatorStructValue::~EtchValidatorStructValue() {
 }
 

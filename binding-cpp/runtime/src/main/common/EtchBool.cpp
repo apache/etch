@@ -24,15 +24,19 @@ const EtchObjectType* EtchBool::TYPE() {
 }
 
 EtchBool::EtchBool()
-: EtchObject(EtchBool::TYPE())
-, mValue(false){
-
+: mValue(false){
+  addObjectType(TYPE());
 }
 
 EtchBool::EtchBool(capu::bool_t value)
-: EtchObject(EtchBool::TYPE())
-, mValue(value){
+ : mValue(value){
+  addObjectType(TYPE());
 }
+
+EtchBool::EtchBool(const EtchBool& other)
+ : EtchObject(other), mValue(other.mValue) {
+}
+
 
 void EtchBool::set(capu::bool_t value){
   mValue = value;

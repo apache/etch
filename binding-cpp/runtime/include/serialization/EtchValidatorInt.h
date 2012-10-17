@@ -39,6 +39,17 @@ public:
   static const EtchObjectType* TYPE();
 
   /**
+   * Copy Constructor
+   */
+  EtchValidatorInt(const EtchValidatorInt& other);
+
+  /**
+   * Destructor
+   */
+  virtual ~EtchValidatorInt();
+
+
+  /**
    * @see EtchValidator
    */
   virtual status_t getElementValidator(capu::SmartPointer<EtchValidator> &val);
@@ -58,7 +69,7 @@ public:
    */
   static status_t Get(capu::uint32_t ndim, capu::SmartPointer<EtchValidator> &val);
 
-  virtual ~EtchValidatorInt();
+
 
 protected:
   EtchValidatorInt(capu::uint32_t ndim);

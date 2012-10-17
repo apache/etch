@@ -44,6 +44,11 @@ public:
   EtchFloat(capu::float_t value);
 
   /**
+   * Constructs a copy of EtchDouble.
+   */
+  EtchFloat(const EtchFloat& value);
+
+  /**
    * Sets float value.
    */
   void set(capu::float_t value);

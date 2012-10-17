@@ -28,9 +28,12 @@
 class EtchValidator : public EtchObject {
 public:
 
-  EtchValidator(const EtchObjectType *type)
-  : EtchObject(type) {
+  EtchValidator(const EtchObjectType *type) {
+    addObjectType(type);
+  }
 
+  EtchValidator(const EtchValidator& other)
+   : EtchObject(other) {
   }
 
   /**

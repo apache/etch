@@ -205,8 +205,6 @@ status_t ${vf}::InitTypes()
 
 status_t ${vf}::InitResults()
 {
-//AF: TO-REVIEW: finde die Verwendung von Anonymer Enum bei EchtDirection und bei EtchAsyncMode unschoen
-
 #foreach ( $n in $intf.iterator() )
 #if ($n.isMessage())
   ${vf}::${n.vname( $helper )}->setDirection((EtchDirection)$n.msgDir());

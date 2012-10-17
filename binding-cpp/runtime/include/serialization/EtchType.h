@@ -57,6 +57,11 @@ public:
   EtchType(capu::uint32_t id, EtchString name);
 
   /**
+   * Copy Constructor
+   */
+  EtchType(const EtchType& other);
+
+  /**
    * Default Destructor
    */
   virtual ~EtchType();

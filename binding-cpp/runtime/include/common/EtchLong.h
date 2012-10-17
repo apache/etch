@@ -44,6 +44,12 @@ public:
   EtchLong(capu::int64_t value);
 
   /**
+   * Constructs a copy of EtchLong.
+   */
+  EtchLong(const EtchLong& other);
+
+
+  /**
    * Sets long value.
    */
   void set(capu::int64_t value);

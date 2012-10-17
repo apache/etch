@@ -26,6 +26,14 @@ class EtchRuntime;
 class EtchValidatorRuntimeException : public EtchValidator {
 public:
 
+  /**
+   * Copy Constructor
+   */
+  EtchValidatorRuntimeException(const EtchValidatorRuntimeException& other);
+
+  /**
+   * Destructor
+   */
   virtual ~EtchValidatorRuntimeException();
 
   /**

@@ -26,6 +26,14 @@ class EtchRuntime;
 
 class EtchValidatorNone : public EtchValidator {
 public:
+  /**
+   * Copy Constructor
+   */
+  EtchValidatorNone(const EtchValidatorNone& other);
+
+  /**
+   * Destructor
+   */
   virtual ~EtchValidatorNone();
 
   /**

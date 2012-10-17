@@ -341,7 +341,7 @@ public:
           //TODO: enhance performance avoiding for-loop-copy
           for (capu::int8_t i = 0; i < length; i++) {
             mData[pos.pos[index]]->set(i,0,data[i]);
-          } 
+          }
         } else {
           //redirect to next sub array
           return mData[pos.pos[index]]->set(pos, index+1, data, dataSize, offset, length, written);
@@ -470,8 +470,12 @@ class EtchNativeArrayBase :
 public EtchObject {
 public:
 
-  EtchNativeArrayBase(const EtchObjectType* type)
-    : EtchObject(type) {
+  EtchNativeArrayBase() {
+  }
+
+  EtchNativeArrayBase(const EtchNativeArrayBase& other)
+   : EtchObject(other) {
+
   }
 
   /**
@@ -526,6 +530,11 @@ public:
    * Constructs a EtchNativeArray object from native array.
    */
   EtchNativeArray(capu::int32_t length, capu::int32_t dim, T* array);
+
+  /**
+   * Copy Constructor
+   */
+  EtchNativeArray(const EtchNativeArray& other);
 
   /**
    * Destructor for Etch Nativearray.
@@ -609,8 +618,8 @@ const EtchObjectType* EtchNativeArray<T>::TYPE() {
 }
 
 template<class T>
-EtchNativeArray<T>::EtchNativeArray(capu::int32_t length, capu::int32_t dim)
-: EtchNativeArrayBase(EtchNativeArray<T>::TYPE()) {
+EtchNativeArray<T>::EtchNativeArray(capu::int32_t length, capu::int32_t dim) {
+  addObjectType(EtchNativeArray<T>::TYPE());
   if (dim == 1) {
     mData = new EtchArrayData<T>(length);
   } else {
@@ -619,8 +628,8 @@ EtchNativeArray<T>::EtchNativeArray(capu::int32_t length, capu::int32_t dim)
 }
 
 template<class T>
-EtchNativeArray<T>::EtchNativeArray(capu::int32_t length, capu::int32_t dim, T* array)
-: EtchNativeArrayBase(EtchNativeArray<T>::TYPE()) {
+EtchNativeArray<T>::EtchNativeArray(capu::int32_t length, capu::int32_t dim, T* array) {
+  addObjectType(EtchNativeArray<T>::TYPE());
   capu::int32_t bytesWritten;
   if (dim == 1) {
     mData = new EtchArrayData<T>(length);
@@ -630,7 +639,7 @@ EtchNativeArray<T>::EtchNativeArray(capu::int32_t length, capu::int32_t dim, T* 
     capu::int32_t dimCount = dim;
     capu::int32_t offset = 0;
     for (capu::int32_t i = 0; i < length; i++) {
-      mData->createArray(i, 0, 2,dim-1); 
+      mData->createArray(i, 0, 2,dim-1);
       mData->set(i, 0, &array[offset], length, 0, length, &bytesWritten);
       offset += length;
     }
@@ -640,9 +649,14 @@ EtchNativeArray<T>::EtchNativeArray(capu::int32_t length, capu::int32_t dim, T* 
 }
 
 template<class T>
-EtchNativeArray<T>::EtchNativeArray(capu::SmartPointer<EtchArray<T> > array) 
-: EtchNativeArrayBase(EtchNativeArray<T>::TYPE()){
+EtchNativeArray<T>::EtchNativeArray(capu::SmartPointer<EtchArray<T> > array) {
+  addObjectType(EtchNativeArray<T>::TYPE());
   mData = capu::smartpointer_cast<EtchArrayBase<T> > (array);
+}
+
+template<class T>
+EtchNativeArray<T>::EtchNativeArray(const EtchNativeArray& other)
+ : EtchNativeArrayBase(other), mData(other.mData) {
 }
 
 template<class T>

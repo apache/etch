@@ -65,6 +65,11 @@ public:
   EtchStructValue(EtchType* type, EtchValueFactory* vf, capu::uint32_t length);
 
   /**
+   * Copy Constructor
+   */
+  EtchStructValue(const EtchStructValue& other);
+
+  /**
    * Default Destructor
    */
   virtual ~EtchStructValue();
@@ -142,7 +147,7 @@ public:
   /**
    * @return an iterator which is pointing the beginning of collection
    */
-  Iterator begin();
+  Iterator begin() const;
 
   /**
    * @return true if the struct value is empty, otherwise false

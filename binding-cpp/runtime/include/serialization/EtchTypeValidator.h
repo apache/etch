@@ -36,6 +36,11 @@ public:
   EtchTypeValidator(const EtchObjectType * type, const EtchObjectType* scalarClass, const EtchObjectType* arrayClass, capu::uint32_t nDims, capu::bool_t subclass = false);
 
   /**
+   * Copy Constructor
+   */
+  EtchTypeValidator(const EtchTypeValidator& other);
+
+  /**
    *  Default Destructor
    */
   virtual ~EtchTypeValidator();

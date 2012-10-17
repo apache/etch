@@ -24,8 +24,13 @@ const EtchObjectType* EtchStackClient::TYPE() {
 }
 
 EtchStackClient::EtchStackClient() : EtchStack(), mStaticResources(NULL) {
-  EtchObject::addObjectType(EtchStackClient::TYPE());
-  EtchObject::setObjectType(EtchStackClient::TYPE());
+  addObjectType(EtchStackClient::TYPE());
+}
+
+EtchStackClient::EtchStackClient(const EtchStackClient& other)
+ : EtchStack(other), mStaticResources(other.mStaticResources)
+{
+
 }
 
 EtchStackClient::~EtchStackClient() {

@@ -71,9 +71,9 @@ TEST(EtchObjectTest, getTypeTrait) {
 
 TEST(EtchObjectTest, isInstanceOf) {
   EtchObjectMy1Object* o1 = new EtchObjectMy1Object();
-  EXPECT_EQ(true, o1->isInstanceOf(EtchObjectMy1Object::TYPE()));
-  EXPECT_EQ(true, o1->isInstanceOf(EtchObject::TYPE()));
-  EXPECT_EQ(false, o1->isInstanceOf(EtchObjectMy2Object::TYPE()));
+  EXPECT_TRUE(o1->isInstanceOf(EtchObjectMy1Object::TYPE()));
+  EXPECT_TRUE(o1->isInstanceOf(EtchObject::TYPE()));
+  EXPECT_FALSE(o1->isInstanceOf(EtchObjectMy2Object::TYPE()));
 
   delete o1;
 }

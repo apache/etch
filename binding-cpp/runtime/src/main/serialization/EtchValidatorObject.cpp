@@ -36,6 +36,11 @@ EtchValidatorObject::EtchValidatorObject(capu::uint32_t ndim)
   mSubclass = true;
 }
 
+EtchValidatorObject::EtchValidatorObject(const EtchValidatorObject& other)
+: EtchTypeValidator(other), mRuntime(other.mRuntime) {
+
+}
+
 EtchValidatorObject::~EtchValidatorObject() {
 }
 
@@ -63,7 +68,7 @@ status_t EtchValidatorObject::validateValue(capu::SmartPointer<EtchObject> value
 status_t EtchValidatorObject::Get(capu::uint32_t ndim, capu::SmartPointer<EtchValidator> &val) {
   //TODO rafactor this
   EtchRuntime* runtime = EtchRuntime::getRuntime();
-  
+
   if (ndim > MAX_NDIMS)
     return ETCH_EINVAL;
   if (ndim >= MAX_CACHED) {

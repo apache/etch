@@ -195,7 +195,7 @@ TEST_F(EtchDefaultValueFactoryTest, exportCustomValueTest) {
   EtchStructValue* sv_unknown;
 
   //TRY UNKNOWN VALUE
-  capu::SmartPointer<EtchObject> unknown = new EtchObject(EtchObject::TYPE());
+  capu::SmartPointer<EtchObject> unknown = new EtchObject();
   EXPECT_TRUE(test->exportCustomValue(unknown, sv_unknown) == ETCH_EINVAL);
 
   //clear the added types

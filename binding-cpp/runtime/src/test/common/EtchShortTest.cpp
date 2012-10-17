@@ -18,44 +18,61 @@
 
 #include <gtest/gtest.h>
 #include "common/EtchShort.h"
+#include "common/EtchString.h"
 
 // Tests positive input.
 
 TEST(EtchShortTest, Constructor_Default){
   EtchShort* i1 = new EtchShort();
   EXPECT_TRUE(i1->getObjectType()->equals(EtchShort::TYPE()));
-  EXPECT_TRUE(i1->get() == 0);
+  EXPECT_EQ(0, i1->get());
   delete i1;
 }
 
 TEST(EtchShortTest, Constructor_Short){
   EtchShort* i1 = new EtchShort(42);
   EXPECT_TRUE(i1->getObjectType()->equals(EtchShort::TYPE()));
-  EXPECT_TRUE(i1->get() == 42);
+  EXPECT_EQ(42, i1->get());
   delete i1;
 }
 
 TEST(EtchShortTest, set){
   EtchShort* i1 = new EtchShort();
   i1->set(43);
-  EXPECT_TRUE(i1->get() == 43);
+  EXPECT_EQ(43, i1->get());
   delete i1;
 }
 
 TEST(EtchShortTest, get){
   EtchShort* i1 = new EtchShort();
-  EXPECT_TRUE(i1->get() == 0);
+  EXPECT_EQ(0, i1->get());
   i1->set(41);
-  EXPECT_TRUE(i1->get() == 41);
+  EXPECT_EQ(41, i1->get());
   delete i1;
 }
 
 TEST(EtchShortTest, equals){
   EtchShort i1, i2;
-  EXPECT_TRUE(i1.get() == false);
+  EXPECT_FALSE(i1.get());
   i1.set(40);
   i2.set(41);
-  EXPECT_TRUE(i1.equals(&i2) == false);
+  EXPECT_FALSE(i1.equals(&i2));
   i2.set(40);
-  EXPECT_TRUE(i1.equals(&i2) == true);
+  EXPECT_TRUE(i1.equals(&i2));
+}
+
+TEST(EtchShortTest, copyTest) {
+  EtchShort o1(2);
+  EtchShort o2(o1);
+  EtchShort o3 = o2;
+  EXPECT_TRUE(o1.equals(&o2));
+  EXPECT_TRUE(o2.equals(&o3));
+}
+
+TEST(EtchShortTest, isInstanceOf) {
+  EtchObject* o1 = new EtchShort(2);
+  EXPECT_TRUE(o1->isInstanceOf(EtchObject::TYPE()));
+  EXPECT_TRUE(o1->isInstanceOf(EtchShort::TYPE()));
+  EXPECT_FALSE(o1->isInstanceOf(EtchString::TYPE()));
+  delete o1;
 }

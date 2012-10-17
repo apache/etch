@@ -18,27 +18,28 @@
 
 #include <gtest/gtest.h>
 #include "common/EtchLong.h"
+#include "common/EtchString.h"
 
 // Tests positive input.
 
 TEST(EtchLongTest, Constructor_Default){
   EtchLong* i1 = new EtchLong();
   EXPECT_TRUE(i1->getObjectType()->equals(EtchLong::TYPE()));
-  EXPECT_TRUE(i1->get() == 0);
+  EXPECT_EQ(0, i1->get());
   delete i1;
 }
 
 TEST(EtchLongTest, Constructor_Long){
   EtchLong* i1 = new EtchLong(42);
   EXPECT_TRUE(i1->getObjectType()->equals(EtchLong::TYPE()));
-  EXPECT_TRUE(i1->get() == 42);
+  EXPECT_EQ(42, i1->get());
   delete i1;
 }
 
 TEST(EtchLongTest, set){
   EtchLong* i1 = new EtchLong();
   i1->set(43000000);
-  EXPECT_TRUE(i1->get() == 43000000);
+  EXPECT_EQ(43000000, i1->get());
   delete i1;
 }
 
@@ -52,10 +53,26 @@ TEST(EtchLongTest, get){
 
 TEST(EtchLongTest, equals){
   EtchLong i1, i2;
-  EXPECT_TRUE(i1.get() == false);
+  EXPECT_FALSE(i1.get());
   i1.set(40);
   i2.set(41);
-  EXPECT_TRUE(i1.equals(&i2) == false);
+  EXPECT_FALSE(i1.equals(&i2));
   i2.set(40);
-  EXPECT_TRUE(i1.equals(&i2) == true);
+  EXPECT_TRUE(i1.equals(&i2));
+}
+
+TEST(EtchLongTest, copyTest) {
+  EtchLong o1(2);
+  EtchLong o2(o1);
+  EtchLong o3 = o2;
+  EXPECT_TRUE(o1.equals(&o2));
+  EXPECT_TRUE(o2.equals(&o3));
+}
+
+TEST(EtchLongTest, isInstanceOf) {
+  EtchObject* o1 = new EtchLong(2);
+  EXPECT_TRUE(o1->isInstanceOf(EtchObject::TYPE()));
+  EXPECT_TRUE(o1->isInstanceOf(EtchLong::TYPE()));
+  EXPECT_FALSE(o1->isInstanceOf(EtchString::TYPE()));
+  delete o1;
 }

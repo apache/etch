@@ -18,44 +18,61 @@
 
 #include <gtest/gtest.h>
 #include "common/EtchFloat.h"
+#include "common/EtchString.h"
 
 // Tests positive input.
 
 TEST(EtchFloatTest, Constructor_Default){
   EtchFloat* i1 = new EtchFloat();
   EXPECT_TRUE(i1->getObjectType()->equals(EtchFloat::TYPE()));
-  EXPECT_TRUE(i1->get() == 0.0f);
+  EXPECT_EQ(0.0f, i1->get());
   delete i1;
 }
 
 TEST(EtchFloatTest, Constructor_Float){
   EtchFloat* i1 = new EtchFloat(42.0f);
   EXPECT_TRUE(i1->getObjectType()->equals(EtchFloat::TYPE()));
-  EXPECT_TRUE(i1->get() == 42.0f);
+  EXPECT_EQ(42.0f, i1->get());
   delete i1;
 }
 
 TEST(EtchFloatTest, set){
   EtchFloat* i1 = new EtchFloat();
   i1->set(43.33f);
-  EXPECT_TRUE(i1->get() == 43.33f);
+  EXPECT_EQ(43.33f, i1->get());
   delete i1;
 }
 
 TEST(EtchFloatTest, get){
   EtchFloat* i1 = new EtchFloat();
-  EXPECT_TRUE(i1->get() == 0.0f);
+  EXPECT_EQ(0.0f, i1->get());
   i1->set(41.0f);
-  EXPECT_TRUE(i1->get() == 41.0f);
+  EXPECT_EQ(41.0f, i1->get());
   delete i1;
 }
 
 TEST(EtchFloatTest, equals){
   EtchFloat i1, i2;
-  EXPECT_TRUE(i1.get() == 0.0f);
+  EXPECT_EQ(0.0f, i1.get());
   i1.set(40);
   i2.set(41);
-  EXPECT_TRUE(i1.equals(&i2) == false);
+  EXPECT_FALSE(i1.equals(&i2));
   i2.set(40);
-  EXPECT_TRUE(i1.equals(&i2) == true);
+  EXPECT_TRUE(i1.equals(&i2));
+}
+
+TEST(EtchFloatTest, copyTest) {
+  EtchFloat o1(2.123);
+  EtchFloat o2(o1);
+  EtchFloat o3 = o2;
+  EXPECT_TRUE(o1.equals(&o2));
+  EXPECT_TRUE(o2.equals(&o3));
+}
+
+TEST(EtchFloatTest, isInstanceOf) {
+  EtchObject* o1 = new EtchFloat(2.123);
+  EXPECT_TRUE(o1->isInstanceOf(EtchObject::TYPE()));
+  EXPECT_TRUE(o1->isInstanceOf(EtchFloat::TYPE()));
+  EXPECT_FALSE(o1->isInstanceOf(EtchString::TYPE()));
+  delete o1;
 }

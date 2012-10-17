@@ -37,6 +37,11 @@ EtchValidatorShort::EtchValidatorShort(capu::uint32_t ndim)
   mRuntime = EtchRuntime::getRuntime();
 }
 
+EtchValidatorShort::EtchValidatorShort(const EtchValidatorShort& other)
+: EtchTypeValidator(other), mRuntime(other.mRuntime) {
+
+}
+
 EtchValidatorShort::~EtchValidatorShort() {
 }
 

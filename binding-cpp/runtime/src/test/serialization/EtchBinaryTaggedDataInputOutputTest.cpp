@@ -208,7 +208,7 @@ public:
   }
 
   static void bytes2msg(capu::int8_t* buf, capu::uint32_t length, capu::SmartPointer<EtchMessage> &msg, MyValueFactory &vf) {
-    return bytes2msg(buf, length, msg, LEVEL_FULL, vf);
+    bytes2msg(buf, length, msg, LEVEL_FULL, vf);
   }
 
   static void bytes2msg(capu::int8_t* buf, capu::uint32_t length, capu::SmartPointer<EtchMessage> &msg, EtchLevel level, MyValueFactory &vf) {

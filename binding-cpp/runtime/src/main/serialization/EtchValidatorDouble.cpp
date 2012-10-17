@@ -36,6 +36,11 @@ EtchValidatorDouble::EtchValidatorDouble(capu::uint32_t ndim)
   mRuntime = EtchRuntime::getRuntime();
 }
 
+EtchValidatorDouble::EtchValidatorDouble(const EtchValidatorDouble& other)
+: EtchTypeValidator(other), mRuntime(other.mRuntime) {
+
+}
+
 EtchValidatorDouble::~EtchValidatorDouble() {
 }
 

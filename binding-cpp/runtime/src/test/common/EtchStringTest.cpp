@@ -18,13 +18,14 @@
 
 #include <gtest/gtest.h>
 #include "common/EtchString.h"
+#include "common/EtchInt32.h"
 
 // Tests positive input.
 
 TEST(EtchStringTest, Constructor_Default) {
   EtchString* s1 = new EtchString();
   EXPECT_TRUE(s1->getObjectType()->equals(EtchString::TYPE()));
-  EXPECT_TRUE(s1->c_str() == NULL);
+  EXPECT_EQ(NULL, s1->c_str());
   delete s1;
 }
 
@@ -198,4 +199,19 @@ TEST(EtchStringTest, UTF8_substringTest) {
   status_t result;
   result = str1.substring(0, 5, &tmp);
   EXPECT_TRUE(result == ETCH_EUNIMPL);
+}
+TEST(EtchStringTest, copyTest) {
+  EtchString o1("2");
+  EtchString o2(o1);
+  EtchString o3 = o2;
+  EXPECT_TRUE(o1.equals(&o2));
+  EXPECT_TRUE(o2.equals(&o3));
+}
+
+TEST(EtchStringTest, isInstanceOf) {
+  EtchObject* o1 = new EtchString("2");
+  EXPECT_TRUE(o1->isInstanceOf(EtchObject::TYPE()));
+  EXPECT_TRUE(o1->isInstanceOf(EtchString::TYPE()));
+  EXPECT_FALSE(o1->isInstanceOf(EtchInt32::TYPE()));
+  delete o1;
 }

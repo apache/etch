@@ -60,3 +60,22 @@ TEST(EtchAuthenticationExceptionTest, equalsTest) {
   delete test2;
   delete test3;
 }
+
+TEST(EtchAuthenticationExceptionTest, copyTest) {
+  EtchString str("test message");
+  EtchAuthenticationException o1(str);
+  EtchAuthenticationException o2(o1);
+  EtchAuthenticationException o3 = o2;
+  EXPECT_TRUE(o1.equals(&o2));
+  EXPECT_TRUE(o2.equals(&o3));
+}
+
+TEST(EtchAuthenticationExceptionTest, isInstanceOf) {
+  EtchString str("test message");
+  EtchObject* o1 = new EtchAuthenticationException(str);
+  EXPECT_TRUE(o1->isInstanceOf(EtchObject::TYPE()));
+  EXPECT_TRUE(o1->isInstanceOf(EtchException::TYPE()));
+  EXPECT_TRUE(o1->isInstanceOf(EtchAuthenticationException::TYPE()));
+  EXPECT_FALSE(o1->isInstanceOf(EtchString::TYPE()));
+  delete o1;
+}

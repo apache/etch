@@ -498,3 +498,15 @@ TEST_F(EtchStructValueTest, removeTest) {
   delete factory;
 }
 
+TEST_F(EtchStructValueTest, isInstanceOf) {
+  EtchString typeName("comp");
+  EtchType* comp = new EtchType(90, typeName);
+  EtchValueFactory* factory = new MockValueFactory_FULL();
+  EtchObject* o1 = new EtchStructValue(comp, factory);
+  EXPECT_TRUE(o1->isInstanceOf(EtchObject::TYPE()));
+  EXPECT_TRUE(o1->isInstanceOf(EtchStructValue::TYPE()));
+  EXPECT_FALSE(o1->isInstanceOf(EtchInt32::TYPE()));
+  delete o1;
+  delete comp;
+  delete factory;
+}

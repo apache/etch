@@ -24,13 +24,17 @@ const EtchObjectType* EtchDouble::TYPE() {
 }
 
 EtchDouble::EtchDouble()
-: EtchObject(EtchDouble::TYPE())
-, mValue(0.0L){
+: mValue(0.0L) {
+  addObjectType(TYPE());
 }
 
 EtchDouble::EtchDouble(capu::double_t value)
-: EtchObject(EtchDouble::TYPE())
-, mValue(value){
+: mValue(value) {
+  addObjectType(TYPE());
+}
+
+EtchDouble::EtchDouble(const EtchDouble& other)
+ : EtchObject(other), mValue(other.mValue) {
 }
 
 void EtchDouble::set(capu::double_t value){

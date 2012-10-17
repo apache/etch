@@ -38,7 +38,18 @@ EtchStack::EtchStack() : EtchObject()
   , mDeliveryService(NULL)
   , mStub(NULL)
   {
-    EtchObject::addObjectType(EtchStack::TYPE());
+    addObjectType(EtchStack::TYPE());
+}
+
+EtchStack::EtchStack(const EtchStack& other) : EtchObject(other)
+, mTransportData(other.mTransportData)
+, mTransportPacket(other.mTransportPacket)
+, mTransportMessage(other.mTransportMessage)
+, mResources(other.mResources)
+, mValueFactory(other.mValueFactory)
+, mMailboxManager(other.mMailboxManager)
+, mDeliveryService(other.mDeliveryService)
+, mStub(other.mStub) {
 }
 
 EtchStack::~EtchStack() {

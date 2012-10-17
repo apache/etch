@@ -35,6 +35,11 @@ EtchValidatorNone::EtchValidatorNone()
   mRuntime = EtchRuntime::getRuntime();
 }
 
+EtchValidatorNone::EtchValidatorNone(const EtchValidatorNone& other)
+: EtchValidator(other), mRuntime(other.mRuntime) {
+
+}
+
 EtchValidatorNone::~EtchValidatorNone() {
 }
 

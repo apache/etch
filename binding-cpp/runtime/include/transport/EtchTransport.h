@@ -161,7 +161,15 @@ public:
    * @param maxDelay max delay in milliseconds.
    */
   WaitUp(capu::int32_t maxDelay)
-    : EtchObject(WaitUp::TYPE()), mMaxDelay(maxDelay) {
+    : mMaxDelay(maxDelay) {
+    addObjectType(TYPE());
+  }
+
+  /**
+   * Copy Constructor
+   */
+  WaitUp(const WaitUp& other)
+   : EtchObject(other), mMaxDelay(other.mMaxDelay) {
   }
 
   /**
@@ -184,12 +192,19 @@ public:
     return &TYPE;
   }
 
+  /**
+   * Copy Constructor
+   */
+  WaitDown(const WaitDown& other)
+   : EtchObject(other), mMaxDelay(other.mMaxDelay) {
+  }
 
   /**
    * @param maxDelay max delay in milliseconds.
    */
   WaitDown(capu::int32_t maxDelay)
-    : EtchObject(WaitDown::TYPE()), mMaxDelay(maxDelay) {
+    : mMaxDelay(maxDelay) {
+    addObjectType(TYPE());
   }
 
   /**

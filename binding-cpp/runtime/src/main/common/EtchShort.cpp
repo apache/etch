@@ -24,30 +24,34 @@ const EtchObjectType* EtchShort::TYPE() {
 }
 
 EtchShort::EtchShort()
-: EtchObject(EtchShort::TYPE())
-, mValue(0){
+ : mValue(0) {
+  addObjectType(TYPE());
 }
 
 EtchShort::EtchShort(capu::int16_t value)
-: EtchObject(EtchShort::TYPE())
-, mValue(value){
+ : mValue(value) {
+  addObjectType(TYPE());
 }
 
-void EtchShort::set(capu::int16_t value){
+EtchShort::EtchShort(const EtchShort& other)
+ : EtchObject(other), mValue(other.mValue) {
+}
+
+void EtchShort::set(capu::int16_t value) {
   mValue = value;
 }
 
-capu::int16_t EtchShort::get(){
+capu::int16_t EtchShort::get() {
   return mValue;
 }
 
-capu::uint32_t EtchShort::getHashCode() const{
+capu::uint32_t EtchShort::getHashCode() const {
   //for better distribution
   capu::uint32_t result = mValue + 32768;
   return result;
 }
 
-capu::bool_t EtchShort::equals(const EtchObject * other) const{
+capu::bool_t EtchShort::equals(const EtchObject * other) const {
   if (other == NULL)
     return false;
   else if (!other->getObjectType()->equals(EtchShort::TYPE()))

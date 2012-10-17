@@ -44,6 +44,11 @@ public:
   EtchShort(capu::int16_t value);
 
   /**
+   * Constructs a copy of EtchShort.
+   */
+  EtchShort(const EtchShort& value);
+
+  /**
    * Sets short value.
    */
   void set(capu::int16_t value);

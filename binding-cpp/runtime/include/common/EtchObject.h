@@ -21,7 +21,7 @@
 
 #include "capu/util/SmartPointer.h"
 #include "capu/container/List.h"
-#include "EtchError.h"
+#include "common/EtchError.h"
 
 class EtchObjectType;
 
@@ -39,9 +39,9 @@ public:
   EtchObject();
 
   /**
-   * Constructor.
+   * Copy Constructor.
    */
-  EtchObject(const EtchObjectType* type);
+  EtchObject(const EtchObject& other);
 
   /**
    * Destructor.
@@ -78,11 +78,7 @@ protected:
    */
   virtual status_t addObjectType(const EtchObjectType* type);
 
-  // TODO remove me if object hierachy was refactored
-  virtual status_t setObjectType(const EtchObjectType* type);
-
 private:
-  const EtchObjectType* mType;
   capu::List<const EtchObjectType*> mTypes;
 };
 

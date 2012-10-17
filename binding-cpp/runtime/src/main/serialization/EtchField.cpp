@@ -26,16 +26,26 @@ const EtchObjectType* EtchField::TYPE() {
 }
 
 EtchField::EtchField(capu::uint32_t id, EtchString& name)
-: EtchObject(EtchField::TYPE()), mId(id), mName(name) {
+ : mId(id), mName(name) {
+  addObjectType(EtchField::TYPE());
 }
 
 EtchField::EtchField(const EtchString& name)
-: EtchObject(EtchField::TYPE()), mId(0), mName(name) {
+ : mId(0), mName(name) {
+  addObjectType(EtchField::TYPE());
   mId = EtchHashEx::Digest(name);
 }
 
 EtchField::EtchField()
-: EtchObject(EtchField::TYPE()), mId(0), mName("") {
+ : mId(0), mName("") {
+  addObjectType(EtchField::TYPE());
+}
+
+EtchField::~EtchField() {
+}
+
+EtchField::EtchField(const EtchField& other)
+ : EtchObject(other), mId(other.mId), mName(other.mName) {
 }
 
 capu::uint32_t EtchField::getHashCode() const{

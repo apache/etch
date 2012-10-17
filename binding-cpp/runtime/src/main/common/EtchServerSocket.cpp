@@ -24,9 +24,13 @@ const EtchObjectType* EtchServerSocket::TYPE() {
   return &TYPE;
 }
 
-EtchServerSocket::EtchServerSocket()
-: EtchObject(EtchServerSocket::TYPE()) {
+EtchServerSocket::EtchServerSocket() {
+  addObjectType(TYPE());
+}
 
+
+EtchServerSocket::EtchServerSocket(const EtchServerSocket& other)
+ : EtchObject(other) {
 }
 
 EtchServerSocket::~EtchServerSocket() {

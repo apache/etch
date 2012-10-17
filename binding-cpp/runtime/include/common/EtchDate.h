@@ -40,6 +40,11 @@ public:
    */
   EtchDate(capu::time_t value);
 
+  /**
+   * Constructs a copy of EtchDate
+   */
+  EtchDate(const EtchDate& other);
+
   //Destructor
   virtual ~EtchDate();
 

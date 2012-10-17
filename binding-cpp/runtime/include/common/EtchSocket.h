@@ -37,6 +37,12 @@ public:
   EtchSocket();
 
   /**
+   * Copy Constructor
+   */
+  EtchSocket(const EtchSocket& other);
+
+
+  /**
    * Destructor
    */
   ~EtchSocket();

@@ -39,6 +39,11 @@ public:
   EtchMessage(EtchType *type, EtchValueFactory* vf, capu::uint32_t length);
 
   /**
+   * Copy Constructor
+   */
+  EtchMessage(const EtchMessage& other);
+
+  /**
    * Destructor
    */
   virtual ~EtchMessage();

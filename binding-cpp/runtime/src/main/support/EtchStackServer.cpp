@@ -23,11 +23,12 @@ const EtchObjectType* EtchStackServer::TYPE() {
 }
 
 EtchStackServer::EtchStackServer()
-: EtchStack()
-  , mRemote(NULL)
-{
-  EtchObject::addObjectType(EtchStackServer::TYPE());
-  EtchObject::setObjectType(EtchStackServer::TYPE());
+: EtchStack(), mRemote(NULL) {
+  addObjectType(EtchStackServer::TYPE());
+}
+
+EtchStackServer::EtchStackServer(const EtchStackServer& other)
+: EtchStack(other), mRemote(other.mRemote) {
 }
 
 EtchStackServer::~EtchStackServer() {

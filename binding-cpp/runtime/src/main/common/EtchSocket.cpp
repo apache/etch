@@ -23,17 +23,21 @@ const EtchObjectType* EtchSocket::TYPE() {
   return &TYPE;
 }
 
-EtchSocket::EtchSocket()
-: EtchObject(EtchSocket::TYPE()) {
+EtchSocket::EtchSocket() {
+  addObjectType(TYPE());
   mSocket = new capu::Socket();
 }
 
-EtchSocket::EtchSocket(capu::Socket* soc)
-: EtchObject(EtchSocket::TYPE()) {
+EtchSocket::EtchSocket(capu::Socket* soc) {
+  addObjectType(TYPE());
   if (soc == NULL)
     mSocket = new capu::Socket();
   else
     mSocket = soc;
+}
+
+EtchSocket::EtchSocket(const EtchSocket& other)
+ : EtchObject(other), mSocket(other.mSocket) {
 }
 
 EtchSocket::~EtchSocket() {

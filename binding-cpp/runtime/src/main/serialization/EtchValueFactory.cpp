@@ -23,8 +23,12 @@ const EtchObjectType* EtchValueFactory::TYPE() {
   return &TYPE;
 }
 
-EtchValueFactory::EtchValueFactory()
-: EtchObject(EtchValueFactory::TYPE()) {
+EtchValueFactory::EtchValueFactory() {
+  addObjectType(EtchValueFactory::TYPE());
+}
+
+EtchValueFactory::EtchValueFactory(const EtchValueFactory& other)
+ : EtchObject(other) {
 }
 
 EtchString EtchValueFactory::getStringEncoding() {

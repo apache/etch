@@ -92,7 +92,7 @@ TEST_F(EtchHashTableSerializerTest, initTest) {
   EtchClass2TypeMap* c2type = new EtchClass2TypeMap();
   EtchString typeName("type1");
   EtchType* type = new EtchType(10, typeName);
-  EtchType* result;
+  EtchType* result = 0;
   EXPECT_TRUE(EtchHashTableSerializer::Init(type, c2type) == ETCH_OK);
   c2type->get(EtchNativeArray<capu::SmartPointer<EtchObject> >::TYPE(), &result);
 

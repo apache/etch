@@ -82,17 +82,17 @@ const EtchObjectType* EtchValidatorCustomKey::TYPE() {
 }
 
 EtchValidatorCustomKey::EtchValidatorCustomKey()
-: EtchObject(EtchValidatorCustomKey::TYPE())
-, mType(NULL)
-, mDims(0)
-, mSubclassOk(false) {
+ : mType(NULL), mDims(0), mSubclassOk(false) {
+  addObjectType(EtchValidatorCustomKey::TYPE());
 }
 
 EtchValidatorCustomKey::EtchValidatorCustomKey(const EtchObjectType * type, capu::int32_t dim, capu::bool_t sub)
-: EtchObject(EtchValidatorCustomKey::TYPE())
-, mType(type)
-, mDims(dim)
-, mSubclassOk(sub) {
+ : mType(type), mDims(dim), mSubclassOk(sub) {
+  addObjectType(EtchValidatorCustomKey::TYPE());
+}
+
+EtchValidatorCustomKey::EtchValidatorCustomKey(const EtchValidatorCustomKey& other)
+ : EtchObject(other), mType(other.mType), mDims(other.mDims), mSubclassOk(other.mSubclassOk) {
 }
 
 EtchValidatorCustomKey::~EtchValidatorCustomKey() {
@@ -120,6 +120,11 @@ EtchValidatorCustom::EtchValidatorCustom(const EtchObjectType *type, capu::uint3
   : EtchTypeValidator(EtchValidatorCustom::TYPE(), type, type, ndim) {
   // TODO refacotor type hierarchy
   mSubclass = sub;
+}
+
+EtchValidatorCustom::EtchValidatorCustom(const EtchValidatorCustom& other)
+ : EtchTypeValidator(other) {
+
 }
 
 EtchValidatorCustom::~EtchValidatorCustom() {

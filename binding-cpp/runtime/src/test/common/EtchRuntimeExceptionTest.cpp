@@ -59,3 +59,20 @@ TEST(EtchRuntimeExceptionTest, equalsTest) {
   delete test2;
   delete test3;
 }
+
+TEST(EtchRuntimeExceptionTest, copyTest) {
+  EtchRuntimeException o1(EtchString("Message"), ETCH_ERROR);
+  EtchRuntimeException o2(o1);
+  EtchRuntimeException o3 = o2;
+  EXPECT_TRUE(o1.equals(&o2));
+  EXPECT_TRUE(o2.equals(&o3));
+}
+
+TEST(EtchRuntimeExceptionTest, isInstanceOf) {
+  EtchObject* o1 = new EtchRuntimeException(EtchString("Message"), ETCH_ERROR);
+  EXPECT_TRUE(o1->isInstanceOf(EtchObject::TYPE()));
+  EXPECT_TRUE(o1->isInstanceOf(EtchException::TYPE()));
+  EXPECT_TRUE(o1->isInstanceOf(EtchRuntimeException::TYPE()));
+  EXPECT_FALSE(o1->isInstanceOf(EtchString::TYPE()));
+  delete o1;
+}

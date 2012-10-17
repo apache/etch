@@ -39,6 +39,11 @@ public:
   EtchServerSocket();
 
   /**
+   * Copy Constructor
+   */
+  EtchServerSocket(const EtchServerSocket& other);
+
+  /**
    * Destructor
    */
   virtual ~EtchServerSocket();

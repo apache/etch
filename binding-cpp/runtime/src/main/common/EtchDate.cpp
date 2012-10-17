@@ -24,11 +24,18 @@ const EtchObjectType* EtchDate::TYPE() {
 }
 
 EtchDate::EtchDate()
-: EtchObject(EtchDate::TYPE()), mValue(0) {
+: mValue(0) {
+  addObjectType(TYPE());
 }
 
 EtchDate::EtchDate(capu::time_t value)
-: EtchObject(EtchDate::TYPE()), mValue(value) {
+ : mValue(value) {
+  addObjectType(TYPE());
+}
+
+
+EtchDate::EtchDate(const EtchDate& other)
+ : EtchObject(other), mValue(other.mValue) {
 }
 
 EtchDate::~EtchDate() {
@@ -54,5 +61,5 @@ void EtchDate::set(capu::time_t value) {
 }
 
 capu::uint32_t EtchDate::getHashCode() const{
-  return static_cast<capu::uint32_t>(mValue ^ mValue >> 32);;
+  return static_cast<capu::uint32_t>(mValue ^ mValue >> 32);
 }

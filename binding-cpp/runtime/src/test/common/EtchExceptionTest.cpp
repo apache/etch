@@ -18,6 +18,7 @@
 
 #include <gtest/gtest.h>
 #include "common/EtchException.h"
+#include "common/EtchString.h"
 
 TEST(EtchExceptionTest, createTest) {
   EtchString str("test message");
@@ -58,4 +59,20 @@ TEST(EtchExceptionTest, equalsTest) {
   delete test;
   delete test2;
   delete test3;
+}
+
+TEST(EtchExceptionTest, copyTest) {
+  EtchException o1(EtchString("Message"), ETCH_ERROR, EtchException::EXCPTYPE_BUILTIN);
+  EtchException o2(o1);
+  EtchException o3 = o2;
+  EXPECT_TRUE(o1.equals(&o2));
+  EXPECT_TRUE(o2.equals(&o3));
+}
+
+TEST(EtchExceptionTest, isInstanceOf) {
+  EtchObject* o1 = new EtchException(EtchString("Message"), ETCH_ERROR, EtchException::EXCPTYPE_BUILTIN);
+  EXPECT_TRUE(o1->isInstanceOf(EtchObject::TYPE()));
+  EXPECT_TRUE(o1->isInstanceOf(EtchException::TYPE()));
+  EXPECT_FALSE(o1->isInstanceOf(EtchString::TYPE()));
+  delete o1;
 }

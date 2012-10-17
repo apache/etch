@@ -24,20 +24,21 @@ const EtchObjectType* EtchObject::TYPE() {
   return &TYPE;
 }
 
-EtchObject::EtchObject()
-  : mType(TYPE()) {
+EtchObject::EtchObject() {
   addObjectType(TYPE());
 }
 
-EtchObject::EtchObject(const EtchObjectType* type){
-  mType = type;
+EtchObject::EtchObject(const EtchObject& other)
+ : mTypes(other.mTypes) {
+}
+
+const EtchObjectType* EtchObject::getObjectType() const {
+  const EtchObjectType* ret;
+  this->mTypes.get(mTypes.size()-1, &ret);
+  return ret;
 }
 
 EtchObject::~EtchObject() {
-}
-
-const EtchObjectType* EtchObject::getObjectType() const{
-  return mType;
 }
 
 capu::bool_t EtchObject::isInstanceOf(const EtchObjectType* type) const {
@@ -64,9 +65,3 @@ status_t EtchObject::addObjectType(const EtchObjectType* type) {
   mTypes.add(type);
   return ETCH_OK;
 }
-
-status_t EtchObject::setObjectType(const EtchObjectType* type) {
-  mType = type;
-  return ETCH_OK;
-}
-

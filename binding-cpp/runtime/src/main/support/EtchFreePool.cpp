@@ -67,13 +67,10 @@ const EtchObjectType* EtchFreePool::TYPE() {
 }
 
 EtchFreePool::EtchFreePool(capu::int32_t size)
- : EtchPool(EtchFreePool::TYPE())
- , mSize(0)
- , mSizeMax(size)
- , mIsOpen(true) {
-
-   mThreads = new capu::Thread*[mSizeMax];
-   capu::Memory::Set(mThreads, 0, sizeof(capu::Thread*)*mSizeMax);
+ : mSize(0), mSizeMax(size), mIsOpen(true) {
+  addObjectType(TYPE());
+  mThreads = new capu::Thread*[mSizeMax];
+  capu::Memory::Set(mThreads, 0, sizeof(capu::Thread*)*mSizeMax);
 }
 
 EtchFreePool::~EtchFreePool() {
@@ -116,7 +113,7 @@ status_t EtchFreePool::add(capu::SmartPointer<EtchPoolRunnable> runnable) {
   if(!mIsOpen) {
     return ETCH_ERROR;
   }
-  
+
   mMutex.lock();
 
   // clean thread list

@@ -51,6 +51,11 @@ public:
   EtchValueFactory();
 
   /**
+   * Copy Constructor
+   */
+  EtchValueFactory(const EtchValueFactory& other);
+
+  /**
    * Destructor
    */
   virtual ~EtchValueFactory() {

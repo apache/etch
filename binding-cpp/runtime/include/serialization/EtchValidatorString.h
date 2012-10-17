@@ -33,6 +33,14 @@ public:
    */
   static const EtchObjectType* TYPE();
 
+  /**
+   * Copy Constructor
+   */
+  EtchValidatorString(const EtchValidatorString& other);
+
+  /**
+   * Destructor
+   */
   virtual ~EtchValidatorString();
 
   /**

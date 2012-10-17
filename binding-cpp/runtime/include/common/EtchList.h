@@ -45,6 +45,11 @@ public:
   EtchList();
 
   /**
+   * Copy Constructor
+   */
+  EtchList(const EtchList& other);
+
+  /**
    * Destructor
    */
   ~EtchList();
@@ -154,10 +159,15 @@ const EtchObjectType* EtchList<T, C>::TYPE() {
 }
 
 template<class T, class C>
-EtchList<T, C>::EtchList()
-: EtchObject(EtchList<T, C>::TYPE()) {
-
+EtchList<T, C>::EtchList() {
+  addObjectType(EtchList<T, C>::TYPE());
 }
+
+template<class T, class C>
+EtchList<T, C>::EtchList(const EtchList& other)
+ : EtchObject(other), mList(other.mList) {
+}
+
 
 template<class T, class C>
 EtchList<T, C>::~EtchList() {

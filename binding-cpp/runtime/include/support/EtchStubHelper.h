@@ -44,9 +44,13 @@ public:
    * Constructs a StubHelper which uses synchronous mode to dispatch
    * method from message.
    */
-  EtchStubHelper()
-  : EtchObject(EtchStubHelper::TYPE()) {
+  EtchStubHelper() {
+    addObjectType(TYPE());
     // nothing to do.
+  }
+
+  EtchStubHelper(const EtchStubHelper& other)
+  : EtchObject(other) {
   }
 
   /**

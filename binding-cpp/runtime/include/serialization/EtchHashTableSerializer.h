@@ -37,7 +37,7 @@ public:
   /**
    * Constructor
    */
-  EtchHashTableSerializer(EtchType* type, EtchField* field);
+  EtchHashTableSerializer(EtchType* type, EtchField& field);
 
   /**
    * Destructor

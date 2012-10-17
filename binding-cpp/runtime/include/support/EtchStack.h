@@ -30,7 +30,7 @@
 /* *
  * This class serves as a container for all layers created during the setup of a new stack (connection, packetizer, messagizer, ...).
  */
-class EtchStack : public EtchObject{
+class EtchStack : public EtchObject {
 public:
 
   /**
@@ -47,6 +47,12 @@ public:
    * Default Constructor
    */
   EtchStack();
+
+  /**
+   * Default Constructor
+   */
+  EtchStack(const EtchStack& other);
+
 
   /**
    * Destructor which cleans the whole stack
@@ -87,7 +93,7 @@ public:
    * sets the delivery service
    */
   void setDeliveryService(EtchDeliveryService* deliveryservice);
-  
+
   /**
    * sets the stub implemenation
    */

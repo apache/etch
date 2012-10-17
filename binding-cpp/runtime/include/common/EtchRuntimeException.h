@@ -30,8 +30,22 @@ public:
    */
   static const EtchObjectType* TYPE();
 
-  //Default Constructor
+  /**
+   * Constructs a EtchRuntimeException object.
+   */
+  EtchRuntimeException();
+
+  /**
+   * EtchRuntimeException
+   * @param msg Exception Message
+   * @param errcode Error Code
+   */
   EtchRuntimeException(EtchString msg, status_t errcode);
+
+  /**
+   * Constructs a copy of EtchRuntimeException.
+   */
+  EtchRuntimeException(const EtchRuntimeException& other);
 
   /**
    * Destructor

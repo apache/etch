@@ -34,7 +34,9 @@ public:
   };
 
 
-  //Constructor
+  /**
+   * Constructs a EtchException object.
+   */
   EtchException();
 
   /**
@@ -43,7 +45,14 @@ public:
    */
   EtchException(EtchString msg, status_t errcode, EtchExceptionType type);
 
-  //destructor
+  /**
+   * Constructs a copy of EtchShort.
+   */
+  EtchException(const EtchException& other);
+
+  /**
+   * Destructor
+   */
   virtual ~EtchException();
 
   //overridden
@@ -70,18 +79,9 @@ public:
   static const EtchObjectType* TYPE();
 
 protected:
-
   EtchString mErrorMessage;
   status_t mErrorcode;
   EtchExceptionType mExcptype;
-
-  /**
-   * @param msg Message of exception
-   * @param errcode Error Code such as ETCH_EINVAL etc.
-   * @param type    Exception Type such as EXCPTYPE_USERDEFINED etc.
-   * @param type_id Typeid of Exception
-   */
-  EtchException(EtchString msg, status_t errcode, EtchExceptionType type, const EtchObjectType* type_id);
 };
 
 #endif /* ETCHEXCEPTION_H */

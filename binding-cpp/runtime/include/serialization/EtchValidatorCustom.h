@@ -43,6 +43,11 @@ public:
   EtchValidatorCustomKey();
 
   /**
+   * Copy Constructor
+   */
+  EtchValidatorCustomKey(const EtchValidatorCustomKey& other);
+
+  /**
    * Destructor
    */
   virtual ~EtchValidatorCustomKey();
@@ -79,6 +84,8 @@ public:
    * EtchObjectType for EtchValidatorCustom.
    */
   static const EtchObjectType* TYPE();
+
+  EtchValidatorCustom(const EtchValidatorCustom& other);
 
   /**
    * Destructor

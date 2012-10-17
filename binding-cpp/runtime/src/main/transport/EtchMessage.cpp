@@ -29,6 +29,10 @@ EtchMessage::EtchMessage(EtchType* type, EtchValueFactory* vf, capu::uint32_t le
 
 }
 
+EtchMessage::EtchMessage(const EtchMessage& other)
+ : EtchStructValue(other), mVf(other.mVf) {
+}
+
 EtchMessage::~EtchMessage() {
 
 }

@@ -24,29 +24,33 @@ const EtchObjectType* EtchLong::TYPE() {
 }
 
 EtchLong::EtchLong()
-: EtchObject(EtchLong::TYPE())
-, mValue(0){
+ : mValue(0) {
+  addObjectType(TYPE());
 }
 
 EtchLong::EtchLong(capu::int64_t value)
-: EtchObject(EtchLong::TYPE())
-, mValue(value){
+ : mValue(value) {
+  addObjectType(TYPE());
 }
 
-void EtchLong::set(capu::int64_t value){
+EtchLong::EtchLong(const EtchLong& other)
+ : EtchObject(other), mValue(other.mValue) {
+}
+
+void EtchLong::set(capu::int64_t value) {
   mValue = value;
 }
 
-capu::int64_t EtchLong::get(){
+capu::int64_t EtchLong::get() {
   return mValue;
 }
 
-capu::uint32_t EtchLong::getHashCode() const{
+capu::uint32_t EtchLong::getHashCode() const {
   //first 32 bit xor second 32 bit of long
   return static_cast<capu::uint32_t>(mValue ^ mValue >> 32);
 }
 
-capu::bool_t EtchLong::equals(const EtchObject * other) const{
+capu::bool_t EtchLong::equals(const EtchObject * other) const {
   if (other == NULL)
     return false;
   else if (!other->getObjectType()->equals(EtchLong::TYPE()))

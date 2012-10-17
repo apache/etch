@@ -24,13 +24,17 @@ const EtchObjectType* EtchFloat::TYPE() {
 }
 
 EtchFloat::EtchFloat()
-: EtchObject(EtchFloat::TYPE())
-, mValue(0.0f){
+ : mValue(0.0f) {
+  addObjectType(TYPE());
 }
 
 EtchFloat::EtchFloat(capu::float_t value)
-: EtchObject(EtchFloat::TYPE())
-, mValue(value){
+ : mValue(value) {
+  addObjectType(TYPE());
+}
+
+EtchFloat::EtchFloat(const EtchFloat& other)
+ : EtchObject(other), mValue(other.mValue) {
 }
 
 void EtchFloat::set(capu::float_t value){

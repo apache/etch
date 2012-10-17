@@ -64,6 +64,7 @@ enum EtchObjectTypeIds {
   EOTID_AUTH_EXCEPTION,
   EOTID_RUNTIME_EXCEPTION,
   EOTID_ARRAY_VALUE,
+  EOTID_POOL,
   EOTID_FREEPOOL,
   EOTID_QUEUEDPOOL,
   EOTID_WAIT_UP,
@@ -223,7 +224,7 @@ struct EtchObjectType::__Wrapper__<capu::int16_t> {
   static const EtchObjectType* getType() {
     return &EtchObjectType::NATIVE_INT16();
   }
-  
+
   static const EtchObjectTypeTrait getTypeTrait() {
     return EtchObjectType::VALUE;
   }
@@ -286,7 +287,7 @@ struct EtchObjectType::__Wrapper__<capu::bool_t> {
   static const EtchObjectType* getType() {
     return &EtchObjectType::NATIVE_BOOL();
   }
-  
+
   static const EtchObjectTypeTrait getTypeTrait() {
     return EtchObjectType::VALUE;
   }
@@ -312,7 +313,7 @@ struct EtchObjectType::__Wrapper__<capu::int16_t*> {
   static const EtchObjectType* getType() {
     return &EtchObjectType::NATIVE_INT16();
   }
-  
+
   static const EtchObjectTypeTrait getTypeTrait() {
     return EtchObjectType::POINTER;
   }
@@ -402,7 +403,7 @@ struct EtchObjectType::__Wrapper__<capu::SmartPointer<capu::int16_t> > {
   static const EtchObjectType * getType() {
     return &EtchObjectType::NATIVE_INT16();
   }
-  
+
   static const EtchObjectTypeTrait getTypeTrait() {
     return EtchObjectType::SMART_POINTER;
   }
@@ -465,7 +466,7 @@ struct EtchObjectType::__Wrapper__<capu::SmartPointer<capu::bool_t> > {
   static const EtchObjectType * getType() {
     return &EtchObjectType::NATIVE_BOOL();
   }
-  
+
   static const EtchObjectTypeTrait getTypeTrait() {
     return EtchObjectType::SMART_POINTER;
   }

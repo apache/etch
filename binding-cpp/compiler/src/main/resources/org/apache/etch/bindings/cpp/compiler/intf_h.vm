@@ -83,9 +83,8 @@ namespace $namespace {
 #end
    */
 #end
-  class $n.name() :
-    public EtchObject
-  {
+  class $n.name() 
+  : public EtchObject {
   public:
     static const EtchObjectType* TYPE();
     enum _eval{
@@ -104,8 +103,13 @@ namespace $namespace {
 
     } Value;
 
-    $n.name()() : EtchObject($n.name()::TYPE()) { }
-    $n.name()(_eval eval) : EtchObject($n.name()::TYPE()) { Value = eval; }
+    $n.name()() {
+      addObjectType($n.name()::TYPE());
+    }
+    $n.name()(_eval eval) { 
+      addObjectType($n.name()::TYPE());
+      Value = eval; 
+    }
   };
   typedef capu::SmartPointer<$n.name()> $n.name()Ptr;
 #end
@@ -218,7 +222,7 @@ namespace $namespace {
 #end
     class $n.name()
 #if($n.hasExtends())
-      : public $n.getExtends().name(), public EtchObject
+      : public $n.getExtends().name()
 #elseif($n.isExcept())
       : public EtchException
 #else
@@ -245,9 +249,7 @@ namespace $namespace {
 #end
 #end
        */
-      $n.name()(#set($sep = "")#foreach($i in $n.getAllParameters())$sep$helper.getEtchTypeName($i.type(), true) $i.name() #set( $sep = ", " )#end)#if(!$n.hasExtends());
-#else
-        : $n.name();#end
+      $n.name()(#set($sep = "")#foreach($i in $n.getAllParameters())$sep$helper.getEtchTypeName($i.type(), true) $i.name() #set( $sep = ", " )#end);
 #end
 
       virtual ~$n.name()() {}
@@ -293,26 +295,19 @@ namespace $namespace {
 #end
     };
     typedef capu::SmartPointer<${n.name()}> $n.name()Ptr;
+    //TODO: we may not be able to serialize NativeArrays of custom user Types! 
+    typedef capu::SmartPointer<EtchNativeArray<${n.name()}Ptr> > EtchNativeArray$n.name()Ptr;
 
 #end
 #elseif ($n.isBuiltin())
 ## nothing to do.
 #elseif ($n.isEnumx())
     typedef capu::SmartPointer<${n.name()}> $n.name()Ptr;
+    typedef capu::SmartPointer<EtchNativeArray<${n.name()}Ptr> > EtchNativeArray$n.name()Ptr;
 
 #else
     *** intf.vm: don't know what to do with $n ***
 #end
-#end
-#foreach($n in $intf.iterator())
-#if ($n.hasAnyParameters())
-#foreach( $i in $n.getAllParameters() )
-#if($i.type().dim() > 0)
-    typedef capu::SmartPointer<EtchNativeArray<${n.name()}Ptr> > EtchNativeArray$n.name()Ptr;
-    ##typedef EtchNativeArray<${n.name()}Ptr> EtchNativeArray$n.name()Obj;
-#end
-#end
-#end  
 #end
   };
 }

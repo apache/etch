@@ -20,8 +20,6 @@
 #define __ETCHINT32_H__
 
 #include "common/EtchObject.h"
-#include "common/EtchObjectType.h"
-#include "common/EtchError.h"
 
 class EtchInt32 :
 public EtchObject {
@@ -43,6 +41,17 @@ public:
    * Constructs a EtchInt32 object with given value.
    */
   EtchInt32(capu::int32_t value);
+
+  /**
+   * Constructs a EtchInt32 copy
+   */
+  EtchInt32(const EtchInt32& other);
+
+
+  /**
+   * Destructor.
+   */
+  virtual ~EtchInt32();
 
   /**
    * Sets int32 value.
@@ -69,7 +78,12 @@ public:
    * assigns an integer number to the stored value
    */
   capu::int32_t& operator=(capu::int32_t const& other);
-  
+
+  /**
+   * assigns an EtchInt32 to an EtchInt32
+   */
+  EtchInt32& operator=(EtchInt32 const& other);
+
   /**
    * increments and assigns the stored integer value
    */

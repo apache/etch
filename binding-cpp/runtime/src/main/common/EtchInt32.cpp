@@ -17,6 +17,8 @@
  */
 
 #include "common/EtchInt32.h"
+#include "common/EtchObjectType.h"
+#include "common/EtchError.h"
 
 const EtchObjectType* EtchInt32::TYPE() {
    const static EtchObjectType TYPE(EOTID_INT32, NULL);
@@ -24,14 +26,22 @@ const EtchObjectType* EtchInt32::TYPE() {
 }
 
 EtchInt32::EtchInt32()
-: EtchObject(EtchInt32::TYPE())
-, mValue(0){
+ : mValue(0) {
+  addObjectType(TYPE());
 }
 
 EtchInt32::EtchInt32(capu::int32_t value)
-: EtchObject(EtchInt32::TYPE())
-, mValue(value){
+ : mValue(value) {
+  addObjectType(TYPE());
 }
+
+EtchInt32::EtchInt32(const EtchInt32& other)
+ : EtchObject(other), mValue(other.mValue) {
+}
+
+EtchInt32::~EtchInt32() {
+}
+
 
 void EtchInt32::set(capu::int32_t value){
   mValue = value;
@@ -61,6 +71,15 @@ capu::int32_t& EtchInt32::operator=(capu::int32_t const& other)
     mValue = other;
   }
   return mValue;
+}
+
+EtchInt32& EtchInt32::operator=(EtchInt32 const& other)
+{
+  if(mValue != other.mValue)
+  {
+    mValue = other.mValue;
+  }
+  return *this;
 }
 
 capu::int32_t& EtchInt32::operator++() //pre increment

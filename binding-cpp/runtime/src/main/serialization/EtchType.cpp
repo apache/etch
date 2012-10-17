@@ -23,21 +23,29 @@ const EtchObjectType* EtchType::TYPE() {
   const static EtchObjectType TYPE(EOTID_TYPE, NULL);
   return &TYPE;
 }
-
 EtchType::EtchType()
-: EtchObject(EtchType::TYPE()), mId(0), mTimeout(0), mName(""), mSuperType(NULL),
-mResultType(NULL), mDirection(BOTH), mAsyncMode(NONE), mLocked(false), mComponentType(NULL), mHelper(NULL), mStubHelper(NULL) {
+: mId(0), mTimeout(0), mName(""), mSuperType(NULL), mResultType(NULL),
+  mDirection(BOTH), mAsyncMode(NONE), mLocked(false), mComponentType(NULL), mHelper(NULL), mStubHelper(NULL) {
+  addObjectType(TYPE());
 }
 
 EtchType::EtchType(EtchString name)
-: EtchObject(EtchType::TYPE()), mTimeout(0), mName(name), mSuperType(NULL),
+: mTimeout(0), mName(name), mSuperType(NULL),
 mResultType(NULL), mDirection(BOTH), mAsyncMode(NONE), mLocked(false), mComponentType(NULL), mHelper(NULL), mStubHelper(NULL) {
-  mId = EtchHashEx::Digest(mName);;
+  mId = EtchHashEx::Digest(mName);
+  addObjectType(TYPE());
 }
 
 EtchType::EtchType(capu::uint32_t id, EtchString name)
-: EtchObject(EtchType::TYPE()), mId(id), mTimeout(0), mName(name), mSuperType(NULL),
+: mId(id), mTimeout(0), mName(name), mSuperType(NULL),
 mResultType(NULL), mDirection(BOTH), mAsyncMode(NONE), mLocked(false), mComponentType(NULL), mHelper(NULL), mStubHelper(NULL) {
+  addObjectType(TYPE());
+}
+
+EtchType::EtchType(const EtchType& other)
+ : EtchObject(other), mId(other.mId), mTimeout(other.mTimeout), mName(other.mName), mSuperType(other.mSuperType),
+   mResultType(other.mResultType), mDirection(other.mDirection), mAsyncMode(other.mAsyncMode), mLocked(other.mLocked),
+   mComponentType(other.mComponentType), mHelper(other.mHelper), mStubHelper(other.mStubHelper) {
 }
 
 EtchType::~EtchType() {
@@ -49,7 +57,6 @@ EtchType::~EtchType() {
     //TODO: Check memory management
     delete mStubHelper;
   }
-
 }
 
 capu::uint64_t EtchType::getHashCode() {

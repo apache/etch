@@ -20,3 +20,7 @@
 
 #include "support/EtchPool.h"
 
+const EtchObjectType* EtchPool::TYPE() {
+  const static EtchObjectType TYPE(EOTID_POOL, NULL);
+  return &TYPE;
+}

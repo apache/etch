@@ -36,12 +36,18 @@ public:
   virtual status_t run() = 0;
 
   /**
+   * Destructor
+   */
+  virtual ~EtchPoolRunnable() {}
+
+  /**
    * Sets an exception
    * @param exception that occured
    * @return ETCH_OK if no error
    */
   status_t setException(capu::SmartPointer<EtchException> exception) {
     mException = exception;
+    return ETCH_OK;
   }
 
   capu::bool_t hasException() {

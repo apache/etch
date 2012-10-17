@@ -24,21 +24,16 @@ const EtchObjectType* EtchException::TYPE() {
 
 EtchException::EtchException()
 : EtchObject(), mErrorMessage(""), mErrorcode(0), mExcptype(0) {
-  EtchObject::addObjectType(EtchException::TYPE());
-  // TODO change object hierachy
-  EtchObject::setObjectType(EtchException::TYPE());
+  addObjectType(EtchException::TYPE());
 }
 
 EtchException::EtchException(EtchString msg, status_t errcode, EtchExceptionType type)
 : EtchObject(), mErrorMessage(msg), mErrorcode(errcode), mExcptype(type) {
-  EtchObject::addObjectType(EtchException::TYPE());
-  // TODO change object hierachy
-  EtchObject::setObjectType(EtchException::TYPE());
+  addObjectType(EtchException::TYPE());
 }
 
-EtchException::EtchException(EtchString msg, status_t errcode, EtchExceptionType type, const EtchObjectType* type_id)
-: EtchObject(type_id), mErrorMessage(msg), mErrorcode(errcode), mExcptype(type) {
-
+EtchException::EtchException(const EtchException& other)
+ : EtchObject(other), mErrorMessage(other.mErrorMessage), mErrorcode(other.mErrorcode), mExcptype(other.mExcptype) {
 }
 
 EtchException::~EtchException() {

@@ -44,6 +44,11 @@ public:
   EtchBool(capu::bool_t value);
 
   /**
+   * Constructs a copy of EtchBool
+   */
+  EtchBool(const EtchBool& other);
+
+  /**
    * Sets bool value.
    */
   void set(capu::bool_t value);

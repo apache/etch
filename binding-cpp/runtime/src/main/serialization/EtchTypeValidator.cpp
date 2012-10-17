@@ -25,12 +25,17 @@ EtchTypeValidator::EtchTypeValidator(const EtchObjectType * type, const EtchObje
 
   if (mNDims == 0)
     mExpectedType = new EtchObjectType(scalarClass->getTypeId(),scalarClass->getObjectComponentType());
-  else if (mNDims > 0){    
+  else if (mNDims > 0){
     EtchObjectType *type = new EtchObjectType(EOTID_NATIVE_ARRAY, scalarClass);
     mExpectedType = type;
     mArrayComponentType = scalarClass;
   }
 
+}
+
+EtchTypeValidator::EtchTypeValidator(const EtchTypeValidator& other)
+ : EtchValidator(other), mNDims(other.mNDims), mExpectedType(other.mExpectedType),
+   mArrayComponentType(other.mArrayComponentType), mSubclass(other.mSubclass) {
 }
 
 EtchTypeValidator::~EtchTypeValidator(){

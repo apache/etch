@@ -50,6 +50,17 @@ public:
   EtchField(capu::uint32_t id, EtchString & name);
 
   /**
+   * Copy Constructor
+   * @param other
+   */
+  EtchField(const EtchField& other);
+
+  /**
+   * Destructor
+   */
+  virtual ~EtchField();
+
+  /**
    * returns the hash code
    * @return hash value
    */

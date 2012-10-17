@@ -23,8 +23,12 @@ const EtchObjectType* EtchAuthenticationException::TYPE() {
 }
 
 EtchAuthenticationException::EtchAuthenticationException(EtchString& msg)
-: EtchException(msg, ETCH_ERROR, EXCPTYPE_BUILTIN, EtchAuthenticationException::TYPE()) {
+: EtchException(msg, ETCH_ERROR, EXCPTYPE_BUILTIN) {
+  addObjectType(TYPE());
+}
 
+EtchAuthenticationException::EtchAuthenticationException(const EtchAuthenticationException& other)
+: EtchException(other) {
 }
 
 EtchAuthenticationException::~EtchAuthenticationException() {

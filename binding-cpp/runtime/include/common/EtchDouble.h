@@ -44,6 +44,11 @@ public:
   EtchDouble(capu::double_t value);
 
   /**
+   * Constructs a copy of EtchDouble.
+   */
+  EtchDouble(const EtchDouble& other);
+
+  /**
    * Sets double value.
    */
   void set(capu::double_t value);

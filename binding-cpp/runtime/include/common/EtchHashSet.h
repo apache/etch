@@ -51,6 +51,12 @@ public:
   inline EtchHashSet(capu::uint32_t size);
 
   /**
+   * Copy Constructor
+   */
+  inline EtchHashSet(const EtchHashSet& other);
+
+
+  /**
    * Destructor
    */
   inline ~EtchHashSet();
@@ -103,21 +109,26 @@ private:
 };
 
 template <class T, class H, class C>
-inline EtchHashSet<T, H, C>::EtchHashSet()
-: EtchObject(EtchHashSet<T, H, C>::TYPE()) {
-
+inline EtchHashSet<T, H, C>::EtchHashSet() {
+  addObjectType(EtchHashSet<T, H, C>::TYPE());
 }
 
 template <class T, class H, class C>
 inline EtchHashSet<T, H, C>::EtchHashSet(capu::uint32_t size)
-: EtchObject(&EtchHashSet<T, H, C>::TYPE), mHashSet(size) {
-
+ : mHashSet(size) {
+  addObjectType(EtchHashSet<T, H, C>::TYPE());
 }
 
 template <class T, class H, class C>
 const EtchObjectType* EtchHashSet<T, H, C>::TYPE() {
   const static EtchObjectType TYPE(EOTID_SET, NULL);
   return &TYPE;
+}
+
+template <class T, class H, class C>
+inline EtchHashSet<T, H, C>::EtchHashSet(const EtchHashSet& other)
+ : EtchObject(other), mHashSet(other.mHashSet) {
+
 }
 
 template <class T, class H, class C>

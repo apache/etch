@@ -37,6 +37,10 @@ EtchValidatorBoolean::EtchValidatorBoolean(capu::uint32_t ndim)
   mRuntime = EtchRuntime::getRuntime();
 }
 
+EtchValidatorBoolean::EtchValidatorBoolean(const EtchValidatorBoolean& other)
+: EtchTypeValidator(other), mRuntime(other.mRuntime) {
+}
+
 EtchValidatorBoolean::~EtchValidatorBoolean() {
 
 }

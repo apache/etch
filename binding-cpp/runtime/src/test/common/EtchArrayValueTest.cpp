@@ -195,5 +195,22 @@ TEST(EtchArrayValueTest, addTest) {
   delete av2;
 }
 
+TEST(EtchArrayValueTest, copyTest) {
+  capu::SmartPointer<EtchNativeArray<capu::int8_t> > nativeTypeArray = new EtchNativeArray<capu::int8_t>(1);
+  nativeTypeArray->set(0, 1);
+  EtchArrayValue o1(nativeTypeArray, 1);
+  EtchArrayValue o2(o1);
+  EtchArrayValue o3 = o2;
+  EXPECT_TRUE(o1.equals(&o2));
+  EXPECT_TRUE(o2.equals(&o3));
+}
 
+TEST(EtchArrayValueTest, isInstanceOf) {
+  capu::SmartPointer<EtchNativeArray<capu::int8_t> > nativeTypeArray = new EtchNativeArray<capu::int8_t>(1);
+  EtchObject* o1 =  new EtchArrayValue(nativeTypeArray, 1);
+  EXPECT_TRUE(o1->isInstanceOf(EtchObject::TYPE()));
+  EXPECT_TRUE(o1->isInstanceOf(EtchArrayValue::TYPE()));
+  EXPECT_FALSE(o1->isInstanceOf(EtchString::TYPE()));
+  delete o1;
+}
 

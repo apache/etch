@@ -31,13 +31,13 @@ const EtchObjectType* EtchString::TYPE() {
 // TODO: String should support UTF-8 by default
 
 EtchString::EtchString()
-: EtchObject(EtchString::TYPE())
-, mData(NULL), mDataSize(0), mEncoding(ENCODING_ASCII) {
+ : mData(NULL), mDataSize(0), mEncoding(ENCODING_ASCII) {
+  addObjectType(TYPE());
 }
 
 EtchString::EtchString(const char* string)
-: EtchObject(EtchString::TYPE())
-, mData(NULL), mDataSize(0), mEncoding(ENCODING_ASCII) {
+ : mData(NULL), mDataSize(0), mEncoding(ENCODING_ASCII) {
+  addObjectType(TYPE());
   if (string != NULL) {
     capu::uint32_t len = capu::StringUtils::Strlen(string);
     mData = new char[len + 1];
@@ -47,9 +47,8 @@ EtchString::EtchString(const char* string)
 }
 
 EtchString::EtchString(const capu::int8_t* buffer, const capu::int32_t bufferSize, EtchString encoding)
-: EtchObject(EtchString::TYPE())
-, mData(NULL), mDataSize(0), mEncoding(ENCODING_ASCII) {
-
+: mData(NULL), mDataSize(0), mEncoding(ENCODING_ASCII) {
+  addObjectType(TYPE());
   EtchString enc("utf-8");
   if (encoding.equals(&enc)) {
     mEncoding = ENCODING_UTF8;
@@ -73,7 +72,7 @@ EtchString::EtchString(const capu::int8_t* buffer, const capu::int32_t bufferSiz
 }
 
 EtchString::EtchString(const EtchString &copy)
-: EtchObject(EtchString::TYPE()), mDataSize(copy.mDataSize), mEncoding(copy.mEncoding) {
+: EtchObject(copy), mDataSize(copy.mDataSize), mEncoding(copy.mEncoding) {
   if (copy.mData == NULL)
     return;
   if (mEncoding != ENCODING_UTF8) {

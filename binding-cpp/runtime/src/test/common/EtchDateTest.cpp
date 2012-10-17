@@ -18,6 +18,7 @@
 
 #include <gtest/gtest.h>
 #include "common/EtchDate.h"
+#include "common/EtchString.h"
 
 TEST(EtchDateTest, Constructor) {
   EtchDate* i1 = new EtchDate();
@@ -48,4 +49,23 @@ TEST(EtchDateTest, equals) {
   EXPECT_TRUE(i1.equals(&i2) == false);
   i2.set(_time);
   EXPECT_TRUE(i1.equals(&i2) == true);
+}
+
+
+TEST(EtchDateTest, copyTest) {
+  EtchDate o1;
+  time_t _time = 1234567;
+  o1.set(_time);
+  EtchDate o2(o1);
+  EtchDate o3 = o2;
+  EXPECT_TRUE(o1.equals(&o2));
+  EXPECT_TRUE(o2.equals(&o3));
+}
+
+TEST(EtchDateTest, isInstanceOf) {
+  EtchObject* o1 = new EtchDate();
+  EXPECT_TRUE(o1->isInstanceOf(EtchObject::TYPE()));
+  EXPECT_TRUE(o1->isInstanceOf(EtchDate::TYPE()));
+  EXPECT_FALSE(o1->isInstanceOf(EtchString::TYPE()));
+  delete o1;
 }

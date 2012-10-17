@@ -64,13 +64,11 @@ const EtchObjectType* $class::$n.name()::TYPE() {
  * Constructs the $n.name().
  */
 $class::$n.name()::$n.name()()
-#if(!$n.isExcept())
-  : EtchObject($class::$n.name()::TYPE())
-#else
-  : EtchException("${n.name()}", ETCH_ERROR, EXCPTYPE_USERDEFINED, $class::$n.name()::TYPE())
+#if($n.isExcept())
+  : EtchException("${n.name()}", ETCH_ERROR, EXCPTYPE_USERDEFINED)
 #end
 {
-  //nothing to do!
+  addObjectType($class::$n.name()::TYPE());
 }
 #if ($n.hasAnyParameters())
 /**
@@ -85,16 +83,14 @@ $class::$n.name()::$n.name()()
  */
 $class::$n.name()::$n.name()(#set($sep = "")#foreach($i in $n.getAllParameters())$sep$helper.getEtchTypeName($i.type(), true) $i.name() #set( $sep = ", " )#end)
 #if($n.hasExtends())
-  : $n.name()(#set($sep = "")#foreach($i in $n.getExtends().getAllParameters())$sep$i.name()#set( $sep = ", " ))#end#if(!$n.isExcept()),
-  EtchObject($class::$n.name()::TYPE())#end
+  : $n.name()(#set($sep = "")#foreach($i in $n.getExtends().getAllParameters())$sep$i.name()#set( $sep = ", " ))#end
 #else
-#if(!$n.isExcept())
-  : EtchObject($class::$n.name()::TYPE())
-#else
-  : EtchException("${n.name()}", ETCH_ERROR, EXCPTYPE_USERDEFINED, $class::$n.name()::TYPE())
+#if($n.isExcept())
+  : EtchException("${n.name()}", ETCH_ERROR, EXCPTYPE_USERDEFINED)
 #end
 #end
 {
+  addObjectType($class::$n.name()::TYPE());
 #foreach( $i in $n.getParameters() )
   this->$i.name() = $i.name();
 #end

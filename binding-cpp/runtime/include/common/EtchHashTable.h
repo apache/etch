@@ -51,9 +51,14 @@ public:
   inline EtchHashTable(capu::uint32_t size);
 
   /**
+   * Copy Constructor
+   */
+  inline EtchHashTable(const EtchHashTable& other);
+
+  /**
    * Destructure.
    */
-  inline ~EtchHashTable();
+  inline virtual ~EtchHashTable();
 
   /**
    * put a new value to the EtchHashTable.
@@ -109,7 +114,7 @@ public:
    * Return iterator for iterating key value tuples.
    * @return Iterator
    */
-  inline Iterator begin();
+  inline Iterator begin() const;
 
 };
 
@@ -121,14 +126,19 @@ const EtchObjectType* EtchHashTable<Key, T, H, C>::TYPE() {
 
 template <class Key, class T, class H, class C>
 inline EtchHashTable<Key, T, H, C>::EtchHashTable()
-: EtchObject(EtchHashTable<Key, T, H, C>::TYPE()), mHashTable(ETCH_DEFAULT_HASH_TABLE_SIZE) {
-
+: mHashTable(ETCH_DEFAULT_HASH_TABLE_SIZE) {
+  addObjectType(EtchHashTable<Key, T, H, C>::TYPE());
 }
 
 template <class Key, class T, class H, class C>
 inline EtchHashTable<Key, T, H, C>::EtchHashTable(capu::uint32_t size)
-: EtchObject(EtchHashTable<Key, T, H, C>::TYPE()), mHashTable(size) {
+: mHashTable(size) {
+  addObjectType(EtchHashTable<Key, T, H, C>::TYPE());
+}
 
+template <class Key, class T, class H, class C>
+inline EtchHashTable<Key, T, H, C>::EtchHashTable(const EtchHashTable& other)
+: EtchObject(other), mHashTable(other.mHashTable) {
 }
 
 template <class Key, class T, class H, class C>
@@ -162,7 +172,7 @@ inline status_t EtchHashTable<Key, T, H, C>::clear() {
 }
 
 template <class Key, class T, class H, class C>
-inline typename EtchHashTable<Key, T, H, C>::Iterator EtchHashTable<Key, T, H, C>::begin() {
+inline typename EtchHashTable<Key, T, H, C>::Iterator EtchHashTable<Key, T, H, C>::begin() const {
   return mHashTable.begin();
 }
 

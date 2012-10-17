@@ -65,10 +65,9 @@ const EtchObjectType* EtchQueuedPool::TYPE() {
 }
 
 EtchQueuedPool::EtchQueuedPool(capu::int32_t size)
-  : EtchPool(EtchQueuedPool::TYPE())
-  , mSizeMax(size)
-  , mIsOpen(true) {
-    mPool = new capu::ThreadPool(mSizeMax);
+: mSizeMax(size), mIsOpen(true) {
+  addObjectType(TYPE());
+  mPool = new capu::ThreadPool(mSizeMax);
 }
 
 EtchQueuedPool::~EtchQueuedPool() {

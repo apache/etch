@@ -25,8 +25,15 @@ public:
 
   static const EtchObjectType* TYPE();
 
-  //Default Constructor
+  /**
+   * Constructs a EtchAuthenticationException object.
+   */
   EtchAuthenticationException(EtchString &msg);
+
+  /**
+   * Constructs a copy of EtchAuthenticationException.
+   */
+  EtchAuthenticationException(const EtchAuthenticationException& other);
 
   /**
    * Destructor

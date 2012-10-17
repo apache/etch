@@ -26,8 +26,8 @@
 class MockGeneratedClass : public EtchObject {
 public:
 
-  MockGeneratedClass()
-  : EtchObject(MockGeneratedClass::TYPE()) {
+  MockGeneratedClass() {
+    addObjectType(MockGeneratedClass::TYPE());
   }
 
   virtual ~MockGeneratedClass() {
@@ -144,7 +144,7 @@ TEST_F(EtchValidatorCustomTest, validateValueTest) {
   capu::SmartPointer<EtchObject> integer2 = new EtchInt32(5);
   capu::SmartPointer<EtchObject> integer3 = new EtchInt32(127);
   capu::SmartPointer<EtchObject> byte2 = new EtchByte(3);
-  
+
   capu::SmartPointer<EtchValidator> ptr = NULL;
   capu::SmartPointer<EtchObject> generatedClass = new MockGeneratedClass();
 
@@ -165,7 +165,7 @@ TEST_F(EtchValidatorCustomTest, validateValueTest) {
 TEST_F(EtchValidatorCustomTest, elementValidatorTest) {
   status_t status;
   capu::SmartPointer<EtchValidator> ptr = NULL;
-  
+
   status = EtchValidatorCustom::Get(1, MockGeneratedClass::TYPE(), true, ptr);
   EXPECT_EQ(ETCH_OK, status);
 

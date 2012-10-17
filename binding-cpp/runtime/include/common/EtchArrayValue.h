@@ -61,6 +61,13 @@ public:
    */
   EtchArrayValue(capu::SmartPointer<EtchNativeArrayBase> array, capu::int32_t size);
 
+  /**
+   * Constructs an array value copy with no type info. This is used perhaps
+   * by extern struct serializers.
+   * @param other Array Value
+   */
+  EtchArrayValue(const EtchArrayValue& other);
+
   virtual ~EtchArrayValue();
 
   /**
@@ -97,6 +104,11 @@ public:
    */
   void setIndex(capu::int32_t val);
 
+  /**
+   * @return true if two object is equal
+   *         false otherwise
+   */
+  virtual capu::bool_t equals(const EtchObject * other) const;
 
   /**
    * @param index

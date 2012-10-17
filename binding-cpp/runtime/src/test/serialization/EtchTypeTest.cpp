@@ -164,3 +164,20 @@ TEST_F(EtchTypeTest, lockTest) {
   EXPECT_TRUE(t.getSuperType() == NULL);
   delete t2;
 }
+
+TEST_F(EtchTypeTest, copyTest) {
+  EtchType o1(EtchString("test"));
+  EtchType o2(o1);
+  EtchType o3 = o2;
+  EXPECT_TRUE(o1.equals(&o2));
+  EXPECT_TRUE(o2.equals(&o3));
+}
+
+TEST_F(EtchTypeTest, isInstanceOf) {
+  EtchObject* o1 = new EtchType(EtchString("test"));
+  EXPECT_TRUE(o1->isInstanceOf(EtchObject::TYPE()));
+  EXPECT_TRUE(o1->isInstanceOf(EtchType::TYPE()));
+  EXPECT_FALSE(o1->isInstanceOf(EtchString::TYPE()));
+  delete o1;
+}
+

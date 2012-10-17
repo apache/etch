@@ -29,6 +29,14 @@ class EtchRuntime;
 class EtchValidatorStructValue : public EtchTypeValidator {
 public:
 
+  /**
+   * Copy Constructor
+   */
+  EtchValidatorStructValue(const EtchValidatorStructValue& other);
+
+  /**
+   * Destructor
+   */
   virtual ~EtchValidatorStructValue();
 
   /**
@@ -55,7 +63,7 @@ public:
    * EtchObjectType for EtchRuntimeException.
    */
   static const EtchObjectType* TYPE();
-  
+
   EtchType* getType();
 
 protected:

@@ -136,7 +136,7 @@ TEST_F(EtchMessageTest, getTypeTest) {
 
   //Create Value Factory
   EtchValueFactory* factory = new MockValueFactory7();
-  
+
   //create message
   EtchMessage *sv = new EtchMessage(comp, factory);
   EXPECT_TRUE(sv->getType()->equals(comp));

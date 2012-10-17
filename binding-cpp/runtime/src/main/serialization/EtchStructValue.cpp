@@ -24,13 +24,17 @@ const EtchObjectType* EtchStructValue::TYPE() {
 }
 
 EtchStructValue::EtchStructValue(EtchType* type, EtchValueFactory* vf)
-: EtchObject(EtchStructValue::TYPE()), mType(type), mLevel(vf->getLevel()), mTable(DEFAULT_SIZE) {
-
+ : mType(type), mLevel(vf->getLevel()), mTable(DEFAULT_SIZE) {
+  addObjectType(TYPE());
 }
 
 EtchStructValue::EtchStructValue(EtchType* type, EtchValueFactory* vf, capu::uint32_t length)
-: EtchObject(EtchStructValue::TYPE()), mType(type), mLevel(vf->getLevel()), mTable(length > 0 ? (length * 4 + 2) / 3 : DEFAULT_SIZE) {
+ : mType(type), mLevel(vf->getLevel()), mTable(length > 0 ? (length * 4 + 2) / 3 : DEFAULT_SIZE) {
+  addObjectType(TYPE());
+}
 
+EtchStructValue::EtchStructValue(const EtchStructValue& other)
+ : EtchObject(other), mType(other.mType), mLevel(other.mLevel), mTable(other.mTable) {
 }
 
 EtchStructValue::~EtchStructValue() {
@@ -93,7 +97,7 @@ status_t EtchStructValue::get(const EtchField &key, capu::SmartPointer<EtchObjec
   return mTable.get(key, value);
 }
 
-EtchStructValue::Iterator EtchStructValue::begin()
+EtchStructValue::Iterator EtchStructValue::begin() const
 {
   return mTable.begin();
 }

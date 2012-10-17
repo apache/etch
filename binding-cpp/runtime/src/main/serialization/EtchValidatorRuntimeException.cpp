@@ -37,6 +37,11 @@ EtchValidatorRuntimeException::EtchValidatorRuntimeException()
   mRuntime = EtchRuntime::getRuntime();
 }
 
+EtchValidatorRuntimeException::EtchValidatorRuntimeException(const EtchValidatorRuntimeException& other)
+: EtchValidator(other), mRuntime(other.mRuntime) {
+
+}
+
 EtchValidatorRuntimeException::~EtchValidatorRuntimeException() {
 }
 

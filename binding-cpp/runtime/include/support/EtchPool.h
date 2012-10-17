@@ -31,11 +31,23 @@ class EtchPool
 public:
 
   /**
+   * EtchObjectType for EtchPool.
+   */
+  static const EtchObjectType* TYPE();
+
+  /**
    * Creates a new instance of the EtchPool-Class.
    */
-  EtchPool(const EtchObjectType* type)
-    : EtchObject(type) {}
+  EtchPool() {
+    addObjectType(TYPE());
+  }
 
+  /**
+   * Creates a copy of the EtchPool-Class.
+   */
+  EtchPool(const EtchObject& other)
+   : EtchObject(other) {
+  }
   /**
    * Destructure.
    */
