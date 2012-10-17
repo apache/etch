@@ -64,8 +64,50 @@ public:
    */
   void lock();
 
+  /**
+   * Hashing Functions for the EtchClass2TypeMap
+   */
+  class Hash {
+  public:
+  static capu::uint32_t Digest(const EtchObjectType &key) {
+    return key.getHashCode();
+    }
+
+    static capu::uint32_t Digest(const EtchObjectType* key) {
+    return key->getHashCode();
+    }
+
+    static capu::uint32_t Digest(const capu::SmartPointer<EtchObjectType>& key) {
+    return key->getHashCode();
+    }
+  };
+
+  /**
+   * Comperator Functions for the EtchClass2TypeMap
+   */
+  template <class T>
+  class Comparator {
+  public:
+    inline capu::bool_t operator() (const EtchObjectType &first, const EtchObjectType &second) const {
+    return first.equals(&second);
+    }
+  };
+  template <class T>
+  class Comparator <T*> {
+  public:
+    inline capu::bool_t operator() (const EtchObjectType* first, const EtchObjectType* second) const {
+      return first->equals(second);
+    }
+  };
+  template <class T>
+  class Comparator <capu::SmartPointer<T> > {
+  public:
+    inline capu::bool_t operator() (const capu::SmartPointer<EtchObjectType>& first, const capu::SmartPointer<EtchObjectType>& second) const {
+      return first->equals(second.get());
+    }
+  };
 private:
-  EtchHashTable<const EtchObjectType*, EtchType* > mC2T;
+  EtchHashTable<const EtchObjectType*, EtchType*, EtchClass2TypeMap::Hash, EtchClass2TypeMap::Comparator<const EtchObjectType*> > mC2T;
 
   capu::bool_t mLocked;
 
