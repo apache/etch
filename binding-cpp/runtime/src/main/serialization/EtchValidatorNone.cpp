@@ -29,10 +29,8 @@ const EtchObjectType* EtchValidatorNone::TYPE() {
   return &TYPE;
 }
 
-EtchValidatorNone::EtchValidatorNone()
-: EtchValidator(EtchValidatorNone::TYPE()) {
-  //TODO rafactor this
-  mRuntime = EtchRuntime::getRuntime();
+EtchValidatorNone::EtchValidatorNone(EtchRuntime* runtime)
+: EtchValidator(EtchValidatorNone::TYPE()), mRuntime(runtime) {
 }
 
 EtchValidatorNone::EtchValidatorNone(const EtchValidatorNone& other)
@@ -58,12 +56,9 @@ status_t EtchValidatorNone::validateValue(capu::SmartPointer<EtchObject> value, 
   }
 }
 
-status_t EtchValidatorNone::Get(capu::SmartPointer<EtchValidator> &val) {
-  //TODO rafactor this
-  EtchRuntime* runtime = EtchRuntime::getRuntime();
-
+status_t EtchValidatorNone::Get(EtchRuntime* runtime, capu::SmartPointer<EtchValidator> &val) {
   if (Validators(runtime)[0].get() == NULL) {
-    Validators(runtime)[0] = new EtchValidatorNone();
+    Validators(runtime)[0] = new EtchValidatorNone(runtime);
     CAPU_LOG_TRACE(runtime->getLogger(), "EtchValidatorNone", "EtchValidatorNone has been created");
   }
   val = Validators(runtime)[0];

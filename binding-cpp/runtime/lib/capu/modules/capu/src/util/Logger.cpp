@@ -98,31 +98,29 @@ namespace capu {
     return CAPU_OK;
   }
 
-  status_t Logger::vlog(LoggerLevel level, const char *tag, const char *file, int32_t line, const char *msgFormat, va_list args) {
+  status_t Logger::vlog(LoggerLevel level, const char_t *tag, const char_t *file, int32_t line, const char_t *msgFormat, va_list args) {
 
-    LoggerMessage *msg = new LoggerMessage();
-    msg->setId(mId);
-    msg->setTimestamp(0); // not implemented
-    msg->setThreadId(0);  // not implemented
-    msg->setLevel(level);
-    msg->setTag(tag);
-    msg->setFile(file);
-    msg->setLine(line);
+    LoggerMessage msg;
+    msg.setId(mId);
+    msg.setTimestamp(0); // not implemented
+    msg.setThreadId(0);  // not implemented
+    msg.setLevel(level);
+    msg.setTag(tag);
+    msg.setFile(file);
+    msg.setLine(line);
 
     int32_t size = StringUtils::Vscprintf(msgFormat, args);
-    char* buffer = new char[size + 1];
+    char_t* buffer = new char_t[size + 1];
     StringUtils::Vsprintf(buffer, size + 1, msgFormat, args);
-    msg->setMessage(buffer);
+    msg.setMessage(buffer);
     delete [] buffer;
 
     // log message
     for(int i = 0; i < LOGGER_APPENDER_MAX; i++) {
       if(mAppenders[i] != NULL) {
-        mAppenders[i]->log(msg);
+        mAppenders[i]->log(&msg);
       }
     }
-    delete msg;
-
     return CAPU_OK;
   }
 

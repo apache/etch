@@ -21,17 +21,14 @@
 
 static const char* TAG = "EtchBinaryTaggedDataInput";
 
-EtchBinaryTaggedDataInput::EtchBinaryTaggedDataInput(EtchValueFactory* vf)
-: EtchBinaryTaggedData(vf), mBuffer(NULL), mLengthBudget(0) {
-  // TODO refacotring
-  mRuntime = EtchRuntime::getRuntime();
-
+EtchBinaryTaggedDataInput::EtchBinaryTaggedDataInput(EtchRuntime* runtime, EtchValueFactory* vf)
+: EtchBinaryTaggedData(vf), mRuntime(runtime), mBuffer(NULL), mLengthBudget(0) {
   //get int validator
-  EtchValidatorInt::Get(0, mIntValidator);
+  EtchValidatorInt::Get(runtime, 0, mIntValidator);
 
   //get string validator
   capu::SmartPointer<EtchValidator> stringValidator;
-  EtchValidatorString::Get(0, stringValidator);
+  EtchValidatorString::Get(runtime, 0, stringValidator);
 
   //create combo validator
   mIntOrStrValidator = new EtchComboValidator(mIntValidator, stringValidator);
@@ -149,7 +146,7 @@ status_t EtchBinaryTaggedDataInput::readKeysAndValues(capu::SmartPointer<EtchStr
     } else {
       capu::SmartPointer<EtchObject> obj;
       capu::SmartPointer<EtchValidator> val;
-      EtchValidatorObject::Get(0, val);
+      EtchValidatorObject::Get(mRuntime, 0, val);
       readValue(val, obj);
     }
   }

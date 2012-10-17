@@ -81,16 +81,11 @@ class EtchPacketizerTest
 protected:
   virtual void SetUp() {
     mRuntime = new EtchRuntime();
-    mRuntime->setLogger(new EtchLogger());
     mRuntime->start();
   }
 
   virtual void TearDown() {
     mRuntime->shutdown();
-    EtchLogger* logger = mRuntime->getLogger();
-    if(logger != NULL) {
-      delete logger;
-    }
     delete mRuntime;
     mRuntime = NULL;
   }
@@ -101,21 +96,21 @@ protected:
 TEST_F(EtchPacketizerTest, constructorTest) {
   EtchURL u("tcp://127.0.0.1:4001");
   EtchTransportData* conn = new EtchTcpConnection(mRuntime, NULL, &u);
-  EtchSessionData* packetizer = new EtchPacketizer(conn, &u);
+  EtchSessionData* packetizer = new EtchPacketizer(mRuntime, conn, &u);
 
   delete conn;
   delete packetizer;
-  
+
 }
 
 TEST_F(EtchPacketizerTest, TransportControlTest) {
   EtchURL u("tcp://127.0.0.1:4001");
   EtchTransportData* conn = new EtchTcpConnection(mRuntime, NULL, &u);
-  EtchPacketizer* packetizer = new EtchPacketizer(conn, &u);
+  EtchPacketizer* packetizer = new EtchPacketizer(mRuntime, conn, &u);
   MockMessagizer mes;
   packetizer->setSession(&mes);
 
-  EtchTcpListener* transport = new EtchTcpListener(&u);
+  EtchTcpListener* transport = new EtchTcpListener(mRuntime, &u);
   EtchSessionListener<EtchSocket>* listener = new MockListener3(transport);
 
   //Start the mock listener
@@ -134,7 +129,7 @@ TEST_F(EtchPacketizerTest, TransportControlTest) {
 TEST_F(EtchPacketizerTest, TransportPacketTest) {
   EtchURL u("tcp://127.0.0.1:4001");
   EtchTransportData* conn = new EtchTcpConnection(mRuntime, NULL, &u);
-  EtchPacketizer* packetizer = new EtchPacketizer(conn, &u);
+  EtchPacketizer* packetizer = new EtchPacketizer(mRuntime, conn, &u);
   MockMessagizer mes;
   packetizer->setSession(&mes);
   capu::SmartPointer<EtchFlexBuffer> buffer = new EtchFlexBuffer();
@@ -153,7 +148,7 @@ TEST_F(EtchPacketizerTest, TransportPacketTest) {
 TEST_F(EtchPacketizerTest, SessionDataTest) {
   EtchURL u("tcp://127.0.0.1:4001");
   EtchTransportData* conn = new EtchTcpConnection(mRuntime, NULL, &u);
-  EtchPacketizer* packetizer = new EtchPacketizer(conn, &u);
+  EtchPacketizer* packetizer = new EtchPacketizer(mRuntime, conn, &u);
   capu::SmartPointer<EtchFlexBuffer> buffer = new EtchFlexBuffer();
   //A packet is created
   capu::int32_t pktsize = 4;

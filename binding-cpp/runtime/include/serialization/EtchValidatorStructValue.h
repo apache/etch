@@ -57,7 +57,7 @@ public:
   /**
    * @see EtchValidator
    */
-  static status_t Get(EtchType* type, capu::uint32_t ndim, capu::SmartPointer<EtchValidator> &val);
+  static status_t Get(EtchRuntime* runtime, EtchType* type, capu::uint32_t ndim, capu::SmartPointer<EtchValidator> &val);
 
   /**
    * EtchObjectType for EtchRuntimeException.
@@ -68,7 +68,7 @@ public:
 
 protected:
 
-  EtchValidatorStructValue(EtchType* type, capu::uint32_t ndim);
+  EtchValidatorStructValue(EtchRuntime* runtime, EtchType* type, capu::uint32_t ndim);
 
 private:
   EtchRuntime* mRuntime;

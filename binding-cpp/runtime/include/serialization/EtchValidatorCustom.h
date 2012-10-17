@@ -110,7 +110,7 @@ public:
   /**
    * @see EtchValidator
    */
-  static status_t Get(capu::uint32_t ndim, const EtchObjectType *type, capu::bool_t sub, capu::SmartPointer<EtchValidator> &val);
+  static status_t Get(EtchRuntime* runtime, capu::uint32_t ndim, const EtchObjectType *type, capu::bool_t sub, capu::SmartPointer<EtchValidator> &val);
 
 protected:
 
@@ -120,9 +120,10 @@ protected:
    * @param dim dimensions
    * @param sub is subclass ok
    */
-  EtchValidatorCustom(const EtchObjectType *type, capu::uint32_t ndim, capu::bool_t sub);
+  EtchValidatorCustom(EtchRuntime* runtime, const EtchObjectType *type, capu::uint32_t ndim, capu::bool_t sub);
 
 private:
+  EtchRuntime* mRuntime;
   static EtchHashTable<EtchValidatorCustomKey, capu::SmartPointer<EtchValidator> >& Validators(EtchRuntime* runtime);
 };
 

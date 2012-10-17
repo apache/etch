@@ -161,16 +161,11 @@ class EtchStructValueTest
 protected:
   virtual void SetUp() {
     mRuntime = new EtchRuntime();
-    mRuntime->setLogger(new EtchLogger());
     mRuntime->start();
   }
 
   virtual void TearDown() {
     mRuntime->shutdown();
-    EtchLogger* logger = mRuntime->getLogger();
-    if(logger != NULL) {
-      delete logger;
-    }
     delete mRuntime;
     mRuntime = NULL;
   }
@@ -189,8 +184,8 @@ TEST_F(EtchStructValueTest, createTest) {
 
   capu::SmartPointer<EtchValidator> v1;
   capu::SmartPointer<EtchValidator> v2;
-  EtchValidatorBoolean::Get(0, v1);
-  EtchValidatorBoolean::Get(0, v2);
+  EtchValidatorBoolean::Get(mRuntime, 0, v1);
+  EtchValidatorBoolean::Get(mRuntime, 0, v2);
 
   comp->putValidator(field1, v1);
   comp->putValidator(field2, v2);
@@ -216,8 +211,8 @@ TEST_F(EtchStructValueTest, getTypeTest) {
 
   capu::SmartPointer<EtchValidator> v1;
   capu::SmartPointer<EtchValidator> v2;
-  EtchValidatorBoolean::Get(0, v1);
-  EtchValidatorBoolean::Get(0, v2);
+  EtchValidatorBoolean::Get(mRuntime, 0, v1);
+  EtchValidatorBoolean::Get(mRuntime, 0, v2);
 
   comp->putValidator(field1, v1);
   comp->putValidator(field2, v2);
@@ -242,8 +237,8 @@ TEST_F(EtchStructValueTest, isType) {
 
   capu::SmartPointer<EtchValidator> v1;
   capu::SmartPointer<EtchValidator> v2;
-  EtchValidatorBoolean::Get(0, v1);
-  EtchValidatorBoolean::Get(0, v2);
+  EtchValidatorBoolean::Get(mRuntime, 0, v1);
+  EtchValidatorBoolean::Get(mRuntime, 0, v2);
 
   comp->putValidator(field1, v1);
   comp->putValidator(field2, v2);
@@ -278,8 +273,8 @@ TEST_F(EtchStructValueTest, putTest_FULL) {
 
   capu::SmartPointer<EtchValidator> v1;
   capu::SmartPointer<EtchValidator> v2;
-  EtchValidatorBoolean::Get(0, v1);
-  EtchValidatorBoolean::Get(0, v2);
+  EtchValidatorBoolean::Get(mRuntime, 0, v1);
+  EtchValidatorBoolean::Get(mRuntime, 0, v2);
 
   comp->putValidator(field1, v1);
   comp->putValidator(field2, v2);
@@ -328,8 +323,8 @@ TEST_F(EtchStructValueTest, putTest_MISSING_OK) {
 
   capu::SmartPointer<EtchValidator> v1;
   capu::SmartPointer<EtchValidator> v2;
-  EtchValidatorBoolean::Get(0, v1);
-  EtchValidatorBoolean::Get(0, v2);
+  EtchValidatorBoolean::Get(mRuntime, 0, v1);
+  EtchValidatorBoolean::Get(mRuntime, 0, v2);
 
   comp->putValidator(field1, v1);
   comp->putValidator(field2, v2);
@@ -378,8 +373,8 @@ TEST_F(EtchStructValueTest, putTest_NONE) {
 
   capu::SmartPointer<EtchValidator> v1;
   capu::SmartPointer<EtchValidator> v2;
-  EtchValidatorBoolean::Get(0, v1);
-  EtchValidatorBoolean::Get(0, v2);
+  EtchValidatorBoolean::Get(mRuntime, 0, v1);
+  EtchValidatorBoolean::Get(mRuntime, 0, v2);
 
   comp->putValidator(field1, v1);
   comp->putValidator(field2, v2);
@@ -422,8 +417,8 @@ TEST_F(EtchStructValueTest, getTest) {
 
   capu::SmartPointer<EtchValidator> v1;
   capu::SmartPointer<EtchValidator> v2;
-  EtchValidatorBoolean::Get(0, v1);
-  EtchValidatorBoolean::Get(0, v2);
+  EtchValidatorBoolean::Get(mRuntime, 0, v1);
+  EtchValidatorBoolean::Get(mRuntime, 0, v2);
 
   comp->putValidator(field1, v1);
   comp->putValidator(field2, v2);
@@ -462,7 +457,7 @@ TEST_F(EtchStructValueTest, removeTest) {
   EtchType* comp = new EtchType(90, typeName);
 
   capu::SmartPointer<EtchValidator> v1;
-  EtchValidatorBoolean::Get(0, v1);
+  EtchValidatorBoolean::Get(mRuntime, 0, v1);
   comp->putValidator(field1, v1);
 
   EtchStructValue *sv = new EtchStructValue(comp, factory);

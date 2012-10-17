@@ -73,16 +73,11 @@ class EtchRuntimeExceptionSerializationTest
 protected:
   virtual void SetUp() {
     mRuntime = new EtchRuntime();
-    mRuntime->setLogger(new EtchLogger());
     mRuntime->start();
   }
 
   virtual void TearDown() {
     mRuntime->shutdown();
-    EtchLogger* logger = mRuntime->getLogger();
-    if(logger != NULL) {
-      delete logger;
-    }
     delete mRuntime;
     mRuntime = NULL;
   }
@@ -95,7 +90,7 @@ TEST_F(EtchRuntimeExceptionSerializationTest, initTest) {
   EtchString typeName("type1");
   EtchType* type = new EtchType(10, typeName);
   EtchType* result;
-  EtchRuntimeExceptionSerializer::Init(type, c2type);
+  EtchRuntimeExceptionSerializer::Init(mRuntime, type, c2type);
   c2type->get(EtchRuntimeException::TYPE(), &result);
 
   //check the added type to class to type matching
@@ -111,7 +106,7 @@ TEST_F(EtchRuntimeExceptionSerializationTest, initTest) {
   //check validator
   type->getValidator(field, validator);
   capu::SmartPointer<EtchValidator> val;
-  EtchValidatorString::Get(0, val);
+  EtchValidatorString::Get(mRuntime, 0, val);
   EXPECT_TRUE(validator == val);
   delete type;
   delete c2type;
@@ -128,7 +123,7 @@ TEST_F(EtchRuntimeExceptionSerializationTest, exportTest) {
   capu::SmartPointer<EtchObject> object3;
   EtchStructValue* result;
   //initialize the serializer
-  EtchRuntimeExceptionSerializer::Init(type, c2type);
+  EtchRuntimeExceptionSerializer::Init(mRuntime, type, c2type);
   EtchImportExportHelper* test = type->getImportExportHelper();
   //check with invalid values
   EXPECT_TRUE(test->exportValue(NULL, NULL, result) == ETCH_EINVAL);
@@ -167,7 +162,7 @@ TEST_F(EtchRuntimeExceptionSerializationTest, importTest) {
   capu::SmartPointer<EtchObject> object = new EtchRuntimeException(message, ETCH_ERROR);
   EtchStructValue* structValue;
   //initialize the serializer
-  EtchRuntimeExceptionSerializer::Init(type, c2type);
+  EtchRuntimeExceptionSerializer::Init(mRuntime, type, c2type);
   //get the serializer
   EtchImportExportHelper* test = type->getImportExportHelper();
   //export values

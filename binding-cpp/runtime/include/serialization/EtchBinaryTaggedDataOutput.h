@@ -43,7 +43,7 @@ public:
    * @param vf the value factory for the service.
    * @param uri.
    */
-  EtchBinaryTaggedDataOutput(EtchValueFactory *vf, EtchURL* uri);
+  EtchBinaryTaggedDataOutput(EtchRuntime* runtime, EtchValueFactory *vf, EtchURL* uri);
 
   /**
    * Destructor
@@ -58,8 +58,8 @@ public:
 
 private:
   EtchRuntime* mRuntime;
-  capu::SmartPointer<EtchFlexBuffer> mBuffer;
   EtchLevel mLevel;
+  capu::SmartPointer<EtchFlexBuffer> mBuffer;
   capu::bool_t mStringTypeAndField;
   capu::SmartPointer<EtchValidator> mIntValidator;
   capu::SmartPointer<EtchValidator> mStringValidator;

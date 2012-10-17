@@ -22,6 +22,8 @@
 #include "common/EtchString.h"
 #include "util/EtchResources.h"
 
+class EtchRuntime;
+
 /**
  * Class to help construct transport stacks.
  */
@@ -63,7 +65,7 @@ public:
    * @return an error if there is a problem
    *         ETCH_OK otherwise
    */
-  static status_t InitResources( EtchResources* resources, EtchResources*& result );
+  static status_t InitResources(EtchRuntime* runtime, EtchResources* resources, EtchResources*& result);
 
   /**
    * Destroyes the given standard resources
@@ -71,7 +73,7 @@ public:
    * @return an error if there is a problem
    *         ETCH_OK otherwise
    */
-  static status_t DestroyResources(EtchResources* resources);
+  static status_t DestroyResources(EtchRuntime* runtime, EtchResources* resources);
 };
 
 #endif /* __ETCHTRANSPORTHELPER_H__ */

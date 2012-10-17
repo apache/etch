@@ -88,10 +88,10 @@ public:
   /**
    * Gets the next available item from the queue, waiting
    * until an item is available or the queue is closed.
-   * 
+   *
    * @param element an item from the queue or null if the queue
    * is closed
-   * @return ETCH_OK if the item could be dequeued, ETCH_EINVAL if 
+   * @return ETCH_OK if the item could be dequeued, ETCH_EINVAL if
    * the param is invalid or ETCH_ERROR if the queue is closed.
    */
    status_t get(EtchMailbox::EtchElement** element);
@@ -99,14 +99,14 @@ public:
   /**
    * Gets the next available item from the queue, waiting
    * until an item is available or the queue is closed.
-   * 
+   *
    * @param element an item from the queue or null if maxDelay
    * has been exceeded or the queue is closed.
    * @param maxDelay the maximum time in ms to wait for
    * something to be put in the queue; 0 means wait forever,
    * less than 0 means don't wait at all.
    *
-   * @return ETCH_OK if the item could be dequeued, ETCH_EINVAL if 
+   * @return ETCH_OK if the item could be dequeued, ETCH_EINVAL if
    * the param is invalid, ETCH_TIMEOUT if maxDelay has been exceeded
    * or ETCH_ERROR if an error occurred
    */
@@ -115,10 +115,10 @@ public:
   /**
    * Puts an item in the queue, waiting until space is available
    * or the queue is closed.
-   * 
+   *
    * @param obj a non-null item to put in the queue.
-   * 
-   * @return ETCH_OK if the item was placed in the queue, ETCH_EINVAL if 
+   *
+   * @return ETCH_OK if the item was placed in the queue, ETCH_EINVAL if
    * the param is invalid or ETCH_ERROR if the queue is closed.
    */
   status_t put(EtchMailbox::EtchElement* obj);
@@ -126,17 +126,17 @@ public:
   /**
    * Puts an item in the queue, waiting until space is available
    * or the queue is closed.
-   * 
+   *
    * @param obj a non-null item to put in the queue.
-   * 
+   *
    * @param maxDelay the maximum time in ms to wait for
    * available space the queue; 0 means wait forever,
    * less than 0 means don't wait at all.
-   * 
-   * @return ETCH_OK if the item was placed in the queue, 
+   *
+   * @return ETCH_OK if the item was placed in the queue,
    *  ETCH_TIMEOUT if maxDelay has been exceeded or ETCH_ERROR if an error occurred
    */
-  status_t put(EtchMailbox::EtchElement* obj, capu::int32_t maxDelay); 
+  status_t put(EtchMailbox::EtchElement* obj, capu::int32_t maxDelay);
 
   /**
    * Closes the queue so that no more items may be put into it.
@@ -166,7 +166,7 @@ private:
    * up the next one waiting for the queue, either to get or put.
    * @param obj non-null item to put.
    *
-   * @return ETCH_OK if the item was placed in the queue, ETCH_EINVAL if 
+   * @return ETCH_OK if the item was placed in the queue, ETCH_EINVAL if
    * the param is invalid or ETCH_ERROR if the queue is closed.
    */
   status_t putAndNotify(EtchMailbox::EtchElement* obj);
@@ -184,7 +184,7 @@ private:
    * Puts the item at the tail of the queue.
    * @param obj non-null item to put.
    *
-   * @return ETCH_OK if the item was placed in the queue, ETCH_EINVAL if 
+   * @return ETCH_OK if the item was placed in the queue, ETCH_EINVAL if
    * the param is invalid or ETCH_ERROR if the queue is closed.
    */
   status_t put0(EtchMailbox::EtchElement* obj);

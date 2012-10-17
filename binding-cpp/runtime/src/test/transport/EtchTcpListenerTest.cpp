@@ -74,16 +74,11 @@ class EtchTcpListenerTest
 protected:
   virtual void SetUp() {
     mRuntime = new EtchRuntime();
-    mRuntime->setLogger(new EtchLogger());
     mRuntime->start();
   }
 
   virtual void TearDown() {
     mRuntime->shutdown();
-    EtchLogger* logger = mRuntime->getLogger();
-    if(logger != NULL) {
-      delete logger;
-    }
     delete mRuntime;
     mRuntime = NULL;
   }
@@ -93,7 +88,7 @@ protected:
 
 TEST_F(EtchTcpListenerTest, constructorTest) {
   EtchURL url("tcp://127.0.0.1:4001");
-  EtchTcpListener * tcpListener = new EtchTcpListener(&url);
+  EtchTcpListener * tcpListener = new EtchTcpListener(mRuntime, &url);
   EXPECT_TRUE(tcpListener != NULL);
   delete tcpListener;
 }
@@ -101,7 +96,7 @@ TEST_F(EtchTcpListenerTest, constructorTest) {
 TEST_F(EtchTcpListenerTest, transportControlTest) {
   MockListener2 mock;
   EtchURL url("tcp://127.0.0.1:4001");
-  EtchTcpListener * tcpListener = new EtchTcpListener(&url);
+  EtchTcpListener * tcpListener = new EtchTcpListener(mRuntime, &url);
   tcpListener->setSession(&mock);
   tcpListener->transportControl(new EtchString(EtchTcpListener::START_AND_WAIT_UP()), new EtchInt32(1000));
   EXPECT_TRUE(tcpListener->isStarted());
@@ -111,10 +106,10 @@ TEST_F(EtchTcpListenerTest, transportControlTest) {
 
 TEST_F(EtchTcpListenerTest, isStartedTest) {
   // TODO refactor this test
-  
+
   EtchURL url("tcp://127.0.0.1:4001");
   EtchTcpConnection * conn = new EtchTcpConnection(mRuntime, NULL, &url);
-  EtchTcpListener *listener = new EtchTcpListener(&url);
+  EtchTcpListener *listener = new EtchTcpListener(mRuntime, &url);
   EtchSessionListener<EtchSocket>* mSessionListener = new MockListener2();
   EtchSessionData* mPacketizer = new MockPacketizer2();
   EXPECT_FALSE(listener->isStarted());

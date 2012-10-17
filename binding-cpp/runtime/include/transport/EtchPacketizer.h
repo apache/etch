@@ -61,7 +61,7 @@ public:
    * @param uri
    * @param resources
    */
-  EtchPacketizer(EtchTransportData* transport, EtchString& uri);
+  EtchPacketizer(EtchRuntime* runtime, EtchTransportData* transport, EtchString& uri);
 
   /**
    * Constructs the Packetizer with null packet handler and uri specified
@@ -70,7 +70,7 @@ public:
    * @param uri
    * @param resources
    */
-  EtchPacketizer(EtchTransportData* transport, EtchURL* uri);
+  EtchPacketizer(EtchRuntime* runtime, EtchTransportData* transport, EtchURL* uri);
 
   /**
    * Destructor

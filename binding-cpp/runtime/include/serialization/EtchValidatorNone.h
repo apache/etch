@@ -54,12 +54,12 @@ public:
   /**
    * @see EtchValidator
    */
-  static status_t Get(capu::SmartPointer<EtchValidator> &val);
+  static status_t Get(EtchRuntime* runtime, capu::SmartPointer<EtchValidator> &val);
 
   static const EtchObjectType* TYPE();
 
 protected:
-  EtchValidatorNone();
+  EtchValidatorNone(EtchRuntime* runtime);
 
 private:
   EtchRuntime* mRuntime;

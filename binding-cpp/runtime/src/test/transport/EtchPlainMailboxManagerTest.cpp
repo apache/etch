@@ -79,8 +79,8 @@ public:
    */
 public:
 
-  MockDefaultValueFactory(EtchString uri) {
-    EtchDefaultValueFactory::Init(&types, &class2type);
+  MockDefaultValueFactory(EtchRuntime* runtime, EtchString uri) {
+    EtchDefaultValueFactory::Init(runtime, &types, &class2type);
     factory = new EtchDefaultValueFactory(uri, &types, &class2type);
   }
 
@@ -95,16 +95,11 @@ class EtchPlainMailboxManagerTest
 protected:
   virtual void SetUp() {
     mRuntime = new EtchRuntime();
-    mRuntime->setLogger(new EtchLogger());
     mRuntime->start();
   }
 
   virtual void TearDown() {
     mRuntime->shutdown();
-    EtchLogger* logger = mRuntime->getLogger();
-    if(logger != NULL) {
-      delete logger;
-    }
     delete mRuntime;
     mRuntime = NULL;
   }
@@ -117,11 +112,11 @@ TEST_F(EtchPlainMailboxManagerTest, constructorTest) {
   MockSession session;
   MockDefaultValueFactory *factory;
   EtchString uri("tcp://127.0.0.1:4001");
-  factory = new MockDefaultValueFactory(uri);
+  factory = new MockDefaultValueFactory(mRuntime, uri);
   //created value factory
   EtchURL u(uri);
   EtchMailboxManager * manager = NULL;
-  manager = new EtchPlainMailboxManager(transport, NULL, NULL);
+  manager = new EtchPlainMailboxManager(mRuntime, transport, NULL, NULL);
 
   EXPECT_TRUE(manager != NULL);
   manager->setSession(&session);
@@ -134,11 +129,11 @@ TEST_F(EtchPlainMailboxManagerTest, constructorTest) {
 TEST_F(EtchPlainMailboxManagerTest, transportMessageTest) {
   EtchString uri("tcp://127.0.0.1:4001");
   MockDefaultValueFactory *factory;
-  factory = new MockDefaultValueFactory(uri);
+  factory = new MockDefaultValueFactory(mRuntime, uri);
   //initialization
   EtchType * type;
   capu::SmartPointer<EtchValidator> val = NULL;
-  EtchValidatorLong::Get(0, val);
+  EtchValidatorLong::Get(mRuntime, 0, val);
 
   factory->types.get("add", type);
   type->putValidator(EtchDefaultValueFactory::_mf__messageId(), val);
@@ -153,12 +148,12 @@ TEST_F(EtchPlainMailboxManagerTest, transportMessageTest) {
 
   EtchURL u(uri);
   EtchPlainMailboxManager * manager = NULL;
-  manager = new EtchPlainMailboxManager(transport, NULL, NULL);
+  manager = new EtchPlainMailboxManager(mRuntime, transport, NULL, NULL);
 
   manager->setSession(&session);
 
   EXPECT_TRUE(ETCH_OK == manager->transportMessage(NULL, message));
-  EXPECT_EQ(0, manager->count());
+  EXPECT_EQ(0u, manager->count());
   EXPECT_TRUE(ETCH_OK == message->getMessageId(id));
   EXPECT_TRUE(ETCH_OK != message->getInReplyToMessageId(id));
 
@@ -175,11 +170,11 @@ TEST_F(EtchPlainMailboxManagerTest, transportMessageTest) {
 TEST_F(EtchPlainMailboxManagerTest, transportResultMessageTest) {
   EtchString uri("tcp://127.0.0.1:4001");
   MockDefaultValueFactory *factory;
-  factory = new MockDefaultValueFactory(uri);
+  factory = new MockDefaultValueFactory(mRuntime, uri);
   //initialization
   EtchType * type;
   capu::SmartPointer<EtchValidator> val = NULL;
-  EtchValidatorLong::Get(0, val);
+  EtchValidatorLong::Get(mRuntime, 0, val);
 
   factory->types.get("add_result", type);
   type->putValidator(EtchDefaultValueFactory::_mf__messageId(), val);
@@ -197,12 +192,12 @@ TEST_F(EtchPlainMailboxManagerTest, transportResultMessageTest) {
 
   EtchURL u(uri);
   EtchPlainMailboxManager * manager = NULL;
-  manager = new EtchPlainMailboxManager(transport, NULL, NULL);
+  manager = new EtchPlainMailboxManager(mRuntime, transport, NULL, NULL);
 
   manager->setSession(&session);
 
   EXPECT_TRUE(ETCH_OK == manager->transportMessage(NULL, message));
-  EXPECT_EQ(0, manager->count());
+  EXPECT_EQ(0u, manager->count());
   EXPECT_TRUE(ETCH_OK == message->getMessageId(id));
   EXPECT_TRUE(ETCH_OK == message->getInReplyToMessageId(id));
   EXPECT_TRUE(id == 1L);
@@ -219,11 +214,11 @@ TEST_F(EtchPlainMailboxManagerTest, transportResultMessageTest) {
 TEST_F(EtchPlainMailboxManagerTest, transportCallTest) {
   EtchString uri("tcp://127.0.0.1:4001");
   MockDefaultValueFactory *factory;
-  factory = new MockDefaultValueFactory(uri);
+  factory = new MockDefaultValueFactory(mRuntime, uri);
   //initialization
   EtchType * type;
   capu::SmartPointer<EtchValidator> val = NULL;
-  EtchValidatorLong::Get(0, val);
+  EtchValidatorLong::Get(mRuntime, 0, val);
 
   factory->types.get("add", type);
   type->putValidator(EtchDefaultValueFactory::_mf__messageId(), val);
@@ -238,7 +233,7 @@ TEST_F(EtchPlainMailboxManagerTest, transportCallTest) {
 
   EtchURL u(uri);
   EtchPlainMailboxManager * manager = NULL;
-  manager = new EtchPlainMailboxManager(transport, NULL, NULL);
+  manager = new EtchPlainMailboxManager(mRuntime, transport, NULL, NULL);
 
   manager->setSession(&session);
   //in order to notify upper layers that the connection is open
@@ -246,7 +241,7 @@ TEST_F(EtchPlainMailboxManagerTest, transportCallTest) {
 
   EtchMailbox *mail;
   EXPECT_TRUE(ETCH_OK == manager->transportCall(NULL, message, mail));
-  EXPECT_EQ(1, manager->count());
+  EXPECT_EQ(1u, manager->count());
   EXPECT_TRUE(ETCH_OK == message->getMessageId(id));
   EXPECT_TRUE(ETCH_OK != message->getInReplyToMessageId(id));
 
@@ -262,11 +257,11 @@ TEST_F(EtchPlainMailboxManagerTest, transportCallTest) {
 TEST_F(EtchPlainMailboxManagerTest, replicatedTransportCallTest) {
   EtchString uri("tcp://127.0.0.1:4001");
   MockDefaultValueFactory *factory;
-  factory = new MockDefaultValueFactory(uri);
+  factory = new MockDefaultValueFactory(mRuntime, uri);
   //initialization
   EtchType * type;
   capu::SmartPointer<EtchValidator> val = NULL;
-  EtchValidatorLong::Get(0, val);
+  EtchValidatorLong::Get(mRuntime, 0, val);
 
   factory->types.get("add", type);
   type->putValidator(EtchDefaultValueFactory::_mf__messageId(), val);
@@ -284,7 +279,7 @@ TEST_F(EtchPlainMailboxManagerTest, replicatedTransportCallTest) {
 
   EtchURL u(uri);
   EtchPlainMailboxManager * manager = NULL;
-  manager = new EtchPlainMailboxManager(transport, NULL, NULL);
+  manager = new EtchPlainMailboxManager(mRuntime, transport, NULL, NULL);
 
   manager->setSession(&session);
   //in order to notify upper layers that the connection is open
@@ -293,8 +288,7 @@ TEST_F(EtchPlainMailboxManagerTest, replicatedTransportCallTest) {
   EtchMailbox *mail;
   EXPECT_TRUE(ETCH_ERROR == manager->transportCall(NULL, message, mail));
   //should not create a mailbox
-  EXPECT_EQ(0, manager->count());
-  EXPECT_TRUE(ETCH_OK == message->getMessageId(id));
+  EXPECT_EQ(ETCH_OK, message->getMessageId(id));
   EXPECT_TRUE(ETCH_OK != message->getInReplyToMessageId(id));
   //there should be no mailbox
   EXPECT_TRUE(ETCH_OK != manager->getMailbox(id, mail));
@@ -309,12 +303,12 @@ TEST_F(EtchPlainMailboxManagerTest, replicatedTransportCallTest) {
 TEST_F(EtchPlainMailboxManagerTest, sessionMessageTest) {
   EtchString uri("tcp://127.0.0.1:4001");
   MockDefaultValueFactory *factory;
-  factory = new MockDefaultValueFactory(uri);
+  factory = new MockDefaultValueFactory(mRuntime, uri);
   //initialization
   EtchType * type;
   EtchType * replyType;
   capu::SmartPointer<EtchValidator> val = NULL;
-  EtchValidatorLong::Get(0, val);
+  EtchValidatorLong::Get(mRuntime, 0, val);
 
   factory->types.get("add_result", replyType);
   factory->types.get("add", type);
@@ -332,7 +326,7 @@ TEST_F(EtchPlainMailboxManagerTest, sessionMessageTest) {
 
   EtchURL u(uri);
   EtchPlainMailboxManager * manager = NULL;
-  manager = new EtchPlainMailboxManager(transport, NULL, NULL);
+  manager = new EtchPlainMailboxManager(mRuntime, transport, NULL, NULL);
 
   manager->setSession(&session);
   //in order to notify upper layers that the connection is open
@@ -341,7 +335,7 @@ TEST_F(EtchPlainMailboxManagerTest, sessionMessageTest) {
   //perform the call
   EtchMailbox *mail;
   EXPECT_TRUE(ETCH_OK == manager->transportCall(NULL, message, mail));
-  EXPECT_EQ(1, manager->count());
+  EXPECT_EQ(1u, manager->count());
   EXPECT_TRUE(ETCH_OK == message->getMessageId(id));
   EXPECT_TRUE(ETCH_OK != message->getInReplyToMessageId(id));
   //get the created mailbox

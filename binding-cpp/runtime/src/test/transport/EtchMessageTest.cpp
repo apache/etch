@@ -77,21 +77,15 @@ class EtchMessageTest
 protected:
   virtual void SetUp() {
     mRuntime = new EtchRuntime();
-    mRuntime->setLogger(new EtchLogger());
     mRuntime->start();
   }
 
   virtual void TearDown() {
     mRuntime->shutdown();
-    EtchLogger* logger = mRuntime->getLogger();
-    if(logger != NULL) {
-      delete logger;
-    }
     delete mRuntime;
     mRuntime = NULL;
 
   }
-private:
   EtchRuntime* mRuntime;
 };
 
@@ -128,9 +122,9 @@ TEST_F(EtchMessageTest, getTypeTest) {
 
   //fill validators
   capu::SmartPointer<EtchValidator> val1;
-  EtchValidatorBoolean::Get(0, val1);
+  EtchValidatorBoolean::Get(mRuntime, 0, val1);
   capu::SmartPointer<EtchValidator> val2;
-  EtchValidatorBoolean::Get(0, val2);
+  EtchValidatorBoolean::Get(mRuntime, 0, val2);
   comp->putValidator(field1, val1);
   comp->putValidator(field2, val2);
 
@@ -154,9 +148,9 @@ TEST_F(EtchMessageTest, isType) {
   EtchType* comp = new EtchType(90, "comp");
 
   capu::SmartPointer<EtchValidator> val1;
-  EtchValidatorBoolean::Get(0, val1);
+  EtchValidatorBoolean::Get(mRuntime, 0, val1);
   capu::SmartPointer<EtchValidator> val2;
-  EtchValidatorBoolean::Get(0, val2);
+  EtchValidatorBoolean::Get(mRuntime, 0, val2);
   comp->putValidator(field1, val1);
   comp->putValidator(field2, val2);
   //Create Value Factory
@@ -187,9 +181,9 @@ TEST_F(EtchMessageTest, putTest) {
   EtchType* comp = new EtchType(90, typeName);
 
   capu::SmartPointer<EtchValidator> val1;
-  EtchValidatorBoolean::Get(0, val1);
+  EtchValidatorBoolean::Get(mRuntime, 0, val1);
   capu::SmartPointer<EtchValidator> val2;
-  EtchValidatorBoolean::Get(0, val2);
+  EtchValidatorBoolean::Get(mRuntime, 0, val2);
   comp->putValidator(field1, val1);
   comp->putValidator(field2, val2);
 
@@ -226,9 +220,9 @@ TEST_F(EtchMessageTest, getTest) {
   EtchType* comp = new EtchType(90, typeName);
 
   capu::SmartPointer<EtchValidator> val1;
-  EtchValidatorBoolean::Get(0, val1);
+  EtchValidatorBoolean::Get(mRuntime, 0, val1);
   capu::SmartPointer<EtchValidator> val2;
-  EtchValidatorBoolean::Get(0, val2);
+  EtchValidatorBoolean::Get(mRuntime, 0, val2);
   comp->putValidator(field1, val1);
   comp->putValidator(field2, val2);
 
@@ -265,7 +259,7 @@ TEST_F(EtchMessageTest, removeTest) {
   EtchType* comp = new EtchType(90, typeName);
 
   capu::SmartPointer<EtchValidator> val1;
-  EtchValidatorBoolean::Get(0, val1);
+  EtchValidatorBoolean::Get(mRuntime, 0, val1);
   comp->putValidator(field1, val1);
 
   EtchMessage *sv = new EtchMessage(comp, factory);

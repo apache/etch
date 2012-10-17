@@ -21,13 +21,13 @@
 #include "util/EtchCircularQueue.h"
 
 EtchCircularQueue::EtchCircularQueue()
-: mSize(10), mItems(NULL), mClosed(false), mCount(0), mHead(0), mTail(0) {
+: mItems(NULL), mClosed(false), mCount(0), mSize(10), mHead(0), mTail(0) {
   mItems = new EtchMailbox::EtchElement*[mSize];
   capu::Memory::Set(mItems, 0, sizeof(EtchMailbox::EtchElement*) * mSize);
 }
 
 EtchCircularQueue::EtchCircularQueue(capu::uint32_t size)
-: mSize(size), mItems(NULL), mClosed(false), mCount(0), mHead(0), mTail(0) {
+: mItems(NULL), mClosed(false), mCount(0), mSize(size), mHead(0), mTail(0) {
   mItems = new EtchMailbox::EtchElement*[mSize];
   capu::Memory::Set(mItems, 0, sizeof(EtchMailbox::EtchElement*) * mSize);
 }

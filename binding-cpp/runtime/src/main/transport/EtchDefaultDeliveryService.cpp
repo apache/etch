@@ -29,20 +29,14 @@ const EtchString& EtchDefaultDeliveryService::DISABLE_TIMEOUT() {
   return name;
 }
 
-EtchDefaultDeliveryService::EtchDefaultDeliveryService(EtchMailboxManager* transport, const EtchString& uri)
+EtchDefaultDeliveryService::EtchDefaultDeliveryService(EtchRuntime* runtime, EtchMailboxManager* transport, const EtchString& uri)
 : mTransport(transport), mStatus(EtchString("session status"), EtchString("")) {
-  //TODO refactor this
-  mRuntime = EtchRuntime::getRuntime();
-
   EtchURL url(uri);
   init(&url);
 }
 
-EtchDefaultDeliveryService::EtchDefaultDeliveryService(EtchMailboxManager* transport, EtchURL* uri)
-: mTransport(transport), mStatus(EtchString("session status"), EtchString("")) {
-  //TODO refactor this
-  mRuntime = EtchRuntime::getRuntime();
-
+EtchDefaultDeliveryService::EtchDefaultDeliveryService(EtchRuntime* runtime, EtchMailboxManager* transport, EtchURL* uri)
+: mRuntime(runtime), mTransport(transport), mStatus(EtchString("session status"), EtchString("")) {
   init(uri);
 }
 
@@ -150,7 +144,7 @@ status_t EtchDefaultDeliveryService::transportNotify(capu::SmartPointer<EtchObje
 }
 
 status_t EtchDefaultDeliveryService::begincall(capu::SmartPointer<EtchMessage> msg, EtchMailbox*& result) {
-  CAPU_LOG_DEBUG(mRuntime->getLogger(), TAG, "Begin call for the message has been initiated");  
+  CAPU_LOG_DEBUG(mRuntime->getLogger(), TAG, "Begin call for the message has been initiated");
   return mTransport->transportCall(NULL, msg, result);
 }
 
@@ -165,7 +159,7 @@ status_t EtchDefaultDeliveryService::endcall(EtchMailbox* mb, EtchType* response
   status_t res = mb->read(mbe, timeout);
   if (res != ETCH_OK) {
     mb->closeRead();
-    CAPU_LOG_ERROR(mRuntime->getLogger(), TAG, "Error on mailbox read, might be caused by timeout"); 
+    CAPU_LOG_ERROR(mRuntime->getLogger(), TAG, "Error on mailbox read, might be caused by timeout");
     //TODO: Add error handling
     return res;
   }
@@ -193,7 +187,7 @@ status_t EtchDefaultDeliveryService::endcall(EtchMailbox* mb, EtchType* response
   } else if (err != ETCH_OK) {
     mb->closeRead();
     rmsg->clear();
-    CAPU_LOG_ERROR(mRuntime->getLogger(), TAG, "Error on getting respective field on message structure"); 
+    CAPU_LOG_ERROR(mRuntime->getLogger(), TAG, "Error on getting respective field on message structure");
     delete mbe;
     return ETCH_ERROR;
   }

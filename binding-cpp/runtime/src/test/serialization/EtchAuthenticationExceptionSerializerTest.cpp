@@ -71,16 +71,11 @@ class EtchAuthenticationExceptionSerializationTest
 protected:
   virtual void SetUp() {
     mRuntime = new EtchRuntime();
-    mRuntime->setLogger(new EtchLogger());
     mRuntime->start();
   }
 
   virtual void TearDown() {
     mRuntime->shutdown();
-    EtchLogger* logger = mRuntime->getLogger();
-    if(logger != NULL) {
-      delete logger;
-    }
     delete mRuntime;
     mRuntime = NULL;
   }
@@ -93,7 +88,7 @@ TEST_F(EtchAuthenticationExceptionSerializationTest, initTest) {
   EtchString typeName("type1");
   EtchType* type = new EtchType(10, typeName);
   EtchType* result;
-  EXPECT_TRUE(EtchAuthenticationExceptionSerializer::Init(type, c2type) == ETCH_OK);
+  EXPECT_TRUE(EtchAuthenticationExceptionSerializer::Init(mRuntime, type, c2type) == ETCH_OK);
   c2type->get(EtchAuthenticationException::TYPE(), &result);
 
   //check the added type to class to type matching
@@ -109,7 +104,7 @@ TEST_F(EtchAuthenticationExceptionSerializationTest, initTest) {
   //check validator
   type->getValidator(field, validator);
   capu::SmartPointer<EtchValidator> val;
-  EtchValidatorString::Get(0, val);
+  EtchValidatorString::Get(mRuntime, 0, val);
   EXPECT_TRUE(validator == val);
   delete type;
   delete c2type;
@@ -126,7 +121,7 @@ TEST_F(EtchAuthenticationExceptionSerializationTest, exportTest) {
   capu::SmartPointer<EtchObject> object3;
   EtchStructValue* result;
   //initialize the serializer
-  EXPECT_TRUE(EtchAuthenticationExceptionSerializer::Init(type, c2type) == ETCH_OK);
+  EXPECT_TRUE(EtchAuthenticationExceptionSerializer::Init(mRuntime, type, c2type) == ETCH_OK);
   EtchImportExportHelper* test = type->getImportExportHelper();
   //check with invalid values
   EXPECT_TRUE(test->exportValue(NULL, NULL, result) == ETCH_EINVAL);
@@ -165,7 +160,7 @@ TEST_F(EtchAuthenticationExceptionSerializationTest, importTest) {
   capu::SmartPointer<EtchObject> object = new EtchAuthenticationException(message);
   EtchStructValue* structValue;
   //initialize the serializer
-  EXPECT_TRUE(EtchAuthenticationExceptionSerializer::Init(type, c2type) == ETCH_OK);
+  EXPECT_TRUE(EtchAuthenticationExceptionSerializer::Init(mRuntime, type, c2type) == ETCH_OK);
   //get the serializer
   EtchImportExportHelper* test = type->getImportExportHelper();
   //export values

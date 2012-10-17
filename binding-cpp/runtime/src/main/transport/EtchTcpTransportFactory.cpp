@@ -69,10 +69,10 @@ status_t EtchTcpTransportFactory::newTransport(EtchString uri, EtchResources* re
   }
   stack->setTransportData(c);
 
-  EtchTransportPacket* p = new EtchPacketizer(c, &u);
+  EtchTransportPacket* p = new EtchPacketizer(mRuntime, c, &u);
   stack->setTransportPacket(p);
 
-  EtchTransportMessage* m = new EtchMessagizer(p, &u, resources);
+  EtchTransportMessage* m = new EtchMessagizer(mRuntime, p, &u, resources);
   stack->setTransportMessage(m);
 
   //TODO: ADD FILTERS HERE
@@ -98,7 +98,7 @@ status_t EtchTcpTransportFactory::newListener(EtchString uri, EtchResources* res
     //TODO secure communication
     return ETCH_EUNIMPL;
   } else {
-    l = new EtchTcpListener(&u);
+    l = new EtchTcpListener(mRuntime, &u);
   }
 
   result = new MySessionListener(mRuntime, this, l, uri, resources, mIsSecure);
@@ -128,7 +128,7 @@ EtchTcpTransportFactory::MySessionListener::~MySessionListener() {
     delete mFactory;
   }
   if (mResources != NULL) {
-    EtchTransportHelper::DestroyResources(mResources);
+    EtchTransportHelper::DestroyResources(mRuntime, mResources);
   }
 
   capu::List<EtchStack*>::Iterator it = mConnectionStacks->begin();
@@ -168,7 +168,7 @@ status_t EtchTcpTransportFactory::MySessionListener::sessionControl(capu::SmartP
 
 status_t EtchTcpTransportFactory::MySessionListener::sessionNotify(capu::SmartPointer<EtchObject> event) {
   if (event->equals(&EtchTcpListener::CONNECTION_CHECK())) {
-    //go through the list of connection and check if the connection is still dead and we have to clean the stack up 
+    //go through the list of connection and check if the connection is still dead and we have to clean the stack up
     capu::List<EtchStack*>::Iterator it = mConnectionStacks->begin();
     while (it.hasNext()) {
       EtchStack* stack = NULL;
@@ -190,7 +190,7 @@ status_t EtchTcpTransportFactory::MySessionListener::sessionNotify(capu::SmartPo
   }
 
   return mSession->sessionNotify(event);
-  
+
 }
 
 status_t EtchTcpTransportFactory::MySessionListener::sessionAccepted(EtchSocket* connection) {

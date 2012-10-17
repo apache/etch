@@ -48,7 +48,7 @@ public:
   /**
    * Default Constructor
    */
-  EtchTcpListener(EtchURL *url);
+  EtchTcpListener(EtchRuntime* runtime, EtchURL *url);
 
   /**
    * Destructor

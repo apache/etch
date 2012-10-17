@@ -21,21 +21,15 @@
 #include "support/EtchTransportHelper.h"
 #include "util/EtchLogger.h"
 
-//TODO remove this after refactoring
-EtchRuntime* EtchRuntime::sRuntime = NULL;
-
 EtchRuntime::EtchRuntime()
-  : mIsClosed(false)
-  , mLogger(NULL) {
+  : mIsClosed(false) {
   mMutex.lock();
   mId = getNextId();
   mMutex.unlock();
-
-  //TODO remove this after refactoring
-  sRuntime = this;
 }
 
 EtchRuntime::~EtchRuntime() {
+  //do nothing
 }
 
 capu::uint64_t EtchRuntime::getId() {
@@ -101,19 +95,6 @@ capu::uint64_t EtchRuntime::getNextId() {
   return sId++;
 }
 
-status_t EtchRuntime::setLogger(EtchLogger* logger) {
-  if(logger == NULL) {
-    return ETCH_EINVAL;
-  }
-  mLogger = logger;
-  return ETCH_OK;
-}
-
-EtchLogger* EtchRuntime::getLogger() {
+EtchLogger& EtchRuntime::getLogger() {
   return mLogger;
 }
-
-EtchRuntime* EtchRuntime::getRuntime() {
-  return sRuntime;
-}
-

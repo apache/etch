@@ -131,39 +131,40 @@ EtchDefaultValueFactory::~EtchDefaultValueFactory() {
   delete mDynamicTypes;
 }
 
-status_t EtchDefaultValueFactory::Init(EtchTypeMap* types, EtchClass2TypeMap* class2type) {
-  status_t result;
+status_t EtchDefaultValueFactory::Init(EtchRuntime* runtime, EtchTypeMap* types, EtchClass2TypeMap* class2type) {
+  status_t result = ETCH_OK;
 
   EtchType *type;
-  result = types->get(ETCH_RUNTIME_EXCEPTION_TYPE_NAME(), type);
-  result = EtchRuntimeExceptionSerializer::Init(type, class2type);
+  result |= types->get(ETCH_RUNTIME_EXCEPTION_TYPE_NAME(), type);
 
-  result = types->get(ETCH_LIST_TYPE_NAME(), type);
-  result = EtchListSerializer::Init(type, class2type);
+  result |= EtchRuntimeExceptionSerializer::Init(runtime, type, class2type);
 
-  result = types->get(ETCH_MAP_TYPE_NAME(), type);
-  result = EtchHashTableSerializer::Init(type, class2type);
+  result |= types->get(ETCH_LIST_TYPE_NAME(), type);
+  result |= EtchListSerializer::Init(runtime, type, class2type);
 
-  result = types->get(ETCH_SET_TYPE_NAME(), type);
-  result = EtchSetSerializer::Init(type, class2type);
+  result |= types->get(ETCH_MAP_TYPE_NAME(), type);
+  result |= EtchHashTableSerializer::Init(runtime, type, class2type);
 
-  result = types->get(ETCH_DATETIME_TYPE_NAME(), type);
-  result = EtchDateSerializer::Init(type, class2type);
+  result |= types->get(ETCH_SET_TYPE_NAME(), type);
+  result |= EtchSetSerializer::Init(runtime, type, class2type);
 
-  result = types->get(ETCH_AUTH_EXCEPTION_TYPE_NAME(), type);
-  result = EtchAuthenticationExceptionSerializer::Init(type, class2type);
+  result |= types->get(ETCH_DATETIME_TYPE_NAME(), type);
+  result |= EtchDateSerializer::Init(runtime, type, class2type);
+
+  result |= types->get(ETCH_AUTH_EXCEPTION_TYPE_NAME(), type);
+  result |= EtchAuthenticationExceptionSerializer::Init(runtime, type, class2type);
 
   {
-    result = types->get(ETCH_EXCEPTION_MESSAGE_NAME(), type);
+    result |= types->get(ETCH_EXCEPTION_MESSAGE_NAME(), type);
     capu::SmartPointer<EtchValidator> val;
-    EtchValidatorRuntimeException::Get(val);
-    result = type->putValidator(_mf_result(), val);
-    EtchValidatorLong::Get(0, val);
-    result = type->putValidator(_mf__messageId(), val);
-    result = type->putValidator(_mf__inReplyTo(), val);
+    EtchValidatorRuntimeException::Get(runtime, val);
+    result |= type->putValidator(_mf_result(), val);
+    EtchValidatorLong::Get(runtime, 0, val);
+    result |= type->putValidator(_mf__messageId(), val);
+    result |= type->putValidator(_mf__inReplyTo(), val);
   }
 
-  return ETCH_OK;
+  return result;
 }
 
 const EtchType * EtchDefaultValueFactory::get_mt__Etch_RuntimeException() {

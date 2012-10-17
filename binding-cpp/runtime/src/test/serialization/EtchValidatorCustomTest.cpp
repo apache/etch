@@ -49,16 +49,11 @@ class EtchValidatorCustomTest
 protected:
   virtual void SetUp() {
     mRuntime = new EtchRuntime();
-    mRuntime->setLogger(new EtchLogger());
     mRuntime->start();
   }
 
   virtual void TearDown() {
     mRuntime->shutdown();
-    EtchLogger* logger = mRuntime->getLogger();
-    if(logger != NULL) {
-      delete logger;
-    }
     delete mRuntime;
     mRuntime = NULL;
   }
@@ -71,7 +66,7 @@ TEST_F(EtchValidatorCustomTest, createTest) {
 
   status_t status;
   capu::SmartPointer<EtchValidator> val;
-  status = EtchValidatorCustom::Get(0, MockGeneratedClass::TYPE(), true, val);
+  status = EtchValidatorCustom::Get(mRuntime, 0, MockGeneratedClass::TYPE(), true, val);
   EXPECT_EQ(ETCH_OK, status);
 
   ptr = (EtchValidatorCustom*)val.get();
@@ -81,7 +76,7 @@ TEST_F(EtchValidatorCustomTest, createTest) {
 
   EtchObjectType type1(99, NULL);
   EtchObjectType type2(EOTID_NATIVE_ARRAY, &type1);
-  status = EtchValidatorCustom::Get(2, MockGeneratedClass::TYPE(), true, val);
+  status = EtchValidatorCustom::Get(mRuntime, 2, MockGeneratedClass::TYPE(), true, val);
   EXPECT_EQ(ETCH_OK, status);
 
   ptr = (EtchValidatorCustom*) val.get();
@@ -115,7 +110,7 @@ TEST_F(EtchValidatorCustomTest, validateTest) {
   capu::SmartPointer<EtchObject> generatedClass = new MockGeneratedClass();
 
   capu::SmartPointer<EtchValidator> val;
-  status = EtchValidatorCustom::Get(0, MockGeneratedClass::TYPE(), true, val);
+  status = EtchValidatorCustom::Get(mRuntime, 0, MockGeneratedClass::TYPE(), true, val);
   EXPECT_EQ(ETCH_OK, status);
 
   EXPECT_FALSE(val->validate(byte));
@@ -149,7 +144,7 @@ TEST_F(EtchValidatorCustomTest, validateValueTest) {
   capu::SmartPointer<EtchObject> generatedClass = new MockGeneratedClass();
 
   capu::SmartPointer<EtchValidator> val;
-  status = EtchValidatorCustom::Get(0, MockGeneratedClass::TYPE(), true, val);
+  status = EtchValidatorCustom::Get(mRuntime, 0, MockGeneratedClass::TYPE(), true, val);
   EXPECT_EQ(ETCH_OK, status);
 
   EXPECT_TRUE(val->validateValue(byte, result) == ETCH_ERROR);
@@ -166,7 +161,7 @@ TEST_F(EtchValidatorCustomTest, elementValidatorTest) {
   status_t status;
   capu::SmartPointer<EtchValidator> ptr = NULL;
 
-  status = EtchValidatorCustom::Get(1, MockGeneratedClass::TYPE(), true, ptr);
+  status = EtchValidatorCustom::Get(mRuntime, 1, MockGeneratedClass::TYPE(), true, ptr);
   EXPECT_EQ(ETCH_OK, status);
 
   capu::SmartPointer<EtchValidator> element_validator;

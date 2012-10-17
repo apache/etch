@@ -33,10 +33,10 @@ public:
 
   /**
    * Constructs the BinaryTaggedDataInput with a null buffer.
-   * 
+   *
    * @param vf the value factory for the service.
    */
-  EtchBinaryTaggedDataInput(EtchValueFactory *vf);
+  EtchBinaryTaggedDataInput(EtchRuntime* runtime, EtchValueFactory *vf);
 
   /**
    * Destructor

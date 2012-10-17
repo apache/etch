@@ -83,8 +83,8 @@ public:
    */
 public:
 
-  MockDefaultValueFactory2(EtchString uri) {
-    EtchDefaultValueFactory::Init(&types, &class2type);
+  MockDefaultValueFactory2(EtchRuntime* runtime, EtchString uri) {
+    EtchDefaultValueFactory::Init(runtime, &types, &class2type);
     factory = new EtchDefaultValueFactory(uri, &types, &class2type);
   }
 
@@ -99,16 +99,12 @@ class EtchRemoteBaseTest
 protected:
   virtual void SetUp() {
     mRuntime = new EtchRuntime();
-    mRuntime->setLogger(new EtchLogger());
     mRuntime->start();
   }
 
   virtual void TearDown() {
     mRuntime->shutdown();
-    EtchLogger* logger = mRuntime->getLogger();
-    if(logger != NULL) {
-      delete logger;
-    }
+
     delete mRuntime;
     mRuntime = NULL;
   }
@@ -121,15 +117,15 @@ TEST_F(EtchRemoteBaseTest, constructorTest) {
   MockTransport2 *transport = new MockTransport2();
   MockDefaultValueFactory2 *factory;
   EtchString uri("tcp://127.0.0.1:4001");
-  factory = new MockDefaultValueFactory2(uri);
+  factory = new MockDefaultValueFactory2(mRuntime, uri);
   //created value factory
   EtchURL u(uri);
   EtchPlainMailboxManager * manager = NULL;
-  manager = new EtchPlainMailboxManager(transport, NULL, NULL);
+  manager = new EtchPlainMailboxManager(mRuntime, transport, NULL, NULL);
   EtchDeliveryService * service = NULL;
-  service = new EtchDefaultDeliveryService(manager, &u);
+  service = new EtchDefaultDeliveryService(mRuntime, manager, &u);
   EtchRemoteBase * remote = NULL;
-  remote = new EtchRemoteBase(service, factory->factory, NULL);
+  remote = new EtchRemoteBase(mRuntime, service, factory->factory, NULL);
 
   EXPECT_TRUE(remote != NULL);
   manager->setSession(service);
@@ -147,16 +143,16 @@ TEST_F(EtchRemoteBaseTest, newMessageTest) {
   MockTransport2 *transport = new MockTransport2();
   MockDefaultValueFactory2 *factory;
   EtchString uri("tcp://127.0.0.1:4001");
-  factory = new MockDefaultValueFactory2(uri);
+  factory = new MockDefaultValueFactory2(mRuntime, uri);
   //created value factory
   EtchURL u(uri);
 
   EtchPlainMailboxManager * manager = NULL;
-  manager = new EtchPlainMailboxManager(transport, NULL, NULL);
+  manager = new EtchPlainMailboxManager(mRuntime, transport, NULL, NULL);
   EtchDeliveryService * service = NULL;
-  service = new EtchDefaultDeliveryService(manager, &u);
+  service = new EtchDefaultDeliveryService(mRuntime, manager, &u);
   EtchRemoteBase * remote = NULL;
-  remote = new EtchRemoteBase(service, factory->factory, NULL);
+  remote = new EtchRemoteBase(mRuntime, service, factory->factory, NULL);
 
   EXPECT_TRUE(remote != NULL);
   manager->setSession(service);
@@ -187,16 +183,16 @@ TEST_F(EtchRemoteBaseTest, sendTest) {
   MockTransport2 *transport = new MockTransport2();
   MockDefaultValueFactory2 *factory;
   EtchString uri("tcp://127.0.0.1:4001");
-  factory = new MockDefaultValueFactory2(uri);
+  factory = new MockDefaultValueFactory2(mRuntime, uri);
   //created value factory
   EtchURL u(uri);
 
   EtchPlainMailboxManager * manager = NULL;
-  manager = new EtchPlainMailboxManager(transport, NULL, NULL);
+  manager = new EtchPlainMailboxManager(mRuntime, transport, NULL, NULL);
   EtchDeliveryService * service = NULL;
-  service = new EtchDefaultDeliveryService(manager, &u);
+  service = new EtchDefaultDeliveryService(mRuntime, manager, &u);
   EtchRemoteBase * remote = NULL;
-  remote = new EtchRemoteBase(service, factory->factory, NULL);
+  remote = new EtchRemoteBase(mRuntime, service, factory->factory, NULL);
 
   EXPECT_TRUE(remote != NULL);
   manager->setSession(service);
@@ -204,7 +200,7 @@ TEST_F(EtchRemoteBaseTest, sendTest) {
 
   //get the validator
   capu::SmartPointer<EtchValidator> val = NULL;
-  EtchValidatorLong::Get(0, val);
+  EtchValidatorLong::Get(mRuntime, 0, val);
   //create type
   EtchType *mt;
   factory->types.get("add", mt);
@@ -232,16 +228,16 @@ TEST_F(EtchRemoteBaseTest, beginCallTest) {
   MockTransport2 *transport = new MockTransport2();
   MockDefaultValueFactory2 *factory;
   EtchString uri("tcp://127.0.0.1:4001");
-  factory = new MockDefaultValueFactory2(uri);
+  factory = new MockDefaultValueFactory2(mRuntime, uri);
   //created value factory
   EtchURL u(uri);
 
   EtchPlainMailboxManager * manager = NULL;
-  manager = new EtchPlainMailboxManager(transport, NULL, NULL);
+  manager = new EtchPlainMailboxManager(mRuntime, transport, NULL, NULL);
   EtchDeliveryService * service = NULL;
-  service = new EtchDefaultDeliveryService(manager, &u);
+  service = new EtchDefaultDeliveryService(mRuntime, manager, &u);
   EtchRemoteBase * remote = NULL;
-  remote = new EtchRemoteBase(service, factory->factory, NULL);
+  remote = new EtchRemoteBase(mRuntime, service, factory->factory, NULL);
 
   EXPECT_TRUE(remote != NULL);
   manager->setSession(service);
@@ -249,7 +245,7 @@ TEST_F(EtchRemoteBaseTest, beginCallTest) {
 
   //get the validator
   capu::SmartPointer<EtchValidator> val = NULL;
-  EtchValidatorLong::Get(0, val);
+  EtchValidatorLong::Get(mRuntime, 0, val);
   //create type
   EtchType *mt;
   factory->types.get("add", mt);
@@ -282,16 +278,16 @@ TEST_F(EtchRemoteBaseTest, endCallTest) {
   MockTransport2 *transport = new MockTransport2();
   MockDefaultValueFactory2 *factory;
   EtchString uri("tcp://127.0.0.1:4001");
-  factory = new MockDefaultValueFactory2(uri);
+  factory = new MockDefaultValueFactory2(mRuntime, uri);
   //created value factory
   EtchURL u(uri);
 
   EtchPlainMailboxManager * manager = NULL;
-  manager = new EtchPlainMailboxManager(transport, NULL, NULL);
+  manager = new EtchPlainMailboxManager(mRuntime, transport, NULL, NULL);
   EtchDeliveryService * service = NULL;
-  service = new EtchDefaultDeliveryService(manager, &u);
+  service = new EtchDefaultDeliveryService(mRuntime, manager, &u);
   EtchRemoteBase * remote = NULL;
-  remote = new EtchRemoteBase(service, factory->factory, NULL);
+  remote = new EtchRemoteBase(mRuntime, service, factory->factory, NULL);
 
   EXPECT_TRUE(remote != NULL);
   manager->setSession(service);
@@ -301,7 +297,7 @@ TEST_F(EtchRemoteBaseTest, endCallTest) {
   EtchType * type;
   EtchType * replyType;
   capu::SmartPointer<EtchValidator> val = NULL;
-  EtchValidatorLong::Get(0, val);
+  EtchValidatorLong::Get(mRuntime, 0, val);
 
   factory->types.get("add_result", replyType);
   factory->types.get("add", type);
@@ -341,7 +337,7 @@ TEST_F(EtchRemoteBaseTest, endCallTest) {
   EXPECT_TRUE(result == data);
 
   factory->types.clear();
-  
+
   delete transport;
   delete mail;
   delete remote;

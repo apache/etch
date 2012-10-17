@@ -26,16 +26,11 @@ class EtchDefaultValueFactoryTest
 protected:
   virtual void SetUp() {
     mRuntime = new EtchRuntime();
-    mRuntime->setLogger(new EtchLogger());
     mRuntime->start();
   }
 
   virtual void TearDown() {
     mRuntime->shutdown();
-    EtchLogger* logger = mRuntime->getLogger();
-    if(logger != NULL) {
-      delete logger;
-    }
     delete mRuntime;
     mRuntime = NULL;
   }
@@ -56,7 +51,7 @@ TEST_F(EtchDefaultValueFactoryTest, createTest) {
   types->get(str, _mt_x);
   str.set("y");
   types->get(str, _mt_y);
-  EtchDefaultValueFactory::Init(types, class2type);
+  EtchDefaultValueFactory::Init(mRuntime, types, class2type);
   types->lock();
   class2type->lock();
 
@@ -86,7 +81,7 @@ TEST_F(EtchDefaultValueFactoryTest, typeTest) {
   types->get(str, _mt_x);
   str.set("y");
   types->get(str, _mt_y);
-  EtchDefaultValueFactory::Init(types, class2type);
+  EtchDefaultValueFactory::Init(mRuntime, types, class2type);
   types->lock();
   class2type->lock();
 
@@ -169,7 +164,7 @@ TEST_F(EtchDefaultValueFactoryTest, exportCustomValueTest) {
   types->get(str, _mt_x);
   str.set("y");
   types->get(str, _mt_y);
-  EtchDefaultValueFactory::Init(types, class2type);
+  EtchDefaultValueFactory::Init(mRuntime, types, class2type);
   types->lock();
   class2type->lock();
 
@@ -188,7 +183,7 @@ TEST_F(EtchDefaultValueFactoryTest, exportCustomValueTest) {
   EtchString strRuntime = "_Etch_RuntimeException";
   test->getType(strRuntime, type);
   EXPECT_TRUE(sv->isType(type));
-  EXPECT_EQ(1, sv->count());
+  EXPECT_EQ(1u, sv->count());
   EXPECT_EQ(ETCH_OK, sv->get(EtchDefaultValueFactory::_mf_msg(), &serialized));
   EXPECT_TRUE(serialized->equals(&str));
 
@@ -221,7 +216,7 @@ TEST_F(EtchDefaultValueFactoryTest, importCustomValueTest) {
   types->get(str, _mt_x);
   str.set("y");
   types->get(str, _mt_y);
-  EtchDefaultValueFactory::Init(types, class2type);
+  EtchDefaultValueFactory::Init(mRuntime, types, class2type);
   types->lock();
   class2type->lock();
 
@@ -276,7 +271,7 @@ TEST_F(EtchDefaultValueFactoryTest, lockTest) {
   types->get(str, _mt_x);
   str.set("y");
   types->get(str, _mt_y);
-  EtchDefaultValueFactory::Init(types, class2type);
+  EtchDefaultValueFactory::Init(mRuntime, types, class2type);
   types->lock();
   class2type->lock();
 
@@ -319,7 +314,7 @@ TEST_F(EtchDefaultValueFactoryTest, messageIdTest) {
   types->get(str, _mt_x);
   str.set("y");
   types->get(str, _mt_y);
-  EtchDefaultValueFactory::Init(types, class2type);
+  EtchDefaultValueFactory::Init(mRuntime, types, class2type);
   types->lock();
   class2type->lock();
 
@@ -331,7 +326,7 @@ TEST_F(EtchDefaultValueFactoryTest, messageIdTest) {
   EtchType *mt_foo = new EtchType(str);
 
   capu::SmartPointer<EtchValidator> val;
-  EtchValidatorLong::Get(0, val);
+  EtchValidatorLong::Get(mRuntime, 0, val);
   mt_foo->putValidator(EtchDefaultValueFactory::_mf__messageId(), val);
 
   EtchMessage *msg = new EtchMessage(mt_foo, test);
@@ -369,7 +364,7 @@ TEST_F(EtchDefaultValueFactoryTest, inReplyToTest) {
   types->get(str, _mt_x);
   str.set("y");
   types->get(str, _mt_y);
-  EtchDefaultValueFactory::Init(types, class2type);
+  EtchDefaultValueFactory::Init(mRuntime, types, class2type);
   types->lock();
   class2type->lock();
 
@@ -381,7 +376,7 @@ TEST_F(EtchDefaultValueFactoryTest, inReplyToTest) {
   EtchType *mt_foo = new EtchType(str);
 
   capu::SmartPointer<EtchValidator> val;
-  EtchValidatorLong::Get(0, val);
+  EtchValidatorLong::Get(mRuntime, 0, val);
   mt_foo->putValidator(EtchDefaultValueFactory::_mf__inReplyTo(), val);
 
   EtchMessage *msg = new EtchMessage(mt_foo, test);

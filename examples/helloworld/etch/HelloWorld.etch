@@ -29,6 +29,7 @@ service HelloWorld {
 	)
 
 	@Direction(Server)
+	@Timeout(1305)
 	string say_hello(user to_whom) throws UserUnknownException
 
 }

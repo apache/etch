@@ -78,7 +78,7 @@ status_t EtchDefaultServerFactory::transportControl( capu::SmartPointer<EtchObje
   if(mListener == NULL) {
     return ETCH_ERANGE;
   }
-  return mListener->transportControl(control, value);;
+  return mListener->transportControl(control, value);
 }
 
 status_t EtchDefaultServerFactory::transportNotify( capu::SmartPointer<EtchObject> event ) {

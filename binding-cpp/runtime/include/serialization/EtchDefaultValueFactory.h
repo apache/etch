@@ -98,7 +98,7 @@ protected:
 
 public:
 
-  static status_t Init(EtchTypeMap* types, EtchClass2TypeMap* class2type);
+  static status_t Init(EtchRuntime* runtime, EtchTypeMap* types, EtchClass2TypeMap* class2type);
 
   /**
    * The msg field of the standard unchecked exception.

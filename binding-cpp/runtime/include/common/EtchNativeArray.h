@@ -507,7 +507,7 @@ public:
   /**
    * Returns the dim of array
    */
-  virtual capu::int32_t getDim() = 0;
+  virtual capu::uint32_t getDim() = 0;
 
 };
 
@@ -585,7 +585,7 @@ public:
   /**
    * Returns the dim of array
    */
-  capu::int32_t getDim();
+  capu::uint32_t getDim();
 
   /**
    * Creates a new nested array
@@ -636,7 +636,6 @@ EtchNativeArray<T>::EtchNativeArray(capu::int32_t length, capu::int32_t dim, T* 
     mData->set(0, 0, array, length, 0, length, &bytesWritten);
   } else if (dim == 2) {
     mData = new EtchArray<T>(length, dim);
-    capu::int32_t dimCount = dim;
     capu::int32_t offset = 0;
     for (capu::int32_t i = 0; i < length; i++) {
       mData->createArray(i, 0, 2,dim-1);
@@ -711,7 +710,7 @@ capu::int32_t EtchNativeArray<T>::getLength() {
 }
 
 template<class T>
-capu::int32_t EtchNativeArray<T>::getDim() {
+capu::uint32_t EtchNativeArray<T>::getDim() {
   return mData->getDim();
 }
 
@@ -779,6 +778,9 @@ status_t EtchNativeArray<T>::resize(capu::int32_t newSize) {
       } \
       break; \
     } \
+    default: { \
+      return ETCH_ERROR; \
+    } \
   } \
 }
 
@@ -811,7 +813,7 @@ status_t EtchNativeArray<T>::resize(capu::int32_t newSize) {
       } \
       break; \
     } \
-    case EtchObjectType::SMART_POINTER: \
+    case EtchObjectType::SMART_POINTER: { \
       EtchNativeArray<capu::SmartPointer<type> >* na = (EtchNativeArray<capu::SmartPointer<type> >*)(this); \
       if(dims == 1) { \
         capu::SmartPointer<type> value = capu::smartpointer_cast<type> (data); \
@@ -822,6 +824,10 @@ status_t EtchNativeArray<T>::resize(capu::int32_t newSize) {
       } \
       break; \
     } \
+    default: { \
+      break; \
+    } \
+  } \
   break; \
 }
 

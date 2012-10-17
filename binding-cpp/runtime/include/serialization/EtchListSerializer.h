@@ -36,7 +36,7 @@ public:
   /**
    * Constructor
    */
-  EtchListSerializer(EtchType* type, EtchField* field);
+  EtchListSerializer(EtchRuntime* runtime, EtchType* type, EtchField* field);
 
   /**
    * Destructor
@@ -58,12 +58,12 @@ public:
    * @param type
    * @param class2type
    */
-  static status_t Init(EtchType* type, EtchClass2TypeMap* class2type);
+  static status_t Init(EtchRuntime* runtime, EtchType* type, EtchClass2TypeMap* class2type);
 
 private:
   EtchRuntime* mRuntime;
-  EtchType* mType;
   EtchField mField;
+  EtchType* mType;
   const static EtchString& FIELD_NAME();
 };
 

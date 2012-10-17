@@ -38,7 +38,7 @@ TEST(EtchCirclerQueueTest, putAndGetTest) {
   EXPECT_EQ(ETCH_EINVAL, queue->get(&e1, -1));
   EXPECT_EQ(ETCH_TIMEOUT, queue->get(&e1, 1));
 
-  EXPECT_EQ(0, queue->getCount());
+  EXPECT_EQ(0u, queue->getCount());
   EXPECT_TRUE(queue->isEmpty());
   EXPECT_FALSE(queue->isFull());
 
@@ -51,7 +51,7 @@ TEST(EtchCirclerQueueTest, putAndGetTest) {
 
     EXPECT_EQ(ETCH_OK, queue->get(&e3));
     EXPECT_EQ(e2, e3);
-    EXPECT_EQ(0, queue->getCount());
+    EXPECT_EQ(0u, queue->getCount());
     EXPECT_TRUE(queue->isEmpty());
     delete e2;
   }

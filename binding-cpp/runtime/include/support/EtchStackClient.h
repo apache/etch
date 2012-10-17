@@ -21,6 +21,8 @@
 #include "support/EtchStack.h"
 #include "util/EtchResources.h"
 
+class EtchRuntime;
+
 /* *
  * This class serves as a container for all layers created during the setup of a new stack (connection, packetizer, messagizer, ...).
  */
@@ -35,7 +37,7 @@ public:
   /**
    * Default Constructor
    */
-  EtchStackClient();
+  EtchStackClient(EtchRuntime* runtime);
 
   /**
    * Copy Constructor
@@ -48,9 +50,8 @@ public:
   virtual ~EtchStackClient();
 
 public:
+  EtchRuntime* mRuntime;
   EtchResources* mStaticResources;
-
-
 };
 
 #endif /* __ETCHSTACKCLIENT_H__ */

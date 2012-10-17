@@ -135,12 +135,12 @@ public:
   void setNumAttempts(capu::uint8_t numAttempts);
 
 private:
+  EtchRuntime *mRuntime;
   EtchString mHost;
   capu::uint16_t mPort;
   EtchSocket* mSocket;
   EtchTcpOption mOptions;
   capu::uint8_t mNumAttempts;
-  EtchRuntime *mRuntime;
 
 protected:
 

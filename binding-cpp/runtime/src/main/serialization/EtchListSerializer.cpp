@@ -28,10 +28,8 @@ const EtchString& EtchListSerializer::FIELD_NAME() {
 
 // TODO: check signature regarding by value copy
 
-EtchListSerializer::EtchListSerializer(EtchType* type, EtchField* field)
-: mField(*field), mType(type) {
-  //TODO refactor this
-  mRuntime = EtchRuntime::getRuntime();
+EtchListSerializer::EtchListSerializer(EtchRuntime* runtime, EtchType* type, EtchField* field)
+: mRuntime(runtime), mField(*field), mType(type) {
 }
 
 EtchListSerializer::~EtchListSerializer() {
@@ -92,10 +90,7 @@ status_t EtchListSerializer::importValue(EtchStructValue* value, capu::SmartPoin
   return ETCH_OK;
 }
 
-status_t EtchListSerializer::Init(EtchType* type, EtchClass2TypeMap * class2type) {
-  //TODO rafactor this
-  EtchRuntime* runtime = EtchRuntime::getRuntime();
-  
+status_t EtchListSerializer::Init(EtchRuntime* runtime, EtchType* type, EtchClass2TypeMap * class2type) {
   status_t result;
 
   EtchField field;
@@ -113,11 +108,11 @@ status_t EtchListSerializer::Init(EtchType* type, EtchClass2TypeMap * class2type
 
   //set the import export helper
   // TODO memory EtchField
-  type->setImportExportHelper(new EtchListSerializer(type, &field));
-  
+  type->setImportExportHelper(new EtchListSerializer(runtime, type, &field));
+
   //get validator
   capu::SmartPointer<EtchValidator> validator;
-  result = EtchValidatorObject::Get(1, validator);
+  result = EtchValidatorObject::Get(runtime, 1, validator);
   if (result != ETCH_OK) {
     return result;
   }

@@ -40,7 +40,7 @@ public:
    * @param svc the delivery service used to send messages.
    * @param vf the value factory used to create messages and encode/decode types.
    */
-  EtchRemoteBase(EtchDeliveryService* svc, EtchValueFactory* vf, EtchStack* stack);
+  EtchRemoteBase(EtchRuntime* runtime, EtchDeliveryService* svc, EtchValueFactory* vf, EtchStack* stack);
 
   /**
    * Destructor
@@ -190,8 +190,8 @@ public:
 private:
   EtchRuntime* mRuntime;
   EtchDeliveryService * mSvc;
-  EtchStack* mStack;
   EtchValueFactory* mVf;
+  EtchStack* mStack;
 };
 
 #endif /* __ETCHREMOTBASE_H__ */

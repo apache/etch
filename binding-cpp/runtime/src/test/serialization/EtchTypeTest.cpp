@@ -27,16 +27,11 @@ class EtchTypeTest
 protected:
   virtual void SetUp() {
     mRuntime = new EtchRuntime();
-    mRuntime->setLogger(new EtchLogger());
     mRuntime->start();
   }
 
   virtual void TearDown() {
     mRuntime->shutdown();
-    EtchLogger* logger = mRuntime->getLogger();
-    if(logger != NULL) {
-      delete logger;
-    }
     delete mRuntime;
     mRuntime = NULL;
   }
@@ -59,11 +54,11 @@ TEST_F(EtchTypeTest, putValidatorTest) {
   EtchField f(str2);
   EtchField g(str3);
   capu::SmartPointer<EtchValidator> v1;
-  EtchValidatorInt::Get(0, v1);
+  EtchValidatorInt::Get(mRuntime, 0, v1);
   capu::SmartPointer<EtchValidator> v2;
-  EtchValidatorLong::Get(0, v2);
+  EtchValidatorLong::Get(mRuntime, 0, v2);
   capu::SmartPointer<EtchValidator> v3;
-  EtchValidatorByte::Get(0, v3);
+  EtchValidatorByte::Get(mRuntime, 0, v3);
   EXPECT_EQ(t.putValidator(f, v1), ETCH_OK);
   EXPECT_EQ(t.putValidator(g, v2), ETCH_OK);
   EXPECT_EQ(t.putValidator(g, v3), ETCH_OK); //makes a combo generator
@@ -79,7 +74,7 @@ TEST_F(EtchTypeTest, getValidatorTest) {
   EtchField f(str2);
   EtchField g(str3);
   capu::SmartPointer<EtchValidator> v;
-  EtchValidatorInt::Get(0, v);
+  EtchValidatorInt::Get(mRuntime, 0, v);
   capu::SmartPointer<EtchValidator> result = NULL;
   t.putValidator(f, v);
   EXPECT_EQ(t.getValidator(f, result), ETCH_OK);
@@ -95,9 +90,9 @@ TEST_F(EtchTypeTest, clearTest) {
   EtchField f(str2);
   EtchField g(str3);
   capu::SmartPointer<EtchValidator> v1;
-  EtchValidatorInt::Get(0, v1);
+  EtchValidatorInt::Get(mRuntime, 0, v1);
   capu::SmartPointer<EtchValidator> v2;
-  EtchValidatorLong::Get(0, v2);
+  EtchValidatorLong::Get(mRuntime, 0, v2);
   EXPECT_EQ(t.putValidator(f, v1), ETCH_OK);
   EXPECT_EQ(t.putValidator(g, v2), ETCH_OK);
   EXPECT_EQ(t.clearValidator(f), ETCH_OK);

@@ -23,19 +23,19 @@ const EtchObjectType* EtchStackClient::TYPE() {
    return &TYPE;
 }
 
-EtchStackClient::EtchStackClient() : EtchStack(), mStaticResources(NULL) {
+EtchStackClient::EtchStackClient(EtchRuntime* runtime) : EtchStack(), mRuntime(runtime), mStaticResources(NULL) {
   addObjectType(EtchStackClient::TYPE());
 }
 
 EtchStackClient::EtchStackClient(const EtchStackClient& other)
- : EtchStack(other), mStaticResources(other.mStaticResources)
+ : EtchStack(other), mRuntime(other.mRuntime), mStaticResources(other.mStaticResources)
 {
 
 }
 
 EtchStackClient::~EtchStackClient() {
   if (mStaticResources != NULL) {
-    EtchTransportHelper::DestroyResources(mStaticResources);
+    EtchTransportHelper::DestroyResources(mRuntime, mStaticResources);
   }
 }
 

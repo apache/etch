@@ -36,7 +36,7 @@ public:
   /**
    * Constructor
    */
-  EtchAuthenticationExceptionSerializer(EtchType* type, EtchField* field);
+  EtchAuthenticationExceptionSerializer(EtchRuntime* runtime, EtchType* type, EtchField* field);
 
   /**
    * Destructor
@@ -53,7 +53,7 @@ public:
    * @param type
    * @param collection
    */
-  static status_t Init(EtchType* type, EtchClass2TypeMap* class2type);
+  static status_t Init(EtchRuntime* runtime, EtchType* type, EtchClass2TypeMap* class2type);
 
 private:
   EtchRuntime* mRuntime;

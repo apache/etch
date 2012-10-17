@@ -85,8 +85,8 @@ public:
   virtual status_t transportQuery(capu::SmartPointer<EtchObject> query, capu::SmartPointer<EtchObject> *result);
 
 private:
-  EtchSession* mSession;
   EtchTransport<EtchServerFactory>* mListener;
+  EtchSession* mSession;
 };
 
 #endif /* __ETCHDEFAULTSERVERFACTORY_H__*/

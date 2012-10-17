@@ -27,16 +27,11 @@ class EtchValidatorDoubleTest
 protected:
   virtual void SetUp() {
     mRuntime = new EtchRuntime();
-    mRuntime->setLogger(new EtchLogger());
     mRuntime->start();
   }
 
   virtual void TearDown() {
     mRuntime->shutdown();
-    EtchLogger* logger = mRuntime->getLogger();
-    if(logger != NULL) {
-      delete logger;
-    }
     delete mRuntime;
     mRuntime = NULL;
   }
@@ -48,7 +43,7 @@ TEST_F(EtchValidatorDoubleTest, createTest) {
   capu::SmartPointer<EtchValidatorDouble> ptr = NULL;
 
   capu::SmartPointer<EtchValidator> val;
-  EXPECT_TRUE(EtchValidatorDouble::Get(0, val) == ETCH_OK);
+  EXPECT_TRUE(EtchValidatorDouble::Get(mRuntime, 0, val) == ETCH_OK);
   ptr = capu::smartpointer_cast<EtchValidatorDouble>(val);
 
   EXPECT_TRUE(ptr->getExpectedType()->equals(EtchDouble::TYPE()));
@@ -57,7 +52,7 @@ TEST_F(EtchValidatorDoubleTest, createTest) {
   EtchObjectType type1(EOTID_DOUBLE, NULL);
   EtchObjectType type2(EOTID_NATIVE_ARRAY, &type1);
 
-  EXPECT_TRUE(EtchValidatorDouble::Get(2, val) == ETCH_OK);
+  EXPECT_TRUE(EtchValidatorDouble::Get(mRuntime, 2, val) == ETCH_OK);
   ptr = capu::smartpointer_cast<EtchValidatorDouble>(val);
   EXPECT_TRUE(ptr->getExpectedType()->equals(&type2));
   EXPECT_TRUE(ptr->getNDims() == 2);
@@ -76,7 +71,7 @@ TEST_F(EtchValidatorDoubleTest, validateTest) {
   capu::SmartPointer<EtchObject> str = new EtchString();
 
   capu::SmartPointer<EtchValidator> ptr = NULL;
-  EXPECT_TRUE(EtchValidatorDouble::Get(0, ptr) == ETCH_OK);
+  EXPECT_TRUE(EtchValidatorDouble::Get(mRuntime, 0, ptr) == ETCH_OK);
   EXPECT_TRUE((capu::smartpointer_cast<EtchTypeValidator>(ptr))->getNDims() == 0);
 
   EXPECT_FALSE(ptr->validate(byte));
@@ -96,7 +91,7 @@ TEST_F(EtchValidatorDoubleTest, validateValueTest) {
   capu::SmartPointer<EtchObject> doubleTmp2 = new EtchDouble(5.13);
   capu::SmartPointer<EtchObject> doubleTmp3 = new EtchDouble(127.54);
   capu::SmartPointer<EtchValidator> ptr = NULL;
-  EXPECT_TRUE(EtchValidatorDouble::Get(0, ptr) == ETCH_OK);
+  EXPECT_TRUE(EtchValidatorDouble::Get(mRuntime, 0, ptr) == ETCH_OK);
   EXPECT_TRUE(ptr->validateValue(byte, result) == ETCH_ERROR);
   EXPECT_TRUE(ptr->validateValue(doubleTmp, result) == ETCH_OK);
   EXPECT_TRUE(((EtchDouble*) result.get())->get() == ((EtchDouble*) doubleTmp.get())->get());
@@ -108,7 +103,7 @@ TEST_F(EtchValidatorDoubleTest, validateValueTest) {
 
 TEST_F(EtchValidatorDoubleTest, elementValidatorTest) {
   capu::SmartPointer<EtchValidator> ptr = NULL;
-  EXPECT_TRUE(EtchValidatorDouble::Get(1, ptr) == ETCH_OK);
+  EXPECT_TRUE(EtchValidatorDouble::Get(mRuntime, 1, ptr) == ETCH_OK);
   capu::SmartPointer<EtchValidator> elementValidator;
   ptr->getElementValidator(elementValidator);
 

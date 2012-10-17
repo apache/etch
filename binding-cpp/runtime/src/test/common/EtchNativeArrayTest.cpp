@@ -118,9 +118,9 @@ TEST(EtchNativeArrayTest, Constructor_Array) {
 
   EtchNativeArray<capu::int8_t> *na2 = new EtchNativeArray<capu::int8_t>(2, 1, (capu::int8_t*)nativeArray);
 
-  EXPECT_EQ(1, na2->getDim());
+  EXPECT_EQ(1u, na2->getDim());
   EXPECT_EQ(2, na2->getLength());
-  
+
   capu::int8_t nativeResult;
   EXPECT_EQ(ETCH_OK, na2->get(0,&nativeResult));
   EXPECT_EQ(1, nativeResult);
@@ -138,9 +138,9 @@ TEST(EtchNativeArrayTest, Constructor_Array) {
 
   EtchNativeArray<capu::int8_t> *na3 = new EtchNativeArray<capu::int8_t>(2, 2, (capu::int8_t*)nativeArray2);
 
-  EXPECT_EQ(2, na3->getDim());
+  EXPECT_EQ(2u, na3->getDim());
   EXPECT_EQ(2, na3->getLength());
-  
+
   EXPECT_EQ(ETCH_OK, na3->get(Pos(0,0),&nativeResult));
   EXPECT_EQ(0, nativeResult);
   EXPECT_EQ(ETCH_OK, na3->get(Pos(0,1),&nativeResult));
@@ -205,7 +205,7 @@ TEST(EtchNativeArrayTest, setGetArray) {
   //data == NULL
   ret = na->set(0,NULL,0,0,0,&elementsWritten);
   EXPECT_EQ(ETCH_EINVAL, ret);
-  
+
   //data == NULL
   ret = na->get(0,NULL,0,0,0,&elementsRead);
   EXPECT_EQ(ETCH_EINVAL, ret);
@@ -230,7 +230,7 @@ TEST(EtchNativeArrayTest, setGetArray) {
   ret = na->set(0, arr1, 6, 0, 6, &elementsWritten);
   EXPECT_EQ(ret, ETCH_OK);
   EXPECT_EQ(elementsWritten, 6);
-  
+
   na->get(0,&temp);
   EXPECT_EQ(temp->get(), 1);
   na->set(0, int2);
@@ -441,11 +441,11 @@ TEST(EtchNativeArrayTest, setSubarray) {
   //fill main array
   mainArray->set(Pos(0, 0, 0), int1);
   mainArray->set(Pos(0, 0, 1), int2);
-  
+
   //fill sub array
   subArray->set(Pos(0),int3);
   subArray->set(Pos(0),int4);
-  
+
   //set sub array in data array, must return error
   ret = mainArray->set(Pos(1, 0, 0), subArray);
   EXPECT_EQ(ETCH_ERANGE, ret);

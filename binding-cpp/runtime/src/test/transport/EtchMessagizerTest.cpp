@@ -30,7 +30,7 @@
 class MockListener11 : public virtual EtchSessionListener<EtchSocket> {
 public:
 
-  MockListener11(EtchTransport<EtchSessionListener<EtchSocket> >* transport) 
+  MockListener11(EtchTransport<EtchSessionListener<EtchSocket> >* transport)
     : mTransport(transport) {
     if(mTransport != NULL) {
       mTransport->setSession(this);
@@ -84,16 +84,11 @@ class EtchMessagizerTest
 protected:
   virtual void SetUp() {
     mRuntime = new EtchRuntime();
-    mRuntime->setLogger(new EtchLogger());
     mRuntime->start();
   }
 
   virtual void TearDown() {
     mRuntime->shutdown();
-    EtchLogger* logger = mRuntime->getLogger();
-    if(logger != NULL) {
-      delete logger;
-    }
     delete mRuntime;
     mRuntime = NULL;
   }
@@ -105,7 +100,7 @@ TEST_F(EtchMessagizerTest, constructorTest) {
   EtchTypeMap types;
   EtchClass2TypeMap class2type;
   EtchDefaultValueFactory * factory;
-  EtchDefaultValueFactory::Init(&types, &class2type);
+  EtchDefaultValueFactory::Init(mRuntime, &types, &class2type);
   EtchString uri("tcp://127.0.0.1:4001");
   factory = new EtchDefaultValueFactory(uri, &types, &class2type);
   //created value factory
@@ -114,9 +109,9 @@ TEST_F(EtchMessagizerTest, constructorTest) {
   EtchObject *out;
   r.put(EtchTransport<EtchSessionMessage>::VALUE_FACTORY(), factory, out);
   EtchTransportData* conn = new EtchTcpConnection(mRuntime, NULL, &u);
-  EtchTransportPacket* pac = new EtchPacketizer(conn, &u);
-  EtchSessionPacket* mes = new EtchMessagizer(pac, &u, &r);
-  
+  EtchTransportPacket* pac = new EtchPacketizer(mRuntime, conn, &u);
+  EtchSessionPacket* mes = new EtchMessagizer(mRuntime, pac, &u, &r);
+
   //Delete created stack
   delete conn;
   delete mes;
@@ -130,7 +125,7 @@ TEST_F(EtchMessagizerTest, TransportControlTest) {
   EtchClass2TypeMap class2type;
   EtchDefaultValueFactory * factory;
   MockMailboxManager manager;
-  EtchDefaultValueFactory::Init(&types, &class2type);
+  EtchDefaultValueFactory::Init(mRuntime, &types, &class2type);
   EtchString uri("tcp://127.0.0.1:4001");
   factory = new EtchDefaultValueFactory(uri, &types, &class2type);
   //created value factory
@@ -139,15 +134,15 @@ TEST_F(EtchMessagizerTest, TransportControlTest) {
   EtchObject *out;
   r.put(EtchTransport<EtchSessionMessage>::VALUE_FACTORY(), factory, out);
   EtchTransportData* conn = new EtchTcpConnection(mRuntime, NULL, &u);
-  EtchPacketizer* pac = new EtchPacketizer(conn, &u);
-  EtchMessagizer* mess = new EtchMessagizer(pac, &u, &r);
+  EtchPacketizer* pac = new EtchPacketizer(mRuntime, conn, &u);
+  EtchMessagizer* mess = new EtchMessagizer(mRuntime, pac, &u, &r);
   mess->setSession(&manager);
 
-  EtchTcpListener* transport = new EtchTcpListener(&u);
+  EtchTcpListener* transport = new EtchTcpListener(mRuntime, &u);
   EtchSessionListener<EtchSocket>* mSessionListener = new MockListener11(transport);
 
   transport->transportControl(new EtchString(EtchTcpListener::START_AND_WAIT_UP()), new EtchInt32(1000));
-  
+
   mess->transportControl(new EtchString(EtchPacketizer::START_AND_WAIT_UP()), new EtchInt32(1000));
   //test transport commands
   mess->transportControl(new EtchString(EtchPacketizer::STOP_AND_WAIT_DOWN()), new EtchInt32(1000));
@@ -167,7 +162,7 @@ TEST_F(EtchMessagizerTest, TransportMessageTest) {
   EtchClass2TypeMap class2type;
   EtchDefaultValueFactory * factory;
   MockMailboxManager manager;
-  EtchDefaultValueFactory::Init(&types, &class2type);
+  EtchDefaultValueFactory::Init(mRuntime, &types, &class2type);
   EtchString uri("tcp://127.0.0.1:4001");
   factory = new EtchDefaultValueFactory(uri, &types, &class2type);
   //default value factory
@@ -177,8 +172,8 @@ TEST_F(EtchMessagizerTest, TransportMessageTest) {
   //add to the resource
   r.put(EtchTransport<EtchSessionMessage>::VALUE_FACTORY(), factory, out);
   EtchTransportData* conn = new EtchTcpConnection(mRuntime, NULL, &u);
-  EtchPacketizer* pac = new EtchPacketizer(conn, &u);
-  EtchMessagizer* mess = new EtchMessagizer(pac, &u, &r);
+  EtchPacketizer* pac = new EtchPacketizer(mRuntime, conn, &u);
+  EtchMessagizer* mess = new EtchMessagizer(mRuntime, pac, &u, &r);
   mess->setSession(&manager);
   //creation of example message which will be serialized
   EtchType *mt_foo = NULL;
@@ -186,7 +181,7 @@ TEST_F(EtchMessagizerTest, TransportMessageTest) {
   EtchString str("foo");
   factory->getType(str, mt_foo);
   capu::SmartPointer<EtchValidator> v;
-  EtchValidatorShort::Get(0, v);
+  EtchValidatorShort::Get(mRuntime, 0, v);
   mt_foo->putValidator(mf_x, v);
   capu::SmartPointer<EtchShort> data = new EtchShort(10000);
   capu::SmartPointer<EtchMessage> msg = new EtchMessage(mt_foo, factory);
@@ -210,13 +205,13 @@ TEST_F(EtchMessagizerTest, SessionDataTest) {
   EtchType *mt_foo = new EtchType(1, name1);
   EtchField mf_x(2, name2);
   capu::SmartPointer<EtchValidator> v;
-  EtchValidatorShort::Get(0, v);
+  EtchValidatorShort::Get(mRuntime, 0, v);
   mt_foo->putValidator(mf_x, v);
   types.add(mt_foo);
   capu::SmartPointer<EtchShort> data = new EtchShort(10000);
   //default value factory
   EtchDefaultValueFactory * factory;
-  EtchDefaultValueFactory::Init(&types, &class2type);
+  EtchDefaultValueFactory::Init(mRuntime, &types, &class2type);
   EtchString uri("tcp://127.0.0.1:4001");
 
 
@@ -232,8 +227,8 @@ TEST_F(EtchMessagizerTest, SessionDataTest) {
   r.put(EtchTransport<EtchSessionMessage>::VALUE_FACTORY(), factory, out);
   //create stack
   EtchTransportData* conn = new EtchTcpConnection(mRuntime, NULL, &u);
-  EtchPacketizer* pac = new EtchPacketizer(conn, &u);
-  EtchMessagizer* mess = new EtchMessagizer(pac, &u, &r);
+  EtchPacketizer* pac = new EtchPacketizer(mRuntime, conn, &u);
+  EtchMessagizer* mess = new EtchMessagizer(mRuntime, pac, &u, &r);
   capu::SmartPointer<EtchFlexBuffer> buffer = new EtchFlexBuffer();
 
   //A packet is created

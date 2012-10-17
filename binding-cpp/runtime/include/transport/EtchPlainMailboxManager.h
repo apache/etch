@@ -37,7 +37,7 @@ public:
    * @param uri
    * @param resources
    */
-  EtchPlainMailboxManager(EtchTransportMessage* transport, const EtchString& url, EtchResources* resources);
+  EtchPlainMailboxManager(EtchRuntime* runtime, EtchTransportMessage* transport, const EtchString& url, EtchResources* resources);
 
   /**
    * Destructure

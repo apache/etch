@@ -26,10 +26,8 @@ const EtchString& EtchMessagizer::FORMAT(){
 }
 capu::Mutex EtchMessagizer::mutex;
 
-EtchMessagizer::EtchMessagizer(EtchTransportPacket* transport, EtchURL* uri, EtchResources* resources)
-: mTransport(transport) {
-  //TODO refactor this
-  mRuntime = EtchRuntime::getRuntime();
+EtchMessagizer::EtchMessagizer(EtchRuntime* runtime, EtchTransportPacket* transport, EtchURL* uri, EtchResources* resources)
+: mRuntime(runtime), mTransport(transport) {
 
   EtchString format;
   EtchObject * val;
@@ -38,14 +36,14 @@ EtchMessagizer::EtchMessagizer(EtchTransportPacket* transport, EtchURL* uri, Etc
   if (uri->getTerms().get(FORMAT(), &format) == ETCH_OK) {
 
     if (format.equals(&EtchFormat::BINARY())) {
-      mTdi = new EtchBinaryTaggedDataInput((EtchValueFactory *) val);
-      mTdo = new EtchBinaryTaggedDataOutput((EtchValueFactory *) val, uri);
+      mTdi = new EtchBinaryTaggedDataInput(runtime, (EtchValueFactory *) val);
+      mTdo = new EtchBinaryTaggedDataOutput(runtime, (EtchValueFactory *) val, uri);
     } else if (format.equals(&EtchFormat::XML())) {
       //we dont need serialization via xml currently
     }
   } else {
-    mTdi = new EtchBinaryTaggedDataInput((EtchValueFactory *) val);
-    mTdo = new EtchBinaryTaggedDataOutput((EtchValueFactory *) val, uri);
+    mTdi = new EtchBinaryTaggedDataInput(runtime, (EtchValueFactory *) val);
+    mTdo = new EtchBinaryTaggedDataOutput(runtime, (EtchValueFactory *) val, uri);
   }
   transport->setSession(this);
 }

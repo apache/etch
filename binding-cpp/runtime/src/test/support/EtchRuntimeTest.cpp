@@ -19,14 +19,20 @@
 #include "gmock/gmock.h"
 #include "support/EtchRuntime.h"
 
+capu::uint64_t currentIdCount;
+
 TEST(EtchRuntime, Default) {
-  EtchRuntime* runtime = new EtchRuntime();
+  EtchRuntime* runtime = new EtchRuntime(); //ID = 0
+  currentIdCount = runtime->getId();
   delete runtime;
 }
 
 TEST(EtchRuntime, getId) {
-  EtchRuntime* runtime = new EtchRuntime();
-  capu::uint64_t id = runtime->getId();
+  EtchRuntime* runtime = new EtchRuntime(); //ID = 1
+  EXPECT_EQ(currentIdCount + 1, runtime->getId());
+  delete runtime;
+  runtime = new EtchRuntime(); //ID = 2
+  EXPECT_EQ(currentIdCount + 2, runtime->getId());
   delete runtime;
 }
 

@@ -27,10 +27,8 @@ const EtchString& EtchHashTableSerializer::FIELD_NAME() {
   return name;
 }
 
-EtchHashTableSerializer::EtchHashTableSerializer(EtchType* type, EtchField& field)
-: mField(field), mType(type) {
-  //TODO refactoring
-  mRuntime = EtchRuntime::getRuntime();
+EtchHashTableSerializer::EtchHashTableSerializer(EtchRuntime* runtime, EtchType* type, EtchField& field)
+: mRuntime(runtime), mField(field), mType(type) {
 }
 
 EtchHashTableSerializer::~EtchHashTableSerializer() {
@@ -98,10 +96,7 @@ status_t EtchHashTableSerializer::importValue(EtchStructValue* value, capu::Smar
   return ETCH_OK;
 }
 
-status_t EtchHashTableSerializer::Init(EtchType* type, EtchClass2TypeMap* class2type) {
-  //TODO rafactor this
-  EtchRuntime* runtime = EtchRuntime::getRuntime();
-
+status_t EtchHashTableSerializer::Init(EtchRuntime* runtime, EtchType* type, EtchClass2TypeMap* class2type) {
   status_t result;
 
   EtchField field;
@@ -118,11 +113,11 @@ status_t EtchHashTableSerializer::Init(EtchType* type, EtchClass2TypeMap* class2
   type->setComponentType(EtchHashTable<capu::SmartPointer<EtchObject>, capu::SmartPointer<EtchObject> >::TYPE());
 
   //set the import export helper
-  type->setImportExportHelper(new EtchHashTableSerializer(type, field));
+  type->setImportExportHelper(new EtchHashTableSerializer(runtime, type, field));
 
   //get validator
   capu::SmartPointer<EtchValidator> tmp;
-  result = EtchValidatorObject::Get(1, tmp);
+  result = EtchValidatorObject::Get(runtime, 1, tmp);
   if (result != ETCH_OK) {
     return result;
   }

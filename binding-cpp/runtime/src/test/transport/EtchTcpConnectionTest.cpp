@@ -84,16 +84,11 @@ class EtchTcpConnectionTest
 protected:
   virtual void SetUp() {
     mRuntime = new EtchRuntime();
-    mRuntime->setLogger(new EtchLogger());
     mRuntime->start();
   }
 
   virtual void TearDown() {
     mRuntime->shutdown();
-    EtchLogger* logger = mRuntime->getLogger();
-    if(logger != NULL) {
-      delete logger;
-    }
     delete mRuntime;
     mRuntime = NULL;
   }
@@ -111,7 +106,7 @@ TEST_F(EtchTcpConnectionTest, constructorTest) {
 TEST_F(EtchTcpConnectionTest, isStartedTest) {
   EtchURL url("tcp://127.0.0.1:4001");
   EtchTcpConnection * conn = new EtchTcpConnection(mRuntime, NULL, &url);
-  EtchTcpListener *listener = new EtchTcpListener(&url);
+  EtchTcpListener *listener = new EtchTcpListener(mRuntime, &url);
   EXPECT_FALSE(conn->isStarted());
   EtchSessionListener<EtchSocket>* mSessionListener = new MockListener();
   EtchSessionData* mPacketizer = new MockPacketizer();
@@ -141,7 +136,7 @@ TEST_F(EtchTcpConnectionTest, SessionAcceptTest) {
   EtchTcpConnection * conn = new EtchTcpConnection(mRuntime, NULL, &url);
   EtchSessionListener<EtchSocket>* mSessionListener = new MockListener();
   EtchSessionData* mPacketizer = new MockPacketizer();
-  EtchTcpListener *listener = new EtchTcpListener(&url);
+  EtchTcpListener *listener = new EtchTcpListener(mRuntime, &url);
 
   //START THE LISTENER
   listener->setSession(mSessionListener);

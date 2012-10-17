@@ -24,10 +24,8 @@
 
 static char* TAG = "EtchRemoteBase";
 
-EtchRemoteBase::EtchRemoteBase(EtchDeliveryService* svc, EtchValueFactory* vf, EtchStack* stack) 
-  : mSvc(svc), mVf(vf), mStack(stack) {
-  //TODO refactor this
-  mRuntime = EtchRuntime::getRuntime();
+EtchRemoteBase::EtchRemoteBase(EtchRuntime* runtime, EtchDeliveryService* svc, EtchValueFactory* vf, EtchStack* stack)
+  : mRuntime(runtime), mSvc(svc), mVf(vf), mStack(stack) {
 }
 
 EtchRemoteBase::~EtchRemoteBase() {
@@ -51,7 +49,7 @@ status_t EtchRemoteBase::send(capu::SmartPointer<EtchMessage> msg) {
 }
 
 status_t EtchRemoteBase::begincall(capu::SmartPointer<EtchMessage> msg, EtchMailbox *&result) {
-  CAPU_LOG_DEBUG(mRuntime->getLogger(), TAG, "Begin call for the message is initiated");  
+  CAPU_LOG_DEBUG(mRuntime->getLogger(), TAG, "Begin call for the message is initiated");
   return mSvc->begincall(msg, result);
 }
 

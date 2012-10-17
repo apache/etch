@@ -35,16 +35,11 @@ class EtchValidatorObjectTest
 protected:
   virtual void SetUp() {
     mRuntime = new EtchRuntime();
-    mRuntime->setLogger(new EtchLogger());
     mRuntime->start();
   }
 
   virtual void TearDown() {
     mRuntime->shutdown();
-    EtchLogger* logger = mRuntime->getLogger();
-    if(logger != NULL) {
-      delete logger;
-    }
     delete mRuntime;
     mRuntime = NULL;
   }
@@ -55,11 +50,11 @@ protected:
 TEST_F(EtchValidatorObjectTest, createTest) {
   capu::SmartPointer<EtchValidatorObject> ptr = NULL;
   capu::SmartPointer<EtchValidator> val;
-  EXPECT_TRUE(EtchValidatorObject::Get(0, val) == ETCH_OK);
+  EXPECT_TRUE(EtchValidatorObject::Get(mRuntime, 0, val) == ETCH_OK);
   ptr = capu::smartpointer_cast<EtchValidatorObject>(val);
   EXPECT_TRUE(ptr->getNDims() == 0);
 
-  EXPECT_TRUE(EtchValidatorObject::Get(2, val) == ETCH_OK);
+  EXPECT_TRUE(EtchValidatorObject::Get(mRuntime, 2, val) == ETCH_OK);
   ptr = capu::smartpointer_cast<EtchValidatorObject>(val);
   EXPECT_TRUE(ptr->getNDims() == 2);
 }
@@ -69,7 +64,7 @@ TEST_F(EtchValidatorObjectTest, validateTest) {
   capu::SmartPointer<EtchObject> integer = new EtchInt32(4);
   capu::SmartPointer<EtchObject> boolean2 = new EtchBool(false);
   capu::SmartPointer<EtchValidator> ptr = NULL;
-  EXPECT_TRUE(EtchValidatorObject::Get(0, ptr) == ETCH_OK);
+  EXPECT_TRUE(EtchValidatorObject::Get(mRuntime, 0, ptr) == ETCH_OK);
   EXPECT_TRUE((capu::smartpointer_cast<EtchTypeValidator>(ptr))->getNDims() == 0);
   EXPECT_FALSE(ptr->validate(boolean));
   EXPECT_TRUE(ptr->validate(integer));
@@ -108,7 +103,7 @@ TEST_F(EtchValidatorObjectTest, validateValueTest) {
   capu::SmartPointer<EtchObject> byte4 = new EtchByte(32);
 
   capu::SmartPointer<EtchValidator> ptr = NULL;
-  EXPECT_TRUE(EtchValidatorObject::Get(0, ptr) == ETCH_OK);
+  EXPECT_TRUE(EtchValidatorObject::Get(mRuntime, 0, ptr) == ETCH_OK);
   EXPECT_TRUE(ptr->validateValue(byte, result) == ETCH_ERROR);
   EXPECT_TRUE(ptr->validateValue(str, result) == ETCH_OK);
   EXPECT_TRUE(ptr->validateValue(longInteger5, result) == ETCH_OK);
@@ -133,7 +128,7 @@ TEST_F(EtchValidatorObjectTest, validateValueTest) {
 
 TEST_F(EtchValidatorObjectTest, elementValidatorTest) {
   capu::SmartPointer<EtchValidator> ptr = NULL;
-  EXPECT_TRUE(EtchValidatorObject::Get(1, ptr) == ETCH_OK);
+  EXPECT_TRUE(EtchValidatorObject::Get(mRuntime, 1, ptr) == ETCH_OK);
   capu::SmartPointer<EtchValidator> elementValidator;
   ptr->getElementValidator(elementValidator);
 

@@ -71,16 +71,11 @@ class EtchHashTableSerializerTest
 protected:
   virtual void SetUp() {
     mRuntime = new EtchRuntime();
-    mRuntime->setLogger(new EtchLogger());
     mRuntime->start();
   }
 
   virtual void TearDown() {
     mRuntime->shutdown();
-    EtchLogger* logger = mRuntime->getLogger();
-    if(logger != NULL) {
-      delete logger;
-    }
     delete mRuntime;
     mRuntime = NULL;
   }
@@ -93,7 +88,7 @@ TEST_F(EtchHashTableSerializerTest, initTest) {
   EtchString typeName("type1");
   EtchType* type = new EtchType(10, typeName);
   EtchType* result = 0;
-  EXPECT_TRUE(EtchHashTableSerializer::Init(type, c2type) == ETCH_OK);
+  EXPECT_TRUE(EtchHashTableSerializer::Init(mRuntime, type, c2type) == ETCH_OK);
   c2type->get(EtchNativeArray<capu::SmartPointer<EtchObject> >::TYPE(), &result);
 
   //check the added type to class to type matching
@@ -108,7 +103,7 @@ TEST_F(EtchHashTableSerializerTest, initTest) {
   type->getField(typeName, &field);
   type->getValidator(field, validator);
   capu::SmartPointer<EtchValidator> val;
-  EtchValidatorObject::Get(1, val);
+  EtchValidatorObject::Get(mRuntime, 1, val);
   EXPECT_TRUE(validator == val);
   delete type;
   delete c2type;
@@ -125,7 +120,7 @@ TEST_F(EtchHashTableSerializerTest, exportTest) {
   capu::SmartPointer<EtchObject> object3;
   EtchStructValue* result;
   //  //initialize the serializer
-  EXPECT_TRUE(EtchHashTableSerializer::Init(type, c2type) == ETCH_OK);
+  EXPECT_TRUE(EtchHashTableSerializer::Init(mRuntime, type, c2type) == ETCH_OK);
   EtchImportExportHelper* test = type->getImportExportHelper();
   //  //check with invalid values
   EXPECT_TRUE(test->exportValue(NULL, NULL, result) == ETCH_EINVAL);
@@ -176,7 +171,7 @@ TEST_F(EtchHashTableSerializerTest, importTest) {
   capu::SmartPointer<EtchObject> object2_value = new EtchInt32(91);
   EtchStructValue* structValue;
   //initialize the serializer
-  EXPECT_TRUE(EtchHashTableSerializer::Init(type, c2type) == ETCH_OK);
+  EXPECT_TRUE(EtchHashTableSerializer::Init(mRuntime, type, c2type) == ETCH_OK);
   //get the serializer
   EtchImportExportHelper* test = type->getImportExportHelper();
   //add some test entries

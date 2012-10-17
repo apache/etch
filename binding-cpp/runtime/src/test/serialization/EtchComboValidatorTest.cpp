@@ -25,16 +25,11 @@ class EtchComboValidatorTest
 protected:
   virtual void SetUp() {
     mRuntime = new EtchRuntime();
-    mRuntime->setLogger(new EtchLogger());
     mRuntime->start();
   }
 
   virtual void TearDown() {
     mRuntime->shutdown();
-    EtchLogger* logger = mRuntime->getLogger();
-    if(logger != NULL) {
-      delete logger;
-    }
     delete mRuntime;
     mRuntime = NULL;
   }
@@ -46,8 +41,8 @@ TEST_F(EtchComboValidatorTest, createTest) {
   capu::SmartPointer<EtchValidator> ptr;
   capu::SmartPointer<EtchValidator> ptr2;
 
-  EtchValidatorString::Get(0, ptr);
-  EtchValidatorInt::Get(0, ptr2);
+  EtchValidatorString::Get(mRuntime, 0, ptr);
+  EtchValidatorInt::Get(mRuntime, 0, ptr2);
 
   EtchComboValidator *combo = new EtchComboValidator(ptr, ptr2);
   EXPECT_TRUE(combo != NULL);
@@ -87,8 +82,8 @@ TEST_F(EtchComboValidatorTest, validateTest) {
   EtchComboValidator *ptr = NULL;
   capu::SmartPointer<EtchValidator> ptr1;
   capu::SmartPointer<EtchValidator> ptr2;
-  EtchValidatorInt::Get(0, ptr1);
-  EtchValidatorString::Get(0, ptr2);
+  EtchValidatorInt::Get(mRuntime, 0, ptr1);
+  EtchValidatorString::Get(mRuntime, 0, ptr2);
   ptr = new EtchComboValidator(ptr1, ptr2);
 
   EXPECT_FALSE(ptr->validate(byte));
@@ -127,8 +122,8 @@ TEST_F(EtchComboValidatorTest, validateValueTest) {
   EtchComboValidator *ptr = NULL;
   capu::SmartPointer<EtchValidator> ptr1;
   capu::SmartPointer<EtchValidator> ptr2;
-  EtchValidatorInt::Get(0, ptr1);
-  EtchValidatorString::Get(0, ptr2);
+  EtchValidatorInt::Get(mRuntime, 0, ptr1);
+  EtchValidatorString::Get(mRuntime, 0, ptr2);
   ptr = new EtchComboValidator(ptr1, ptr2);
   //INT TESTS
   EXPECT_TRUE(ptr->validateValue(byte, result) == ETCH_ERROR);
@@ -154,8 +149,8 @@ TEST_F(EtchComboValidatorTest, elementValidatorTest) {
   EtchComboValidator *ptr = NULL;
   capu::SmartPointer<EtchValidator> ptr1;
   capu::SmartPointer<EtchValidator> ptr2;
-  EtchValidatorInt::Get(1, ptr1);
-  EtchValidatorString::Get(1, ptr2);
+  EtchValidatorInt::Get(mRuntime, 1, ptr1);
+  EtchValidatorString::Get(mRuntime, 1, ptr2);
   ptr = new EtchComboValidator(ptr1, ptr2);
   capu::SmartPointer<EtchValidator> element_validator;
   ptr->getElementValidator(element_validator);

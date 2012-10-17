@@ -28,7 +28,7 @@
 class MockSession1 : public EtchSessionMessage {
 public:
 
-  MockSession1(EtchTransportMessage* transport) 
+  MockSession1(EtchTransportMessage* transport)
     : mTransport(transport) {
     if(mTransport != NULL) {
       mTransport->setSession(this);
@@ -96,8 +96,8 @@ public:
    */
 public:
 
-  MockDefaultValueFactory1(EtchString uri) {
-  EtchDefaultValueFactory::Init(&types, &class2type);
+  MockDefaultValueFactory1(EtchRuntime* runtime, EtchString uri) {
+  EtchDefaultValueFactory::Init(runtime, &types, &class2type);
   factory = new EtchDefaultValueFactory(uri, &types, &class2type);
   }
 
@@ -112,16 +112,11 @@ class EtchDefaultDeliveryServiceTest
 protected:
   virtual void SetUp() {
     mRuntime = new EtchRuntime();
-    mRuntime->setLogger(new EtchLogger());
     mRuntime->start();
   }
 
   virtual void TearDown() {
     mRuntime->shutdown();
-    EtchLogger* logger = mRuntime->getLogger();
-    if(logger != NULL) {
-      delete logger;
-    }
     delete mRuntime;
     mRuntime = NULL;
   }
@@ -136,8 +131,8 @@ TEST_F(EtchDefaultDeliveryServiceTest, constructorTest) {
 // create mock layer for transport
   MockTransport1* transport = new MockTransport1();
 
-  EtchPlainMailboxManager* mailboxManager = new EtchPlainMailboxManager(transport, uri, NULL);
-  EtchDefaultDeliveryService* deliveryService = new EtchDefaultDeliveryService(mailboxManager, uri);
+  EtchPlainMailboxManager* mailboxManager = new EtchPlainMailboxManager(mRuntime, transport, uri, NULL);
+  EtchDefaultDeliveryService* deliveryService = new EtchDefaultDeliveryService(mRuntime, mailboxManager, uri);
 
   // create mock layer for session
   MockSession1* session = new MockSession1(deliveryService);
@@ -151,11 +146,11 @@ TEST_F(EtchDefaultDeliveryServiceTest, beginCallTest) {
   EtchString uri("tcp://127.0.0.1:4001");
 
   // create value factory
-  MockDefaultValueFactory1* factory = new MockDefaultValueFactory1(uri);
+  MockDefaultValueFactory1* factory = new MockDefaultValueFactory1(mRuntime, uri);
   //set type and corresponding validator
   EtchType * type = NULL;
   capu::SmartPointer<EtchValidator> val = NULL;
-  EtchValidatorLong::Get(0, val);
+  EtchValidatorLong::Get(mRuntime, 0, val);
 
   factory->types.get("add", type);
   type->putValidator(EtchDefaultValueFactory::_mf__messageId(), val);
@@ -170,8 +165,8 @@ TEST_F(EtchDefaultDeliveryServiceTest, beginCallTest) {
   // create mock layer for transport
   MockTransport1* transport = new MockTransport1();
 
-  EtchPlainMailboxManager* mailboxManager = new EtchPlainMailboxManager(transport, uri, NULL);
-  EtchDefaultDeliveryService* deliveryService = new EtchDefaultDeliveryService(mailboxManager, uri);
+  EtchPlainMailboxManager* mailboxManager = new EtchPlainMailboxManager(mRuntime, transport, uri, NULL);
+  EtchDefaultDeliveryService* deliveryService = new EtchDefaultDeliveryService(mRuntime, mailboxManager, uri);
 
   // create mock layer for session
   MockSession1* session = new MockSession1(deliveryService);
@@ -182,7 +177,7 @@ TEST_F(EtchDefaultDeliveryServiceTest, beginCallTest) {
   //test begincall
   EtchMailbox *mail = NULL;
   EXPECT_TRUE(ETCH_OK == deliveryService->begincall(message, mail));
-  EXPECT_EQ(1, mailboxManager->count());
+  EXPECT_EQ(1u, mailboxManager->count());
   EXPECT_TRUE(ETCH_OK == message->getMessageId(id));
   EXPECT_TRUE(ETCH_OK != message->getInReplyToMessageId(id));
 
@@ -203,13 +198,13 @@ TEST_F(EtchDefaultDeliveryServiceTest, endCallTest) {
   EtchString uri("tcp://127.0.0.1:4001");
 
   // create value factory
-  MockDefaultValueFactory1* factory = new MockDefaultValueFactory1(uri);
+  MockDefaultValueFactory1* factory = new MockDefaultValueFactory1(mRuntime, uri);
 
   //set type and return type and the corresponding validators
   EtchType * type = NULL;
   EtchType * replyType = NULL;
   capu::SmartPointer<EtchValidator> val = NULL;
-  EtchValidatorLong::Get(0, val);
+  EtchValidatorLong::Get(mRuntime, 0, val);
 
   factory->types.get("add_result", replyType);
   factory->types.get("add", type);
@@ -228,8 +223,8 @@ TEST_F(EtchDefaultDeliveryServiceTest, endCallTest) {
   // create mock layer for transport
   MockTransport1* transport = new MockTransport1();
 
-  EtchPlainMailboxManager* mailboxManager = new EtchPlainMailboxManager(transport, uri, NULL);
-  EtchDefaultDeliveryService* deliveryService = new EtchDefaultDeliveryService(mailboxManager, uri);
+  EtchPlainMailboxManager* mailboxManager = new EtchPlainMailboxManager(mRuntime, transport, uri, NULL);
+  EtchDefaultDeliveryService* deliveryService = new EtchDefaultDeliveryService(mRuntime, mailboxManager, uri);
 
   // create mock layer for session
   MockSession1* session = new MockSession1(deliveryService);
@@ -240,7 +235,7 @@ TEST_F(EtchDefaultDeliveryServiceTest, endCallTest) {
   //performed the call
   EtchMailbox *mail;
   EXPECT_TRUE(ETCH_OK == deliveryService->begincall(message, mail));
-  EXPECT_EQ(1, mailboxManager->count());
+  EXPECT_EQ(1u, mailboxManager->count());
   EXPECT_TRUE(ETCH_OK == message->getMessageId(id));
   EXPECT_TRUE(ETCH_OK != message->getInReplyToMessageId(id));
   EXPECT_TRUE(ETCH_OK == mailboxManager->getMailbox(id, mail));
@@ -264,7 +259,7 @@ TEST_F(EtchDefaultDeliveryServiceTest, endCallTest) {
   status = deliveryService->endcall(mail, replyType, result);
   EXPECT_EQ(ETCH_OK, status);
   delete mail;
-  
+
   //check the result
   EXPECT_TRUE(result->equals(data.get()));
 

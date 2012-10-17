@@ -70,8 +70,8 @@ public:
 
 private:
   static const EtchString& SOCKET();
-  const capu::bool_t mIsSecure;
   EtchRuntime* mRuntime;
+  const capu::bool_t mIsSecure;
 
   class MySessionListener : public EtchTransport<EtchServerFactory>, public EtchSessionListener<EtchSocket> {
   public:
@@ -137,15 +137,14 @@ private:
     status_t sessionNotify(capu::SmartPointer<EtchObject> event);
 
   private:
+    EtchRuntime* mRuntime;
+    EtchTcpTransportFactory* mFactory;
     EtchTransport<EtchSessionListener<EtchSocket> > *mTransport;
     EtchString mUri;
     EtchResources* mResources;
-    EtchServerFactory* mSession;
-    EtchRuntime* mRuntime;
     capu::bool_t mIsSecure;
+    EtchServerFactory* mSession;
     capu::List<EtchStack*>* mConnectionStacks;
-    EtchTcpTransportFactory* mFactory;
-
   };
 
 };

@@ -48,11 +48,8 @@ const EtchString& EtchTcpListener::CONNECTION_CHECK() {
   return name;
 }
 
-EtchTcpListener::EtchTcpListener(EtchURL *url)
-: mPort(url->getPort()) {
-  //TODO rafactor this
-  mRuntime = EtchRuntime::getRuntime();
-
+EtchTcpListener::EtchTcpListener(EtchRuntime* runtime, EtchURL *url)
+: mRuntime(runtime), mPort(url->getPort()) {
   EtchString str;
   if (url->getTerms().get(BACKLOG(), &str) != ETCH_OK) {
     mBackLog = 0;

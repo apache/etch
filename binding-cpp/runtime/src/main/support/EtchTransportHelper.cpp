@@ -42,15 +42,12 @@ const EtchString& EtchTransportHelper::XML() {
   return type;
 }
 
-status_t EtchTransportHelper::InitResources(EtchResources* resources, EtchResources*& result) {
+status_t EtchTransportHelper::InitResources(EtchRuntime* runtime, EtchResources* resources, EtchResources*& result) {
   if(resources == NULL) {
     resources = new EtchResources();
   } else {
     resources = new EtchResources(*resources);
   }
-
-  //TODO rafactor this
-  EtchRuntime* runtime = EtchRuntime::getRuntime();
 
   EtchObject* obj = NULL;
   EtchObject* objOld = NULL;
@@ -72,16 +69,14 @@ status_t EtchTransportHelper::InitResources(EtchResources* resources, EtchResour
   return ETCH_OK;
 }
 
-status_t EtchTransportHelper::DestroyResources(EtchResources* resources) {
-  status_t result; 
+status_t EtchTransportHelper::DestroyResources(EtchRuntime* runtime, EtchResources* resources) {
+  status_t result;
   if (resources == NULL) {
     return ETCH_EINVAL;
   } else {
-    //TODO rafactor this
-    EtchRuntime* runtime = EtchRuntime::getRuntime();
 
     EtchObject* returnValue = NULL;
-    
+
     //get queued pool and delete it
     result = resources->get(EtchTransportHelper::QUEUED_POOL(), returnValue);
     if(result == ETCH_OK && returnValue != NULL) {

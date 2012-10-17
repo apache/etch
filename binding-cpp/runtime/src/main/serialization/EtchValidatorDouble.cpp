@@ -30,10 +30,8 @@ const EtchObjectType* EtchValidatorDouble::TYPE() {
   return &TYPE;
 }
 
-EtchValidatorDouble::EtchValidatorDouble(capu::uint32_t ndim)
-: EtchTypeValidator(EtchValidatorDouble::TYPE(), EtchDouble::TYPE(), EtchDouble::TYPE(), ndim) {
-  //TODO rafactor this
-  mRuntime = EtchRuntime::getRuntime();
+EtchValidatorDouble::EtchValidatorDouble(EtchRuntime* runtime, capu::uint32_t ndim)
+: EtchTypeValidator(EtchValidatorDouble::TYPE(), EtchDouble::TYPE(), EtchDouble::TYPE(), ndim), mRuntime(runtime) {
 }
 
 EtchValidatorDouble::EtchValidatorDouble(const EtchValidatorDouble& other)
@@ -78,19 +76,16 @@ status_t EtchValidatorDouble::validateValue(capu::SmartPointer<EtchObject> value
   }
 }
 
-status_t EtchValidatorDouble::Get(capu::uint32_t ndim, capu::SmartPointer<EtchValidator> &val) {
-    //TODO rafactor this
-  EtchRuntime* runtime = EtchRuntime::getRuntime();
-
+status_t EtchValidatorDouble::Get(EtchRuntime* runtime, capu::uint32_t ndim, capu::SmartPointer<EtchValidator> &val) {
   if (ndim > MAX_NDIMS) {
     return ETCH_EINVAL;
   }
   if (ndim >= MAX_CACHED) {
-    val = new EtchValidatorDouble(ndim);
+    val = new EtchValidatorDouble(runtime, ndim);
     return ETCH_OK;
   }
   if (Validators(runtime)[ndim].get() == NULL) {
-    Validators(runtime)[ndim] = new EtchValidatorDouble(ndim);
+    Validators(runtime)[ndim] = new EtchValidatorDouble(runtime, ndim);
     CAPU_LOG_TRACE(runtime->getLogger(), TAG, "EtchValidatorDouble has been created");
   }
   val = Validators(runtime)[ndim];
@@ -98,5 +93,5 @@ status_t EtchValidatorDouble::Get(capu::uint32_t ndim, capu::SmartPointer<EtchVa
 }
 
 status_t EtchValidatorDouble::getElementValidator(capu::SmartPointer<EtchValidator> &val) {
-  return EtchValidatorDouble::Get(mNDims - 1, val);
+  return EtchValidatorDouble::Get(mRuntime, mNDims - 1, val);
 }

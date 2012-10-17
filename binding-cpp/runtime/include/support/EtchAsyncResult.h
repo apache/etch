@@ -81,8 +81,8 @@ public:
   }
 
 private:
-   capu::bool_t mHasResult;
-   capu::SmartPointer<T> mResult;
+  capu::SmartPointer<T> mResult;
+  capu::bool_t mHasResult;
 };
 
 #endif

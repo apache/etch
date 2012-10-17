@@ -19,10 +19,8 @@
 #include "support/EtchRuntime.h"
 #include "capu/os/Debug.h"
 
-EtchPlainMailboxManager::EtchPlainMailboxManager(EtchTransportMessage* transport, const EtchString& uri, EtchResources* resources)
-: mSession(NULL), mTransport(transport), mUp(false) {
-  //TODO rafactor this
-  mRuntime = EtchRuntime::getRuntime();
+EtchPlainMailboxManager::EtchPlainMailboxManager(EtchRuntime* runtime, EtchTransportMessage* transport, const EtchString& uri, EtchResources* resources)
+: mRuntime(runtime), mSession(NULL), mTransport(transport), mUp(false) {
   capu::Debug::Assert(mRuntime != NULL);
   mTransport->setSession(this);
 }
@@ -58,7 +56,7 @@ status_t EtchPlainMailboxManager::registerMailbox(EtchMailbox* mb) {
     mMutex.unlock();
     return ETCH_EINVAL;
   }
-  
+
   EtchMailbox* tmp = NULL;
   if (mMailboxes.get(msgid, &tmp) != ETCH_ENOT_EXIST) {
     mMutex.unlock();

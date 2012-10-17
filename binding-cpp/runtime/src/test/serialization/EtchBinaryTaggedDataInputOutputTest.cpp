@@ -88,8 +88,8 @@ public:
    */
 public:
 
-  MyValueFactory(EtchString uri) {
-    EtchDefaultValueFactory::Init(&types, &class2type);
+  MyValueFactory(EtchRuntime* runtime, EtchString uri) {
+    EtchDefaultValueFactory::Init(runtime, &types, &class2type);
     factory = new EtchDefaultValueFactory(uri, &types, &class2type);
   }
 
@@ -134,8 +134,8 @@ public:
     return vals;
   }
 
-  static void test(capu::SmartPointer<EtchObject> x, capu::SmartPointer<EtchValidator> v, capu::bool_t stringTypeAndField) {
-    MyValueFactory vf("tcp:");
+  static void test(EtchRuntime* runtime, capu::SmartPointer<EtchObject> x, capu::SmartPointer<EtchValidator> v, capu::bool_t stringTypeAndField) {
+    MyValueFactory vf(runtime, "tcp:");
     EtchType *mt_foo = NULL;
     EtchField mf_x("x");
     EtchString foo("foo");
@@ -148,10 +148,10 @@ public:
     capu::uint32_t length;
     capu::int8_t * buffer;
     //SERIALIZE DATA INTO FLEX BUFFER
-    msg2bytes(msg, stringTypeAndField, length, buffer, vf);
+    msg2bytes(runtime, msg, stringTypeAndField, length, buffer, vf);
     capu::SmartPointer<EtchMessage> msg2;
     //DESERIALIZE DATA FROM FLEX BYTE ARRAY
-    bytes2msg(buffer, length, msg2, vf);
+    bytes2msg(runtime, buffer, length, msg2, vf);
     //TYPE CHECK
     EXPECT_TRUE(msg2->isType(mt_foo));
     EXPECT_TRUE(msg2->count() == 1);
@@ -191,13 +191,13 @@ public:
     }
   }
 
-  static void msg2bytes(capu::SmartPointer<EtchMessage> msg, capu::bool_t stringTypeAndField, capu::uint32_t &size, capu::int8_t *&buffer, MyValueFactory &vf) {
+  static void msg2bytes(EtchRuntime* runtime, capu::SmartPointer<EtchMessage> msg, capu::bool_t stringTypeAndField, capu::uint32_t &size, capu::int8_t *&buffer, MyValueFactory &vf) {
     capu::SmartPointer<EtchFlexBuffer> buf = new EtchFlexBuffer();
 
     EtchURL u("none:");
     //    u.addTerm(EtchBinaryTaggedDataOutput::STRING_TYPE_AND_FIELD(), stringTypeAndField);
 
-    EtchBinaryTaggedDataOutput btdo(vf.factory, &u);
+    EtchBinaryTaggedDataOutput btdo(runtime, vf.factory, &u);
     EXPECT_TRUE(btdo.writeMessage(msg, buf) == ETCH_OK);
     buf->setIndex(0);
     size = buf->getAvailableBytes();
@@ -207,23 +207,23 @@ public:
     return;
   }
 
-  static void bytes2msg(capu::int8_t* buf, capu::uint32_t length, capu::SmartPointer<EtchMessage> &msg, MyValueFactory &vf) {
-    bytes2msg(buf, length, msg, LEVEL_FULL, vf);
+  static void bytes2msg(EtchRuntime* runtime, capu::int8_t* buf, capu::uint32_t length, capu::SmartPointer<EtchMessage> &msg, MyValueFactory &vf) {
+    bytes2msg(runtime, buf, length, msg, LEVEL_FULL, vf);
   }
 
-  static void bytes2msg(capu::int8_t* buf, capu::uint32_t length, capu::SmartPointer<EtchMessage> &msg, EtchLevel level, MyValueFactory &vf) {
+  static void bytes2msg(EtchRuntime* runtime, capu::int8_t* buf, capu::uint32_t length, capu::SmartPointer<EtchMessage> &msg, EtchLevel level, MyValueFactory &vf) {
     EtchLevel oldLevel = vf.factory->setLevel(level);
-    EtchBinaryTaggedDataInput btdi(vf.factory);
+    EtchBinaryTaggedDataInput btdi(runtime, vf.factory);
     capu::SmartPointer<EtchFlexBuffer> buffer = new EtchFlexBuffer(buf, length);
     buffer->setIndex(0);
     EXPECT_TRUE(btdi.readMessage(buffer, msg) == ETCH_OK);
     vf.factory->setLevel(oldLevel);
   }
 
-  static void test_bto_write(capu::SmartPointer<EtchObject> x, capu::int8_t *compare_buffer, capu::SmartPointer<EtchValidator> v) {
+  static void test_bto_write(EtchRuntime* runtime, capu::SmartPointer<EtchObject> x, capu::int8_t *compare_buffer, capu::SmartPointer<EtchValidator> v) {
     EtchString type("a");
     EtchString field("b");
-    MyValueFactory vf("tcp:");
+    MyValueFactory vf(runtime, "tcp:");
 
     EtchType t(1, type);
     EtchField f(2, field);
@@ -232,7 +232,7 @@ public:
     capu::SmartPointer<EtchMessage> msg = new EtchMessage(&t, vf.factory);
     msg->put(f, x);
     EtchURL u("none:");
-    EtchBinaryTaggedDataOutput btdo(vf.factory, &u);
+    EtchBinaryTaggedDataOutput btdo(runtime, vf.factory, &u);
     capu::SmartPointer<EtchFlexBuffer> buf = new EtchFlexBuffer();
     buf->setByteRepresentation(ETCH_BIG_ENDIAN);
     EXPECT_TRUE(btdo.writeMessage(msg, buf) == ETCH_OK);
@@ -253,16 +253,11 @@ class EtchBinaryTaggedDataInputOutputTest
 protected:
   virtual void SetUp() {
     mRuntime = new EtchRuntime();
-    mRuntime->setLogger(new EtchLogger());
     mRuntime->start();
   }
 
   virtual void TearDown() {
     mRuntime->shutdown();
-    EtchLogger* logger = mRuntime->getLogger();
-    if(logger != NULL) {
-      delete logger;
-    }
     delete mRuntime;
     mRuntime = NULL;
   }
@@ -272,14 +267,14 @@ protected:
 
 TEST_F(EtchBinaryTaggedDataInputOutputTest, createTest) {
   MockValueFactory9 *factory = new MockValueFactory9();
-  EtchBinaryTaggedDataInput* dataIn = new EtchBinaryTaggedDataInput(factory);
+  EtchBinaryTaggedDataInput* dataIn = new EtchBinaryTaggedDataInput(mRuntime, factory);
   delete dataIn;
   delete factory;
 }
 
 TEST_F(EtchBinaryTaggedDataInputOutputTest, checkTest) {
   MockValueFactory9 *factory = new MockValueFactory9();
-  EtchBinaryTaggedDataInput* dataIn = new EtchBinaryTaggedDataInput(factory);
+  EtchBinaryTaggedDataInput* dataIn = new EtchBinaryTaggedDataInput(mRuntime, factory);
 
   // i'm testing with hard coded constants on the left hand
   // side here because this represents our external interface
@@ -421,13 +416,13 @@ TEST_F(EtchBinaryTaggedDataInputOutputTest, boolean_serialization) {
   carray1->set(Pos(1, 1), content4);
 
   capu::SmartPointer<EtchValidator> val = NULL;
-  EtchValidatorBoolean::Get(2, val);
-  Utility::test(carray1, val, false);
-  EtchValidatorBoolean::Get(0, val);
-  Utility::test(content1, val, false);
-  Utility::test(content2, val, false);
-  Utility::test(content3, val, false);
-  Utility::test(content4, val, false);
+  EtchValidatorBoolean::Get(mRuntime, 2, val);
+  Utility::test(mRuntime, carray1, val, false);
+  EtchValidatorBoolean::Get(mRuntime, 0, val);
+  Utility::test(mRuntime, content1, val, false);
+  Utility::test(mRuntime, content2, val, false);
+  Utility::test(mRuntime, content3, val, false);
+  Utility::test(mRuntime, content4, val, false);
 }
 //
 
@@ -445,13 +440,13 @@ TEST_F(EtchBinaryTaggedDataInputOutputTest, int_serialization) {
   carray1->set(Pos(1, 1), content4);
 
   capu::SmartPointer<EtchValidator> val = NULL;
-  EtchValidatorInt::Get(2, val);
-  Utility::test(carray1, val, false);
-  EtchValidatorInt::Get(0, val);
-  Utility::test(content1, val, false);
-  Utility::test(content2, val, false);
-  Utility::test(content3, val, false);
-  Utility::test(content4, val, false);
+  EtchValidatorInt::Get(mRuntime, 2, val);
+  Utility::test(mRuntime, carray1, val, false);
+  EtchValidatorInt::Get(mRuntime, 0, val);
+  Utility::test(mRuntime, content1, val, false);
+  Utility::test(mRuntime, content2, val, false);
+  Utility::test(mRuntime, content3, val, false);
+  Utility::test(mRuntime, content4, val, false);
 }
 
 TEST_F(EtchBinaryTaggedDataInputOutputTest, string_serialization) {
@@ -470,13 +465,13 @@ TEST_F(EtchBinaryTaggedDataInputOutputTest, string_serialization) {
   carray1->set(Pos(1, 1), content4);
 
   capu::SmartPointer<EtchValidator> val = NULL;
-  EtchValidatorString::Get(2, val);
-  Utility::test(carray1, val, false);
-  EtchValidatorString::Get(0, val);
-  Utility::test(content1, val, false);
-  Utility::test(content2, val, false);
-  Utility::test(content3, val, false);
-  Utility::test(content4, val, false);
+  EtchValidatorString::Get(mRuntime, 2, val);
+  Utility::test(mRuntime, carray1, val, false);
+  EtchValidatorString::Get(mRuntime, 0, val);
+  Utility::test(mRuntime, content1, val, false);
+  Utility::test(mRuntime, content2, val, false);
+  Utility::test(mRuntime, content3, val, false);
+  Utility::test(mRuntime, content4, val, false);
 }
 
 TEST_F(EtchBinaryTaggedDataInputOutputTest, long_serialization) {
@@ -493,13 +488,13 @@ TEST_F(EtchBinaryTaggedDataInputOutputTest, long_serialization) {
   carray1->set(Pos(1, 1), content4);
 
   capu::SmartPointer<EtchValidator> val = NULL;
-  EtchValidatorLong::Get(2, val);
-  Utility::test(carray1, val, false);
-  EtchValidatorLong::Get(0, val);
-  Utility::test(content1, val, false);
-  Utility::test(content2, val, false);
-  Utility::test(content3, val, false);
-  Utility::test(content4, val, false);
+  EtchValidatorLong::Get(mRuntime, 2, val);
+  Utility::test(mRuntime, carray1, val, false);
+  EtchValidatorLong::Get(mRuntime, 0, val);
+  Utility::test(mRuntime, content1, val, false);
+  Utility::test(mRuntime, content2, val, false);
+  Utility::test(mRuntime, content3, val, false);
+  Utility::test(mRuntime, content4, val, false);
 }
 
 TEST_F(EtchBinaryTaggedDataInputOutputTest, byte_serialization) {
@@ -507,8 +502,8 @@ TEST_F(EtchBinaryTaggedDataInputOutputTest, byte_serialization) {
   capu::SmartPointer<EtchByte> content1 = new EtchByte(90);
   //array can not be tested because it is optimized as native
   capu::SmartPointer<EtchValidator> val = NULL;
-  EtchValidatorByte::Get(0, val);
-  Utility::test(content1, val, false);
+  EtchValidatorByte::Get(mRuntime, 0, val);
+  Utility::test(mRuntime, content1, val, false);
 }
 
 TEST_F(EtchBinaryTaggedDataInputOutputTest, short_serialization) {
@@ -525,13 +520,13 @@ TEST_F(EtchBinaryTaggedDataInputOutputTest, short_serialization) {
   carray1->set(Pos(1, 1), content4);
 
   capu::SmartPointer<EtchValidator> val = NULL;
-  EtchValidatorShort::Get(2, val);
-  Utility::test(carray1, val, false);
-  EtchValidatorShort::Get(0, val);
-  Utility::test(content1, val, false);
-  Utility::test(content2, val, false);
-  Utility::test(content3, val, false);
-  Utility::test(content4, val, false);
+  EtchValidatorShort::Get(mRuntime, 2, val);
+  Utility::test(mRuntime, carray1, val, false);
+  EtchValidatorShort::Get(mRuntime, 0, val);
+  Utility::test(mRuntime, content1, val, false);
+  Utility::test(mRuntime, content2, val, false);
+  Utility::test(mRuntime, content3, val, false);
+  Utility::test(mRuntime, content4, val, false);
 }
 
 TEST_F(EtchBinaryTaggedDataInputOutputTest, float_serialization) {
@@ -548,13 +543,13 @@ TEST_F(EtchBinaryTaggedDataInputOutputTest, float_serialization) {
   carray1->set(Pos(1, 1), content4);
 
   capu::SmartPointer<EtchValidator> val = NULL;
-  EtchValidatorFloat::Get(2, val);
-  Utility::test(carray1, val, false);
-  EtchValidatorFloat::Get(0, val);
-  Utility::test(content1, val, false);
-  Utility::test(content2, val, false);
-  Utility::test(content3, val, false);
-  Utility::test(content4, val, false);
+  EtchValidatorFloat::Get(mRuntime, 2, val);
+  Utility::test(mRuntime, carray1, val, false);
+  EtchValidatorFloat::Get(mRuntime, 0, val);
+  Utility::test(mRuntime, content1, val, false);
+  Utility::test(mRuntime, content2, val, false);
+  Utility::test(mRuntime, content3, val, false);
+  Utility::test(mRuntime, content4, val, false);
 }
 
 TEST_F(EtchBinaryTaggedDataInputOutputTest, double_serialization) {
@@ -571,20 +566,20 @@ TEST_F(EtchBinaryTaggedDataInputOutputTest, double_serialization) {
   carray1->set(Pos(1, 1), content4);
 
   capu::SmartPointer<EtchValidator> val = NULL;
-  EtchValidatorDouble::Get(2, val);
-  Utility::test(carray1, val, false);
-  EtchValidatorDouble::Get(0, val);
-  Utility::test(content1, val, false);
-  Utility::test(content2, val, false);
-  Utility::test(content3, val, false);
-  Utility::test(content4, val, false);
+  EtchValidatorDouble::Get(mRuntime, 2, val);
+  Utility::test(mRuntime, carray1, val, false);
+  EtchValidatorDouble::Get(mRuntime, 0, val);
+  Utility::test(mRuntime, content1, val, false);
+  Utility::test(mRuntime, content2, val, false);
+  Utility::test(mRuntime, content3, val, false);
+  Utility::test(mRuntime, content4, val, false);
 }
 
 TEST_F(EtchBinaryTaggedDataInputOutputTest, empty_string_serialization) {
   capu::SmartPointer<EtchString> str = new EtchString(NULL, 0, "utf-8");
   capu::SmartPointer<EtchValidator> val = NULL;
-  EtchValidatorString::Get(0, val);
-  Utility::test(str, val, false);
+  EtchValidatorString::Get(mRuntime, 0, val);
+  Utility::test(mRuntime, str, val, false);
 }
 
 TEST_F(EtchBinaryTaggedDataInputOutputTest, date_serialization) {
@@ -605,13 +600,13 @@ TEST_F(EtchBinaryTaggedDataInputOutputTest, date_serialization) {
   carray1->set(Pos(1, 1), content4);
 
   capu::SmartPointer<EtchValidator> val = NULL;
-  EtchValidatorObject::Get(2, val);
-  Utility::test(carray1, val, false);
-  EtchValidatorObject::Get(0, val);
-  Utility::test(content1, val, false);
-  Utility::test(content2, val, false);
-  Utility::test(content3, val, false);
-  Utility::test(content4, val, false);
+  EtchValidatorObject::Get(mRuntime, 2, val);
+  Utility::test(mRuntime, carray1, val, false);
+  EtchValidatorObject::Get(mRuntime, 0, val);
+  Utility::test(mRuntime, content1, val, false);
+  Utility::test(mRuntime, content2, val, false);
+  Utility::test(mRuntime, content3, val, false);
+  Utility::test(mRuntime, content4, val, false);
 }
 
 TEST_F(EtchBinaryTaggedDataInputOutputTest, btdo_object_serialization) {
@@ -624,8 +619,8 @@ TEST_F(EtchBinaryTaggedDataInputOutputTest, btdo_object_serialization) {
   carray1->set(1, content2);
 
   capu::SmartPointer<EtchValidator> val = NULL;
-  EtchValidatorObject::Get(1, val);
-  Utility::test_bto_write(carray1, byte_array, val);
+  EtchValidatorObject::Get(mRuntime, 1, val);
+  Utility::test_bto_write(mRuntime, carray1, byte_array, val);
 }
 
 TEST_F(EtchBinaryTaggedDataInputOutputTest, btdo_boolean_write) {
@@ -639,11 +634,11 @@ TEST_F(EtchBinaryTaggedDataInputOutputTest, btdo_boolean_write) {
   carray->set(0, content1);
   carray->set(1, content2);
   capu::SmartPointer<EtchValidator> val = NULL;
-  EtchValidatorBoolean::Get(0, val);
-  Utility::test_bto_write(content2, byte_false, val);
-  Utility::test_bto_write(content1, byte_true, val);
-  EtchValidatorBoolean::Get(1, val);
-  Utility::test_bto_write(carray, byte_array, val);
+  EtchValidatorBoolean::Get(mRuntime, 0, val);
+  Utility::test_bto_write(mRuntime, content2, byte_false, val);
+  Utility::test_bto_write(mRuntime, content1, byte_true, val);
+  EtchValidatorBoolean::Get(mRuntime, 1, val);
+  Utility::test_bto_write(mRuntime, carray, byte_array, val);
 
 }
 
@@ -668,14 +663,14 @@ TEST_F(EtchBinaryTaggedDataInputOutputTest, btdo_byte_write) {
   carray->set(2, content5);
   capu::SmartPointer<EtchValidator> val = NULL;
 
-  EtchValidatorByte::Get(0, val);
-  Utility::test_bto_write(content1, byte_pos, val);
-  Utility::test_bto_write(content2, byte_neg, val);
-  Utility::test_bto_write(content0, byte_zero, val);
-  Utility::test_bto_write(content7, bytes, val);
+  EtchValidatorByte::Get(mRuntime, 0, val);
+  Utility::test_bto_write(mRuntime, content1, byte_pos, val);
+  Utility::test_bto_write(mRuntime, content2, byte_neg, val);
+  Utility::test_bto_write(mRuntime, content0, byte_zero, val);
+  Utility::test_bto_write(mRuntime, content7, bytes, val);
 
-  EtchValidatorByte::Get(1, val);
-  Utility::test_bto_write(carray, byte_array, val);
+  EtchValidatorByte::Get(mRuntime, 1, val);
+  Utility::test_bto_write(mRuntime, carray, byte_array, val);
 
 }
 
@@ -695,12 +690,12 @@ TEST_F(EtchBinaryTaggedDataInputOutputTest, btdo_short_write) {
   carray->set(2, content3);
   capu::SmartPointer<EtchValidator> val = NULL;
 
-  EtchValidatorShort::Get(0, val);
-  Utility::test_bto_write(content0, byte_pos, val);
-  Utility::test_bto_write(content7, byte_neg, val);
+  EtchValidatorShort::Get(mRuntime, 0, val);
+  Utility::test_bto_write(mRuntime, content0, byte_pos, val);
+  Utility::test_bto_write(mRuntime, content7, byte_neg, val);
 
-  EtchValidatorShort::Get(1, val);
-  Utility::test_bto_write(carray, byte_array, val);
+  EtchValidatorShort::Get(mRuntime, 1, val);
+  Utility::test_bto_write(mRuntime, carray, byte_array, val);
 
 }
 
@@ -720,12 +715,12 @@ TEST_F(EtchBinaryTaggedDataInputOutputTest, btdo_int_write) {
   carray->set(2, content3);
   capu::SmartPointer<EtchValidator> val = NULL;
 
-  EtchValidatorInt::Get(0, val);
-  Utility::test_bto_write(content0, byte_pos, val);
-  Utility::test_bto_write(content7, byte_neg, val);
+  EtchValidatorInt::Get(mRuntime, 0, val);
+  Utility::test_bto_write(mRuntime, content0, byte_pos, val);
+  Utility::test_bto_write(mRuntime, content7, byte_neg, val);
 
-  EtchValidatorInt::Get(1, val);
-  Utility::test_bto_write(carray, byte_array, val);
+  EtchValidatorInt::Get(mRuntime, 1, val);
+  Utility::test_bto_write(mRuntime, carray, byte_array, val);
 }
 
 TEST_F(EtchBinaryTaggedDataInputOutputTest, btdo_long_write) {
@@ -744,12 +739,12 @@ TEST_F(EtchBinaryTaggedDataInputOutputTest, btdo_long_write) {
   carray->set(2, content3);
   capu::SmartPointer<EtchValidator> val = NULL;
 
-  EtchValidatorLong::Get(0, val);
-  Utility::test_bto_write(content0, byte_pos, val);
-  Utility::test_bto_write(content7, byte_neg, val);
+  EtchValidatorLong::Get(mRuntime, 0, val);
+  Utility::test_bto_write(mRuntime, content0, byte_pos, val);
+  Utility::test_bto_write(mRuntime, content7, byte_neg, val);
 
-  EtchValidatorLong::Get(1, val);
-  Utility::test_bto_write(carray, byte_array, val);
+  EtchValidatorLong::Get(mRuntime, 1, val);
+  Utility::test_bto_write(mRuntime, carray, byte_array, val);
 }
 
 TEST_F(EtchBinaryTaggedDataInputOutputTest, btdo_float_write) {
@@ -765,11 +760,11 @@ TEST_F(EtchBinaryTaggedDataInputOutputTest, btdo_float_write) {
   carray->set(2, content3);
   capu::SmartPointer<EtchValidator> val = NULL;
 
-  EtchValidatorFloat::Get(0, val);
-  Utility::test_bto_write(content0, byte_pos, val);
+  EtchValidatorFloat::Get(mRuntime, 0, val);
+  Utility::test_bto_write(mRuntime, content0, byte_pos, val);
 
-  EtchValidatorFloat::Get(1, val);
-  Utility::test_bto_write(carray, byte_array, val);
+  EtchValidatorFloat::Get(mRuntime, 1, val);
+  Utility::test_bto_write(mRuntime, carray, byte_array, val);
 }
 
 TEST_F(EtchBinaryTaggedDataInputOutputTest, btdo_double_write) {
@@ -785,19 +780,19 @@ TEST_F(EtchBinaryTaggedDataInputOutputTest, btdo_double_write) {
   carray->set(2, content3);
   capu::SmartPointer<EtchValidator> val = NULL;
 
-  EtchValidatorDouble::Get(0, val);
-  Utility::test_bto_write(content0, byte_pos, val);
+  EtchValidatorDouble::Get(mRuntime, 0, val);
+  Utility::test_bto_write(mRuntime, content0, byte_pos, val);
 
-  EtchValidatorDouble::Get(1, val);
-  Utility::test_bto_write(carray, byte_array, val);
+  EtchValidatorDouble::Get(mRuntime, 1, val);
+  Utility::test_bto_write(mRuntime, carray, byte_array, val);
 }
 
 TEST_F(EtchBinaryTaggedDataInputOutputTest, btdo_empty_string_write) {
   capu::int8_t byte_pos[] = {3, 1, 1, 2, -110, -127};
   capu::SmartPointer<EtchString> content0 = new EtchString("");
   capu::SmartPointer<EtchValidator> val = NULL;
-  EtchValidatorString::Get(0, val);
-  Utility::test_bto_write(content0, byte_pos, val);
+  EtchValidatorString::Get(mRuntime, 0, val);
+  Utility::test_bto_write(mRuntime, content0, byte_pos, val);
 }
 
 TEST_F(EtchBinaryTaggedDataInputOutputTest, btdo_date_write) {
@@ -814,18 +809,18 @@ TEST_F(EtchBinaryTaggedDataInputOutputTest, btdo_date_write) {
   carray->set(1, content2);
 
   capu::SmartPointer<EtchValidator> val = NULL;
-  EtchValidatorObject::Get(1, val);
-  Utility::test_bto_write(carray, byte_array, val);
+  EtchValidatorObject::Get(mRuntime, 1, val);
+  Utility::test_bto_write(mRuntime, carray, byte_array, val);
 
-  EtchValidatorObject::Get(0, val);
-  Utility::test_bto_write(date, byte_pos, val);
+  EtchValidatorObject::Get(mRuntime, 0, val);
+  Utility::test_bto_write(mRuntime, date, byte_pos, val);
 }
 
 TEST_F(EtchBinaryTaggedDataInputOutputTest, null_write) {
   capu::int8_t byte_pos[] = {3, 1, 0, -127};
   capu::SmartPointer<EtchValidator> val = NULL;
-  EtchValidatorObject::Get(0, val);
-  Utility::test_bto_write(NULL, byte_pos, val);
+  EtchValidatorObject::Get(mRuntime, 0, val);
+  Utility::test_bto_write(mRuntime, NULL, byte_pos, val);
 }
 
 TEST_F(EtchBinaryTaggedDataInputOutputTest, multi_dimension_test) {
@@ -842,8 +837,8 @@ TEST_F(EtchBinaryTaggedDataInputOutputTest, multi_dimension_test) {
   carray1->set(Pos(1, 0), content3);
   carray1->set(Pos(1, 1), content4);
   capu::SmartPointer<EtchValidator> val = NULL;
-  EtchValidatorBoolean::Get(2, val);
-  Utility::test_bto_write(carray1, byte_pos, val);
+  EtchValidatorBoolean::Get(mRuntime, 2, val);
+  Utility::test_bto_write(mRuntime, carray1, byte_pos, val);
 }
 
 TEST_F(EtchBinaryTaggedDataInputOutputTest, btdo_multi_array_write) {
@@ -860,6 +855,6 @@ TEST_F(EtchBinaryTaggedDataInputOutputTest, btdo_multi_array_write) {
   carray1->set(Pos(1, 0), content3);
   carray1->set(Pos(1, 1), content4);
   capu::SmartPointer<EtchValidator> val = NULL;
-  EtchValidatorObject::Get(2, val);
-  Utility::test_bto_write(carray1, byte_array ,val);
+  EtchValidatorObject::Get(mRuntime, 2, val);
+  Utility::test_bto_write(mRuntime, carray1, byte_array ,val);
 }

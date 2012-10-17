@@ -28,16 +28,11 @@ class EtchValidatorRuntimeExceptionTest
 protected:
   virtual void SetUp() {
     mRuntime = new EtchRuntime();
-    mRuntime->setLogger(new EtchLogger());
     mRuntime->start();
   }
 
   virtual void TearDown() {
     mRuntime->shutdown();
-    EtchLogger* logger = mRuntime->getLogger();
-    if(logger != NULL) {
-      delete logger;
-    }
     delete mRuntime;
     mRuntime = NULL;
   }
@@ -48,7 +43,7 @@ protected:
 TEST_F(EtchValidatorRuntimeExceptionTest, createTest) {
   capu::SmartPointer<EtchValidatorRuntimeException> ptr = NULL;
   capu::SmartPointer<EtchValidator> val;
-  EXPECT_TRUE(EtchValidatorRuntimeException::Get(val) == ETCH_OK);
+  EXPECT_TRUE(EtchValidatorRuntimeException::Get(mRuntime, val) == ETCH_OK);
   ptr = capu::smartpointer_cast<EtchValidatorRuntimeException>(val);
 }
 
@@ -58,7 +53,7 @@ TEST_F(EtchValidatorRuntimeExceptionTest, validateTest) {
   capu::SmartPointer<EtchObject> integer = new EtchInt32(4);
   capu::SmartPointer<EtchObject> exc = new EtchRuntimeException(excepmess, ETCH_ERROR);
   capu::SmartPointer<EtchValidator> ptr = NULL;
-  EXPECT_TRUE(EtchValidatorRuntimeException::Get(ptr) == ETCH_OK);
+  EXPECT_TRUE(EtchValidatorRuntimeException::Get(mRuntime, ptr) == ETCH_OK);
   EXPECT_FALSE(ptr->validate(boolean));
   EXPECT_FALSE(ptr->validate(integer));
   EXPECT_TRUE(ptr->validate(exc));
@@ -73,7 +68,7 @@ TEST_F(EtchValidatorRuntimeExceptionTest, validateValueTest) {
   capu::SmartPointer<EtchObject> integer = new EtchInt32(4);
   capu::SmartPointer<EtchObject> exc = new EtchRuntimeException(excepmess, ETCH_ERROR);
   capu::SmartPointer<EtchValidator> ptr = NULL;
-  EXPECT_TRUE(EtchValidatorRuntimeException::Get(ptr) == ETCH_OK);
+  EXPECT_TRUE(EtchValidatorRuntimeException::Get(mRuntime, ptr) == ETCH_OK);
   EXPECT_TRUE(ptr->validateValue(boolean, result) == ETCH_ERROR);
   EXPECT_TRUE(ptr->validateValue(integer, result) == ETCH_ERROR);
   EXPECT_TRUE(ptr->validateValue(exc, result) == ETCH_OK);

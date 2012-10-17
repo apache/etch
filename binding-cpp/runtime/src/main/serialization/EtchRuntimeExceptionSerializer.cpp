@@ -28,10 +28,8 @@ const EtchString& EtchRuntimeExceptionSerializer::FIELD_NAME() {
 
 // TODO: check signature regarding by value copy
 
-EtchRuntimeExceptionSerializer::EtchRuntimeExceptionSerializer(EtchType* type, EtchField* field)
-: mField(*field), mType(type) {
-  //TODO refactor this
-  mRuntime = EtchRuntime::getRuntime();
+EtchRuntimeExceptionSerializer::EtchRuntimeExceptionSerializer(EtchRuntime* runtime, EtchType* type, EtchField* field)
+: mRuntime(runtime), mField(*field), mType(type) {
 }
 
 EtchRuntimeExceptionSerializer::~EtchRuntimeExceptionSerializer() {
@@ -71,10 +69,7 @@ status_t EtchRuntimeExceptionSerializer::exportValue(EtchValueFactory* vf, capu:
   return ETCH_OK;
 }
 
-status_t EtchRuntimeExceptionSerializer::Init(EtchType* type, EtchClass2TypeMap* class2type) {
-  //TODO rafactor this
-  EtchRuntime* runtime = EtchRuntime::getRuntime();
-
+status_t EtchRuntimeExceptionSerializer::Init(EtchRuntime* runtime, EtchType* type, EtchClass2TypeMap* class2type) {
   status_t result;
 
   EtchField field;
@@ -91,11 +86,11 @@ status_t EtchRuntimeExceptionSerializer::Init(EtchType* type, EtchClass2TypeMap*
   type->setComponentType(EtchRuntimeException::TYPE());
 
   //set the import export helper
-  type->setImportExportHelper(new EtchRuntimeExceptionSerializer(type, &field));
+  type->setImportExportHelper(new EtchRuntimeExceptionSerializer(runtime, type, &field));
 
   //get validator
   capu::SmartPointer<EtchValidator> tmp;
-  result = EtchValidatorString::Get(0, tmp);
+  result = EtchValidatorString::Get(runtime, 0, tmp);
   if (result != ETCH_OK) {
     return result;
   }

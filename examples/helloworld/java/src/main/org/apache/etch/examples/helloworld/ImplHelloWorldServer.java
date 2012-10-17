@@ -54,6 +54,12 @@ public class ImplHelloWorldServer extends BaseHelloWorldServer
 	
 	@Override
 	public String say_hello(user u){
+		try {
+			Thread.sleep(1000000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return "Hello " + u.name;
 	}
 	

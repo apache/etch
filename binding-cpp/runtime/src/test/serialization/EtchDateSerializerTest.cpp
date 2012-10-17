@@ -71,16 +71,11 @@ class EtchDateSerializationTest
 protected:
   virtual void SetUp() {
     mRuntime = new EtchRuntime();
-    mRuntime->setLogger(new EtchLogger());
     mRuntime->start();
   }
 
   virtual void TearDown() {
     mRuntime->shutdown();
-    EtchLogger* logger = mRuntime->getLogger();
-    if(logger != NULL) {
-      delete logger;
-    }
     delete mRuntime;
     mRuntime = NULL;
   }
@@ -93,7 +88,7 @@ TEST_F(EtchDateSerializationTest, initTest) {
   EtchString typeName("type1");
   EtchType* type = new EtchType(10, typeName);
   EtchType* result;
-  EXPECT_TRUE(EtchDateSerializer::Init(type, c2type) == ETCH_OK);
+  EXPECT_TRUE(EtchDateSerializer::Init(mRuntime, type, c2type) == ETCH_OK);
   c2type->get(EtchDate::TYPE(), &result);
 
   //check the added type to class to type matching
@@ -109,7 +104,7 @@ TEST_F(EtchDateSerializationTest, initTest) {
   //check validator
   type->getValidator(field, validator);
   capu::SmartPointer<EtchValidator> val;
-  EtchValidatorLong::Get(0, val);
+  EtchValidatorLong::Get(mRuntime, 0, val);
   EXPECT_TRUE(validator == val);
   delete type;
   delete c2type;
@@ -125,7 +120,7 @@ TEST_F(EtchDateSerializationTest, exportTest) {
   capu::SmartPointer<EtchObject> object3;
   EtchStructValue* result;
   //initialize the serializer
-  EXPECT_TRUE(EtchDateSerializer::Init(type, c2type) == ETCH_OK);
+  EXPECT_TRUE(EtchDateSerializer::Init(mRuntime, type, c2type) == ETCH_OK);
   EtchImportExportHelper* test = type->getImportExportHelper();
   //some test values
   (capu::smartpointer_cast<EtchDate > (object))->set(5);
@@ -166,7 +161,7 @@ TEST_F(EtchDateSerializationTest, importTest) {
   capu::SmartPointer<EtchObject> object = new EtchDate();
   EtchStructValue* structValue;
   //initialize the serializer
-  EXPECT_TRUE(EtchDateSerializer::Init(type, c2type) == ETCH_OK);
+  EXPECT_TRUE(EtchDateSerializer::Init(mRuntime, type, c2type) == ETCH_OK);
   //get the serializer
   EtchImportExportHelper* test = type->getImportExportHelper();
   //some test values

@@ -25,21 +25,17 @@ const EtchString& EtchBinaryTaggedDataOutput::STRING_TYPE_AND_FIELD() {
   return name;
 }
 
-EtchBinaryTaggedDataOutput::EtchBinaryTaggedDataOutput(EtchValueFactory *vf, EtchURL* uri)
-: EtchBinaryTaggedData(vf), mLevel(vf->getLevel()), mBuffer(NULL) {
-  // TODO refactoring
-  mRuntime = EtchRuntime::getRuntime();
-
+EtchBinaryTaggedDataOutput::EtchBinaryTaggedDataOutput(EtchRuntime* runtime, EtchValueFactory *vf, EtchURL* uri)
+: EtchBinaryTaggedData(vf), mRuntime(runtime), mLevel(vf->getLevel()), mBuffer(NULL) {
   EtchString tmp;
   if (uri->getTerms().get(STRING_TYPE_AND_FIELD(), &tmp) == ETCH_OK) {
     mStringTypeAndField = atoi(tmp.c_str()) > 0;
   } else {
     mStringTypeAndField = false;
   }
-  EtchValidatorInt::Get(0, mIntValidator);
-  EtchValidatorString::Get(0, mStringValidator);
-  EtchValidatorNone::Get(mNoneValidator);
-
+  EtchValidatorInt::Get(runtime, 0, mIntValidator);
+  EtchValidatorString::Get(runtime, 0, mStringValidator);
+  EtchValidatorNone::Get(runtime, mNoneValidator);
 }
 
 EtchBinaryTaggedDataOutput::~EtchBinaryTaggedDataOutput() {

@@ -72,16 +72,11 @@ class EtchListSerializerTest
 protected:
   virtual void SetUp() {
     mRuntime = new EtchRuntime();
-    mRuntime->setLogger(new EtchLogger());
     mRuntime->start();
   }
 
   virtual void TearDown() {
     mRuntime->shutdown();
-    EtchLogger* logger = mRuntime->getLogger();
-    if(logger != NULL) {
-      delete logger;
-    }
     delete mRuntime;
     mRuntime = NULL;
   }
@@ -94,7 +89,7 @@ TEST_F(EtchListSerializerTest, initTest) {
   EtchString typeName("type1");
   EtchType* type = new EtchType(10, typeName);
   EtchType* result;
-  EXPECT_TRUE(EtchListSerializer::Init(type, c2type) == ETCH_OK);
+  EXPECT_TRUE(EtchListSerializer::Init(mRuntime, type, c2type) == ETCH_OK);
   c2type->get(EtchNativeArray<capu::SmartPointer<EtchObject> >::TYPE(), &result);
 
   //check the added type to class to type matching
@@ -110,7 +105,7 @@ TEST_F(EtchListSerializerTest, initTest) {
   type->getValidator(field, validator);
 
   capu::SmartPointer<EtchValidator> val;
-  EtchValidatorObject::Get(1, val);
+  EtchValidatorObject::Get(mRuntime, 1, val);
   EXPECT_TRUE(validator == val);
   delete type;
   delete c2type;
@@ -126,7 +121,7 @@ TEST_F(EtchListSerializerTest, exportTest) {
   capu::SmartPointer<EtchObject> object3;
   EtchStructValue* result;
   //initialize the serializer
-  EXPECT_TRUE(EtchListSerializer::Init(type, c2type) == ETCH_OK);
+  EXPECT_TRUE(EtchListSerializer::Init(mRuntime, type, c2type) == ETCH_OK);
   EtchImportExportHelper* test = type->getImportExportHelper();
   //check with invalid values
   EXPECT_TRUE(test->exportValue(NULL, NULL, result) == ETCH_EINVAL);
@@ -173,7 +168,7 @@ TEST_F(EtchListSerializerTest, importTest) {
   capu::SmartPointer<EtchObject> object2 = NULL;
   EtchStructValue* structValue;
   //initialize the serializer
-  EXPECT_TRUE(EtchListSerializer::Init(type, c2type) == ETCH_OK);
+  EXPECT_TRUE(EtchListSerializer::Init(mRuntime, type, c2type) == ETCH_OK);
   //get the serializer
   EtchImportExportHelper* test = type->getImportExportHelper();
   //check with invalid values

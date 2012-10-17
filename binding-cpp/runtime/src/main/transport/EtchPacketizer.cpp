@@ -41,11 +41,8 @@ const EtchString& EtchPacketizer::MAX_PKT_SIZE_TERM() {
   return pktSize;
 }
 
-EtchPacketizer::EtchPacketizer(EtchTransportData* transport, EtchString& uri)
-: mTransport(transport), mBodyLen(0), mWantHeader(true) {
-  //TODO rafactor this
-  mRuntime = EtchRuntime::getRuntime();
-
+EtchPacketizer::EtchPacketizer(EtchRuntime* runtime, EtchTransportData* transport, EtchString& uri)
+: mRuntime(runtime), mTransport(transport), mBodyLen(0), mWantHeader(true) {
   if (mTransport != NULL)
     mTransport->setSession(this);
 
@@ -63,11 +60,8 @@ EtchPacketizer::EtchPacketizer(EtchTransportData* transport, EtchString& uri)
   mSavedBuf = new EtchFlexBuffer();
 }
 
-EtchPacketizer::EtchPacketizer(EtchTransportData* transport, EtchURL* uri)
-: mTransport(transport), mBodyLen(0), mWantHeader(true) {
-  //TODO rafactor this
-  mRuntime = EtchRuntime::getRuntime();
-
+EtchPacketizer::EtchPacketizer(EtchRuntime* runtime, EtchTransportData* transport, EtchURL* uri)
+: mRuntime(runtime), mTransport(transport), mBodyLen(0), mWantHeader(true) {
   EtchString value("");
   if (mTransport != NULL)
     transport->setSession(this);

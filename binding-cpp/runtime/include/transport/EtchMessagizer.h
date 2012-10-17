@@ -55,7 +55,7 @@ public:
    * @param uri the uri being used to configure the transport stack.
    * @param resources the associated set of resources for this service.
    */
-  EtchMessagizer(EtchTransportPacket* transport, EtchURL* uri, EtchResources* resources);
+  EtchMessagizer(EtchRuntime* runtime, EtchTransportPacket* transport, EtchURL* uri, EtchResources* resources);
 
   /**
    * Destructor

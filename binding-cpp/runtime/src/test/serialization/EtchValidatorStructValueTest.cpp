@@ -79,16 +79,11 @@ class EtchValidatorStructValueTest
 protected:
   virtual void SetUp() {
     mRuntime = new EtchRuntime();
-    mRuntime->setLogger(new EtchLogger());
     mRuntime->start();
   }
 
   virtual void TearDown() {
     mRuntime->shutdown();
-    EtchLogger* logger = mRuntime->getLogger();
-    if(logger != NULL) {
-      delete logger;
-    }
     delete mRuntime;
     mRuntime = NULL;
   }
@@ -102,7 +97,7 @@ TEST_F(EtchValidatorStructValueTest, createTest) {
   capu::SmartPointer<EtchValidatorStructValue> ptr = NULL;
 
   capu::SmartPointer<EtchValidator> val = NULL;
-  EXPECT_TRUE(EtchValidatorStructValue::Get(type, 0, val) == ETCH_OK);
+  EXPECT_TRUE(EtchValidatorStructValue::Get(mRuntime, type, 0, val) == ETCH_OK);
   ptr = capu::smartpointer_cast<EtchValidatorStructValue>(val);
 
   EXPECT_TRUE(ptr->getExpectedType()->equals(EtchStructValue::TYPE()));
@@ -111,12 +106,12 @@ TEST_F(EtchValidatorStructValueTest, createTest) {
   EtchObjectType type1(EOTID_STRUCT_VALUE, NULL);
   EtchObjectType type2(EOTID_NATIVE_ARRAY, &type1);
 
-  EXPECT_TRUE(EtchValidatorStructValue::Get(type, 2, val) == ETCH_OK);
+  EXPECT_TRUE(EtchValidatorStructValue::Get(mRuntime, type, 2, val) == ETCH_OK);
   ptr = capu::smartpointer_cast<EtchValidatorStructValue>(val);
   EXPECT_TRUE(ptr->getExpectedType()->equals(&type2));
   EXPECT_TRUE(ptr->getNDims() == 2);
 
-  EXPECT_TRUE(EtchValidatorStructValue::Get(type, 12, val) == ETCH_EINVAL);
+  EXPECT_TRUE(EtchValidatorStructValue::Get(mRuntime, type, 12, val) == ETCH_EINVAL);
   delete type;
 }
 
@@ -129,7 +124,7 @@ TEST_F(EtchValidatorStructValueTest, elementValidator) {
 
   EtchObjectType type1(EOTID_STRUCT_VALUE, NULL);
   EtchObjectType type2(EOTID_NATIVE_ARRAY, &type1);
-  EXPECT_TRUE(EtchValidatorStructValue::Get(type, 1, val) == ETCH_OK);
+  EXPECT_TRUE(EtchValidatorStructValue::Get(mRuntime, type, 1, val) == ETCH_OK);
   EXPECT_TRUE(val.get() != NULL);
   EXPECT_TRUE((capu::smartpointer_cast<EtchTypeValidator>(val))->getExpectedType()->equals(&type2));
   EXPECT_TRUE((capu::smartpointer_cast<EtchTypeValidator>(val))->getNDims() == 1);
@@ -197,7 +192,7 @@ TEST_F(EtchValidatorStructValueTest, validateTest) {
   capu::SmartPointer<EtchValidator> ptr = NULL;
   MockValueFactory8 *fac = new MockValueFactory8();
 
-  EXPECT_TRUE(EtchValidatorStructValue::Get(type, 0, ptr) == ETCH_OK);
+  EXPECT_TRUE(EtchValidatorStructValue::Get(mRuntime, type, 0, ptr) == ETCH_OK);
 
   capu::SmartPointer<EtchObject> byte = NULL;
 
@@ -264,7 +259,7 @@ TEST_F(EtchValidatorStructValueTest, validateValueTest) {
   capu::SmartPointer<EtchValidator> ptr = NULL;
   MockValueFactory8 *fac = new MockValueFactory8();
 
-  EXPECT_TRUE(EtchValidatorStructValue::Get(type, 0, ptr) == ETCH_OK);
+  EXPECT_TRUE(EtchValidatorStructValue::Get(mRuntime, type, 0, ptr) == ETCH_OK);
   EXPECT_TRUE(((EtchTypeValidator*)ptr.get())->getExpectedType()->equals(EtchStructValue::TYPE()));
   EXPECT_TRUE(((EtchTypeValidator*)ptr.get())->getNDims() == 0);
 

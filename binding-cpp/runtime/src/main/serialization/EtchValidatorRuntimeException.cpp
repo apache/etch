@@ -31,10 +31,8 @@ const EtchObjectType* EtchValidatorRuntimeException::TYPE() {
   return &TYPE;
 }
 
-EtchValidatorRuntimeException::EtchValidatorRuntimeException()
-: EtchValidator(EtchValidatorRuntimeException::TYPE()) {
-  //TODO rafactor this
-  mRuntime = EtchRuntime::getRuntime();
+EtchValidatorRuntimeException::EtchValidatorRuntimeException(EtchRuntime* runtime)
+: EtchValidator(EtchValidatorRuntimeException::TYPE()), mRuntime(runtime) {
 }
 
 EtchValidatorRuntimeException::EtchValidatorRuntimeException(const EtchValidatorRuntimeException& other)
@@ -62,12 +60,9 @@ status_t EtchValidatorRuntimeException::validateValue(capu::SmartPointer<EtchObj
   }
 }
 
-status_t EtchValidatorRuntimeException::Get(capu::SmartPointer<EtchValidator> &val) {
-  //TODO rafactor this
-  EtchRuntime* runtime = EtchRuntime::getRuntime();
-
+status_t EtchValidatorRuntimeException::Get(EtchRuntime* runtime, capu::SmartPointer<EtchValidator> &val) {
   if (Validators(runtime)[0].get() == NULL) {
-    Validators(runtime)[0] = new EtchValidatorRuntimeException();
+    Validators(runtime)[0] = new EtchValidatorRuntimeException(runtime);
     CAPU_LOG_TRACE(runtime->getLogger(), "EtchValidatorRuntimeException", "EtchValidatorRuntimeException has been created");
   }
   val = Validators(runtime)[0];

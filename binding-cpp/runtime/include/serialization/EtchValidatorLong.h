@@ -65,10 +65,10 @@ public:
   /**
    * @see EtchValidator
    */
-  static status_t Get(capu::uint32_t ndim, capu::SmartPointer<EtchValidator> &val);
+  static status_t Get(EtchRuntime* runtime, capu::uint32_t ndim, capu::SmartPointer<EtchValidator> &val);
 
 protected:
-  EtchValidatorLong(capu::uint32_t ndim);
+  EtchValidatorLong(EtchRuntime* runtime, capu::uint32_t ndim);
 
 private:
   EtchRuntime* mRuntime;

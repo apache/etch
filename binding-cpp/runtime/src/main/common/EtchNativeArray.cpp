@@ -35,7 +35,7 @@ status_t EtchNativeArrayBase::getBase(Pos pos, capu::SmartPointer<EtchObject> &r
   status_t ret = ETCH_OK;
   const EtchObjectType* type = getObjectType()->getObjectComponentType();
   const EtchObjectType::EtchObjectTypeTrait trait = getObjectType()->getObjectComponentTypeTrait();
-  const capu::int32_t dims = getDim();
+  const capu::uint32_t dims = getDim();
 
   switch(type->getTypeId()) {
     case EOTID_BYTE: {
@@ -76,7 +76,7 @@ status_t EtchNativeArrayBase::getBase(Pos pos, capu::SmartPointer<EtchObject> &r
           }
           break;
         }
-        case EtchObjectType::SMART_POINTER:
+        case EtchObjectType::SMART_POINTER: {
           EtchNativeArray<capu::SmartPointer<capu::int8_t> >* na = (EtchNativeArray<capu::SmartPointer<capu::int8_t> >*)(this);
           if(dims == 1) {
             capu::SmartPointer<capu::int8_t> value = NULL;
@@ -93,6 +93,10 @@ status_t EtchNativeArrayBase::getBase(Pos pos, capu::SmartPointer<EtchObject> &r
           }
           break;
         }
+        default: {
+          return ETCH_ERROR;
+        }
+      }
       break;
     }
 
@@ -185,6 +189,9 @@ status_t EtchNativeArrayBase::getBase(Pos pos, capu::SmartPointer<EtchObject> &r
           }
           break;
         }
+        default: {
+          return ETCH_ERROR;
+        }
       }
       break;
     }
@@ -195,6 +202,9 @@ status_t EtchNativeArrayBase::getBase(Pos pos, capu::SmartPointer<EtchObject> &r
     case EOTID_LIST: {
       GETBASE_CAST_OBJECT_TO_NA(EtchList<capu::SmartPointer<EtchObject> > )
       break;
+    }
+    default: {
+      return ETCH_ERROR;
     }
   }
   return ret;
@@ -238,7 +248,7 @@ status_t EtchNativeArrayBase::setBase(Pos pos, capu::SmartPointer<EtchObject> da
           }
           break;
         }
-        case EtchObjectType::SMART_POINTER:
+        case EtchObjectType::SMART_POINTER: {
           EtchNativeArray<capu::SmartPointer<capu::int8_t> >* na = (EtchNativeArray<capu::SmartPointer<capu::int8_t> >*)(this);
           if(dims == 1) {
             capu::SmartPointer<EtchInt32> value = capu::smartpointer_cast<EtchInt32> (data);
@@ -254,6 +264,10 @@ status_t EtchNativeArrayBase::setBase(Pos pos, capu::SmartPointer<EtchObject> da
           }
           break;
         }
+        default: {
+          break;
+        }
+      }
       break;
     }
     case EOTID_OBJECT: {
@@ -319,7 +333,7 @@ status_t EtchNativeArrayBase::setBase(Pos pos, capu::SmartPointer<EtchObject> da
           }
           break;
         }
-        case EtchObjectType::SMART_POINTER:
+        case EtchObjectType::SMART_POINTER: {
           EtchNativeArray<capu::SmartPointer<EtchHashTable<capu::SmartPointer<EtchObject>, capu::SmartPointer<EtchObject> > > >* na = (EtchNativeArray<capu::SmartPointer<EtchHashTable<capu::SmartPointer<EtchObject>, capu::SmartPointer<EtchObject> > > >*)(this);
           if(dims == 1) {
             capu::SmartPointer<EtchHashTable<capu::SmartPointer<EtchObject>, capu::SmartPointer<EtchObject> > > value = capu::smartpointer_cast<EtchHashTable<capu::SmartPointer<EtchObject>, capu::SmartPointer<EtchObject> > > (data);
@@ -330,6 +344,10 @@ status_t EtchNativeArrayBase::setBase(Pos pos, capu::SmartPointer<EtchObject> da
           }
           break;
         }
+        default: {
+          break;
+        }
+      }
       break;
     }
     case EOTID_SET: {
