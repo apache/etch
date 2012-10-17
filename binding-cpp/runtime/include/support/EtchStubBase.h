@@ -75,8 +75,8 @@ protected:
    * The message source.
    */
   EtchDeliveryService* mSvc;
-  EtchFreePool* mFreePool;
   EtchQueuedPool* mQueuedPool;
+  EtchFreePool* mFreePool;
 
   /**
    * The object used to implement stub.
@@ -126,7 +126,7 @@ private:
 
 template<typename T>
 EtchStubBase<T>::EtchStubBase(EtchDeliveryService* svc, T* obj, EtchQueuedPool* queued, EtchFreePool* free)
-: mSvc(svc), mObj(obj), mQueuedPool(queued), mFreePool(free) {
+: mSvc(svc), mQueuedPool(queued), mFreePool(free), mObj(obj) {
   mSvc->setSession(this);
 }
 

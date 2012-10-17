@@ -27,7 +27,7 @@ const EtchString& EtchAuthenticationExceptionSerializer::FIELD_NAME() {
 }
 
 EtchAuthenticationExceptionSerializer::EtchAuthenticationExceptionSerializer(EtchRuntime* runtime, EtchType* type, EtchField* field)
-: mRuntime(runtime), mField(*field), mType(type) {
+: EtchImportExportHelper(runtime), mField(*field), mType(type) {
 }
 
 EtchAuthenticationExceptionSerializer::~EtchAuthenticationExceptionSerializer() {

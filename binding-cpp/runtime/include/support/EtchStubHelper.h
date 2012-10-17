@@ -22,6 +22,7 @@
 
 #include "capu/util/SmartPointer.h"
 #include "support/EtchDeliveryService.h"
+#include "support/EtchRuntime.h"
 
 template<typename T>
 class EtchStubBase;
@@ -44,13 +45,13 @@ public:
    * Constructs a StubHelper which uses synchronous mode to dispatch
    * method from message.
    */
-  EtchStubHelper() {
+  EtchStubHelper(EtchRuntime* runtime)
+  : mRuntime(runtime) {
     addObjectType(TYPE());
-    // nothing to do.
   }
 
   EtchStubHelper(const EtchStubHelper& other)
-  : EtchObject(other) {
+  : EtchObject(other), mRuntime(other.mRuntime) {
   }
 
   /**
@@ -61,6 +62,11 @@ public:
    * @param msg
    */
   virtual status_t run(EtchStubBase<T>* ref, EtchDeliveryService* svc, T* obj, capu::SmartPointer<EtchWho> sender, capu::SmartPointer<EtchMessage> msg ) = 0;
+
+
+protected:
+  EtchRuntime* mRuntime;
+
 };
 
 template<typename T>

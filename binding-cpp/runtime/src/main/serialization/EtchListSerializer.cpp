@@ -29,7 +29,7 @@ const EtchString& EtchListSerializer::FIELD_NAME() {
 // TODO: check signature regarding by value copy
 
 EtchListSerializer::EtchListSerializer(EtchRuntime* runtime, EtchType* type, EtchField* field)
-: mRuntime(runtime), mField(*field), mType(type) {
+: EtchImportExportHelper(runtime), mField(*field), mType(type) {
 }
 
 EtchListSerializer::~EtchListSerializer() {

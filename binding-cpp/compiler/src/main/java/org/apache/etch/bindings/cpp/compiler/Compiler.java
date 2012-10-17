@@ -1302,7 +1302,7 @@ public class Compiler extends Backend {
         if (n.efqname(this).equals("EtchHashTable")) return b.className()+"<EtchObjectPtr, EtchObjectPtr> ";
         if (n.efqname(this).equals("EtchHashSet")) return b.className()+"<EtchObjectPtr> ";
         throw new IllegalArgumentException(String.format(
-                "unable to find correct Etch data type for type at line %d: %s", t.beginLine, n.efqname(this)));
+            "unable to find correct Etch data type for type at line %d: %s", t.beginLine, n.efqname(this)));
       }
       if (n.isEnumx()) {
         return n.efqname(this);
@@ -1492,7 +1492,7 @@ public class Compiler extends Backend {
       TypeRef type = param.type();
 
       if (type.isBuiltin())
-        return String.format("EtchValidator%s::Get(%d, tmpValue)",
+        return String.format("EtchValidator%s::Get(runtime, %d, tmpValue)",
             this.getValidatorStringForParam(param), type.dim());
 
       Named<?> n = type.getNamed(type.intf());
@@ -1513,7 +1513,7 @@ public class Compiler extends Backend {
          * int i = cn.indexOf( '<' ); if (i >= 0) cn = cn.substring( 0, i );
          */
         return String.format(
-            "EtchValidatorCustom::Get(%d, %s::TYPE(), %s, tmpValue);",
+            "EtchValidatorCustom::Get(runtime, %d, %s::TYPE(), %s, tmpValue);",
             type.dim(), cn, b.allowSubclass());
       }
 
@@ -1523,13 +1523,13 @@ public class Compiler extends Backend {
         if (n.isStruct()) {
           Struct s = (Struct) n;
           return String.format(
-              "EtchValidatorCustom::Get( %d, %s::TYPE(), true, tmpValue);",
+              "EtchValidatorCustom::Get(runtime, %d, %s::TYPE(), true, tmpValue);",
               type.dim(), s
               .service().name() + "::" + n.efqname(this));
         }
         Except e = (Except) n;
         return String.format(
-            "EtchValidatorCustom::Get( %d, %s::TYPE(), true, tmpValue);", type.dim(), e
+            "EtchValidatorCustom::Get(runtime, %d, %s::TYPE(), true, tmpValue);", type.dim(), e
             .service().name() + "::" + n.efqname(this));
       }
       // Don't allow subclassing for externs or etch defined enums.
@@ -1538,7 +1538,7 @@ public class Compiler extends Backend {
             "n.isExtern() || n.isEnumx(): " + n);
       Enumx e = (Enumx) n;
       return String.format(
-          "EtchValidatorCustom::Get( %d, %s::TYPE(), false, tmpValue);",
+          "EtchValidatorCustom::Get(runtime, %d, %s::TYPE(), false, tmpValue);",
           type.dim(), n.efqname(this));
     }
 
@@ -1548,11 +1548,11 @@ public class Compiler extends Backend {
       String efgName = this.getExcept(thrown).service().name() + "::"
           + e.efqname(this);
       return String.format(
-          "EtchValidatorCustom::Get(0, %s::TYPE(), true, tmpValue);"
+          "EtchValidatorCustom::Get(runtime, 0, %s::TYPE(), true, tmpValue);"
           , efgName);
     }
     if (named instanceof Item)
-      return "EtchValidatorBoolean::Get(0, tmpValue)";
+      return "EtchValidatorBoolean::Get(runtime, 0, tmpValue)";
     return "NULL";
   }
 

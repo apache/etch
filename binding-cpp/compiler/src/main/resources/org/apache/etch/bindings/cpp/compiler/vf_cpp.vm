@@ -34,6 +34,7 @@
 \#include "serialization/EtchAsyncMode.h"
 \#include "serialization/EtchDirection.h"
 \#include "serialization/EtchValidators.h"
+\#include "serialization/EtchImportExportHelper.h"
 
 using namespace $namespace;
 
@@ -62,6 +63,13 @@ $vf::Etch${intf.name()}RuntimeListener $vf::S${intf.name()}RuntimeListener;
 class ImportExportHelper$n.vname($helper)
   : public EtchImportExportHelper {
 public:
+  ImportExportHelper$n.vname($helper)(EtchRuntime* runtime) 
+  : EtchImportExportHelper(runtime) {
+  }
+
+  virtual ~ImportExportHelper$n.vname($helper)() {
+  }
+  
   status_t exportValue(EtchValueFactory* vf, EtchObjectPtr value, EtchStructValue *&result)
   {
     EtchStructValue* _struct = new EtchStructValue( $vf::${n.vname( $helper )}, vf );
@@ -73,6 +81,7 @@ public:
     _struct->put($vf::$p.vname($helper)(), val$CountParams );
 #end
     result = _struct;
+    CAPU_LOG_TRACE(mRuntime->getLogger(), "$vf", "${namespace}: exported $n.vname($helper) Value.");
     return ETCH_OK;
   }
   status_t importValue(EtchStructValue* value, EtchObjectPtr &result)
@@ -88,6 +97,7 @@ public:
     v->$helper.getSetterName($p.name())(tmp$CountParams);
 #end
     result = v;
+    CAPU_LOG_TRACE(mRuntime->getLogger(), "$vf", "${namespace}: imported $n.vname($helper) Value.");
     return ETCH_OK;
   }
 };
@@ -224,7 +234,7 @@ status_t ${vf}::InitResults()
 }
 
 ## ----------------------------- import / export -----------------------------
-status_t ${vf}::InitImportExport()
+status_t ${vf}::InitImportExport(EtchRuntime* runtime)
 {
 #foreach ( $n in $intf.iterator() )
 #if ($n.isStruct() || $n.isExcept())
@@ -234,14 +244,14 @@ status_t ${vf}::InitImportExport()
 #if ($n.hasExtends())
   $vf::${n.vname($helper)}->setSuperType($n.getExtends().vname($helper));
 #end
-  $vf::${n.vname($helper)}->setImportExportHelper(new ImportExportHelper$n.vname($helper)());
+  $vf::${n.vname($helper)}->setImportExportHelper(new ImportExportHelper$n.vname($helper)(runtime));
 #elseif ($n.isExtern())
 #set( $tname = $n.efqname( $helper ) )
 #elseif ($n.isEnumx())
 #set( $tname = $n.efqname( $helper ) )
   $vf::class2type()->put(${tname}::TYPE(), $vf::${n.vname($helper)});
   $vf::${n.vname( $helper )}->setComponentType(${tname}::TYPE());
-  $vf::${n.vname( $helper )}->setImportExportHelper(new ImportExportHelper$n.vname($helper)());
+  $vf::${n.vname( $helper )}->setImportExportHelper(new ImportExportHelper$n.vname($helper)(runtime));
 #end
 #end
 
@@ -271,7 +281,7 @@ status_t ${vf}::InitFields()
 
 
 #set( $ctr = 0 )
-status_t $vf::InitParams()
+status_t $vf::InitParams(EtchRuntime* runtime)
 {
   capu::SmartPointer<EtchValidator> tmpValue;
 #foreach( $n in $intf.iterator() )
@@ -293,7 +303,7 @@ status_t $vf::InitParams()
 #end ## -- foreach --
 #end ## -- else --
 #if ($n.isMessage())
-  EtchValidatorLong::Get(0, tmpValue);
+  EtchValidatorLong::Get(runtime, 0, tmpValue);
   ${n.vname( $helper )}->putValidator($vf::_mf__messageId(), tmpValue);
 
 #if ($n.isHidden())
@@ -304,9 +314,9 @@ status_t $vf::InitParams()
   $vf::${n.vname( $helper )}->putValidator($vf::$param.vname($helper)(), tmpValue); // thrown $t.name()
 
 #end ## -- foreach --
-  EtchValidatorRuntimeException::Get(tmpValue);
+  EtchValidatorRuntimeException::Get(runtime, tmpValue);
   $vf::${n.vname( $helper )}->putValidator($vf::$param.vname($helper)(), tmpValue); // thrown RuntimeException
-  EtchValidatorLong::Get(0, tmpValue);
+  EtchValidatorLong::Get(runtime, 0, tmpValue);
   $vf::${n.vname( $helper )}->putValidator($vf::_mf__inReplyTo(), tmpValue);
 #end ## -- isHidden --
 #end ## -- isMessage --
@@ -338,7 +348,7 @@ status_t $vf::InitValueFactory(EtchRuntime* runtime)
   }
   SRuntimesMutex.unlock();
   
-  status = $vf::Init( types(), class2type() );
+  status = $vf::Init(runtime, types(), class2type());
   if (status != ETCH_OK) {
     return status;
   }
@@ -359,33 +369,33 @@ status_t $vf::InitValueFactory(EtchRuntime* runtime)
   }
 #foreach( $n in $intf.iterator() )
 #if ($n.isExtern())
-    status = ${n.sname( $helper )}.Init( ${n.vname($helper)}(), class2type );
+    status = ${n.sname( $helper )}.Init(runtime, ${n.vname($helper)}(), class2type);
     if (status != ETCH_OK) {
       return status;
     }
 #end
 #end
-  status = $vf::InitParams();
+  status = $vf::InitParams(runtime);
   if (status != ETCH_OK) {
     return status;
   }
   
-  status = $vf::InitImportExport();
+  status = $vf::InitImportExport(runtime);
   if (status != ETCH_OK) {
     return status;
   }
 
-  status = Stub${i}<void>::Init();
+  status = Stub${i}<void>::Init(runtime);
   if (status != ETCH_OK) {
     return status;
   }
   
-  status = Stub${i}Server::Init();
+  status = Stub${i}Server::Init(runtime);
   if (status != ETCH_OK) {
     return status;
   }
   
-  status = Stub${i}Client::Init();
+  status = Stub${i}Client::Init(runtime);
   if (status != ETCH_OK) {
     return status;
   }

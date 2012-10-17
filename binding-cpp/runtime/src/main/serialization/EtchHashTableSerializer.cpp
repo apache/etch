@@ -28,7 +28,7 @@ const EtchString& EtchHashTableSerializer::FIELD_NAME() {
 }
 
 EtchHashTableSerializer::EtchHashTableSerializer(EtchRuntime* runtime, EtchType* type, EtchField& field)
-: mRuntime(runtime), mField(field), mType(type) {
+: EtchImportExportHelper(runtime), mField(field), mType(type) {
 }
 
 EtchHashTableSerializer::~EtchHashTableSerializer() {

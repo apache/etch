@@ -38,6 +38,7 @@
 #end
 \#include "ValueFactory${i}.h"
 \#include "support/EtchStubHelper.h"
+\#include "support/EtchRuntime.h"
 
 using namespace $namespace;
 
@@ -49,15 +50,22 @@ class Run${mthd.vname($helper)}
   : public EtchStubHelper<$i$suffix>
 {
 public:
+  Run${mthd.vname($helper)}(EtchRuntime* runtime)
+  : EtchStubHelper(runtime) {
+  }
+  
+  ~Run${mthd.vname($helper)}() {
+  }
+
   status_t run(EtchStubBase<$i$suffix>* _ref, EtchDeliveryService *_svc, $i$suffix *_obj, capu::SmartPointer<EtchWho> _sender, capu::SmartPointer<EtchMessage> _msg )
   {
     status_t status = ETCH_OK;
-
+    CAPU_LOG_TRACE(mRuntime->getLogger(), "Stub$i$suffix", "${namespace}: Called ${mthd.vname($helper)} Run-Method.");
 #if (!$mthd.isOneway())
     capu::SmartPointer<EtchMessage> _rmsg;
     status = _msg->createReplyMessage(_rmsg);
     if(status != ETCH_OK) {
-      // TODO log error
+      CAPU_LOG_ERROR(mRuntime->getLogger(), "Stub$i$suffix", "${namespace}: Coudn't create reply-message.");
       // TODO set exception
       return ETCH_ERROR;
     }
@@ -75,15 +83,18 @@ public:
     $intfname::$mthd.name()AsyncResultPtr ar;
 #set($sep = "")
 #set($count = 0)
+    CAPU_LOG_TRACE(mRuntime->getLogger(), "Stub$i$suffix", "${namespace}: Calling implementation of \"$mthd.name()\" function.");
     ar = _obj->$mthd.name()(#foreach($param in $mthd.iterator())#if($mthd.hasAuth())${sep}$param.name()#else#set($count = $count + 1)${sep}val$count#end#set($sep = ", ")#end);
 
     // create result message
 #if($mthd.hasReturn())
     if(ar->hasResult()) {
+    CAPU_LOG_TRACE(mRuntime->getLogger(), "Stub$i$suffix", "${namespace}: $mthd.name() - returned an Result, generating Answer Message.");
         _rmsg->put(ValueFactory$i::_mf_result(), ar->getResult());
     } else
 #end
     if(ar->hasException()) {
+         CAPU_LOG_DEBUG(mRuntime->getLogger(), "Stub$i$suffix", "${namespace}: $mthd.name()  - returned an Exception - notify Session.");
         _ref->sessionNotify(ar->getException());
 #if ($mthd.isOneway())
         EtchMessagePtr _rmsg;
@@ -92,12 +103,14 @@ public:
         _rmsg->put( ValueFactory$i::_mf_result(), ar->getException() );
 #if ($mthd.isOneway())
         // transport result message
+        CAPU_LOG_TRACE(mRuntime->getLogger(), "Stub$i$suffix", "${namespace}: $mthd.name() - (One-Way) Transport Message back! Because an Exception occurred!.");
         status = _svc->transportMessage( _sender, _rmsg);
 #end
     }
 
 #if (!$mthd.isOneway())
     // transport result message
+    CAPU_LOG_TRACE(mRuntime->getLogger(), "Stub$i$suffix", "${namespace}: $mthd.name() - Transport answer-message back!.");
     status = _svc->transportMessage( _sender, _rmsg);
 #end
     return status;
@@ -153,23 +166,22 @@ namespace $namespace {
     /**
      * Static Initialization-Helper
      */
-    static status_t Init()
+    static status_t Init(EtchRuntime* runtime)
     {
-      #foreach( $mthd in $intf.iterator() )
-      #if ($mthd.isMsgDir($mc))
-      #if (!$mthd.isHidden())
-          ValueFactory$i::${mthd.vname( $helper )}->setStubHelper(new Run${mthd.vname($helper)}());
-      #end
-      #end
-      #if( $n.isMixin() )
-      #set( $m = $n.getModule() )
-      #set( $z = $m.iterator().next() )
-          ${m.name()}::Stub${z.name()}${suffix}::Init();
-      #end
-      #end
+#foreach( $mthd in $intf.iterator() )
+#if ($mthd.isMsgDir($mc))
+#if (!$mthd.isHidden())
+      ValueFactory$i::${mthd.vname( $helper )}->setStubHelper(new Run${mthd.vname($helper)}(runtime));
+#end
+#end
+#if( $n.isMixin() )
+#set( $m = $n.getModule() )
+#set( $z = $m.iterator().next() )
+      ${m.name()}::Stub${z.name()}${suffix}::Init(runtime);
+#end
+#end
       return ETCH_OK;
     }
-
 ##end
   };
 }

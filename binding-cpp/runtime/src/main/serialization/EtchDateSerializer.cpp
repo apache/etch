@@ -27,7 +27,7 @@ const EtchString& EtchDateSerializer::FIELD_NAME() {
 }
 
 EtchDateSerializer::EtchDateSerializer(EtchRuntime* runtime, EtchType* type, EtchField* field)
-: mRuntime(runtime), mField(*field), mType(type) {
+: EtchImportExportHelper(runtime), mField(*field), mType(type) {
 }
 
 EtchDateSerializer::~EtchDateSerializer() {

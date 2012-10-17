@@ -79,7 +79,7 @@ namespace $namespace {
     static status_t InitTypes();
     static status_t InitResults();
     static status_t InitFields();
-    static status_t InitParams();
+    static status_t InitParams(EtchRuntime* runtime);
 #set( $ctr = 0 )
 #foreach( $n in $intf.iterator() )
 #if ($n.isEnumx() || $n.isStruct() || $n.isExcept() || $n.isMessage())
@@ -89,7 +89,7 @@ namespace $namespace {
 #set( $ctr = $ctr + 1 )
 #end
 #end
-    static status_t InitImportExport();
+    static status_t InitImportExport(EtchRuntime* runtime);
 
     /**
      * Static Initialization-Helper

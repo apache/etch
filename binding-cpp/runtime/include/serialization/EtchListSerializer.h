@@ -61,7 +61,6 @@ public:
   static status_t Init(EtchRuntime* runtime, EtchType* type, EtchClass2TypeMap* class2type);
 
 private:
-  EtchRuntime* mRuntime;
   EtchField mField;
   EtchType* mType;
   const static EtchString& FIELD_NAME();

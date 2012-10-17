@@ -19,6 +19,7 @@
 #ifndef __ETCHIMPORTEXPORTHELPER_H__
 #define __ETCHIMPORTEXPORTHELPER_H__
 #include "serialization/EtchValueFactory.h"
+#include "support/EtchRuntime.h"
 
 class EtchStructValue;
 
@@ -28,6 +29,12 @@ class EtchStructValue;
  */
 class EtchImportExportHelper {
 public:
+
+  /**
+   * Constructor
+   */
+  EtchImportExportHelper(EtchRuntime* runtime) : mRuntime(runtime) {
+  }
 
   /**
    * Destructor
@@ -56,6 +63,8 @@ public:
    */
   virtual status_t importValue(EtchStructValue* value, capu::SmartPointer<EtchObject> &result) = 0;
 
+protected:
+  EtchRuntime* mRuntime;
 };
 
 #endif /* ETCHIMPORTEXPORTHELPER_H */

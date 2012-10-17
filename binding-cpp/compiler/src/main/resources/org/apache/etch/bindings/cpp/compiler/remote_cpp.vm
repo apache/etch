@@ -119,7 +119,7 @@ $clname::$clname(EtchRuntime* runtime, EtchDeliveryService* svc, EtchValueFactor
   : Remote${i}(runtime, svc, vf, stack) {
 #else
 $clname::$clname(EtchRuntime* runtime, EtchDeliveryService* svc, EtchValueFactory* vf, EtchStack* stack )
-  : EtchRemoteBase(svc, vf, stack), mRuntime(runtime) {
+  : EtchRemoteBase(runtime, svc, vf, stack), mRuntime(runtime) {
 #end
 }
 

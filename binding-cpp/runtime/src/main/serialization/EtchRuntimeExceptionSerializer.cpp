@@ -29,7 +29,7 @@ const EtchString& EtchRuntimeExceptionSerializer::FIELD_NAME() {
 // TODO: check signature regarding by value copy
 
 EtchRuntimeExceptionSerializer::EtchRuntimeExceptionSerializer(EtchRuntime* runtime, EtchType* type, EtchField* field)
-: mRuntime(runtime), mField(*field), mType(type) {
+: EtchImportExportHelper(runtime), mField(*field), mType(type) {
 }
 
 EtchRuntimeExceptionSerializer::~EtchRuntimeExceptionSerializer() {
