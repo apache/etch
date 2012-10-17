@@ -22,7 +22,6 @@
 #include "serialization/EtchTypeValidator.h"
 #include "common/EtchDouble.h"
 #include "common/EtchFloat.h"
-#include "serialization/EtchTypeCodes.h"
 #include "common/EtchNativeArray.h"
 
 class EtchRuntime;

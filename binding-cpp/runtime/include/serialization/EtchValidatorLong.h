@@ -23,7 +23,6 @@
 #include "common/EtchShort.h"
 #include "common/EtchInt32.h"
 #include "common/EtchLong.h"
-#include "serialization/EtchTypeCodes.h"
 #include "common/EtchNativeArray.h"
 #include "capu/os/NumericLimits.h"
 

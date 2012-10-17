@@ -20,11 +20,9 @@
 #ifndef __ETCHVALUEFACTORY_H__
 #define __ETCHVALUEFACTORY_H__
 
-
-#include "serialization/EtchLevel.h"
 #include "common/EtchString.h"
+#include "serialization/EtchLevel.h"
 #include "serialization/EtchField.h"
-#include "capu/util/SmartPointer.h"
 
 class EtchStructValue;
 class EtchMessage;

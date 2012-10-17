@@ -27,7 +27,6 @@
 #include "serialization/EtchType.h"
 #include "serialization/EtchClass2TypeMap.h"
 #include "serialization/EtchValidatorObject.h"
-#include "serialization/EtchValidatorObject.h"
 
 class EtchRuntime;
 

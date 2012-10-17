@@ -22,7 +22,6 @@
 #define __ETCHOBJECTTYPE_H__
 
 #include "EtchConfig.h"
-#include "common/EtchObject.h"
 #include "capu/util/SmartPointer.h"
 
 enum EtchObjectTypeIds {

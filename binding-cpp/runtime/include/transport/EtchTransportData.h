@@ -18,7 +18,7 @@
 
 #ifndef __ETCHTRANSPORTDATA_H__
 #define __ETCHTRANSPORTDATA_H__
-#include "capu/util/SmartPointer.h"
+
 #include "transport/EtchSessionData.h"
 #include "transport/EtchTransport.h"
 #include "transport/EtchFlexBuffer.h"

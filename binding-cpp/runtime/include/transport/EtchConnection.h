@@ -21,11 +21,9 @@
 
 #include "capu/os/Mutex.h"
 #include "capu/os/Thread.h"
-#include "capu/util/SmartPointer.h"
 #include "common/EtchError.h"
 #include "common/EtchException.h"
 #include "common/EtchInt32.h"
-#include "common/EtchObject.h"
 #include "common/EtchString.h"
 #include "support/EtchMonitor.h"
 #include "transport/EtchSession.h"
@@ -155,7 +153,7 @@ capu::Mutex EtchConnection<S>::mMutexConnection;
 
 template <class S>
 EtchConnection<S>::EtchConnection()
-: mStatus(EtchString("status"), EtchSession::DOWN()) {
+: mSession(0), mThread(0), mStatus(EtchString("status"), EtchSession::DOWN()) {
 }
 
 template <class S>

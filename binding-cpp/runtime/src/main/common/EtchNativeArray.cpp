@@ -17,18 +17,6 @@
  */
 
 #include "common/EtchNativeArray.h"
-#include "common/EtchInt32.h"
-#include "common/EtchBool.h"
-#include "common/EtchByte.h"
-#include "common/EtchShort.h"
-#include "common/EtchLong.h"
-#include "common/EtchDouble.h"
-#include "common/EtchFloat.h"
-#include "common/EtchString.h"
-#include "common/EtchDate.h"
-#include "common/EtchHashTable.h"
-#include "common/EtchHashSet.h"
-#include "common/EtchList.h"
 
 status_t EtchNativeArrayBase::getBase(Pos pos, capu::SmartPointer<EtchObject> &result) {
 

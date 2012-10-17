@@ -20,9 +20,6 @@
 #define __ETCHNATIVEARRAY_H__
 
 #include "capu/util/SmartPointer.h"
-#include "common/EtchError.h"
-#include "common/EtchObject.h"
-#include "common/EtchObjectType.h"
 #include "common/EtchTypes.h"
 
 

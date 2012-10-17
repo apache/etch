@@ -15,9 +15,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 #include "common/EtchServerSocket.h"
 #include "capu/util/SmartPointer.h"
-#include "common/EtchSocket.h"
 
 const EtchObjectType* EtchServerSocket::TYPE() {
   const static EtchObjectType TYPE(EOTID_SERVER_SOCKET, NULL);

@@ -19,10 +19,7 @@
 #ifndef __ETCHVALIDATOR_H__
 #define __ETCHVALIDATOR_H__
 
-#include "capu/util/SmartPointer.h"
 #include "common/EtchObject.h"
-#include "common/EtchObjectType.h"
-#include "common/EtchError.h"
 #include "support/EtchRuntime.h"
 
 class EtchValidator : public EtchObject {

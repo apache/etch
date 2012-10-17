@@ -19,10 +19,7 @@
 #ifndef __ETCHSESSION_H__
 #define __ETCHSESSION_H__
 
-#include "capu/util/SmartPointer.h"
-#include "common/EtchObject.h"
 #include "common/EtchString.h"
-#include "common/EtchError.h"
 
 class EtchSession {
 public:

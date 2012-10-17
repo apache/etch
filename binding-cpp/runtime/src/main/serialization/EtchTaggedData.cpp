@@ -17,19 +17,7 @@
  */
 
 #include "serialization/EtchTaggedData.h"
-#include "common/EtchObject.h"
-#include "common/EtchInt32.h"
-#include "common/EtchBool.h"
-#include "common/EtchByte.h"
-#include "common/EtchShort.h"
-#include "common/EtchLong.h"
-#include "common/EtchDouble.h"
-#include "common/EtchFloat.h"
-#include "common/EtchString.h"
-#include "common/EtchDate.h"
-#include "common/EtchList.h"
-#include "common/EtchHashTable.h"
-#include "common/EtchHashSet.h"
+#include "common/EtchTypes.h"
 
 EtchTaggedData::EtchTaggedData(EtchValueFactory* vf)
 : mVf(vf) {

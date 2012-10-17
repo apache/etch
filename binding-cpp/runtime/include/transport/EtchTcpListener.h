@@ -23,7 +23,6 @@
 #include "capu/os/ServerSocket.h"
 #include "capu/os/Socket.h"
 #include "capu/util/Runnable.h"
-#include "capu/util/SmartPointer.h"
 
 #include "common/EtchError.h"
 #include "common/EtchObject.h"

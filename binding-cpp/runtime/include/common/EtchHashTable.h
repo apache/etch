@@ -19,9 +19,6 @@
 #ifndef __ETCHHASHTABLE_H__
 #define __ETCHHASHTABLE_H__
 
-#include "common/EtchObject.h"
-#include "common/EtchObjectType.h"
-#include "common/EtchError.h"
 #include "common/EtchObjectHash.h"
 #include "common/EtchComparator.h"
 #include "capu/container/HashTable.h"

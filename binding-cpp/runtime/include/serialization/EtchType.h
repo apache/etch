@@ -19,7 +19,6 @@
 #ifndef __ETCHTYPE_H__
 #define __ETCHTYPE_H__
 
-#include "capu/util/SmartPointer.h"
 #include "common/EtchString.h"
 #include "common/EtchHashTable.h"
 #include "serialization/EtchDirection.h"

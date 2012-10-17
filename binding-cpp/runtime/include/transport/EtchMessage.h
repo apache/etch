@@ -20,7 +20,6 @@
 #ifndef __ETCHMESSAGE_H__
 #define __ETCHMESSAGE_H__
 
-#include "capu/util/SmartPointer.h"
 #include "serialization/EtchType.h"
 #include "serialization/EtchValueFactory.h"
 #include "serialization/EtchStructValue.h"

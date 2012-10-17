@@ -22,7 +22,6 @@
 #define __ETCHTRANSPORTFACTORY_H__
 
 #include "common/EtchTypes.h"
-#include "common/EtchError.h"
 #include "support/EtchServerFactory.h"
 #include "transport/EtchTransport.h"
 #include "transport/EtchTransportMessage.h"

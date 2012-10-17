@@ -19,17 +19,7 @@
 #ifndef __ETCHBINARYTAGGEDDATA_H__
 #define __ETCHBINARYTAGGEDDATA_H__
 
-#include "capu/util/SmartPointer.h"
-#include "common/EtchObject.h"
-#include "common/EtchBool.h"
-#include "common/EtchByte.h"
-#include "common/EtchShort.h"
-#include "common/EtchInt32.h"
-#include "common/EtchLong.h"
-#include "common/EtchFloat.h"
-#include "common/EtchDouble.h"
-#include "common/EtchNativeArray.h"
-#include "serialization/EtchValueFactory.h"
+#include "common/EtchTypes.h"
 #include "serialization/EtchTypeCodes.h"
 #include "serialization/EtchTaggedData.h"
 

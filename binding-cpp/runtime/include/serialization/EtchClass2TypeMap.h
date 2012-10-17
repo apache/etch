@@ -20,7 +20,6 @@
 #ifndef __ETCHCLASS2TYPEMAP_H__
 #define __ETCHCLASS2TYPEMAP_H__
 
-#include "capu/util/SmartPointer.h"
 #include "common/EtchInt32.h"
 #include "serialization/EtchType.h"
 

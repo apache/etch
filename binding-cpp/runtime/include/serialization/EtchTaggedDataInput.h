@@ -20,7 +20,6 @@
 #define	__ETCHTAGGEDDATAINPUT_H__
 #include "transport/EtchFlexBuffer.h"
 #include "transport/EtchMessage.h"
-#include "capu/util/SmartPointer.h"
 
 class EtchTaggedDataInput {
 public:

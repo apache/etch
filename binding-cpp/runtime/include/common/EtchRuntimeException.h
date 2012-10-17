@@ -20,7 +20,6 @@
 #define __ETCHRUNTIMEEXCEPTION_H__
 
 #include "common/EtchException.h"
-#include "common/EtchError.h"
 
 class EtchRuntimeException : public EtchException {
 public:

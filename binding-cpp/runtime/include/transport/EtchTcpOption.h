@@ -19,7 +19,6 @@
 #ifndef __ETCHTCPOPTION_H__
 #define __ETCHTCPOPTION_H__
 
-#include "common/EtchString.h"
 #include "util/EtchURL.h"
 
 class EtchTcpOption {

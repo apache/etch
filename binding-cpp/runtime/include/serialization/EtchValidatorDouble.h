@@ -18,12 +18,12 @@
 
 #ifndef __ETCHVALIDATORDOUBLE_H__
 #define __ETCHVALIDATORDOUBLE_H__
+
 #include "serialization/EtchTypeValidator.h"
 #include "common/EtchFloat.h"
 #include "common/EtchDouble.h"
-#include "serialization/EtchTypeCodes.h"
-#include "capu/os/NumericLimits.h"
 #include "common/EtchNativeArray.h"
+#include "capu/os/NumericLimits.h"
 
 class EtchRuntime;
 

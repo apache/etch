@@ -18,8 +18,6 @@
  * under the License.
  */
 #include "common/EtchObjectType.h"
-#include "common/EtchObject.h"
-
 
 const EtchObjectType& EtchObjectType::NATIVE_INT8() {
   static const EtchObjectType type(EOTID_BYTE, NULL);

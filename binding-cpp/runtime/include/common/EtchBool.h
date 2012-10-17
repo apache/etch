@@ -20,8 +20,6 @@
 #define __ETCHBOOL_H__
 
 #include "common/EtchObject.h"
-#include "common/EtchObjectType.h"
-#include "common/EtchError.h"
 
 class EtchBool :
 public EtchObject {

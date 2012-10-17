@@ -26,7 +26,6 @@
 #include "support/EtchStack.h"
 #include "transport/EtchTransportMessage.h"
 #include "transport/EtchTransportData.h"
-#include "transport/EtchTcpConnection.h"
 #include "transport/EtchTransportPacket.h"
 #include "transport/EtchPacketizer.h"
 #include "transport/EtchTcpConnection.h"

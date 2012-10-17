@@ -19,11 +19,10 @@
 #ifndef __ETCHOBJECT_H__
 #define __ETCHOBJECT_H__
 
-#include "capu/util/SmartPointer.h"
 #include "capu/container/List.h"
-#include "common/EtchError.h"
 
-class EtchObjectType;
+#include "common/EtchError.h"
+#include "common/EtchObjectType.h"
 
 class EtchObject {
 public:

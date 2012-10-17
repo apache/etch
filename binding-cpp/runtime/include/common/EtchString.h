@@ -19,9 +19,7 @@
 #ifndef __ETCHSTRING_H__
 #define __ETCHSTRING_H__
 
-#include "common/EtchError.h"
 #include "common/EtchObject.h"
-#include "common/EtchObjectType.h"
 
 /**
  * String type.

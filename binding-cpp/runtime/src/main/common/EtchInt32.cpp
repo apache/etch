@@ -17,8 +17,6 @@
  */
 
 #include "common/EtchInt32.h"
-#include "common/EtchObjectType.h"
-#include "common/EtchError.h"
 
 const EtchObjectType* EtchInt32::TYPE() {
    const static EtchObjectType TYPE(EOTID_INT32, NULL);

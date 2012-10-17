@@ -18,8 +18,8 @@
 
 #ifndef ETCHDATE_H
 #define ETCHDATE_H
+
 #include "common/EtchObject.h"
-#include "common/EtchObjectType.h"
 
 class EtchDate : public EtchObject {
 public:

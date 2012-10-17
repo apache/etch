@@ -20,9 +20,6 @@
 #define __ETCHTCPCONNECTION_H__
 
 #include "capu/util/Runnable.h"
-
-#include "common/EtchObject.h"
-#include "common/EtchError.h"
 #include "common/EtchString.h"
 #include "common/EtchSocket.h"
 #include "support/EtchRuntime.h"
@@ -35,7 +32,6 @@
 #include "util/EtchResources.h"
 #include "util/EtchLogger.h"
 
-class EtchRuntime;
 
 /**
  * Implementation of connection which handles a tcp connection.

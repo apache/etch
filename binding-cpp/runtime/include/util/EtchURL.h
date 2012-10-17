@@ -18,7 +18,7 @@
 
 #ifndef __ETCHURL_H__
 #define __ETCHURL_H__
-#include "common/EtchError.h"
+
 #include "common/EtchString.h"
 #include "common/EtchHashTable.h"
 #include "common/EtchList.h"

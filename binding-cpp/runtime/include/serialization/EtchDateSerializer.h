@@ -23,7 +23,6 @@
 #include "serialization/EtchImportExportHelper.h"
 #include "serialization/EtchStructValue.h"
 #include "serialization/EtchField.h"
-#include "serialization/EtchType.h"
 #include "serialization/EtchClass2TypeMap.h"
 #include "serialization/EtchValidatorLong.h"
 

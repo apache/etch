@@ -19,12 +19,8 @@
 #ifndef __ETCHMESSAGIZER_H__
 #define __ETCHMESSAGIZER_H__
 
-#include "capu/util/SmartPointer.h"
 #include "capu/os/Mutex.h"
 #include "common/EtchException.h"
-#include "serialization/EtchTaggedDataInput.h"
-#include "serialization/EtchTaggedDataOutput.h"
-#include "serialization/EtchBinaryTaggedData.h"
 #include "serialization/EtchBinaryTaggedDataInput.h"
 #include "serialization/EtchBinaryTaggedDataOutput.h"
 #include "transport/EtchFormat.h"

@@ -20,8 +20,8 @@
 #define __ETCHFIELDMAP_H__
 
 #include "common/EtchString.h"
-#include "serialization/EtchField.h"
 #include "common/EtchHashTable.h"
+#include "serialization/EtchField.h"
 
 /**
  * Mapping of id and name to EtchField
@@ -84,7 +84,7 @@ public:
    */
   capu::int32_t size();
 
-  
+
   /**
    * @return the iterator
    */

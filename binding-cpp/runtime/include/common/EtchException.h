@@ -19,7 +19,6 @@
 #ifndef __ETCHEXCEPTION_H__
 #define __ETCHEXCEPTION_H__
 
-#include "common/EtchObject.h"
 #include "common/EtchString.h"
 
 class EtchException : public EtchObject {

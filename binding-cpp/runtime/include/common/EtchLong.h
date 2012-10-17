@@ -20,8 +20,6 @@
 #define __ETCHLONG_H__
 
 #include "common/EtchNumber.h"
-#include "common/EtchObjectType.h"
-#include "common/EtchError.h"
 
 class EtchLong :
 public EtchNumber {

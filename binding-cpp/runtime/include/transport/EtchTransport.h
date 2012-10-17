@@ -19,9 +19,6 @@
 #ifndef __ETCHTRANSPORT_H__
 #define __ETCHTRANSPORT_H__
 
-#include "capu/util/SmartPointer.h"
-#include "common/EtchError.h"
-#include "common/EtchObject.h"
 #include "common/EtchString.h"
 
 /**

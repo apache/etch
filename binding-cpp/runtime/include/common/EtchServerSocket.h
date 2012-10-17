@@ -19,10 +19,8 @@
 #ifndef __ETCHSERVERSOCKET_H__
 #define __ETCHSERVERSOCKET_H__
 
-
 #include "capu/os/ServerSocket.h"
 #include "capu/os/Socket.h"
-#include "capu/util/SmartPointer.h"
 #include "common/EtchSocket.h"
 
 class EtchServerSocket : public EtchObject {

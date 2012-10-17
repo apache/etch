@@ -20,10 +20,8 @@
 #define __ETCHTAGGEDDATA_H__
 #include "serialization/EtchValueFactory.h"
 #include "serialization/EtchValidatorStructValue.h"
-#include "serialization/EtchType.h"
-#include "common/EtchArrayValue.h"
 #include "serialization/EtchTypeCodes.h"
-#include "common/EtchObject.h"
+#include "common/EtchArrayValue.h"
 #include "common/EtchNativeArray.h"
 
 class EtchTaggedData {
@@ -57,7 +55,7 @@ protected:
    * @param result the allocated array value.
    * @return ETCH_OK if array is successfully allocated
    *         ETCH_ENO_MEMORY if mem allocation fails
-   *         
+   *
    */
   status_t allocNativeArray(capu::int8_t typeCode, EtchType* customStructType, capu::int32_t dim, capu::int32_t length, capu::SmartPointer<EtchNativeArrayBase> &result);
 
@@ -110,7 +108,7 @@ public:
 
   /**
    * @param c           typeid
-   * @param result      out buffet 
+   * @param result      out buffet
    */
   virtual status_t getCustomStructType(const EtchObjectType* c, EtchType*& result) = 0;
 

@@ -20,9 +20,6 @@
 #define __ETCHLIST_H__
 
 #include "capu/container/List.h"
-#include "common/EtchObject.h"
-#include "common/EtchObjectType.h"
-#include "common/EtchError.h"
 #include "common/EtchComparator.h"
 
 template <class T, class C = EtchComparator<T> >

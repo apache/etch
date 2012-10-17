@@ -19,8 +19,6 @@
 #ifndef __ETCHSESSIONLISTENER_H__
 #define __ETCHSESSIONLISTENER_H__
 
-#include "capu/util/SmartPointer.h"
-#include "common/EtchError.h"
 #include "transport/EtchSession.h"
 
 
