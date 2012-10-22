@@ -51,7 +51,7 @@ class Run${mthd.vname($helper)}
 {
 public:
   Run${mthd.vname($helper)}(EtchRuntime* runtime)
-  : EtchStubHelper(runtime) {
+  : EtchStubHelper<$i$suffix>(runtime) {
   }
   
   ~Run${mthd.vname($helper)}() {
