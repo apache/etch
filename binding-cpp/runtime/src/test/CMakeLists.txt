@@ -24,10 +24,19 @@ include_directories (${GMOCK}/include)
 include_directories (${CAPU}/include/capu)
 
 
-IF (WIN32 AND BUILD_CHECK_MEMORY)
+IF (TARGET_OS STREQUAL "Windows" AND BUILD_CHECK_MEMORY)
   include_directories (${VLD}/include)
   add_definitions (-DBUILD_CHECK_MEMORY)
-ENDIF (WIN32 AND BUILD_CHECK_MEMORY)
+ENDIF ()
+
+IF (TARGET_OS STREQUAL "Linux")
+  link_directories(${CAPU}/lib/Linux_X86_32)
+ELSEIF(TARGET_OS STREQUAL "Windows")
+  link_directories(${CAPU}/lib/Windows_X86_32)
+ELSEIF(TARGET_OS STREQUAL "QNX")
+  link_directories(${CAPU}/lib/QNX_X86_32)
+ENDIF()
+
 
 add_executable (etch-cpp-test
     common/EtchNumberTest.cpp
@@ -100,22 +109,24 @@ add_executable (etch-cpp-test
     main.cpp
 )
 
-IF (UNIX)
-  target_link_libraries (etch-cpp-test etch-cpp pthread rt)
-ELSEIF(WIN32)
-  target_link_libraries (etch-cpp-test etch-cpp)
+IF (TARGET_OS STREQUAL "Linux")
+  target_link_libraries (etch-cpp-test etch-cpp capu pthread rt)
+ELSEIF(TARGET_OS STREQUAL "Windows")
+  target_link_libraries (etch-cpp-test etch-cpp capu)
+ELSEIF(TARGET_OS STREQUAL "QNX")
+  target_link_libraries (etch-cpp-test etch-cpp capu c socket)
 ENDIF()
 
-IF (WIN32 AND BUILD_CHECK_MEMORY)
+IF (TARGET_OS STREQUAL "Windows" AND BUILD_CHECK_MEMORY)
   file (COPY ${VLD}/vld.ini DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE})
   file (COPY ${VLD}/bin/dbghelp.dll DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE})
   file (COPY ${VLD}/bin/vld.dll DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE})
 
   target_link_libraries (etch-cpp-test ${VLD}/lib/vld.lib)
-ENDIF (WIN32 AND BUILD_CHECK_MEMORY)
+ENDIF ()
 
-IF (UNIX)
+IF (TARGET_OS STREQUAL "Linux")
   set_target_properties (etch-cpp-test PROPERTIES COMPILE_FLAGS "-m32" LINK_FLAGS "-m32")
-ENDIF (UNIX)
+ENDIF ()
 
-add_dependencies (etch-cpp Capu)
+add_dependencies (etch-cpp-test etch-cpp Capu)

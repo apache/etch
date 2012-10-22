@@ -20,6 +20,13 @@
 <project name="etch-cpp-runtime" basedir="." default="help">
     <description>Etch-to-CPP runtime binding implementation</description>
     <property name="Etch.basedir" location="${basedir}/../.." />
+
+    <property file="build.properties"/>
+
+    <!-- import custom rules which can be used by depending projects to override ant targets -->
+    <import file="custom_rules.xml" optional="true" />
+
+    <!-- import etch generics -->
     <import file="${Etch.basedir}/build-support/etch.includes.xml" />
 
     <!-- Static properties of the sub-project -->
@@ -30,19 +37,73 @@
     <!-- INIT TARGET -->
     <!-- Modify this target to define project specific properties that can only be set at runtime -->
     <target name="do-init" >
-        <mkdir dir="${target}" />
-        <mkdir dir="${testResultsDirectory}" />
+        <property name="target_platform"                location="${target}/${platform}"/>
+        <property name="testResultsDirectory_platform"  location="${testResultsDirectory}/${platform}"/>
+        <echo>${target_platform} created</echo>
+        <mkdir dir="${target_platform}" />
+        <mkdir dir="${testResultsDirectory_platform}" />
     </target>
 
     <!-- CLEAN TARGET -->
     <target name="do-clean">
         <delete dir="${target}" />
-    <delete dir="${proj}/lib/capu/3psw/libs" />
-    <delete dir="${proj}/lib/capu/build" />
-    <delete dir="${proj}/lib/capu/deliverable" />
+        <delete dir="${proj}/lib/capu/3psw/libs" />
+        <delete dir="${proj}/lib/capu/build" />
+        <delete dir="${proj}/lib/capu/deliverable" />
+    </target>
+
+    <target name="do-clean-capu">
+        <delete dir="${proj}/lib/capu/build" />
+        <delete dir="${proj}/lib/capu/deliverable" />
     </target>
 
     <!-- BUILD TARGET -->
+
+    <!-- overriding build target from etch.include.xml -->
+    <target name="build" depends="">
+        <!-- Build platform targets -->
+        <if>
+            <not><isset property="${target.platforms}"/></not>
+            <then>
+                <echo level="warn">No target.platforms set. Trying to build for detected host platform...</echo>
+                    <if>
+                        <os family="windows" />
+                        <then>
+                            <property name="target.platforms" value="Windows_X86_32"/>
+                        </then>
+                    </if>
+                    <if>
+                        <os family="unix" />
+                        <then>
+                            <property name="target.platforms" value="Linux_X86_32"/>
+                        </then>
+                    </if>
+            </then>
+        </if>
+        
+        <if>
+            <equals arg1="${target.platforms}" arg2=""/>
+            <then>
+                <echo>${target.platforms}</echo>
+                <fail message="Not able to detect platform. target.platforms is not set. Aborting."/>
+            </then>
+        </if>
+        <for list="${target.platforms}" param="platform" delimiter="," trim="true">
+            <sequential>
+                <var  name="platform" value="@{platform}"/>
+                <echo>Init platform: ${platform}</echo>
+                <antcall target="init"/>
+                <echo>Building platform: ${platform}</echo>
+                <antcall target="do-build"/>
+                <echo>Testing platform: ${platform}</echo>
+                <antcall target="do-test"/>
+                <!-- TODO remove this as soon as ACME in capu is able to build multiple targets -->
+                <antcall target="do-clean-capu"/>
+            </sequential>
+        </for>
+
+    </target>
+
     <target name="do-build-info" unless="USE.cmake">
         <echo message="**********************************" />
         <echo message="binding-cpp build will not be done." />
@@ -61,17 +122,32 @@
         </zip>
     </target>
 
-    <!-- Uncomment the generator you would like to use on your platform. If no generator is set explicitly the default generator will be used. -->
     <target name="do-build-main" if="USE.cmake">
-        <echo>"${basedir}/target"</echo>
-        <cmake srcdir="${basedir}" bindir="${basedir}/target" buildtype="Debug" >
-            <!--<generator name="Visual Studio 8 2005" platform="windows" />-->
-            <!--<generator name="Visual Studio 9 2008" platform="windows" />-->
-            <!--<generator name="Visual Studio 10 2010" platform="windows" />-->
-            <!--<generator name="Unix Makefiles"/>-->
-            <!--<generator name="Eclipse CDT4 - Unix Makefiles" platform="Linux" />-->
-            <variable name="ETCH_EXTERNAL_DEPENDS" type="PATH" value="${env.ETCH_EXTERNAL_DEPENDS}" />
-        </cmake>
+        <if>
+            <isset property="target.platforms.${platform}.generator"/>
+            <then>
+                <!-- use specified generator -->
+                <propertycopy name="cmake.generator" from="target.platforms.${platform}.generator" />
+                <echo>Configuring CMake build</echo>
+                <echo>Using generator: ${cmake.generator}</echo>
+                <echo>Using toolchain file: ${basedir}/toolchains/${platform}.toolchain</echo>
+                <cmake srcdir="${basedir}" bindir="${target}/${platform}/${Etch.build.target}" buildtype="${Etch.build.target}" >
+                    <generator name="${cmake.generator}" />
+                    <variable name="ETCH_EXTERNAL_DEPENDS" type="PATH" value="${env.ETCH_EXTERNAL_DEPENDS}" />
+                    <variable name="CMAKE_TOOLCHAIN_FILE" type="FILEPATH" value="${basedir}/toolchains/${platform}.toolchain" />
+                </cmake>
+            </then>
+            <else>
+                <!-- try default generator -->
+                <echo>Configuring CMake build</echo>
+                <echo>Using default generator</echo>
+                <echo>Using toolchain file: ${basedir}/toolchains/${platform}.toolchain</echo>
+                <cmake srcdir="${basedir}" bindir="${target}/${platform}/${Etch.build.target}" buildtype="${Etch.build.target}" >
+                    <variable name="ETCH_EXTERNAL_DEPENDS" type="PATH" value="${env.ETCH_EXTERNAL_DEPENDS}" />
+                    <variable name="CMAKE_TOOLCHAIN_FILE" type="FILEPATH" value="${basedir}/toolchains/${platform}.toolchain" />
+                </cmake>
+            </else>
+        </if>
     </target>
 
     <target name="do-build" depends="do-build-info,do-build-generate-sources,do-build-main" if="USE.cmake">
@@ -87,9 +163,41 @@
             </fileset>
         </copy>
 
+        <property name="capu.library.output.path.prefix" value="${proj}/lib/capu/deliverable/capu/lib/${platform}"/>
+        <property name="capu.binary.output.path.prefix" value="${proj}/lib/capu/deliverable/capu/bin/${platform}"/>
+        <property name="etch.library.output.path.prefix" value="${target}/${platform}/${Etch.build.target}/src/main"/>
+        <property name="etch.binary.output.path.prefix" value="${target}/${platform}/${Etch.build.target}/src/test"/>
+
+        <if>
+            <!-- Visual Studio adds the Debug/Release folder, other generators do not -->
+            <equals arg1="${platform}" arg2="Windows_X86_32" />
+            <then>
+                <property name="capu.library.output.path" value="${capu.library.output.path.prefix}/${Etch.build.target}" />
+                <property name="capu.binary.output.path" value="${capu.binary.output.path.prefix}/${Etch.build.target}" />
+                <property name="etch.library.output.path" value="${etch.library.output.path.prefix}/${Etch.build.target}" />
+                <property name="etch.binary.output.path" value="${etch.binary.output.path.prefix}/${Etch.build.target}" />
+            </then>
+            <else>
+                <property name="capu.library.output.path" value="${capu.library.output.path.prefix}" />
+                <property name="capu.binary.output.path" value="${capu.binary.output.path.prefix}" />
+                <property name="etch.library.output.path" value="${etch.library.output.path.prefix}" />
+                <property name="etch.binary.output.path" value="${etch.binary.output.path.prefix}" />
+            </else>
+        </if>
+        
         <!-- copy etch library to dist folder -->
-        <copy todir="${Etch.dist}/binding-cpp/lib" flatten="true">
-            <fileset dir="${target}/src/main">
+        <copy todir="${Etch.dist}/binding-cpp/lib/${platform}/${Etch.build.target}" flatten="true">
+            <fileset dir="${etch.library.output.path}">
+                <include name="*.lib" />
+                <include name="*.a" />
+            </fileset>
+        </copy>
+        
+        <!-- copy etch tests to dist folder -->
+        <copy todir="${Etch.dist}/binding-cpp/bin/${platform}/${Etch.build.target}" flatten="true">
+            <fileset dir="${etch.binary.output.path}">
+                <include name="etch-cpp-test.exe" />
+                <include name="etch-cpp-test" />
             </fileset>
         </copy>
         
@@ -101,43 +209,61 @@
         </copy>
     
         <!-- copy capu lib to dist folder -->
-        <copy todir="${Etch.dist}/binding-cpp/lib">
-            <fileset dir="${proj}/lib/capu/deliverable/capu/lib">
-                <include name="**/*.lib" />
-		<include name="**/*.a" />
+        <copy todir="${Etch.dist}/binding-cpp/lib/${platform}/${Etch.build.target}">
+            <fileset dir="${capu.library.output.path}">
+                <include name="*.lib" />
+                <include name="*.a" />
             </fileset>
         </copy>
-
+        
+        <!-- copy capu tests to dist folder -->
+        <copy todir="${Etch.dist}/binding-cpp/bin/${platform}/${Etch.build.target}">
+            <fileset dir="${capu.binary.output.path}">
+            <include name="capuTest.exe" />
+                <include name="capuTest" />
+            </fileset>
+        </copy>
     </target>
 
     <!-- TEST TARGET -->
-    <target name="do-test" unless="build.skip.tests">
-
-        <!-- Run CAPU Unit Tests -->
-        <!-- Run CAPU Unit Tests on Windows-->
-        <property name="executable-full-path"
-            location="lib/capu/deliverable/capu/bin/Windows_X86_32/Debug/capuTest.exe"/>
-        <exec executable="${executable-full-path}" osfamily="windows" failonerror="true">
-            <arg value="--gtest_output=xml:${testResultsDirectory}/"/>
-        </exec>
-        <!-- Run CAPU Unit Tests on Unix -->
-        <exec executable="lib/capu/deliverable/capu/bin/Linux_X86_32/capuTest" osfamily="unix"  failonerror="true">
-            <arg value="--gtest_output=xml:${testResultsDirectory}/"/>
-        </exec>
-    
-        <!-- Run Etch Unit Tests -->
-        <!-- Run Etch Unit Tests on Windows-->
-        <exec executable="${target}/src/test/debug/etch-cpp-test" osfamily="windows"  failonerror="true">
-            <arg value="--gtest_output=xml:${testResultsDirectory}/"/>
-        </exec>
-        <!-- Run Etch Unit Tests on Unix -->
-        <exec executable="${target}/src/test/etch-cpp-test" osfamily="unix"  failonerror="true">
-            <arg value="--gtest_output=xml:${testResultsDirectory}/"/>
-        </exec>
+    <target name="test" depends="postbuild">
+        
     </target>
 
-    <!-- POSTBUILD TARGET -->
-    <target name="do-postbuild">
+    <target name="postbuild" depends="build,do-postbuild">
+        
+    </target>
+  
+    <target name="do-test" unless="build.skip.tests">
+        <if>
+            <isset property="target.platforms.${platform}.crosscompile"/>
+            <then>
+                <echo>Not executing tests for cross compiled platform</echo>
+            </then>
+            <else>
+                <!-- Run CAPU Unit Tests -->
+                <!-- Run CAPU Unit Tests on Windows-->
+                <property name="executable-full-path"
+                    location="lib/capu/deliverable/capu/bin/Windows_X86_32/${Etch.build.target}/capuTest.exe"/>
+                <exec executable="${executable-full-path}" osfamily="windows" failonerror="true">
+                    <arg value="--gtest_output=xml:${testResultsDirectory}/"/>
+                </exec>
+                <!-- Run CAPU Unit Tests on Unix -->
+                <exec executable="lib/capu/deliverable/capu/bin/Linux_X86_32/capuTest" osfamily="unix"  failonerror="true">
+                    <arg value="--gtest_output=xml:${testResultsDirectory}/"/>
+                </exec>
+            
+                <!-- Run Etch Unit Tests -->
+                <!-- Run Etch Unit Tests on Windows-->
+                <exec executable="${target}/${platform}/${Etch.build.target}/src/test/${Etch.build.target}/etch-cpp-test" osfamily="windows"  failonerror="true">
+                    <arg value="--gtest_output=xml:${testResultsDirectory}/"/>
+                </exec>
+                <!-- Run Etch Unit Tests on Unix -->
+                <exec executable="${target}/${platform}/${Etch.build.target}/src/test/etch-cpp-test" osfamily="unix"  failonerror="true">
+                    <arg value="--gtest_output=xml:${testResultsDirectory}/"/>
+                </exec>
+            </else>
+        </if>
     </target>
 
     <target name="do-publish" if="build.tests.fail">

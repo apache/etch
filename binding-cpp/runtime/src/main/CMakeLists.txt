@@ -239,17 +239,10 @@ add_library (etch-cpp STATIC
     ${MAIN_INCLUDES}
 )
 
-IF (UNIX)
-  #TODO: add correct lib here debug / release
-  target_link_libraries (etch-cpp ${CAPU}/lib/Linux_X86_32/libcapu.a)
-ELSEIF(WIN32)
-  #TODO: add correct lib here debug / release
-  target_link_libraries (etch-cpp ${CAPU}/lib/windows_x86_32/debug/capu.lib)
-ENDIF()
 
-IF (UNIX)
+IF (TARGET_OS STREQUAL "Linux")
   set_target_properties (etch-cpp PROPERTIES COMPILE_FLAGS "-m32 -g" LINK_FLAGS "-m32")
-ENDIF (UNIX)
+ENDIF ()
 
 set_target_properties (etch-cpp PROPERTIES OUTPUT_NAME "etch")
 

@@ -238,6 +238,7 @@
     <property   name="Etch.dependency.velocity-dep.jar" value="${build.velocity.lib}/velocity-1.7-dep.jar" />
     <property   name="Etch.dependency.ant-dotnet-1.1.jar" value="${build.ant-dotnet.lib}/ant-dotnet-1.1.jar" />
     <property   name="Etch.dependency.ant-cmake.jar" value="${build.ant-cmake.lib}/cmakeant.jar" />
+    <property   name="Etch.dependency.ant-contrib.jar" value="${build.ant-contrib.lib}/ant-contrib-1.0b3.jar" />
 
     <!-- Csharp Support -->
     <condition property="USE.dotnet">
@@ -311,6 +312,9 @@
 
     <!-- CMake ANT support -->
     <taskdef onerror="report" name="cmake" classname="org.iainhull.ant.CmakeBuilder" classpath="${Etch.dependency.ant-cmake.jar}"/>
+
+    <!-- Ant contrib support -->
+    <taskdef resource="net/sf/antcontrib/antlib.xml" classpath="${Etch.dependency.ant-contrib.jar}"/>
 
     <!-- dependencies -->
     <!-- TODO: remove clover reference if clover-disabled -->

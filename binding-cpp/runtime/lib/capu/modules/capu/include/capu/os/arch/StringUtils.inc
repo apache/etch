@@ -23,5 +23,5 @@
 #elif defined(OS_INTEGRITY)
     #include "Linux/StringUtils.inc"
 #elif defined(OS_QNX)
-    #include "Qnx/StringUtils.inc"
+    #include "Linux/StringUtils.inc"
 #endif

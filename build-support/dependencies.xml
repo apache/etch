@@ -126,12 +126,33 @@
     </target>
 
     <target name="check-cmake-check">
-    <echo message="check: ${build.ant-cmake.lib}" />
+        <echo message="check: ${build.ant-cmake.lib}" />
         <condition property="cmake-missing-components" value="true">
             <not><available file="${build.ant-cmake.lib}/cmakeant.jar" /></not>
         </condition>
     </target>
+    
+    <target name="check-ant-contrib" depends="check-ant-contrib-check" if="ant-contrib-missing-components">
+         <echo>
+              *
+              *
+              *
+              ************************************************************************
+              WARNING: ant-contrib.lib is missing, some ant scripts will not work
+              ************************************************************************
+              *
+              *
+              *
+         </echo>
+    </target>
 
-    <target name="check-all" depends="check-javacc,check-junit,check-velocity,check-dotnet,check-cmake" />
+    <target name="check-ant-contrib-check">
+        <echo message="check: ${build.ant-contrib.lib}" />
+        <condition property="ant-contrib-missing-components" value="true">
+            <not><available file="${build.ant-contrib.lib}/ant-contrib-1.0b3.jar" /></not>
+        </condition>
+    </target>
+
+    <target name="check-all" depends="check-javacc,check-junit,check-velocity,check-dotnet,check-cmake,check-ant-contrib" />
 
 </project>

@@ -39,6 +39,9 @@ ant-dotnet.lib=${env.ETCH_EXTERNAL_DEPENDS}/apache-ant-dotnet/1.1
 ## CMake ANT support
 ant-cmake.lib=${env.ETCH_EXTERNAL_DEPENDS}/apache-ant-cmake/1.0
 
+## Ant-contrib support
+ant-contrib.lib=${env.ETCH_EXTERNAL_DEPENDS}/ant-contrib/1.0b3
+
 ##
 ## Settings
 ##
