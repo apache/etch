@@ -1,0 +1,9 @@
+# remove map key from map
+foo: 2
+bar: 4
+array: [2, 3, 4]
+list:
+  - fish
+  - { a: 5, b: 6, c: 7 }
+  - [ 1, 2, 3 ]
+  - bear

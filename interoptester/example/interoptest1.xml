@@ -1,0 +1,191 @@
+<interoptest>
+	<run test="java-java">
+		<arg name="suri" value="tcp://127.0.0.1:4001"/>
+		<arg name="curi" value="tcp://127.0.0.1:4001"/>
+	</run>
+	
+	<run test="java-java">
+		<arg name="suri" value="tcp://127.0.0.1:4002?filter=KeepAlive"/>
+		<arg name="curi" value="tcp://127.0.0.1:4002?filter=KeepAlive"/>
+	</run>
+	
+	<run test="java-java">
+		<arg name="suri" value="tls://127.0.0.1:4003"/>
+		<arg name="svmarg1" value="-Djavax.net.ssl.keyStore=interoptester/example/keys/my.keystore"/>
+		<arg name="svmarg2" value="-Djavax.net.ssl.keyStorePassword=snort1"/>
+		<arg name="curi" value="tls://127.0.0.1:4003?TlsConnection.authReqd=false"/>
+	</run>
+	
+	<run test="java-csharp">
+		<arg name="suri" value="tcp://127.0.0.1:4001"/>
+		<arg name="curi" value="tcp://127.0.0.1:4001"/>
+	</run>
+	
+	<run test="csharp-java">
+		<arg name="suri" value="tcp://127.0.0.1:4001"/>
+		<arg name="curi" value="tcp://127.0.0.1:4001"/>
+	</run>
+	
+	<run test="csharp-csharp">
+		<arg name="suri" value="tcp://127.0.0.1:4001"/>
+		<arg name="curi" value="tcp://127.0.0.1:4001"/>
+	</run>
+	
+	<tests>
+		<test name="java-java">
+			<params>
+				<param name="suri" default=""/>
+				<param name="svmarg1" default=""/>
+				<param name="svmarg2" default=""/>
+				<param name="curi" default=""/>
+				<param name="cvmarg1" default=""/>
+				<param name="cvmarg2" default=""/>
+			</params>
+			<support>
+				<prog name="java_MainIOTListener">
+					<arg name="uri" value="{suri}"/>
+					<arg name="vmarg1" value="{svmarg1}"/>
+					<arg name="vmarg2" value="{svmarg2}"/>
+				</prog>
+			</support>
+			<jig>
+				<prog name="java_MainIOTClient">
+					<arg name="uri" value="{curi}"/>
+					<arg name="vmarg1" value="{cvmarg1}"/>
+					<arg name="vmarg2" value="{cvmarg2}"/>
+				</prog>
+			</jig>
+		</test>
+		
+		<test name="java-csharp">
+			<params>
+				<param name="suri" default=""/>
+				<param name="svmarg1" default=""/>
+				<param name="svmarg2" default=""/>
+				<param name="curi" default=""/>
+				<param name="cvmarg1" default=""/>
+				<param name="cvmarg2" default=""/>
+			</params>
+			<support>
+				<prog name="csharp_MainIOTListener">
+					<arg name="uri" value="{suri}"/>
+				</prog>
+			</support>
+			<jig>
+				<prog name="java_MainIOTClient">
+					<arg name="uri" value="{curi}"/>
+					<arg name="vmarg1" value="{cvmarg1}"/>
+					<arg name="vmarg2" value="{cvmarg2}"/>
+				</prog>
+			</jig>
+		</test>
+		
+		<test name="csharp-java">
+			<params>
+				<param name="suri" default=""/>
+				<param name="svmarg1" default=""/>
+				<param name="svmarg2" default=""/>
+				<param name="curi" default=""/>
+				<param name="cvmarg1" default=""/>
+				<param name="cvmarg2" default=""/>
+			</params>
+			<support>
+				<prog name="java_MainIOTListener">
+					<arg name="uri" value="{suri}"/>
+					<arg name="vmarg1" value="{svmarg1}"/>
+					<arg name="vmarg2" value="{svmarg2}"/>
+				</prog>
+			</support>
+			<jig>
+				<prog name="csharp_MainIOTClient">
+					<arg name="uri" value="{curi}"/>
+				</prog>
+			</jig>
+		</test>
+		
+		<test name="csharp-csharp">
+			<params>
+				<param name="suri" default=""/>
+				<param name="svmarg1" default=""/>
+				<param name="svmarg2" default=""/>
+				<param name="curi" default=""/>
+				<param name="cvmarg1" default=""/>
+				<param name="cvmarg2" default=""/>
+			</params>
+			<support>
+				<prog name="csharp_MainIOTListener">
+					<arg name="uri" value="{suri}"/>
+				</prog>
+			</support>
+			<jig>
+				<prog name="csharp_MainIOTClient">
+					<arg name="uri" value="{curi}"/>
+				</prog>
+			</jig>
+		</test>
+	</tests>
+	
+	<programs>
+		<program name="java_MainIOTListener">
+			<params>
+				<param name="uri" default=""/>
+				<param name="vmarg1" default=""/>
+				<param name="vmarg2" default=""/>
+			</params>
+			<stdouttag>SOUT</stdouttag>
+			<stderrtag>SERR</stderrtag>
+			<tokens>
+				<token>java</token>
+				<token>{vmarg1}</token>
+				<token>{vmarg2}</token>
+				<token>-cp</token>
+				<token>bin;../etch/bin</token>
+				<token>org.apache.etch.interoptester.example.iot.MainIOTListener</token>
+				<token>{uri}</token>
+			</tokens>
+		</program>
+		
+		<program name="java_MainIOTClient">
+			<params>
+				<param name="uri" default=""/>
+				<param name="vmarg1" default=""/>
+				<param name="vmarg2" default=""/>
+			</params>
+			<stdouttag>COUT</stdouttag>
+			<stderrtag>CERR</stderrtag>
+			<tokens>
+				<token>java</token>
+				<token>{vmarg1}</token>
+				<token>{vmarg2}</token>
+				<token>-cp</token>
+				<token>bin;../etch/bin;../../wks/tools/junit/4.3.1/junit-4.3.1.jar</token>
+				<token>org.apache.etch.interoptester.example.iot.MainIOTClient</token>
+				<token>{uri}</token>
+			</tokens>
+		</program>
+		
+		<program name="csharp_MainIOTListener">
+			<params>
+				<param name="uri" default=""/>
+			</params>
+			<stdouttag>SOUT</stdouttag>
+			<stderrtag>SERR</stderrtag>
+			<tokens>
+				<token>interoptester/example/src/main/csharp/IOTListenerProj/bin/Debug/IOTListenerProj.exe</token>
+				<token>{uri}</token>
+			</tokens>
+		</program>
+		
+		<program name="csharp_MainIOTClient">
+			<params>
+				<param name="uri" default=""/>
+			</params>
+			<stdouttag>COUT</stdouttag>
+			<stderrtag>CERR</stderrtag>
+			<tokens>
+				<token>interoptester/example/src/main/csharp/IOTClientProj/bin/Debug/IOTClientProj.exe</token>
+				<token>{uri}</token>
+			</tokens>
+		</program>
+	</programs>
+</interoptest>

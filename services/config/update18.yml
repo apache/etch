@@ -1,0 +1,10 @@
+# update key value in map: map -> map
+foo: 2
+bar: 4
+array: [ 2, 3, 4 ]
+map: { x: 8, y: 9, z: 10 }
+list:
+  - fish
+  - { a: 5, b: 6, c: 7 }
+  - [ 1, 2, 3 ]
+  - bear

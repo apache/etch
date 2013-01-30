@@ -1,0 +1,13 @@
+module org.apache.etch.interoptester.example.iot
+
+/** Simple example for the interoptester. */
+service IOT
+{
+	/**
+	 * Adds two numbers.
+	 * @param x the first number to add.
+	 * @param y the second number to add.
+	 * @return the sum of x and y.
+	 */
+	int add( int x, int y )
+}

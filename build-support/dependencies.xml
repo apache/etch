@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8" ?>
+ <!--
+ * Licensed to the Apache Software Foundation (ASF) under one   *
+ * or more contributor license agreements.  See the NOTICE file *
+ * distributed with this work for additional information        *
+ * regarding copyright ownership.  The ASF licenses this file   *
+ * to you under the Apache License, Version 2.0 (the            *
+ * "License"); you may not use this file except in compliance   *
+ * with the License.  You may obtain a copy of the License at   *
+ *                                                              *
+ *   http://www.apache.org/licenses/LICENSE-2.0                 *
+ *                                                              *
+ * Unless required by applicable law or agreed to in writing,   *
+ * software distributed under the License is distributed on an  *
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY       *
+ * KIND, either express or implied.  See the License for the    *
+ * specific language governing permissions and limitations      *
+ * under the License.                                           *
+ -->
+<project name="etch-dependencies" basedir="." default="check-all">
+    <description>Etch Dependencies</description>
+    <property name="Etch.basedir" location="${basedir}/.." />
+    
+    <!-- Load Environment -->
+    <property environment="env" />
+    
+    <!-- Load dependencies -->
+    <property file="${Etch.basedir}/build.dependencies" prefix="default" />
+    
+    <target name="check-javacc" >
+        <fail message="${default.javacc.home}/bin/lib/javacc.jar cannot be found. Please set 'javacc.home' in build.dependencies">
+            <condition>
+                <not><available file="${default.javacc.home}/bin/lib/javacc.jar" /></not>
+            </condition>
+        </fail>
+        <echo message="Using ${default.javacc.home}/bin/lib/javacc.jar ..." />
+    </target>
+    
+    <target name="check-junit">
+        <fail message="${default.junit.lib}/junit-4.3.1.jar cannot be found. Please set 'junit.lib' in build.dependencies">
+            <condition>
+                <not><available file="${default.junit.lib}/junit-4.3.1.jar" /></not>
+            </condition>
+        </fail>        
+        <echo message="Using ${default.junit.lib}/junit-4.3.1.jar ..." />
+    </target>
+    
+    <target name="check-velocity">
+        <fail message="${default.velocity.lib}/velocity-dep-1.5.jar cannot be found. Please set 'velocity.lib' in build.dependencies">
+            <condition>
+                <not><available file="${default.velocity.lib}/velocity-dep-1.5.jar" /></not>
+            </condition>
+        </fail>        
+        <echo message="Using ${default.velocity.lib}/velocity-dep-1.5.jar ..." />
+    </target>
+    
+    <target name="check-dotnet" >
+        <echo message="ANT-DOTNET" />
+    </target>
+    
+    <target name="check-all" depends="check-javacc,check-junit,check-velocity,check-dotnet" />
+    
+
+</project>

@@ -1,0 +1,144 @@
+{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf430
+{\fonttbl\f0\fswiss\fcharset0 ArialMT;\f1\froman\fcharset0 TimesNewRomanPSMT;\f2\fmodern\fcharset0 CourierNewPSMT;
+}
+{\colortbl;\red255\green255\blue255;}
+\vieww12000\viewh15840\viewkind0
+\deftab720
+\pard\pardeftab720\sb240\sa60\qc
+
+\f0\b\fs32 \cf0 Microsoft Visual Studio 2005 Add-In Users Guide\
+\pard\pardeftab720\qc
+
+\f1\b0\fs24 \cf0 \expnd0\expndtw0\kerning0
+~Draft~\
+\pard\pardeftab720\sb240\sa60\ql\qnatural
+
+\f0\i\b\fs28 \cf0 License\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\i0\b0\fs24 \cf0 \kerning1\expnd0\expndtw0 \
+ * Licensed to the Apache Software Foundation (ASF) under one   *\
+ * or more contributor license agreements.  See the NOTICE file *\
+ * distributed with this work for additional information        *\
+ * regarding copyright ownership.  The ASF licenses this file   *\
+ * to you under the Apache License, Version 2.0 (the            *\
+ * "License"); you may not use this file except in compliance   *\
+ * with the License.  You may obtain a copy of the License at   *\
+ *                                                              *\
+ *   http://www.apache.org/licenses/LICENSE-2.0                 *\
+ *                                                              *\
+ * Unless required by applicable law or agreed to in writing,   *\
+ * software distributed under the License is distributed on an  *\
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY       *\
+ * KIND, either express or implied.  See the License for the    *\
+ * specific language governing permissions and limitations      *\
+ * under the License.                                           *
+\fs28 \
+
+\i\b \expnd0\expndtw0\kerning0
+\
+\pard\pardeftab720\sb240\sa60\ql\qnatural
+\cf0 About the Add-In\
+\pard\pardeftab720\ql\qnatural
+
+\f1\fs24 \cf0 Microsoft Visual Studio 2005 Add-In
+\i0\b0  is a plugin provided by Etch framework to integrate Etch Compiler and Etch C# runtime library into Visual Studio 2005 IDE.  Developers who use C# to develop Etch network service and client can use this Add-In to generate Etch C# binding and stub code without leaving the IDE.  Also, Etch C# library is available in the list of standard .Net components.  Developers can reference the library without browsing into the Etch library directory.  \
+\pard\pardeftab720\sb240\sa60\ql\qnatural
+
+\f0\i\b\fs28 \cf0 Installation and Uninstallation\
+\pard\pardeftab720\sa120\ql\qnatural
+
+\f1\i0\b0\fs24 \cf0 A wizard-driven installer is available for developers to install and uninstall the Add-In effortlessly.  The installer, 
+\i\b VSAddInSetup.exe
+\i0\b0 , is in the 
+\i\b plugins
+\i0\b0  folder inside Etch home directory.  \
+To install the Add-In, run 
+\i\b VSAddInSetup.exe
+\i0\b0  and specified your Etch home directory and the install directory for the Add-In.  Please close all instances of Visual Studio 2005 before installation.  After installation, you can find 
+\i\b Etch
+\i0\b0  listed as one of the Add-Ins in the 
+\i\b Add-In Manager
+\i0\b0  (
+\i\b Tools, Add-in Manager\'85
+\i0\b0 ).     \
+\pard\pardeftab720\sa120\qc
+
+\f2\fs20 \cf0 \
+\pard\pardeftab720\sa120\ql\qnatural
+
+\f1\fs24 \cf0 To uninstall the Add-In, user can either perform the action from 
+\i\b Control Panel
+\i0\b0 , 
+\i\b Add or Remove Programs, Visual Studio for Etch
+\i0\b0  or 
+\i\b Start
+\i0\b0 , 
+\i\b All Programs
+\i0\b0 , 
+\i\b Visual Studio Add-In for Etch
+\i0\b0 , 
+\i\b Uninstall
+\i0\b0 .  All instances of Visual Studio 2005 must be closed before uninstallation.  The uninstaller restarts Visual Studio 2005 when the uninstallation process is done.\
+\pard\pardeftab720\sb240\sa60\ql\qnatural
+
+\f0\i\b\fs28 \cf0 Etch C# Runtime Reference\
+\pard\pardeftab720\ql\qnatural
+
+\f1\i0\b0\fs24 \cf0 The Add-In adds the library path of Etch installation into Visual Studio 2005\'92s default assembly folders.  When developers need to add Etch C# runtime as one of the references into the project, the 
+\i\b Etch4CS
+\i0\b0  library can be easily located in the 
+\i\b .NET
+\i0\b0  tab of 
+\i\b Add Reference
+\i0\b0  window.    \
+\pard\pardeftab720\sb240\sa60\qc
+\cf0 \
+\pard\pardeftab720\sb240\sa60\ql\qnatural
+\cf0 \
+\pard\pardeftab720\sb240\sa60\ql\qnatural
+
+\f0\i\b\fs28 \cf0 Generate Etch C# Binding\
+\pard\pardeftab720\ql\qnatural
+
+\f1\i0\b0\fs24 \cf0 The Add-In integrates with Etch Compiler for developers to generate Etch C# binding and stub code inside 
+\i\b Visual Studio 2005 IDE
+\i0\b0 .  The Add-In provides three context menu items in 
+\i\b Solution Explorer
+\i0\b0 ; developers can right-mouse click on an Etch network service definition file (
+\i\b .etch
+\i0\b0 )  in a development project then create the bindings and stub code by selecting one of the three Etch related menu items.\
+\
+
+\i\b Etch (Both)
+\i0\b0 : Generate both server and client binding and stub code.\
+
+\i\b Etch (Server)
+\i0\b0 : Generate server side binding and stub code.\
+
+\i\b Etch (Client)
+\i0\b0 : Generate client side binding and stub code.\
+\
+The Etch compiler generated files reside under the same directory as Etch network service definition file (
+\i\b .etch)
+\i0\b0  file.  \
+\
+\pard\pardeftab720\qc
+
+\f2\fs20 \cf0 \
+\
+\
+\
+\
+\pard\pardeftab720\ql\qnatural
+
+\f1\fs24 \cf0 To view Etch compiler generated files, developers can click on \'93
+\i\b Show All Files
+\i0\b0 \'94 toolbar button on 
+\i\b Solution Explorer
+\i0\b0  then select files and include them into the working project.  \
+\
+\pard\pardeftab720\qc
+\cf0  
+\f2\fs20 \
+}

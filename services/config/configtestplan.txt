@@ -1,0 +1,37 @@
+possible yaml updates:
+
+update key value in map: scalar -> scalar [update1]
+add scalar key to map [update2]
+remove scalar key from map [update3]
+
+update element in list: scalar -> scalar [update4]
+add scalar element to list [update5]
+remove scalar element from list [update6]
+
+add map key to map [update7]
+add list key to map [update8]
+remove map key from map [update9]
+remove list key from map [update10]
+
+add map element to list [update11]
+add list element to list [update12]
+remove map element from list [update13]
+remove list element from list [update14]
+
+update key value in map: scalar -> map [update15]
+update key value in map: scalar -> list [update16]
+update key value in map: map -> scalar [update17]
+update key value in map: map -> map [update18]
+update key value in map: map -> list [update19]
+update key value in map: list -> scalar [update20]
+update key value in map: list -> map [update21]
+update key value in map: list -> list [update22]
+
+update element in list: scalar -> map [update23]
+update element in list: scalar -> list [update24]
+update element in list: map -> scalar [update25]
+update element in list: map -> map [update26]
+update element in list: map -> list [update27]
+update element in list: list -> scalar [update28]
+update element in list: list -> map [update29]
+update element in list: list -> list [update30]

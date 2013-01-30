@@ -1,0 +1,479 @@
+/*
+ *  Licensed to the Apache Software Foundation (ASF) under one   *
+ *  or more contributor license agreements.  See the NOTICE file *
+ *  distributed with this work for additional information        *
+ *  regarding copyright ownership.  The ASF licenses this file   *
+ *  to you under the Apache License, Version 2.0 (the            *
+ *  "License"); you may not use this file except in compliance   *
+ *  with the License.  You may obtain a copy of the License at   *
+ *                                                               *
+ *    http://www.apache.org/licenses/LICENSE-2.0                 *
+ *                                                               *
+ *  Unless required by applicable law or agreed to in writing,   *
+ *  software distributed under the License is distributed on an  *
+ *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY       *
+ *  KIND, either express or implied.  See the License for the    *
+ *  specific language governing permissions and limitations      *
+ *  under the License.                                           *
+ */
+
+/* $Id$
+ *
+ * Grammer for the etch idl compiler.
+ */
+ 
+options
+{
+	JAVA_UNICODE_ESCAPE = false;
+	STATIC = false;
+	JDK_VERSION = "1.5";
+	OUTPUT_DIRECTORY = "../../../target/generated-sources/main/javacc/java/org/apache/etch/compiler";
+}
+
+PARSER_BEGIN(EtchGrammar)
+
+package org.apache.etch.compiler;
+
+import java.io.InputStream;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.etch.compiler.ast.Constant;
+import org.apache.etch.compiler.ast.Enumx;
+import org.apache.etch.compiler.ast.Except;
+import org.apache.etch.compiler.ast.Service;
+import org.apache.etch.compiler.ast.Item;
+import org.apache.etch.compiler.ast.Message;
+import org.apache.etch.compiler.ast.Module;
+import org.apache.etch.compiler.ast.Name;
+import org.apache.etch.compiler.ast.Opt;
+import org.apache.etch.compiler.ast.ParamList;
+import org.apache.etch.compiler.ast.Parameter;
+import org.apache.etch.compiler.ast.Struct;
+import org.apache.etch.compiler.ast.Thrown;
+import org.apache.etch.compiler.ast.TypeRef;
+
+/** The JavaCC grammar file for the etch compiler. */
+public class EtchGrammar extends EtchHelper
+{
+	public EtchGrammar( Backend b, InputStream is )
+	{
+		this( is );
+		this.binding = b;
+	}
+	
+	private Backend binding;
+	
+	private Service gintf;
+}
+
+PARSER_END(EtchGrammar)
+
+/*
+ * Tokens to ignore in the BNF follow.
+ */
+
+SKIP :
+{
+	<" ">
+|	<"\t">
+|	<"\r">
+|	<"\n">
+|	<"\f">
+|	<SINGLE1 : "//" (~["\r","\n"])* ["\r","\n"]>
+|	<SINGLE2 : "#" (~["\r","\n"])* ["\r","\n"]>
+}
+
+SPECIAL_TOKEN :
+{
+	<FORMAL : "/**" (~["*"])* "*" ("*" | (~["*","/"] (~["*"])* "*"))* "/">
+|	<BLOCK : "/*" (~["*"])* "*" ("*" | (~["*","/"] (~["*"])* "*"))* "/">
+}
+
+TOKEN :
+{
+	<BOOLEAN : "boolean">
+|	<BYTE : "byte">
+|	<CONST : "const">
+|	<DOUBLE : "double">
+|	<ENUM : "enum">
+|	<EXCEPTION : "exception">
+|	<EXTENDS : "extends">
+|	<EXTERN : "extern">
+|	<FALSE : "false">
+|	<FLOAT : "float">
+|   <INCLUDE : "include">
+|	<INT : "int">
+|	<LONG : "long">
+|	<MIXIN : "mixin">
+|	<MODULE : "module">
+|	<NULL : "null">
+|	<OBJECT : "object">
+|	<SERVICE : "service">
+|	<SHORT : "short">
+|	<STRING : "string">
+|	<STRUCT : "struct">
+|	<THROWS : "throws">
+|	<TRUE : "true">
+|	<VOID : "void">
+|	<ID : ["a"-"z","A"-"Z"] (["a"-"z","A"-"Z","0"-"9","_"])*>
+|	<QID : <ID> ( "." <ID> )+>
+|	<#INT_LIT : ["1"-"9"] (["0"-"9"])*>
+|	<#SGN : (["-"])?>
+|	<INTEGER : <SGN> ("0" | <INT_LIT>)>
+|	<OCTAL : "0" (["0"-"7"])+>
+|	<HEX : "0" ["x","X"] (["0"-"9","a"-"f","A"-"F"])+>
+|	<BINARY : "0" ["b","B"] (["0"-"1"])+>
+|	<#EXP : ["e", "E"] <INTEGER>>
+|	<#FRACTION : <SGN> "." (["0"-"9"])+>
+|	<DECIMAL : (<INTEGER> ( "." (["0"-"9"])* )? <EXP>) | (<INTEGER> "." (["0"-"9"])* (<EXP>)?) | (<FRACTION> (<EXP>)?)>
+|	<STR : "\"" (~["\"","\\","\r","\n"] | ("\\" ["\"","\\","r","n","t"]) | ("\\u" (["0"-"9","a"-"f","A"-"F"]){4}))* "\"">
+|	<AT : "@">
+|	<COMMA : ",">
+|	<EQ : "=">
+|	<SEMI : ";">
+|	<LPAREN : "(">
+|	<RPAREN : ")">
+|	<LBRACE : "{">
+|	<RBRACE : "}">
+|	<LBRACKET : "[">
+|	<RBRACKET : "]">
+}
+
+Module module( CmdLineOptions cmdLineOptions ) :
+{ Module m; }
+{
+	m = module_stmt( cmdLineOptions )
+	service( m )
+	{ return m; }
+}
+
+Module module_stmt( CmdLineOptions cmdLineOptions ) :
+{ Token k; Token t; }
+{
+	k = <MODULE> t = xid() ( <SEMI> )?
+	
+	{
+		Module m = new Module( new Name( t, t.image ), cmdLineOptions );
+		moduleComment( m, k.specialToken );
+		return m;
+	}
+}
+
+void service( Module m ) :
+{ Map<String, Opt> opts; Token k; Name n; Service i; }
+{
+	{
+		doStartService();	
+	}
+	
+	opts = opts()
+	k = <SERVICE> n = def()
+	{		 
+		saveComment( k.specialToken );
+		i = m.addService( n, opts );
+		serviceComment( i, getComment() );
+		binding.addDefaults( i );
+		Service ointf = gintf;
+		gintf = i;
+	}
+	<LBRACE> stmts( i ) <RBRACE>
+	{
+		gintf = ointf;
+		doEndService( i );	
+	}
+}
+
+Map<String, Opt> opts() :
+{ Map<String, Opt> map = new HashMap<String, Opt>(); Opt o; }
+{
+	(
+		o = opt()
+		{ map.put( o.name(), o ); }
+	)*
+	{ return map; }
+}
+
+Opt opt() :
+{ Token k; Token n; List<Token> list = new ArrayList<Token>(); }
+{
+	k = <AT> n = id()
+	{
+		saveComment( k.specialToken );
+	}
+	( <LPAREN> args( list ) <RPAREN> )?
+	{ return makeOpt( new Name( n, n.image ), list ); }
+}
+
+void args( List<Token> list ) :
+{ Token v; }
+{
+	v = arg() { list.add( v ); }
+	(
+		<COMMA> v = arg()
+		{ list.add( v ); }
+	)*
+}
+
+Token arg() :
+{ Token t; }
+{
+	(
+		t = cvalue()
+	|	t = ref()
+	|	t = <NULL>
+	)
+	{ return t; }
+}
+
+Token cvalue() :
+{ Token t; }
+{
+	(
+		t = <TRUE>
+	|	t = <FALSE>
+	|	t = <INTEGER>
+	|	t = <OCTAL>
+	|	t = <HEX>
+	|	t = <BINARY>
+	|	t = <DECIMAL>
+	|	t = <STR> { fixString( t ); }
+	)
+	{ return t; }
+}
+
+void stmts( Service i ) :
+{ Map<String, Opt> opts; }
+{
+	(
+		opts = opts()
+		(
+			mixin_stmt( i, opts )
+		|	include_stmt( i, opts )
+		|	const_stmt( i, opts )
+		|	enum_stmt( i, opts )
+		|	struct_stmt( i, opts )
+		|	extern_stmt( i, opts )
+		|	exception_stmt( i, opts )
+		|	message_stmt( i, opts )
+		)
+	)*
+}
+
+void mixin_stmt( Service i, Map<String, Opt> opts ) :
+{ Token t; }
+{
+	<MIXIN> t = ref() ( <SEMI> )?
+	{ i.addMixin( new Name( t, t.image ), opts ); }
+}
+
+
+void include_stmt( Service i, Map<String, Opt> opts ) :
+{ Token f; }
+{
+	<INCLUDE> f = <STR> ( <SEMI> )?
+	{ 
+		doInclude( f, i ); 
+	}
+}
+
+void const_stmt( Service i, Map<String, Opt> opts ) :
+{ Token k; TypeRef tr; Name n; Token v; }
+{
+	k = <CONST> tr = ctype() n = def() <EQ> v = cvalue() ( <SEMI> )?
+	{
+		Constant c = i.addConstant( n, opts, tr, v );
+		constantComment( c, k.specialToken );
+	}
+}
+
+void enum_stmt( Service i, Map<String, Opt> opts ) :
+{ Token k; Name n; Enumx e; }
+{
+	k = <ENUM> n = def()
+	{
+		e = i.addEnum( n, opts );
+		enumComment( e, k.specialToken );
+	}
+	<LPAREN> item_list( e ) <RPAREN> ( <SEMI> )?
+}
+
+void item_list( Enumx e ) :
+{ Name n; Item i; }
+{
+	n = def()
+	{
+		i = e.addItem( n );
+		itemComment( i, n.token.specialToken );
+	}
+	(
+		<COMMA> n = def()
+		{
+			i = e.addItem( n );
+			itemComment( i, n.token.specialToken );
+		}
+	)*
+}
+
+void struct_stmt( Service i, Map<String, Opt> opts ) :
+{ Token k; Name n; Struct s; Token x; Token e; }
+{
+	k = <STRUCT> n = def()
+	{ saveComment( k.specialToken ); x = getComment(); s = i.addStruct( n, opts ); }
+	params( s )
+	( <EXTENDS> e = ref() { s.setExtends( new Name( e, e.image ) ); } )?
+	( <SEMI> )?
+	{ structComment( s, x ); }
+}
+
+void extern_stmt( Service i, Map<String, Opt> opts ) :
+{ Name n; }
+{
+	<EXTERN> n = def()
+	{ i.addExtern( n, opts ); }
+	( <SEMI> )?
+}
+
+void exception_stmt( Service i, Map<String, Opt> opts ) :
+{ Token k; Name n; Except s; Token x; Token e; }
+{
+	k = <EXCEPTION> n = def()
+	{ saveComment( k.specialToken ); x = getComment(); s = i.addExcept( n, opts ); }
+	params( s )
+	( <EXTENDS> e = ref() { s.setExtends( new Name( e, e.image ) ); } )?
+	( <SEMI> )?
+	{ exceptComment( s, x ); }
+}
+
+void message_stmt( Service i, Map<String, Opt> opts ) :
+{ TypeRef rt; Name n; Message m; Token k; }
+{
+	rt = rtype() n = def()
+	{
+		saveComment( rt.type().specialToken );
+		k = getComment();
+		m = i.addMessage( n, opts, rt );
+	}
+	params( m )
+	(
+		<THROWS> throws_list( m )
+	)?
+	( <SEMI> )?
+	{ messageComment( m, k ); }
+}
+
+void throws_list( Message m ) :
+{ Token n; Thrown t; }
+{
+	n = ref()
+	{
+		t = m.addThrown( new Name( n, n.image ) );
+		thrownComment( t, n.specialToken );
+	}
+	(
+		<COMMA> n = ref()
+		{
+			t = m.addThrown( new Name( n, n.image ) );
+			thrownComment( t, n.specialToken );
+		}
+	)*
+}
+
+Token id() :
+{ Token t; }
+{
+	t = <ID>
+	{ return t; }
+}
+
+Token qid() :
+{ Token t; }
+{
+	t = <QID>
+	{ return t; }
+}
+
+Token xid() :
+{ Token t; }
+{
+	( t = qid() | t = id() )
+	{ return t; }
+}
+
+Name def() :
+{ Token t; }
+{
+	t = id()
+	{ return new Name( t, t.image ); }
+}
+
+Token ref() :
+{ Token t; }
+{
+	t = xid()
+	{ return t; }
+}
+
+TypeRef ctype() :
+{ Token t; }
+{
+	(
+		t = <BOOLEAN>
+	|	t = <BYTE>
+	|	t = <SHORT>
+	|	t = <INT>
+	|	t = <LONG>
+	|	t = <FLOAT>
+	|	t = <DOUBLE>
+	|	t = <STRING>
+	)
+	{ return new TypeRef( gintf, t ); }
+}
+
+TypeRef ptype() :
+{ TypeRef tr; Token t; }
+{
+	(
+		tr = ctype()
+	|   t = <OBJECT> { tr = new TypeRef( gintf, t ); }
+	|	t = ref() { tr = new TypeRef( gintf, t ); }
+	)
+	{ return tr; }
+}
+
+TypeRef rtype() :
+{ TypeRef tr; Token t; int d; }
+{
+	(
+		( tr = ptype() d = dim() { tr.setDim( d ); } )
+	|	t = <VOID> { tr = new TypeRef( gintf, t ); }
+	)
+	{ return tr; }
+}
+
+int dim() :
+{ int d = 0; }
+{
+	( <LBRACKET> <RBRACKET> { d++; } )*
+	{ return d; }
+}
+
+void params( ParamList<?> pl ) :
+{}
+{
+	<LPAREN> ( param( pl ) ( <COMMA> param( pl ) )* )? <RPAREN>
+}
+
+void param( ParamList<?> pl ) :
+{ TypeRef tr; int d; Name n; }
+{
+	tr = ptype() d = dim() n = def()
+	{
+		tr.setDim( d );
+		Parameter p = pl.addParameter( n, tr );
+		parameterComment( p, tr.type().specialToken );
+	}
+}

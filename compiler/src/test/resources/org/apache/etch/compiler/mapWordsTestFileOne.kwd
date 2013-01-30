@@ -1,0 +1,44 @@
+# $Id$
+# 
+# Copyright 2007-2008 Cisco Systems Inc.
+# 
+# Licensed under the Apache License, Version 2.0 (the "License"); you may not
+# use this file except in compliance with the License. You may obtain a copy
+# of the License at
+#  
+#     http://www.apache.org/licenses/LICENSE-2.0
+# 
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations
+# under the License.
+
+# Whitespace betwixt comments
+key1
+key2#Comment following directly after a key
+key3 # Simple Comment
+key4  # Multi space comment
+
+key5 = value5
+key6 = value6#Comment following directly after a value
+key7 = value7 # Simple Comment
+key8 = value8  # Multi space comment
+key9=value9
+key10=value10#Comment following directly after a non-spaced value
+key11=value11 # Simple Comment
+key12 value12
+key13 value13#Comment following directly after a value
+key14 value14 # Simple Comment
+key15 value15  # Multi space comment
+
+key16 value16
+key16 value17
+key17
+key17 value17
+key18 value18
+key18
+
+Key19
+KEY20
+kEy21

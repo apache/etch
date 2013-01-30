@@ -1,0 +1,199 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+ <!--
+ * Licensed to the Apache Software Foundation (ASF) under one   *
+ * or more contributor license agreements.  See the NOTICE file *
+ * distributed with this work for additional information        *
+ * regarding copyright ownership.  The ASF licenses this file   *
+ * to you under the Apache License, Version 2.0 (the            *
+ * "License"); you may not use this file except in compliance   *
+ * with the License.  You may obtain a copy of the License at   *
+ *                                                              *
+ *   http://www.apache.org/licenses/LICENSE-2.0                 *
+ *                                                              *
+ * Unless required by applicable law or agreed to in writing,   *
+ * software distributed under the License is distributed on an  *
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY       *
+ * KIND, either express or implied.  See the License for the    *
+ * specific language governing permissions and limitations      *
+ * under the License.                                           *
+ -->
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{0E518F2A-3016-4C2F-A21B-9BD52B2DC846}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Etch</RootNamespace>
+    <AssemblyName>Etch</AssemblyName>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>etch.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Msg\AsyncMode.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Msg\ComboValidator.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Msg\Direction.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Msg\Field.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Msg\FieldMap.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Msg\IdName.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Msg\IdNameMap.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Msg\ImportExportHelper.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Msg\Message.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Msg\StructValue.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Msg\TypeMap.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Msg\Validator.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Msg\ValueFactory.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Msg\XType.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Support\AuthExceptionSerializer.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Support\Class2TypeMap.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Support\DefaultServerFactory.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Support\DefaultValueFactory.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Support\DeliveryService.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Support\DummyValueFactory.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Support\FreePool.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Support\Mailbox.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Support\NullPool.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Support\ObjSession.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Support\Pool.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Support\QueuedPool.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Support\RemoteBase.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Support\RuntimeExceptionSerializer.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Support\ServerFactory.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Support\StubBase.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Support\StubHelper.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Support\TransportFactory.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Support\TransportHelper.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Support\TypeValidator.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Support\Validator_boolean.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Support\Validator_byte.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Support\Validator_custom.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Support\Validator_double.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Support\Validator_float.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Support\Validator_int.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Support\Validator_long.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Support\Validator_object.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Support\Validator_RuntimeException.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Support\Validator_short.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Support\Validator_string.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Support\Validator_StructValue.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Support\Validator_void.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Support\_Etch_AuthException.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Support\_Etch_RuntimeException.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Transport\ArrayValue.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Transport\DefaultDeliveryService.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Transport\Filter\AbstractMessageFilter.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Transport\Filter\KeepAlive.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Transport\Filter\Logger.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Transport\Filter\PwAuth.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Transport\Fmt\Binary\BinaryTaggedData.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Transport\Fmt\Binary\BinaryTaggedDataFormatFactory.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Transport\Fmt\Binary\BinaryTaggedDataInput.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Transport\Fmt\Binary\BinaryTaggedDataOutput.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Transport\Fmt\Binary\Validator_none.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Transport\Fmt\ByteToSbyteConverter.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Transport\Fmt\TaggedData.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Transport\Fmt\TypeCode.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Transport\FormatFactory.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Transport\MailboxManager.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Transport\Messagizer.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Transport\PlainMailbox.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Transport\PlainMailboxManager.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Transport\SessionMessage.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Transport\TaggedDataInput.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Transport\TaggedDataOutput.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Transport\TcpTransportFactory.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Transport\TransportMessage.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Transport\UnwantedMessage.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Util\AbstractStartable.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Util\AlarmListener.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Util\AlarmManager.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Util\ArrayIterator.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Util\Assertion.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Util\CharIterator.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Util\CircularQueue.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Util\Connection.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Util\DateSerializer.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Util\EmptyIterator.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Util\EqualsHelper.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Util\FlexBuffer.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Util\HPTimer.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Util\IdGenerator.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Util\InputStream.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Util\IntCounter.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Util\Integer.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Util\ListSerializer.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Util\MapSerializer.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Util\Monitor.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Util\OutputStream.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Util\Packetizer.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Util\PerfTest.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Util\Resources.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Util\Runner.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Util\RunnerHandler.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Util\Session.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Util\SessionConsts.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Util\SessionData.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Util\SessionListener.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Util\SessionPacket.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Util\SingleIterator.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Util\Startable.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Util\StringTokenizer.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Util\StringUtil.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Util\StrIntHashMap.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Util\StrIntHashMapSerializer.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Util\StrStrHashMap.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Util\StrStrHashMapSerializer.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Util\TcpConnection.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Util\TcpListener.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Util\TcpOptions.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Util\TcpTransport.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Util\Timer.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Util\TlsConnection.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Util\Todo.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Util\TodoDelegateImpl.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Util\TodoManager.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Util\Transport.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Util\TransportConsts.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Util\TransportData.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Util\TransportPacket.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Util\URL.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Util\URLSerializer.cs" />
+    <Compile Include="Org.Apache.Etch.Bindings.Csharp\Util\Who.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="etch.snk" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
