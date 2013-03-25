@@ -35,6 +35,10 @@
         <antcall target="component-binding-${binding}"/>
         <antcall target="post-debug"/>
     </target>
+    <target name="release-binding" depends="init-release">
+        <antcall target="component-binding-${binding}"/>
+        <antcall target="post-release"/>
+    </target>
 
     <!-- Execute a clean, then 'debug' build -->
     <target name="rebuild-debug">
