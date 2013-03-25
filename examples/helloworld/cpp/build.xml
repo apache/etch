@@ -94,25 +94,78 @@
    </target>
 
    <target name="build-cpp" depends="generate-sources" if="USE.cmake">
-     <cmake srcdir="${basedir}" bindir="${basedir}/target" buildtype="Debug" >
-     <!-- <generator name="Visual Studio 8 2005" platform="windows" />-->
-      <variable name="ETCH_INCLUDE_CAPU_DIR" type="PATH" value="${Etch.basedir}/binding-cpp/runtime/lib/capu/deliverable/capu/include/capu" />
-      <variable name="ETCH_HOME" type="PATH" value="${etch.home}" />
-     </cmake>
-     <copy todir="${bin}" flatten="true">
-        <fileset dir="${target}" >
-           <include name="helloworld-client" />
-           <include name="helloworld-server" />
-           <include name="Debug/helloworld-client.exe" />
-           <include name="Debug/helloworld-server.exe" />
-        </fileset>
-     </copy>
-     <chmod perm="+x">
-        <fileset dir="${bin}">
-           <include name="helloworld-client" />
-           <include name="helloworld-server" />
-        </fileset>
-     </chmod>
+       <if>
+            <not><isset property="${target.platforms}"/></not>
+            <then>
+                <echo level="warn">No target.platforms set. Trying to build for detected host platform...</echo>
+                    <if>
+                        <os family="windows" />
+                        <then>
+                            <property name="target.platforms" value="Windows_X86_32"/>
+                        </then>
+                    </if>
+                    <if>
+                        <os family="unix" />
+                        <then>
+                            <property name="target.platforms" value="Linux_X86_32"/>
+                        </then>
+                    </if>
+            </then>
+        </if>
+
+        <if>
+            <equals arg1="${target.platforms}" arg2=""/>
+            <then>
+                <fail message="Not able to detect platform. target.platforms is not set. Aborting."/>
+            </then>
+        </if>
+        
+        <var  name="platform" value="${target.platforms}"/>
+        
+        <property name="defaultCMakeToolchainDir" value="${Etch.basedir}/binding-cpp/runtime/toolchains/"/>
+        <if>
+            <isset property="target.platforms.${platform}.toolchainfile"/>
+            <then>
+                <propertycopy name="cmake.toolchainfile" from="target.platforms.${platform}.toolchainfile" />
+            </then>
+            <else>
+                <property name="cmake.toolchainfile" value="${defaultCMakeToolchainDir}/${platform}.toolchain"/>
+            </else>
+        </if>
+        <if>
+            <isset property="target.platforms.${platform}.generator"/>
+            <then>
+                <!-- use specified generator -->
+                <propertycopy name="cmake.generator" from="target.platforms.${platform}.generator" />
+                <echo>Configuring CMake build</echo>
+                <echo>Using generator: ${cmake.generator}</echo>
+                <echo>Using toolchain file: ${cmake.toolchainfile}</echo>
+                
+                <!-- CMake configuration -->
+                <cmake srcdir="${basedir}" bindir="${basedir}/target/${platform}/${Etch.build.target}" buildtype="${Etch.build.target}" >
+                    <generator name="${cmake.generator}" />
+                    <variable name="ETCH_HOME" type="PATH" value="${etch.home}" />
+                    <variable name="ETCH_BUILD_TARGET" type="STRING" value="${Etch.build.target}" />
+                    <variable name="CMAKE_TOOLCHAIN_FILE" type="FILEPATH" value="${cmake.toolchainfile}" />
+                </cmake>
+
+            </then>
+            <else>
+                <!-- try default generator -->
+                <echo>Configuring CMake build</echo>
+                <echo>Using default generator</echo>
+                <echo>Using toolchain file: ${cmake.toolchainfile}</echo>
+                
+                <!-- CMake configuration -->
+                <cmake srcdir="${basedir}" bindir="${basedir}/target/${platform}/${Etch.build.target}" buildtype="${Etch.build.target}" >
+                    <variable name="ETCH_INCLUDE_CAPU_DIR" type="PATH" value="${Etch.basedir}/binding-cpp/runtime/lib/capu/deliverable/capu/include/capu" />
+                    <variable name="CMAKE_TOOLCHAIN_FILE" type="FILEPATH" value="${cmake.toolchainfile}" />
+                    <variable name="ETCH_HOME" type="PATH" value="${etch.home}" />
+                </cmake>
+            </else>
+        </if>
+        
+
    </target>
 
     <target name="build" depends="build-cpp" />
@@ -132,7 +185,7 @@
      ======================
      To run cpp example:
 
-     > cd cpp\target\bin
+     > cd cpp\target\$Platform\$BuildTarget>
      > ./helloworld-server.exe
      > ./helloworld-client.exe
 
@@ -142,7 +195,7 @@
 
     <!-- build everything -->
     <target name="init-debug" >
-        <property name="build.target" value="Debug" />
+        <property name="Etch.build.target" value="Debug" />
     </target>
 
     <target name="init-release" >

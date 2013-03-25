@@ -131,7 +131,7 @@
                 <echo>Configuring CMake build</echo>
                 <echo>Using generator: ${cmake.generator}</echo>
                 <echo>Using toolchain file: ${basedir}/toolchains/${platform}.toolchain</echo>
-                <cmake srcdir="${basedir}" bindir="${target}/${platform}/${Etch.build.target}" buildtype="${Etch.build.target}" >
+                <cmake srcdir="${basedir}" bindir="${target}/${platform}/${Etch.build.target}" cmakeonly="false" buildtype="${Etch.build.target}" >
                     <generator name="${cmake.generator}" />
                     <variable name="ETCH_EXTERNAL_DEPENDS" type="PATH" value="${env.ETCH_EXTERNAL_DEPENDS}" />
                     <variable name="CMAKE_TOOLCHAIN_FILE" type="FILEPATH" value="${basedir}/toolchains/${platform}.toolchain" />
@@ -142,7 +142,7 @@
                 <echo>Configuring CMake build</echo>
                 <echo>Using default generator</echo>
                 <echo>Using toolchain file: ${basedir}/toolchains/${platform}.toolchain</echo>
-                <cmake srcdir="${basedir}" bindir="${target}/${platform}/${Etch.build.target}" buildtype="${Etch.build.target}" >
+                <cmake srcdir="${basedir}" bindir="${target}/${platform}/${Etch.build.target}" cmakeonly="false" buildtype="${Etch.build.target}" >
                     <variable name="ETCH_EXTERNAL_DEPENDS" type="PATH" value="${env.ETCH_EXTERNAL_DEPENDS}" />
                     <variable name="CMAKE_TOOLCHAIN_FILE" type="FILEPATH" value="${basedir}/toolchains/${platform}.toolchain" />
                 </cmake>

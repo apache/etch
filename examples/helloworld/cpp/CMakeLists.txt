@@ -25,14 +25,6 @@ IF (EXISTS "${CMAKE_SOURCE_DIR}/CMakeLists_local.txt")
   INCLUDE ("${CMAKE_SOURCE_DIR}/CMakeLists_local.txt" OPTIONAL)
 ENDIF()
 
-IF(UNIX)
-  add_definitions("-DOS_LINUX")
-  add_definitions("-DARCH_X86_32")
-ELSEIF(WIN32)
-  add_definitions("-DOS_WINDOWS")
-  add_definitions("-DARCH_X86_32")
-ENDIF()
-
 #====================================================================================#
 
 #Etch Home
@@ -43,48 +35,23 @@ ENDIF (NOT ETCH_HOME)
 SET(ETCH_CPP_HOME ${ETCH_HOME}/binding-cpp)
 SET(ETCH_CPP_INCLUDE_DIR ${ETCH_CPP_HOME}/include)
 SET(ETCH_CPP_LIBRARY_DIR ${ETCH_CPP_HOME}/lib)
-
-IF(UNIX)
-	FIND_LIBRARY(ETCH_LIBRARY NAMES libetch.a PATHS ${ETCH_CPP_LIBRARY_DIR})
-	FIND_LIBRARY(CAPU_LIBRARY NAMES libcapu.a PATHS ${ETCH_CPP_LIBRARY_DIR}/Linux_X86_32)
-ELSEIF(WIN32)
-	FIND_LIBRARY(ETCH_LIBRARY NAMES etch.lib PATHS ${ETCH_CPP_LIBRARY_DIR})
-	FIND_LIBRARY(CAPU_LIBRARY NAMES capu.lib PATHS ${ETCH_CPP_LIBRARY_DIR}/Windows_X86_32/Debug)
-ENDIF()
-
-IF (ETCH_LIBRARY)
-    SET(ETCH_LIBRARY_FOUND TRUE)
-ENDIF ()
-
-IF (CAPU_LIBRARY)
-    SET(CAPU_LIBRARY_FOUND TRUE)
-ENDIF ()
-
-IF (NOT ETCH_LIBRARY_FOUND)
-    MESSAGE(FATAL_ERROR "ERROR: Could not find etch library in ${ETCH_CPP_LIBRARY_DIR}")
-ENDIF ()
-
-IF (NOT CAPU_LIBRARY_FOUND)
-    MESSAGE(FATAL_ERROR "ERROR: Could not find capu library in ${ETCH_CPP_LIBRARY_DIR}")
-ENDIF ()
-
+SET(ETCH_CPP_LIBRARY_DIR_PLATFORM_SPECIFIC ${ETCH_CPP_LIBRARY_DIR}/${TARGET_OS}_${TARGET_ARCH}/${ETCH_BUILD_TARGET})
 
 # set include dirs
 include_directories (${ETCH_CPP_INCLUDE_DIR})
 include_directories (${PROJECT_SOURCE_DIR}/src/main/include)
 include_directories (${PROJECT_SOURCE_DIR}/target/generated-sources/cpp/include)
 
+link_directories(${ETCH_CPP_LIBRARY_DIR_PLATFORM_SPECIFIC})
+
+
 #STATUS
 message(STATUS " ")
 message(STATUS "====================================================")
+message(STATUS "build target:            ${ETCH_BUILD_TARGET}")
 message(STATUS "using Etch home Dir:     ${ETCH_HOME}")
-message(STATUS "using Etch dir:         ${ETCH_LIBRARY}")
-message(STATUS "using Capu dir:         ${CAPU_LIBRARY}")
-
-message(STATUS "using include dir: ${ETCH_CPP_INCLUDE_DIR}")
-message(STATUS "====================================================")
-message(STATUS " ")
-
+message(STATUS "using include dir:       ${ETCH_CPP_INCLUDE_DIR}")
+message(STATUS "using library dir:       ${ETCH_CPP_LIBRARY_DIR_PLATFORM_SPECIFIC}")
 
 #====================================================================================#
 # SERVER
@@ -114,18 +81,21 @@ add_executable(etch-cpp-helloworld-server
 )
 
 
-IF (UNIX)
-target_link_libraries(etch-cpp-helloworld-server ${ETCH_LIBRARY} ${CAPU_LIBRARY} pthread rt)
-set_target_properties(etch-cpp-helloworld-server PROPERTIES COMPILE_FLAGS "-m32 -g" LINK_FLAGS "-m32")
-ELSEIF(WIN32)
-target_link_libraries(etch-cpp-helloworld-server ${ETCH_LIBRARY} ${CAPU_LIBRARY})
-IF (BUILD_CHECK_MEMORY)
-  file (COPY ${VLD}/vld.ini DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE})
-  file (COPY ${VLD}/bin/dbghelp.dll DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE})
-  file (COPY ${VLD}/bin/vld.dll DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE})
-  target_link_libraries (etch-cpp-helloworld-server ${VLD}/lib/vld.lib)
-ENDIF (BUILD_CHECK_MEMORY)
-ENDIF ()
+IF (TARGET_OS STREQUAL "Linux")
+  target_link_libraries(etch-cpp-helloworld-server etch capu pthread rt)
+  set_target_properties(etch-cpp-helloworld-server PROPERTIES COMPILE_FLAGS "-m32 -g" LINK_FLAGS "-m32")
+ELSEIF(TARGET_OS STREQUAL "Windows")
+  target_link_libraries(etch-cpp-helloworld-server etch capu)
+  IF (BUILD_CHECK_MEMORY)
+    file (COPY ${VLD}/vld.ini DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE})
+    file (COPY ${VLD}/bin/dbghelp.dll DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE})
+    file (COPY ${VLD}/bin/vld.dll DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE})
+    target_link_libraries (etch-cpp-helloworld-server ${VLD}/lib/vld.lib)
+  ENDIF (BUILD_CHECK_MEMORY)
+ELSEIF(TARGET_OS STREQUAL "QNX")
+  target_link_libraries (etch-cpp-helloworld-server etch capu c socket)
+ENDIF()
+
 set_target_properties(etch-cpp-helloworld-server PROPERTIES OUTPUT_NAME "helloworld-server")
 
 #====================================================================================#
@@ -150,19 +120,20 @@ add_executable(etch-cpp-helloworld-client
  target/generated-sources/cpp/src/ValueFactoryHelloWorld.cpp
 )
 
-
-IF (UNIX)
-target_link_libraries(etch-cpp-helloworld-client ${ETCH_LIBRARY} ${CAPU_LIBRARY} pthread rt)
-set_target_properties(etch-cpp-helloworld-client PROPERTIES COMPILE_FLAGS "-m32 -g" LINK_FLAGS "-m32")
-ELSEIF(WIN32)
-target_link_libraries(etch-cpp-helloworld-client ${ETCH_LIBRARY} ${CAPU_LIBRARY})
-IF (BUILD_CHECK_MEMORY)
-  file (COPY ${VLD}/vld.ini DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE})
-  file (COPY ${VLD}/bin/dbghelp.dll DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE})
-  file (COPY ${VLD}/bin/vld.dll DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE})
-  target_link_libraries (etch-cpp-helloworld-client ${VLD}/lib/vld.lib)
-ENDIF (BUILD_CHECK_MEMORY)
-ENDIF ()
+IF (TARGET_OS STREQUAL "Linux")
+  target_link_libraries(etch-cpp-helloworld-client etch capu pthread rt)
+  set_target_properties(etch-cpp-helloworld-client PROPERTIES COMPILE_FLAGS "-m32 -g" LINK_FLAGS "-m32")
+ELSEIF(TARGET_OS STREQUAL "Windows")
+  target_link_libraries(etch-cpp-helloworld-client etch capu )
+  IF (BUILD_CHECK_MEMORY)
+    file (COPY ${VLD}/vld.ini DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE})
+    file (COPY ${VLD}/bin/dbghelp.dll DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE})
+    file (COPY ${VLD}/bin/vld.dll DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE})
+    target_link_libraries (etch-cpp-helloworld-client ${VLD}/lib/vld.lib)
+  ENDIF (BUILD_CHECK_MEMORY)
+ELSEIF(TARGET_OS STREQUAL "QNX")
+  target_link_libraries (etch-cpp-helloworld-client etch capu c socket)
+ENDIF()
 
 set_target_properties(etch-cpp-helloworld-client PROPERTIES OUTPUT_NAME "helloworld-client")
 
