@@ -25,13 +25,13 @@ const EtchObjectType* EtchSocket::TYPE() {
 
 EtchSocket::EtchSocket() {
   addObjectType(TYPE());
-  mSocket = new capu::Socket();
+  mSocket = new capu::TcpSocket();
 }
 
-EtchSocket::EtchSocket(capu::Socket* soc) {
+EtchSocket::EtchSocket(capu::TcpSocket* soc) {
   addObjectType(TYPE());
   if (soc == NULL)
-    mSocket = new capu::Socket();
+    mSocket = new capu::TcpSocket();
   else
     mSocket = soc;
 }
@@ -48,16 +48,17 @@ status_t EtchSocket::close() {
   return mSocket->close();
 }
 
-status_t EtchSocket::connect(unsigned char* dest_addr, capu::uint16_t port) {
+status_t EtchSocket::connect(const char* dest_addr, capu::uint16_t port) {
   return mSocket->connect(dest_addr, port);
 }
 
-status_t EtchSocket::receive(unsigned char * buffer, capu::int32_t length, capu::int32_t& numBytes) {
+status_t EtchSocket::receive(char * buffer, capu::int32_t length, capu::int32_t& numBytes) {
   return mSocket->receive(buffer, length, numBytes);
 }
 
-status_t EtchSocket::send(unsigned char* buffer, capu::int32_t length) {
-  return mSocket->send(buffer, length);
+status_t EtchSocket::send(const char* buffer, capu::int32_t length) {
+  capu::int32_t numBytes = 0;
+  return mSocket->send(buffer, length, numBytes);
 }
 
 status_t EtchSocket::setBufferSize(capu::int32_t bufferSize) {

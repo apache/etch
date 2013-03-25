@@ -17,7 +17,7 @@
 
 # set include dirs
 include_directories (${PROJECT_SOURCE_DIR}/include)
-include_directories (${CAPU}/include/capu)
+include_directories (${LIBCAPU_INCLUDE_DIR})
 
 #Add header files
 SET(MAIN_INCLUDES
@@ -240,7 +240,7 @@ add_library (etch-cpp STATIC
 )
 
 
-IF (TARGET_OS STREQUAL "Linux")
+IF (TARGET_OS STREQUAL "Linux" AND TARGET_ARCH STREQUAL "X86_64") #build only 32 bit
   set_target_properties (etch-cpp PROPERTIES COMPILE_FLAGS "-m32 -g" LINK_FLAGS "-m32")
 ENDIF ()
 

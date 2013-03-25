@@ -22,6 +22,8 @@
 #include "common/EtchString.h"
 #include "common/EtchHashTable.h"
 #include "common/EtchHashSet.h"
+#include "common/EtchComparatorNative.h"
+#include "common/EtchHashNative.h"
 #include "serialization/EtchType.h"
 
 class EtchTypeMap {
@@ -96,7 +98,7 @@ public:
 
 private:
 
-  EtchHashTable<capu::int32_t, EtchType*, capu::Hash, capu::Comparator > mById;
+  EtchHashTable<capu::int32_t, EtchType*, EtchComparatorNative, EtchHashNative > mById;
 
   EtchHashTable<EtchString, EtchType* > mByName;
 

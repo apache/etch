@@ -47,14 +47,6 @@
     <!-- CLEAN TARGET -->
     <target name="do-clean">
         <delete dir="${target}" />
-        <delete dir="${proj}/lib/capu/3psw/libs" />
-        <delete dir="${proj}/lib/capu/build" />
-        <delete dir="${proj}/lib/capu/deliverable" />
-    </target>
-
-    <target name="do-clean-capu">
-        <delete dir="${proj}/lib/capu/build" />
-        <delete dir="${proj}/lib/capu/deliverable" />
     </target>
 
     <!-- BUILD TARGET -->
@@ -97,8 +89,6 @@
                 <antcall target="do-build"/>
                 <echo>Testing platform: ${platform}</echo>
                 <antcall target="do-test"/>
-                <!-- TODO remove this as soon as ACME in capu is able to build multiple targets -->
-                <antcall target="do-clean-capu"/>
             </sequential>
         </for>
 
@@ -123,6 +113,16 @@
     </target>
 
     <target name="do-build-main" if="USE.cmake">
+        <property name="defaultCMakeToolchainDir" value="${basedir}/toolchains"/>
+        <if>
+            <isset property="target.platforms.${platform}.toolchainfile"/>
+            <then>
+                <propertycopy name="cmake.toolchainfile" from="target.platforms.${platform}.toolchainfile" />
+            </then>
+            <else>
+                <property name="cmake.toolchainfile" value="${defaultCMakeToolchainDir}/${platform}.toolchain"/>
+            </else>
+        </if>
         <if>
             <isset property="target.platforms.${platform}.generator"/>
             <then>
@@ -130,21 +130,21 @@
                 <propertycopy name="cmake.generator" from="target.platforms.${platform}.generator" />
                 <echo>Configuring CMake build</echo>
                 <echo>Using generator: ${cmake.generator}</echo>
-                <echo>Using toolchain file: ${basedir}/toolchains/${platform}.toolchain</echo>
+                <echo>Using toolchain file: ${cmake.toolchainfile}</echo>
                 <cmake srcdir="${basedir}" bindir="${target}/${platform}/${Etch.build.target}" cmakeonly="false" buildtype="${Etch.build.target}" >
                     <generator name="${cmake.generator}" />
                     <variable name="ETCH_EXTERNAL_DEPENDS" type="PATH" value="${env.ETCH_EXTERNAL_DEPENDS}" />
-                    <variable name="CMAKE_TOOLCHAIN_FILE" type="FILEPATH" value="${basedir}/toolchains/${platform}.toolchain" />
+                    <variable name="CMAKE_TOOLCHAIN_FILE" type="FILEPATH" value="${cmake.toolchainfile}" />
                 </cmake>
             </then>
             <else>
                 <!-- try default generator -->
                 <echo>Configuring CMake build</echo>
                 <echo>Using default generator</echo>
-                <echo>Using toolchain file: ${basedir}/toolchains/${platform}.toolchain</echo>
+                <echo>Using toolchain file: ${cmake.toolchainfile}</echo>
                 <cmake srcdir="${basedir}" bindir="${target}/${platform}/${Etch.build.target}" cmakeonly="false" buildtype="${Etch.build.target}" >
                     <variable name="ETCH_EXTERNAL_DEPENDS" type="PATH" value="${env.ETCH_EXTERNAL_DEPENDS}" />
-                    <variable name="CMAKE_TOOLCHAIN_FILE" type="FILEPATH" value="${basedir}/toolchains/${platform}.toolchain" />
+                    <variable name="CMAKE_TOOLCHAIN_FILE" type="FILEPATH" value="${cmake.toolchainfile}" />
                 </cmake>
             </else>
         </if>
@@ -163,8 +163,8 @@
             </fileset>
         </copy>
 
-        <property name="capu.library.output.path.prefix" value="${proj}/lib/capu/deliverable/capu/lib/${platform}"/>
-        <property name="capu.binary.output.path.prefix" value="${proj}/lib/capu/deliverable/capu/bin/${platform}"/>
+        <property name="capu.library.output.path.prefix" value="${proj}/3rd/capu/deliverable/Capu/lib/${platform}"/>
+        <property name="capu.binary.output.path.prefix" value="${proj}/3rd/capu/deliverable/Capu/bin/${platform}"/>
         <property name="etch.library.output.path.prefix" value="${target}/${platform}/${Etch.build.target}/src/main"/>
         <property name="etch.binary.output.path.prefix" value="${target}/${platform}/${Etch.build.target}/src/test"/>
 
@@ -178,8 +178,8 @@
                 <property name="etch.binary.output.path" value="${etch.binary.output.path.prefix}/${Etch.build.target}" />
             </then>
             <else>
-                <property name="capu.library.output.path" value="${capu.library.output.path.prefix}" />
-                <property name="capu.binary.output.path" value="${capu.binary.output.path.prefix}" />
+                <property name="capu.library.output.path" value="${capu.library.output.path.prefix}/${Etch.build.target}" />
+                <property name="capu.binary.output.path" value="${capu.binary.output.path.prefix}/${Etch.build.target}" />
                 <property name="etch.library.output.path" value="${etch.library.output.path.prefix}" />
                 <property name="etch.binary.output.path" value="${etch.binary.output.path.prefix}" />
             </else>
@@ -203,7 +203,7 @@
         
         <!-- copy capu includes to dist folder -->
         <copy todir="${Etch.dist}/binding-cpp/include">
-            <fileset dir="${proj}/lib/capu/deliverable/capu/include/capu">
+            <fileset dir="${proj}/lib/capu/deliverable/Capu/include/Capu">
                 <exclude name="**/.svn" />
             </fileset>
         </copy>
@@ -244,12 +244,12 @@
                 <!-- Run CAPU Unit Tests -->
                 <!-- Run CAPU Unit Tests on Windows-->
                 <property name="executable-full-path"
-                    location="lib/capu/deliverable/capu/bin/Windows_X86_32/${Etch.build.target}/capuTest.exe"/>
+                    location="3rd/capu/deliverable/Capu/bin/Windows_X86_32/${Etch.build.target}/capuTest.exe"/>
                 <exec executable="${executable-full-path}" osfamily="windows" failonerror="true">
                     <arg value="--gtest_output=xml:${testResultsDirectory}/"/>
                 </exec>
                 <!-- Run CAPU Unit Tests on Unix -->
-                <exec executable="lib/capu/deliverable/capu/bin/Linux_X86_32/capuTest" osfamily="unix"  failonerror="true">
+                <exec executable="3rd/capu/deliverable/Capu/bin/Linux_X86_32/${Etch.build.target}/capuTest" osfamily="unix"  failonerror="true">
                     <arg value="--gtest_output=xml:${testResultsDirectory}/"/>
                 </exec>
             

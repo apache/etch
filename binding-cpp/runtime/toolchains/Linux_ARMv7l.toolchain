@@ -37,5 +37,7 @@ SET(CMAKE_FIND_ROOT_PATH /opt/pb-a8/staging/armv7a-angstrom-linux-gnueabi)
 SET(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
 SET(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 
+add_definitions("-DTARGET_OS=Linux")
+add_definitions("-DTARGET_ARCH=ARMV7L")
 add_definitions("-DOS_LINUX")
 add_definitions("-DARCH_ARMV7L")

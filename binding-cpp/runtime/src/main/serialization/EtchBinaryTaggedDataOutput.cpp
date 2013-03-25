@@ -127,13 +127,13 @@ status_t EtchBinaryTaggedDataOutput::writeKeysAndValues(capu::SmartPointer<EtchS
   status_t ret;
   EtchType* t = sv->getType();
   EtchStructValue::Iterator it = sv->begin();
-  EtchStructValue::Pair pair;
+  EtchStructValue::HashTableEntry entry;
   capu::SmartPointer<EtchValidator> tmp;
 
   while (it.hasNext()) {
-    if (it.next(&pair) == ETCH_OK) {
+    if (it.next(&entry) == ETCH_OK) {
 
-      EtchField f = pair.first;
+      EtchField f = entry.key;
 
       ret = writeField(&f);
       if (ret != ETCH_OK) {
@@ -145,13 +145,14 @@ status_t EtchBinaryTaggedDataOutput::writeKeysAndValues(capu::SmartPointer<EtchS
         return ETCH_ERROR;
       }
 
-      ret = writeValue(tmp, pair.second);
+      ret = writeValue(tmp, entry.value);
       if (ret != ETCH_OK) {
         return ETCH_ERROR;
       }
     } else {
       return ETCH_ERROR;
     }
+   
   }
   return ETCH_OK;
 }

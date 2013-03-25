@@ -156,9 +156,9 @@ TEST(EtchCirclerQueueTest, closeTest) {
 
 namespace {
 
-class R1 : public capu::Runnable {
+class Runnable1 : public capu::Runnable {
 public:
-  R1(EtchCircularQueue* queue) {
+  Runnable1(EtchCircularQueue* queue) {
     mQueue = queue;
   }
 
@@ -174,9 +174,9 @@ private:
   EtchCircularQueue* mQueue;
 };
 
-class R2 : public capu::Runnable {
+class Runnable2 : public capu::Runnable {
 public:
-  R2(EtchCircularQueue* queue) {
+  Runnable2(EtchCircularQueue* queue) {
     mQueue = queue;
   }
 
@@ -198,13 +198,13 @@ private:
 TEST(EtchCirclerQueueTest, concurrency) {
   EtchCircularQueue* queue = new EtchCircularQueue(5);
 
-  R1* r1 = new R1(queue);
-  capu::Thread* t1 = new capu::Thread(r1);
-  t1->start();
+  Runnable1* r1 = new Runnable1(queue);
+  capu::Thread* t1 = new capu::Thread();
+  t1->start(*r1);
 
-  R2* r2 = new R2(queue);
-  capu::Thread* t2 = new capu::Thread(r2);
-  t2->start();
+  Runnable2* r2 = new Runnable2(queue);
+  capu::Thread* t2 = new capu::Thread();
+  t2->start(*r2);
 
   t1->join();
   t2->join();

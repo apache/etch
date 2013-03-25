@@ -59,6 +59,7 @@ TEST(EtchList, removeAt) {
   EtchInt32 data1;
   EtchInt32 data2;
   EtchInt32 data3;
+  EtchInt32 data4;
   status_t result;
 
   data1.set(32);
@@ -68,28 +69,28 @@ TEST(EtchList, removeAt) {
   result = list->add(data1);
   EXPECT_TRUE(result == ETCH_OK);
 
-  result = list->add(data3);
-  EXPECT_TRUE(result == ETCH_OK);
-
   result = list->add(data2);
   EXPECT_TRUE(result == ETCH_OK);
 
-  //removing element at index 1
-  result = list->removeAt(1);
+  result = list->add(data3);
   EXPECT_TRUE(result == ETCH_OK);
 
-  //removing element at index 1
-  result = list->removeAt(1);
-  EXPECT_TRUE(result == ETCH_OK);
+  EtchList<EtchInt32>::Iterator it = list->begin();
 
-  //removing element at index 0 (HEAD)
-  result = list->removeAt(0, &data1);
+  result = list->removeAt(it, &data4);
   EXPECT_TRUE(result == ETCH_OK);
-  EXPECT_TRUE(data1.get() == 32);
+  EXPECT_TRUE(data4.get() == data1.get());
 
-  //remove element from out of index
-  result = list->removeAt(1000);
-  EXPECT_TRUE(result == ETCH_EINVAL);
+  result = list->removeAt(it, &data4);
+  EXPECT_TRUE(result == ETCH_OK);
+  EXPECT_TRUE(data4.get() == data2.get());
+
+  result = list->removeAt(it, &data4);
+  EXPECT_TRUE(result == ETCH_OK);
+  EXPECT_TRUE(data4.get() == data3.get());
+  
+  EXPECT_FALSE(it.hasNext());
+  EXPECT_EQ(ETCH_ERROR, it.next());
 
   //check size of list
   EXPECT_TRUE(list->size() == 0);

@@ -284,7 +284,6 @@ TEST_F(EtchStructValueTest, putTest_FULL) {
   capu::SmartPointer<EtchObject> object = new EtchBool(true);
   capu::SmartPointer<EtchObject> object2 = new EtchBool(false);
   capu::SmartPointer<EtchObject> object3 = NULL;
-  capu::SmartPointer<EtchObject> object4 = NULL;
   capu::SmartPointer<EtchObject> object5 = new EtchInt32(32);
 
   //check the empty struct value
@@ -299,7 +298,7 @@ TEST_F(EtchStructValueTest, putTest_FULL) {
   EXPECT_TRUE(sv->put(field3, object5) == ETCH_ENOT_EXIST);
   EXPECT_TRUE(sv->count() == 2);
   //add a null element and expect a remove operation
-  EXPECT_TRUE(sv->put(field1, object3, &object4) == ETCH_OK);
+  EXPECT_TRUE(sv->put(field1, object3) == ETCH_OK);
   EXPECT_TRUE(sv->count() == 1);
 
   delete sv;
@@ -334,7 +333,6 @@ TEST_F(EtchStructValueTest, putTest_MISSING_OK) {
   capu::SmartPointer<EtchObject> object = new EtchBool(true);
   capu::SmartPointer<EtchObject> object2 = new EtchBool(false);
   capu::SmartPointer<EtchObject> object3 = NULL;
-  capu::SmartPointer<EtchObject> object4 = NULL;
   capu::SmartPointer<EtchObject> object5 = new EtchInt32(32);
 
   //check the empty struct value
@@ -349,7 +347,7 @@ TEST_F(EtchStructValueTest, putTest_MISSING_OK) {
   EXPECT_TRUE(sv->put(field3, object5) == ETCH_OK);
   EXPECT_TRUE(sv->count() == 3);
   //add a null element and expect a remove operation
-  EXPECT_TRUE(sv->put(field1, object3, &object4) == ETCH_OK);
+  EXPECT_TRUE(sv->put(field1, object3) == ETCH_OK);
   EXPECT_TRUE(sv->count() == 2);
 
   delete sv;
@@ -384,7 +382,6 @@ TEST_F(EtchStructValueTest, putTest_NONE) {
   capu::SmartPointer<EtchObject> object = new EtchBool(true);
   capu::SmartPointer<EtchObject> object2 = new EtchBool(false);
   capu::SmartPointer<EtchObject> object3 = NULL;
-  capu::SmartPointer<EtchObject> object4 = NULL;
   capu::SmartPointer<EtchObject> object5 = new EtchInt32(32);
 
   //check the empty struct value
@@ -399,7 +396,7 @@ TEST_F(EtchStructValueTest, putTest_NONE) {
   EXPECT_TRUE(sv->put(field3, object5) == ETCH_OK);
   EXPECT_TRUE(sv->count() == 3);
   //add a null element and expect a remove operation
-  EXPECT_TRUE(sv->put(field1, object3, &object4) == ETCH_OK);
+  EXPECT_TRUE(sv->put(field1, object3) == ETCH_OK);
   EXPECT_TRUE(sv->count() == 2);
 
   delete sv;
@@ -436,7 +433,7 @@ TEST_F(EtchStructValueTest, getTest) {
 
   //add another element
   capu::SmartPointer<EtchObject> object2 = new EtchBool(false);
-  EXPECT_TRUE(sv->put(field1, object2, &object) == ETCH_OK);
+  EXPECT_TRUE(sv->put(field1, object2) == ETCH_OK);
   EXPECT_TRUE(sv->count() == 1);
 
   //get element

@@ -29,6 +29,7 @@ namespace capu {
   class Thread;
 }
 
+class EtchFreePoolRunnable;
 /**
  * A implementation of the free pool.
  */
@@ -88,11 +89,14 @@ private:
   capu::bool_t mIsOpen;
   capu::Mutex mMutex;
   capu::Thread** mThreads;
+  EtchFreePoolRunnable** mRunnables;
 
   /**
    * Checks thread list and clean up
+
    */
   status_t check();
 };
 
 #endif /* __ETCHFREEPOOL_H__ */
+

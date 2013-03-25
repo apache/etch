@@ -113,7 +113,7 @@ EtchTcpTransportFactory::MySessionListener::MySessionListener(EtchRuntime* runti
   if (mTransport != NULL) {
     mTransport->setSession(this);
   }
-  mConnectionStacks = new capu::List<EtchStack*>();
+  mConnectionStacks = new EtchList<EtchStack*>();
 }
 
 EtchServerFactory* EtchTcpTransportFactory::MySessionListener::getSession() {
@@ -131,7 +131,7 @@ EtchTcpTransportFactory::MySessionListener::~MySessionListener() {
     EtchTransportHelper::DestroyResources(mRuntime, mResources);
   }
 
-  capu::List<EtchStack*>::Iterator it = mConnectionStacks->begin();
+  EtchList<EtchStack*>::Iterator it = mConnectionStacks->begin();
   while (it.hasNext()) {
     EtchStack* st = NULL;
     it.next(&st);
@@ -169,10 +169,10 @@ status_t EtchTcpTransportFactory::MySessionListener::sessionControl(capu::SmartP
 status_t EtchTcpTransportFactory::MySessionListener::sessionNotify(capu::SmartPointer<EtchObject> event) {
   if (event->equals(&EtchTcpListener::CONNECTION_CHECK())) {
     //go through the list of connection and check if the connection is still dead and we have to clean the stack up
-    capu::List<EtchStack*>::Iterator it = mConnectionStacks->begin();
+    EtchList<EtchStack*>::Iterator it = mConnectionStacks->begin();
     while (it.hasNext()) {
       EtchStack* stack = NULL;
-      status_t res = it.current(&stack);
+      status_t res = it.current(stack);
       if (res == ETCH_OK) {
         EtchTcpConnection* con = (EtchTcpConnection*) stack->getTransportData();
         if (con != NULL) {

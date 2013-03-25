@@ -19,7 +19,7 @@
 #ifndef __ETCHSOCKET_H__
 #define __ETCHSOCKET_H__
 
-#include "capu/os/Socket.h"
+#include "capu/os/TcpSocket.h"
 #include "common/EtchObject.h"
 
 class EtchSocket : public EtchObject {
@@ -55,7 +55,7 @@ public:
    *         ETCH_SOCKET_ESOCKET if the socket is not created
    *         ETCH_ERROR otherwise
    */
-  status_t send(unsigned char * buffer, capu::int32_t length);
+  status_t send(const char * buffer, capu::int32_t length);
 
   /**
    * Receive message
@@ -67,7 +67,7 @@ public:
    *         ETCH_SOCKET_ESOCKET if the socket is not created
    *         ETCH_ERROR otherwise
    */
-  status_t receive(unsigned char * buffer, capu::int32_t length, capu::int32_t& numBytes);
+  status_t receive(char * buffer, capu::int32_t length, capu::int32_t& numBytes);
 
   /**
    * close the socket
@@ -87,7 +87,7 @@ public:
    *          ETCH_EINVAL if the dest_addr is NULL
    *          ETCH_SOCKET_ESOCKET if the socket is not created
    */
-  status_t connect(unsigned char * dest_addr, capu::uint16_t port);
+  status_t connect(const char * dest_addr, capu::uint16_t port);
 
   /**
    * Sets the maximum socket buffer in bytes. The kernel doubles this value (to allow space for bookkeeping overhead)
@@ -181,12 +181,12 @@ public:
   friend class EtchServerSocket;
 
 private:
-  capu::Socket *mSocket;
+  capu::TcpSocket *mSocket;
 
   /**
    * Constructor
    */
-  EtchSocket(capu::Socket* soc);
+  EtchSocket(capu::TcpSocket* soc);
 
 };
 

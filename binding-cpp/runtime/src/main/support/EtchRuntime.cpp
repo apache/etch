@@ -46,7 +46,7 @@ status_t EtchRuntime::registerListener(EtchRuntimeListener* listener) {
   }
 
   mMutex.lock();
-  mListeners.add(listener);
+  mListeners.insert(listener);
   mMutex.unlock();
   return ETCH_OK;
 }
@@ -56,7 +56,7 @@ status_t EtchRuntime::unregisterListener(EtchRuntimeListener* listener) {
   mMutex.lock();
   capu::int_t index = mListeners.find(listener);
   if(index != -1) {
-    mListeners.removeAt(index);
+    mListeners.erase(index);
     status = ETCH_OK;
   } else {
     status = ETCH_ERROR;
@@ -81,9 +81,9 @@ status_t EtchRuntime::fireOnRuntimeChanged() {
   mMutex.lock();
 
   capu::List<EtchRuntimeListener*>::Iterator iter = mListeners.begin();
-  while(iter.hasNext()) {
-    EtchRuntimeListener* listener = NULL;
-    iter.next(&listener);
+  while(iter != mListeners.end()) {
+    EtchRuntimeListener* listener = *iter;
+    iter++;
     listener->onRuntimeChanged(this);
   }
   mMutex.unlock();

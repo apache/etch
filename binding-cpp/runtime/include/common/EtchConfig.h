@@ -26,19 +26,18 @@
 #include "capu/Config.h"
 
 /**
- * Hash table size
+ * Hash table sizes
  */
-#define ETCH_DEFAULT_HASH_TABLE_SIZE                      1000
-
-#define ETCH_DEFAULT_TYPEMAP_HASH_SIZE                    50
-#define ETCH_DEFAULT_C2TYPEMAP_HASH_SIZE                  50
-#define ETCH_DEFAULT_FIELDMAP_HASH_SIZE                   10
-#define ETCH_DEFAULT_STRUCTVALUE_HASH_SIZE                8
-#define ETCH_DEFAULT_TYPEVALIDATOR_HASH_SIZE              5
-#define ETCH_DEFAULT_CUSTOMVALIDATORCACHE_HASH_SIZE       100
-#define ETCH_DEFAULT_MAILBOXMANAGER_HASH_SIZE             300
-#define ETCH_DEFAULT_RESOURCES_HASH_SIZE                  300
-#define ETCH_DEFAULT_URL_TERMS_HASH_SIZE                  10
+#define ETCH_DEFAULT_HASH_TABLE_BIT_SIZE                   4
+#define ETCH_DEFAULT_TYPEMAP_HASH_BIT_SIZE                 4
+#define ETCH_DEFAULT_C2TYPEMAP_HASH_BIT_SIZE               4
+#define ETCH_DEFAULT_FIELDMAP_HASH_BIT_SIZE                4
+#define ETCH_DEFAULT_STRUCTVALUE_HASH_BIT_SIZE             4
+#define ETCH_DEFAULT_TYPEVALIDATOR_HASH_BIT_SIZE           4
+#define ETCH_DEFAULT_CUSTOMVALIDATORCACHE_HASH_BIT_SIZE    8
+#define ETCH_DEFAULT_MAILBOXMANAGER_HASH_BIT_SIZE          4
+#define ETCH_DEFAULT_URL_TERMS_HASH_BIT_SIZE               4
+#define ETCH_DEFAULT_RESOURCES_HASH_BIT_SIZE               4
 
 /**
  * Socket input buffer size (bytes)

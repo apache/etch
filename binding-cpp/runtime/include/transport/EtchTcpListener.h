@@ -20,8 +20,8 @@
 #ifndef __ETCHTCPLISTENER_H__
 #define __ETCHTCPLISTENER_H__
 
-#include "capu/os/ServerSocket.h"
-#include "capu/os/Socket.h"
+#include "capu/os/TcpServerSocket.h"
+#include "capu/os/TcpSocket.h"
 #include "capu/util/Runnable.h"
 
 #include "common/EtchError.h"

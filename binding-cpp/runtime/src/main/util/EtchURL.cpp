@@ -19,7 +19,7 @@
 #include "capu/os/StringUtils.h"
 
 EtchURL::EtchURL()
- : terms(ETCH_DEFAULT_URL_TERMS_HASH_SIZE) {
+ : terms(ETCH_DEFAULT_URL_TERMS_HASH_BIT_SIZE) {
 
 }
 

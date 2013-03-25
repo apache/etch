@@ -70,9 +70,9 @@ TEST(EtchMonitorTest, waitUntilEqTest) {
 
 namespace {
 
-class R1 : public capu::Runnable {
+class Runnable1 : public capu::Runnable {
 public:
-  R1(EtchMonitor *monitor) {
+  Runnable1(EtchMonitor *monitor) {
     mMonitor = monitor;
   }
 
@@ -103,9 +103,9 @@ TEST(EtchMonitorTest, waitUntilNotEqTest) {
 
   // blocking test
   m->set(tmp2, current);
-  R1* r1 = new R1(m);
-  capu::Thread* t1 = new capu::Thread(r1);
-  t1->start();
+  Runnable1* r1 = new Runnable1(m);
+  capu::Thread* t1 = new capu::Thread();
+  t1->start(*r1);
   EXPECT_EQ(ETCH_OK, m->waitUntilNotEq(tmp2, current));
   t1->join();
   delete r1;
@@ -134,9 +134,9 @@ TEST(EtchMonitorTest, waitUntilEqAndSetTest) {
   m->set(tmp2, current);
   // blocking test
   m->set(tmp2, current);
-  R1* r1 = new R1(m);
-  capu::Thread* t1 = new capu::Thread(r1);
-  t1->start();
+  Runnable1* r1 = new Runnable1(m);
+  capu::Thread* t1 = new capu::Thread();
+  t1->start(*r1);
   EXPECT_EQ(ETCH_OK, m->waitUntilEqAndSet(tmp1, tmp2, current));
   t1->join();
   delete r1;
@@ -164,9 +164,9 @@ TEST(EtchMonitorTest, waitUntilNotEqAndSetTest) {
   m->set(tmp2, current);
   // blocking test
   m->set(tmp2, current);
-  R1* r1 = new R1(m);
-  capu::Thread* t1 = new capu::Thread(r1);
-  t1->start();
+  Runnable1* r1 = new Runnable1(m);
+  capu::Thread* t1 = new capu::Thread();
+  t1->start(*r1);
   EXPECT_EQ(ETCH_OK, m->waitUntilNotEqAndSet(tmp2, tmp1, current));
   t1->join();
   delete r1;

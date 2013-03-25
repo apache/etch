@@ -146,16 +146,6 @@ TEST(EtchStringTest, UTF8_Constructor_Default) {
   delete s1;
 }
 
-TEST(EtchStringTest, UTF8_Assignment_Test) {
-  const capu::uint8_t utf8 [] = {0xF0, 0xA4, 0xAD, 0xA2, 0xE2, 0x82, 0xAC, 0xC2, 0xA2, 0x24};
-  EtchString* s1 = new EtchString(NULL, 0, "utf-8");
-  *s1 = (const char*)utf8;
-  EXPECT_TRUE(s1->c_str() != NULL);
-  EXPECT_TRUE(strncmp(s1->c_str(), (const char*)utf8, 10) == 0);
-  delete s1;
-}
-//
-
 TEST(EtchStringTest, UTF8_len_test) {
   const capu::uint8_t utf8 [] = {0xF0, 0xA4, 0xAD, 0xA2, 0xE2, 0x82, 0xAC, 0xC2, 0xA2, 0x24};
   EtchString *s = new EtchString((capu::int8_t*)utf8, 10, "utf-8");

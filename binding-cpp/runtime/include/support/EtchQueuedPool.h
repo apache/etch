@@ -70,7 +70,7 @@ public:
   status_t add(capu::SmartPointer<EtchPoolRunnable> runnable);
 
 private:
-  capu::int32_t mSizeMax;
+  capu::uint32_t mSizeMax;
   capu::bool_t mIsOpen;
   capu::ThreadPool* mPool;
 };

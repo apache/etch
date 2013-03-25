@@ -62,7 +62,7 @@ TEST(EtchFloatTest, equals){
 }
 
 TEST(EtchFloatTest, copyTest) {
-  EtchFloat o1(2.123);
+  EtchFloat o1(static_cast<capu::float_t>(2.123));
   EtchFloat o2(o1);
   EtchFloat o3 = o2;
   EXPECT_TRUE(o1.equals(&o2));
@@ -70,7 +70,7 @@ TEST(EtchFloatTest, copyTest) {
 }
 
 TEST(EtchFloatTest, isInstanceOf) {
-  EtchObject* o1 = new EtchFloat(2.123);
+  EtchObject* o1 = new EtchFloat(static_cast<capu::float_t>(2.123));
   EXPECT_TRUE(o1->isInstanceOf(EtchObject::TYPE()));
   EXPECT_TRUE(o1->isInstanceOf(EtchFloat::TYPE()));
   EXPECT_FALSE(o1->isInstanceOf(EtchString::TYPE()));

@@ -248,7 +248,7 @@ TEST_F(EtchDefaultDeliveryServiceTest, endCallTest) {
   capu::SmartPointer<EtchObject> data = new EtchLong(123);
   capu::SmartPointer<EtchObject> old;
   EtchField field = replyType->getResponseField();
-  replymessage->put(field, data, &old);
+  replymessage->put(field, data);
 
   //call the sessionMessage of mailbox manager as if it is called from messagizer to deliver data from
   status = mailboxManager->sessionMessage(NULL, replymessage);

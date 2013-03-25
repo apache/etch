@@ -19,8 +19,8 @@
 #ifndef __ETCHSERVERSOCKET_H__
 #define __ETCHSERVERSOCKET_H__
 
-#include "capu/os/ServerSocket.h"
-#include "capu/os/Socket.h"
+#include "capu/os/TcpServerSocket.h"
+#include "capu/os/TcpSocket.h"
 #include "common/EtchSocket.h"
 
 class EtchServerSocket : public EtchObject {
@@ -83,7 +83,7 @@ public:
   status_t listen(capu::uint8_t backlog);
 
 private:
-  capu::ServerSocket mServerSocket;
+  capu::TcpServerSocket mServerSocket;
 
 };
 

@@ -20,15 +20,15 @@
 
 #include "common/EtchError.h"
 #include "common/EtchHashSet.h"
-#include "common/EtchHashNative.h"
 #include "common/EtchComparatorNative.h"
+#include "common/EtchHashNative.h"
 #include "common/EtchString.h"
 
 TEST(EtchHashSet, Constructor_Default){
   EtchHashSet<EtchString>* set = new EtchHashSet<EtchString > ();
   delete set;
 
-  EtchHashSet<char*, EtchHashNative, EtchComparatorNative >* set2 = new EtchHashSet<char*, EtchHashNative, EtchComparatorNative > ();
+  EtchHashSet<char*, EtchComparatorNative, EtchHashNative >* set2 = new EtchHashSet<char*, EtchComparatorNative, EtchHashNative > ();
   delete set2;
 }
 
@@ -51,7 +51,7 @@ TEST(EtchHashSet, put){
   status = h1->put(value2);
   EXPECT_TRUE(status == ETCH_ERROR);
 
-  EtchHashSet<char*, EtchHashNative, EtchComparatorNative >* h2 = new EtchHashSet<char*, EtchHashNative, EtchComparatorNative > ();
+  EtchHashSet<char*, EtchComparatorNative, EtchHashNative >* h2 = new EtchHashSet<char*, EtchComparatorNative, EtchHashNative > ();
 
   // add new key
   char* value3 = const_cast<char*>("val1");
@@ -211,9 +211,8 @@ TEST(EtchHashSetIterator, NEXT){
   it = h1->begin();
 
   it.next(&check_value);
-  EXPECT_TRUE(check_value.equals(&value));
-
   it.next(&check_value);
-  EXPECT_TRUE(check_value.equals(&value2));
+  EXPECT_EQ(ETCH_ERANGE,it.next());
+
   delete h1;
 }

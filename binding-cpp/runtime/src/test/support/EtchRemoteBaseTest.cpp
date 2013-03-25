@@ -326,9 +326,8 @@ TEST_F(EtchRemoteBaseTest, endCallTest) {
   EXPECT_TRUE(ETCH_OK == replyMessage->getInReplyToMessageId(id));
   capu::SmartPointer<EtchMessage> replymess = replyMessage;
   capu::SmartPointer<EtchObject> data = new EtchLong(123);
-  capu::SmartPointer<EtchObject> old;
   EtchField field = replyType->getResponseField();
-  replyMessage->put(field, data, &old);
+  replyMessage->put(field, data);
   //call the sessionMessage of mailbox manager as if it is called from messagizer to deliver data from
   EXPECT_TRUE(ETCH_OK == manager->sessionMessage(NULL, replymess));
   capu::SmartPointer<EtchObject> result;

@@ -19,6 +19,7 @@
 #include "support/EtchFreePool.h"
 
 #include "capu/os/Thread.h"
+#include "capu/util/Runnable.h"
 #include "capu/os/Memory.h"
 #include "capu/util/Runnable.h"
 
@@ -53,7 +54,6 @@ public:
         }
       }
     }
-    delete this;
   }
 
 private:
@@ -71,10 +71,13 @@ EtchFreePool::EtchFreePool(capu::int32_t size)
   addObjectType(TYPE());
   mThreads = new capu::Thread*[mSizeMax];
   capu::Memory::Set(mThreads, 0, sizeof(capu::Thread*)*mSizeMax);
+  mRunnables = new EtchFreePoolRunnable*[mSizeMax];
+  capu::Memory::Set(mRunnables, 0, sizeof(EtchFreePoolRunnable*)*mSizeMax);
 }
 
 EtchFreePool::~EtchFreePool() {
   delete[] mThreads;
+  delete[] mRunnables;
 }
 
 status_t EtchFreePool::close() {
@@ -98,7 +101,9 @@ status_t EtchFreePool::join() {
     if(mThreads[i] != NULL) {
       mThreads[i]->join();
       delete mThreads[i];
+      delete mRunnables[i];
       mThreads[i] = NULL;
+      mRunnables[i] = NULL;
     }
   }
   mMutex.unlock();
@@ -124,13 +129,14 @@ status_t EtchFreePool::add(capu::SmartPointer<EtchPoolRunnable> runnable) {
     return ETCH_ERROR;
   }
 
-  EtchFreePoolRunnable* tmp = new EtchFreePoolRunnable(this, runnable);
-  capu::Thread* thread = new capu::Thread(tmp);
-  thread->start();
+  EtchFreePoolRunnable *tmp = new EtchFreePoolRunnable(this, runnable);
+  capu::Thread* thread = new capu::Thread();
+  thread->start(*tmp);
 
   for(capu::int32_t i = 0; i < mSizeMax; i++) {
     if(mThreads[i] == NULL) {
       mThreads[i] = thread;
+      mRunnables[i] = tmp;
       mSize++;
       mMutex.unlock();
       return ETCH_OK;
@@ -149,6 +155,11 @@ status_t EtchFreePool::check() {
       if(capu::TS_TERMINATED == state) {
         delete mThreads[i];
         mThreads[i] = NULL;
+
+        if (mRunnables[i] != NULL) {
+          delete mRunnables[i];
+          mRunnables[i] = NULL;
+        }
         mSize--;
       }
     }

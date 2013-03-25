@@ -39,13 +39,12 @@
 using namespace $namespace;
 
 status_t $vf::Etch${intf.name()}RuntimeListener::onRuntimeChanged(EtchRuntime* runtime) {
-  capu::int_t index = $vf::SRuntimes.find(runtime->getId());
-  if (index == -1) {
+  if (runtime == NULL) {
     return ETCH_ERROR;
   }
   if (runtime->isClosed()) {
     //the runtime is closed and is removed
-    $vf::SRuntimes.removeAt(index);
+    $vf::SRuntimes.remove(runtime->getId());
   }
   return ETCH_OK;
 }
@@ -305,6 +304,7 @@ status_t $vf::InitParams${ctr}(EtchRuntime* runtime)
   capu::SmartPointer<EtchValidator> tmpValue;
 #end
 #set( $ctr = $ctr + 1 )
+  
 
   // params for $n.name()
 #if ($n.isStruct() || $n.isExcept())
@@ -353,7 +353,7 @@ status_t $vf::InitValueFactory(EtchRuntime* runtime)
     return ETCH_OK;
   }
 
-  status = SRuntimes.add(runtime->getId());
+  status = SRuntimes.push_back(runtime->getId());
   runtime->registerListener(&S${i}RuntimeListener);
   if (status != ETCH_OK) {
     return status;

@@ -47,7 +47,7 @@ TEST(EtchUtilTest, etch_strcpy_s) {
 
 TEST(EtchUtilTest, etch_utf8_strlen) {
   const char utf8 [] = {(char)0xF0, (char)0xA4, (char)0xAD, (char)0xA2, (char)0xE2, (char)0x82, (char)0xAC, (char)0xC2, (char)0xA2, (char)0x24, (char)0x0};
-  capu::int32_t dstSize = 0;
+  capu::uint32_t dstSize = 0;
 
   status_t retval = etch_strlen_utf8(NULL, dstSize);
   EXPECT_TRUE(retval == ETCH_EINVAL);

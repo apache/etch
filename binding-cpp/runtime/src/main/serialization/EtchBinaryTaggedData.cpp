@@ -106,21 +106,21 @@ capu::int8_t EtchBinaryTaggedData::checkByte(capu::int8_t v) {
 }
 
 capu::int8_t EtchBinaryTaggedData::checkShort(capu::int16_t v) {
-  if ((v >= capu::NumericLimitMin<capu::int8_t>()) && (v <= capu::NumericLimitMax<capu::int8_t>()))
+  if ((v >= capu::NumericLimits::Min<capu::int8_t>()) && (v <= capu::NumericLimits::Max<capu::int8_t>()))
     return checkByte((capu::int8_t) v);
 
   return EtchTypeCode::SHORT;
 }
 
 capu::int8_t EtchBinaryTaggedData::checkInteger(capu::int32_t v) {
-  if ((v >= capu::NumericLimitMin<capu::int16_t>()) && (v <= capu::NumericLimitMax<capu::int16_t>()))
+  if ((v >= capu::NumericLimits::Min<capu::int16_t>()) && (v <= capu::NumericLimits::Max<capu::int16_t>()))
     return checkShort((capu::int16_t) v);
 
   return EtchTypeCode::INT;
 }
 
 capu::int8_t EtchBinaryTaggedData::checkLong(capu::int64_t v) {
-  if (v >= capu::NumericLimitMin<capu::int32_t>() && v <= capu::NumericLimitMax<capu::int32_t>())
+  if (v >= capu::NumericLimits::Min<capu::int32_t>() && v <= capu::NumericLimits::Max<capu::int32_t>())
     return checkInteger((capu::int32_t) v);
 
   return EtchTypeCode::LONG;

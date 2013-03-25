@@ -59,12 +59,12 @@ capu::bool_t EtchValidatorShort::validate(capu::SmartPointer<EtchObject> value) 
 
   if (value->getObjectType()->equals(EtchInt32::TYPE())) {
     EtchInt32 *v = (EtchInt32 *) value.get();
-    return ((v->get() >= capu::NumericLimitMin<capu::int16_t > ()) && (v->get() <= capu::NumericLimitMax<capu::int16_t > ()));
+    return ((v->get() >= capu::NumericLimits::Min<capu::int16_t > ()) && (v->get() <= capu::NumericLimits::Max<capu::int16_t > ()));
   }
 
   if (value->getObjectType()->equals(EtchLong::TYPE())) {
     EtchLong *v = (EtchLong *) value.get();
-    return ((v->get() >= capu::NumericLimitMin<capu::int16_t > ()) && (v->get() <= capu::NumericLimitMax<capu::int16_t > ()));
+    return ((v->get() >= capu::NumericLimits::Min<capu::int16_t > ()) && (v->get() <= capu::NumericLimits::Max<capu::int16_t > ()));
   }
 
   if ((value->getObjectType()->isArray()) && (mExpectedType->isArray())) {

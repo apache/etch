@@ -61,12 +61,12 @@ TEST_F(EtchValidatorDoubleTest, createTest) {
 TEST_F(EtchValidatorDoubleTest, validateTest) {
   capu::SmartPointer<EtchObject> byte = NULL;
 
-  capu::SmartPointer<EtchObject> doubleTmp = new EtchDouble(capu::NumericLimitMax<capu::float_t>());
+  capu::SmartPointer<EtchObject> doubleTmp = new EtchDouble(capu::NumericLimits::Max<capu::float_t>());
   capu::SmartPointer<EtchObject> doubleTmp1 = new EtchDouble(0);
-  capu::SmartPointer<EtchObject> doubleTmp2 = new EtchDouble(capu::NumericLimitMin<capu::float_t>());
+  capu::SmartPointer<EtchObject> doubleTmp2 = new EtchDouble(capu::NumericLimits::Min<capu::float_t>());
   capu::SmartPointer<EtchObject> doubleTmp3 = new EtchDouble(897.12);
   //exceed limits of Float
-  capu::SmartPointer<EtchObject> doubleTmp4_true = new EtchDouble((capu::double_t)capu::NumericLimitMax<capu::float_t>() + (capu::double_t)2.12);
+  capu::SmartPointer<EtchObject> doubleTmp4_true = new EtchDouble((capu::double_t)capu::NumericLimits::Max<capu::float_t>() + (capu::double_t)2.12);
   //incompatible type
   capu::SmartPointer<EtchObject> str = new EtchString();
 
@@ -107,12 +107,12 @@ TEST_F(EtchValidatorDoubleTest, elementValidatorTest) {
   capu::SmartPointer<EtchValidator> elementValidator;
   ptr->getElementValidator(elementValidator);
 
-  capu::SmartPointer<EtchObject> doubleTmp = new EtchDouble(capu::NumericLimitMax<capu::float_t>());
+  capu::SmartPointer<EtchObject> doubleTmp = new EtchDouble(capu::NumericLimits::Max<capu::float_t>());
   capu::SmartPointer<EtchObject> doubleTmp1 = new EtchDouble(0);
-  capu::SmartPointer<EtchObject> doubleTmp2 = new EtchDouble(capu::NumericLimitMin<capu::float_t>());
+  capu::SmartPointer<EtchObject> doubleTmp2 = new EtchDouble(capu::NumericLimits::Min<capu::float_t>());
   capu::SmartPointer<EtchObject> doubleTmp3 = new EtchDouble(897.12);
   //exceed limits of Float
-  capu::SmartPointer<EtchObject> doubleTmp4_true = new EtchDouble((capu::double_t)capu::NumericLimitMax<capu::float_t>() + (capu::double_t)2.12);
+  capu::SmartPointer<EtchObject> doubleTmp4_true = new EtchDouble((capu::double_t)capu::NumericLimits::Max<capu::float_t>() + (capu::double_t)2.12);
 
   //incompatible type
   capu::SmartPointer<EtchObject> str = new EtchString();

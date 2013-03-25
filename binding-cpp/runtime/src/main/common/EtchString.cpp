@@ -17,6 +17,7 @@
  */
 
 #include "capu/os/StringUtils.h"
+#include "capu/os/Memory.h"
 #include "common/EtchString.h"
 #include "util/EtchUtil.h"
 
@@ -57,7 +58,7 @@ EtchString::EtchString(const capu::int8_t* buffer, const capu::int32_t bufferSiz
       //utf8
       // TODO: refactor this an use a utf-8 strncpy function from capu
       mData = new char[bufferSize + 1];
-      capu::StringUtils::Strncpy(mData, bufferSize, (const char*)buffer);
+      capu::Memory::Copy(mData, (const char*)buffer, bufferSize);
       mData [bufferSize] = 0x0;
     }
   } else {
@@ -172,7 +173,7 @@ capu::int32_t EtchString::length() const {
   if (mEncoding != ENCODING_UTF8) {
     return capu::StringUtils::Strlen(mData);
   } else {
-    capu::int32_t result = 0;
+    capu::uint32_t result = 0;
     etch_strlen_utf8(mData, result);
     return result;
   }

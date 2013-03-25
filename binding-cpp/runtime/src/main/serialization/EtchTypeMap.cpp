@@ -22,16 +22,16 @@
 // TODO: Check memory handling
 
 EtchTypeMap::EtchTypeMap()
-: mById(ETCH_DEFAULT_TYPEMAP_HASH_SIZE), mByName(ETCH_DEFAULT_TYPEMAP_HASH_SIZE), mLocked(false) {
+: mById(ETCH_DEFAULT_TYPEMAP_HASH_BIT_SIZE), mByName(ETCH_DEFAULT_TYPEMAP_HASH_BIT_SIZE), mLocked(false) {
 }
 
 EtchTypeMap::~EtchTypeMap() {
-  EtchHashTable<capu::int32_t, EtchType*, capu::Hash, capu::Comparator >::Iterator it = mById.begin();
+  EtchHashTable<capu::int32_t, EtchType*, EtchComparatorNative, EtchHashNative>::Iterator it = mById.begin();
   while (it.hasNext()) {
-    capu::Pair<capu::int32_t, EtchType*> pair;
-    it.next(&pair);
-    if (pair.second != NULL) {
-      delete pair.second;
+    EtchHashTable<capu::int32_t, EtchType*, EtchComparatorNative, EtchHashNative>::HashTableEntry entry;
+    it.next(&entry);
+    if (entry.value != NULL) {
+      delete entry.value;
     }
   }
   mById.clear();
@@ -89,20 +89,20 @@ status_t EtchTypeMap::getAll(EtchHashSet<EtchType*>* set) {
   if (set == NULL)
     return ETCH_EINVAL;
   EtchHashTable<EtchString, EtchType* >::Iterator it = mByName.begin();
-  EtchHashTable<EtchString, EtchType* >::Pair pair;
+  EtchHashTable<EtchString, EtchType* >::HashTableEntry entry;
   while (it.hasNext()) {
-    it.next(&pair);
-    set->put(pair.second);
+    it.next(&entry);
+    set->put(entry.value);
   }
   return ETCH_OK;
 }
 
 void EtchTypeMap::clear() {
   EtchHashTable<EtchString, EtchType* >::Iterator it = mByName.begin();
-  EtchHashTable<EtchString, EtchType* >::Pair pair;
+  EtchHashTable<EtchString, EtchType* >::HashTableEntry entry;
   while (it.hasNext()) {
-    it.next(&pair);
-    delete pair.second;
+    it.next(&entry);
+    delete entry.value;
   }
   mByName.clear();
   mById.clear();

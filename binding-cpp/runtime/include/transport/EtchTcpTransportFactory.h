@@ -143,7 +143,7 @@ private:
     EtchResources* mResources;
     capu::bool_t mIsSecure;
     EtchServerFactory* mSession;
-    capu::List<EtchStack*>* mConnectionStacks;
+    EtchList<EtchStack*>* mConnectionStacks;
   };
 
 };

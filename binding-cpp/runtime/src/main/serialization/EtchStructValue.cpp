@@ -41,12 +41,10 @@ EtchStructValue::~EtchStructValue() {
 
 }
 
-status_t EtchStructValue::put(const EtchField &field, capu::SmartPointer<EtchObject> object, capu::SmartPointer<EtchObject> *old_value) {
+status_t EtchStructValue::put(const EtchField &field, capu::SmartPointer<EtchObject> object) {
   if (object.get() == NULL) {
     capu::SmartPointer<EtchObject> tmp;
     status_t result = remove(field, &tmp);
-    if (old_value != NULL)
-      *old_value = tmp;
     return result;
   }
   if (mLevel != LEVEL_NONE) {
@@ -60,7 +58,7 @@ status_t EtchStructValue::put(const EtchField &field, capu::SmartPointer<EtchObj
     if ((v.get() != NULL) && (!v->validate(object)))
       return ETCH_EINVAL;
   }
-  return mTable.put(field, object, old_value);
+  return mTable.put(field, object);
 }
 
 EtchType* EtchStructValue::getType() {
@@ -84,12 +82,7 @@ capu::uint32_t EtchStructValue::count() {
 }
 
 status_t EtchStructValue::clear() {
-  EtchHashTable<EtchField, capu::SmartPointer<EtchObject> >::Iterator it = mTable.begin();
-  EtchHashTable<EtchField, capu::SmartPointer<EtchObject> >::Pair pair;
-  while (it.hasNext()) {
-    it.next(&pair);
-    pair.second = NULL;
-  }
+  mTable.clear();
   return ETCH_OK;
 }
 
@@ -101,7 +94,6 @@ EtchStructValue::Iterator EtchStructValue::begin() const
 {
   return mTable.begin();
 }
-
 
 capu::bool_t EtchStructValue::isEmpty()
 {

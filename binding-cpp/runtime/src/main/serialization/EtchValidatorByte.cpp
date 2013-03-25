@@ -55,17 +55,17 @@ capu::bool_t EtchValidatorByte::validate(capu::SmartPointer<EtchObject> value) {
 
   if (value->getObjectType()->equals(EtchShort::TYPE())) {
     EtchShort *v = (EtchShort *) value.get();
-    return ((v->get() >= capu::NumericLimitMin<capu::int8_t > ()) && (v->get() <= capu::NumericLimitMax<capu::int8_t > ()));
+    return ((v->get() >= capu::NumericLimits::Min<capu::int8_t > ()) && (v->get() <= capu::NumericLimits::Max<capu::int8_t > ()));
   }
 
   if (value->getObjectType()->equals(EtchInt32::TYPE())) {
     EtchInt32 *v = (EtchInt32 *) value.get();
-    return ((v->get() >= capu::NumericLimitMin<capu::int8_t > ()) && (v->get() <= capu::NumericLimitMax<capu::int8_t > ()));
+    return ((v->get() >= capu::NumericLimits::Min<capu::int8_t > ()) && (v->get() <= capu::NumericLimits::Max<capu::int8_t > ()));
   }
 
   if (value->getObjectType()->equals(EtchLong::TYPE())) {
     EtchLong *v = (EtchLong *) value.get();
-    return ((v->get() >= capu::NumericLimitMin<capu::int8_t > ()) && (v->get() <= capu::NumericLimitMax<capu::int8_t > ()));
+    return ((v->get() >= capu::NumericLimits::Min<capu::int8_t > ()) && (v->get() <= capu::NumericLimits::Max<capu::int8_t > ()));
   }
   //array handling
   if ((value->getObjectType()->isArray()) && (mExpectedType->isArray())) {

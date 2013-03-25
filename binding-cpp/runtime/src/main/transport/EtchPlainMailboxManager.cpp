@@ -20,19 +20,19 @@
 #include "capu/os/Debug.h"
 
 EtchPlainMailboxManager::EtchPlainMailboxManager(EtchRuntime* runtime, EtchTransportMessage* transport, const EtchString& uri, EtchResources* resources)
-: mRuntime(runtime), mSession(NULL), mTransport(transport), mUp(false), mMailboxes(ETCH_DEFAULT_MAILBOXMANAGER_HASH_SIZE) {
+: mRuntime(runtime), mSession(NULL), mTransport(transport), mUp(false), mMailboxes(ETCH_DEFAULT_MAILBOXMANAGER_HASH_BIT_SIZE) {
   capu::Debug::Assert(mRuntime != NULL);
   mTransport->setSession(this);
 }
 
 EtchPlainMailboxManager::~EtchPlainMailboxManager() {
   EtchHashTable<EtchLong, EtchMailbox*>::Iterator it = mMailboxes.begin();
-  EtchHashTable<EtchLong, EtchMailbox*>::Pair p;
+  EtchHashTable<EtchLong, EtchMailbox*>::HashTableEntry entry;
   // TODO check thread safety
   while (it.hasNext()) {
-    it.next(&p);
-    p.second->closeDelivery();
-    delete p.second;
+    it.next(&entry);
+    entry.value->closeDelivery();
+    delete entry.value;
   }
 }
 
@@ -180,11 +180,11 @@ status_t EtchPlainMailboxManager::sessionNotify(capu::SmartPointer<EtchObject> e
     mUp = false;
     // TODO check thread safety
     EtchHashTable<EtchLong, EtchMailbox*>::Iterator it = mMailboxes.begin();
-    EtchHashTable<EtchLong, EtchMailbox*>::Pair p;
+    EtchHashTable<EtchLong, EtchMailbox*>::HashTableEntry entry;
     while (it.hasNext()) {
-      it.next(&p);
-      p.second->closeDelivery();
-      delete p.second;
+      it.next(&entry);
+      entry.value->closeDelivery();
+      delete entry.value;
     }
     CAPU_LOG_TRACE(mRuntime->getLogger(), "EtchPlainMailboxManager", "Connection is down");
   }

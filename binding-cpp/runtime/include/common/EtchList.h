@@ -22,14 +22,60 @@
 #include "capu/container/List.h"
 #include "common/EtchComparator.h"
 
-template <class T, class C = EtchComparator<T> >
+template <class T, class A = capu::Allocator<capu::GenericListNode<T> >, class C = EtchComparator<T> >
 class EtchList : public EtchObject {
 private:
-  capu::List<T, C> mList;
+  capu::List<T, A, C> mList;
 
 public:
 
-  typedef typename capu::List<T, C>::Iterator Iterator;
+  class EtchListIterator {
+  public:
+      friend class EtchList;
+
+      /**
+      * destructor
+      */
+      ~EtchListIterator();
+
+      /**
+      * Check if iterator has next element.
+      * @return false if the next of current node that is pointed, is null otherwise true
+      */
+      capu::bool_t hasNext();
+
+      /**
+      * Shifts the iterator to the next position and returns the element if next != NULL
+      * @param element
+      * @return CAPU_OK if the next element has been gotten
+      *
+      */
+      status_t next(T* element = 0);
+
+      /**
+        * Get current iterator element.
+        * @param element
+        * @return ETCH_OK if the current element has been gotten
+        */
+        status_t current(T& element);
+
+      /**
+      * Returns the index of the current element.
+      * @return The index of the current element. If there is no current element, the return value is undefined.
+      */
+      capu::uint32_t currentIndex();
+
+  private:
+    /**
+      * Constructor
+      */
+    EtchListIterator(typename capu::List<T, A, C>::Iterator mBeginCapuListIterator, typename capu::List<T, A, C>::Iterator mEndCapuListIterator);
+    typename capu::List<T, A, C>::Iterator mBeginCapuListIterator;
+    typename capu::List<T, A, C>::Iterator mEndCapuListIterator;
+      
+
+  };
+  typedef typename EtchList<T, A, C>::EtchListIterator Iterator;
 
   /**
    * EtchObjectType for EtchList.
@@ -80,7 +126,7 @@ public:
    * @return ETCH_EINVAL invalid index
    *         ETCH_OK if the element is successfully removed
    */
-  status_t removeAt(capu::int32_t index, T* elementOld = NULL);
+  status_t removeAt(Iterator& it, T* elementOld = NULL);
 
   /**
    * get a single element on specified index
@@ -149,81 +195,130 @@ public:
 
 };
 
-template<class T, class C>
-const EtchObjectType* EtchList<T, C>::TYPE() {
+template<class T, class A, class C>
+const EtchObjectType* EtchList<T, A, C>::TYPE() {
   const static EtchObjectType TYPE(EOTID_LIST, NULL);
   return &TYPE;
 }
 
-template<class T, class C>
-EtchList<T, C>::EtchList() {
-  addObjectType(EtchList<T, C>::TYPE());
+template<class T, class A, class C>
+EtchList<T, A, C>::EtchList() {
+  addObjectType(EtchList<T, A, C>::TYPE());
 }
 
-template<class T, class C>
-EtchList<T, C>::EtchList(const EtchList& other)
+template<class T, class A, class C>
+EtchList<T, A, C>::EtchList(const EtchList& other)
  : EtchObject(other), mList(other.mList) {
 }
 
 
-template<class T, class C>
-EtchList<T, C>::~EtchList() {
+template<class T, class A, class C>
+EtchList<T, A, C>::~EtchList() {
 
 }
 
-template<class T, class C>
-status_t EtchList<T, C>::add(const T &element) {
-  return mList.add(element);
+template<class T, class A, class C>
+status_t EtchList<T, A, C>::add(const T &element) {
+  return mList.insert(element);
 }
 
-template<class T, class C>
-status_t EtchList<T, C>::add(capu::int32_t index, const T &element) {
-  return mList.add(index, element);
+template<class T, class A, class C>
+status_t EtchList<T, A, C>::add(capu::int32_t index, const T &element) {
+  return mList.insert(index, element);
 }
 
-template<class T, class C>
-typename EtchList<T, C>::Iterator EtchList<T, C>::begin() const {
-  return mList.begin();
+template<class T, class A, class C>
+typename EtchList<T, A, C>::Iterator EtchList<T, A, C>::begin() const {
+  return EtchListIterator(mList.begin(), mList.end());
 }
 
-template<class T, class C>
-status_t EtchList<T, C>::clear() {
-  return mList.clear();
+template<class T, class A, class C>
+status_t EtchList<T, A, C>::clear() {
+  mList.clear();
+  return ETCH_OK;
 }
 
-template<class T, class C>
-capu::bool_t EtchList<T, C>::contains(const T &element) {
+template<class T, class A, class C>
+capu::bool_t EtchList<T, A, C>::contains(const T &element) {
   return mList.contains(element);
 }
 
-template<class T, class C>
-capu::int32_t EtchList<T, C>::find(const T &element) const {
+template<class T, class A, class C>
+capu::int32_t EtchList<T, A, C>::find(const T &element) const {
   return mList.find(element);
 }
 
-template<class T, class C>
-status_t EtchList<T, C>::get(capu::int32_t index, T* result) {
-  return mList.get(index, result);
+template<class T, class A, class C>
+status_t EtchList<T, A, C>::get(capu::int32_t index, T* result) {
+  status_t status = ETCH_EINVAL;
+  if (result != NULL) {
+    *result = mList.get(index, &status);
+  }
+  return status;
 }
 
-template<class T, class C>
-capu::bool_t EtchList<T, C>::isEmpty() const {
+template<class T, class A, class C>
+capu::bool_t EtchList<T, A, C>::isEmpty() const {
   return mList.isEmpty();
 }
 
-template<class T, class C>
-status_t EtchList<T, C>::removeAt(capu::int32_t index, T* elementOld) {
-  return mList.removeAt(index, elementOld);
+template<class T, class A, class C>
+status_t EtchList<T, A, C>::removeAt(typename EtchList<T, A, C>::Iterator& it, T* elementOld) {
+  status_t status = mList.erase(it.mBeginCapuListIterator, elementOld);
+  return status;
 }
 
-template<class T, class C>
-capu::int32_t EtchList<T, C>::size() {
+template<class T, class A, class C>
+capu::int32_t EtchList<T, A, C>::size() {
   return mList.size();
 }
 
-template<class T, class C>
-capu::int32_t EtchList<T, C>::set(capu::int32_t index, const T &element, T* elementOld) {
+template<class T, class A, class C>
+capu::int32_t EtchList<T, A, C>::set(capu::int32_t index, const T &element, T* elementOld) {
   return mList.set(index, element, elementOld);
+}
+
+
+template<class T, class A, class C>
+EtchList<T, A, C>::EtchListIterator::EtchListIterator(typename capu::List<T, A, C>::Iterator beginCapuListIterator, typename capu::List<T, A, C>::Iterator mEndCapuListIterator) :
+  mBeginCapuListIterator(beginCapuListIterator), mEndCapuListIterator(mEndCapuListIterator) { 
+
+}
+
+template<class T, class A, class C>
+EtchList<T, A, C>::EtchListIterator::~EtchListIterator() { 
+
+}
+
+template<class T, class A, class C>
+capu::bool_t EtchList<T, A, C>::EtchListIterator::hasNext() { 
+  return mBeginCapuListIterator != mEndCapuListIterator;
+}
+
+template<class T, class A, class C>
+status_t EtchList<T, A, C>::EtchListIterator::next(T *element) { 
+  if (mBeginCapuListIterator == mEndCapuListIterator) {
+    return ETCH_ERROR;
+  }
+  if (element != NULL) {
+    *element = *mBeginCapuListIterator;
+  }
+  mBeginCapuListIterator++;
+  return ETCH_OK;
+}
+
+template<class T, class A, class C>
+status_t EtchList<T, A, C>::EtchListIterator::current(T& element) { 
+  if (mBeginCapuListIterator != mEndCapuListIterator) {
+    element = *mBeginCapuListIterator;
+    return ETCH_OK;
+  }
+  return ETCH_ERROR;
+}
+
+template<class T, class A, class C>
+capu::uint32_t EtchList<T, A, C>::EtchListIterator::currentIndex() { 
+  return mBeginCapuListIterator.currentIndex();
 }
 
 typedef capu::SmartPointer<EtchList<EtchObjectPtr> > EtchListPtr;

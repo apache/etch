@@ -232,7 +232,7 @@ TEST_F(EtchDefaultValueFactoryTest, importCustomValueTest) {
   EtchString strRuntime = "_Etch_RuntimeException";
   test->getType(strRuntime, type);
   EtchStructValue *sv = new EtchStructValue(type, test);
-  sv->put(EtchDefaultValueFactory::_mf_msg(), new EtchString("Error Message"), &deserialized);
+  sv->put(EtchDefaultValueFactory::_mf_msg(), new EtchString("Error Message"));
 
   //construct the object
   test->importCustomValue(sv, deserialized);

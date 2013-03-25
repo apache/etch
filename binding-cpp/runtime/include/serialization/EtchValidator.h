@@ -103,9 +103,9 @@ public:
    */
   virtual ~EtchValidatorCaches() {
     capu::List<ValidatorCache*>::Iterator iter = mValidatorsCache.begin();
-    while(iter.hasNext()) {
-      ValidatorCache* entry = NULL;
-      iter.next(&entry);
+    while(iter != mValidatorsCache.end()) {
+      ValidatorCache* entry = *iter;
+      iter++;
       delete entry;
     }
     mValidatorsCache.clear();
@@ -117,16 +117,16 @@ public:
 
   capu::SmartPointer<EtchValidator>* get(EtchRuntime* runtime) {
     capu::List<ValidatorCache*>::Iterator iter = mValidatorsCache.begin();
-    while(iter.hasNext()) {
-      ValidatorCache* entry = NULL;
-      iter.next(&entry);
+    while(iter != mValidatorsCache.end()) {
+      ValidatorCache* entry = *iter;
+      iter++;
       if(entry->id == runtime->getId()) {
         return entry->validators;
       }
     }
     ValidatorCache* entry = new ValidatorCache();
     entry->id = runtime->getId();
-    mValidatorsCache.add(entry);
+    mValidatorsCache.insert(entry);
     return entry->validators;
   }
 

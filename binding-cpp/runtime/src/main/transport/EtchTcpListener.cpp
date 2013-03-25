@@ -168,12 +168,12 @@ status_t EtchTcpListener::transportControl(capu::SmartPointer<EtchObject> contro
     mMutex.lock();
     mIsStarted = true;
     mMutex.unlock();
-    mThread = new capu::Thread(this);
+    mThread = new capu::Thread();
+    mThread->start(*this);
     mConnectionChecker = new ConnectionChecker(this);
-    mConnectionCheckerThread = new capu::Thread(mConnectionChecker);
-    mThread->start();
+    mConnectionCheckerThread = new capu::Thread();
+    mConnectionCheckerThread->start(*mConnectionChecker);
     CAPU_LOG_DEBUG(mRuntime->getLogger(), "EtchTcpListener", "Start command received and EtchTcpListener starts listening on port %d", mPort);
-    mConnectionCheckerThread->start();
     return ETCH_OK;
   }
 
@@ -185,12 +185,12 @@ status_t EtchTcpListener::transportControl(capu::SmartPointer<EtchObject> contro
     mMutex.lock();
     mIsStarted = true;
     mMutex.unlock();
-    mThread = new capu::Thread(this);
+    mThread = new capu::Thread();
+    mThread->start(*this);
     mConnectionChecker = new ConnectionChecker(this);
-    mConnectionCheckerThread = new capu::Thread(mConnectionChecker);
-    mThread->start();
+    mConnectionCheckerThread = new capu::Thread();
+    mConnectionCheckerThread->start(*mConnectionChecker);
     CAPU_LOG_DEBUG(mRuntime->getLogger(), "EtchTcpListener", "Start and wait up command received and EtchTcpListener starts listening on port %d", mPort);
-    mConnectionCheckerThread->start();
     return waitUp(((EtchInt32*) value.get())->get());
   }
 
@@ -231,7 +231,8 @@ status_t EtchTcpListener::transportControl(capu::SmartPointer<EtchObject> contro
     close();
     mThread->join();
     mIsStarted = true;
-    mThread = new capu::Thread(this);
+    mThread = new capu::Thread();
+    mThread->start(*this);
     CAPU_LOG_DEBUG(mRuntime->getLogger(), "EtchTcpListener", "Reset command received and EtchTcpListener has been restarted the stop flag");
     return ETCH_OK;
   }

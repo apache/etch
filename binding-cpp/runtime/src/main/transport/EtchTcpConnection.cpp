@@ -54,7 +54,7 @@ EtchTcpConnection::~EtchTcpConnection() {
 status_t EtchTcpConnection::send(capu::int8_t* buf, capu::uint32_t off, capu::uint32_t len) {
   if (mSocket != NULL) {
     CAPU_LOG_DEBUG(mRuntime->getLogger(), "EtchTcpConnection", "%d byte of data has been transmitted", len);
-    return mSocket->send((unsigned char *) &buf[off], len);
+    return mSocket->send((capu::char_t*)&buf[off], len);
   }
   CAPU_LOG_WARN(mRuntime->getLogger(), "EtchTcpConnection", "%d byte of data has not been transmitted because there is no connection", len);
   return ETCH_ERROR;
@@ -65,7 +65,7 @@ status_t EtchTcpConnection::readSocket() {
 
   while (mIsStarted) {
     capu::int32_t n;
-    status_t result = mSocket->receive((unsigned char *) buf->getBuffer(), buf->getSize(), n);
+    status_t result = mSocket->receive((capu::char_t*)buf->getBuffer(), buf->getSize(), n);
     if (result != ETCH_OK) {
       CAPU_LOG_ERROR(mRuntime->getLogger(), "EtchTcpConnection", "%s : %d => Receive() failed with error code %d", mHost.c_str(), mPort, result);
       return result;
@@ -126,7 +126,7 @@ status_t EtchTcpConnection::openSocket(capu::bool_t reconnect) {
     if (mSocket == NULL) {
       mSocket = new EtchSocket();
     }
-    if (mSocket->connect((unsigned char *) mHost.c_str(), mPort) == ETCH_OK) {
+    if (mSocket->connect((capu::char_t*) mHost.c_str(), mPort) == ETCH_OK) {
       mMutexConnection.unlock();
       CAPU_LOG_TRACE(mRuntime->getLogger(), "EtchTcpConnection", "%s : %d => Connection established", mHost.c_str(), mPort);
       return ETCH_OK;
@@ -167,8 +167,8 @@ status_t EtchTcpConnection::transportControl(capu::SmartPointer<EtchObject> cont
     }
     mIsStarted = true;
     mMutex.unlock();
-    mThread = new capu::Thread(this);
-    mThread->start();
+    mThread = new capu::Thread();
+    mThread->start(*this);
     CAPU_LOG_DEBUG(mRuntime->getLogger(), "EtchTcpConnection", "%s : %d => Start command received and EtchTcpConnection Receiving Thread has started", mHost.c_str(), mPort);
     return ETCH_OK;
   }
@@ -182,8 +182,8 @@ status_t EtchTcpConnection::transportControl(capu::SmartPointer<EtchObject> cont
     }
     mIsStarted = true;
     mMutex.unlock();
-    mThread = new capu::Thread(this);
-    mThread->start();
+    mThread = new capu::Thread();
+    mThread->start(*this);
     CAPU_LOG_DEBUG(mRuntime->getLogger(), "EtchTcpConnection", "%s : %d => Start and wait command received and EtchTcpConnection Receiving Thread has started", mHost.c_str(), mPort);
     return waitUp(((EtchInt32*) value.get())->get());
   }

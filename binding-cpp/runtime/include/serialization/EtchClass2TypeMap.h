@@ -21,6 +21,7 @@
 #define __ETCHCLASS2TYPEMAP_H__
 
 #include "common/EtchInt32.h"
+#include "common/EtchHashNative.h"
 #include "serialization/EtchType.h"
 
 /**
@@ -107,7 +108,7 @@ public:
     }
   };
 private:
-  EtchHashTable<const EtchObjectType*, EtchType*, EtchClass2TypeMap::Hash, EtchClass2TypeMap::Comparator<const EtchObjectType*> > mC2T;
+  EtchHashTable<const EtchObjectType*, EtchType*, EtchClass2TypeMap::Comparator<const EtchObjectType*>,EtchHashNative > mC2T;
 
   capu::bool_t mLocked;
 

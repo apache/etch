@@ -29,8 +29,12 @@ SET(CMAKE_C_FLAGS_DEBUG "/MDd /Zi /Od /RTC1 /D_DEBUG /MP8" )
 SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} /W3")
 
 
+add_definitions("-DTARGET_OS=Windows")
+add_definitions("-DTARGET_ARCH=X86_64")
 add_definitions("-DOS_WINDOWS")
 add_definitions("-DARCH_X86_64")
+
+add_definitions("-D_VARIADIC_MAX=10") #this is needed for compiling gtest with visual studio 11
 
 # enable the BUILD_CHECK_MEMORY flag if you would like to check for memory leaks with visual leak detector
 #add_definitions("-DBUILD_CHECK_MEMORY")

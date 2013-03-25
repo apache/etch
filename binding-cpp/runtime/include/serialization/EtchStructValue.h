@@ -84,13 +84,12 @@ public:
    * Puts an object to EtchStructValue by validating it
    * @param field  field of custom type
    * @param object value of field that will be added. If object is set to NULL, the field is removed.
-   * @param result the removed field is put to result (optional)
    *
    * @return ETCH_OK if successfully added
    *         ETCH_EINVAL if the level of type is not LEVEL_NONE and the object is NULL
    *         ETCH_ERROR  if the level of type is not LEVEL_NONE and the object is not validated and is not NULL
    */
-  status_t put(const EtchField &field, capu::SmartPointer<EtchObject> object, capu::SmartPointer<EtchObject> *value_old = NULL);
+  status_t put(const EtchField &field, capu::SmartPointer<EtchObject> object);
 
   /**
    * Get value associated with key in the EtchStructValue.
@@ -143,7 +142,7 @@ public:
   EtchLevel getLevel();
 
   typedef EtchHashTable<EtchField, capu::SmartPointer<EtchObject> >::Iterator Iterator;
-  typedef EtchHashTable<EtchField, capu::SmartPointer<EtchObject> >::Pair Pair;
+  typedef EtchHashTable<EtchField, capu::SmartPointer<EtchObject> >::HashTableEntry HashTableEntry;
 
   /**
    * @return an iterator which is pointing the beginning of collection
@@ -166,7 +165,7 @@ private:
   static const capu::int64_t serialVersionUID = 1L;
 
   //Default size of mTable
-  static const capu::int32_t DEFAULT_SIZE = ETCH_DEFAULT_STRUCTVALUE_HASH_SIZE;
+  static const capu::int32_t DEFAULT_SIZE = ETCH_DEFAULT_STRUCTVALUE_HASH_BIT_SIZE;
 
 };
 

@@ -60,7 +60,7 @@ status_t EtchMonitor::waitUntilEqAndSet(const EtchString& desiredValue, capu::in
 
 status_t EtchMonitor::waitUntilEqIntern(const EtchString& desiredValue, capu::int32_t maxDelay) {
   capu::uint64_t now = capu::Time::GetMilliseconds();
-  capu::uint64_t end = (maxDelay > 0) ? now + maxDelay : capu::NumericLimitMax<capu::uint32_t>();
+  capu::uint64_t end = (maxDelay > 0) ? now + maxDelay : capu::NumericLimits::Max<capu::int64_t>();
 
   capu::int64_t d = end - now;
   while (!eq(mValue, desiredValue) && d > 0) {
@@ -117,7 +117,7 @@ status_t EtchMonitor::waitUntilNotEq(const EtchString& undesiredValue, capu::uin
 
 status_t EtchMonitor::waitUntilNotEqIntern(const EtchString& undesiredValue, capu::uint32_t maxDelay, EtchString& current) {
   capu::uint64_t now = capu::Time::GetMilliseconds();
-  capu::uint64_t end = (maxDelay > 0) ? now + maxDelay : capu::NumericLimitMax<capu::uint32_t>();
+  capu::uint64_t end = (maxDelay > 0) ? now + maxDelay : capu::NumericLimits::Max<capu::int64_t>();
 
   capu::int64_t d = end - now;
   while (eq(mValue, undesiredValue) && d > 0) {

@@ -23,14 +23,48 @@
 #include "common/EtchComparator.h"
 #include "capu/container/HashTable.h"
 
-template <class Key, class T, class H = EtchObjectHash, class C = EtchComparator<Key> >
+template <class Key, class T, class C = EtchComparator<Key>, class H = EtchObjectHash >
 class EtchHashTable : public EtchObject {
 private:
   capu::HashTable<Key, T, C, H> mHashTable;
 
 public:
-  typedef typename capu::Pair<Key, T> Pair;
-  typedef typename capu::HashTable<Key, T, C, H >::Iterator Iterator;
+  typedef typename capu::HashTable<Key, T, C, H>::HashTableEntry HashTableEntry;
+  class EtchHashTableIterator {
+  public:
+      friend class EtchHashTable;
+
+      /**
+      * destructor
+      */
+      ~EtchHashTableIterator();
+
+      /**
+      * Check if iterator has next element.
+      * @return false if the next of current node that is pointed, is null otherwise true
+      */
+      capu::bool_t hasNext();
+
+      /**
+      * Shifts the iterator to the next position and returns the element if next != NULL
+      * @param element
+      * @return CAPU_OK if the next element has been gotten
+      *
+      */
+      status_t next(HashTableEntry *element = 0);
+
+  private:
+    /**
+      * Constructor
+      */
+    EtchHashTableIterator(typename capu::HashTable<Key, T, C, H>::Iterator mBeginCapuIterator, typename capu::HashTable<Key, T, C, H>::Iterator mEndCapuIterator);
+    typename capu::HashTable<Key, T, C, H>::Iterator mBeginCapuIterator;
+    typename capu::HashTable<Key, T, C, H>::Iterator mEndCapuIterator;
+      
+
+  };
+  typedef typename EtchHashTable<Key, T, C, H>::EtchHashTableIterator Iterator;
+  
 
   /**
    * EtchObjectType for EtchHashTable.
@@ -113,64 +147,101 @@ public:
    */
   inline Iterator begin() const;
 
+
 };
 
-template <class Key, class T, class H, class C>
-const EtchObjectType* EtchHashTable<Key, T, H, C>::TYPE() {
+template <class Key, class T, class C, class H>
+const EtchObjectType* EtchHashTable<Key, T, C, H>::TYPE() {
   const static EtchObjectType TYPE(EOTID_HASHTABLE, NULL);
   return &TYPE;
 }
 
-template <class Key, class T, class H, class C>
-inline EtchHashTable<Key, T, H, C>::EtchHashTable()
-: mHashTable(ETCH_DEFAULT_HASH_TABLE_SIZE) {
-  addObjectType(EtchHashTable<Key, T, H, C>::TYPE());
+template <class Key, class T, class C, class H>
+inline EtchHashTable<Key, T, C, H>::EtchHashTable()
+: mHashTable(ETCH_DEFAULT_HASH_TABLE_BIT_SIZE) {
+  addObjectType(EtchHashTable<Key, T, C, H>::TYPE());
 }
 
-template <class Key, class T, class H, class C>
-inline EtchHashTable<Key, T, H, C>::EtchHashTable(capu::uint32_t size)
+template <class Key, class T, class C, class H>
+inline EtchHashTable<Key, T, C, H>::EtchHashTable(capu::uint32_t size)
 : mHashTable(size) {
-  addObjectType(EtchHashTable<Key, T, H, C>::TYPE());
+  addObjectType(EtchHashTable<Key, T, C, H>::TYPE());
 }
 
-template <class Key, class T, class H, class C>
-inline EtchHashTable<Key, T, H, C>::EtchHashTable(const EtchHashTable& other)
+template <class Key, class T, class C, class H>
+inline EtchHashTable<Key, T, C, H>::EtchHashTable(const EtchHashTable& other)
 : EtchObject(other), mHashTable(other.mHashTable) {
 }
 
-template <class Key, class T, class H, class C>
-inline EtchHashTable<Key, T, H, C>::~EtchHashTable() {
+template <class Key, class T, class C, class H>
+inline EtchHashTable<Key, T, C, H>::~EtchHashTable() {
 
 }
 
-template <class Key, class T, class H, class C>
-inline status_t EtchHashTable<Key, T, H, C>::put(const Key &key, T value, T* value_old) {
+template <class Key, class T, class C, class H>
+inline status_t EtchHashTable<Key, T, C, H>::put(const Key &key, T value, T* value_old) {
   return mHashTable.put(key, value, value_old);
 }
 
-template <class Key, class T, class H, class C>
-inline status_t EtchHashTable<Key, T, H, C>::get(const Key &key, T* value) {
-  return mHashTable.get(key, value);
+template <class Key, class T, class C, class H>
+inline status_t EtchHashTable<Key, T, C, H>::get(const Key &key, T* value) {
+  status_t status = ETCH_EINVAL;
+  if (value != NULL) {
+    *value = mHashTable.at(key,&status);
+  }
+  return status;
 }
 
-template <class Key, class T, class H, class C>
-inline status_t EtchHashTable<Key, T, H, C>::remove(const Key &key, T* value_old) {
+template <class Key, class T, class C, class H>
+inline status_t EtchHashTable<Key, T, C, H>::remove(const Key &key, T* value_old) {
   return mHashTable.remove(key, value_old);
 }
 
-template <class Key, class T, class H, class C>
-inline capu::uint32_t EtchHashTable<Key, T, H, C>::count() {
+template <class Key, class T, class C, class H>
+inline capu::uint32_t EtchHashTable<Key, T, C, H>::count() {
   return mHashTable.count();
 }
 
-template <class Key, class T, class H, class C>
-inline status_t EtchHashTable<Key, T, H, C>::clear() {
-  return mHashTable.clear();
+template <class Key, class T, class C, class H>
+inline status_t EtchHashTable<Key, T, C, H>::clear() {
+  mHashTable.clear();
+  return ETCH_OK;
 }
 
-template <class Key, class T, class H, class C>
-inline typename EtchHashTable<Key, T, H, C>::Iterator EtchHashTable<Key, T, H, C>::begin() const {
-  return mHashTable.begin();
+template <class Key, class T, class C, class H>
+inline typename EtchHashTable<Key, T, C, H>::Iterator EtchHashTable<Key, T, C, H>::begin() const {
+  EtchHashTableIterator it(mHashTable.begin(),mHashTable.end());
+  return it;
+}
+
+template<class Key, class T, class C, class H>
+EtchHashTable<Key, T, C, H>::EtchHashTableIterator::EtchHashTableIterator(typename capu::HashTable<Key, T, C, H>::Iterator beginCapuIterator, typename capu::HashTable<Key, T, C, H>::Iterator endCapuIterator) :
+  mBeginCapuIterator(beginCapuIterator), mEndCapuIterator(endCapuIterator) { 
+
+}
+
+template<class Key, class T, class C, class H>
+EtchHashTable<Key, T, C, H>::EtchHashTableIterator::~EtchHashTableIterator() { 
+
+}
+
+template<class Key, class T, class C, class H>
+capu::bool_t EtchHashTable<Key, T, C, H>::EtchHashTableIterator::hasNext() { 
+  return mBeginCapuIterator != mEndCapuIterator;
+}
+
+template<class Key, class T, class C, class H>
+status_t EtchHashTable<Key, T, C, H>::EtchHashTableIterator::next(HashTableEntry *element) { 
+  if (!hasNext()) {
+    return ETCH_ERANGE;
+  }
+
+  if (element != NULL) {
+    *element = *mBeginCapuIterator;
+  }
+  mBeginCapuIterator++;
+  
+  return ETCH_OK;
 }
 
 typedef capu::SmartPointer<EtchHashTable<EtchObjectPtr, EtchObjectPtr> > EtchHashTablePtr;

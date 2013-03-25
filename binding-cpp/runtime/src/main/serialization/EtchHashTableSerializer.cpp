@@ -45,13 +45,13 @@ status_t EtchHashTableSerializer::exportValue(EtchValueFactory* vf, capu::SmartP
   EtchHashTable<capu::SmartPointer<EtchObject>, capu::SmartPointer<EtchObject> >::Iterator it = table->begin();
   capu::SmartPointer<EtchNativeArray<capu::SmartPointer<EtchObject> > > keysAndValuesArray = new EtchNativeArray<capu::SmartPointer<EtchObject> > (table->count()*2);
   capu::int32_t i = 0;
-  EtchHashTable<capu::SmartPointer<EtchObject>, capu::SmartPointer<EtchObject> >::Pair ptr;
+  EtchHashTable<capu::SmartPointer<EtchObject>, capu::SmartPointer<EtchObject> >::HashTableEntry entry;
 
   while (it.hasNext()) {
-    it.next(&ptr);
-    keysAndValuesArray->set(i, ptr.first);
+    it.next(&entry);
+    keysAndValuesArray->set(i, entry.key);
     i++;
-    keysAndValuesArray->set(i, ptr.second);
+    keysAndValuesArray->set(i, entry.value);
     i++;
   }
 

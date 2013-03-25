@@ -19,7 +19,7 @@
 #include "util/EtchResources.h"
 
 EtchResources::EtchResources()
-: mRelated(NULL), mRes(ETCH_DEFAULT_RESOURCES_HASH_SIZE) {
+: mRelated(NULL), mRes(ETCH_DEFAULT_RESOURCES_HASH_BIT_SIZE) {
 
 }
 

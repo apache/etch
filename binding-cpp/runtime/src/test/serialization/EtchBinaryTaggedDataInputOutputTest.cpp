@@ -105,32 +105,32 @@ public:
   static capu::int32_t* testInt() {
     capu::int32_t n = 65536 + 2 + 2;
     capu::int32_t k = 65536 + 2;
-    capu::int32_t min = capu::NumericLimitMin<capu::int16_t > () - 1;
+    capu::int32_t min = capu::NumericLimits::Min<capu::int16_t > () - 1;
     capu::int32_t *vals = new capu::int32_t[n];
     capu::int32_t i = 0;
     while (k > 0) {
       vals[i++] = min++;
       k--;
     }
-    vals[i++] = capu::NumericLimitMin<capu::int32_t > ();
-    vals[i++] = capu::NumericLimitMax<capu::int32_t > ();
+    vals[i++] = capu::NumericLimits::Min<capu::int32_t > ();
+    vals[i++] = capu::NumericLimits::Max<capu::int32_t > ();
     return vals;
   }
 
   static capu::int64_t* testLong() {
     capu::int32_t n = 65536 + 2 + 6;
     capu::int32_t k = 65536 + 2;
-    capu::int32_t min = capu::NumericLimitMin<capu::int16_t > () - 1;
+    capu::int32_t min = capu::NumericLimits::Min<capu::int16_t > () - 1;
     capu::int64_t* vals = new capu::int64_t[n];
     capu::int32_t i = 0;
     while (k > 0) {
       vals[i++] = min++;
       k--;
     }
-    vals[i++] = capu::NumericLimitMin<capu::int32_t > ();
-    vals[i++] = capu::NumericLimitMax<capu::int32_t > ();
-    vals[i++] = (capu::int64_t) capu::NumericLimitMin<capu::int32_t > () - (capu::int64_t)1L;
-    vals[i++] = (capu::int64_t) capu::NumericLimitMax<capu::int32_t > () + (capu::int64_t)1L;
+    vals[i++] = capu::NumericLimits::Min<capu::int32_t > ();
+    vals[i++] = capu::NumericLimits::Max<capu::int32_t > ();
+    vals[i++] = (capu::int64_t) capu::NumericLimits::Min<capu::int32_t > () - (capu::int64_t)1L;
+    vals[i++] = (capu::int64_t) capu::NumericLimits::Max<capu::int32_t > () + (capu::int64_t)1L;
     return vals;
   }
 
@@ -285,7 +285,7 @@ TEST_F(EtchBinaryTaggedDataInputOutputTest, checkTest) {
   // the parking lot, you don't wanna go there.
 
   // byte values
-  for (capu::int8_t i = capu::NumericLimitMin<capu::int8_t > (); i < capu::NumericLimitMax<capu::int8_t > (); i++) {
+  for (capu::int8_t i = capu::NumericLimits::Min<capu::int8_t > (); i < capu::NumericLimits::Max<capu::int8_t > (); i++) {
     capu::SmartPointer<EtchByte> _byte = new EtchByte(i);
     if (i >= EtchTypeCode::MIN_TINY_INT && i <= EtchTypeCode::MAX_TINY_INT)
       EXPECT_TRUE(i == dataIn->checkValue(_byte));
@@ -295,11 +295,11 @@ TEST_F(EtchBinaryTaggedDataInputOutputTest, checkTest) {
     }
   }
   // short values
-  for (capu::int16_t i = capu::NumericLimitMin<capu::int16_t > (); i < capu::NumericLimitMax<capu::int16_t > (); i++) {
+  for (capu::int16_t i = capu::NumericLimits::Min<capu::int16_t > (); i < capu::NumericLimits::Max<capu::int16_t > (); i++) {
     capu::SmartPointer<EtchShort> _short = new EtchShort(i);
     if (i >= EtchTypeCode::MIN_TINY_INT && i <= EtchTypeCode::MAX_TINY_INT)
       EXPECT_TRUE((capu::int8_t) i == dataIn->checkValue(_short));
-    else if (i >= capu::NumericLimitMin<capu::int8_t > () && i <= capu::NumericLimitMax<capu::int8_t > ()) {
+    else if (i >= capu::NumericLimits::Min<capu::int8_t > () && i <= capu::NumericLimits::Max<capu::int8_t > ()) {
       capu::int8_t var = EtchTypeCode::BYTE;
       EXPECT_TRUE(var == dataIn->checkValue(_short));
     } else {
@@ -314,10 +314,10 @@ TEST_F(EtchBinaryTaggedDataInputOutputTest, checkTest) {
     capu::SmartPointer<EtchInt32> _int = new EtchInt32(array[i]);
     if (array[i] >= EtchTypeCode::MIN_TINY_INT && array[i] <= EtchTypeCode::MAX_TINY_INT)
       EXPECT_TRUE((capu::int8_t) array[i] == dataIn->checkValue(_int));
-    else if ((array[i] >= capu::NumericLimitMin<capu::int8_t > ()) && (array[i] <= capu::NumericLimitMax<capu::int8_t > ())) {
+    else if ((array[i] >= capu::NumericLimits::Min<capu::int8_t > ()) && (array[i] <= capu::NumericLimits::Max<capu::int8_t > ())) {
       capu::int8_t var = EtchTypeCode::BYTE;
       EXPECT_TRUE(var == dataIn->checkValue(_int));
-    } else if ((array[i] >= capu::NumericLimitMin<capu::int16_t > ()) && (array[i] <= capu::NumericLimitMax<capu::int16_t > ())) {
+    } else if ((array[i] >= capu::NumericLimits::Min<capu::int16_t > ()) && (array[i] <= capu::NumericLimits::Max<capu::int16_t > ())) {
       capu::int8_t var = EtchTypeCode::SHORT;
       EXPECT_TRUE(var == dataIn->checkValue(_int));
     } else {
@@ -333,13 +333,13 @@ TEST_F(EtchBinaryTaggedDataInputOutputTest, checkTest) {
     capu::SmartPointer<EtchLong> _long = new EtchLong(array2[i]);
     if (array2[i] >= EtchTypeCode::MIN_TINY_INT && array2[i] <= EtchTypeCode::MAX_TINY_INT)
       EXPECT_TRUE((capu::int8_t) array2[i] == dataIn->checkValue(_long));
-    else if (array2[i] >= capu::NumericLimitMin<capu::int8_t > () && array2[i] <= capu::NumericLimitMax<capu::int8_t > ()) {
+    else if (array2[i] >= capu::NumericLimits::Min<capu::int8_t > () && array2[i] <= capu::NumericLimits::Max<capu::int8_t > ()) {
       capu::int8_t var = EtchTypeCode::BYTE;
       EXPECT_TRUE(var == dataIn->checkValue(_long));
-    } else if (array2[i] >= capu::NumericLimitMin<capu::int16_t > () && array2[i] <= capu::NumericLimitMax<capu::int16_t > ()) {
+    } else if (array2[i] >= capu::NumericLimits::Min<capu::int16_t > () && array2[i] <= capu::NumericLimits::Max<capu::int16_t > ()) {
       capu::int8_t var = EtchTypeCode::SHORT;
       EXPECT_TRUE(var == dataIn->checkValue(_long));
-    } else if (array2[i] >= capu::NumericLimitMin<capu::int32_t > () && array2[i] <= capu::NumericLimitMax<capu::int32_t > ()) {
+    } else if (array2[i] >= capu::NumericLimits::Min<capu::int32_t > () && array2[i] <= capu::NumericLimits::Max<capu::int32_t > ()) {
       capu::int8_t var = EtchTypeCode::INT;
       EXPECT_TRUE(var == dataIn->checkValue(_long));
     } else {

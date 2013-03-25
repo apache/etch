@@ -20,7 +20,7 @@
 #include "serialization/EtchFieldMap.h"
 
 EtchFieldMap::EtchFieldMap()
-: mById(ETCH_DEFAULT_FIELDMAP_HASH_SIZE), mByName(ETCH_DEFAULT_FIELDMAP_HASH_SIZE), mLocked(false) {
+: mById(ETCH_DEFAULT_FIELDMAP_HASH_BIT_SIZE), mByName(ETCH_DEFAULT_FIELDMAP_HASH_BIT_SIZE), mLocked(false) {
 
 }
 

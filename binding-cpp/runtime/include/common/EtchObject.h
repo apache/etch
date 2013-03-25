@@ -20,6 +20,7 @@
 #define __ETCHOBJECT_H__
 
 #include "capu/container/List.h"
+#include "capu/container/Hash.h"
 
 #include "common/EtchError.h"
 #include "common/EtchObjectType.h"
@@ -79,6 +80,7 @@ protected:
 
 private:
   capu::List<const EtchObjectType*> mTypes;
+
 };
 
 typedef capu::SmartPointer<EtchObject> EtchObjectPtr;

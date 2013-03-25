@@ -13,20 +13,22 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and 
 # limitations under the License. 
-#
 
-SET(CMAKE_SYSTEM_NAME Linux)
+
+SET(CMAKE_SYSTEM_NAME MacOSX)
 SET(CMAKE_SYSTEM_VERSION 1)
 
-SET(TARGET_OS Linux)
-SET(TARGET_ARCH X86_32)
-SET(TARGET_COMPILER GCC)
+SET(TARGET_OS MacOSX)
+SET(TARGET_ARCH x86_64)
+# SET(TARGET_COMPILER GCC)
 
-SET(CMAKE_C_FLAGS_DEBUG "-m32 -ggdb -Wall -D_DEBUG")
+SET(CMAKE_C_FLAGS_DEBUG "-m64 -ggdb -Wall -D_DEBUG")
 SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG}")
 
-SET(CMAKE_C_FLAGS_RELEASE "-m32 -Wall -O3 -DNDEBUG")
+SET(CMAKE_C_FLAGS_RELEASE "-m64 -Wall -O3 -DNDEBUG")
 SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE}")
 
-add_definitions("-DOS_LINUX")
-add_definitions("-DARCH_X86_32")
+add_definitions("-DTARGET_OS=MacOSX")
+add_definitions("-DTARGET_ARCH=X86_64")
+add_definitions("-DOS_MACOSX")
+add_definitions("-DARCH_X86_64")

@@ -37,6 +37,6 @@ status_t etch_strcpy_s(char *dst, size_t dstSize, const char *src);
  *         ETCH_ERROR if length calculation has failed
  *         ETCH_EINVAL if src == NULL
  */
-status_t etch_strlen_utf8(const char *src, capu::int32_t &length);
+status_t etch_strlen_utf8(const char *src, capu::uint32_t &length);
 
 #endif

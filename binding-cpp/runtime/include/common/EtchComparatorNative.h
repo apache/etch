@@ -26,7 +26,7 @@ class EtchComparatorNative {
 public:
  
   template <class T>
-  inline capu::bool_t operator() (const T &first, const T &second) {
+  inline capu::bool_t operator() (const T &first, const T &second) const {
     capu::Comparator c;
     return c(first, second);
   } 

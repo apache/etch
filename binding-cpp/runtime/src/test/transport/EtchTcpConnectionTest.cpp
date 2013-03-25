@@ -64,7 +64,7 @@ public:
     EtchString _socket("socket");
     EtchObject *tmp;
     resources.put(_socket, connection, tmp);
-    connection->send((unsigned char *) "mock", 4);
+    connection->send("mock", 4);
     socket = connection;
     return ETCH_OK;
   }

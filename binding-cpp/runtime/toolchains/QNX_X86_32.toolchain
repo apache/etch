@@ -23,7 +23,7 @@
 #   Windows: set PATH=%QNX_HOST%\usr\bin;%PATH%
 #   Linux: export PATH=$QNX_HOST/usr/bin:$PATH
 #4. execute cmake in build-folder:
-#   cmake -G "Unix Makefiles" -DCMAKE_TOOLCHAIN_FILE=<path to capu>/cmake/acme/toolchain/QNX_X86.toolchain -DCMAKE_BUILD_TYPE=Debug|Release ..
+#   cmake -G "Unix Makefiles" -DCMAKE_TOOLCHAIN_FILE=<path to toolchain>/QNX_X86.toolchain -DCMAKE_BUILD_TYPE=Debug|Release ..
 #5. make
 #
 #------------------------------------------------------------------#
@@ -96,5 +96,10 @@ SET(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
 SET(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
 SET(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 
+ADD_DEFINITIONS("-DTARGET_OS=QNX")
+ADD_DEFINITIONS("-DTARGET_ARCH=X86_32")
 ADD_DEFINITIONS("-DOS_QNX")
 ADD_DEFINITIONS("-DARCH_X86_32")
+
+# necessary for gmock
+ADD_DEFINITIONS("-DGTEST_HAS_PTHREAD=1")

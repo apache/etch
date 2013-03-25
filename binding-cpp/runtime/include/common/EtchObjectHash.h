@@ -24,16 +24,17 @@
 class EtchObjectHash {
 public:
 
-  static capu::uint32_t Digest(const EtchObject &key) {
-    return key.getHashCode();
+  static capu::uint32_t Digest(const EtchObject &key, const capu::uint8_t bitCount) {
+
+    return capu::Resizer<capu::uint32_t>::Resize(key.getHashCode(),bitCount);
   }
 
-  static capu::uint32_t Digest(const EtchObject* key) {
-    return key->getHashCode();
+  static capu::uint32_t Digest(const EtchObject* key, const capu::uint8_t bitCount) {
+    return capu::Resizer<capu::uint32_t>::Resize(key->getHashCode(),bitCount);
   }
 
-  static capu::uint32_t Digest(const capu::SmartPointer<EtchObject>& key) {
-    return key->getHashCode();
+  static capu::uint32_t Digest(const capu::SmartPointer<EtchObject>& key, const capu::uint8_t bitCount) {
+    return capu::Resizer<capu::uint32_t>::Resize(key->getHashCode(),bitCount);
   }
 };
 #endif

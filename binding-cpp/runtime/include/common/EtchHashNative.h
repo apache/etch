@@ -19,23 +19,23 @@
 #ifndef __ETCHHASHNATIVE_H__
 #define __ETCHHASHNATIVE_H__
 #include "common/EtchConfig.h"
-#include "capu/container/HashTable.h"
+#include "capu/container/Hash.h"
 #include "capu/util/Traits.h"
 
 class EtchHashNative {
 public:
 
   template<class T>
-  static capu::uint32_t Digest(T &key) {
-    return capu::Hash::Digest<T>(key);
+  static capu::uint32_t Digest(T &key, const capu::uint8_t bitSize) {
+    return capu::CapuDefaultHashFunction::Digest<T>(key, bitSize);
   }
 
-  static capu::uint32_t Digest(char* key) {
-    return capu::Hash::Digest(key);
+  static capu::uint32_t Digest(char* key, const capu::uint8_t bitSize) {
+    return capu::CapuDefaultHashFunction::Digest(key, bitSize);
   }
 
-  static capu::uint32_t Digest(const char* key) {
-    return capu::Hash::Digest(key);
+  static capu::uint32_t Digest(const char* key, const capu::uint8_t bitSize) {
+    return capu::CapuDefaultHashFunction::Digest(key, bitSize);
   }
 
 };

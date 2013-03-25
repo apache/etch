@@ -27,7 +27,7 @@ public:
    * Validator cache
    */
   struct ValidatorCache {
-    ValidatorCache() : id(0), validators(ETCH_DEFAULT_CUSTOMVALIDATORCACHE_HASH_SIZE) {}
+    ValidatorCache() : id(0), validators(ETCH_DEFAULT_CUSTOMVALIDATORCACHE_HASH_BIT_SIZE) {}
     capu::uint64_t id;
     EtchHashTable<EtchValidatorCustomKey, capu::SmartPointer<EtchValidator> > validators;
   };
@@ -42,7 +42,7 @@ public:
    * Destructor
    */
   virtual ~EtchValidatorCustomCaches() {
-    capu::List<ValidatorCache*>::Iterator iter = mValidatorsCache.begin();
+    EtchList<ValidatorCache*>::Iterator iter = mValidatorsCache.begin();
     while(iter.hasNext()) {
       ValidatorCache* entry = NULL;
       iter.next(&entry);
@@ -56,7 +56,7 @@ public:
   }
 
   EtchHashTable<EtchValidatorCustomKey, capu::SmartPointer<EtchValidator> >& get(EtchRuntime* runtime) {
-    capu::List<ValidatorCache*>::Iterator iter = mValidatorsCache.begin();
+    EtchList<ValidatorCache*>::Iterator iter = mValidatorsCache.begin();
     while(iter.hasNext()) {
       ValidatorCache* entry = NULL;
       iter.next(&entry);
@@ -71,7 +71,7 @@ public:
   }
 
 private:
-  capu::List<ValidatorCache*> mValidatorsCache;
+  EtchList<ValidatorCache*> mValidatorsCache;
 };
 
 

@@ -80,7 +80,7 @@ status_t EtchQueuedPool::close() {
 }
 
 status_t EtchQueuedPool::join() {
-  mPool->join();
+  mPool->close();
   return ETCH_OK;
 }
 

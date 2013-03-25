@@ -28,5 +28,7 @@ SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG}")
 SET(CMAKE_C_FLAGS_RELEASE "-m64 -Wall -O3 -DNDEBUG")
 SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE}")
 
+add_definitions("-DTARGET_OS=Linux")
+add_definitions("-DTARGET_ARCH=X86_64")
 add_definitions("-DOS_LINUX")
 add_definitions("-DARCH_X86_64")
