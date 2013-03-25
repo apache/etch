@@ -80,5 +80,9 @@ status_t EtchValidatorObject::Get(EtchRuntime* runtime, capu::uint32_t ndim, cap
 }
 
 status_t EtchValidatorObject::getElementValidator(capu::SmartPointer<EtchValidator> &val) {
-  return EtchValidatorObject::Get(mRuntime, mNDims - 1, val);
+  if (mNDims > 0) {
+    return EtchValidatorObject::Get(mRuntime, mNDims - 1, val);
+  } else {
+    return EtchValidatorObject::Get(mRuntime, 0, val);
+  }
 }

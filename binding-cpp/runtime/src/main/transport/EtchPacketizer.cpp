@@ -197,7 +197,11 @@ status_t EtchPacketizer::sessionData(capu::SmartPointer<EtchWho> sender, capu::S
         capu::uint32_t index = buf->getIndex();
         buf->setLength(index + mBodyLen);
         CAPU_LOG_DEBUG(mRuntime->getLogger(), TAG, "Header is parsed and the body of message is sent to Messagizer");
-        mSession->sessionPacket(sender, buf);
+        result = mSession->sessionPacket(sender, buf);
+
+        if (result != ETCH_OK) {
+          return result;
+        }
 
         buf->setLength(length);
         buf->setIndex(index + mBodyLen);

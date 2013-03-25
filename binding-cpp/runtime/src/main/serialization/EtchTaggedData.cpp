@@ -49,6 +49,11 @@ const EtchObjectType* EtchTaggedData::getComponentType(capu::int8_t typeCode, Et
 status_t EtchTaggedData::allocNativeArray(capu::int8_t typeCode, EtchType* customStructType, capu::int32_t dim, capu::int32_t length, capu::SmartPointer<EtchNativeArrayBase> &result) {
   const EtchObjectType* componentType = getComponentType(typeCode, customStructType, dim - 1);
 
+  if (!componentType) {
+    //unknown type code
+    return ETCH_ERROR;
+  }
+
   switch (componentType->getTypeId()) {
     case EOTID_INT32:
       result = new EtchNativeArray<capu::SmartPointer<EtchInt32> >(length, dim);

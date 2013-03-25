@@ -140,8 +140,12 @@ status_t EtchBinaryTaggedDataInput::readKeysAndValues(capu::SmartPointer<EtchStr
     capu::SmartPointer<EtchValidator> v;
     if (t->getValidator(key, v) == ETCH_OK) { // read the value but ignore it.
       capu::SmartPointer<EtchObject> obj;
-      if (readValue(v, obj) == ETCH_OK) {
+      ret = readValue(v, obj);
+      if (ret == ETCH_OK) {
         sv->put(key, obj);
+      }
+      else {
+        return ret;
       }
     } else {
       capu::SmartPointer<EtchObject> obj;
@@ -155,18 +159,19 @@ status_t EtchBinaryTaggedDataInput::readKeysAndValues(capu::SmartPointer<EtchStr
 }
 
 status_t EtchBinaryTaggedDataInput::readValues(EtchArrayValue *av, capu::SmartPointer<EtchValidator> v) {
+  status_t ret = ETCH_OK;
   capu::SmartPointer<EtchValidator> validator;
-  v->getElementValidator(validator);
+  ret = v->getElementValidator(validator);
 
-  while (true) {
+  while (true && ret == ETCH_OK) {
     capu::SmartPointer<EtchObject> value;
-    readValue(validator, true, value);
+    ret = readValue(validator, true, value);
     if (value == NONE()) {
       break;
     }
-    av->add(value);
+    ret = av->add(value);
   }
-  return ETCH_OK;
+  return ret;
 }
 
 status_t EtchBinaryTaggedDataInput::startMessage(capu::SmartPointer<EtchMessage> &result) {
