@@ -83,8 +83,8 @@ namespace $namespace {
 #set( $ctr = 0 )
 #foreach( $n in $intf.iterator() )
 #if ($n.isEnumx() || $n.isStruct() || $n.isExcept() || $n.isMessage())
-#if ($ctr > 0 && $ctr % 100 == 0)
-    static status_t InitParams${ctr}();
+#if ($ctr > 0 && $ctr % 10 == 0)
+    static status_t InitParams${ctr}(EtchRuntime* runtime);
 #end
 #set( $ctr = $ctr + 1 )
 #end

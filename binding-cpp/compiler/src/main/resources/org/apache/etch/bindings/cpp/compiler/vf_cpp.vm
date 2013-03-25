@@ -293,8 +293,19 @@ status_t $vf::InitParams(EtchRuntime* runtime)
   capu::SmartPointer<EtchValidator> tmpValue;
 #foreach( $n in $intf.iterator() )
 #if ($n.isEnumx() || $n.isStruct() || $n.isExcept() || $n.isMessage())
+#if ($ctr > 0 && $ctr % 10 == 0)
 
+  $vf::InitParams${ctr}(runtime);
+
+  return ETCH_OK;
+}
+
+status_t $vf::InitParams${ctr}(EtchRuntime* runtime)
+{
+  capu::SmartPointer<EtchValidator> tmpValue;
+#end
 #set( $ctr = $ctr + 1 )
+
   // params for $n.name()
 #if ($n.isStruct() || $n.isExcept())
 #foreach( $param in $n.getAllParameters() )
