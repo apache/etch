@@ -21,7 +21,7 @@ include_directories (${GTEST})
 include_directories (${GTEST}/include)
 include_directories (${GMOCK})
 include_directories (${GMOCK}/include)
-include_directories (${CAPU}/include/capu)
+include_directories (${LIBCAPU_INCLUDE_DIR})
 
 
 IF (TARGET_OS STREQUAL "Windows")
@@ -31,14 +31,7 @@ IF (TARGET_OS STREQUAL "Windows")
   ENDIF()
 ENDIF ()
 
-IF (TARGET_OS STREQUAL "Linux")
-  link_directories(${CAPU}/lib/Linux_X86_32)
-ELSEIF(TARGET_OS STREQUAL "Windows")
-  link_directories(${CAPU}/lib/Windows_X86_32)
-ELSEIF(TARGET_OS STREQUAL "QNX")
-  link_directories(${CAPU}/lib/QNX_X86_32)
-ENDIF()
-
+link_directories(${LIBCAPU_LIBRARY_DIR})
 
 add_executable (etch-cpp-test
     common/EtchNumberTest.cpp
@@ -127,8 +120,13 @@ IF (TARGET_OS STREQUAL "Windows" AND BUILD_CHECK_MEMORY)
   target_link_libraries (etch-cpp-test ${VLD}/lib/vld.lib)
 ENDIF ()
 
-IF (TARGET_OS STREQUAL "Linux")
+IF (TARGET_OS STREQUAL "Linux" AND TARGET_ARCH STREQUAL "X86_64")
   set_target_properties (etch-cpp-test PROPERTIES COMPILE_FLAGS "-m32" LINK_FLAGS "-m32")
 ENDIF ()
 
 add_dependencies (etch-cpp-test etch-cpp Capu)
+
+#install test executables
+INSTALL(TARGETS etch-cpp-test DESTINATION "${ETCH_INSTALL_DIR}/bin/${ETCH_TARGET_PLATFORM}/Release" CONFIGURATIONS Release)
+INSTALL(TARGETS etch-cpp-test DESTINATION "${ETCH_INSTALL_DIR}/bin/${ETCH_TARGET_PLATFORM}/Debug" CONFIGURATIONS Debug)
+

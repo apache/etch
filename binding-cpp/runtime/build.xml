@@ -33,15 +33,17 @@
     <property name="proj"                 location="${Etch.basedir}/binding-cpp/runtime" />
     <property name="target"               location="${proj}/target" />
     <property name="testResultsDirectory" location="${target}/test-results" />
-    
+
+    <property name="binaryDir"            location="${Etch.dist}/binding-cpp/bin"/>
+    <property name="libaryDir"            location="${Etch.dist}/binding-cpp/lib"/>
+    <property name="headerDir"            location="${Etch.dist}/binding-cpp/include"/>
+
     <!-- INIT TARGET -->
     <!-- Modify this target to define project specific properties that can only be set at runtime -->
     <target name="do-init" >
         <property name="target_platform"                location="${target}/${platform}"/>
-        <property name="testResultsDirectory_platform"  location="${testResultsDirectory}/${platform}"/>
-        <echo>${target_platform} created</echo>
         <mkdir dir="${target_platform}" />
-        <mkdir dir="${testResultsDirectory_platform}" />
+        <mkdir dir="${testResultsDirectory}" />
     </target>
 
     <!-- CLEAN TARGET -->
@@ -131,98 +133,54 @@
                 <echo>Configuring CMake build</echo>
                 <echo>Using generator: ${cmake.generator}</echo>
                 <echo>Using toolchain file: ${cmake.toolchainfile}</echo>
-                <cmake srcdir="${basedir}" bindir="${target}/${platform}/${Etch.build.target}" cmakeonly="false" buildtype="${Etch.build.target}" >
-                    <generator name="${cmake.generator}" />
-                    <variable name="ETCH_EXTERNAL_DEPENDS" type="PATH" value="${env.ETCH_EXTERNAL_DEPENDS}" />
-                    <variable name="CMAKE_TOOLCHAIN_FILE" type="FILEPATH" value="${cmake.toolchainfile}" />
-                </cmake>
+                <mkdir dir="${target}/${platform}/${Etch.build.target}"/>
+                
+                <!-- CMake configuration -->
+                <exec dir="${target}/${platform}/${Etch.build.target}" executable="cmake" failonerror="true">
+                    <arg value="-G${cmake.generator}"/>
+                    <arg value="-DETCH_EXTERNAL_DEPENDS:PATH=${env.ETCH_EXTERNAL_DEPENDS}" />
+                    <arg value="-DCMAKE_TOOLCHAIN_FILE:FILEPATH=${cmake.toolchainfile}" />
+                    <arg value="-DETCH_INSTALL_DIR:PATH=${Etch.dist}/binding-cpp"/>
+                    <arg value="-DETCH_TARGET_PLATFORM:STRING=${platform}"/>
+                    <arg value="-DCMAKE_BUILD_TYPE:STRING=${Etch.build.target}"/>
+                    <arg value="${basedir}"/>
+                </exec>
+
+                <!-- run the build -->
+                <exec dir="${target}/${platform}/${Etch.build.target}" executable="cmake" failonerror="true">
+                    <arg line="--build . --target install --config ${Etch.build.target}"/>
+                </exec>
+
             </then>
             <else>
                 <!-- try default generator -->
                 <echo>Configuring CMake build</echo>
                 <echo>Using default generator</echo>
                 <echo>Using toolchain file: ${cmake.toolchainfile}</echo>
-                <cmake srcdir="${basedir}" bindir="${target}/${platform}/${Etch.build.target}" cmakeonly="false" buildtype="${Etch.build.target}" >
-                    <variable name="ETCH_EXTERNAL_DEPENDS" type="PATH" value="${env.ETCH_EXTERNAL_DEPENDS}" />
-                    <variable name="CMAKE_TOOLCHAIN_FILE" type="FILEPATH" value="${cmake.toolchainfile}" />
-                </cmake>
+                
+                <mkdir dir="${target}/${platform}/${Etch.build.target}"/>
+                
+                <!-- CMake configuration -->
+                <exec dir="${target}/${platform}/${Etch.build.target}" executable="cmake" failonerror="true">
+                    <arg value="-DETCH_EXTERNAL_DEPENDS:PATH=${env.ETCH_EXTERNAL_DEPENDS}" />
+                    <arg value="-DCMAKE_TOOLCHAIN_FILE:FILEPATH=${cmake.toolchainfile}" />
+                    <arg value="-DETCH_INSTALL_DIR:PATH=${Etch.dist}/binding-cpp"/>
+                    <arg value="-DETCH_TARGET_PLATFORM:STRING=${platform}"/>
+                    <arg value="-DCMAKE_BUILD_TYPE:STRING=${Etch.build.target}"/>
+                    <arg value="${basedir}"/>
+                </exec>
+
+                <!-- run the build -->
+                <exec dir="${target}/${platform}/${Etch.build.target}" executable="cmake" failonerror="true">
+                    <arg line="--build . --target install --config ${Etch.build.target}"/>
+                </exec>
+                
             </else>
         </if>
     </target>
 
     <target name="do-build" depends="do-build-info,do-build-generate-sources,do-build-main" if="USE.cmake">
 
-        <mkdir dir="${Etch.dist}/binding-cpp/bin" />
-        <mkdir dir="${Etch.dist}/binding-cpp/include" />
-        <mkdir dir="${Etch.dist}/binding-cpp/lib" />
-
-        <!-- copy etch includes to dist folder -->
-        <copy todir="${Etch.dist}/binding-cpp/include">
-            <fileset dir="${proj}/include">
-                <exclude name="**/.svn" />
-            </fileset>
-        </copy>
-
-        <property name="capu.library.output.path.prefix" value="${proj}/3rd/capu/deliverable/Capu/lib/${platform}"/>
-        <property name="capu.binary.output.path.prefix" value="${proj}/3rd/capu/deliverable/Capu/bin/${platform}"/>
-        <property name="etch.library.output.path.prefix" value="${target}/${platform}/${Etch.build.target}/src/main"/>
-        <property name="etch.binary.output.path.prefix" value="${target}/${platform}/${Etch.build.target}/src/test"/>
-
-        <if>
-            <!-- Visual Studio adds the Debug/Release folder, other generators do not -->
-            <equals arg1="${platform}" arg2="Windows_X86_32" />
-            <then>
-                <property name="capu.library.output.path" value="${capu.library.output.path.prefix}/${Etch.build.target}" />
-                <property name="capu.binary.output.path" value="${capu.binary.output.path.prefix}/${Etch.build.target}" />
-                <property name="etch.library.output.path" value="${etch.library.output.path.prefix}/${Etch.build.target}" />
-                <property name="etch.binary.output.path" value="${etch.binary.output.path.prefix}/${Etch.build.target}" />
-            </then>
-            <else>
-                <property name="capu.library.output.path" value="${capu.library.output.path.prefix}/${Etch.build.target}" />
-                <property name="capu.binary.output.path" value="${capu.binary.output.path.prefix}/${Etch.build.target}" />
-                <property name="etch.library.output.path" value="${etch.library.output.path.prefix}" />
-                <property name="etch.binary.output.path" value="${etch.binary.output.path.prefix}" />
-            </else>
-        </if>
-        
-        <!-- copy etch library to dist folder -->
-        <copy todir="${Etch.dist}/binding-cpp/lib/${platform}/${Etch.build.target}" flatten="true">
-            <fileset dir="${etch.library.output.path}">
-                <include name="*.lib" />
-                <include name="*.a" />
-            </fileset>
-        </copy>
-        
-        <!-- copy etch tests to dist folder -->
-        <copy todir="${Etch.dist}/binding-cpp/bin/${platform}/${Etch.build.target}" flatten="true">
-            <fileset dir="${etch.binary.output.path}">
-                <include name="etch-cpp-test.exe" />
-                <include name="etch-cpp-test" />
-            </fileset>
-        </copy>
-        
-        <!-- copy capu includes to dist folder -->
-        <copy todir="${Etch.dist}/binding-cpp/include">
-            <fileset dir="${proj}/lib/capu/deliverable/Capu/include/Capu">
-                <exclude name="**/.svn" />
-            </fileset>
-        </copy>
-    
-        <!-- copy capu lib to dist folder -->
-        <copy todir="${Etch.dist}/binding-cpp/lib/${platform}/${Etch.build.target}">
-            <fileset dir="${capu.library.output.path}">
-                <include name="*.lib" />
-                <include name="*.a" />
-            </fileset>
-        </copy>
-        
-        <!-- copy capu tests to dist folder -->
-        <copy todir="${Etch.dist}/binding-cpp/bin/${platform}/${Etch.build.target}">
-            <fileset dir="${capu.binary.output.path}">
-            <include name="capuTest.exe" />
-                <include name="capuTest" />
-            </fileset>
-        </copy>
     </target>
 
     <!-- TEST TARGET -->
@@ -241,25 +199,13 @@
                 <echo>Not executing tests for cross compiled platform</echo>
             </then>
             <else>
-                <!-- Run CAPU Unit Tests -->
-                <!-- Run CAPU Unit Tests on Windows-->
-                <property name="executable-full-path"
-                    location="3rd/capu/deliverable/Capu/bin/Windows_X86_32/${Etch.build.target}/capuTest.exe"/>
-                <exec executable="${executable-full-path}" osfamily="windows" failonerror="true">
-                    <arg value="--gtest_output=xml:${testResultsDirectory}/"/>
-                </exec>
-                <!-- Run CAPU Unit Tests on Unix -->
-                <exec executable="3rd/capu/deliverable/Capu/bin/Linux_X86_32/${Etch.build.target}/capuTest" osfamily="unix"  failonerror="true">
-                    <arg value="--gtest_output=xml:${testResultsDirectory}/"/>
-                </exec>
-            
                 <!-- Run Etch Unit Tests -->
                 <!-- Run Etch Unit Tests on Windows-->
-                <exec executable="${target}/${platform}/${Etch.build.target}/src/test/${Etch.build.target}/etch-cpp-test" osfamily="windows"  failonerror="true">
+                <exec executable="${binaryDir}/${platform}/${Etch.build.target}/etch-cpp-test.exe" osfamily="windows"  failonerror="true">
                     <arg value="--gtest_output=xml:${testResultsDirectory}/"/>
                 </exec>
                 <!-- Run Etch Unit Tests on Unix -->
-                <exec executable="${target}/${platform}/${Etch.build.target}/src/test/etch-cpp-test" osfamily="unix"  failonerror="true">
+                <exec executable="${binaryDir}/${platform}/${Etch.build.target}/etch-cpp-test" osfamily="unix"  failonerror="true">
                     <arg value="--gtest_output=xml:${testResultsDirectory}/"/>
                 </exec>
             </else>
@@ -272,3 +218,4 @@
     </target>
 
 </project>
+

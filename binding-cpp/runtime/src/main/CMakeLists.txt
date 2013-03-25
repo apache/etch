@@ -247,3 +247,14 @@ ENDIF ()
 set_target_properties (etch-cpp PROPERTIES OUTPUT_NAME "etch")
 
 add_dependencies (etch-cpp Capu)
+
+#install etch headers and library
+INSTALL(DIRECTORY ${PROJECT_SOURCE_DIR}/include DESTINATION "${ETCH_INSTALL_DIR}")
+INSTALL(TARGETS etch-cpp DESTINATION "${ETCH_INSTALL_DIR}/lib/${ETCH_TARGET_PLATFORM}/${CMAKE_BUILD_TYPE}")
+
+#copy more files on windows (*.pdb)
+IF(IS_DIRECTORY ${CMAKE_BINARY_DIR}/lib/${CMAKE_BUILD_TYPE})
+    INSTALL(DIRECTORY ${CMAKE_BINARY_DIR}/lib/${CMAKE_BUILD_TYPE} DESTINATION "${ETCH_INSTALL_DIR}/lib/${ETCH_TARGET_PLATFORM}")
+ELSE()
+ENDIF()
+

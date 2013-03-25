@@ -38,7 +38,7 @@ set NUNIT_HOME=%ETCH_EXTERNAL_DEPENDS%\NUnit\2.5.10.11092
 
 @rem CMAKE_HOME settings
 IF "%CMAKE_HOME%" == "" (
-set CMAKE_HOME=%ETCH_EXTERNAL_DEPENDS%\cmake\2.8.6
+set CMAKE_HOME=%ETCH_EXTERNAL_DEPENDS%\cmake\2.8.10
 )
 
 @rem uncomment this line / unset this variable if you don't want to build csharp
