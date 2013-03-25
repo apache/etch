@@ -24,9 +24,11 @@ include_directories (${GMOCK}/include)
 include_directories (${CAPU}/include/capu)
 
 
-IF (TARGET_OS STREQUAL "Windows" AND BUILD_CHECK_MEMORY)
-  include_directories (${VLD}/include)
-  add_definitions (-DBUILD_CHECK_MEMORY)
+IF (TARGET_OS STREQUAL "Windows")
+  IF (BUILD_CHECK_MEMORY)
+    include_directories (${VLD}/include)
+    add_definitions (-DBUILD_CHECK_MEMORY)
+  ENDIF()
 ENDIF ()
 
 IF (TARGET_OS STREQUAL "Linux")
