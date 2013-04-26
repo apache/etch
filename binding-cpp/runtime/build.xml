@@ -125,6 +125,37 @@
                 <property name="cmake.toolchainfile" value="${defaultCMakeToolchainDir}/${platform}.toolchain"/>
             </else>
         </if>
+
+        <if>
+            <isset property="CAPU_INCLUDE_DIR"/>
+            <then>
+                <property name="use.capu.include.dir" value="${CAPU_INCLUDE_DIR}"/>
+            </then>
+            <else>
+                <property name="use.capu.include.dir" value=""/>
+            </else>
+        </if>
+
+        <if>
+            <isset property="CAPU_LIBRARY_DIR"/>
+            <then>
+                <property name="use.capu.library.dir" value="${CAPU_LIBRARY_DIR}"/>
+            </then>
+            <else>
+                <property name="use.capu.library.dir" value=""/>
+            </else>
+        </if>
+
+        <if>
+            <isset property="LOCAL_CAPU_SOURCE_DIR"/>
+            <then>
+                <property name="use.capu.local.source.dir" value="${LOCAL_CAPU_SOURCE_DIR}"/>
+            </then>
+            <else>
+                <property name="use.capu.local.source.dir" value=""/>
+            </else>
+        </if>
+
         <if>
             <isset property="target.platforms.${platform}.generator"/>
             <then>
@@ -133,8 +164,9 @@
                 <echo>Configuring CMake build</echo>
                 <echo>Using generator: ${cmake.generator}</echo>
                 <echo>Using toolchain file: ${cmake.toolchainfile}</echo>
+
                 <mkdir dir="${target}/${platform}/${Etch.build.target}"/>
-                
+
                 <!-- CMake configuration -->
                 <exec dir="${target}/${platform}/${Etch.build.target}" executable="cmake" failonerror="true">
                     <arg value="-G${cmake.generator}"/>
@@ -143,6 +175,10 @@
                     <arg value="-DETCH_INSTALL_DIR:PATH=${Etch.dist}/binding-cpp"/>
                     <arg value="-DETCH_TARGET_PLATFORM:STRING=${platform}"/>
                     <arg value="-DCMAKE_BUILD_TYPE:STRING=${Etch.build.target}"/>
+                    <arg value="-DCAPU_INCLUDE_DIR:PATH=${use.capu.include.dir}"/>
+                    <arg value="-DCAPU_LIBRARY_DIR:PATH=${use.capu.library.dir}"/>
+                    <arg value="-DLOCAL_CAPU_SOURCE_DIR:PATH=${use.capu.local.source.dir}"/>
+                    <arg value="-DCONFIG_BUILD_UNITTESTS:BOOLEAN=0"/>
                     <arg value="${basedir}"/>
                 </exec>
 
@@ -157,7 +193,7 @@
                 <echo>Configuring CMake build</echo>
                 <echo>Using default generator</echo>
                 <echo>Using toolchain file: ${cmake.toolchainfile}</echo>
-                
+
                 <mkdir dir="${target}/${platform}/${Etch.build.target}"/>
                 
                 <!-- CMake configuration -->
@@ -167,6 +203,10 @@
                     <arg value="-DETCH_INSTALL_DIR:PATH=${Etch.dist}/binding-cpp"/>
                     <arg value="-DETCH_TARGET_PLATFORM:STRING=${platform}"/>
                     <arg value="-DCMAKE_BUILD_TYPE:STRING=${Etch.build.target}"/>
+                    <arg value="-DCAPU_INCLUDE_DIR:PATH=${use.capu.include.dir}"/>
+                    <arg value="-DCAPU_LIBRARY_DIR:PATH=${use.capu.library.dir}"/>
+                    <arg value="-DLOCAL_CAPU_SOURCE_DIR:PATH=${use.capu.local.source.dir}"/>
+                    <arg value="-DCONFIG_BUILD_UNITTESTS:BOOLEAN=0"/>
                     <arg value="${basedir}"/>
                 </exec>
 

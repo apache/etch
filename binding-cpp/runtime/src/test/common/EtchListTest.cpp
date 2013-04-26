@@ -226,13 +226,13 @@ TEST(EtchList, find) {
   list->add(data3);
 
   //find the elements
-  result = list->find(data1);
+  result = list->find(data1).currentIndex();
   EXPECT_EQ(0, result);
 
-  result = list->find(data2);
+  result = list->find(data2).currentIndex();
   EXPECT_EQ(1, result);
 
-  result = list->find(data3);
+  result = list->find(data3).currentIndex();
   EXPECT_EQ(2, result);
 
   delete list;

@@ -161,10 +161,10 @@ public:
    * if you are using an object you need to overload == operator
    *
    * @param element the value that will be searched
-   * @return -1 if the value either does not exist or given value is NULL
-   *          otherwise index of value on linked list
+   * @return Iterator to the searched element if the element is found
+   *         otherwise Iterator to the end of the list
    */
-  capu::int32_t find(const T &element) const;
+  Iterator find(const T &element) const;
 
   /**
    *
@@ -244,8 +244,8 @@ capu::bool_t EtchList<T, A, C>::contains(const T &element) {
 }
 
 template<class T, class A, class C>
-capu::int32_t EtchList<T, A, C>::find(const T &element) const {
-  return mList.find(element);
+typename EtchList<T, A, C>::Iterator EtchList<T, A, C>::find(const T &element) const {
+  return EtchListIterator(mList.find(element), mList.end());
 }
 
 template<class T, class A, class C>

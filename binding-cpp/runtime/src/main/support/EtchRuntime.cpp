@@ -54,9 +54,9 @@ status_t EtchRuntime::registerListener(EtchRuntimeListener* listener) {
 status_t EtchRuntime::unregisterListener(EtchRuntimeListener* listener) {
   status_t status;
   mMutex.lock();
-  capu::int_t index = mListeners.find(listener);
-  if(index != -1) {
-    mListeners.erase(index);
+  capu::List<EtchRuntimeListener*>::Iterator it =  mListeners.find(listener);
+  if(it != mListeners.end()) {
+    mListeners.erase(it);
     status = ETCH_OK;
   } else {
     status = ETCH_ERROR;

@@ -348,7 +348,7 @@ status_t $vf::InitValueFactory(EtchRuntime* runtime)
 {
   status_t status;
   SRuntimesMutex.lock();
-  if (SRuntimes.find(runtime->getId()) != -1) {
+  if (SRuntimes.find(runtime->getId()) != SRuntimes.end()) {
     //runtime is already in list
     return ETCH_OK;
   }
