@@ -58,9 +58,12 @@ IF ("${CAPU_INCLUDE_DIR}" STREQUAL "" AND "${CAPU_LIBRARY_DIR}" STREQUAL "")
             BINARY_DIR "${CAPU_CMAKE_BUILD_DIR}"
             DOWNLOAD_COMMAND ""
             UPDATE_COMMAND ""
-            INSTALL_COMMAND "install"
+            INSTALL_DIR "${CAPU_PROJECT_DIR}/deliverable"
             CMAKE_ARGS -DCMAKE_TOOLCHAIN_FILE:PATH=${CMAKE_TOOLCHAIN_FILE}
                        -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+                       -DBUILD_DynamicTestLibraryProject:BOOL=1
+                       -DBUILD_GoogleMock:BOOL=0
+                       -DCONFIG_BUILD_UNITTESTS:BOOL=0
         )
     ENDIF()
     
