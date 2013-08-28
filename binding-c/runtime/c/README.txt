@@ -3,9 +3,9 @@ Introduction to binding-c
 ==================================================
 To build the binding-c components, the following dependencies
 are needed.
-- Apache APR Source Version 1.4.5
+- Apache APR Source Version 1.4.8
   http://apr.apache.org/download.cgi
-- Apache APR Util Sources Version 1.3.12
+- Apache APR Util Sources Version 1.5.2
   http://apr.apache.org/download.cgi
 - Apache APR Iconv Sources Version 1.2.1
   http://apr.apache.org/download.cgi
@@ -25,19 +25,19 @@ You should have the following folder and file structure inside your external
 etch directory "ETCH_EXTERNAL_DEPENDS".
 
 APR and APR-ICONV libraries
-- <ETCH_EXTERNAL_DEPENDS>/apr/1.4.5/bin
-- <ETCH_EXTERNAL_DEPENDS>/apr/1.4.5/bin/libapr-1.dll
-- <ETCH_EXTERNAL_DEPENDS>/apr/1.4.5/bin/libapr-1.pdb
-- <ETCH_EXTERNAL_DEPENDS>/apr/1.4.5/bin/libapriconv-1.dll
-- <ETCH_EXTERNAL_DEPENDS>/apr/1.4.5/bin/libapriconv-1.pdb
-- <ETCH_EXTERNAL_DEPENDS>/apr/1.4.5/iconv
-- <ETCH_EXTERNAL_DEPENDS>/apr/1.4.5/iconv/*.so + *.pdb (coding tables)
-- <ETCH_EXTERNAL_DEPENDS>/apr/1.4.5/include
-- <ETCH_EXTERNAL_DEPENDS>/apr/1.4.5/include/apr-1
-- <ETCH_EXTERNAL_DEPENDS>/apr/1.4.5/include/apr-1/*.h (header files)
-- <ETCH_EXTERNAL_DEPENDS>/apr/1.4.5/lib
-- <ETCH_EXTERNAL_DEPENDS>/apr/1.4.5/lib/libapr-1.lib
-- <ETCH_EXTERNAL_DEPENDS>/apr/1.4.5/lib/libapriconv-1.lib
+- <ETCH_EXTERNAL_DEPENDS>/apr/1.4.8/bin
+- <ETCH_EXTERNAL_DEPENDS>/apr/1.4.8/bin/libapr-1.dll
+- <ETCH_EXTERNAL_DEPENDS>/apr/1.4.8/bin/libapr-1.pdb
+- <ETCH_EXTERNAL_DEPENDS>/apr/1.4.8/bin/libapriconv-1.dll
+- <ETCH_EXTERNAL_DEPENDS>/apr/1.4.8/bin/libapriconv-1.pdb
+- <ETCH_EXTERNAL_DEPENDS>/apr/1.4.8/iconv
+- <ETCH_EXTERNAL_DEPENDS>/apr/1.4.8/iconv/*.so + *.pdb (coding tables)
+- <ETCH_EXTERNAL_DEPENDS>/apr/1.4.8/include
+- <ETCH_EXTERNAL_DEPENDS>/apr/1.4.8/include/apr-1
+- <ETCH_EXTERNAL_DEPENDS>/apr/1.4.8/include/apr-1/*.h (header files)
+- <ETCH_EXTERNAL_DEPENDS>/apr/1.4.8/lib
+- <ETCH_EXTERNAL_DEPENDS>/apr/1.4.8/lib/libapr-1.lib
+- <ETCH_EXTERNAL_DEPENDS>/apr/1.4.8/lib/libapriconv-1.lib
 
 APR and APR-ICONV can be build via MS Visual Studio GUI. After that, all needed
 artifacts have to be copied to above folder and file structure. If you do so, please
@@ -90,7 +90,7 @@ and ../trunk/binding-c/runtime/c/target/src/test.
 
 Please note that tests need libapr-1.dll and libapriconv-1.dll either in your path environment
 variable or in case of MS Visual Studio under the ..\binding-c\runtime\c\target\src\test\ folder.
-Additionally, you have to set APR_ICONV_PATH to <ETCH_EXTERNAL_DEPENDS>\apr\1.4.5\iconv\ to make
+Additionally, you have to set APR_ICONV_PATH to <ETCH_EXTERNAL_DEPENDS>\apr\1.4.8\iconv\ to make
 character conversion run. 
 
 ==================================================
@@ -103,18 +103,18 @@ You should have the following folder and file structure inside your external
 etch directory "ETCH_EXTERNAL_DEPENDS".
 
 APR and APR-ICONV libraries
-- <ETCH_EXTERNAL_DEPENDS>/apr/1.4.5/bin
-- <ETCH_EXTERNAL_DEPENDS>/apr/1.4.5/include
-- <ETCH_EXTERNAL_DEPENDS>/apr/1.4.5/include/apr-1
-- <ETCH_EXTERNAL_DEPENDS>/apr/1.4.5/include/apr-1/*.h (header files)
-- <ETCH_EXTERNAL_DEPENDS>/apr/1.4.5/lib
-- <ETCH_EXTERNAL_DEPENDS>/apr/1.4.5/lib/libapr-1.so
-- <ETCH_EXTERNAL_DEPENDS>/apr/1.4.5/lib/libapriconv-1.so
-- <ETCH_EXTERNAL_DEPENDS>/apr/1.4.5/lib/iconv/*.so (coding tables)
+- <ETCH_EXTERNAL_DEPENDS>/apr/1.4.8/bin
+- <ETCH_EXTERNAL_DEPENDS>/apr/1.4.8/include
+- <ETCH_EXTERNAL_DEPENDS>/apr/1.4.8/include/apr-1
+- <ETCH_EXTERNAL_DEPENDS>/apr/1.4.8/include/apr-1/*.h (header files)
+- <ETCH_EXTERNAL_DEPENDS>/apr/1.4.8/lib
+- <ETCH_EXTERNAL_DEPENDS>/apr/1.4.8/lib/libapr-1.so
+- <ETCH_EXTERNAL_DEPENDS>/apr/1.4.8/lib/libapriconv-1.so
+- <ETCH_EXTERNAL_DEPENDS>/apr/1.4.8/lib/iconv/*.so (coding tables)
 
 APR and APR-ICONV can be build via "configure" and make. Please set correct install
-location to configure script configure --prefix=$INSTALL_PREFIX/apr/1.4.5/ for apr
-and configure --prefix=$INSTALL_PREFIX/apr/1.4.5/ --with-apr=$INSTALL_PREFIX/apr/1.4.5/
+location to configure script configure --prefix=$INSTALL_PREFIX/apr/1.4.8/ for apr
+and configure --prefix=$INSTALL_PREFIX/apr/1.4.8/ --with-apr=$INSTALL_PREFIX/apr/1.4.8/
 for apr-iconv.
 
 A much more easy way to build apr is to use our apr-install.sh script (). For build the apr libraries,

@@ -69,17 +69,17 @@ cd apr
 
 REM apr
 rem svn export https://svn.apache.org/repos/asf/apr/apr/tags/1.4.6/ apr
-wget http://apache.imsam.info//apr/apr-1.4.6-win32-src.zip
-unzip apr-1.4.6-win32-src.zip
-mv apr-1.4.6 apr
-rm -rf apr-1.4.6-win32-src.zip
+wget http://apache.imsam.info//apr/apr-1.4.8-win32-src.zip
+unzip apr-1.4.8-win32-src.zip
+mv apr-1.4.8 apr
+rm -rf apr-1.4.8-win32-src.zip
 
 REM apr-util
 rem svn export https://svn.apache.org/repos/asf/apr/apr-util/tags/1.4.1/ apr-util
-wget http://apache.imsam.info//apr/apr-util-1.4.1-win32-src.zip
-unzip apr-util-1.4.1-win32-src.zip
-mv apr-util-1.4.1 apr-util
-rm -rf apr-util-1.4.1-win32-src.zip
+wget http://apache.imsam.info//apr/apr-util-1.5.2-win32-src.zip
+unzip apr-util-1.5.2-win32-src.zip
+mv apr-util-1.5.2 apr-util
+rm -rf apr-util-1.5.2-win32-src.zip
 
 REM apr-iconv
 rem svn export https://svn.apache.org/repos/asf/apr/apr-iconv/tags/1.2.1/ apr-iconv
@@ -149,8 +149,7 @@ cd ..\..
 goto :EOF
 
 :install
-rem should be 1.4.6 but this is a hack
-set INSTALL_PREFIX_APR=%INSTALL_PREFIX%\apr\1.4.5
+set INSTALL_PREFIX_APR=%INSTALL_PREFIX%\apr\1.4.8
 mkdir "%INSTALL_PREFIX_APR%\bin"
 mkdir "%INSTALL_PREFIX_APR%\iconv"
 mkdir "%INSTALL_PREFIX_APR%\include\apr-1"

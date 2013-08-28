@@ -17,7 +17,7 @@
 # under the License.                                           * 
 
 # set install prefix
-if [ $INSTALL_PREFIX = "" ]; then 
+if [ -z "$INSTALL_PREFIX" ]; then 
     export INSTALL_PREFIX=/tmp
 fi
 echo using INSTALL_PREFIX: $INSTALL_PREFIX
@@ -32,10 +32,10 @@ mkdir apr
 cd apr
 
 # apr
-svn export https://svn.apache.org/repos/asf/apr/apr/tags/1.4.6/ apr
+svn export https://svn.apache.org/repos/asf/apr/apr/tags/1.4.8/ apr
 
 #apr-util
-#svn export https://svn.apache.org/repos/asf/apr/apr-util/tags/1.4.1/ apr-util
+svn export https://svn.apache.org/repos/asf/apr/apr-util/tags/1.5.2/ apr-util
 
 # apr-iconv
 svn export https://svn.apache.org/repos/asf/apr/apr-iconv/tags/1.2.1/ apr-iconv
@@ -50,8 +50,9 @@ build_apr(){
 # build apr
 cd apr/apr
 mkdir linux
+./buildconf
 cd linux
-../configure --prefix=$INSTALL_PREFIX/apr/1.4.5 CC="gcc" 
+../configure --prefix=$INSTALL_PREFIX/apr/1.4.8 CC="gcc"
 make
 make install
 cd ../../..
@@ -60,8 +61,9 @@ cd ../../..
 build_apr_iconv(){
 cd apr/apr-iconv
 mkdir linux
+./buildconf
 cd linux
-../configure --prefix=$INSTALL_PREFIX/apr/1.4.5 --with-apr=$INSTALL_PREFIX/apr/1.4.5 CC="gcc"
+../configure --prefix=$INSTALL_PREFIX/apr/1.4.8 --with-apr=$INSTALL_PREFIX/apr/1.4.8 CC="gcc"
 make
 make install
 }

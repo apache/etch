@@ -97,7 +97,7 @@
 
         <!-- copy apr library to dist folder -->
         <copy todir="${Etch.dist}/binding-c/extern/apr">
-            <fileset dir="${env.ETCH_EXTERNAL_DEPENDS}/apr/1.4.5">
+            <fileset dir="${env.ETCH_EXTERNAL_DEPENDS}/apr/1.4.8">
             </fileset>
         </copy>
     </target>
