@@ -35,6 +35,9 @@ namespace org_apache_etch_examples_helloworld_HelloWorld {
     ImplHelloWorldClient( RemoteHelloWorldServer* mServer );
     virtual ~ImplHelloWorldClient() {}
 
+
+    virtual status_t _sessionNotify(capu::SmartPointer<EtchObject> event );
+
     // TODO insert methods here to provide declarations of HelloWorldClient
     // messages from the mServer.
   };

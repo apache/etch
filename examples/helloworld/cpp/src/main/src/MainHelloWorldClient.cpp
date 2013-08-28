@@ -64,6 +64,10 @@ capu::int32_t main(int argc, const char* argv[])
   // Disconnect from the service
   remote->transportControl(new EtchString(EtchTransportData::STOP_AND_WAIT_DOWN()), new EtchInt32(4000));
 
+  //waiting
+  printf("\n\npress any key to close client\n");
+  getchar();
+
   //delete remote
   delete remote;
 

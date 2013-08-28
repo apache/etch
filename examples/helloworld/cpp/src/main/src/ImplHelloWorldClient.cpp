@@ -19,5 +19,12 @@ using namespace org_apache_etch_examples_helloworld_HelloWorld;
     this->mServer = mServer;
   }
 
+  status_t ImplHelloWorldClient::_sessionNotify(capu::SmartPointer<EtchObject> event ) {
+    EtchStringPtr eventName = capu::smartpointer_cast<EtchString>(event);
+    printf("Got sessionNotifyEvent %s\n",eventName->c_str());
+    
+    return ETCH_OK;
+  }
+
   // TODO insert methods here to provide implementations of HelloWorldClient
   // messages from the mServer.
