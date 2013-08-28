@@ -145,16 +145,14 @@ capu::int32_t main(int argc, const char* argv[])
     //TODO Handle error
   }
 
- 
   // Connect to the service
   status = remote->transportControl(new EtchString(EtchTransportData::START_AND_WAIT_UP()), new EtchInt32(4000));
   if (status != ETCH_OK) {
     //TODO Handle error
   }
-  
-  HelloWorld::userPtr myUser = new HelloWorld::user(new EtchInt32(1),new EtchString("World"));
-  remote->say_hello_server(myUser);
-  
+
+  //Add calls to remote here
+
   // Disconnect from the service
   status = remote->transportControl(new EtchString(EtchTransportData::STOP_AND_WAIT_DOWN()), new EtchInt32(4000));
   if (status != ETCH_OK) {
