@@ -140,15 +140,22 @@
                 <echo>Configuring CMake build</echo>
                 <echo>Using generator: ${cmake.generator}</echo>
                 <echo>Using toolchain file: ${cmake.toolchainfile}</echo>
-                
-                <!-- CMake configuration -->
-                <cmake srcdir="${basedir}" bindir="${basedir}/target/${platform}/${Etch.build.target}" buildtype="${Etch.build.target}" >
-                    <generator name="${cmake.generator}" />
-                    <variable name="ETCH_HOME" type="PATH" value="${etch.home}" />
-                    <variable name="ETCH_BUILD_TARGET" type="STRING" value="${Etch.build.target}" />
-                    <variable name="CMAKE_TOOLCHAIN_FILE" type="FILEPATH" value="${cmake.toolchainfile}" />
-                </cmake>
 
+                <mkdir dir="${basedir}/target/${platform}/${build.target}"/>
+
+                <!-- CMake configuration -->
+                <exec dir="${target}/${platform}/${build.target}" executable="cmake" failonerror="true">
+                    <arg value="-G${cmake.generator}"/>
+                    <arg value="-DETCH_HOME:PATH=${etch.home}"/>
+                    <arg value="-DCMAKE_BUILD_TYPE:STRING=${build.target}"/>
+                    <arg value="-DCMAKE_TOOLCHAIN_FILE:FILEPATH=${cmake.toolchainfile}"/>
+                    <arg value="${basedir}"/>
+                </exec>
+
+                <!-- run the build -->
+                <exec dir="${basedir}/target/${platform}/${build.target}" executable="cmake" failonerror="true">
+                    <arg line="--build . --config ${build.target}"/>
+                </exec>
             </then>
             <else>
                 <!-- try default generator -->
@@ -156,12 +163,20 @@
                 <echo>Using default generator</echo>
                 <echo>Using toolchain file: ${cmake.toolchainfile}</echo>
                 
+                <mkdir dir="${basedir}/target/${platform}/${build.target}"/>
+
                 <!-- CMake configuration -->
-                <cmake srcdir="${basedir}" bindir="${basedir}/target/${platform}/${Etch.build.target}" buildtype="${Etch.build.target}" >
-                    <variable name="ETCH_INCLUDE_CAPU_DIR" type="PATH" value="${Etch.basedir}/binding-cpp/runtime/lib/capu/deliverable/capu/include/capu" />
-                    <variable name="CMAKE_TOOLCHAIN_FILE" type="FILEPATH" value="${cmake.toolchainfile}" />
-                    <variable name="ETCH_HOME" type="PATH" value="${etch.home}" />
-                </cmake>
+                <exec dir="${target}/${platform}/${build.target}" executable="cmake" failonerror="true">
+                    <arg value="-DETCH_HOME:PATH=${etch.home}"/>
+                    <arg value="-DCMAKE_BUILD_TYPE:STRING=${build.target}"/>
+                    <arg value="-DCMAKE_TOOLCHAIN_FILE:FILEPATH=${cmake.toolchainfile}"/>
+                    <arg value="${basedir}"/>
+                </exec>
+
+                <!-- run the build -->
+                <exec dir="${basedir}/target/${platform}/${build.target}" executable="cmake" failonerror="true">
+                    <arg line="--build . --config ${build.target}"/>
+                </exec>
             </else>
         </if>
         
@@ -185,7 +200,7 @@
      ======================
      To run cpp example:
 
-     > cd cpp\target\$Platform\$BuildTarget>
+     > cd cpp\target\${target.platforms}\${build.target}
      > ./helloworld-server.exe
      > ./helloworld-client.exe
 
@@ -195,7 +210,7 @@
 
     <!-- build everything -->
     <target name="init-debug" >
-        <property name="Etch.build.target" value="Debug" />
+        <property name="build.target" value="Debug" />
     </target>
 
     <target name="init-release" >

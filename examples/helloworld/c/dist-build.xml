@@ -41,22 +41,29 @@
         classpath="${etch-ant-plugin.jar}"/>
 
     <target name="build-c" depends="gensrc-c" if="USE.cmake">
-     <cmake srcdir="${basedir}" bindir="${basedir}/target" buildtype="Debug" >
-      <variable name="ETCH_INCLUDE_CAPU_DIR" type="PATH" value="${Etch.basedir}/binding-c/runtime/lib/capu/deliverable/capu/include/capu" />
-      <variable name="ETCH_HOME" type="PATH" value="${etch.home}" />
-     </cmake>
-     <copy todir="${bin}" flatten="true">
-        <fileset dir="${basedir}/target/" >
-           <include name="helloworld-client" />
-           <include name="helloworld-server" />
-           <include name="debug/helloworld-client.exe" />
-           <include name="debug/helloworld-server.exe" />
-        </fileset>
-     </copy>
-     <delete file="helloworld-client" quiet="true" />
-     <delete file="helloworld-server" quiet="true" />
-     <delete file="debug/helloworld-client.exe" quiet="true" />
-     <delete file="debug/helloworld-server.exe" quiet="true" />
+     <!-- CMake configuration -->
+        <exec dir="${basedir}/target" executable="cmake" failonerror="true">
+            <arg value="-DETCH_HOME:PATH=${etch.home}"/>
+            <arg value="${basedir}"/>
+        </exec>
+
+        <!-- run the build -->
+        <exec dir="${basedir}/target" executable="cmake" failonerror="true">
+            <arg line="--build . --config ${build.target}"/>
+        </exec>
+
+        <copy todir="${bin}" flatten="true">
+            <fileset dir="${basedir}/target/" >
+                <include name="helloworld-client" />
+                <include name="helloworld-server" />
+                <include name="debug/helloworld-client.exe" />
+                <include name="debug/helloworld-server.exe" />
+            </fileset>
+         </copy>
+         <delete file="helloworld-client" quiet="true" />
+         <delete file="helloworld-server" quiet="true" />
+         <delete file="debug/helloworld-client.exe" quiet="true" />
+         <delete file="debug/helloworld-server.exe" quiet="true" />
    </target>
 
     <target name="done">

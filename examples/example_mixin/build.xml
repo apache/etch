@@ -215,9 +215,17 @@
     <target name="build-csharp" depends="build-csharp-with-mono,build-csharp-with-dotnet" />
 
     <target name="build-c" depends="generate-sources" if="USE.cmake">
-        <cmake srcdir="${basedir}" bindir="${basedir}/target" buildtype="Debug" >
-            <variable name="ETCH_HOME" type="PATH" value="${build.ETCH_HOME}" />
-        </cmake>
+        <!-- CMake configuration -->
+        <exec dir="${basedir}/target" executable="cmake" failonerror="true">
+            <arg value="-DETCH_HOME:PATH=${etch.home}"/>
+            <arg value="${basedir}"/>
+        </exec>
+
+        <!-- run the build -->
+        <exec dir="${basedir}/target" executable="cmake" failonerror="true">
+            <arg line="--build . --config ${build.target}"/>
+        </exec>
+
         <copy todir="${bin}" flatten="true">
             <fileset dir="${basedir}/target/" >
                 <include name="example-client" />

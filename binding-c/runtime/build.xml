@@ -59,9 +59,17 @@
     </target>
 
     <target name="do-build-main" if="USE.cmake">
-        <cmake srcdir="${basedir}/c" bindir="${basedir}/c/target" buildtype="Debug" >
-            <variable name="ETCH_EXTERNAL_DEPENDS" type="PATH" value="${env.ETCH_EXTERNAL_DEPENDS}" />
-        </cmake>
+
+        <!-- CMake configuration -->
+        <exec dir="${basedir}/c/target" executable="cmake" failonerror="true">
+            <arg value="-DETCH_EXTERNAL_DEPENDS:PATH=${env.ETCH_EXTERNAL_DEPENDS}"/>
+            <arg value="${basedir}/c"/>
+        </exec>
+        
+        <!-- run the build -->
+        <exec dir="${basedir}/c/target" executable="cmake" failonerror="true">
+            <arg line="--build . --config Debug"/>
+        </exec>
     </target>
 
     <target name="do-build" depends="do-build-info,do-build-generate-sources,do-build-main" if="USE.cmake">

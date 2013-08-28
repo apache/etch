@@ -94,28 +94,35 @@
    </target>
 
    <target name="build-c" depends="generate-sources" if="USE.cmake">
-     <cmake srcdir="${basedir}" bindir="${basedir}/target" buildtype="Debug" >
-      <variable name="ETCH_INCLUDE_CAPU_DIR" type="PATH" value="${Etch.basedir}/binding-c/runtime/lib/capu/deliverable/capu/include/capu" />
-      <variable name="ETCH_HOME" type="PATH" value="${etch.home}" />
-     </cmake>
-     <copy todir="${bin}" flatten="true">
-        <fileset dir="${target}" >
-           <include name="helloworld-client" />
-           <include name="helloworld-server" />
-           <include name="debug/helloworld-client.exe" />
-           <include name="debug/helloworld-server.exe" />
-        </fileset>
-     </copy>
-     <delete file="${target}/helloworld-client" quiet="true" />
-     <delete file="${target}/helloworld-server" quiet="true" />
-     <delete file="${target}/debug/helloworld-client.exe" quiet="true" />
-     <delete file="${target}/debug/helloworld-server.exe" quiet="true" />
-     <chmod perm="+x">
-        <fileset dir="${bin}">
-           <include name="helloworld-client" />
-           <include name="helloworld-server" />
-        </fileset>
-     </chmod>
+        <!-- CMake configuration -->
+        <exec dir="${basedir}/target" executable="cmake" failonerror="true">
+            <arg value="-DETCH_HOME:PATH=${etch.home}"/>
+            <arg value="${basedir}"/>
+        </exec>
+
+        <!-- run the build -->
+        <exec dir="${basedir}/target" executable="cmake" failonerror="true">
+            <arg line="--build . --config ${build.target}"/>
+        </exec>
+
+        <copy todir="${bin}" flatten="true">
+            <fileset dir="${target}" >
+                <include name="helloworld-client" />
+                <include name="helloworld-server" />
+                <include name="debug/helloworld-client.exe" />
+                <include name="debug/helloworld-server.exe" />
+            </fileset>
+         </copy>
+         <delete file="${target}/helloworld-client" quiet="true" />
+         <delete file="${target}/helloworld-server" quiet="true" />
+         <delete file="${target}/debug/helloworld-client.exe" quiet="true" />
+         <delete file="${target}/debug/helloworld-server.exe" quiet="true" />
+         <chmod perm="+x">
+            <fileset dir="${bin}">
+                <include name="helloworld-client" />
+                <include name="helloworld-server" />
+            </fileset>
+         </chmod>
    </target>
 
     <target name="build" depends="build-c" />
