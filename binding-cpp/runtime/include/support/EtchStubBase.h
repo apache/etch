@@ -26,7 +26,7 @@
 #include "support/EtchQueuedPool.h"
 #include "transport/EtchWho.h"
 #include "transport/EtchMessage.h"
-
+#include "support/EtchObjectSession.h"
 /**
  * Base class of stub implementations.
  * @param <T> The type of object used to implement stub.
@@ -183,8 +183,8 @@ status_t EtchStubBase<T>::sessionMessage(capu::SmartPointer<EtchWho> sender, cap
 
 template<typename T>
 status_t EtchStubBase<T>::sessionNotify(capu::SmartPointer<EtchObject> event) {
-  //TODO: add implementation
-  return ETCH_EUNIMPL;
+  //TODO: Check if mObj is of type EtchObjectSession
+  return ((EtchObjectSession*) mObj)->_sessionNotify(event);
 }
 
 template<typename T>

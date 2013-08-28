@@ -140,3 +140,17 @@ void $class::$n.name()::$helper.getSetterName($i.name())( $helper.getEtchTypeNam
 #end
 #end
 #end
+
+status_t $class::_sessionQuery(capu::SmartPointer<EtchObject> query, capu::SmartPointer<EtchObject> &result)
+{
+  return ETCH_EUNIMPL;
+}
+status_t $class::_sessionControl(capu::SmartPointer<EtchObject> control, capu::SmartPointer<EtchObject> value)
+{
+  return ETCH_EUNIMPL;
+}
+
+status_t $class::_sessionNotify(capu::SmartPointer<EtchObject> event )
+{
+  return ETCH_EUNIMPL;
+}

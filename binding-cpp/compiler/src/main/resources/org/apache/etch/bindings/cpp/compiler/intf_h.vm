@@ -39,6 +39,7 @@
 \#include "common/EtchTypes.h"
 #end
 \#include "support/EtchAsyncResult.h"
+\#include "support/EtchObjectSession.h"
 
 #if ($intf.hasDescr())
 /**
@@ -117,7 +118,7 @@ namespace $namespace {
 #end
 
 #if ($hasBaseClass)
-  class $intf.name()$suffix : public virtual $intf.name()
+  class $intf.name()$suffix : public virtual $intf.name(), public EtchObjectSession
 #else
   class $intf.name()$suffix
 #end
@@ -140,6 +141,11 @@ namespace $namespace {
     $intf.name()();
 #end
     virtual ~$intf.name()$suffix() {}
+    
+    // default implementation of EtchObjectSession
+    virtual status_t _sessionQuery( capu::SmartPointer<EtchObject> query, capu::SmartPointer<EtchObject> &result );
+    virtual status_t _sessionControl( capu::SmartPointer<EtchObject> control, capu::SmartPointer<EtchObject> value );
+    virtual status_t _sessionNotify( capu::SmartPointer<EtchObject> event );
 
 #foreach( $n in $intf.iterator() )
 #if ($n.isMessage())

@@ -35,7 +35,6 @@
 \#define __$helper.getBaseName($intf, $mc).toUpperCase()_H__
 
 \#include "$inc"
-\#include "support/EtchObjectSession.h"
 
 namespace $namespace {
   /**
@@ -47,7 +46,7 @@ namespace $namespace {
    */
 
    class $clname
-    : public $intfname, public EtchObjectSession
+    : public $intfname
    {
 #foreach ($mthd in $intf.iterator())
 #if ($mthd.isMsgDir($mc) || $mthd.isMsgDirBoth())
@@ -85,10 +84,7 @@ namespace $namespace {
 #end
 #end
 #end
-    public:
-      status_t _sessionQuery( capu::SmartPointer<EtchObject> query, capu::SmartPointer<EtchObject> &result );
-      status_t _sessionControl( capu::SmartPointer<EtchObject> control, capu::SmartPointer<EtchObject> value );
-      status_t _sessionNotify( capu::SmartPointer<EtchObject> event );
+
    };
 }
 #endif /* $helper.getBaseName($intf, $mc).toUpperCase() */

@@ -114,16 +114,3 @@ $intfname::$n.name()AsyncResultPtr $clname::$n.name()(#set($sep = "")#foreach($p
 #end
 #end
 
-  status_t $clname::_sessionQuery(capu::SmartPointer<EtchObject> query, capu::SmartPointer<EtchObject> &result)
-  {
-    return ETCH_EUNIMPL;
-  }
-  status_t $clname::_sessionControl(capu::SmartPointer<EtchObject> control, capu::SmartPointer<EtchObject> value)
-  {
-    return ETCH_EUNIMPL;
-  }
-
-  status_t $clname::_sessionNotify(capu::SmartPointer<EtchObject> event )
-  {
-    return ETCH_EUNIMPL;
-  }
