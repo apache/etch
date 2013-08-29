@@ -2,10 +2,1420 @@
 Release 1.3.0
 -------------
 
+------------------------------------------------------------------------
+r1518518 | veithm | 2013-08-29 09:02:27 +0200 (Do, 29. Aug 2013) | 5 Zeilen
+
+Updating Etch Version to 1.3
+
+Removing all incubator suffixes
+
+Change-Id: Ie1c7c93b3481530182d74cb5af20b051048c7c7c
+------------------------------------------------------------------------
+r1518250 | veithm | 2013-08-28 17:08:47 +0200 (Mi, 28. Aug 2013) | 3 Zeilen
+
+ETCH-224 Updating APR from version 1.4.5 to 1.4.8
+
+Change-Id: Ia653ebe171ee78dc4b1a47619433406c233a9538
+------------------------------------------------------------------------
+r1518248 | veithm | 2013-08-28 17:07:57 +0200 (Mi, 28. Aug 2013) | 6 Zeilen
+
+ETCH-273 Removing hardcoded HelloWorld string from compiler
+
+This patch removes the hardcoded HelloWorld example call from
+the velocity template
+
+Change-Id: I14672b6c474f5da225a06a6f599daf6610270997
+------------------------------------------------------------------------
+r1518247 | veithm | 2013-08-28 17:07:10 +0200 (Mi, 28. Aug 2013) | 7 Zeilen
+
+MINOR Replacing cmake ant plugin with cmake executable
+
+The CMake ant plugin is not working together with CMake 2.8.10
+or higher. Therefore the change to the exec task together
+with the CMake exectuable located in the Path was necessary.
+
+Change-Id: Ic8bbb90615f1aa6fbb047e8c59a824b4e37e52e0
+------------------------------------------------------------------------
+r1518245 | veithm | 2013-08-28 17:06:20 +0200 (Mi, 28. Aug 2013) | 6 Zeilen
+
+ETCH-267 Using session events in CPP Hello World example
+
+This patch demonstrates how session event handlers can be registered
+in user code.
+
+Change-Id: I4260d875893d37141ab61fc4d4432eb3f9f3259c
+------------------------------------------------------------------------
+r1518241 | veithm | 2013-08-28 17:05:23 +0200 (Mi, 28. Aug 2013) | 8 Zeilen
+
+ETCH-267 Forwarding session events to user code
+
+Till now session events are transferred through the
+stack, but were not passed to the user code.
+This patch makes it possible for the user code to override
+_session* events.
+
+Change-Id: Ida6b51a215888e70a6e02df748b772c188994053
+------------------------------------------------------------------------
+r1482741 | veithm | 2013-05-15 11:59:30 +0200 (Mi, 15. Mai 2013) | 3 Zeilen
+
+Improving FindCapu CMake script
+
+Change-Id: I82472dc627f525fcf42308c5ef8f2a589e9868b9
+------------------------------------------------------------------------
+r1482721 | veithm | 2013-05-15 10:31:34 +0200 (Mi, 15. Mai 2013) | 5 Zeilen
+
+ETCH-272 Fixing code generation error
+
+Fixing code generation when dealing with hashtables
+
+Change-Id: I1aae4bba5f6c4335b536990084d96a87c4b02e64
+------------------------------------------------------------------------
+r1476247 | veithm | 2013-04-26 17:06:25 +0200 (Fr, 26. Apr 2013) | 5 Zeilen
+
+ETCH-270 Passing through Capu include and library dirs in ant build
+
+Integrating CAPU v0.9.0, disabling unit tests by default
+
+Change-Id: Ia1f13174803092618a226744f97823af70990b0b
+------------------------------------------------------------------------
+r1460569 | veithm | 2013-03-25 10:47:07 +0100 (Mo, 25. Mär 2013) | 5 Zeilen
+
+ETCH-264 Improving cpp build process
+
+Doing copy to dist folder with CMake now
+
+Change-Id: Ifcbd69d4b7f86453bc722d1bec7d389f41683800
+------------------------------------------------------------------------
+r1460567 | veithm | 2013-03-25 10:46:31 +0100 (Mo, 25. Mär 2013) | 3 Zeilen
+
+Small bug fixes in Etch Code Generation and Runtime
+
+Change-Id: Ia3507b790eb66947c8c1cf36605b1ae1ae4a699e
+------------------------------------------------------------------------
+r1460566 | veithm | 2013-03-25 10:43:41 +0100 (Mo, 25. Mär 2013) | 6 Zeilen
+
+ETCH-263 Cleaning up external library dependency
+
+Adapting Etch to use CAPU version 0.8.1
+CAPU is now included as a external dependency
+
+Change-Id: I1d81b508e129d15f78bfd0148e9367d31122d51f
+------------------------------------------------------------------------
+r1460564 | veithm | 2013-03-25 10:39:38 +0100 (Mo, 25. Mär 2013) | 3 Zeilen
+
+ETCH-262 Enabling unit tests build of cpp binding with Visual Studio 11
+
+Change-Id: I71c4a934bfb965707e905262289fc71423dc6a0c
+------------------------------------------------------------------------
+r1460562 | veithm | 2013-03-25 10:39:07 +0100 (Mo, 25. Mär 2013) | 3 Zeilen
+
+ETCH-241 Adding helper scripts for building a single binding
+
+Change-Id: I4f3d2472325f115cc51e6bfa667e483b9a580b87
+------------------------------------------------------------------------
+r1460561 | veithm | 2013-03-25 10:38:11 +0100 (Mo, 25. Mär 2013) | 3 Zeilen
+
+Enabling release build of a specific binding only
+
+Change-Id: I3946152bd6a5c12978e995f19961d26a34cfbf8b
+------------------------------------------------------------------------
+r1460560 | veithm | 2013-03-25 10:37:24 +0100 (Mo, 25. Mär 2013) | 3 Zeilen
+
+ETCH-261 Splitting up large initParams function in CPP code generator
+
+Change-Id: Ie3b291fc3e0a4817f4a9628a79629ab7e6debd70
+------------------------------------------------------------------------
+r1460559 | veithm | 2013-03-25 10:36:42 +0100 (Mo, 25. Mär 2013) | 3 Zeilen
+
+ETCH-260 Enable HelloWorld Cpp Example Build for different platforms
+
+Change-Id: Ie0d1b1471ee926e58253f951be4aec69d170a0cb
+------------------------------------------------------------------------
+r1442142 | veithm | 2013-02-04 15:51:51 +0100 (Mo, 04. Feb 2013) | 1 Zeile
+
+Adding DOAP file for project, renaming DOAP file for PMC
+------------------------------------------------------------------------
+r1442123 | veithm | 2013-02-04 15:08:40 +0100 (Mo, 04. Feb 2013) | 1 Zeile
+
+Adding DOAP files needed for creation of projects.apache.org website
+------------------------------------------------------------------------
+r1442105 | veithm | 2013-02-04 14:17:39 +0100 (Mo, 04. Feb 2013) | 2 Zeilen
+
+Removing incubator from website, updating links and text 
+
+------------------------------------------------------------------------
+r1441906 | veithm | 2013-02-03 13:17:49 +0100 (So, 03. Feb 2013) | 1 Zeile
+
+Updating skeleton template for new website location
+------------------------------------------------------------------------
+r1441904 | veithm | 2013-02-03 13:02:41 +0100 (So, 03. Feb 2013) | 1 Zeile
+
+Moving web site content up to content root folder
+------------------------------------------------------------------------
+r1440293 | danielsh | 2013-01-30 08:09:32 +0100 (Mi, 30. Jan 2013) | 1 Zeile
+
+Etch has become a TLP
+------------------------------------------------------------------------
+r1400862 | veithm | 2012-10-22 14:32:26 +0200 (Mo, 22. Okt 2012) | 3 Zeilen
+
+ETCH-243 Fixed small template related bug in code generation
+
+Change-Id: Ic7963da6bc3fdff6b1925a4e5e00534953cd7e84
+------------------------------------------------------------------------
+r1400861 | veithm | 2012-10-22 14:25:06 +0200 (Mo, 22. Okt 2012) | 5 Zeilen
+
+ETCH-245 Refactoring of ant/CMake build system of cpp-binding
+
+Introduction of toolchain files
+
+Change-Id: Ieaa654df10a20ce6cc69a3438b37c690b9e140a9
+------------------------------------------------------------------------
+r1399123 | veithm | 2012-10-17 08:51:35 +0200 (Mi, 17. Okt 2012) | 3 Zeilen
+
+ETCH-244 Fixing QueuedPool todo
+
+Change-Id: I43f88546ad2e6212e6fa6f99baa822c85107b46d
+------------------------------------------------------------------------
+r1399122 | veithm | 2012-10-17 08:51:30 +0200 (Mi, 17. Okt 2012) | 3 Zeilen
+
+ETCH-243 Small fixes in code generation
+
+Change-Id: Ie04cb8b984f9fe3cdc6979da06c9346615f868c2
+------------------------------------------------------------------------
+r1399121 | veithm | 2012-10-17 08:51:22 +0200 (Mi, 17. Okt 2012) | 3 Zeilen
+
+ETCH-243 Added same hash function for numeric datatypes
+
+Change-Id: If543cc7718e2548d44bac3e674bd0bb58fae65a1
+------------------------------------------------------------------------
+r1399120 | veithm | 2012-10-17 08:51:17 +0200 (Mi, 17. Okt 2012) | 5 Zeilen
+
+ETCH-246 Fixed multidimensional array serialization
+
+Serialization of empty values fixed
+
+Change-Id: I3c86300193e3db9bc5aee7be3033a3812d0870b9
+------------------------------------------------------------------------
+r1399119 | veithm | 2012-10-17 08:51:12 +0200 (Mi, 17. Okt 2012) | 5 Zeilen
+
+Etch-243 Added EtchByte operator=
+
+Useful in Stubhelpers
+
+Change-Id: I681f8fbceb6dd3f0d73cf4b60c0143c8340ac25e
+------------------------------------------------------------------------
+r1399118 | veithm | 2012-10-17 08:51:06 +0200 (Mi, 17. Okt 2012) | 5 Zeilen
+
+ETCH-243 Refactored EtchObjectType hashing
+
+Separate of hash and comparator functionality from EtchObject
+
+Change-Id: I499a46ad0d77899eccd54f41471e4e17b71eac42
+------------------------------------------------------------------------
+r1399117 | veithm | 2012-10-17 08:50:55 +0200 (Mi, 17. Okt 2012) | 3 Zeilen
+
+ETCH-243 Cleaned Up include dependencies
+
+Change-Id: I6630eac7565d4c7d1eff47eeaa0cd66a59a29c2e
+------------------------------------------------------------------------
+r1399116 | veithm | 2012-10-17 08:50:36 +0200 (Mi, 17. Okt 2012) | 7 Zeilen
+
+ETCH-243 Small Fixes
+
+Added virtual destructors
+Added custom HashTable sizes inside of EtchConfig.h
+Added some logging
+
+Change-Id: I97cc1778909d9882c2b42cf7833b02bd29dd2f0d
+------------------------------------------------------------------------
+r1399115 | veithm | 2012-10-17 08:50:24 +0200 (Mi, 17. Okt 2012) | 6 Zeilen
+
+ETCH-244 Adding runtime and logging to code generation templates
+
+- added Logging
+- refactored runtime usage
+
+Change-Id: I3b9e3b6faf76ca0b1089fa509933b68afebe2482
+------------------------------------------------------------------------
+r1399114 | veithm | 2012-10-17 08:50:01 +0200 (Mi, 17. Okt 2012) | 6 Zeilen
+
+ETCH-244 EtchRuntime refactoring
+
+replaced EtchRuntime::getRuntime with mRuntime given by the constructor
+Fixed Warnings under Linux
+
+Change-Id: I2a22bf7f0f3418ca2e1aa5a60921b4cbc2f80ada
+------------------------------------------------------------------------
+r1399113 | veithm | 2012-10-17 08:49:27 +0200 (Mi, 17. Okt 2012) | 6 Zeilen
+
+ETCH-243 Fixed bug in void function calls
+
+Changed Connection Checker in order to avoid Race Condition
+Enabling recreation of runtime if it has been destroyed before
+
+Change-Id: Ia7d16052af22a5f7a4dfa2ee0708506222add095
+------------------------------------------------------------------------
+r1399112 | veithm | 2012-10-17 08:49:14 +0200 (Mi, 17. Okt 2012) | 6 Zeilen
+
+ETCH-249 Added EtchNumber class
+
+Etch number types derive now from EtchNumber
+BinaryTaggedDataOutput uses EtchNumber to get the value
+
+Change-Id: I7a487dcab3e6f489083031008ca91912da7655d0
+------------------------------------------------------------------------
+r1399111 | veithm | 2012-10-17 08:48:53 +0200 (Mi, 17. Okt 2012) | 3 Zeilen
+
+ETCH-222 Refactored EtchObjectType hierarchy
+
+Change-Id: Ia0df372b9d34e300d7a87537bdc34ec77e291501
+------------------------------------------------------------------------
+r1399110 | veithm | 2012-10-17 08:48:21 +0200 (Mi, 17. Okt 2012) | 3 Zeilen
+
+ETCH-250 List refactoring
+
+Change-Id: If3d671e67bfeaa70ee310f0f7a7ee5000122ff74
+------------------------------------------------------------------------
+r1391408 | veithm | 2012-09-28 13:47:49 +0200 (Fr, 28. Sep 2012) | 1 Zeile
+
+ETCH-202 Added Wireshark preference window image
+------------------------------------------------------------------------
+r1391407 | veithm | 2012-09-28 13:46:43 +0200 (Fr, 28. Sep 2012) | 1 Zeile
+
+ETCH-202 Updated Tools page
+------------------------------------------------------------------------
+r1387904 | veithm | 2012-09-20 10:30:04 +0200 (Do, 20. Sep 2012) | 1 Zeile
+
+ETCH-202 Added News for cpp binding alpha version
+------------------------------------------------------------------------
+r1376589 | veithm | 2012-08-23 18:48:30 +0200 (Do, 23. Aug 2012) | 6 Zeilen
+
+ETCH-216 Small improvement in TcpConnection
+
+Avoiding QNX Sockets to fail while setting properties
+Fixed small bugs in code generation
+
+Change-Id: I2fe3a9dcae70525544f774f7ffc07facae9234fb
+------------------------------------------------------------------------
+r1376588 | veithm | 2012-08-23 18:48:16 +0200 (Do, 23. Aug 2012) | 5 Zeilen
+
+ETCH-198 Changes in helper and valuefactory
+
+Refactoring of life cycle and memory management
+
+Change-Id: If74bb9e43e0712fb8dca8cf52d364efa3d5d12a3
+------------------------------------------------------------------------
+r1376587 | fitzner | 2012-08-23 18:46:37 +0200 (Do, 23. Aug 2012) | 5 Zeilen
+
+ETCH-198 Changed remote compiler template
+
+Implemented initial client answers
+
+Change-Id: I2bc036e131e9b5e90ffd1a204b14f9b49c0cafc2
+------------------------------------------------------------------------
+r1376586 | fitzner | 2012-08-23 18:45:28 +0200 (Do, 23. Aug 2012) | 6 Zeilen
+
+ETCH-243 EtchRuntimeTest Warning Fix
+
+- warning fix EQ(false, foo())
+- Assert to Expect
+
+Change-Id: I5163338cc51b404427118ed3f709a3f9948ed19d
+------------------------------------------------------------------------
+r1376584 | fitzner | 2012-08-23 18:42:45 +0200 (Do, 23. Aug 2012) | 6 Zeilen
+
+ETCH-243 Added log messages to the binding-cpp
+
+- Added logger and some log messages
+- Added runtime to different components
+
+Change-Id: I68715800f8d6dab3cf65262debb0b7249b7c9724
+------------------------------------------------------------------------
+r1376511 | veithm | 2012-08-23 16:41:28 +0200 (Do, 23. Aug 2012) | 3 Zeilen
+
+ETCH-112 Preventing infinite static initialization loop on linux
+
+Change-Id: Iab3972bd0f37ecda4394d74c4b4103c2de21d921
+------------------------------------------------------------------------
+r1376510 | fitzner | 2012-08-23 16:39:37 +0200 (Do, 23. Aug 2012) | 5 Zeilen
+
+ETCH-243 Added Default Console Appender
+
+- Logging functionality to server side of HelloWorld added
+
+Change-Id: I690777f5b060876f2535228d4faec4c0531f3dd3
+------------------------------------------------------------------------
+r1376507 | fitzner | 2012-08-23 16:34:07 +0200 (Do, 23. Aug 2012) | 7 Zeilen
+
+ETCH-243 HelloWorld Linux build was fixed
+
+- added copy of .a capu Lib
+- added chmod +x for copied exetuables
+- changed lib path from Etch to the Linux 32bit capu version
+
+Change-Id: I38748e3c9ca3165b6dfa4c44e94d264f83654889
+------------------------------------------------------------------------
+r1368972 | veithm | 2012-08-03 16:15:03 +0200 (Fr, 03. Aug 2012) | 6 Zeilen
+
+Added build.type switch to HelloWorld example
+
+Avoiding the build of the experimental cpp HelloWorld example
+in stable builds
+
+Change-Id: I4d4f9c0ae353bbe140aed0c7c4dd2479e6b911cc
+------------------------------------------------------------------------
+r1368576 | veithm | 2012-08-02 18:18:09 +0200 (Do, 02. Aug 2012) | 3 Zeilen
+
+Restructuring of Etch HelloWorld Example
+
+Change-Id: Id4cea0ac9f9fa4e045dc345e958c936aa68a3bdc
+------------------------------------------------------------------------
+r1368575 | veithm | 2012-08-02 18:17:22 +0200 (Do, 02. Aug 2012) | 3 Zeilen
+
+ETCH-207 Removed some warnings in Linux build
+
+Change-Id: If9fdb4010d214fb7202e062ad4001e20fa8adc7d
+------------------------------------------------------------------------
+r1368574 | veithm | 2012-08-02 18:17:14 +0200 (Do, 02. Aug 2012) | 3 Zeilen
+
+Updated Compiler Version String to 1.3.0
+
+Change-Id: I76a3e39dc36c8f382646f24652ae079217a6116e
+------------------------------------------------------------------------
+r1368573 | veithm | 2012-08-02 18:17:08 +0200 (Do, 02. Aug 2012) | 5 Zeilen
+
+ETCH-132 Enabled copy of OS Abstraction capu to dist folder
+
+Capu headers and libs are now copied into the dist folder
+
+Change-Id: Ic2d9551f95caf6f9e315c0c70de92c682998af2e
+------------------------------------------------------------------------
+r1368572 | veithm | 2012-08-02 18:17:03 +0200 (Do, 02. Aug 2012) | 6 Zeilen
+
+ETCH-198 ETCH-195 Implementation of cpp compiler
+
+Added compiler implementation
+Added velocity templates used for code generation
+
+Change-Id: I86af43a7b93f34e55779b5c4787038851ff22c1f
+------------------------------------------------------------------------
+r1368571 | veithm | 2012-08-02 18:16:44 +0200 (Do, 02. Aug 2012) | 3 Zeilen
+
+ETCH-147 Different small improvements and bug fixes
+
+Change-Id: I939ae33e0b9974435401f7e9f5f281f1c53427aa
+------------------------------------------------------------------------
+r1368570 | veithm | 2012-08-02 18:16:35 +0200 (Do, 02. Aug 2012) | 6 Zeilen
+
+ETCH-235 Implementation of AsyncResult classes
+
+Added EtchAsyncResultNone for void methods
+Added EtchAsyncResult for methods with return value
+
+Change-Id: I07c6328256fd7d2399e46feb0568eb2fe93b1972
+------------------------------------------------------------------------
+r1368569 | veithm | 2012-08-02 18:16:27 +0200 (Do, 02. Aug 2012) | 5 Zeilen
+
+ETCH-241 Enabling build of single binding
+
+Added new target debug-binding to build.xml
+
+Change-Id: Idef7f5d787a260e8bbdcb4a78b2721e61ef06688
+------------------------------------------------------------------------
+r1368557 | veithm | 2012-08-02 17:45:56 +0200 (Do, 02. Aug 2012) | 5 Zeilen
+
+ETCH-147 Small bug fixes
+
+Added EtchValidators file
+
+Change-Id: I0b76a7d7e624d6b532711882b19797baa5db70c1
+------------------------------------------------------------------------
+r1368556 | veithm | 2012-08-02 17:45:44 +0200 (Do, 02. Aug 2012) | 3 Zeilen
+
+ETCH-180 Fixed some minor bugs in packetizer
+
+Change-Id: Id4cea52d7cf5b7e8df6b48d66cb0d65466995553
+------------------------------------------------------------------------
+r1368555 | fitzner | 2012-08-02 17:42:44 +0200 (Do, 02. Aug 2012) | 3 Zeilen
+
+ETCH-207 Implementation of OS file abstraction
+
+Change-Id: I2e74f147231077d1ae5e7712a03834ccc0724ab4
+------------------------------------------------------------------------
+r1368550 | veithm | 2012-08-02 17:37:33 +0200 (Do, 02. Aug 2012) | 5 Zeilen
+
+ETCH-204 Updated .gitignore and .classpath
+
+removed tracking from CompilerVersion.java
+
+Change-Id: I8d260234878371ea95939c8688d458c2ee0dfe53
+------------------------------------------------------------------------
+r1368549 | veithm | 2012-08-02 17:37:22 +0200 (Do, 02. Aug 2012) | 5 Zeilen
+
+ETCH-181 EtchNativeArray fix
+
+Valgrind error has been fixed
+
+Change-Id: I3821be665b3b88c1b0227aff742d257c68df7bee
+------------------------------------------------------------------------
+r1368548 | veithm | 2012-08-02 17:37:16 +0200 (Do, 02. Aug 2012) | 3 Zeilen
+
+ETCH-137 Changed int type to capu int32_t type
+
+Change-Id: I228385bf8f8832bc3f89316f1d532be4b00b5e07
+------------------------------------------------------------------------
+r1368547 | veithm | 2012-08-02 17:37:10 +0200 (Do, 02. Aug 2012) | 3 Zeilen
+
+ETCH-149 Added EtchWho
+
+Change-Id: I34d9ab88cead566de995c4ec7e8e0966e6307c37
+------------------------------------------------------------------------
+r1368546 | veithm | 2012-08-02 17:36:55 +0200 (Do, 02. Aug 2012) | 5 Zeilen
+
+ETCH-240 Changing Static Initialization
+
+replaced static fields with methods in order to have a deterministic static initialization order
+
+Change-Id: I14dab27ee3ac9f04f9f1ba3eda45a2955d6a84b9
+------------------------------------------------------------------------
+r1368545 | veithm | 2012-08-02 17:36:28 +0200 (Do, 02. Aug 2012) | 6 Zeilen
+
+ETCH-133 Added Typedefs to SmartPointers for EtchCollections
+
+typedefs as <Type>Ptr are used in code generation and are visible in user
+code
+
+Change-Id: I5e77d6d7cdb55e5c88b67c3847d1c7e51e153921
+------------------------------------------------------------------------
+r1368544 | veithm | 2012-08-02 17:36:21 +0200 (Do, 02. Aug 2012) | 5 Zeilen
+
+ETCH-184 Minor improvements in EtchStructValue and EtchType
+
+Added const to some get methods
+
+Change-Id: Id5bbf50ef722af4e54bf0ba38edc7214d9d9c3db
+------------------------------------------------------------------------
+r1368543 | fitzner | 2012-08-02 17:33:40 +0200 (Do, 02. Aug 2012) | 3 Zeilen
+
+ETCH-147 EtchRuntime Implementation and updates for memory management
+
+Change-Id: Ic9acda9427c2a44eaeffac1c5f01a01d9c276e67
+------------------------------------------------------------------------
+r1368538 | veithm | 2012-08-02 17:29:33 +0200 (Do, 02. Aug 2012) | 3 Zeilen
+
+ETCH-173 Added getter in TcpOption
+
+Change-Id: Ifcb991cb3e855d63de6da63de72b5990ce670797
+------------------------------------------------------------------------
+r1368537 | fitzner | 2012-08-02 17:28:14 +0200 (Do, 02. Aug 2012) | 3 Zeilen
+
+ETCH-149 EtchIdGenerator change to uint64
+
+Change-Id: Id28806a17de08cf84df3b60e1e93cba156a88580
+------------------------------------------------------------------------
+r1368536 | fitzner | 2012-08-02 17:25:39 +0200 (Do, 02. Aug 2012) | 7 Zeilen
+
+ETCH-147 EtchStructValue Changes
+
+=> added const EtchField to get method
+=> getFirstField()
+=> isEmpty()
+
+Change-Id: I0ea91264b113ab0bde952092f71689f3aef5d16b
+------------------------------------------------------------------------
+r1368533 | fitzner | 2012-08-02 17:24:57 +0200 (Do, 02. Aug 2012) | 5 Zeilen
+
+ETCH-147 EtchException create by value
+
+- EtchString constructor now by value this makes EtchException(EtchString("ERROR!")); possible
+
+Change-Id: I535519b31fca6bc754e9c6c05e6d28a4473ec830
+------------------------------------------------------------------------
+r1368530 | fitzner | 2012-08-02 17:24:14 +0200 (Do, 02. Aug 2012) | 5 Zeilen
+
+ETCH-147 EtchStack Implementation
+
+- Memory Handling of Stacks
+
+Change-Id: I1f6133e0540f271ded788e96ae1409291ec00413
+------------------------------------------------------------------------
+r1368526 | veithm | 2012-08-02 17:19:23 +0200 (Do, 02. Aug 2012) | 5 Zeilen
+
+ETCH-132 Fix for thread-safeness of SmartPointer
+
+Added return value to atomic operations which returns the old value
+
+Change-Id: Ic49cb5fb274fdecf1db9ceec7a54769c16674df8
+------------------------------------------------------------------------
+r1368525 | veithm | 2012-08-02 17:19:12 +0200 (Do, 02. Aug 2012) | 3 Zeilen
+
+ETCH-197 Added destroyRessources method to TransportHelper
+
+Change-Id: I78bccba944d316bb76aeaa4b672ccd2e13af65d3
+------------------------------------------------------------------------
+r1368524 | veithm | 2012-08-02 17:19:05 +0200 (Do, 02. Aug 2012) | 5 Zeilen
+
+ETCH-147 ExceptionFactory added
+
+Returns RuntimeException Object by error code
+
+Change-Id: I5ff11e6815eb4fc36329b77f63f2636cd9faf97a
+------------------------------------------------------------------------
+r1368523 | veithm | 2012-08-02 17:18:59 +0200 (Do, 02. Aug 2012) | 6 Zeilen
+
+ETCH-147 Added some notifications to EtchConnection
+
+Added Session Up and Session Down notifications
+Using EtchMonitor in WaitUp and WaitDown now
+
+Change-Id: I8a9a91b2b5d8d7ebe4ee2425a14cd2321c34b94b
+------------------------------------------------------------------------
+r1368522 | veithm | 2012-08-02 17:18:51 +0200 (Do, 02. Aug 2012) | 3 Zeilen
+
+ETCH-132 Added some operators to EtchInt32
+
+Change-Id: I63c32edbf69d32659331082aa9f14d0ca0db8c88
+------------------------------------------------------------------------
+r1368521 | veithm | 2012-08-02 17:18:44 +0200 (Do, 02. Aug 2012) | 3 Zeilen
+
+ETCH-145 Small changes in socket implementation
+
+Change-Id: Id3f4ecd3559dac79c1e78d32929bf5218f56146c
+------------------------------------------------------------------------
+r1368518 | fitzner | 2012-08-02 17:15:58 +0200 (Do, 02. Aug 2012) | 5 Zeilen
+
+ETCH-185 Implementation Validators
+
+EtchValidatorCustom is implemented
+
+Change-Id: Ifdd9fce222bb4574d56b3c41575f1f418d52f968
+------------------------------------------------------------------------
+r1368517 | fitzner | 2012-08-02 17:13:36 +0200 (Do, 02. Aug 2012) | 7 Zeilen
+
+ETCH-141: EtchThreadPools and Implementation of StubBase
+
+- Implementation of ThreadPool Wrappers for ETCH
+=> EtchFreePool: n Threads at a time, further Threads are not accepted (not queued)
+=> EtchQueuedPool: 1 Thread at a time, Queued to unlimited list
+
+Change-Id: I408f8a3bbe24d51fe96919aee30b30849ef68376
+------------------------------------------------------------------------
+r1368516 | veithm | 2012-08-02 17:10:39 +0200 (Do, 02. Aug 2012) | 7 Zeilen
+
+ETCH-141 ThreadPool Implementation
+
+Implementation and tests of ThreadPool
+Change of Thread interface
+Added getState to Thread
+
+Change-Id: I96a552154bd0aba4d9ee914cf2ff027c980b92e2
+------------------------------------------------------------------------
+r1368513 | fitzner | 2012-08-02 17:09:56 +0200 (Do, 02. Aug 2012) | 5 Zeilen
+
+ETCH-197: Implementation of Remote base and some other improvements
+
+Implementation of Remote Base and some improvements
+
+Change-Id: Ibd7edc42d18f27b8b5277d041b186cced67080bb
+------------------------------------------------------------------------
+r1368510 | veithm | 2012-08-02 17:05:59 +0200 (Do, 02. Aug 2012) | 3 Zeilen
+
+ETCH-237 Added FailonError attribute to exec task
+
+Change-Id: I0ef92fd5f940179ece0cccd236931b69379419a6
+------------------------------------------------------------------------
+r1368509 | veithm | 2012-08-02 17:05:53 +0200 (Do, 02. Aug 2012) | 6 Zeilen
+
+ETCH-215 Implementation of DeliveryService
+
+Added DeliveryService interface
+Added DefaultDeliveryService implementation
+
+Change-Id: I304e567e6492613631f63e3b22fccdd6940c97a6
+------------------------------------------------------------------------
+r1368508 | fitzner | 2012-08-02 17:04:41 +0200 (Do, 02. Aug 2012) | 3 Zeilen
+
+ETCH-149: EtchMonitor Implementation
+
+Change-Id: Ia81de91f0752092874c3651fc1ce247e9ab13057
+------------------------------------------------------------------------
+r1368507 | fitzner | 2012-08-02 17:03:46 +0200 (Do, 02. Aug 2012) | 5 Zeilen
+
+ETCH-149 Enhanced UTF8 Support
+
+EtchString modifications for UTF8 support
+
+Change-Id: Idacf1dd320ba9143b9bf32ba9072f7e11f55f75b
+------------------------------------------------------------------------
+r1368505 | veithm | 2012-08-02 17:00:18 +0200 (Do, 02. Aug 2012) | 3 Zeilen
+
+ETCH-134 Fixed time bug
+
+Change-Id: Idd8d61bd5352832e1a88b405ac5f65223f36ab94
+------------------------------------------------------------------------
+r1368504 | veithm | 2012-08-02 16:59:08 +0200 (Do, 02. Aug 2012) | 6 Zeilen
+
+ETCH-216 : Implementation of EtchTransportFactories
+
+- EtchTransportFactory (basic Interface)
+- EtchTCPTransportFactory
+
+Change-Id: Iee18c9c7ee176fdcc0c9e649f305181a9d32a351
+------------------------------------------------------------------------
+r1368503 | fitzner | 2012-08-02 16:57:46 +0200 (Do, 02. Aug 2012) | 5 Zeilen
+
+ETCH-214: Implementation of EtchMailboxManager
+
+EtchMailboxManager Implementation
+
+Change-Id: I2022932d3437255968b4b3e44c50ab928657a6ec
+------------------------------------------------------------------------
+r1368502 | fitzner | 2012-08-02 16:56:38 +0200 (Do, 02. Aug 2012) | 3 Zeilen
+
+ETCH-149: EtchIdGenerator Implementation
+
+Change-Id: I4cb22b3e6d7e1e655d10323e505415d5c67d9a30
+------------------------------------------------------------------------
+r1368498 | fitzner | 2012-08-02 16:53:36 +0200 (Do, 02. Aug 2012) | 5 Zeilen
+
+ETCH-134: EtchCircularQueue Implementation
+
+EtchCircularQueue has been implemented
+
+Change-Id: I04c2c7f3fec88037f06549e0eb67cf11ab0d9d1e
+------------------------------------------------------------------------
+r1368497 | veithm | 2012-08-02 16:50:54 +0200 (Do, 02. Aug 2012) | 3 Zeilen
+
+ETCH-143 Fixed condition variable bug on Windows
+
+Change-Id: I3cbb89d1e7bf2904ef1a1a4e2bb2694a89c332d4
+------------------------------------------------------------------------
+r1368496 | fitzner | 2012-08-02 16:49:30 +0200 (Do, 02. Aug 2012) | 3 Zeilen
+
+ETCH-132 Capu: List Performance Optimization
+
+Change-Id: I035eaad4162c6f98a7384eeba33068c0f017d064
+------------------------------------------------------------------------
+r1368491 | veithm | 2012-08-02 16:40:08 +0200 (Do, 02. Aug 2012) | 11 Zeilen
+
+ETCH-132 Major changes in platform abstraction
+
+Restructuring of os specific file hierarchy
+Added QNX, Linux ARMv7 and Integrity ARMv7 support
+
+Added Array, Ringbuffer and Queue containers
+Added Math abstraction
+
+Fixed warnings on windows Visual Studio build
+
+Change-Id: Ifeb6d9a68452532de359a8d5305db1794d28ed29
+------------------------------------------------------------------------
+r1368489 | fitzner | 2012-08-02 16:36:39 +0200 (Do, 02. Aug 2012) | 5 Zeilen
+
+ETCH-213: Implementation of EtchServerFactories
+
+First implementation
+
+Change-Id: Id5d13aca235a1940ed2479614b9775f98864b3e7
+------------------------------------------------------------------------
+r1368486 | fitzner | 2012-08-02 16:33:26 +0200 (Do, 02. Aug 2012) | 7 Zeilen
+
+ETCH-197: Implementation of Remote base
+
+- EtchRemoteBase skeleton added
+- EtchTransportHelper skeleton added
+- EtchQueuedPool skeleton added
+
+Change-Id: I466efeac6b9ec28a0259450bf35d0fc450a9c722
+------------------------------------------------------------------------
+r1368475 | fitzner | 2012-08-02 16:01:26 +0200 (Do, 02. Aug 2012) | 5 Zeilen
+
+ETCH-141: EtchFreePool skeleton implementation
+
+Skeleton implementation of EtchFreePool
+
+Change-Id: Ifb5ccb3fb8cad708df435e210d1c524610a8abe6
+------------------------------------------------------------------------
+r1368474 | fitzner | 2012-08-02 15:51:29 +0200 (Do, 02. Aug 2012) | 6 Zeilen
+
+ETCH-141: EtchPool Interface
+
+Added Interface for EtchPool
+Added Interface for EtchPoolRunnable
+
+Change-Id: Iefc2950e2b98e9063e268a6342cc5f0af39cf553
+------------------------------------------------------------------------
+r1368468 | veithm | 2012-08-02 15:31:50 +0200 (Do, 02. Aug 2012) | 5 Zeilen
+
+ETCH-196 Implementation of Stub Base classes
+
+Added Basic interfaces
+
+Change-Id: I8b07b246644e788b4e314bbb2d584a0ca69e6190
+------------------------------------------------------------------------
+r1368467 | veithm | 2012-08-02 15:30:25 +0200 (Do, 02. Aug 2012) | 5 Zeilen
+
+ETCH-147 Added SmartPointer Typedefs
+
+Added EtchXXXPtr typedefs to each etch type
+
+Change-Id: Id9bd49cfc170f5df9266be4c2358b3f9b41fd4f7
+------------------------------------------------------------------------
+r1368466 | veithm | 2012-08-02 15:28:50 +0200 (Do, 02. Aug 2012) | 5 Zeilen
+
+ETCH-181 Implementation Messagizer
+
+EtchMessagizer implementation and testing
+
+Change-Id: I42cd4e73b834a24719d0207938e505932f2299e2
+------------------------------------------------------------------------
+r1368460 | veithm | 2012-08-02 15:20:50 +0200 (Do, 02. Aug 2012) | 6 Zeilen
+
+ETCH-181 EtchBinaryTaggedData Implementation
+
+BinaryTaggedData Implementation and Tests
+EtchNoneValidator Implementation
+
+Change-Id: I553f6d6705ebd1491fbc4b4b83cb12358337eb42
+------------------------------------------------------------------------
+r1345149 | veithm | 2012-06-01 15:06:15 +0200 (Fr, 01. Jun 2012) | 5 Zeilen
+
+ETCH-185 Validators updated to smartpointers
+
+methods validate and validateValue updated to smartpointers
+
+Change-Id: I12184179d0c5a5d8ea59dc6fba0e34e644fc14f2
+------------------------------------------------------------------------
+r1345146 | veithm | 2012-06-01 14:57:34 +0200 (Fr, 01. Jun 2012) | 3 Zeilen
+
+ETCH-181 EtchTaggedData Interfaces
+
+Change-Id: Ida69e5a7e13b5b515ca0ca2165114b4e15e2dba1
+------------------------------------------------------------------------
+r1345144 | veithm | 2012-06-01 14:54:41 +0200 (Fr, 01. Jun 2012) | 3 Zeilen
+
+EtchUtil UTF-8 support
+
+Change-Id: I244540a4543aaae31c03e9945ade09b4b9eae7a1
+------------------------------------------------------------------------
+r1345142 | veithm | 2012-06-01 14:52:12 +0200 (Fr, 01. Jun 2012) | 3 Zeilen
+
+ETCH-185 EtchStructValueValidator has been implemented
+
+Change-Id: Idb10131de70bf1dc1f932f31e3aa58c751a52d8f
+------------------------------------------------------------------------
+r1345139 | veithm | 2012-06-01 14:49:15 +0200 (Fr, 01. Jun 2012) | 3 Zeilen
+
+ETCH-181 EtchArrayValue Implementation and Native Array Improvements.
+
+Change-Id: Idee8fa3307ba8ec08d6a702336385b9941cd803c
+------------------------------------------------------------------------
+r1345133 | veithm | 2012-06-01 14:46:13 +0200 (Fr, 01. Jun 2012) | 5 Zeilen
+
+ETCH-184 Implementation of EtchDefaultValueFactory
+
+EtchDefaultValueFactory has been implemented
+
+Change-Id: I9c903e5ca4bb95f13437cd501cbc4f9ae2de3f0c
+------------------------------------------------------------------------
+r1345128 | veithm | 2012-06-01 14:38:24 +0200 (Fr, 01. Jun 2012) | 3 Zeilen
+
+ETCH-182 EtchMessage has been implemented
+
+Change-Id: I0949369a36b29eab63dd6f35a849138fd95aa750
+------------------------------------------------------------------------
+r1345121 | veithm | 2012-06-01 14:35:56 +0200 (Fr, 01. Jun 2012) | 5 Zeilen
+
+ETCH-184 Implementation of EtchDateSerializer
+
+EtchDateSerializer has been implemented
+
+Change-Id: I1d786ee32af263c4f4c4e8bc4161c79ce7a20f3b
+------------------------------------------------------------------------
+r1345118 | veithm | 2012-06-01 14:31:49 +0200 (Fr, 01. Jun 2012) | 5 Zeilen
+
+ETCH-150 Implementation of basic primitive data types for the NSDL
+
+EtchDate has been implemented
+
+Change-Id: I3bdf8138a7a2cb30ab65b099c5e2ba4f353d2cba
+------------------------------------------------------------------------
+r1345115 | veithm | 2012-06-01 14:26:35 +0200 (Fr, 01. Jun 2012) | 5 Zeilen
+
+ETCH-184 Implementation of EtchSetSerializer
+
+EtchSetSerializer has been implemented
+
+Change-Id: Icf22a13854e120f7149fbeec14bbde654559584a
+------------------------------------------------------------------------
+r1345114 | veithm | 2012-06-01 14:23:30 +0200 (Fr, 01. Jun 2012) | 3 Zeilen
+
+ETCH-184 Implementation of EtchHashTableSerializer
+
+Change-Id: I89d528ffedfd0937a93f636cd825f2df3cd38016
+------------------------------------------------------------------------
+r1345107 | veithm | 2012-06-01 14:20:06 +0200 (Fr, 01. Jun 2012) | 3 Zeilen
+
+ETCH-184 Implementation of EtchAuthenticationExceptionSerializer
+
+Change-Id: Ieafb65cb34a65fec7db50250918689f9509eea1a
+------------------------------------------------------------------------
+r1345104 | veithm | 2012-06-01 14:18:02 +0200 (Fr, 01. Jun 2012) | 3 Zeilen
+
+ETCH-184 Implementation of EtchRuntimeExceptionSerializer
+
+Change-Id: I45704bd54ef2c5f318009e7b41ad7813d1745d03
+------------------------------------------------------------------------
+r1345101 | veithm | 2012-06-01 14:15:49 +0200 (Fr, 01. Jun 2012) | 3 Zeilen
+
+ETCH-185 EtchValidatorRuntimeException is implemented
+
+Change-Id: I45d7f473166c5d9708c41936e364d975cd83e594
+------------------------------------------------------------------------
+r1345099 | fitzner | 2012-06-01 14:12:47 +0200 (Fr, 01. Jun 2012) | 5 Zeilen
+
+ETCH-184 Implementation of EtchRuntimeException
+
+EtchRuntimeException has been implemented
+
+Change-Id: Icfb9729c8e4a3d58b3f9720f563afe251ec12efe
+------------------------------------------------------------------------
+r1345098 | fitzner | 2012-06-01 14:11:59 +0200 (Fr, 01. Jun 2012) | 5 Zeilen
+
+ETCH-184 Implementation of EtchAuthenticationException
+
+EtchAuthenticationException has been implemented
+
+Change-Id: I5dac9912a4106376fe1fc4250f686b49746ff42e
+------------------------------------------------------------------------
+r1345097 | fitzner | 2012-06-01 14:11:15 +0200 (Fr, 01. Jun 2012) | 5 Zeilen
+
+ETCH-184 Implementation of EtchException
+
+EtchException and EtchExceptionType are created
+
+Change-Id: I39cfcc5fb62bf6f8f28562a8c84fc3724cf71a18
+------------------------------------------------------------------------
+r1345095 | fitzner | 2012-06-01 14:08:53 +0200 (Fr, 01. Jun 2012) | 5 Zeilen
+
+ETCH-184 EtchListSerializer Implementation
+
+EtchListSerializer implementation
+
+Change-Id: I592d93cb1a30cc977db6da13c176f60b34ffaae1
+------------------------------------------------------------------------
+r1345092 | fitzner | 2012-06-01 14:01:19 +0200 (Fr, 01. Jun 2012) | 5 Zeilen
+
+ETCH-139 Implementation of EtchNativeArray
+
+New native array implementation
+
+Change-Id: I7ab41641ca727a9c43ccf5312837a36bd029f8d9
+------------------------------------------------------------------------
+r1345087 | fitzner | 2012-06-01 13:47:57 +0200 (Fr, 01. Jun 2012) | 6 Zeilen
+
+ETCH-184 EtchClass2TypeMap has been implemented
+
+- EtchClass2TypeMap has been implemented
+- Etch type handling was changed
+
+Change-Id: I2b133c216a77f63ef7baa4eabb7fa3d085dd0911
+------------------------------------------------------------------------
+r1345079 | fitzner | 2012-06-01 13:42:00 +0200 (Fr, 01. Jun 2012) | 3 Zeilen
+
+ETCH-184 EtchTypeCollection has been implemented
+
+Change-Id: Ib6b57d6d2d2a930f18d4330234fcc242891a4744
+------------------------------------------------------------------------
+r1345078 | fitzner | 2012-06-01 13:41:18 +0200 (Fr, 01. Jun 2012) | 3 Zeilen
+
+ETCH-184 EtchStructValue implementation and tests
+
+Change-Id: I191d47ee0dae0b64c7cdcf02be6f3dfb891ce3ab
+------------------------------------------------------------------------
+r1345077 | fitzner | 2012-06-01 13:40:23 +0200 (Fr, 01. Jun 2012) | 3 Zeilen
+
+ETCH-184 EtchType has been implemented
+
+Change-Id: Ib02766b5665d6474d7e61d9d11a989d7bf9a21fe
+------------------------------------------------------------------------
+r1345074 | fitzner | 2012-06-01 13:38:32 +0200 (Fr, 01. Jun 2012) | 3 Zeilen
+
+ETCH-184 Interfaces of EtchValueFactory and EtchImportExportHelper
+
+Change-Id: Id315807b90bbc3ea608254fb278fe67b442006c5
+------------------------------------------------------------------------
+r1345073 | fitzner | 2012-06-01 13:36:12 +0200 (Fr, 01. Jun 2012) | 5 Zeilen
+
+ETCH-184 Implementation ValueFactory
+
+EtchFieldMap has been implemented
+
+Change-Id: I3cdc834e18b242c966d11ebee6f88c8add08cdd4
+------------------------------------------------------------------------
+r1345071 | fitzner | 2012-06-01 13:29:23 +0200 (Fr, 01. Jun 2012) | 5 Zeilen
+
+ETCH-185 Implementation Validators
+
+Object Validator has been implemented
+
+Change-Id: I85a85d1a8c4592b499c8abb616bd75bd7d694250
+------------------------------------------------------------------------
+r1345068 | veithm | 2012-06-01 13:26:45 +0200 (Fr, 01. Jun 2012) | 5 Zeilen
+
+ETCH-184 Implementation ValueFactory
+
+EtchField Implementation and EtchHash and EtchNativeArray fix
+
+Change-Id: Ib14874382dc48bd1eb4834b29e033fb4701e5f0d
+------------------------------------------------------------------------
+r1345067 | veithm | 2012-06-01 13:23:35 +0200 (Fr, 01. Jun 2012) | 7 Zeilen
+
+ETCH-194 Definition of Etch Enumerations
+
+EtchAsyncMode
+EtchLevel
+EtchDirection
+
+Change-Id: Ie22581111471b5ff0521217d8c90ddd20960855a
+------------------------------------------------------------------------
+r1345065 | fitzner | 2012-06-01 13:20:47 +0200 (Fr, 01. Jun 2012) | 5 Zeilen
+
+ETCH-185 Implementation Validators
+
+Combo Validator has been implemented
+
+Change-Id: Ib5a0d78eb9c88836ddaef8d75cfc46b58e12e24e
+------------------------------------------------------------------------
+r1345064 | fitzner | 2012-06-01 13:19:38 +0200 (Fr, 01. Jun 2012) | 5 Zeilen
+
+ETCH-185 Implementation Validators
+
+String Validator has been implemented
+
+Change-Id: Ib1000436426d5f2578c27bf57ded0b63232f07fd
+------------------------------------------------------------------------
+r1345062 | fitzner | 2012-06-01 13:18:47 +0200 (Fr, 01. Jun 2012) | 5 Zeilen
+
+ETCH-185 Implementation Validators
+
+Long Validator has been implemented
+
+Change-Id: Ic31b39b1219b77cafb644d2a5b6ad1cf971cb115
+------------------------------------------------------------------------
+r1345061 | fitzner | 2012-06-01 13:17:32 +0200 (Fr, 01. Jun 2012) | 5 Zeilen
+
+ETCH-185 Implementation Validators
+
+Double Validator has been implemented by Aaron
+
+Change-Id: I656bfd248492f993215af8d53984173433b26925
+------------------------------------------------------------------------
+r1345060 | fitzner | 2012-06-01 13:16:56 +0200 (Fr, 01. Jun 2012) | 5 Zeilen
+
+ETCH-185 Implementation Validators
+
+Float Validator has been implemented by Aaron
+
+Change-Id: I5236b67eaebd3d589132e5b6698ebdfa2f32054b
+------------------------------------------------------------------------
+r1345056 | fitzner | 2012-06-01 13:16:14 +0200 (Fr, 01. Jun 2012) | 5 Zeilen
+
+ETCH-185 Implementation Validators
+
+Short Validator has been implemented
+
+Change-Id: Ic019f99ca254fafcf5cea2c81247fb556958fa7f
+------------------------------------------------------------------------
+r1345055 | fitzner | 2012-06-01 13:15:33 +0200 (Fr, 01. Jun 2012) | 5 Zeilen
+
+ETCH-185 Implementation Validators
+
+Integer Validator has been implemented
+
+Change-Id: I9d0fdb1e668e638dedaa94b7990a604b27090eee
+------------------------------------------------------------------------
+r1345054 | fitzner | 2012-06-01 13:13:42 +0200 (Fr, 01. Jun 2012) | 5 Zeilen
+
+ETCH-185 Implementation Validators
+
+Byte Validator has been implemented
+
+Change-Id: Ieb93770892b1217945af10906dbf20e05b45b3ef
+------------------------------------------------------------------------
+r1345053 | fitzner | 2012-06-01 13:12:48 +0200 (Fr, 01. Jun 2012) | 5 Zeilen
+
+ETCH-185 Implementation Validators
+
+Boolean Validator has been implemented
+
+Change-Id: I25da9402acde0346a0c20f76286c2acdb9a550dc
+------------------------------------------------------------------------
+r1345051 | fitzner | 2012-06-01 13:10:46 +0200 (Fr, 01. Jun 2012) | 5 Zeilen
+
+ETCH-185 Implementation Validators
+
+Abstract Base Classes for validators are implemented fix
+
+Change-Id: If9cde20f2b73e8db21936736299840f0a20ea46d
+------------------------------------------------------------------------
+r1345050 | fitzner | 2012-06-01 13:09:22 +0200 (Fr, 01. Jun 2012) | 5 Zeilen
+
+ETCH-185 Implementation Validators
+
+Abstract Base Classes for validators are implemented
+
+Change-Id: Iaf8ac1217de1a9f5ffb15fcc33012b54cb148ebe
+------------------------------------------------------------------------
+r1345047 | fitzner | 2012-06-01 13:05:17 +0200 (Fr, 01. Jun 2012) | 5 Zeilen
+
+ETCH-149: Added Numeric Limits
+
+Basic implementation of Numeric_Limits for Float
+
+Change-Id: I9c7c68fef531092e32ed6468d9c4658ab2185fa1
+------------------------------------------------------------------------
+r1345045 | veithm | 2012-06-01 12:50:16 +0200 (Fr, 01. Jun 2012) | 5 Zeilen
+
+ETCH-182 Implementation Session Interfaces
+
+EtchSession Interfaces improvements
+
+Change-Id: I6f4614c5e521a0cecfe4f8478c03694faa8783a5
+------------------------------------------------------------------------
+r1345043 | veithm | 2012-06-01 12:45:20 +0200 (Fr, 01. Jun 2012) | 3 Zeilen
+
+ETCH-180 Packetizer Implementation
+
+Change-Id: Ia166b490a37a732a687c201a100c015a915b1116
+------------------------------------------------------------------------
+r1326501 | veithm | 2012-04-16 08:13:59 +0200 (Mo, 16. Apr 2012) | 1 Zeile
+
+ETCH-202 Added note for building Etch on Linux 64-bit systems
+------------------------------------------------------------------------
+r1301136 | sccomer | 2012-03-15 19:48:09 +0100 (Do, 15. Mär 2012) | 5 Zeilen
+
+some small changes to scripts to make them work better. and a new script to help with cunit installation.
+
+ignoring build product from example_mixin.
+
+added some svn:eol-style=native properties where needed.
+------------------------------------------------------------------------
+r1300957 | fitzner | 2012-03-15 13:36:12 +0100 (Do, 15. Mär 2012) | 4 Zeilen
+
+ETCH-224 Changed version inside the APR library because of wrong
+workspace settingsETCH-224 Changed version inside the APR library
+
+Change-Id: Ib6a16bc2c75af0e309e518cf12d56579b2209467
+------------------------------------------------------------------------
+r1296073 | veithm | 2012-03-02 08:34:18 +0100 (Fr, 02. Mär 2012) | 5 Zeilen
+
+ETCH-173 EtchTransport Layer Implementation and Tests
+
+EtchTcpConnection, EtchTcpListener and EtchTcpOption has been implemented
+
+Change-Id: Ia7ef1c9a693b2e54b9e8a316c33d13d3098f048a
+------------------------------------------------------------------------
+r1296072 | veithm | 2012-03-02 08:32:51 +0100 (Fr, 02. Mär 2012) | 5 Zeilen
+
+ETCH-182 Implementation Session Interfaces
+
+Improvement of EtchSessionListener
+
+Change-Id: I8ccd227820b91860878b0ef72476d9ef9096700f
+------------------------------------------------------------------------
+r1296071 | veithm | 2012-03-02 08:32:09 +0100 (Fr, 02. Mär 2012) | 5 Zeilen
+
+ETCH-150 Implementation of basic primitive data types for the NSDL
+
+some neccessary fixes
+
+Change-Id: I2fb79dc482150dfd5b1f43ea33aa2b0e57d85ccc
+------------------------------------------------------------------------
+r1296070 | veithm | 2012-03-02 08:29:17 +0100 (Fr, 02. Mär 2012) | 5 Zeilen
+
+ETCH-145 EtchSocket Implementation
+
+Etch ServerSocket Typeid Fix
+
+Change-Id: I7843d5863715e578e94912693a7791de8d05747a
+------------------------------------------------------------------------
+r1296069 | veithm | 2012-03-02 08:28:32 +0100 (Fr, 02. Mär 2012) | 3 Zeilen
+
+ETCH-174 EtchResources Implementation Improvement of EtchResources
+
+Change-Id: I19092b4fc7507f970b0b229a7696cacad68e07fc
+------------------------------------------------------------------------
+r1296068 | veithm | 2012-03-02 08:27:42 +0100 (Fr, 02. Mär 2012) | 3 Zeilen
+
+ETCH-183 Implementation Transport Interfaces
+
+Change-Id: I0dd5a5c223ea162968dda89bf1149304b2343fa7
+------------------------------------------------------------------------
+r1296067 | veithm | 2012-03-02 08:22:43 +0100 (Fr, 02. Mär 2012) | 3 Zeilen
+
+ETCH-182 Implementation Session Interfaces
+
+Change-Id: I4f50f851dfb10d07858184c7ff4f88239b44940f
+------------------------------------------------------------------------
+r1296066 | veithm | 2012-03-02 08:21:24 +0100 (Fr, 02. Mär 2012) | 3 Zeilen
+
+ETCH-174 EtchFlexBuffer Implementation and Tests
+
+Change-Id: I76a0e82d941d36bafddc3cc2dadd39da1ea4c2d3
+------------------------------------------------------------------------
+r1296065 | veithm | 2012-03-02 08:19:05 +0100 (Fr, 02. Mär 2012) | 5 Zeilen
+
+ETCH-150 Implementation of basic primitive data types for the NSDL
+
+Major TypeID Update, EtchObjectType is created.
+
+Change-Id: Iad69302aedc83e949fa80394e894ce166d36f6f1
+------------------------------------------------------------------------
+r1295703 | veithm | 2012-03-01 18:47:05 +0100 (Do, 01. Mär 2012) | 6 Zeilen
+
+ETCH-149 SmartPointer
+
+Enabled assignment of different, but castable type
+Added equals operator
+
+Change-Id: I876a21d1f39d0a7392981889f7311c799f15431c
+------------------------------------------------------------------------
+r1295701 | veithm | 2012-03-01 18:45:35 +0100 (Do, 01. Mär 2012) | 5 Zeilen
+
+ETCH-174 EtchResources Implementation
+
+Updated container interfaces to references
+
+Change-Id: Iade864c2d860febbe9142d8efb8861f026cd7f9b
+------------------------------------------------------------------------
+r1295697 | veithm | 2012-03-01 18:42:10 +0100 (Do, 01. Mär 2012) | 3 Zeilen
+
+ETCH-174 EtchURL Implementation & Tests
+
+Change-Id: I99aa2c97110f3ed743b07daba7b1dd30d34a10d8
+------------------------------------------------------------------------
+r1295682 | fitzner | 2012-03-01 18:15:54 +0100 (Do, 01. Mär 2012) | 5 Zeilen
+
+ETCH-209
+CMake build for 32 bit executables on a 64 bit machine with Ubuntu 11.10
+fails. Fixed library order
+
+Change-Id: I2366691a94d6596a0450ae4bd1d4a8c7c85c6657
+------------------------------------------------------------------------
+r1242021 | fitzner | 2012-02-08 19:04:26 +0100 (Mi, 08. Feb 2012) | 1 Zeile
+
+ETCH-202 Added Thomas Marsh to the website
+------------------------------------------------------------------------
+r1241828 | veithm | 2012-02-08 10:15:01 +0100 (Mi, 08. Feb 2012) | 5 Zeilen
+
+ETCH-145 EtchSocket Wrapper
+
+capu socket wrapper for etch project
+
+Change-Id: I320fd828903d5cf69a97e4dd0fbea130d36d645f
+------------------------------------------------------------------------
+r1241827 | veithm | 2012-02-08 10:14:09 +0100 (Mi, 08. Feb 2012) | 5 Zeilen
+
+ETCH-145 Implementation of OS independent Sockets
+
+Socket and ServerSocket for blocking IO
+
+Change-Id: I53f6259271471b7a0cda7dc6150921728fa54a4e
+------------------------------------------------------------------------
+r1241804 | veithm | 2012-02-08 08:55:39 +0100 (Mi, 08. Feb 2012) | 5 Zeilen
+
+ETCH-132 OS Abstraction for binding-cpp
+
+Windows part fix
+
+Change-Id: Ie8bb4cde9122c9baa77fbb882d30c986f5ca91ce
+------------------------------------------------------------------------
+r1241803 | veithm | 2012-02-08 08:49:04 +0100 (Mi, 08. Feb 2012) | 3 Zeilen
+
+ETCH-138 EtchSet Wrapper
+
+Change-Id: Ie3537de235aacc96d80002e506ab7fbf04f86180
+------------------------------------------------------------------------
+r1241802 | veithm | 2012-02-08 08:47:16 +0100 (Mi, 08. Feb 2012) | 5 Zeilen
+
+ETCH-138 CAPU Set Implementation and Test
+
+HashSet Implementation and Tests
+
+Change-Id: I701f314060b99ee2f834bda6670833b187df323a
+------------------------------------------------------------------------
+r1241801 | veithm | 2012-02-08 08:46:01 +0100 (Mi, 08. Feb 2012) | 7 Zeilen
+
+ETCH-137 HashTable Etch Wrapper
+
+Added HashTable Wrapper
+Added Type Traits
+Added References to List and Hashtable
+
+Change-Id: Ic9bb4975296817baed8ec5c925be795980bcb8f4
+------------------------------------------------------------------------
+r1236669 | veithm | 2012-01-27 14:05:49 +0100 (Fr, 27. Jan 2012) | 3 Zeilen
+
+ETCH-210 Fixed URLs of buildserver in BUILD.txt
+
+Change-Id: I2e76e34f86eca71ca7d73270432b49daf471e22d
+------------------------------------------------------------------------
+r1232486 | veithm | 2012-01-17 18:09:46 +0100 (Di, 17. Jan 2012) | 3 Zeilen
+
+ETCH-202 Added svn-eol advice to source page
+
+Change-Id: I6d5801231638e9fc0a529373a655afbe395d7820
+------------------------------------------------------------------------
+r1230613 | fitzner | 2012-01-12 17:14:43 +0100 (Do, 12. Jan 2012) | 2 Zeilen
+
+ETCH-204
+Changed to next version tag
+------------------------------------------------------------------------
+r1230611 | fitzner | 2012-01-12 17:10:54 +0100 (Do, 12. Jan 2012) | 2 Zeilen
+
+ETCH-204
+correct some line endings
+------------------------------------------------------------------------
+r1230469 | veithm | 2012-01-12 11:10:08 +0100 (Do, 12. Jan 2012) | 3 Zeilen
+
+ETCH-137 CAPU HashTable Implementation and Tests
+
+Change-Id: Ia0fded93b5b9be83a994eced4f2b10a62b01bfc5
+------------------------------------------------------------------------
+r1230468 | veithm | 2012-01-12 11:08:46 +0100 (Do, 12. Jan 2012) | 3 Zeilen
+
+ETCH-135 Double Linked List Etch Wrapper
+
+Change-Id: I282ee8a50ca6b31f420bd564fcd2baaeea29434b
+------------------------------------------------------------------------
+r1230467 | veithm | 2012-01-12 11:07:54 +0100 (Do, 12. Jan 2012) | 6 Zeilen
+
+ETCH-135 CAPU Linked List
+
+Interface extension
+Add/Remove methods take iterator
+
+Change-Id: I6277ecd2f5bb9d3634ae08d37b423e893a8a08ae
+------------------------------------------------------------------------
+r1230465 | veithm | 2012-01-12 11:06:25 +0100 (Do, 12. Jan 2012) | 3 Zeilen
+
+ETCH-135 CAPU Double Linked List Implementation and Test
+
+Change-Id: I99380706ee38ab7034e89c82b56d30eb8f69e15a
+------------------------------------------------------------------------
+r1230464 | veithm | 2012-01-12 11:05:14 +0100 (Do, 12. Jan 2012) | 5 Zeilen
+
+ETCH-132 OS Abstraction for StringUtils
+
+Abstraction for sprintf, strcmp, strcpy, etc.
+
+Change-Id: Ia8688d57950102961a13671a346aca24bea9b8f1
+------------------------------------------------------------------------
+r1230463 | veithm | 2012-01-12 11:03:27 +0100 (Do, 12. Jan 2012) | 11 Zeilen
+
+ETCH-112 EtchString Implementation
+
+contains implementation of these methods
+
+substring
+copy constructor
+Assignment operator overloading
+hash function
+equals method
+
+Change-Id: Ib197140957a2a5f1e771d443dfa8137dedfdea49
+------------------------------------------------------------------------
+r1230462 | veithm | 2012-01-12 11:01:58 +0100 (Do, 12. Jan 2012) | 5 Zeilen
+
+ETCH-137 Implementation of EtchHashTable Helpers
+
+getHashCode and equals methods are added
+
+Change-Id: Ibb6765a4d60950d2a191192e116315e2c971efc8
+------------------------------------------------------------------------
+
+
 -------------
 Release 1.2.0
 -------------
 
+------------------------------------------------------------------------
+r1227067 | veithm | 2012-01-04 08:45:41 +0100 (Mi, 04. Jan 2012) | 3 Zeilen
+
+Added my public key to KEYS file
+
+Change-Id: I21a550cb235a1415566dd65289c8af62babf066a
+------------------------------------------------------------------------
+r1226712 | veithm | 2012-01-03 10:11:24 +0100 (Di, 03. Jan 2012) | 3 Zeilen
+
+ETCH-202 Added new release 1.2 information
+
+Change-Id: I8b860a9e34c67f521a930ded9f5be435dcddbbab
+------------------------------------------------------------------------
+r1226711 | veithm | 2012-01-03 10:11:02 +0100 (Di, 03. Jan 2012) | 3 Zeilen
+
+ETCH-202 Updated external dependencies on Getting Started page
+
+Change-Id: I8a012bfb34f8b8fb6ab0269bf83870b3ce1e6f55
+------------------------------------------------------------------------
+r1214813 | veithm | 2011-12-15 16:46:22 +0100 (Do, 15. Dez 2011) | 3 Zeilen
+
+ETCH-202 Fix rendering problem in documentation iframe
+
+Change-Id: I9ba3e910db0db955b322d8a661924f8c06e25fd4
+------------------------------------------------------------------------
+r1214782 | veithm | 2011-12-15 15:35:38 +0100 (Do, 15. Dez 2011) | 3 Zeilen
+
+ETCH-202 Old documentation is embedded as an iFrame
+
+Change-Id: I641c3857d0926e2d1716555771552ea2218ed2ce
+------------------------------------------------------------------------
+r1213281 | veithm | 2011-12-12 16:32:41 +0100 (Mo, 12. Dez 2011) | 1 Zeile
+
+Etch Release 1.2 tag
+------------------------------------------------------------------------
+r1213272 | veithm | 2011-12-12 16:20:13 +0100 (Mo, 12. Dez 2011) | 1 Zeile
+
+Prepare for update release tag
+------------------------------------------------------------------------
+r1213269 | veithm | 2011-12-12 16:17:50 +0100 (Mo, 12. Dez 2011) | 1 Zeile
+
+ETCH-93 Added further build instruction to chat example
+------------------------------------------------------------------------
+r1212508 | veithm | 2011-12-09 17:45:58 +0100 (Fr, 09. Dez 2011) | 1 Zeile
+
+Etch Release 1.2 tag
+------------------------------------------------------------------------
+r1212498 | veithm | 2011-12-09 17:12:14 +0100 (Fr, 09. Dez 2011) | 1 Zeile
+
+Prepare for update release tag
+------------------------------------------------------------------------
+r1212491 | veithm | 2011-12-09 17:01:06 +0100 (Fr, 09. Dez 2011) | 3 Zeilen
+
+ETCH-93 Added further information for example build instructions in Readme
+
+Change-Id: Ie7112dad4404c42434ef37646268e1d6d3c5230c
+------------------------------------------------------------------------
+r1212473 | veithm | 2011-12-09 16:18:43 +0100 (Fr, 09. Dez 2011) | 1 Zeile
+
+Etch Release 1.2 tag
+------------------------------------------------------------------------
+r1212398 | veithm | 2011-12-09 14:25:42 +0100 (Fr, 09. Dez 2011) | 3 Zeilen
+
+ETCH-203 Updated Release Notes and changeLog files
+
+Change-Id: Id73f5210a9c89b6d32f2ae0a91c8e9a7cb312005
+------------------------------------------------------------------------
+r1212360 | fitzner | 2011-12-09 13:21:54 +0100 (Fr, 09. Dez 2011) | 1 Zeile
+
+ETCH-202 Update Copyright note
+------------------------------------------------------------------------
+r1211564 | fitzner | 2011-12-07 18:46:23 +0100 (Mi, 07. Dez 2011) | 3 Zeilen
+
+ETCH-126 Add roadmap pages to the new CMS
+
+Change-Id: I1fe38546a5a12e1b7dcad1808042b60982c1cd0d
 ------------------------------------------------------------------------
 r1211560 | veithm | 2011-12-07 18:42:48 +0100 (Mi, 07 Dez 2011) | 5 lines
 

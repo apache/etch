@@ -16,7 +16,7 @@ development and consumption.
 
 The jumping off point for Etch information and help is here:
 
-  http://incubator.apache.org/etch
+  http://etch.apache.org
 
 = Binary Distribution =
 
