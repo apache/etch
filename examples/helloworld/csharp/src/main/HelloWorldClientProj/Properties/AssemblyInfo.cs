@@ -24,7 +24,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyDescription("HelloWorld Client Executable")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Apache Software Foundation")]
-[assembly: AssemblyProduct("Apache Etch (incubating)")]
+[assembly: AssemblyProduct("Apache Etch")]
 [assembly: AssemblyCopyright("Copyright ? Apache Software Foundation 2009")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

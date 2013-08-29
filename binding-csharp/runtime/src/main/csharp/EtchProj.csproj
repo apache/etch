@@ -27,7 +27,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Org.Apache.Etch</RootNamespace>
-    <AssemblyName>ApacheEtchCsharpIncubating</AssemblyName>
+    <AssemblyName>ApacheEtchCsharp</AssemblyName>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>etch.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>

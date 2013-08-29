@@ -1,14 +1,12 @@
-Welcome to Apache Etch 1.2.0. Etch is incubating at apache.org. You can find
-us here:
+Welcome to Apache Etch 1.3.0. You can find us here:
 
 Project info:
 
-    http://incubator.apache.org/projects/etch.html
-    http://incubator.apache.org/etch
+    http://etch.apache.org/
 
 Documentation info:
 
-    http://incubator.apache.org/etch
+    http://etch.apache.org/documentation.html
 
 Issues:
 
@@ -16,23 +14,21 @@ Issues:
 
 SVN:
 
-    http://svn.apache.org/repos/asf/incubator/etch/
+    http://svn.apache.org/repos/asf/etch/trunk/
 
 Continous Integration Server (Hudson):
 
-    https://hudson.apache.org/hudson/view/etch
+    https://builds.apache.org/view/E-G/view/Etch/
 
 Mailing lists:
 
-    mailto:etch-dev@incubator.apache.org (etch developers)
-    mailto:etch-user@incubator.apache.org (etch users)
+    mailto:dev@etch.apache.org (etch developers)
+    mailto:user@etch.apache.org (etch users)
 
 Subscribing to the mailing lists:
 
-    mailto:etch-dev-subscribe@incubator.apache.org (etch developers)
-    mailto:etch-user-subscribe@incubator.apache.org (etch users)
-
-This release is the first fully ASF compliant release of Apache Etch.
+    mailto:dev-subscribe@etch.apache.org (etch developers)
+    mailto:user-subscribe@etch.apache.org (etch users)
 
 The release consists of the three stable language bindings of Etch
 - Java
@@ -52,12 +48,13 @@ in order to continue using your old etch files:
   For C#, the namespace has changed from Etch.* to Org.Apache.Etch.*. 
   
 
-There are also some new components in this release. There is now an experimental binding for Google Go and we 
-started working on a binding for C++. 
+There are also some new components in this release.
+The C++ binding is now feature complete and ready for beta tests. 
+If you experience any issues by building or using it, don't hesitate to write to our mailing lists.
+
 For the Go binding, there is still some work to be done, interested parties should 
-send inquiries to etch-dev@incubator.apache.org. 
-The C++ binding is not function yet, we just added the first prerequisite like a CMake based build system 
-and first components of the needed OS abstraction.
+send inquiries to dev@etch.apache.org. 
+
 There are a few bugs fixed in this release, too, as detailed below.
 
 Here are the issues resolved in this release:

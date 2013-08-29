@@ -31,7 +31,7 @@ set ARTIFACTS_COMPILER=apache-etch-ant-plugin, apache-etch-compiler, apache-etch
 set ARTIFACTS_RUNTIME_BINDING-JAVA=apache-etch-java-runtime
 set ARTIFACTS_RUNTIME_BINDING-CSHARP=apache-etch-csharp-runtime
 set ARTIFACTS_RUNTIME_BINDING-C=apache-etch-c-runtime
-set VERSION=@EtchVersion@-incubating
+set VERSION=@EtchVersion@
 
 if "%M2_HOME%" == "" goto try_maven_home
 set MVN=%M2_HOME%\bin\mvn.bat

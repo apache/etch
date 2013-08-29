@@ -20,7 +20,7 @@
 <project name="etch.common" basedir="." >
 
     <!-- Static properties -->
-    <property name="Etch.copyrightNotice" value="Copyright © Apache Software Foundation 2009" />
+    <property name="Etch.copyrightNotice" value="Copyright © Apache Software Foundation 2013" />
 
     <!-- Compute top of tree -->
     <condition property="Etch.basedir" value="${basedir}" >
@@ -188,8 +188,8 @@
     <property name="etch-java-runtime.zip"        value="apache-etch-java-runtime-${Etch.longversion}.zip" />
     <property name="etch-java-runtime-src.zip"    value="apache-etch-java-runtime-${Etch.longversion}-src.zip" />
     <!-- csharp-runtime -->
-    <property name="etch-csharp-runtime.dll"      value="ApacheEtchCsharpIncubating.dll" />
-    <property name="etch-csharp-runtime.pdb"      value="ApacheEtchCsharpIncubating.pdb" />
+    <property name="etch-csharp-runtime.dll"      value="ApacheEtchCsharp.dll" />
+    <property name="etch-csharp-runtime.pdb"      value="ApacheEtchCsharp.pdb" />
     <property name="etch-csharp-runtime.zip"      value="apache-etch-csharp-runtime-${Etch.longversion}.zip" />
     <property name="etch-csharp-runtime-src.zip"  value="apache-etch-csharp-runtime-${Etch.longversion}-src.zip" />
     <!-- c-runtime -->

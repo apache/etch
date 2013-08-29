@@ -28,8 +28,8 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyDescription("Apache Etch C# Binding Runtime DLL")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Apache Software Foundation")]
-[assembly: AssemblyProduct("Apache Etch (incubating)")]
-[assembly: AssemblyCopyright("Copyright © Apache Software Foundation 2009")]
+[assembly: AssemblyProduct("Apache Etch")]
+[assembly: AssemblyCopyright("Copyright © Apache Software Foundation 2013")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

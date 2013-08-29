@@ -24,7 +24,7 @@
     <property name="etch.version" value="@EtchVersion@"/>
     <property name="etch.longversion" value="@EtchLongVersion@"/>
     <property name="etch-java-runtime-name" value="apache-etch-java-runtime-${etch.longversion}.jar"/>
-    <property name="etch-csharp-runtime-name" value="ApacheEtchCsharpIncubating.dll"/>
+    <property name="etch-csharp-runtime-name" value="ApacheEtchCsharp.dll"/>
 
     <property name="etch-ant-plugin.jar"     location="${etch.home}/lib/apache-etch-ant-plugin-${etch.longversion}.jar"/>
     <property name="etch-java-runtime.jar"   location="${etch.home}/binding-java/lib/${etch-java-runtime-name}"/>

@@ -26,5 +26,5 @@ package org.apache.etch.compiler;
 public interface Version
 {
 	/** The version of the Etch frontend (parser) */
-	public String VERSION = "Apache Etch 1.3.0-incubating (LOCAL-0)";
+	public String VERSION = "Apache Etch 1.3.0 (LOCAL-0)";
 }

@@ -29,5 +29,5 @@ public interface CompilerVersion
 	// of VERSION below with whatever it wants the version string to actually be.
 	
 	/** The version of this Etch backend (compiler) */
-	public String VERSION = "go 1.2.0-incubating (LOCAL-0)";
+	public String VERSION = "go 1.3.0 (LOCAL-0)";
 }

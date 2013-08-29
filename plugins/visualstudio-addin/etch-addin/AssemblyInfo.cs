@@ -27,8 +27,8 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyDescription("Visual Studio Plugin For Etch")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Apache Software Foundation")]
-[assembly: AssemblyProduct("Apache Etch (incubating)")]
-[assembly: AssemblyCopyright("Copyright © Apache Software Foundation 2009")]
+[assembly: AssemblyProduct("Apache Etch")]
+[assembly: AssemblyCopyright("Copyright © Apache Software Foundation 2013")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
