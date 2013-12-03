@@ -68,4 +68,6 @@ public:
 
 };
 
+typedef capu::SmartPointer<EtchNumber> EtchNumberPtr;
+
 #endif
