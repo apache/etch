@@ -20,8 +20,6 @@
 #include "serialization/EtchHashTableSerializer.h"
 #include "support/EtchRuntime.h"
 
-static char* TAG = "EtchHashTableSerializer";
-
 const EtchString& EtchHashTableSerializer::FIELD_NAME() {
   static const EtchString name("keysAndValues");
   return name;
@@ -59,7 +57,7 @@ status_t EtchHashTableSerializer::exportValue(EtchValueFactory* vf, capu::SmartP
   if (result->put(mField, keysAndValuesArray) != ETCH_OK) {
     return ETCH_ERROR;
   }
-  CAPU_LOG_TRACE(mRuntime->getLogger(), TAG, "HashTable has been serialized");
+  ETCH_LOG_TRACE(mRuntime->getLogger(), mRuntime->getLogger().getSerializerContext(), "HashTable has been serialized");
   return ETCH_OK;
 }
 
@@ -71,7 +69,7 @@ status_t EtchHashTableSerializer::importValue(EtchStructValue* value, capu::Smar
   }
   capu::SmartPointer<EtchObject> tmp;
   if (value->get(mField, &tmp) != ETCH_OK) {
-    CAPU_LOG_ERROR(mRuntime->getLogger(), TAG, "KeysAndValues Field could not be found");
+    ETCH_LOG_ERROR(mRuntime->getLogger(), mRuntime->getLogger().getSerializerContext(), "KeysAndValues Field could not be found");
     return ETCH_ERROR;
   }
 
@@ -92,7 +90,7 @@ status_t EtchHashTableSerializer::importValue(EtchStructValue* value, capu::Smar
       return res;
   }
   result = (EtchObject*) table;
-  CAPU_LOG_TRACE(mRuntime->getLogger(), TAG, "HashTable has been deserialized");
+  ETCH_LOG_TRACE(mRuntime->getLogger(), mRuntime->getLogger().getSerializerContext(), "HashTable has been deserialized");
   return ETCH_OK;
 }
 
@@ -127,6 +125,6 @@ status_t EtchHashTableSerializer::Init(EtchRuntime* runtime, EtchType* type, Etc
   }
 
   type->lock();
-  CAPU_LOG_TRACE(runtime->getLogger(), TAG, "EtchHashTableSerializer has been initialized");
+  ETCH_LOG_TRACE(runtime->getLogger(), runtime->getLogger().getSerializerContext(), "EtchHashTableSerializer has been initialized");
   return ETCH_OK;
 }

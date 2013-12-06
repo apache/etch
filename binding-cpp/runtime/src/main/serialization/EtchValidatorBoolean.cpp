@@ -19,8 +19,6 @@
 #include "serialization/EtchValidatorBoolean.h"
 #include "support/EtchRuntime.h"
 
-static const char* TAG = "EtchValidatorBoolean";
-
 capu::SmartPointer<EtchValidator>* EtchValidatorBoolean::Validators(EtchRuntime* runtime) {
   static EtchValidatorCaches validators;
   return validators.get(runtime);
@@ -68,11 +66,11 @@ capu::bool_t EtchValidatorBoolean::validate(capu::SmartPointer<EtchObject> value
 
 status_t EtchValidatorBoolean::validateValue(capu::SmartPointer<EtchObject> value, capu::SmartPointer<EtchObject>& result) {
   if (validate(value)) {
-    CAPU_LOG_TRACE(mRuntime->getLogger(), TAG, "Object has been validated");
+    ETCH_LOG_TRACE(mRuntime->getLogger(), mRuntime->getLogger().getValidatorContext(), "Boolean object validation successful");
     result = value;
     return ETCH_OK;
   } else {
-    CAPU_LOG_WARN(mRuntime->getLogger(), TAG, "Object has not been validated");
+    ETCH_LOG_WARN(mRuntime->getLogger(), mRuntime->getLogger().getValidatorContext(), "Boolean object validation failed");
     return ETCH_ERROR;
   }
 }
@@ -87,7 +85,7 @@ status_t EtchValidatorBoolean::Get(EtchRuntime* runtime, capu::uint32_t ndim, ca
   }
   if (Validators(runtime)[ndim].get() == NULL) {
     Validators(runtime)[ndim] = new EtchValidatorBoolean(runtime, ndim);
-    CAPU_LOG_TRACE(runtime->getLogger(), TAG, "EtchValidatorBoolean has been created");
+    ETCH_LOG_TRACE(runtime->getLogger(), runtime->getLogger().getValidatorContext(), "EtchValidatorBoolean has been created");
   }
   val = Validators(runtime)[ndim];
   return ETCH_OK;

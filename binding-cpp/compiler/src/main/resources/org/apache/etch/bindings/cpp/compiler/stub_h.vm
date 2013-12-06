@@ -60,12 +60,12 @@ public:
   status_t run(EtchStubBase<$i$suffix>* _ref, EtchDeliveryService *_svc, $i$suffix *_obj, capu::SmartPointer<EtchWho> _sender, capu::SmartPointer<EtchMessage> _msg )
   {
     status_t status = ETCH_OK;
-    CAPU_LOG_TRACE(mRuntime->getLogger(), "Stub$i$suffix", "${namespace}: Called ${mthd.vname($helper)} Run-Method.");
+    ETCH_LOG_TRACE(mRuntime->getLogger(), mRuntime->getLogger().getDeliveryServiceContext(), "Stub$i$suffix ${namespace}: Called ${mthd.vname($helper)} Run-Method.");
 #if (!$mthd.isOneway())
     capu::SmartPointer<EtchMessage> _rmsg;
     status = _msg->createReplyMessage(_rmsg);
     if(status != ETCH_OK) {
-      CAPU_LOG_ERROR(mRuntime->getLogger(), "Stub$i$suffix", "${namespace}: Coudn't create reply-message.");
+      ETCH_LOG_TRACE(mRuntime->getLogger(), mRuntime->getLogger().getDeliveryServiceContext(), "Stub$i$suffix ${namespace}: Coudn't create reply-message.");
       // TODO set exception
       return ETCH_ERROR;
     }
@@ -84,18 +84,18 @@ public:
     $intfname::$mthd.name()AsyncResultPtr ar;
 #set($sep = "")
 #set($count = 0)
-    CAPU_LOG_TRACE(mRuntime->getLogger(), "Stub$i$suffix", "${namespace}: Calling implementation of \"$mthd.name()\" function.");
+    ETCH_LOG_TRACE(mRuntime->getLogger(), mRuntime->getLogger().getDeliveryServiceContext(), "Stub$i$suffix ${namespace}: Calling implementation of \"$mthd.name()\" function.");
     ar = _obj->$mthd.name()(#foreach($param in $mthd.iterator())#set($count = $count + 1)${sep}val$count#set($sep = ", ")#end);
 
     // create result message
 #if($mthd.hasReturn())
     if(ar->hasResult()) {
-    CAPU_LOG_TRACE(mRuntime->getLogger(), "Stub$i$suffix", "${namespace}: $mthd.name() - returned an Result, generating Answer Message.");
+    ETCH_LOG_TRACE(mRuntime->getLogger(), mRuntime->getLogger().getDeliveryServiceContext(), "Stub$i$suffix ${namespace}: $mthd.name() - returned an Result, generating Answer Message.");
         _rmsg->put(ValueFactory$i::_mf_result(), ar->getResult());
     } else
 #end
     if(ar->hasException()) {
-         CAPU_LOG_DEBUG(mRuntime->getLogger(), "Stub$i$suffix", "${namespace}: $mthd.name()  - returned an Exception - notify Session.");
+         ETCH_LOG_DEBUG(mRuntime->getLogger(), mRuntime->getLogger().getDeliveryServiceContext(), "Stub$i$suffix ${namespace}: $mthd.name()  - returned an Exception - notify Session.");
         _ref->sessionNotify(ar->getException());
 #if ($mthd.isOneway())
         EtchMessagePtr _rmsg;
@@ -104,14 +104,14 @@ public:
         _rmsg->put( ValueFactory$i::_mf_result(), ar->getException() );
 #if ($mthd.isOneway())
         // transport result message
-        CAPU_LOG_TRACE(mRuntime->getLogger(), "Stub$i$suffix", "${namespace}: $mthd.name() - (One-Way) Transport Message back! Because an Exception occurred!.");
+        ETCH_LOG_TRACE(mRuntime->getLogger(), mRuntime->getLogger().getDeliveryServiceContext(), "Stub$i$suffix ${namespace}: $mthd.name() - (One-Way) Transport Message back! Because an Exception occurred!.");
         status = _svc->transportMessage( _sender, _rmsg);
 #end
     }
 
 #if (!$mthd.isOneway())
     // transport result message
-    CAPU_LOG_TRACE(mRuntime->getLogger(), "Stub$i$suffix", "${namespace}: $mthd.name() - Transport answer-message back!.");
+    ETCH_LOG_TRACE(mRuntime->getLogger(), mRuntime->getLogger().getDeliveryServiceContext(), "Stub$i$suffix ${namespace}: $mthd.name() - Transport answer-message back!.");
     status = _svc->transportMessage( _sender, _rmsg);
 #end
     return status;

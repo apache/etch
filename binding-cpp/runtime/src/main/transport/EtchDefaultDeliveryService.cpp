@@ -22,8 +22,6 @@
 #include "support/EtchRuntime.h"
 #include "util/EtchLogger.h"
 
-static char* TAG = "EtchDefaultDeliveryService";
-
 const EtchString& EtchDefaultDeliveryService::DISABLE_TIMEOUT() {
   static const EtchString name("DefaultDeliveryService.disableTimeout");
   return name;
@@ -95,12 +93,12 @@ status_t EtchDefaultDeliveryService::sessionNotify(capu::SmartPointer<EtchObject
 }
 
 status_t EtchDefaultDeliveryService::sessionMessage(capu::SmartPointer<EtchWho> sender, capu::SmartPointer<EtchMessage> msg) {
-  CAPU_LOG_DEBUG(mRuntime->getLogger(), TAG, "Message will be passed to StubBase to execute the respective remote call");
+  ETCH_LOG_DEBUG(mRuntime->getLogger(), mRuntime->getLogger().getDeliveryServiceContext(), "Message will be passed to StubBase to execute the respective remote call");
   return mSession->sessionMessage(sender, msg);
 }
 
 status_t EtchDefaultDeliveryService::transportMessage(capu::SmartPointer<EtchWho> recipient, capu::SmartPointer<EtchMessage> message) {
-  CAPU_LOG_DEBUG(mRuntime->getLogger(), TAG, "Result of respective remote call will be passed to Mailbox Manager");
+  ETCH_LOG_DEBUG(mRuntime->getLogger(), mRuntime->getLogger().getDeliveryServiceContext(), "Result of respective remote call will be passed to Mailbox Manager");
   return mTransport->transportMessage(recipient, message);
 }
 
@@ -144,7 +142,7 @@ status_t EtchDefaultDeliveryService::transportNotify(capu::SmartPointer<EtchObje
 }
 
 status_t EtchDefaultDeliveryService::begincall(capu::SmartPointer<EtchMessage> msg, EtchMailbox*& result) {
-  CAPU_LOG_DEBUG(mRuntime->getLogger(), TAG, "Begin call for the message has been initiated");
+  ETCH_LOG_DEBUG(mRuntime->getLogger(), mRuntime->getLogger().getDeliveryServiceContext(), "Begin call for the message has been initiated");
   return mTransport->transportCall(NULL, msg, result);
 }
 
@@ -155,20 +153,20 @@ status_t EtchDefaultDeliveryService::endcall(EtchMailbox* mb, EtchType* response
 
   //get message from mailbox
   EtchMailbox::EtchElement* mbe = NULL;
-  CAPU_LOG_DEBUG(mRuntime->getLogger(), TAG, "End call for the message starts");
+  ETCH_LOG_DEBUG(mRuntime->getLogger(), mRuntime->getLogger().getDeliveryServiceContext(), "End call for the message starts");
   status_t res = mb->read(mbe, timeout);
   if (res != ETCH_OK) {
     mb->closeRead();
-    CAPU_LOG_ERROR(mRuntime->getLogger(), TAG, "Error on mailbox read, might be caused by timeout");
+    ETCH_LOG_ERROR(mRuntime->getLogger(), mRuntime->getLogger().getDeliveryServiceContext(), "Error on mailbox read, might be caused by timeout");
     //TODO: Add error handling
     return res;
   }
-  CAPU_LOG_TRACE(mRuntime->getLogger(), TAG, "We got a message in the mailbox");
+  ETCH_LOG_TRACE(mRuntime->getLogger(), mRuntime->getLogger().getDeliveryServiceContext(), "We got a message in the mailbox");
 
   //get reply message and responseType
   capu::SmartPointer<EtchMessage> rmsg = mbe->mMsg;
   if (!rmsg->isType(responseType)) {
-    CAPU_LOG_ERROR(mRuntime->getLogger(), TAG, "Error on response Type");
+    ETCH_LOG_ERROR(mRuntime->getLogger(), mRuntime->getLogger().getDeliveryServiceContext(), "Error on response Type");
     mb->closeRead();
     rmsg->clear();
     delete mbe;
@@ -182,12 +180,12 @@ status_t EtchDefaultDeliveryService::endcall(EtchMailbox* mb, EtchType* response
   if (err == ETCH_ENOT_EXIST) {
     //void return value
     mb->closeRead();
-    CAPU_LOG_DEBUG(mRuntime->getLogger(), TAG, "End call for the message is completed");
+    ETCH_LOG_DEBUG(mRuntime->getLogger(), mRuntime->getLogger().getDeliveryServiceContext(), "End call for the message is completed");
     return ETCH_OK;
   } else if (err != ETCH_OK) {
     mb->closeRead();
     rmsg->clear();
-    CAPU_LOG_ERROR(mRuntime->getLogger(), TAG, "Error on getting respective field on message structure");
+    ETCH_LOG_ERROR(mRuntime->getLogger(), mRuntime->getLogger().getDeliveryServiceContext(), "Error on getting respective field on message structure");
     delete mbe;
     return ETCH_ERROR;
   }
@@ -197,7 +195,7 @@ status_t EtchDefaultDeliveryService::endcall(EtchMailbox* mb, EtchType* response
   delete mbe;
   result = r;
   mb->closeRead();
-  CAPU_LOG_DEBUG(mRuntime->getLogger(), TAG, "End call for the message is completed");
+  ETCH_LOG_DEBUG(mRuntime->getLogger(), mRuntime->getLogger().getDeliveryServiceContext(), "End call for the message is completed");
   return ETCH_OK;
 }
 

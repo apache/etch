@@ -19,8 +19,6 @@
 #include "serialization/EtchDateSerializer.h"
 #include "support/EtchRuntime.h"
 
-static char* TAG = "EtchDateSerializer";
-
 const EtchString& EtchDateSerializer::FIELD_NAME() {
   static const EtchString name("dateTime");
   return name;
@@ -42,13 +40,13 @@ status_t EtchDateSerializer::importValue(EtchStructValue* value, capu::SmartPoin
 
   capu::SmartPointer<EtchObject> tmp;
   if (value->get(mField, &tmp) != ETCH_OK) {
-    CAPU_LOG_ERROR(mRuntime->getLogger(), TAG, "DateTime Field could not be found");
+    ETCH_LOG_ERROR(mRuntime->getLogger(), mRuntime->getLogger().getSerializerContext(), "DateTime Field could not be found");
     return ETCH_ERROR;
   }
 
   EtchLong date = *((EtchLong*) tmp.get());
   result = new EtchDate((capu::time_t)date.get());
-  CAPU_LOG_TRACE(mRuntime->getLogger(), TAG, "Date has been deserialized");
+  ETCH_LOG_TRACE(mRuntime->getLogger(), mRuntime->getLogger().getSerializerContext(), "Date has been deserialized");
   return ETCH_OK;
 }
 
@@ -61,7 +59,7 @@ status_t EtchDateSerializer::exportValue(EtchValueFactory* vf, capu::SmartPointe
   EtchLong *date = new EtchLong(((EtchDate*) value.get())->get());
   if (result->put(mField, date) != ETCH_OK)
     return ETCH_ERROR;
-  CAPU_LOG_TRACE(mRuntime->getLogger(), TAG, "Date has been serialized");
+  ETCH_LOG_TRACE(mRuntime->getLogger(), mRuntime->getLogger().getSerializerContext(), "Date has been serialized");
   return ETCH_OK;
 }
 
@@ -97,6 +95,6 @@ status_t EtchDateSerializer::Init(EtchRuntime* runtime, EtchType* type, EtchClas
   }
 
   type->lock();
-  CAPU_LOG_TRACE(runtime->getLogger(), TAG, "EtchDateSerializer has been initialized");
+  ETCH_LOG_TRACE(runtime->getLogger(), runtime->getLogger().getSerializerContext(), "EtchDateSerializer has been initialized");
   return ETCH_OK;
 }

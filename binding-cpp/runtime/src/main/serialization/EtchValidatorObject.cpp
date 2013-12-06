@@ -55,10 +55,10 @@ capu::bool_t EtchValidatorObject::validate(capu::SmartPointer<EtchObject> value)
 status_t EtchValidatorObject::validateValue(capu::SmartPointer<EtchObject> value, capu::SmartPointer<EtchObject>& result) {
   if (validate(value)) {
     result = value;
-    CAPU_LOG_TRACE(mRuntime->getLogger(), "EtchValidatorObject", "Object has been validated");
+    ETCH_LOG_TRACE(mRuntime->getLogger(), mRuntime->getLogger().getValidatorContext(), "Object validated");
     return ETCH_OK;
   } else {
-    CAPU_LOG_WARN(mRuntime->getLogger(), "EtchValidatorObject", "Object has not been validated");
+    ETCH_LOG_WARN(mRuntime->getLogger(), mRuntime->getLogger().getValidatorContext(), "Object validation failed");
     return ETCH_ERROR;
   }
 }
@@ -72,7 +72,7 @@ status_t EtchValidatorObject::Get(EtchRuntime* runtime, capu::uint32_t ndim, cap
   }
   //TODO thread safety
   if (Validators(runtime)[ndim].get() == NULL) {
-    CAPU_LOG_TRACE(runtime->getLogger(), "EtchValidatorObject", "EtchValidatorObject has been created");
+    ETCH_LOG_TRACE(runtime->getLogger(), runtime->getLogger().getValidatorContext(), "EtchValidatorObject has been created");
     Validators(runtime)[ndim] = new EtchValidatorObject(runtime, ndim);
   }
   val = Validators(runtime)[ndim];

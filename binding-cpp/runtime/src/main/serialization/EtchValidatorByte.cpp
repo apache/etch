@@ -19,8 +19,6 @@
 #include "serialization/EtchValidatorByte.h"
 #include "support/EtchRuntime.h"
 
-static const char* TAG = "EtchValidatorByte";
-
 capu::SmartPointer<EtchValidator>* EtchValidatorByte::Validators(EtchRuntime* runtime) {
   static EtchValidatorCaches validators;
   return validators.get(runtime);
@@ -87,13 +85,13 @@ status_t EtchValidatorByte::validateValue(capu::SmartPointer<EtchObject> value, 
   if (validate(value)) {
     if ((value->getObjectType()->equals(EtchByte::TYPE())) || (mNDims > 0)) {
       result = value;
-      CAPU_LOG_TRACE(mRuntime->getLogger(), "EtchValidatorByte", "Object has been validated");
+      ETCH_LOG_TRACE(mRuntime->getLogger(), mRuntime->getLogger().getValidatorContext(), "Byte object validation successful");
       return ETCH_OK;
     } else {
       if (value->getObjectType()->equals(EtchShort::TYPE())) {
         EtchShort *v = (EtchShort *) value.get();
         result = new EtchByte((capu::int8_t)v->get());
-        CAPU_LOG_TRACE(mRuntime->getLogger(), "EtchValidatorByte", "Short has been validated by EtchValidatorByte and converted to EtchByte");
+        ETCH_LOG_TRACE(mRuntime->getLogger(), mRuntime->getLogger().getValidatorContext(), "Short has been validated by EtchValidatorByte and converted to EtchByte");
 
         return ETCH_OK;
       }
@@ -101,7 +99,7 @@ status_t EtchValidatorByte::validateValue(capu::SmartPointer<EtchObject> value, 
       if (value->getObjectType()->equals(EtchLong::TYPE())) {
         EtchLong *v = (EtchLong *) value.get();
         result = new EtchByte((capu::int8_t)v->get());
-        CAPU_LOG_TRACE(mRuntime->getLogger(), "EtchValidatorByte", "EtchLong has been validated by EtchValidatorByte and converted to EtchByte");
+        ETCH_LOG_TRACE(mRuntime->getLogger(), mRuntime->getLogger().getValidatorContext(), "EtchLong has been validated by EtchValidatorByte and converted to EtchByte");
 
         return ETCH_OK;
       }
@@ -109,14 +107,14 @@ status_t EtchValidatorByte::validateValue(capu::SmartPointer<EtchObject> value, 
       if (value->getObjectType()->equals(EtchInt32::TYPE())) {
         EtchInt32 *v = (EtchInt32 *) value.get();
         result = new EtchByte((capu::int8_t)v->get());
-        CAPU_LOG_TRACE(mRuntime->getLogger(), "EtchValidatorByte", "EtchInt32 has been validated by EtchValidatorByte and converted to EtchByte");
+        ETCH_LOG_TRACE(mRuntime->getLogger(), mRuntime->getLogger().getValidatorContext(), "EtchInt32 has been validated by EtchValidatorByte and converted to EtchByte");
         return ETCH_OK;
       }
-      CAPU_LOG_WARN(mRuntime->getLogger(), "EtchValidatorByte", "Object has not been validated");
+      ETCH_LOG_WARN(mRuntime->getLogger(), mRuntime->getLogger().getValidatorContext(), "Byte object validation failed due to unknown type");
       return ETCH_ERROR;
     }
   } else {
-    CAPU_LOG_WARN(mRuntime->getLogger(), "EtchValidatorByte", "Object has not been validated");
+    ETCH_LOG_WARN(mRuntime->getLogger(), mRuntime->getLogger().getValidatorContext(), "Byte object validation failed");
     return ETCH_ERROR;
   }
 }
@@ -131,7 +129,7 @@ status_t EtchValidatorByte::Get(EtchRuntime* runtime, capu::uint32_t ndim, capu:
   }
   if (Validators(runtime)[ndim].get() == NULL) {
     Validators(runtime)[ndim] = new EtchValidatorByte(runtime, ndim);
-    CAPU_LOG_TRACE(runtime->getLogger(), "EtchValidatorByte", "EtchValidatorByte has been created");
+    ETCH_LOG_TRACE(runtime->getLogger(), runtime->getLogger().getValidatorContext(), "EtchValidatorByte has been created");
 
   }
   val = Validators(runtime)[ndim];

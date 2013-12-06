@@ -53,10 +53,10 @@ EtchTcpConnection::~EtchTcpConnection() {
 
 status_t EtchTcpConnection::send(capu::int8_t* buf, capu::uint32_t off, capu::uint32_t len) {
   if (mSocket != NULL) {
-    CAPU_LOG_DEBUG(mRuntime->getLogger(), "EtchTcpConnection", "%d byte of data has been transmitted", len);
+    ETCH_LOG_DEBUG(mRuntime->getLogger(), mRuntime->getLogger().getTransportContext(), len << "byte of data has been transmitted");
     return mSocket->send((capu::char_t*)&buf[off], len);
   }
-  CAPU_LOG_WARN(mRuntime->getLogger(), "EtchTcpConnection", "%d byte of data has not been transmitted because there is no connection", len);
+  ETCH_LOG_WARN(mRuntime->getLogger(), mRuntime->getLogger().getTransportContext(), len << "byte of data has not been transmitted because there is no connection");
   return ETCH_ERROR;
 }
 
@@ -67,17 +67,17 @@ status_t EtchTcpConnection::readSocket() {
     capu::int32_t n;
     status_t result = mSocket->receive((capu::char_t*)buf->getBuffer(), buf->getSize(), n);
     if (result != ETCH_OK) {
-      CAPU_LOG_ERROR(mRuntime->getLogger(), "EtchTcpConnection", "%s : %d => Receive() failed with error code %d", mHost.c_str(), mPort, result);
+      ETCH_LOG_ERROR(mRuntime->getLogger(), mRuntime->getLogger().getTransportContext(), mHost.c_str() << ":" << mPort << " => Receive() failed with error code " << result);
       return result;
     }
     if (n <= 0) {
-      CAPU_LOG_ERROR(mRuntime->getLogger(), "EtchTcpConnection", "%s : %d => Connection closed for stack", mHost.c_str(), mPort);
+      ETCH_LOG_ERROR(mRuntime->getLogger(), mRuntime->getLogger().getTransportContext(),  mHost.c_str() << ":" << mPort <<" => Connection closed for stack");
       return ETCH_ERROR;
     }
 
     buf->setLength(n);
     buf->setIndex(0);
-    CAPU_LOG_DEBUG(mRuntime->getLogger(), "EtchTcpConnection", "%s : %d => %d byte data has been received and passed to Packetizer", mHost.c_str(), mPort, n);
+    ETCH_LOG_DEBUG(mRuntime->getLogger(), mRuntime->getLogger().getTransportContext(), mHost.c_str() << ":" << mPort << " => " << n << "bytes have been received and passed to Packetizer");
     mSession->sessionData(NULL, buf);
   }
   return ETCH_OK;
@@ -128,7 +128,7 @@ status_t EtchTcpConnection::openSocket(capu::bool_t reconnect) {
     }
     if (mSocket->connect((capu::char_t*) mHost.c_str(), mPort) == ETCH_OK) {
       mMutexConnection.unlock();
-      CAPU_LOG_TRACE(mRuntime->getLogger(), "EtchTcpConnection", "%s : %d => Connection established", mHost.c_str(), mPort);
+      ETCH_LOG_DEBUG(mRuntime->getLogger(), mRuntime->getLogger().getTransportContext(), mHost.c_str() << ":" << mPort << " => Connection established");
       return ETCH_OK;
     } else {
       mSocket->close();
@@ -136,7 +136,7 @@ status_t EtchTcpConnection::openSocket(capu::bool_t reconnect) {
       mSocket = NULL;
       first = false;
     }
-    CAPU_LOG_WARN(mRuntime->getLogger(), "EtchTcpConnection", "%s : %d => Connection could not be established for stack %d", mHost.c_str(), mPort);
+    ETCH_LOG_WARN(mRuntime->getLogger(), mRuntime->getLogger().getTransportContext(), mHost.c_str() << ":" << mPort << " => Connection could not be established");
   }
 
   mMutexConnection.unlock();
@@ -162,14 +162,14 @@ status_t EtchTcpConnection::transportControl(capu::SmartPointer<EtchObject> cont
     mMutex.lock();
     if (mIsStarted) {
       mMutex.unlock();
-      CAPU_LOG_DEBUG(mRuntime->getLogger(), "EtchTcpConnection", "%s : %d => Start command received and EtchTcpConnection Receiving Thread", mHost.c_str(), mPort);
+      ETCH_LOG_DEBUG(mRuntime->getLogger(), mRuntime->getLogger().getTransportContext(), mHost.c_str() << ":" << mPort << " => Start command received and EtchTcpConnection Receiving Thread");
       return ETCH_OK;
     }
     mIsStarted = true;
     mMutex.unlock();
     mThread = new capu::Thread();
     mThread->start(*this);
-    CAPU_LOG_DEBUG(mRuntime->getLogger(), "EtchTcpConnection", "%s : %d => Start command received and EtchTcpConnection Receiving Thread has started", mHost.c_str(), mPort);
+    ETCH_LOG_DEBUG(mRuntime->getLogger(), mRuntime->getLogger().getTransportContext(), mHost.c_str() << ":" << mPort << " => Start command received and EtchTcpConnection Receiving Thread has started");
     return ETCH_OK;
   }
 
@@ -177,14 +177,14 @@ status_t EtchTcpConnection::transportControl(capu::SmartPointer<EtchObject> cont
     mMutex.lock();
     if (mIsStarted) {
       mMutex.unlock();
-      CAPU_LOG_DEBUG(mRuntime->getLogger(), "EtchTcpConnection", "%s : %d => Start and wait command received, but already started", mHost.c_str(), mPort);
+      ETCH_LOG_DEBUG(mRuntime->getLogger(), mRuntime->getLogger().getTransportContext(), mHost.c_str() << ":" << mPort << " => Start and wait command received, but already started");
       return ETCH_OK;
     }
     mIsStarted = true;
     mMutex.unlock();
     mThread = new capu::Thread();
     mThread->start(*this);
-    CAPU_LOG_DEBUG(mRuntime->getLogger(), "EtchTcpConnection", "%s : %d => Start and wait command received and EtchTcpConnection Receiving Thread has started", mHost.c_str(), mPort);
+    ETCH_LOG_DEBUG(mRuntime->getLogger(), mRuntime->getLogger().getTransportContext(), mHost.c_str() << ":" << mPort << " => Start and wait command received and EtchTcpConnection Receiving Thread has started");
     return waitUp(((EtchInt32*) value.get())->get());
   }
 
@@ -192,11 +192,11 @@ status_t EtchTcpConnection::transportControl(capu::SmartPointer<EtchObject> cont
     mMutex.lock();
     if (!mIsStarted) {
       mMutex.unlock();
-      CAPU_LOG_DEBUG(mRuntime->getLogger(), "EtchTcpConnection", "%s : %d => Stop command received, but already stopped", mHost.c_str(), mPort);
+      ETCH_LOG_DEBUG(mRuntime->getLogger(), mRuntime->getLogger().getTransportContext(), mHost.c_str() << ":" << mPort << " => Stop command received, but already stopped");
 
       return ETCH_OK;
     }
-    CAPU_LOG_DEBUG(mRuntime->getLogger(), "EtchTcpConnection", "%s : %d => Stop command received and Stop flag for receiving thread is set", mHost.c_str(), mPort);
+    ETCH_LOG_DEBUG(mRuntime->getLogger(), mRuntime->getLogger().getTransportContext(), mHost.c_str() << ":" << mPort << " => Stop command received and Stop flag for receiving thread is set");
     mIsStarted = false;
 
     mMutex.unlock();
@@ -208,11 +208,11 @@ status_t EtchTcpConnection::transportControl(capu::SmartPointer<EtchObject> cont
     mMutex.lock();
     if (!mIsStarted) {
       mMutex.unlock();
-      CAPU_LOG_DEBUG(mRuntime->getLogger(), "EtchTcpConnection", "%s : %d => Stop and wait command received, but already stopped", mHost.c_str(), mPort);
+      ETCH_LOG_DEBUG(mRuntime->getLogger(), mRuntime->getLogger().getTransportContext(), mHost.c_str() << ":" << mPort << " => Stop and wait command received, but already stopped");
       return ETCH_OK;
     }
     mIsStarted = false;
-    CAPU_LOG_DEBUG(mRuntime->getLogger(), "EtchTcpConnection", "%s : %d => Stop and wait command received and Stop flag for receiving thread is set", mHost.c_str(), mPort);
+    ETCH_LOG_DEBUG(mRuntime->getLogger(), mRuntime->getLogger().getTransportContext(), mHost.c_str() << ":" << mPort << " => Stop and wait command received and Stop flag for receiving thread is set");
     mMutex.unlock();
 
     close();
@@ -223,13 +223,13 @@ status_t EtchTcpConnection::transportControl(capu::SmartPointer<EtchObject> cont
     mMutex.lock();
     if (!mIsStarted) {
       mMutex.unlock();
-      CAPU_LOG_DEBUG(mRuntime->getLogger(), "EtchTcpConnection", "%s : %d => Reset command received, but no connection established yet", mHost.c_str(), mPort);
+      ETCH_LOG_DEBUG(mRuntime->getLogger(), mRuntime->getLogger().getTransportContext(), mHost.c_str() << ":" << mPort << " => Reset command received, but no connection established yet");
       return ETCH_OK;
     }
     mIsStarted = false;
     mMutex.unlock();
     close();
-    CAPU_LOG_DEBUG(mRuntime->getLogger(), "EtchTcpConnection", "%s : %d => Reset command received and the receiving thread has been restarted", mHost.c_str(), mPort);
+    ETCH_LOG_DEBUG(mRuntime->getLogger(), mRuntime->getLogger().getTransportContext(), mHost.c_str() << ":" << mPort << " => Reset command received and the receiving thread has been restarted");
     return ETCH_OK;
   }
   return ETCH_ENOT_SUPPORTED;
@@ -245,7 +245,7 @@ void EtchTcpConnection::setSession(EtchSessionData* session) {
 
 status_t EtchTcpConnection::close() {
   if (mSocket != NULL) {
-    CAPU_LOG_DEBUG(mRuntime->getLogger(), "EtchTcpConnection", "%s : %d => Socket has been closed", mHost.c_str(), mPort);
+    ETCH_LOG_DEBUG(mRuntime->getLogger(), mRuntime->getLogger().getTransportContext(), mHost.c_str() << ":" << mPort << " => Socket has been closed");
     return mSocket->close();
   } else {
     return ETCH_ERROR;
@@ -269,23 +269,23 @@ void EtchTcpConnection::run() {
 
     status = openSocket(!first);
     if (status != ETCH_OK) {
-      CAPU_LOG_ERROR(mRuntime->getLogger(), "EtchTcpConnection", "%s : %d => Socket has not been successfully opened", mHost.c_str(), mPort);
+      ETCH_LOG_ERROR(mRuntime->getLogger(), mRuntime->getLogger().getTransportContext(), mHost.c_str() << ":" << mPort << " => Socket has not been successfully opened");
       break;
     }
 
     status = setupSocket();
     if (status != ETCH_OK) {
-      CAPU_LOG_ERROR(mRuntime->getLogger(), "EtchTcpConnection", "%s : %d => Socket has not been successfully opened", mHost.c_str(), mPort);
+      ETCH_LOG_ERROR(mRuntime->getLogger(), mRuntime->getLogger().getTransportContext(), mHost.c_str() << ":" << mPort << " => Socket has not been successfully opened");
       close();
       break;
     }
-    CAPU_LOG_DEBUG(mRuntime->getLogger(), "EtchTcpConnection", "%s : %d => Socket has been opened and connection has been successfully established and start reading", mHost.c_str(), mPort);
+    ETCH_LOG_DEBUG(mRuntime->getLogger(), mRuntime->getLogger().getTransportContext(), mHost.c_str() << ":" << mPort << " => Socket has been opened and connection has been successfully established and start reading");
     fireUp();
-    CAPU_LOG_DEBUG(mRuntime->getLogger(), "EtchTcpConnection", "%s : %d => FireUp was send to the Stack", mHost.c_str(), mPort);
+    ETCH_LOG_DEBUG(mRuntime->getLogger(), mRuntime->getLogger().getTransportContext(), mHost.c_str() << ":" << mPort << " => FireUp was send to the Stack");
     status = readSocket();
-    CAPU_LOG_TRACE(mRuntime->getLogger(), "EtchTcpConnection", "%s : %d => Connection closing", mHost.c_str(), mPort);
+    ETCH_LOG_DEBUG(mRuntime->getLogger(), mRuntime->getLogger().getTransportContext(), mHost.c_str() << ":" << mPort << " => Connection closing");
     fireDown();
-    CAPU_LOG_DEBUG(mRuntime->getLogger(), "EtchTcpConnection", "%s : %d => FireDown was send to the Stack", mHost.c_str(), mPort);
+    ETCH_LOG_DEBUG(mRuntime->getLogger(), mRuntime->getLogger().getTransportContext(), mHost.c_str() << ":" << mPort << " => FireDown was send to the Stack");
     close();
     first = false;
   }
@@ -295,22 +295,22 @@ void EtchTcpConnection::run() {
 status_t EtchTcpConnection::setupSocket() {
   if (mOptions.getBufferSize() != 0) {
     if (mSocket->setBufferSize(mOptions.getBufferSize()) != ETCH_OK) {
-      CAPU_LOG_ERROR(mRuntime->getLogger(), "EtchTcpConnection", "%s : %d => setupSocket: Error while setting buffer size", mHost.c_str(), mPort);
+      ETCH_LOG_ERROR(mRuntime->getLogger(), mRuntime->getLogger().getTransportContext(), mHost.c_str() << ":" << mPort << " => setupSocket: Error while setting buffer size");
       return ETCH_ERROR;
     }
   }
   if (mSocket->setKeepAlive((mOptions.getKeepAlive() != 0)) != ETCH_OK) {
-    CAPU_LOG_ERROR(mRuntime->getLogger(), "EtchTcpConnection", "%s : %d => setupSocket: Error while setting keep alive", mHost.c_str(), mPort);
+    ETCH_LOG_ERROR(mRuntime->getLogger(), mRuntime->getLogger().getTransportContext(), mHost.c_str() << ":" << mPort << " => setupSocket: Error while setting keep alive");
     return ETCH_ERROR;
   }
   if (mSocket->setLingerOption((mOptions.getLingerTime() >= 0), mOptions.getLingerTime()) != ETCH_OK) {
-    CAPU_LOG_ERROR(mRuntime->getLogger(), "EtchTcpConnection", "%s : %d => setupSocket: Error while setting linger time", mHost.c_str(), mPort);
+    ETCH_LOG_ERROR(mRuntime->getLogger(), mRuntime->getLogger().getTransportContext(), mHost.c_str() << ":" << mPort << " => setupSocket: Error while setting linger time");
     return ETCH_ERROR;
   }
   if (mSocket->setNoDelay((mOptions.getNoDelay() != 0)) != ETCH_OK) {
-    CAPU_LOG_ERROR(mRuntime->getLogger(), "EtchTcpConnection", "%s : %d => setupSocket: Error while setting delay", mHost.c_str(), mPort);
+    ETCH_LOG_ERROR(mRuntime->getLogger(), mRuntime->getLogger().getTransportContext(), mHost.c_str() << ":" << mPort << " => setupSocket: Error while setting delay");
     return ETCH_ERROR;
   }
-  CAPU_LOG_TRACE(mRuntime->getLogger(), "EtchTcpConnection", "%s : %d => Settings for socket has been successfully configured", mHost.c_str(), mPort);
+  ETCH_LOG_TRACE(mRuntime->getLogger(), mRuntime->getLogger().getTransportContext(), mHost.c_str() << ":" << mPort << " => Settings for socket has been successfully configured");
   return ETCH_OK;
 }

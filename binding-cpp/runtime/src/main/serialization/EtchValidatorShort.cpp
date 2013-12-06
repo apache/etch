@@ -19,8 +19,6 @@
 #include "serialization/EtchValidatorShort.h"
 #include "support/EtchRuntime.h"
 
-static const char* TAG = "EtchValidatorShort";
-
 capu::SmartPointer<EtchValidator>* EtchValidatorShort::Validators(EtchRuntime* runtime) {
   static EtchValidatorCaches validators;
   return validators.get(runtime);
@@ -83,35 +81,35 @@ status_t EtchValidatorShort::validateValue(capu::SmartPointer<EtchObject> value,
   if (validate(value)) {
     if ((value->getObjectType()->equals(EtchShort::TYPE())) || (mNDims > 0)) {
       result = value;
-      CAPU_LOG_TRACE(mRuntime->getLogger(), "EtchValidatorShort", "Object has been validated");
+      ETCH_LOG_TRACE(mRuntime->getLogger(), mRuntime->getLogger().getValidatorContext(), "Short Object has been validated");
       return ETCH_OK;
     } else {
       if (value->getObjectType()->equals(EtchInt32::TYPE())) {
         EtchInt32 *v = (EtchInt32 *) value.get();
         result = new EtchShort((capu::int16_t)v->get());
-        CAPU_LOG_TRACE(mRuntime->getLogger(), "EtchValidatorShort", "EtchInt32 has been validated by EtchValidatorInt and converted to EtchShort");
+        ETCH_LOG_TRACE(mRuntime->getLogger(), mRuntime->getLogger().getValidatorContext(), "EtchInt32 has been validated by EtchValidatorInt and converted to EtchShort");
         return ETCH_OK;
       }
 
       if (value->getObjectType()->equals(EtchByte::TYPE())) {
         EtchByte *v = (EtchByte *) value.get();
         result = new EtchShort((capu::int16_t)v->get());
-        CAPU_LOG_TRACE(mRuntime->getLogger(), "EtchValidatorShort", "EtchByte has been validated by EtchValidatorInt and converted to EtchShort");
+        ETCH_LOG_TRACE(mRuntime->getLogger(), mRuntime->getLogger().getValidatorContext(), "EtchByte has been validated by EtchValidatorInt and converted to EtchShort");
         return ETCH_OK;
       }
 
       if (value->getObjectType()->equals(EtchLong::TYPE())) {
         EtchLong *v = (EtchLong *) value.get();
         result = new EtchShort((capu::int16_t)v->get());
-        CAPU_LOG_TRACE(mRuntime->getLogger(), "EtchValidatorShort", "EtchLong has been validated by EtchValidatorInt and converted to EtchShort");
+        ETCH_LOG_TRACE(mRuntime->getLogger(), mRuntime->getLogger().getValidatorContext(), "EtchLong has been validated by EtchValidatorInt and converted to EtchShort");
         return ETCH_OK;
       }
 
-      CAPU_LOG_WARN(mRuntime->getLogger(), "EtchValidatorShort", "Object has not been validated");
+      ETCH_LOG_WARN(mRuntime->getLogger(), mRuntime->getLogger().getValidatorContext(), "Short object validation failed due to unknown type");
       return ETCH_ERROR;
     }
   } else {
-    CAPU_LOG_WARN(mRuntime->getLogger(), "EtchValidatorShort", "Object has not been validated");
+    ETCH_LOG_WARN(mRuntime->getLogger(), mRuntime->getLogger().getValidatorContext(), "Short object validation failed");
     return ETCH_ERROR;
   }
 }
@@ -125,7 +123,7 @@ status_t EtchValidatorShort::Get(EtchRuntime* runtime, capu::uint32_t ndim, capu
     return ETCH_OK;
   }
   if (Validators(runtime)[ndim].get() == NULL) {
-    CAPU_LOG_TRACE(runtime->getLogger(), "EtchValidatorShort", "EtchValidatorShort has been created");
+    ETCH_LOG_TRACE(runtime->getLogger(), runtime->getLogger().getValidatorContext(), "EtchValidatorShort has been created");
     Validators(runtime)[ndim] = new EtchValidatorShort(runtime, ndim);
   }
   val = Validators(runtime)[ndim];

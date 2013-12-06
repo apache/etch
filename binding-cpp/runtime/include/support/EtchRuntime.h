@@ -94,6 +94,7 @@ public:
 private:
   capu::bool_t mIsClosed;
   EtchLogger mLogger;
+  EtchConsoleLogAppender mLogAppender;
   static capu::uint64_t sId;
   capu::uint64_t mId;
   capu::Mutex mMutex;

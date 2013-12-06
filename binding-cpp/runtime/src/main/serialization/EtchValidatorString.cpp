@@ -19,8 +19,6 @@
 #include "serialization/EtchValidatorString.h"
 #include "support/EtchRuntime.h"
 
-static const char* TAG = "EtchValidatorString";
-
 capu::SmartPointer<EtchValidator>* EtchValidatorString::Validators(EtchRuntime* runtime) {
   static EtchValidatorCaches validators;
   return validators.get(runtime);
@@ -66,10 +64,10 @@ capu::bool_t EtchValidatorString::validate(capu::SmartPointer<EtchObject> value)
 status_t EtchValidatorString::validateValue(capu::SmartPointer<EtchObject> value, capu::SmartPointer<EtchObject>& result) {
   if (validate(value)) {
     result = value;
-    CAPU_LOG_TRACE(mRuntime->getLogger(), TAG, "String has been validated");
+    ETCH_LOG_TRACE(mRuntime->getLogger(), mRuntime->getLogger().getValidatorContext(), "String object validated");
     return ETCH_OK;
   } else {
-    CAPU_LOG_WARN(mRuntime->getLogger(), TAG, "String has not been validated");
+    ETCH_LOG_WARN(mRuntime->getLogger(), mRuntime->getLogger().getValidatorContext(), "String object validation failed");
     return ETCH_ERROR;
   }
 }
@@ -84,7 +82,7 @@ status_t EtchValidatorString::Get(EtchRuntime* runtime, capu::uint32_t ndim, cap
   }
   if (Validators(runtime)[ndim].get() == NULL) {
     Validators(runtime)[ndim] = new EtchValidatorString(runtime, ndim);
-    CAPU_LOG_TRACE(runtime->getLogger(), TAG, "EtchValidatorString has been created");
+    ETCH_LOG_TRACE(runtime->getLogger(), runtime->getLogger().getValidatorContext(), "EtchValidatorString has been created");
   }
   val = Validators(runtime)[ndim];
   return ETCH_OK;

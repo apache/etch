@@ -18,8 +18,6 @@
 #include "transport/EtchMessagizer.h"
 #include "support/EtchRuntime.h"
 
-static char* TAG = "EtchMessagizer";
-
 const EtchString& EtchMessagizer::FORMAT(){
   static const EtchString name("Messagizer.format");
   return name;
@@ -96,10 +94,10 @@ status_t EtchMessagizer::sessionPacket(capu::SmartPointer<EtchWho> sender, capu:
   capu::SmartPointer<EtchMessage> message;
   result = mTdi->readMessage(buf, message);
   if (result != ETCH_OK) {
-    CAPU_LOG_ERROR(mRuntime->getLogger(), TAG, "Deserialization of messages has been failed");
+    ETCH_LOG_ERROR(mRuntime->getLogger(), mRuntime->getLogger().getMessagizerContext(), "Deserialization of messages has been failed");
     return result;
   }
-  CAPU_LOG_DEBUG(mRuntime->getLogger(), TAG, "Message has been deserialized and passed to the Mailbox Manager");
+  ETCH_LOG_DEBUG(mRuntime->getLogger(), mRuntime->getLogger().getMessagizerContext(), "Message has been deserialized and passed to the Mailbox Manager");
   result = mSession->sessionMessage(sender, message);
   if (result != ETCH_OK) {
     EtchString errmsg("Unwanted Message");
@@ -129,12 +127,12 @@ status_t EtchMessagizer::transportMessage(capu::SmartPointer<EtchWho> recipient,
   }
   result = mTdo->writeMessage(message, msgBuf);
   if (result != ETCH_OK){
-    CAPU_LOG_ERROR(mRuntime->getLogger(), TAG, "Serialization of messages has been failed");
+    ETCH_LOG_ERROR(mRuntime->getLogger(), mRuntime->getLogger().getMessagizerContext(), "Serialization of messages has been failed");
     mutex.unlock();
     return result;
   }
   msgBuf->setIndex(0);
-  CAPU_LOG_DEBUG(mRuntime->getLogger(), TAG, "Serialized message has been sent to the Packetizer");
+  ETCH_LOG_DEBUG(mRuntime->getLogger(), mRuntime->getLogger().getMessagizerContext(), "Serialized message has been sent to the Packetizer");
   result = mTransport->transportPacket(recipient, msgBuf);
   if (result != ETCH_OK) {
     mutex.unlock();

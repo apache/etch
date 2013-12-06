@@ -19,8 +19,6 @@
 #include "serialization/EtchBinaryTaggedDataInput.h"
 #include "support/EtchRuntime.h"
 
-static const char* TAG = "EtchBinaryTaggedDataInput";
-
 EtchBinaryTaggedDataInput::EtchBinaryTaggedDataInput(EtchRuntime* runtime, EtchValueFactory* vf)
 : EtchBinaryTaggedData(vf), mRuntime(runtime), mBuffer(NULL), mLengthBudget(0) {
   //get int validator
@@ -57,7 +55,7 @@ status_t EtchBinaryTaggedDataInput::readMessage(capu::SmartPointer<EtchFlexBuffe
   if (ret != ETCH_OK) {
     mBuffer = NULL;
     mLengthBudget = 0;
-    CAPU_LOG_ERROR(mRuntime->getLogger(), TAG, "Deserialization of Message header has failed");
+    ETCH_LOG_ERROR(mRuntime->getLogger(), mRuntime->getLogger().getSerializerContext(), "Deserialization of Message header has failed");
     return ret;
   }
 
@@ -65,7 +63,7 @@ status_t EtchBinaryTaggedDataInput::readMessage(capu::SmartPointer<EtchFlexBuffe
   if (ret != ETCH_OK) {
     mBuffer = NULL;
     mLengthBudget = 0;
-    CAPU_LOG_ERROR(mRuntime->getLogger(), TAG, "Deserialization of Message body has failed");
+    ETCH_LOG_ERROR(mRuntime->getLogger(), mRuntime->getLogger().getSerializerContext(), "Deserialization of Message body has failed");
     return ret;
   }
 
@@ -73,7 +71,7 @@ status_t EtchBinaryTaggedDataInput::readMessage(capu::SmartPointer<EtchFlexBuffe
   if (ret != ETCH_OK) {
     mBuffer = NULL;
     mLengthBudget = 0;
-    CAPU_LOG_ERROR(mRuntime->getLogger(), TAG, "Deserialization of Message end has failed");
+    ETCH_LOG_ERROR(mRuntime->getLogger(), mRuntime->getLogger().getSerializerContext(),  "Deserialization of Message end has failed");
     return ret;
   }
 
@@ -85,19 +83,19 @@ status_t EtchBinaryTaggedDataInput::readStruct(capu::SmartPointer<EtchStructValu
 
   ret = startStruct(result);
   if (ret != ETCH_OK) {
-    CAPU_LOG_ERROR(mRuntime->getLogger(), TAG, "Reading header of struct has failed");
+    ETCH_LOG_ERROR(mRuntime->getLogger(), mRuntime->getLogger().getSerializerContext(), "Reading header of struct has failed");
     return ret;
   }
 
   ret = readKeysAndValues(result);
   if (ret != ETCH_OK) {
-    CAPU_LOG_ERROR(mRuntime->getLogger(), TAG, "Reading body of struct has failed");
+    ETCH_LOG_ERROR(mRuntime->getLogger(), mRuntime->getLogger().getSerializerContext(), "Reading body of struct has failed");
     return ret;
   }
 
   ret = endStruct(result);
   if (ret != ETCH_OK) {
-    CAPU_LOG_ERROR(mRuntime->getLogger(), TAG, "Reading end of struct has failed");
+    ETCH_LOG_ERROR(mRuntime->getLogger(), mRuntime->getLogger().getSerializerContext(), "Reading end of struct has failed");
     return ret;
   }
 
@@ -109,19 +107,19 @@ status_t EtchBinaryTaggedDataInput::readArray(capu::SmartPointer<EtchValidator> 
 
   ret = startArray(result);
   if (ret != ETCH_OK) {
-    CAPU_LOG_ERROR(mRuntime->getLogger(), TAG, "Reading header of array has failed");
+    ETCH_LOG_ERROR(mRuntime->getLogger(), mRuntime->getLogger().getSerializerContext(), "Reading header of array has failed");
     return ret;
   }
 
   ret = readValues(result, v);
   if (ret != ETCH_OK) {
-    CAPU_LOG_ERROR(mRuntime->getLogger(), TAG, "Reading body of array has failed");
+    ETCH_LOG_ERROR(mRuntime->getLogger(), mRuntime->getLogger().getSerializerContext(), "Reading body of array has failed");
     return ret;
   }
 
   ret = endArray(result);
   if (ret != ETCH_OK) {
-    CAPU_LOG_ERROR(mRuntime->getLogger(), TAG, "Reading end of array has failed");
+    ETCH_LOG_ERROR(mRuntime->getLogger(), mRuntime->getLogger().getSerializerContext(), "Reading end of array has failed");
     return ret;
   }
   return ETCH_OK;
@@ -179,19 +177,19 @@ status_t EtchBinaryTaggedDataInput::startMessage(capu::SmartPointer<EtchMessage>
   mBuffer->getByte(version);
 
   if (version != VERSION()) {
-    CAPU_LOG_ERROR(mRuntime->getLogger(), TAG, "Incorrect serializer version");
+    ETCH_LOG_ERROR(mRuntime->getLogger(), mRuntime->getLogger().getSerializerContext(), "Incorrect serializer version");
     return ETCH_EIO;
   }
 
   EtchType *type = NULL;
   if (readType(type) != ETCH_OK) {
-    CAPU_LOG_ERROR(mRuntime->getLogger(), TAG, "Type information is not read correctly");
+    ETCH_LOG_ERROR(mRuntime->getLogger(), mRuntime->getLogger().getSerializerContext(), "Type information is not read correctly");
     return ETCH_EIO;
   }
 
   capu::int32_t length = 0;
   if (readLength(length) != ETCH_OK) {
-    CAPU_LOG_ERROR(mRuntime->getLogger(), TAG, "Length of message is not read correctly");
+    ETCH_LOG_ERROR(mRuntime->getLogger(), mRuntime->getLogger().getSerializerContext(), "Length of message is not read correctly");
     return ETCH_EIO;
   }
 
@@ -206,13 +204,13 @@ status_t EtchBinaryTaggedDataInput::endMessage(capu::SmartPointer<EtchMessage> m
 status_t EtchBinaryTaggedDataInput::startStruct(capu::SmartPointer<EtchStructValue> &result) {
   EtchType* t = NULL;
   if (readType(t) != ETCH_OK) {
-    CAPU_LOG_ERROR(mRuntime->getLogger(), TAG, "type of struct is not read correctly");
+    ETCH_LOG_ERROR(mRuntime->getLogger(), mRuntime->getLogger().getSerializerContext(), "type of struct is not read correctly");
     return ETCH_ERROR;
   }
 
   capu::int32_t length;
   if (readLength(length) != ETCH_OK) {
-    CAPU_LOG_ERROR(mRuntime->getLogger(), TAG, "Length of struct is not read correctly");
+    ETCH_LOG_ERROR(mRuntime->getLogger(), mRuntime->getLogger().getSerializerContext(), "Length of struct is not read correctly");
     return ETCH_ERROR;
   }
 
@@ -231,7 +229,7 @@ status_t EtchBinaryTaggedDataInput::startArray(EtchArrayValue *& result) {
   EtchType* customStructType = NULL;
   if (type == EtchTypeCode::CUSTOM || type == EtchTypeCode::STRUCT) {
     if (readType(customStructType) != ETCH_OK) {
-      CAPU_LOG_ERROR(mRuntime->getLogger(), TAG, "type of array is not read correctly");
+      ETCH_LOG_ERROR(mRuntime->getLogger(), mRuntime->getLogger().getSerializerContext(), "type of array is not read correctly");
       return ETCH_ERROR;
     }
   } else {
@@ -240,24 +238,24 @@ status_t EtchBinaryTaggedDataInput::startArray(EtchArrayValue *& result) {
 
   capu::int32_t dim;
   if (readIntegerValue(dim) != ETCH_OK) {
-    CAPU_LOG_ERROR(mRuntime->getLogger(), TAG, "dimension of array is not read correctly");
+    ETCH_LOG_ERROR(mRuntime->getLogger(), mRuntime->getLogger().getSerializerContext(), "dimension of array is not read correctly");
     return ETCH_EINVAL;
   }
 
   if (dim <= 0 || dim > (capu::int32_t)EtchValidator::MAX_NDIMS) {
-    CAPU_LOG_ERROR(mRuntime->getLogger(), TAG, "dimension of array is not within predefined limits");
+    ETCH_LOG_ERROR(mRuntime->getLogger(), mRuntime->getLogger().getSerializerContext(), "dimension of array is not within predefined limits");
     return ETCH_EINVAL;
   }
 
   capu::int32_t length;
   if (readLength(length) != ETCH_OK) {
-    CAPU_LOG_ERROR(mRuntime->getLogger(), TAG, "length of array is not read correctly");
+    ETCH_LOG_ERROR(mRuntime->getLogger(), mRuntime->getLogger().getSerializerContext(), "length of array is not read correctly");
     return ETCH_ERROR;
   }
 
   capu::SmartPointer<EtchNativeArrayBase> array;
   if (allocNativeArray(type, customStructType, dim, length, array) != ETCH_OK) {
-    CAPU_LOG_ERROR(mRuntime->getLogger(), TAG, "Allocation of array with specified type has failed");
+    ETCH_LOG_ERROR(mRuntime->getLogger(), mRuntime->getLogger().getSerializerContext(), "Allocation of array with specified type has failed");
     return ETCH_ERROR;
   }
 
@@ -337,7 +335,7 @@ status_t EtchBinaryTaggedDataInput::readField(EtchType *type, EtchField& field) 
 status_t EtchBinaryTaggedDataInput::readLength(capu::int32_t& result) {
   capu::int32_t length = 0;
   if (readIntegerValue(length) != ETCH_OK) {
-    CAPU_LOG_ERROR(mRuntime->getLogger(), TAG, "length information is not read correctly");
+    ETCH_LOG_ERROR(mRuntime->getLogger(), mRuntime->getLogger().getSerializerContext(), "length information is not read correctly");
     return ETCH_ERROR;
   }
 
@@ -428,7 +426,7 @@ status_t EtchBinaryTaggedDataInput::readValue(capu::SmartPointer<EtchValidator> 
       if (validateValue(v, boolean, result) != ETCH_OK) {
         return ETCH_ERROR;
       } else {
-        CAPU_LOG_TRACE(mRuntime->getLogger(), TAG, "Boolean false value has been received");
+        ETCH_LOG_TRACE(mRuntime->getLogger(), mRuntime->getLogger().getSerializerContext(), "Boolean false value has been received");
         return ETCH_OK;
       }
     }
@@ -439,7 +437,7 @@ status_t EtchBinaryTaggedDataInput::readValue(capu::SmartPointer<EtchValidator> 
       if (validateValue(v, boolean, result) != ETCH_OK) {
         return ETCH_ERROR;
       } else {
-        CAPU_LOG_TRACE(mRuntime->getLogger(), TAG, "Boolean true value has been received");
+        ETCH_LOG_TRACE(mRuntime->getLogger(), mRuntime->getLogger().getSerializerContext(), "Boolean true value has been received");
 
         return ETCH_OK;
       }
@@ -454,7 +452,7 @@ status_t EtchBinaryTaggedDataInput::readValue(capu::SmartPointer<EtchValidator> 
       if (validateValue(v, byte, result) != ETCH_OK) {
         return ETCH_ERROR;
       } else {
-        CAPU_LOG_TRACE(mRuntime->getLogger(), TAG, "Byte value has been received");
+        ETCH_LOG_TRACE(mRuntime->getLogger(), mRuntime->getLogger().getSerializerContext(), "Byte value has been received");
         return ETCH_OK;
       }
     }
@@ -468,7 +466,7 @@ status_t EtchBinaryTaggedDataInput::readValue(capu::SmartPointer<EtchValidator> 
       if (validateValue(v, shortNum, result) != ETCH_OK) {
         return ETCH_ERROR;
       } else {
-        CAPU_LOG_TRACE(mRuntime->getLogger(), TAG, "Short value has been received");
+        ETCH_LOG_TRACE(mRuntime->getLogger(), mRuntime->getLogger().getSerializerContext(), "Short value has been received");
         return ETCH_OK;
       }
     }
@@ -482,7 +480,7 @@ status_t EtchBinaryTaggedDataInput::readValue(capu::SmartPointer<EtchValidator> 
       if (validateValue(v, intNum, result) != ETCH_OK) {
         return ETCH_ERROR;
       } else {
-        CAPU_LOG_TRACE(mRuntime->getLogger(), TAG, "Int value has been received");
+        ETCH_LOG_TRACE(mRuntime->getLogger(), mRuntime->getLogger().getSerializerContext(), "Int value has been received");
         return ETCH_OK;
       }
     }
@@ -496,7 +494,7 @@ status_t EtchBinaryTaggedDataInput::readValue(capu::SmartPointer<EtchValidator> 
       if (validateValue(v, longNum, result) != ETCH_OK) {
         return ETCH_ERROR;
       } else {
-        CAPU_LOG_TRACE(mRuntime->getLogger(), TAG, "Long value has been received");
+        ETCH_LOG_TRACE(mRuntime->getLogger(), mRuntime->getLogger().getSerializerContext(), "Long value has been received");
         return ETCH_OK;
       }
     }
@@ -510,7 +508,7 @@ status_t EtchBinaryTaggedDataInput::readValue(capu::SmartPointer<EtchValidator> 
       if (validateValue(v, floatNum, result) != ETCH_OK) {
         return ETCH_ERROR;
       } else {
-        CAPU_LOG_TRACE(mRuntime->getLogger(), TAG, "Float value has been received");
+        ETCH_LOG_TRACE(mRuntime->getLogger(), mRuntime->getLogger().getSerializerContext(), "Float value has been received");
         return ETCH_OK;
       }
     }
@@ -524,7 +522,7 @@ status_t EtchBinaryTaggedDataInput::readValue(capu::SmartPointer<EtchValidator> 
       if (validateValue(v, doubleNum, result) != ETCH_OK) {
         return ETCH_ERROR;
       } else {
-        CAPU_LOG_TRACE(mRuntime->getLogger(), TAG, "Double value has been received");
+        ETCH_LOG_TRACE(mRuntime->getLogger(), mRuntime->getLogger().getSerializerContext(), "Double value has been received");
         return ETCH_OK;
       }
     }
@@ -547,7 +545,7 @@ status_t EtchBinaryTaggedDataInput::readValue(capu::SmartPointer<EtchValidator> 
 
       ret = validateValue(v, narray, result);
 
-      CAPU_LOG_TRACE(mRuntime->getLogger(), TAG, "Byte Array has been received");
+      ETCH_LOG_TRACE(mRuntime->getLogger(), mRuntime->getLogger().getSerializerContext(), "Byte Array has been received");
 
       return ret;
     }
@@ -583,7 +581,7 @@ status_t EtchBinaryTaggedDataInput::readValue(capu::SmartPointer<EtchValidator> 
         return ETCH_ERROR;
       } else {
         result = array;
-        CAPU_LOG_TRACE(mRuntime->getLogger(), TAG, "Array has been received");
+        ETCH_LOG_TRACE(mRuntime->getLogger(), mRuntime->getLogger().getSerializerContext(), "Array has been received");
         return ETCH_OK;
       }
     }
@@ -595,7 +593,7 @@ status_t EtchBinaryTaggedDataInput::readValue(capu::SmartPointer<EtchValidator> 
         return ETCH_ERROR;
       } else {
         result = str;
-        CAPU_LOG_TRACE(mRuntime->getLogger(), TAG, "Empty String value has been received");
+        ETCH_LOG_TRACE(mRuntime->getLogger(), mRuntime->getLogger().getSerializerContext(), "Empty String value has been received");
         return ETCH_OK;
       }
     }
@@ -617,7 +615,7 @@ status_t EtchBinaryTaggedDataInput::readValue(capu::SmartPointer<EtchValidator> 
         return ETCH_ERROR;
       } else {
         result = str;
-        CAPU_LOG_TRACE(mRuntime->getLogger(), TAG, "String value has been received");
+        ETCH_LOG_TRACE(mRuntime->getLogger(), mRuntime->getLogger().getSerializerContext(), "String value has been received");
         return ETCH_OK;
       }
     }
@@ -637,7 +635,7 @@ status_t EtchBinaryTaggedDataInput::readValue(capu::SmartPointer<EtchValidator> 
       if (validateValue(v, obj, result) != ETCH_OK) {
         return ETCH_ERROR;
       } else {
-        CAPU_LOG_TRACE(mRuntime->getLogger(), TAG, "Custom value has been received");
+        ETCH_LOG_TRACE(mRuntime->getLogger(), mRuntime->getLogger().getSerializerContext(), "Custom value has been received");
         return ETCH_OK;
       }
     }
@@ -649,7 +647,7 @@ status_t EtchBinaryTaggedDataInput::readValue(capu::SmartPointer<EtchValidator> 
         if (validateValue(v, tmp, result) != ETCH_OK) {
           return ETCH_ERROR;
         } else {
-          CAPU_LOG_TRACE(mRuntime->getLogger(), TAG, "Tiny Int value has been received");
+          ETCH_LOG_TRACE(mRuntime->getLogger(), mRuntime->getLogger().getSerializerContext(), "Tiny Int value has been received");
           return ETCH_OK;
         }
       }

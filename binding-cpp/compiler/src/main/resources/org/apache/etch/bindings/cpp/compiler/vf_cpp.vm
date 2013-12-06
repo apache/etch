@@ -80,7 +80,7 @@ public:
     _struct->put($vf::$p.vname($helper)(), val$CountParams );
 #end
     result = _struct;
-    CAPU_LOG_TRACE(mRuntime->getLogger(), "$vf", "${namespace}: exported $n.vname($helper) Value.");
+    ETCH_LOG_TRACE(mRuntime->getLogger(), mRuntime->getLogger().getDeliveryServiceContext(), "Valuefactory ${namespace}: exported $n.vname($helper) Value.");
     return ETCH_OK;
   }
   status_t importValue(EtchStructValue* value, EtchObjectPtr &result)
@@ -96,7 +96,7 @@ public:
     v->$helper.getSetterName($p.name())(tmp$CountParams);
 #end
     result = v;
-    CAPU_LOG_TRACE(mRuntime->getLogger(), "$vf", "${namespace}: imported $n.vname($helper) Value.");
+    ETCH_LOG_TRACE(mRuntime->getLogger(), mRuntime->getLogger().getDeliveryServiceContext(), "Valuefactory ${namespace}: imported $n.vname($helper) Value.");
     return ETCH_OK;
   }
 };

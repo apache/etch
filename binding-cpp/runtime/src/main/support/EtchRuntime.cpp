@@ -19,13 +19,17 @@
 #include "common/EtchRuntimeException.h"
 #include "support/EtchRuntime.h"
 #include "support/EtchTransportHelper.h"
-#include "util/EtchLogger.h"
+#include "capu/util/LogLevel.h"
 
 EtchRuntime::EtchRuntime()
-  : mIsClosed(false) {
+  :   mIsClosed(false)
+    , mLogger(mLogAppender)
+{
   mMutex.lock();
   mId = getNextId();
   mMutex.unlock();
+
+  mLogger.setLogLevel(capu::ELogLevel::LL_ALL);
 }
 
 EtchRuntime::~EtchRuntime() {

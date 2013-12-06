@@ -19,8 +19,6 @@
 #include "serialization/EtchSetSerializer.h"
 #include "support/EtchRuntime.h"
 
-static const char* TAG = "EtchSetSerializer";
-
 const EtchString& EtchSetSerializer::FIELD_NAME() {
   static const EtchString name("keys");
   return name;
@@ -55,7 +53,7 @@ status_t EtchSetSerializer::exportValue(EtchValueFactory* vf, capu::SmartPointer
   result = new EtchStructValue(mType, vf);
   if (result->put(mField, array) != ETCH_OK)
     return ETCH_ERROR;
-  CAPU_LOG_TRACE(mRuntime->getLogger(), TAG, "Set has been serialized");
+  ETCH_LOG_TRACE(mRuntime->getLogger(), mRuntime->getLogger().getSerializerContext(), "Set has been serialized");
   return ETCH_OK;
 }
 
@@ -67,7 +65,7 @@ status_t EtchSetSerializer::importValue(EtchStructValue* value, capu::SmartPoint
   }
   capu::SmartPointer<EtchObject> tmp;
   if (value->get(mField, &tmp) != ETCH_OK) {
-    CAPU_LOG_ERROR(mRuntime->getLogger(), TAG, "Keys Field could not be found");
+    ETCH_LOG_ERROR(mRuntime->getLogger(), mRuntime->getLogger().getSerializerContext(), "Keys Field could not be found");
     return ETCH_ERROR;
   }
 
@@ -83,7 +81,7 @@ status_t EtchSetSerializer::importValue(EtchStructValue* value, capu::SmartPoint
       return res;
   }
   result = (capu::SmartPointer<EtchObject>) set;
-  CAPU_LOG_TRACE(mRuntime->getLogger(), TAG, "Set has been deserialized");
+  ETCH_LOG_TRACE(mRuntime->getLogger(), mRuntime->getLogger().getSerializerContext(), "Set has been deserialized");
   return ETCH_OK;
 }
 
@@ -118,6 +116,6 @@ status_t EtchSetSerializer::Init(EtchRuntime* runtime, EtchType* type, EtchClass
   }
 
   type->lock();
-  CAPU_LOG_TRACE(runtime->getLogger(), TAG, "EtchSetSerializer has been initialized");
+  ETCH_LOG_TRACE(runtime->getLogger(), runtime->getLogger().getSerializerContext(), "EtchSetSerializer has been initialized");
   return ETCH_OK;
 }

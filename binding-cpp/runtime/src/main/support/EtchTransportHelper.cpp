@@ -64,7 +64,7 @@ status_t EtchTransportHelper::InitResources(EtchRuntime* runtime, EtchResources*
     resources->put( EtchTransportHelper::FREE_POOL(), obj, objOld);
   }
   result = resources;
-  CAPU_LOG_TRACE(runtime->getLogger(), "EtchTransportHelper", "Resources and pools have been allocated initialized");
+  ETCH_LOG_TRACE(runtime->getLogger(), runtime->getLogger().getRuntimeContext(), "Resources and pools have been allocated initialized");
 
   return ETCH_OK;
 }
@@ -98,7 +98,7 @@ status_t EtchTransportHelper::DestroyResources(EtchRuntime* runtime, EtchResourc
 
     //delete resource
     delete resources;
-    CAPU_LOG_TRACE(runtime->getLogger(), "EtchTransportHelper", "Resources and pools have been deallocated");
+    ETCH_LOG_TRACE(runtime->getLogger(), runtime->getLogger().getRuntimeContext(), "Resources and pools have been deallocated");
     return ETCH_OK;
   }
 }

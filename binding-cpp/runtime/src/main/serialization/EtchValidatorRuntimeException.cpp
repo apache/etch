@@ -19,8 +19,6 @@
 #include "serialization/EtchValidatorRuntimeException.h"
 #include "support/EtchRuntime.h"
 
-static const char* TAG = "EtchValidatorRuntimeException";
-
 capu::SmartPointer<EtchValidator>* EtchValidatorRuntimeException::Validators(EtchRuntime* runtime) {
   static EtchValidatorCaches validators;
   return validators.get(runtime);
@@ -52,10 +50,10 @@ capu::bool_t EtchValidatorRuntimeException::validate(capu::SmartPointer<EtchObje
 status_t EtchValidatorRuntimeException::validateValue(capu::SmartPointer<EtchObject> value, capu::SmartPointer<EtchObject>& result) {
   if (validate(value)) {
     result = value;
-    CAPU_LOG_TRACE(mRuntime->getLogger(), "EtchValidatorRuntimeException", "EtchRuntimeException has been validated");
+    ETCH_LOG_TRACE(mRuntime->getLogger(), mRuntime->getLogger().getValidatorContext(), "EtchRuntimeException validated");
     return ETCH_OK;
   } else {
-    CAPU_LOG_WARN(mRuntime->getLogger(), "EtchValidatorRuntimeException", "EtchRuntimeException has not been validated");
+    ETCH_LOG_WARN(mRuntime->getLogger(), mRuntime->getLogger().getValidatorContext(), "EtchRuntimeException object validation failed");
     return ETCH_ERROR;
   }
 }
@@ -63,7 +61,7 @@ status_t EtchValidatorRuntimeException::validateValue(capu::SmartPointer<EtchObj
 status_t EtchValidatorRuntimeException::Get(EtchRuntime* runtime, capu::SmartPointer<EtchValidator> &val) {
   if (Validators(runtime)[0].get() == NULL) {
     Validators(runtime)[0] = new EtchValidatorRuntimeException(runtime);
-    CAPU_LOG_TRACE(runtime->getLogger(), "EtchValidatorRuntimeException", "EtchValidatorRuntimeException has been created");
+    ETCH_LOG_TRACE(runtime->getLogger(), runtime->getLogger().getValidatorContext(),"EtchValidatorRuntimeException has been created");
   }
   val = Validators(runtime)[0];
   return ETCH_OK;

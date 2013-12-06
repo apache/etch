@@ -19,8 +19,6 @@
 #include "serialization/EtchRuntimeExceptionSerializer.h"
 #include "support/EtchRuntime.h"
 
-static char* TAG = "EtchRuntimeExceptionSerializer";
-
 const EtchString& EtchRuntimeExceptionSerializer::FIELD_NAME() {
   static const EtchString name("msg");
   return name;
@@ -45,13 +43,13 @@ status_t EtchRuntimeExceptionSerializer::importValue(EtchStructValue* value, cap
 
   capu::SmartPointer<EtchObject> tmp;
   if (value->get(mField, &tmp) != ETCH_OK) {
-    CAPU_LOG_ERROR(mRuntime->getLogger(), TAG, "Msg Field could not be found");
+    ETCH_LOG_ERROR(mRuntime->getLogger(), mRuntime->getLogger().getSerializerContext(), "Msg Field could not be found");
     return ETCH_ERROR;
   }
 
   EtchString str = *((EtchString*) tmp.get());
   result = new EtchRuntimeException(str, ETCH_ERROR);
-  CAPU_LOG_TRACE(mRuntime->getLogger(), TAG, "Exception has been deserialized");
+  ETCH_LOG_TRACE(mRuntime->getLogger(), mRuntime->getLogger().getSerializerContext(), "Exception has been deserialized");
   return ETCH_OK;
 }
 
@@ -65,7 +63,7 @@ status_t EtchRuntimeExceptionSerializer::exportValue(EtchValueFactory* vf, capu:
 
   if (result->put(mField, str) != ETCH_OK)
     return ETCH_ERROR;
-  CAPU_LOG_TRACE(mRuntime->getLogger(), TAG, "Exception has been serialized");
+  ETCH_LOG_TRACE(mRuntime->getLogger(), mRuntime->getLogger().getSerializerContext(), "Exception has been serialized");
   return ETCH_OK;
 }
 
@@ -101,6 +99,6 @@ status_t EtchRuntimeExceptionSerializer::Init(EtchRuntime* runtime, EtchType* ty
 
   //lock type
   type->lock();
-  CAPU_LOG_TRACE(runtime->getLogger(), TAG, "EtchRuntimeExceptionSerializer has been initialized");
+  ETCH_LOG_TRACE(runtime->getLogger(), runtime->getLogger().getSerializerContext(), "EtchRuntimeExceptionSerializer has been initialized");
   return ETCH_OK;
 }

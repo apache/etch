@@ -19,8 +19,6 @@
 #include "support/EtchStackServer.h"
 #include "transport/EtchTcpTransportFactory.h"
 
-static const char* TAG = "EtchTcpTransportFactory";
-
 const EtchString& EtchTcpTransportFactory::SOCKET() {
   static const EtchString name("TcpTransportFactory.socket");
   return name;
@@ -247,7 +245,7 @@ status_t EtchTcpTransportFactory::MySessionListener::sessionAccepted(EtchSocket*
     delete stack;
     return status;
   }
-  CAPU_LOG_DEBUG(mRuntime->getLogger(), TAG, "New stack for the accepted connection has been created");
+  ETCH_LOG_DEBUG(mRuntime->getLogger(), mRuntime->getLogger().getMailboxContext(), "New communication stack for the accepted connection has been created");
 
   return mSession->newServer(mRuntime, m, mUri, res);
 }

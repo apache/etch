@@ -19,8 +19,6 @@
 #include "serialization/EtchValidatorStructValue.h"
 #include "support/EtchRuntime.h"
 
-static char* TAG = "EtchValidatorStructValue";
-
 const EtchObjectType* EtchValidatorStructValue::TYPE() {
   const static EtchObjectType TYPE(EOTID_VALIDATOR_STRUCT_VALUE, NULL);
   return &TYPE;
@@ -42,10 +40,10 @@ EtchValidatorStructValue::~EtchValidatorStructValue() {
 status_t EtchValidatorStructValue::validateValue(capu::SmartPointer<EtchObject> value, capu::SmartPointer<EtchObject>& result) {
   if (validate(value)) {
     result = value;
-    CAPU_LOG_TRACE(mRuntime->getLogger(), TAG, "Object has been validated");
+    ETCH_LOG_TRACE(mRuntime->getLogger(), mRuntime->getLogger().getValidatorContext(), "Struct object has been validated");
     return ETCH_OK;
   } else {
-    CAPU_LOG_WARN(mRuntime->getLogger(), TAG, "Object has not been validated");
+    ETCH_LOG_WARN(mRuntime->getLogger(), mRuntime->getLogger().getValidatorContext(), "Struct object validation failed");
     return ETCH_ERROR;
   }
 }
@@ -79,7 +77,7 @@ status_t EtchValidatorStructValue::Get(EtchRuntime* runtime, EtchType* type, cap
   if (ndim > MAX_NDIMS) {
     return ETCH_EINVAL;
   }
-  CAPU_LOG_TRACE(runtime->getLogger(), TAG, "EtchValidatorShort has been created");
+  ETCH_LOG_TRACE(runtime->getLogger(), runtime->getLogger().getValidatorContext(), "EtchValidatorShort has been created");
   val = capu::SmartPointer <EtchValidator > (new EtchValidatorStructValue(runtime, type, ndim));
   return ETCH_OK;
 }

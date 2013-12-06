@@ -19,12 +19,78 @@
 #ifndef __ETCHLOGGER_H__
 #define __ETCHLOGGER_H__
 
-#include "capu/util/Appender.h"
 #include "capu/util/Logger.h"
-#include "capu/util/ConsoleAppender.h"
+#include "capu/util/ConsoleLogAppender.h"
+#include "capu/util/LogContext.h"
+#include "capu/util/ILogAppender.h"
 
-typedef capu::Appender EtchAppender;
-typedef capu::ConsoleAppender EtchConsoleAppender;
-typedef capu::Logger EtchLogger;
+typedef capu::ILogAppender IEtchLogAppender;
+typedef capu::ConsoleLogAppender EtchConsoleLogAppender;
+typedef capu::LogContext EtchLogContext;
+
+#define ETCH_LOG_TRACE(logger, context, message) \
+  LOG_TRACE_EXT(logger, (context), message);
+
+#define ETCH_LOG_DEBUG(logger, context, message) \
+  LOG_DEBUG_EXT(logger, (context), message);
+
+#define ETCH_LOG_INFO(logger, context, message) \
+  LOG_INFO_EXT(logger, (context), message);
+
+#define ETCH_LOG_WARN(logger, context, message) \
+  LOG_WARN_EXT(logger, (context), message);
+
+#define ETCH_LOG_ERROR(logger, context, message) \
+  LOG_ERROR_EXT(logger, (context), message);
+
+class EtchLogger: public capu::Logger {
+public:
+  EtchLogger(IEtchLogAppender& logAppender) : capu::Logger(logAppender)
+    , mSerializerContext("etch.runtime.messagizer.serializer")
+    , mDeliveryServiceContext("etch.runtime.deliveryservice")
+    , mTransportContext("etch.runtime.transport")
+    , mPacketizerContext("etch.runtime.packetizer")
+    , mMessagizerContext("etch.runtime.messagizer")
+    , mValidatorContext("etch.runtime.messagizer.validator")
+    , mMailboxContext("etch.runtime.mailbox")
+    , mRuntimeContext("etch.runtime")
+  {
+
+  }
+  EtchLogContext& getSerializerContext() {
+    return mSerializerContext;
+  }
+  EtchLogContext& getDeliveryServiceContext() {
+    return mDeliveryServiceContext;
+  }
+  EtchLogContext& getTransportContext() {
+    return mTransportContext;
+  }
+  EtchLogContext& getPacketizerContext() {
+    return mPacketizerContext;
+  }
+  EtchLogContext& getMessagizerContext() {
+    return mMessagizerContext;
+  }
+  EtchLogContext& getValidatorContext() {
+    return mValidatorContext;
+  }
+  EtchLogContext& getMailboxContext() {
+    return mMailboxContext;
+  }
+  EtchLogContext& getRuntimeContext() {
+    return mRuntimeContext;
+  }
+private:
+  EtchLogContext mSerializerContext;
+  EtchLogContext mDeliveryServiceContext;
+  EtchLogContext mTransportContext;
+  EtchLogContext mPacketizerContext;
+  EtchLogContext mMessagizerContext;
+  EtchLogContext mValidatorContext;
+  EtchLogContext mMailboxContext;
+  EtchLogContext mRuntimeContext;
+
+};
 
 #endif /* ETCHLOGGER_H */

@@ -19,8 +19,6 @@
 #include "serialization/EtchAuthenticationExceptionSerializer.h"
 #include "support/EtchRuntime.h"
 
-static const char* TAG = "EtchAuthenticationExceptionSerializer";
-
 const EtchString& EtchAuthenticationExceptionSerializer::FIELD_NAME() {
   static const EtchString name("msg");
   return name;
@@ -42,12 +40,12 @@ status_t EtchAuthenticationExceptionSerializer::importValue(EtchStructValue* val
 
   capu::SmartPointer<EtchObject> tmp;
   if (value->get(mField, &tmp) != ETCH_OK) {
-    CAPU_LOG_ERROR(mRuntime->getLogger(), TAG, "Msg Field could not be found");
+    ETCH_LOG_TRACE(mRuntime->getLogger(), mRuntime->getLogger().getSerializerContext(), "Msg Field could not be found");
     return ETCH_ERROR;
   }
   EtchString str = *((EtchString*) tmp.get());
   result = new EtchAuthenticationException(str);
-  CAPU_LOG_TRACE(mRuntime->getLogger(), TAG, "Exception has been deserialized");
+  ETCH_LOG_TRACE(mRuntime->getLogger(), mRuntime->getLogger().getSerializerContext(), "Exception has been deserialized");
   return ETCH_OK;
 }
 
@@ -60,7 +58,8 @@ status_t EtchAuthenticationExceptionSerializer::exportValue(EtchValueFactory* vf
   EtchString *str = new EtchString(((EtchAuthenticationException*) value.get())->getErrorMessage());
   if (result->put(mField, str) != ETCH_OK)
     return ETCH_ERROR;
-  CAPU_LOG_TRACE(mRuntime->getLogger(), TAG, "Exception has been serialized");
+
+  ETCH_LOG_TRACE(mRuntime->getLogger(), mRuntime->getLogger().getSerializerContext(), "Exception has been serialized");
   return ETCH_OK;
 }
 
@@ -95,6 +94,6 @@ status_t EtchAuthenticationExceptionSerializer::Init(EtchRuntime* runtime, EtchT
   }
 
   type->lock();
-  CAPU_LOG_TRACE(runtime->getLogger(), TAG, "EtchAuthenticationExceptionSerializer has been initialized");
+  ETCH_LOG_TRACE(runtime->getLogger(), runtime->getLogger().getSerializerContext(), "EtchAuthenticationExceptionSerializer has been initialized");
   return ETCH_OK;
 }
