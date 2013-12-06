@@ -29,7 +29,7 @@ EtchRuntime::EtchRuntime()
   mId = getNextId();
   mMutex.unlock();
 
-  mLogger.setLogLevel(capu::ELogLevel::LL_ALL);
+  mLogger.setLogLevel(capu::LL_ALL);
 }
 
 EtchRuntime::~EtchRuntime() {
