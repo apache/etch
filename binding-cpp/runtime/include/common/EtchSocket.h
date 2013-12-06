@@ -178,6 +178,14 @@ public:
    */
   status_t getTimeout(capu::int32_t& timeout);
 
+  /**
+   * Get address from remote
+   * @return ETCH_OK if the address was successfully obtained
+   *         ETCH_SOCKET_ESOCKET if the socket is not valid
+   *         ETCH_ERROR otherwise
+   */
+  status_t getRemoteAddress(capu::char_t** address);
+
   friend class EtchServerSocket;
 
 private:

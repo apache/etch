@@ -100,3 +100,8 @@ status_t EtchSocket::getNoDelay(capu::bool_t& noDelay) {
 status_t EtchSocket::getTimeout(capu::int32_t& timeout) {
   return mSocket->getTimeout(timeout);
 }
+
+status_t EtchSocket::getRemoteAddress( capu::char_t** address )
+{
+  return mSocket->getRemoteAddress(address);
+}
