@@ -149,7 +149,9 @@ status_t EtchTcpListener::readSocket() {
     if (s == NULL)
       break;
     if (mSession != NULL) {
-      ETCH_LOG_DEBUG(mRuntime->getLogger(), mRuntime->getLogger().getTransportContext(), "A connection has been accepted");
+      capu::char_t* remoteAddress = NULL;
+      status_t result = s->getRemoteAddress(&remoteAddress);
+      ETCH_LOG_DEBUG(mRuntime->getLogger(), mRuntime->getLogger().getTransportContext(), "A new connection from " << remoteAddress << " has been accepted");
       mSession->sessionAccepted(s);
     } else {
       delete s;

@@ -67,11 +67,15 @@ status_t EtchTcpConnection::readSocket() {
     capu::int32_t n;
     status_t result = mSocket->receive((capu::char_t*)buf->getBuffer(), buf->getSize(), n);
     if (result != ETCH_OK) {
-      ETCH_LOG_ERROR(mRuntime->getLogger(), mRuntime->getLogger().getTransportContext(), mHost.c_str() << ":" << mPort << " => Receive() failed with error code " << result);
+      if (n == 0) {
+        ETCH_LOG_DEBUG(mRuntime->getLogger(), mRuntime->getLogger().getTransportContext(),  mHost.c_str() << ":" << mPort <<" => Connection has been closed by peer.");
+      } else {
+        ETCH_LOG_ERROR(mRuntime->getLogger(), mRuntime->getLogger().getTransportContext(), mHost.c_str() << ":" << mPort << " => Receive() failed with error code " << result);
+      }
       return result;
     }
     if (n <= 0) {
-      ETCH_LOG_ERROR(mRuntime->getLogger(), mRuntime->getLogger().getTransportContext(),  mHost.c_str() << ":" << mPort <<" => Connection closed for stack");
+      ETCH_LOG_DEBUG(mRuntime->getLogger(), mRuntime->getLogger().getTransportContext(),  mHost.c_str() << ":" << mPort <<" => Connection has been closed by peer.");
       return ETCH_ERROR;
     }
 
@@ -95,7 +99,8 @@ status_t EtchTcpConnection::openSocket(capu::bool_t reconnect) {
   //temporary socket in a listener
   if (reconnect && (mPort == 0) && (mHost.length() == 0)) {
     mMutexConnection.unlock();
-    return ETCH_ERROR;
+    //reconnect is not possible on listener side.
+    return ETCH_ENOT_SUPPORTED;
   }
   // if a reconnect but retries not allowed, then fail.
   if (reconnect && (mOptions.getReconnectDelay() == 0)) {
@@ -128,7 +133,10 @@ status_t EtchTcpConnection::openSocket(capu::bool_t reconnect) {
     }
     if (mSocket->connect((capu::char_t*) mHost.c_str(), mPort) == ETCH_OK) {
       mMutexConnection.unlock();
-      ETCH_LOG_DEBUG(mRuntime->getLogger(), mRuntime->getLogger().getTransportContext(), mHost.c_str() << ":" << mPort << " => Connection established");
+      capu::char_t* remoteAddress = NULL;
+      status_t result = mSocket->getRemoteAddress(&remoteAddress);
+
+      ETCH_LOG_DEBUG(mRuntime->getLogger(), mRuntime->getLogger().getTransportContext(), mHost.c_str() << ":" << mPort << " => Connection established to remote " << remoteAddress);
       return ETCH_OK;
     } else {
       mSocket->close();
@@ -269,13 +277,17 @@ void EtchTcpConnection::run() {
 
     status = openSocket(!first);
     if (status != ETCH_OK) {
-      ETCH_LOG_ERROR(mRuntime->getLogger(), mRuntime->getLogger().getTransportContext(), mHost.c_str() << ":" << mPort << " => Socket has not been successfully opened");
+      if (status == ETCH_ENOT_SUPPORTED) {
+        ETCH_LOG_DEBUG(mRuntime->getLogger(), mRuntime->getLogger().getTransportContext(), mHost.c_str() << ":" << mPort << " => Connection to client closed.");
+      } else {
+        ETCH_LOG_ERROR(mRuntime->getLogger(), mRuntime->getLogger().getTransportContext(), mHost.c_str() << ":" << mPort << " => Socket could not be opened.");
+      }
       break;
     }
 
     status = setupSocket();
     if (status != ETCH_OK) {
-      ETCH_LOG_ERROR(mRuntime->getLogger(), mRuntime->getLogger().getTransportContext(), mHost.c_str() << ":" << mPort << " => Socket has not been successfully opened");
+      ETCH_LOG_ERROR(mRuntime->getLogger(), mRuntime->getLogger().getTransportContext(), mHost.c_str() << ":" << mPort << " => Socket has not been successfully set up");
       close();
       break;
     }
