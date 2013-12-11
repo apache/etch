@@ -33,7 +33,7 @@ IF ("${CAPU_INCLUDE_DIR}" STREQUAL "" AND "${CAPU_LIBRARY_DIR}" STREQUAL "")
 
     IF ("${LOCAL_CAPU_SOURCE_DIR}" STREQUAL "")
         #download capu from foreign repository
-        SET(CAPU_PROJECT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/3rd/capu")
+        SET(CAPU_PROJECT_DIR "${CMAKE_BINARY_DIR}/3rd/capu")
         SET(CAPU_CMAKE_BUILD_DIR "${CMAKE_BINARY_DIR}/capu")
         
         ExternalProject_Add(

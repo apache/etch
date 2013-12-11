@@ -120,9 +120,6 @@ IF (TARGET_OS STREQUAL "Windows" AND BUILD_CHECK_MEMORY)
   target_link_libraries (etch-cpp-test ${VLD}/lib/vld.lib)
 ENDIF ()
 
-IF (TARGET_OS STREQUAL "Linux" AND TARGET_ARCH STREQUAL "X86_64")
-  set_target_properties (etch-cpp-test PROPERTIES COMPILE_FLAGS "-m32" LINK_FLAGS "-m32")
-ENDIF ()
 
 add_dependencies (etch-cpp-test etch-cpp Capu)
 

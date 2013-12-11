@@ -240,10 +240,6 @@ add_library (etch-cpp STATIC
 )
 
 
-IF (TARGET_OS STREQUAL "Linux" AND TARGET_ARCH STREQUAL "X86_64") #build only 32 bit
-  set_target_properties (etch-cpp PROPERTIES COMPILE_FLAGS "-m32 -g" LINK_FLAGS "-m32")
-ENDIF ()
-
 set_target_properties (etch-cpp PROPERTIES OUTPUT_NAME "etch")
 
 add_dependencies (etch-cpp Capu)

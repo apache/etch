@@ -18,6 +18,7 @@
  * under the License.
  */
 #include "common/EtchObjectType.h"
+#include "capu/container/Hash.h"
 
 const EtchObjectType& EtchObjectType::NATIVE_INT8() {
   static const EtchObjectType type(EOTID_BYTE, NULL);
@@ -75,7 +76,7 @@ capu::int32_t EtchObjectType::getTypeId() const {
 }
 
 capu::uint32_t EtchObjectType::getHashCode() const {
-  return (capu::uint32_t) this;
+  return capu::CapuDefaultHashFunction::Digest(this);
 }
 
 capu::bool_t EtchObjectType::equals(const EtchObjectType* type) const {

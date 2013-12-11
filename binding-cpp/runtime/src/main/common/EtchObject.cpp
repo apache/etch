@@ -17,6 +17,7 @@
  */
 
 #include "common/EtchObject.h"
+#include "capu/container/Hash.h"
 
 const EtchObjectType* EtchObject::TYPE() {
   const static EtchObjectType TYPE(EOTID_OBJECT, NULL);
@@ -52,7 +53,7 @@ capu::bool_t EtchObject::isInstanceOf(const EtchObjectType* type) const {
 }
 
 capu::uint32_t EtchObject::getHashCode() const{
-  return (capu::uint32_t) this;
+  return capu::CapuDefaultHashFunction::Digest(this);
 }
 
 capu::bool_t EtchObject::equals(const EtchObject* other) const{

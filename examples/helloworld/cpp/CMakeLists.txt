@@ -80,9 +80,6 @@ add_executable(etch-cpp-helloworld-server
 
 IF (TARGET_OS STREQUAL "Linux")
   target_link_libraries(etch-cpp-helloworld-server etch capu pthread rt)
-  IF (TARGET_ARCH STREQUAL "X86_64")
-    set_target_properties(etch-cpp-helloworld-server PROPERTIES COMPILE_FLAGS "-m32 -g" LINK_FLAGS "-m32")
-  ENDIF()
 ELSEIF(TARGET_OS STREQUAL "Windows")
   target_link_libraries(etch-cpp-helloworld-server etch capu)
   IF (BUILD_CHECK_MEMORY)
@@ -121,9 +118,6 @@ add_executable(etch-cpp-helloworld-client
 
 IF (TARGET_OS STREQUAL "Linux")
   target_link_libraries(etch-cpp-helloworld-client etch capu pthread rt)
-  IF (TARGET_ARCH STREQUAL "X86_64")
-    set_target_properties(etch-cpp-helloworld-client PROPERTIES COMPILE_FLAGS "-m32 -g" LINK_FLAGS "-m32")
-  ENDIF()
 ELSEIF(TARGET_OS STREQUAL "Windows")
   target_link_libraries(etch-cpp-helloworld-client etch capu )
   IF (BUILD_CHECK_MEMORY)
