@@ -59,7 +59,7 @@ EtchType::~EtchType() {
   }
 }
 
-capu::uint64_t EtchType::getHashCode() {
+capu::uint32_t EtchType::getHashCode() const {
   return mId.getHashCode() ^ mName.getHashCode();
 }
 
@@ -171,7 +171,7 @@ void EtchType::lock() {
   mFieldMap.lock();
 }
 
-capu::bool_t EtchType::equals(EtchObject *other) {
+capu::bool_t EtchType::equals(const EtchObject *other) const {
   if (other == NULL)
     return false;
   if (other->getObjectType() != EtchType::TYPE())

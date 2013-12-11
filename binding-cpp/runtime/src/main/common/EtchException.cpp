@@ -40,7 +40,7 @@ EtchException::~EtchException() {
 
 }
 
-capu::bool_t EtchException::equals(const EtchObject* other) {
+capu::bool_t EtchException::equals(const EtchObject* other) const {
   if (other == NULL)
     return false;
   if (other->getObjectType() != EtchException::TYPE())

@@ -186,7 +186,7 @@ public:
   void lock();
 
   //overridden
-  capu::bool_t equals(EtchObject *other);
+  capu::bool_t equals(const EtchObject *other) const;
 
   /**
    * @return the associated import / export helper.
@@ -238,7 +238,7 @@ public:
    * hash code
    * @return hash
    */
-  capu::uint64_t getHashCode();
+  capu::uint32_t getHashCode() const;
 
   /**
    * returns component type

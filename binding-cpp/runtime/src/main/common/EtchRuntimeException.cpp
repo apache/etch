@@ -37,7 +37,7 @@ EtchRuntimeException::~EtchRuntimeException() {
 
 }
 
-capu::bool_t EtchRuntimeException::equals(const EtchObject* other) {
+capu::bool_t EtchRuntimeException::equals(const EtchObject* other) const {
   if (other == NULL)
     return false;
   else if (other->getObjectType() != EtchRuntimeException::TYPE())

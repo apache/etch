@@ -35,7 +35,7 @@ EtchAuthenticationException::~EtchAuthenticationException() {
 
 }
 
-capu::bool_t EtchAuthenticationException::equals(const EtchObject* other) {
+capu::bool_t EtchAuthenticationException::equals(const EtchObject* other) const {
   if (other == NULL)
     return false;
   else if (other->getObjectType() != EtchAuthenticationException::TYPE())

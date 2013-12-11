@@ -52,7 +52,7 @@ public:
   virtual ~EtchRuntimeException();
 
   //Overridden
-  capu::bool_t equals(const EtchObject* other);
+  capu::bool_t equals(const EtchObject* other) const;
 
 };
 
