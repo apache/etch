@@ -82,5 +82,6 @@ namespace $namespace {
 #endif /* __MAIN${intf.name().toString().toUpperCase()}LISTENER_H__ */
 #else
 #endif /* __MAIN${intf.name().toString().toUpperCase()}CLIENT_H__ */
+
 #end
  

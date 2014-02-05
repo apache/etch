@@ -113,4 +113,3 @@ $intfname::$n.name()AsyncResultPtr $clname::$n.name()(#set($sep = "")#foreach($p
 #end
 #end
 #end
-
