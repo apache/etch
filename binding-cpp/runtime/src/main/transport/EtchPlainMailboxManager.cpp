@@ -199,7 +199,7 @@ status_t EtchPlainMailboxManager::sessionNotify(capu::SmartPointer<EtchObject> e
   if(mSession != NULL) {
     status = mSession->sessionNotify(event);
   } else {
-    // TODO: add log message
+    ETCH_LOG_ERROR(mRuntime->getLogger(), mRuntime->getLogger().getMailboxContext(), "Session of PlainMailBoxManager is null");
     status = ETCH_ERROR;
   }
   return status;
