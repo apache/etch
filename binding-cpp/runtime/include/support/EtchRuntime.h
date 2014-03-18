@@ -43,8 +43,16 @@ public:
 
   /**
    * Create a new instance of the EtchRuntime class
+   * It uses the default Console Log Appender for logging.
    */
   EtchRuntime();
+
+  /**
+   * Create a new instance of the EtchRuntime class
+   * @param logAppender the log appender
+   * @param logLevel the log level
+   */
+  EtchRuntime(IEtchLogAppender& logAppender, EtchLogLevel logLevel);
 
   /**
    * Destructor
@@ -94,11 +102,17 @@ public:
 private:
   capu::bool_t mIsClosed;
   EtchLogger mLogger;
-  EtchConsoleLogAppender mLogAppender;
+  EtchConsoleLogAppender mDefaultLogAppender;
   static capu::uint64_t sId;
   capu::uint64_t mId;
   capu::Mutex mMutex;
   capu::List<EtchRuntimeListener*> mListeners;
+
+
+  /**
+   * Assigns an unique id to the runtime
+   */
+  void generateRuntimeId();
 
   /**
    * Return the next id

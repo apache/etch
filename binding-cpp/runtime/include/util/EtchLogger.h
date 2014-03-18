@@ -25,6 +25,7 @@
 #include "capu/util/ILogAppender.h"
 
 typedef capu::ILogAppender IEtchLogAppender;
+typedef capu::ELogLevel EtchLogLevel;
 typedef capu::ConsoleLogAppender EtchConsoleLogAppender;
 typedef capu::LogContext EtchLogContext;
 
@@ -82,14 +83,14 @@ public:
     return mRuntimeContext;
   }
 private:
-  EtchLogContext mSerializerContext;
-  EtchLogContext mDeliveryServiceContext;
-  EtchLogContext mTransportContext;
-  EtchLogContext mPacketizerContext;
-  EtchLogContext mMessagizerContext;
-  EtchLogContext mValidatorContext;
-  EtchLogContext mMailboxContext;
-  EtchLogContext mRuntimeContext;
+  EtchLogContext& mSerializerContext;
+  EtchLogContext& mDeliveryServiceContext;
+  EtchLogContext& mTransportContext;
+  EtchLogContext& mPacketizerContext;
+  EtchLogContext& mMessagizerContext;
+  EtchLogContext& mValidatorContext;
+  EtchLogContext& mMailboxContext;
+  EtchLogContext& mRuntimeContext;
 
 };
 

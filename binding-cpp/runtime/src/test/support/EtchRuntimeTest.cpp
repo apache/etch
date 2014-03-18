@@ -18,6 +18,12 @@
 #include "gtest/gtest.h"
 #include "gmock/gmock.h"
 #include "support/EtchRuntime.h"
+#include "capu/util/LogMessage.h"
+
+class MockLogAppender : public IEtchLogAppender {
+public:
+  MOCK_METHOD1(log, void(const capu::LogMessage& message));
+};
 
 capu::uint64_t currentIdCount;
 
@@ -27,12 +33,29 @@ TEST(EtchRuntime, Default) {
   delete runtime;
 }
 
-TEST(EtchRuntime, getId) {
-  EtchRuntime* runtime = new EtchRuntime(); //ID = 1
-  EXPECT_EQ(currentIdCount + 1, runtime->getId());
+TEST(EtchRuntime, Logging) {
+  MockLogAppender* logAppender = new MockLogAppender();
+
+  EtchRuntime* runtime = new EtchRuntime(*logAppender, capu::LL_ALL); //ID = 2
+
+  EXPECT_CALL(*logAppender, log(::testing::_)).Times(2);
+
+  EtchLogContext testContext = runtime->getLogger().createContext("testcontext");
+  testContext.setLogLevel(capu::LL_ALL);
+
+  ETCH_LOG_DEBUG(runtime->getLogger(), testContext, "test log message for runtime " << runtime->getId());
+  ETCH_LOG_DEBUG(runtime->getLogger(), runtime->getLogger().getMessagizerContext(), "test log message for runtime " << runtime->getId());
+
   delete runtime;
-  runtime = new EtchRuntime(); //ID = 2
+  delete logAppender;
+}
+
+TEST(EtchRuntime, getId) {
+  EtchRuntime* runtime = new EtchRuntime(); //ID = 3
   EXPECT_EQ(currentIdCount + 2, runtime->getId());
+  delete runtime;
+  runtime = new EtchRuntime(); //ID = 4
+  EXPECT_EQ(currentIdCount + 3, runtime->getId());
   delete runtime;
 }
 

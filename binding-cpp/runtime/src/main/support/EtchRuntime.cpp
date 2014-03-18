@@ -23,13 +23,24 @@
 
 EtchRuntime::EtchRuntime()
   :   mIsClosed(false)
-    , mLogger(mLogAppender)
+    , mLogger(mDefaultLogAppender)
 {
-  mMutex.lock();
-  mId = getNextId();
-  mMutex.unlock();
+  //Default log level is WARN
+  mLogger.setLogLevel(capu::LL_WARN);
 
-  mLogger.setLogLevel(capu::LL_ALL);
+  //assign a unique id to this runtime
+  generateRuntimeId();
+}
+
+EtchRuntime::EtchRuntime(IEtchLogAppender& logAppender, EtchLogLevel logLevel)
+  :   mIsClosed(false)
+    , mLogger(logAppender)
+{
+  //Default log level is WARN
+  mLogger.setLogLevel(logLevel);
+
+  //assign a unique id to this runtime
+  generateRuntimeId();
 }
 
 EtchRuntime::~EtchRuntime() {
@@ -92,6 +103,12 @@ status_t EtchRuntime::fireOnRuntimeChanged() {
   }
   mMutex.unlock();
   return ETCH_OK;
+}
+
+void EtchRuntime::generateRuntimeId() {
+  mMutex.lock();
+  mId = getNextId();
+  mMutex.unlock();
 }
 
 capu::uint64_t EtchRuntime::getNextId() {
