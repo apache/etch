@@ -43,9 +43,16 @@ public:
 
   /**
    * Create a new instance of the EtchRuntime class
-   * It uses the default Console Log Appender for logging.
+   * It uses the default Console Log Appender for logging with log level WARN.
    */
   EtchRuntime();
+
+  /**
+   * Create a new instance of the EtchRuntime class
+   * It uses the default Console Log Appender for logging with the given log level.
+   * @param logLevel the log level
+   */
+  EtchRuntime(EtchLogLevel logLevel);
 
   /**
    * Create a new instance of the EtchRuntime class
