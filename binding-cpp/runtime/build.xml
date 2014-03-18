@@ -101,7 +101,7 @@
         <echo message="binding-cpp build will not be done." />
         <echo message="**********************************" />
     </target>
-    
+
     <target name="do-build-generate-sources" if="USE.cmake">
         <mkdir dir="${Etch.dist}/binding-cpp" />
         <!-- package up etch-java-runtime src -->
@@ -157,6 +157,16 @@
         </if>
 
         <if>
+            <isset property="CUSTOM_BUILD_OPTIONS"/>
+            <then>
+                <property name="use.custom.build.options" value="${CUSTOM_BUILD_OPTIONS}"/>
+            </then>
+            <else>
+                <property name="use.custom.build.options" value=""/>
+            </else>
+        </if>
+
+        <if>
             <isset property="target.platforms.${platform}.generator"/>
             <then>
                 <!-- use specified generator -->
@@ -184,7 +194,7 @@
 
                 <!-- run the build -->
                 <exec dir="${target}/${platform}/${Etch.build.target}" executable="cmake" failonerror="true">
-                    <arg line="--build . --target install --config ${Etch.build.target}"/>
+                    <arg line="--build . --target install --config ${Etch.build.target} -- ${use.custom.build.options}"/>
                 </exec>
 
             </then>
@@ -212,7 +222,7 @@
 
                 <!-- run the build -->
                 <exec dir="${target}/${platform}/${Etch.build.target}" executable="cmake" failonerror="true">
-                    <arg line="--build . --target install --config ${Etch.build.target}"/>
+                    <arg line="--build . --target install --config ${Etch.build.target} -- ${use.custom.build.options}"/>
                 </exec>
                 
             </else>
@@ -225,11 +235,9 @@
 
     <!-- TEST TARGET -->
     <target name="test" depends="postbuild">
-        
     </target>
 
     <target name="postbuild" depends="build,do-postbuild">
-        
     </target>
   
     <target name="do-test" unless="build.skip.tests">
