@@ -122,7 +122,7 @@ public:
   /**
    * @see EtchDeliveryService
    */
-  virtual status_t begincall(capu::SmartPointer<EtchMessage> msg, EtchMailbox*& result);
+  virtual status_t begincall(capu::SmartPointer<EtchMessage> msg, capu::SmartPointer<EtchMailbox>& result);
 
   /**
    * @see EtchDeliveryService

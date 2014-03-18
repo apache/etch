@@ -38,7 +38,7 @@ public:
    * @return ETCH_OK if the message was send.
    *         ETCH_ERROR if there is a problem sending.
    */
-  virtual status_t begincall(capu::SmartPointer<EtchMessage> msg, EtchMailbox*& result) = 0;
+  virtual status_t begincall(capu::SmartPointer<EtchMessage> msg, capu::SmartPointer<EtchMailbox>& result) = 0;
 
   /**
    * Finishes a call sequence by waiting for the response message.

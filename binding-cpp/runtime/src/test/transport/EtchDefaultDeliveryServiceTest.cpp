@@ -175,7 +175,7 @@ TEST_F(EtchDefaultDeliveryServiceTest, beginCallTest) {
   mailboxManager->sessionNotify(new EtchString(EtchSession::UP()));
 
   //test begincall
-  EtchMailbox *mail = NULL;
+  capu::SmartPointer<EtchMailbox> mail = NULL;
   EXPECT_TRUE(ETCH_OK == deliveryService->begincall(message, mail));
   EXPECT_EQ(1u, mailboxManager->count());
   EXPECT_TRUE(ETCH_OK == message->getMessageId(id));
@@ -233,7 +233,7 @@ TEST_F(EtchDefaultDeliveryServiceTest, endCallTest) {
   mailboxManager->sessionNotify(new EtchString(EtchSession::UP()));
 
   //performed the call
-  EtchMailbox *mail;
+  capu::SmartPointer<EtchMailbox> mail;
   EXPECT_TRUE(ETCH_OK == deliveryService->begincall(message, mail));
   EXPECT_EQ(1u, mailboxManager->count());
   EXPECT_TRUE(ETCH_OK == message->getMessageId(id));
@@ -256,9 +256,8 @@ TEST_F(EtchDefaultDeliveryServiceTest, endCallTest) {
 
   //wait for the response
   capu::SmartPointer<EtchObject> result;
-  status = deliveryService->endcall(mail, replyType, result);
+  status = deliveryService->endcall(mail.get(), replyType, result);
   EXPECT_EQ(ETCH_OK, status);
-  delete mail;
 
   //check the result
   EXPECT_TRUE(result->equals(data.get()));

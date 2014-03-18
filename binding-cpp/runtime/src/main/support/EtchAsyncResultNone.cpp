@@ -20,25 +20,24 @@
 
 #define MAILBOX_NOTIFY_TIMEOUT 2000
 
-EtchAsyncResultNone::EtchAsyncResultNone(EtchRuntime* runtime, EtchMailbox* mailbox)
+EtchAsyncResultNone::EtchAsyncResultNone(EtchRuntime* runtime, capu::SmartPointer<EtchMailbox> mailbox)
   : mRuntime(runtime), mMailbox(mailbox), mHasMailboxStatus(false), mHasException(false), mException(NULL) {
-    if(mailbox != NULL) {
+    if(mailbox.get() != NULL) {
       mMailbox->registerNotify(this, NULL, MAILBOX_NOTIFY_TIMEOUT);
     }
     
 }
 
 EtchAsyncResultNone::~EtchAsyncResultNone() {
-  if(mMailbox != NULL) {
+  if(mMailbox.get() != NULL) {
     mMailbox->unregisterNotify(this);
     mMailbox->closeDelivery(false);
-    delete mMailbox;
   }
 }
 
 capu::bool_t EtchAsyncResultNone::hasException() {
   mMutex.lock();
-  while(mMailbox != NULL && !mHasMailboxStatus) {
+  while(mMailbox.get() != NULL && !mHasMailboxStatus) {
     mCond.wait(&mMutex);
   }
   mMutex.unlock();

@@ -34,7 +34,7 @@ public:
    * @param runtime
    * @param mailbox
    */
-  EtchAsyncResult(EtchRuntime* runtime = NULL, EtchMailbox* mailbox = NULL)
+  EtchAsyncResult(EtchRuntime* runtime = NULL, capu::SmartPointer<EtchMailbox> mailbox = NULL)
    : EtchAsyncResultNone(runtime, mailbox), mResult(NULL), mHasResult(false) {
   }
 

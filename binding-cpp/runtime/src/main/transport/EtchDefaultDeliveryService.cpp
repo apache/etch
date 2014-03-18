@@ -141,7 +141,7 @@ status_t EtchDefaultDeliveryService::transportNotify(capu::SmartPointer<EtchObje
   return mTransport->transportNotify(event);
 }
 
-status_t EtchDefaultDeliveryService::begincall(capu::SmartPointer<EtchMessage> msg, EtchMailbox*& result) {
+status_t EtchDefaultDeliveryService::begincall(capu::SmartPointer<EtchMessage> msg, capu::SmartPointer<EtchMailbox> &result) {
   ETCH_LOG_DEBUG(mRuntime->getLogger(), mRuntime->getLogger().getDeliveryServiceContext(), "Begin call for the message has been initiated");
   return mTransport->transportCall(NULL, msg, result);
 }

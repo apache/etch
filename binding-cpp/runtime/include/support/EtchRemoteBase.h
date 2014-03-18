@@ -71,7 +71,7 @@ public:
    * @return a mailbox which can be used to read the response, using
    * {@link #endcall(Mailbox, Type)}.
    */
-  status_t begincall(capu::SmartPointer<EtchMessage> msg, EtchMailbox *&result);
+  status_t begincall(capu::SmartPointer<EtchMessage> msg, capu::SmartPointer<EtchMailbox> &result);
 
   /**
    * Finishes a call sequence by waiting for the response message.

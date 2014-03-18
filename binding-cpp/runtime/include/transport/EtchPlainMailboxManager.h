@@ -59,19 +59,19 @@ public:
    * to messages.
    * @param mb
    */
-  status_t registerMailbox(EtchMailbox* mb);
+  status_t registerMailbox(capu::SmartPointer<EtchMailbox> mb);
 
   /**
    * @see EtchMailboxManager
    */
-  status_t unregisterMailbox(EtchMailbox* mb);
+  status_t unregisterMailbox(EtchLong mailboxId);
 
   /**
    * Returns the mailbox for the specified msgid. This is a testing api.
    * @param msgid
    * @return the mailbox for the specified msgid.
    */
-  status_t getMailbox(EtchLong msgid, EtchMailbox*& result);
+  status_t getMailbox(EtchLong msgid, capu::SmartPointer<EtchMailbox>& result);
 
   ////////////////////////////
   // MessageHandler methods //
@@ -81,7 +81,7 @@ public:
   ///////////////////////////
   // MessageSource methods //
   ///////////////////////////
-  status_t transportCall(capu::SmartPointer<EtchWho> recipient, capu::SmartPointer<EtchMessage> msg, EtchMailbox*& result);
+  status_t transportCall(capu::SmartPointer<EtchWho> recipient, capu::SmartPointer<EtchMessage> msg, capu::SmartPointer<EtchMailbox>& result);
   status_t transportMessage(capu::SmartPointer<EtchWho> recipient, capu::SmartPointer<EtchMessage> message);
 
   ///////////////////////////
@@ -109,7 +109,7 @@ private:
   EtchSessionMessage* mSession;
   EtchTransportMessage* mTransport;
   capu::bool_t mUp;
-  EtchHashTable<EtchLong, EtchMailbox*> mMailboxes;
+  EtchHashTable<EtchLong, capu::SmartPointer<EtchMailbox> > mMailboxes;
   capu::Mutex mMutex;
   EtchIdGenerator mIdGen;
 };

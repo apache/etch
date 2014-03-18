@@ -67,15 +67,16 @@ void EtchPlainMailbox::fireNotify() {
   s = mState;
   c = mQueue.isClosed();
   
-  mMutex.unlock();
-
   if (n != NULL) {
     n->mailboxStatus(this, s, c);
   }
+  mMutex.unlock();
 }
 
 status_t EtchPlainMailbox::read(EtchMailbox::EtchElement*& result) {
+  mMutex.lock();
   status_t status = mQueue.get(&result);
+  mMutex.unlock();
   if(ETCH_OK == status) {
     return ETCH_OK;
   }
@@ -84,7 +85,9 @@ status_t EtchPlainMailbox::read(EtchMailbox::EtchElement*& result) {
 }
 
 status_t EtchPlainMailbox::read(EtchMailbox::EtchElement *& result, capu::int32_t maxDelay) {
+  mMutex.lock();
   status_t status = mQueue.get(&result, maxDelay);
+  mMutex.unlock();
   if(status == ETCH_OK) {
     return ETCH_OK;
   }
@@ -99,7 +102,7 @@ status_t EtchPlainMailbox::closeDelivery(capu::bool_t withNotification) {
     return ETCH_EINVAL;
   }
 
-  mMailboxManager->unregisterMailbox(this);
+  mMailboxManager->unregisterMailbox(getMessageId());
   mQueue.close();
   mMutex.unlock();
 

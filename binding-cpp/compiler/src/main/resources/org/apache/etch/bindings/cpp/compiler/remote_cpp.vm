@@ -35,7 +35,7 @@ using namespace $namespace;
 #foreach($n in $intf.iterator())
 #if($n.isMsgDir($mc))
 #if(!$n.isHidden())
-$clname::$n.name()AsyncResultRemote::$n.name()AsyncResultRemote($clname* base, EtchMailbox* mailbox) 
+$clname::$n.name()AsyncResultRemote::$n.name()AsyncResultRemote($clname* base, capu::SmartPointer<EtchMailbox> mailbox)
   : #if($n.hasReturn())EtchAsyncResult<$helper.getEtchTypeName($n.type(), false)>(base->mRuntime, mailbox)#{else}EtchAsyncResultNone(base->mRuntime, mailbox)#end {
   mBase = base;
 }
@@ -101,7 +101,7 @@ $intfname::$n.name()AsyncResultPtr $clname::$n.name()AsyncResultRemote::Begin($c
   msg->put($vfname::$p.vname($helper)(), obj$ObjCount);
 #end
 
-  EtchMailbox* mb = NULL; 
+  capu::SmartPointer<EtchMailbox> mb = NULL;
   status = base->begincall(msg, mb);
   $n.name()AsyncResultRemote* result = new $n.name()AsyncResultRemote(base, mb);
 

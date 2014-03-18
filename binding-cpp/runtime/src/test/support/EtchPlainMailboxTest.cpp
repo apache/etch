@@ -30,7 +30,7 @@ public:
   capu::bool_t unregistered;
   EtchList<EtchMailbox::EtchElement *> list;
 
-  virtual status_t unregisterMailbox(EtchMailbox* mb) {
+  virtual status_t unregisterMailbox(EtchLong mailboxId) {
     unregistered = true;
     return ETCH_OK;
   }
@@ -39,11 +39,11 @@ public:
     return list.add(new EtchMailbox::EtchElement(sender, msg));
   }
 
-  MOCK_METHOD2(getMailbox, status_t(EtchLong msgid, EtchMailbox*& result));
+  MOCK_METHOD2(getMailbox, status_t(EtchLong msgid, capu::SmartPointer<EtchMailbox>& result));
 
   MOCK_METHOD2(sessionMessage, status_t(capu::SmartPointer<EtchWho> sender, capu::SmartPointer<EtchMessage> msg));
 
-  MOCK_METHOD3(transportCall, status_t(capu::SmartPointer<EtchWho> recipient, capu::SmartPointer<EtchMessage> msg, EtchMailbox*& result));
+  MOCK_METHOD3(transportCall, status_t(capu::SmartPointer<EtchWho> recipient, capu::SmartPointer<EtchMessage> msg, capu::SmartPointer<EtchMailbox>& result));
 
   MOCK_METHOD2(transportMessage, status_t(capu::SmartPointer<EtchWho> recipient, capu::SmartPointer<EtchMessage> message));
 
@@ -75,11 +75,10 @@ public:
 
 TEST(EtchPlainMessageBoxTest, constructorTest) {
   MockMailboxManager2 manager;
-  EtchMailbox* mailbox = NULL;
+  capu::SmartPointer<EtchMailbox> mailbox = NULL;
   EtchLong id(5);
   mailbox = new EtchPlainMailbox(&manager, id);
-  EXPECT_TRUE(mailbox != NULL);
-  delete mailbox;
+  EXPECT_TRUE(mailbox.get() != NULL);
 }
 
 TEST(EtchPlainMessageBoxTest, closeDeliveryTest) {

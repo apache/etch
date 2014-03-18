@@ -64,7 +64,7 @@ namespace $namespace {
       /**
        * Create a new instance from $clname class
        */
-      $n.name()AsyncResultRemote($clname* base, EtchMailbox* mailbox);
+      $n.name()AsyncResultRemote($clname* base, capu::SmartPointer<EtchMailbox> mailbox);
 
       /**
        * Destructor

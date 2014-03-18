@@ -40,7 +40,7 @@ public:
    * @param result the mailbox which will receive responses to this call.
    * @return status code
    */
-  virtual status_t transportCall(capu::SmartPointer<EtchWho> recipient, capu::SmartPointer<EtchMessage> msg, EtchMailbox*& result) = 0;
+  virtual status_t transportCall(capu::SmartPointer<EtchWho> recipient, capu::SmartPointer<EtchMessage> msg, capu::SmartPointer<EtchMailbox>& result) = 0;
 
   /**
    * Removes the mailbox from the set of mailboxes receiving responses to
@@ -48,7 +48,7 @@ public:
    * @param mb a mailbox as returned by {@link #transportCall(Who, Message)}.
    * @return status code
    */
-  virtual status_t unregisterMailbox(EtchMailbox* mb) = 0;
+  virtual status_t unregisterMailbox(EtchLong mailboxId) = 0;
 
   /**
    * Re-delivers dead letter messages from a closed mailbox.

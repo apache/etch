@@ -46,7 +46,7 @@ status_t EtchRemoteBase::send(capu::SmartPointer<EtchMessage> msg) {
   return mSvc->transportMessage(NULL, msg);
 }
 
-status_t EtchRemoteBase::begincall(capu::SmartPointer<EtchMessage> msg, EtchMailbox *&result) {
+status_t EtchRemoteBase::begincall(capu::SmartPointer<EtchMessage> msg, capu::SmartPointer<EtchMailbox> &result) {
   ETCH_LOG_DEBUG(mRuntime->getLogger(), mRuntime->getLogger().getDeliveryServiceContext(), "Begin call for the message is initiated");
   return mSvc->begincall(msg, result);
 }

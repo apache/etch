@@ -157,7 +157,7 @@ TEST_F(EtchPlainMailboxManagerTest, transportMessageTest) {
   EXPECT_TRUE(ETCH_OK == message->getMessageId(id));
   EXPECT_TRUE(ETCH_OK != message->getInReplyToMessageId(id));
 
-  EtchMailbox *mail;
+  capu::SmartPointer<EtchMailbox> mail;
   EXPECT_TRUE(ETCH_OK != manager->getMailbox(id, mail));
 
   message->clear();
@@ -201,7 +201,7 @@ TEST_F(EtchPlainMailboxManagerTest, transportResultMessageTest) {
   EXPECT_TRUE(ETCH_OK == message->getMessageId(id));
   EXPECT_TRUE(ETCH_OK == message->getInReplyToMessageId(id));
   EXPECT_TRUE(id == 1L);
-  EtchMailbox *mail;
+  capu::SmartPointer<EtchMailbox> mail;
   EXPECT_TRUE(ETCH_OK != manager->getMailbox(id, mail));
 
   message->clear();
@@ -239,13 +239,14 @@ TEST_F(EtchPlainMailboxManagerTest, transportCallTest) {
   //in order to notify upper layers that the connection is open
   manager->sessionNotify(new EtchString(EtchSession::UP()));
 
-  EtchMailbox *mail;
+  capu::SmartPointer<EtchMailbox> mail;
   EXPECT_TRUE(ETCH_OK == manager->transportCall(NULL, message, mail));
   EXPECT_EQ(1u, manager->count());
   EXPECT_TRUE(ETCH_OK == message->getMessageId(id));
   EXPECT_TRUE(ETCH_OK != message->getInReplyToMessageId(id));
 
-  EXPECT_TRUE(ETCH_OK == manager->getMailbox(id, mail));
+  capu::SmartPointer<EtchMailbox> out;
+  EXPECT_TRUE(ETCH_OK == manager->getMailbox(id, out));
 
   message->clear();
 
@@ -285,7 +286,7 @@ TEST_F(EtchPlainMailboxManagerTest, replicatedTransportCallTest) {
   //in order to notify upper layers that the connection is open
   manager->sessionNotify(new EtchString(EtchSession::UP()));
 
-  EtchMailbox *mail;
+  capu::SmartPointer<EtchMailbox> mail;
   EXPECT_TRUE(ETCH_ERROR == manager->transportCall(NULL, message, mail));
   //should not create a mailbox
   EXPECT_EQ(ETCH_OK, message->getMessageId(id));
@@ -333,7 +334,7 @@ TEST_F(EtchPlainMailboxManagerTest, sessionMessageTest) {
   manager->sessionNotify(new EtchString(EtchSession::UP()));
 
   //perform the call
-  EtchMailbox *mail;
+  capu::SmartPointer<EtchMailbox> mail;
   EXPECT_TRUE(ETCH_OK == manager->transportCall(NULL, message, mail));
   EXPECT_EQ(1u, manager->count());
   EXPECT_TRUE(ETCH_OK == message->getMessageId(id));

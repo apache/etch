@@ -260,9 +260,9 @@ TEST_F(EtchRemoteBaseTest, beginCallTest) {
 
   manager->sessionNotify(new EtchString(EtchSession::UP()));
 
-  EtchMailbox *mail = NULL;
+  capu::SmartPointer<EtchMailbox> mail = NULL;
   EXPECT_TRUE(remote->begincall(msg, mail) == ETCH_OK);
-  EXPECT_TRUE(mail != NULL);
+  EXPECT_TRUE(mail.get() != NULL);
 
   factory->types.clear();
 
@@ -314,10 +314,10 @@ TEST_F(EtchRemoteBaseTest, endCallTest) {
 
   manager->sessionNotify(new EtchString(EtchSession::UP()));
 
-  EtchMailbox *mail = NULL;
+  capu::SmartPointer<EtchMailbox> mail = NULL;
   EXPECT_TRUE(remote->begincall(message, mail) == ETCH_OK);
 
-  EXPECT_TRUE(mail != NULL);
+  EXPECT_TRUE(mail.get() != NULL);
 
   capu::int64_t id;
   message->getMessageId(id);
@@ -331,14 +331,13 @@ TEST_F(EtchRemoteBaseTest, endCallTest) {
   //call the sessionMessage of mailbox manager as if it is called from messagizer to deliver data from
   EXPECT_TRUE(ETCH_OK == manager->sessionMessage(NULL, replymess));
   capu::SmartPointer<EtchObject> result;
-  EXPECT_TRUE(remote->endcall(mail, replyType, result) == ETCH_OK);
-  EXPECT_TRUE(mail != NULL);
+  EXPECT_TRUE(remote->endcall(mail.get(), replyType, result) == ETCH_OK);
+  EXPECT_TRUE(mail.get() != NULL);
   EXPECT_TRUE(result == data);
 
   factory->types.clear();
 
   delete transport;
-  delete mail;
   delete remote;
   delete manager;
   delete service;

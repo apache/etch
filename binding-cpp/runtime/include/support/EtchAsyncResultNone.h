@@ -36,7 +36,7 @@ public:
    * Constructor
    * @param runtime
    */
-  explicit EtchAsyncResultNone(EtchRuntime* runtime = NULL, EtchMailbox* mailbox = NULL);
+  explicit EtchAsyncResultNone(EtchRuntime* runtime = NULL, capu::SmartPointer<EtchMailbox> mailbox = NULL);
 
   /**
    * Destructor
@@ -71,7 +71,7 @@ protected:
   void setMailboxStatus();
 
   EtchRuntime* mRuntime;
-  EtchMailbox* mMailbox;
+  capu::SmartPointer<EtchMailbox> mMailbox;
   capu::Mutex mMutex;
   capu::CondVar mCond;
   capu::bool_t mHasMailboxStatus;
