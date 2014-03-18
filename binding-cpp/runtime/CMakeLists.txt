@@ -51,6 +51,8 @@ SET(GMOCK ${ETCH_EXTERNAL_DEPENDS}/gmock/1.6.0)
 set (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR})
 find_package(Capu)
 
+include (${CMAKE_TOOLCHAIN_FILE})
+
 # Set definitions
 IF (TARGET_OS STREQUAL "Linux")
   add_definitions (-D_GNU_SOURCE -D_REENTRANT -DLINUX=2 -D__LINUX__)

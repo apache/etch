@@ -46,16 +46,16 @@ typedef capu::LogContext EtchLogContext;
 class EtchLogger: public capu::Logger {
 public:
   EtchLogger(IEtchLogAppender& logAppender) : capu::Logger(logAppender)
-    , mSerializerContext("etch.runtime.messagizer.serializer")
-    , mDeliveryServiceContext("etch.runtime.deliveryservice")
-    , mTransportContext("etch.runtime.transport")
-    , mPacketizerContext("etch.runtime.packetizer")
-    , mMessagizerContext("etch.runtime.messagizer")
-    , mValidatorContext("etch.runtime.messagizer.validator")
-    , mMailboxContext("etch.runtime.mailbox")
-    , mRuntimeContext("etch.runtime")
+    , mSerializerContext(createContext("etch.runtime.messagizer.serializer"))
+    , mDeliveryServiceContext(createContext("etch.runtime.deliveryservice"))
+    , mTransportContext(createContext("etch.runtime.transport"))
+    , mPacketizerContext(createContext("etch.runtime.packetizer"))
+    , mMessagizerContext(createContext("etch.runtime.messagizer"))
+    , mValidatorContext(createContext("etch.runtime.messagizer.validator"))
+    , mMailboxContext(createContext("etch.runtime.mailbox"))
+    , mRuntimeContext(createContext("etch.runtime"))
   {
-
+	  
   }
   EtchLogContext& getSerializerContext() {
     return mSerializerContext;

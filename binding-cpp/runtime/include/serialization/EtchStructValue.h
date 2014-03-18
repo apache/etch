@@ -141,7 +141,7 @@ public:
    */
   EtchLevel getLevel();
 
-  typedef EtchHashTable<EtchField, capu::SmartPointer<EtchObject> >::Iterator Iterator;
+  typedef EtchHashTable<EtchField, capu::SmartPointer<EtchObject> >::ConstIterator Iterator;
   typedef EtchHashTable<EtchField, capu::SmartPointer<EtchObject> >::HashTableEntry HashTableEntry;
 
   /**

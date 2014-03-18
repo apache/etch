@@ -370,6 +370,57 @@ TEST(EtchListIterator, next) {
   delete list;
 }
 
+TEST(EtchListConstIterator, hasNext) {
+
+	EtchList<EtchInt32>* normalList = new EtchList<EtchInt32 > ();
+	
+	EtchInt32 data1;
+	EtchInt32 data2;
+	data1.set(32);
+	data2.set(43);
+
+	const EtchList<EtchInt32>* constList = normalList;
+	EtchList<EtchInt32>::ConstIterator it = constList->begin();
+	EXPECT_FALSE(it.hasNext());
+
+	normalList->add(data1);
+
+	it = constList->begin();
+
+	EXPECT_TRUE(it.hasNext());
+	
+	delete normalList;
+}
+
+TEST(EtchListConstIterator, next) {
+	EtchList<EtchInt32>* normalList = new EtchList<EtchInt32 > ();
+	
+	EtchInt32 data1;
+	EtchInt32 data2;
+	EtchInt32 data3;
+
+	data1.set(32);
+	data2.set(43);
+	normalList->add(data1);
+	normalList->add(data2);
+
+	const EtchList<EtchInt32>* constList = normalList;
+	
+	EtchList<EtchInt32>::ConstIterator it = constList->begin();
+	capu::int32_t cnt = 0;
+
+	while (it.hasNext()) {
+		it.next(&data3);
+		if (cnt == 0)
+			EXPECT_TRUE(data3.get() == data1.get());
+		else
+			EXPECT_TRUE(data3.get() == data2.get());
+		cnt++;
+	}
+
+	delete normalList;
+}
+
 
 TEST(EtchList, copyTest) {
   EtchList<EtchInt32> o1;

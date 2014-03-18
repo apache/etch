@@ -260,7 +260,34 @@ TEST(EtchHashTableIterator, hasNext){
   delete h1;
 }
 
-TEST(EtchHashTableIterator, NEXT){
+TEST(EtchHashTableConstIterator, hasNext){
+	EtchString key("key");
+	EtchString key2("key2");
+	EtchInt32 value(5);
+	status_t status = ETCH_OK;
+
+	EtchHashTable<EtchString, EtchInt32>* h1 = new EtchHashTable<EtchString, EtchInt32 > ();
+
+	//create iterator
+	EtchHashTable<EtchString, EtchInt32>::Iterator it = h1->begin();
+	//check hasNext
+	EXPECT_TRUE(it.hasNext() == false);
+
+	// add new keys
+	status = h1->put(key, value);
+	EXPECT_TRUE(status == ETCH_OK);
+
+	//add new value
+	status = h1->put(key2, value);
+	EXPECT_TRUE(status == ETCH_OK);
+
+	it = h1->begin();
+	EXPECT_TRUE(it.hasNext() == true);
+
+	delete h1;
+}
+
+TEST(EtchHashTableIterator, next){
   EtchString key("key");
   EtchString key2("key2");
   EtchInt32 value(5);

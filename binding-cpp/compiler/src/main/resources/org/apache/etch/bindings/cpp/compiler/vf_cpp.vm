@@ -137,7 +137,7 @@ public:
        return ETCH_EINVAL;
 
      // there should only be a single key, so take the first one
-     EtchHashTable<EtchField, capu::SmartPointer<EtchObject> >::Iterator it = value->begin();
+     EtchHashTable<EtchField, capu::SmartPointer<EtchObject> >::ConstIterator it = value->begin();
      EtchHashTable<EtchField, capu::SmartPointer<EtchObject> >::HashTableEntry entry;
      it.next(&entry);
      EtchField key = entry.key;

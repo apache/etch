@@ -22,6 +22,8 @@ IF (EXISTS "${CMAKE_SOURCE_DIR}/CMakeLists_local.txt")
   INCLUDE ("${CMAKE_SOURCE_DIR}/CMakeLists_local.txt" OPTIONAL)
 ENDIF()
 
+include (${CMAKE_TOOLCHAIN_FILE})
+
 #====================================================================================#
 
 #Etch Home

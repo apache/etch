@@ -41,7 +41,7 @@ EtchObject::~EtchObject() {
 }
 
 capu::bool_t EtchObject::isInstanceOf(const EtchObjectType* type) const {
-  capu::List<const EtchObjectType*>::Iterator iter = mTypes.begin();
+  capu::List<const EtchObjectType*>::ConstIterator iter = mTypes.begin();
   while(iter != mTypes.end()) {
     const EtchObjectType* t = *iter;
     iter++;

@@ -56,13 +56,49 @@ public:
     /**
       * Constructor
       */
-    EtchHashSetIterator(typename capu::HashSet<T, C, H>::Iterator mBeginCapuIterator, typename capu::HashSet<T, C, H>::Iterator mEndCapuIterator);
+    EtchHashSetIterator(typename capu::HashSet<T, C, H>::Iterator beginCapuIterator, typename capu::HashSet<T, C, H>::Iterator endCapuIterator);
     typename capu::HashSet<T, C, H>::Iterator mBeginCapuIterator;
     typename capu::HashSet<T, C, H>::Iterator mEndCapuIterator;
       
 
   };
+
+  class EtchHashSetConstIterator {
+  public:
+      friend class EtchHashSet;
+
+      /**
+      * destructor
+      */
+      ~EtchHashSetConstIterator();
+
+      /**
+      * Check if iterator has next element.
+      * @return false if the next of current node that is pointed, is null otherwise true
+      */
+      capu::bool_t hasNext();
+
+      /**
+      * Shifts the iterator to the next position and returns the element if next != NULL
+      * @param element
+      * @return CAPU_OK if the next element has been gotten
+      *
+      */
+      status_t next(T *element = 0);
+
+
+  private:
+    /**
+      * Constructor
+      */
+    EtchHashSetConstIterator(typename capu::HashSet<T, C, H>::Iterator beginCapuIterator, typename capu::HashSet<T, C, H>::Iterator endCapuIterator);
+    typename capu::HashSet<T, C, H>::ConstIterator mBeginCapuConstIterator;
+    typename capu::HashSet<T, C, H>::ConstIterator mEndCapuConstIterator;
+      
+
+  };
   typedef typename EtchHashSet<T, C, H>::EtchHashSetIterator Iterator;
+  typedef typename EtchHashSet<T, C, H>::EtchHashSetConstIterator ConstIterator;
 
   /**
    * EtchObjectType for EtchHashSet.
@@ -127,10 +163,16 @@ public:
   inline status_t clear();
 
   /**
+   * Return const iterator for iterating key value tuples.
+   * @return Iterator
+   */
+  inline ConstIterator begin() const;
+
+  /**
    * Return iterator for iterating key value tuples.
    * @return Iterator
    */
-  inline Iterator begin() const;
+  inline Iterator begin();
 
 private:
 
@@ -187,9 +229,15 @@ inline status_t EtchHashSet<T, C, H>::remove(const T &value) {
 }
 
 template <class T, class C, class H>
-inline typename EtchHashSet<T, C, H>::Iterator EtchHashSet<T, C, H>::begin() const{
-  EtchHashSetIterator it(mHashSet.begin(),mHashSet.end());
+inline typename EtchHashSet<T, C, H>::ConstIterator EtchHashSet<T, C, H>::begin() const{
+  EtchHashSetConstIterator it(mHashSet.begin(),mHashSet.end());
   return it;
+}
+
+template <class T, class C, class H>
+inline typename EtchHashSet<T, C, H>::Iterator EtchHashSet<T, C, H>::begin(){
+	EtchHashSetIterator it(mHashSet.begin(),mHashSet.end());
+	return it;
 }
 
 template<class T, class C, class H>
@@ -199,7 +247,18 @@ EtchHashSet<T, C, H>::EtchHashSetIterator::EtchHashSetIterator(typename capu::Ha
 }
 
 template<class T, class C, class H>
+EtchHashSet<T, C, H>::EtchHashSetConstIterator::EtchHashSetConstIterator(typename capu::HashSet<T, C, H>::Iterator beginCapuConstIterator, typename capu::HashSet<T, C, H>::Iterator endCapuConstIterator) :
+	mBeginCapuConstIterator(beginCapuConstIterator), mEndCapuConstIterator(endCapuConstIterator) { 
+
+}
+
+template<class T, class C, class H>
 EtchHashSet<T, C, H>::EtchHashSetIterator::~EtchHashSetIterator() { 
+
+}
+
+template<class T, class C, class H>
+EtchHashSet<T, C, H>::EtchHashSetConstIterator::~EtchHashSetConstIterator() { 
 
 }
 
@@ -207,6 +266,12 @@ template<class T, class C, class H>
 capu::bool_t EtchHashSet<T, C, H>::EtchHashSetIterator::hasNext() { 
   return mBeginCapuIterator != mEndCapuIterator;
 }
+
+template<class T, class C, class H>
+capu::bool_t EtchHashSet<T, C, H>::EtchHashSetConstIterator::hasNext() { 
+	return mBeginCapuConstIterator != mEndCapuConstIterator;
+}
+
 
 template<class T, class C, class H>
 status_t EtchHashSet<T, C, H>::EtchHashSetIterator::next(T *element) { 
@@ -220,6 +285,20 @@ status_t EtchHashSet<T, C, H>::EtchHashSetIterator::next(T *element) {
   mBeginCapuIterator++;
   
   return ETCH_OK;
+}
+
+template<class T, class C, class H>
+status_t EtchHashSet<T, C, H>::EtchHashSetConstIterator::next(T *element) { 
+	if (!hasNext()) {
+		return ETCH_ERANGE;
+	}
+
+	if (element != NULL) {
+		*element = *mBeginCapuConstIterator;
+	}
+	mBeginCapuConstIterator++;
+
+	return ETCH_OK;
 }
 
 typedef capu::SmartPointer<EtchHashSet<EtchObjectPtr> > EtchHashSetPtr;
