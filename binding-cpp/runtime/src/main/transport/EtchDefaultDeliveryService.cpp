@@ -179,8 +179,13 @@ status_t EtchDefaultDeliveryService::endcall(EtchMailbox* mb, EtchType* response
   status_t err = rmsg->get(field, &r);
   if (err == ETCH_ENOT_EXIST) {
     //void return value
-    mb->closeRead();
+    if (mb->closeRead() != ETCH_OK) {
+        ETCH_LOG_ERROR(mRuntime->getLogger(), mRuntime->getLogger().getDeliveryServiceContext(), "Error in end call on void function");
+        delete mbe;
+        return ETCH_ERROR;
+    }
     ETCH_LOG_DEBUG(mRuntime->getLogger(), mRuntime->getLogger().getDeliveryServiceContext(), "End call for the message is completed");
+    delete mbe;
     return ETCH_OK;
   } else if (err != ETCH_OK) {
     mb->closeRead();
