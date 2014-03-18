@@ -20,8 +20,15 @@ using namespace org_apache_etch_examples_helloworld_HelloWorld;
   }
 
   status_t ImplHelloWorldClient::_sessionNotify(capu::SmartPointer<EtchObject> event ) {
-    EtchStringPtr eventName = capu::smartpointer_cast<EtchString>(event);
-    printf("Got sessionNotifyEvent %s\n",eventName->c_str());
+    if (event->isInstanceOf(EtchString::TYPE())) {
+        EtchStringPtr eventName = capu::smartpointer_cast<EtchString>(event);
+        printf("Got sessionNotifyEvent %s\n",eventName->c_str());
+    } else if (event->isInstanceOf(EtchException::TYPE())) {
+            EtchException* eventName = (EtchException*) event.get();
+            printf("Got sessionNotify Exception %s\n",eventName->getErrorMessage().c_str());
+    } else {
+        printf("Got sessionNotify of type %d\n",event->getObjectType()->getTypeId());
+    }
     
     return ETCH_OK;
   }
