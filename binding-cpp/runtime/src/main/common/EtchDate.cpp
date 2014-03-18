@@ -28,7 +28,7 @@ EtchDate::EtchDate()
   addObjectType(TYPE());
 }
 
-EtchDate::EtchDate(capu::time_t value)
+EtchDate::EtchDate(capu::int64_t value)
  : mValue(value) {
   addObjectType(TYPE());
 }
@@ -52,11 +52,11 @@ capu::bool_t EtchDate::equals(const EtchObject* other) const{
   return tmp->mValue == this->mValue;
 }
 
-capu::time_t EtchDate::get() {
+capu::int64_t EtchDate::get() {
   return mValue;
 }
 
-void EtchDate::set(capu::time_t value) {
+void EtchDate::set(capu::int64_t value) {
   mValue = value;
 }
 

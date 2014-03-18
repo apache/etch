@@ -38,7 +38,7 @@ public:
    * Constructor
    * @param value the time
    */
-  EtchDate(capu::time_t value);
+  EtchDate(capu::int64_t value);
 
   /**
    * Constructs a copy of EtchDate
@@ -54,12 +54,12 @@ public:
   /**
    * Sets time value.
    */
-  void set(capu::time_t value);
+  void set(capu::int64_t value);
 
   /**
    * Returns time value.
    */
-  capu::time_t get();
+  capu::int64_t get();
 
   /**
    * Returns hash code
@@ -68,7 +68,7 @@ public:
 
 private:
 
-  capu::time_t mValue;
+  capu::int64_t mValue;
 
 };
 
