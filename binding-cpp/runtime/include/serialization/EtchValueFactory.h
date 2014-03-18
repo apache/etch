@@ -27,6 +27,7 @@
 class EtchStructValue;
 class EtchMessage;
 class EtchType;
+class EtchNativeArrayBase;
 
 /**
  * Interface which defines the value factory which helps
@@ -220,6 +221,17 @@ public:
    * @return the old value
    */
   virtual EtchLevel setLevel(EtchLevel level) = 0;
+
+  /**
+   * @param objectType the component's objectType of the EtchNativeArray
+   * @param nativeArray the created native array for the given component type
+   * @param length the length of the array
+   * @param dim the dimension of the array
+   * @return ETCH_OK if the type is found correctly.
+   *         ETCH_EUNIMPL if no type information for arrays has been generated
+   *         ETCH_ERROR if the array for the given object type cannot be generated
+   */
+  virtual status_t getNativeArrayForComponentType(const EtchObjectType *objectType,  capu::SmartPointer<EtchNativeArrayBase> &nativeArray, capu::int32_t length, capu::int32_t dim) = 0;
 
 };
 

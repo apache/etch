@@ -21,7 +21,7 @@ using namespace org_apache_etch_examples_helloworld_HelloWorld;
 
   // TODO insert methods here to provide implementations of HelloWorldServer
   // messages from the mClient.
-  ImplHelloWorldServer::say_helloAsyncResultPtr ImplHelloWorldServer::say_hello(HelloWorld::userPtr to_whom)
+  ImplHelloWorldServer::say_helloAsyncResultPtr ImplHelloWorldServer::say_hello(HelloWorld::EtchNativeArrayuserPtr to_whom)
   {
     say_helloAsyncResultPtr res = new EtchAsyncResult<EtchString>();
     res->setResult(new EtchString("Hi From C++ Server!"));

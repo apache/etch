@@ -96,10 +96,11 @@ status_t EtchTaggedData::allocNativeArray(capu::int8_t typeCode, EtchType* custo
       break;
 
     default:
-      //TODO: user definded types are not support yet. The have to be provided by the value factory
-      //EtchNativeArray<capu::SmartPointer<EtchObject> > * res = new EtchNativeArray<capu::SmartPointer<EtchObject> >(length, dim);
-      //res->mType = componentType;
-      //result = res;
+      status_t status = mVf->getNativeArrayForComponentType(componentType, result, length, dim);
+      if (status != ETCH_OK) {
+        return ETCH_ERROR;
+      }
+
       break;
   }
   return ETCH_OK;

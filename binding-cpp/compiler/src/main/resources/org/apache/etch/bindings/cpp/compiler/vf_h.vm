@@ -91,6 +91,9 @@ namespace $namespace {
 #end
     static status_t InitImportExport(EtchRuntime* runtime);
 
+    status_t getNativeArrayForComponentType(const EtchObjectType *objectType,  capu::SmartPointer<EtchNativeArrayBase> &nativeArray, capu::int32_t length, capu::int32_t dim);
+
+
     /**
      * Static Initialization-Helper
      */

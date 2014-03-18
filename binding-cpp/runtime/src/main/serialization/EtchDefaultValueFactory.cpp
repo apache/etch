@@ -317,6 +317,10 @@ status_t EtchDefaultValueFactory::getCustomStructType(const EtchObjectType *c, E
   return ETCH_EINVAL;
 }
 
+status_t EtchDefaultValueFactory::getNativeArrayForComponentType(const EtchObjectType *objectType,  capu::SmartPointer<EtchNativeArrayBase> &nativeArray, capu::int32_t length, capu::int32_t dim) {
+  return ETCH_EUNIMPL;
+}
+
 EtchString EtchDefaultValueFactory::getStringEncoding() {
   return EtchString("utf-8");
 }

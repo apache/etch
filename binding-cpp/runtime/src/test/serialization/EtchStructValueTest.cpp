@@ -60,6 +60,8 @@ public:
 
   MOCK_METHOD2(getCustomStructType, status_t(const EtchObjectType *c, EtchType *& type));
 
+  MOCK_METHOD4(getNativeArrayForComponentType, status_t(const EtchObjectType *objectType,  capu::SmartPointer<EtchNativeArrayBase> &nativeArray, capu::int32_t length, capu::int32_t dim));
+
   EtchLevel getLevel() {
     return LEVEL_FULL;
   }
@@ -104,6 +106,8 @@ public:
 
   MOCK_METHOD2(getCustomStructType, status_t(const EtchObjectType *c, EtchType *& type));
 
+  MOCK_METHOD4(getNativeArrayForComponentType, status_t(const EtchObjectType *objectType,  capu::SmartPointer<EtchNativeArrayBase> &nativeArray, capu::int32_t length, capu::int32_t dim));
+
   EtchLevel getLevel() {
     return LEVEL_MISSING_OK;
   }
@@ -147,6 +151,8 @@ public:
   MOCK_METHOD0(get_mt__exception, EtchType*());
 
   MOCK_METHOD2(getCustomStructType, status_t(const EtchObjectType *c, EtchType *& type));
+
+  MOCK_METHOD4(getNativeArrayForComponentType, status_t(const EtchObjectType *objectType,  capu::SmartPointer<EtchNativeArrayBase> &nativeArray, capu::int32_t length, capu::int32_t dim));
 
   EtchLevel getLevel() {
     return LEVEL_NONE;

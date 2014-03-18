@@ -182,6 +182,8 @@ public:
 
   status_t getCustomStructType(const EtchObjectType *c, EtchType *& type);
 
+  virtual status_t getNativeArrayForComponentType(const EtchObjectType *objectType,  capu::SmartPointer<EtchNativeArrayBase> &nativeArray, capu::int32_t length, capu::int32_t dim);
+
   /////////////////////
   // STRING ENCODING //
   /////////////////////

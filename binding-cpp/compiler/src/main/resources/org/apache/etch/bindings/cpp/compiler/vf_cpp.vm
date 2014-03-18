@@ -426,3 +426,16 @@ status_t $vf::InitValueFactory(EtchRuntime* runtime)
   
   return ETCH_OK;
 }
+
+status_t $vf::getNativeArrayForComponentType(const EtchObjectType *objectType,  capu::SmartPointer<EtchNativeArrayBase> &nativeArray, capu::int32_t length, capu::int32_t dim) {
+#foreach ( $n in $intf.iterator() )
+#if ($n.isStruct())
+#set( $tname = $n.efqname( $helper ) )
+  if (objectType == $i::${tname}::TYPE()) {
+    nativeArray =  new EtchNativeArray<capu::SmartPointer<$i::${tname}> >(length, dim);
+    return ETCH_OK;
+  }
+#end
+#end
+  return ETCH_ERROR;
+}
