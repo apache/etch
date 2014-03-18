@@ -130,6 +130,7 @@ status_t EtchTcpConnection::openSocket(capu::bool_t reconnect) {
     // try to open a socket.
     if (mSocket == NULL) {
       mSocket = new EtchSocket();
+      setupSocket();
     }
     if (mSocket->connect((capu::char_t*) mHost.c_str(), mPort) == ETCH_OK) {
       mMutexConnection.unlock();
