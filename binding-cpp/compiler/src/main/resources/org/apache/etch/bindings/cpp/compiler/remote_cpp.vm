@@ -52,8 +52,10 @@ status_t $clname::$n.name()AsyncResultRemote::mailboxStatus(EtchMailbox* mb, Etc
     capu::SmartPointer<EtchObject> result;
     status = mBase->endcall(mb, $vfname::$n.getResultMessage().vname($helper), result);
     if(status != ETCH_OK) {
-      // TODO set result to a runtime exception 
-      return ETCH_OK;
+      capu::SmartPointer<EtchRuntimeException> exception = new EtchRuntimeException("Error occured while reading peers answer from mailbox for call $n.name() ", ETCH_ERROR);
+      setException(capu::smartpointer_cast<EtchException>(exception));
+      mMailbox = NULL;
+      return ETCH_ERROR;
     }
     
     //result is NULL if it was a void call and no exception has been set
@@ -68,10 +70,13 @@ status_t $clname::$n.name()AsyncResultRemote::mailboxStatus(EtchMailbox* mb, Etc
 #end
     } else {
       setMailboxStatus();
-    }
-
-
-  }
+    } 
+  } else {
+    //mailbox has been closed without answer from peer
+    capu::SmartPointer<EtchRuntimeException> exception = new EtchRuntimeException("Peer did not answer in time to call $n.name()", ETCH_TIMEOUT);
+    setException(capu::smartpointer_cast<EtchException>(exception));
+    mMailbox = NULL;
+}
 
 #end
   return ETCH_OK;
@@ -83,7 +88,10 @@ $intfname::$n.name()AsyncResultPtr $clname::$n.name()AsyncResultRemote::Begin($c
   capu::SmartPointer<EtchMessage> msg;
   status = base->newMessage($vfname::$n.vname( $helper ), &msg); 
   if(status != ETCH_OK) {
-    // TODO log error
+    $n.name()AsyncResultRemote* result = new $n.name()AsyncResultRemote(base, NULL);
+    capu::SmartPointer<EtchRuntimeException> exception = new EtchRuntimeException("Unable to create message for call $n.name().", status);
+    result->setException(capu::smartpointer_cast<EtchException>(exception));
+    return result;
   }
 
 #set($ObjCount = 0)
@@ -95,11 +103,14 @@ $intfname::$n.name()AsyncResultPtr $clname::$n.name()AsyncResultRemote::Begin($c
 
   EtchMailbox* mb = NULL; 
   status = base->begincall(msg, mb);
+  $n.name()AsyncResultRemote* result = new $n.name()AsyncResultRemote(base, mb);
+
   if(status != ETCH_OK) {
-    // TODO log error
+    //mailbox has been closed during send
+    capu::SmartPointer<EtchRuntimeException> exception = new EtchRuntimeException("Unable to call $n.name() as connection has been closed by peer.", status);
+    result->setException(capu::smartpointer_cast<EtchException>(exception));
   }
 
-  $n.name()AsyncResultRemote* result = new $n.name()AsyncResultRemote(base, mb); 
   return result;
 }
 

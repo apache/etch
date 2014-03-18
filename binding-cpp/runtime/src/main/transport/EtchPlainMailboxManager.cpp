@@ -26,14 +26,18 @@ EtchPlainMailboxManager::EtchPlainMailboxManager(EtchRuntime* runtime, EtchTrans
 }
 
 EtchPlainMailboxManager::~EtchPlainMailboxManager() {
+  mMutex.lock();
+
   EtchHashTable<EtchLong, EtchMailbox*>::Iterator it = mMailboxes.begin();
   EtchHashTable<EtchLong, EtchMailbox*>::HashTableEntry entry;
-  // TODO check thread safety
+
   while (it.hasNext()) {
     it.next(&entry);
     entry.value->closeDelivery();
     delete entry.value;
   }
+
+  mMutex.unlock();
 }
 
 EtchTransportMessage* EtchPlainMailboxManager::getTransport() {
@@ -51,20 +55,16 @@ status_t EtchPlainMailboxManager::registerMailbox(EtchMailbox* mb) {
 
   const EtchLong msgid = mb->getMessageId();
 
-  mMutex.lock();
   if (!mUp) {
-    mMutex.unlock();
     return ETCH_EINVAL;
   }
 
   EtchMailbox* tmp = NULL;
   if (mMailboxes.get(msgid, &tmp) != ETCH_ENOT_EXIST) {
-    mMutex.unlock();
     return ETCH_EINVAL;
   }
 
   mMailboxes.put(msgid, mb);
-  mMutex.unlock();
   ETCH_LOG_DEBUG(mRuntime->getLogger(), mRuntime->getLogger().getMailboxContext(), "A new mailbox is registered");
   return ETCH_OK;
 }
@@ -119,19 +119,23 @@ status_t EtchPlainMailboxManager::transportCall(capu::SmartPointer<EtchWho> reci
 
   ETCH_LOG_DEBUG(mRuntime->getLogger(), mRuntime->getLogger().getMailboxContext(), "A mailbox has been created for msgid " << msgid);
   EtchMailbox *mb = new EtchPlainMailbox(this, msgid);
+  mMutex.lock();
   if (registerMailbox(mb) != ETCH_OK) {
     delete mb;
     ETCH_LOG_ERROR(mRuntime->getLogger(), mRuntime->getLogger().getMailboxContext(), "Mailbox registration failed");
+    mMutex.unlock();
     return ETCH_ERROR;
   }
 
   ETCH_LOG_DEBUG(mRuntime->getLogger(), mRuntime->getLogger().getMailboxContext(), "Message sending to Messagizer and registering a respective mailbox");
   if (mTransport->transportMessage(recipient, msg) == ETCH_OK) {
     result = mb;
+    mMutex.unlock();
     return ETCH_OK;
   } else {
-    unregisterMailbox(mb);
+    mb->closeDelivery();
     delete mb;
+    mMutex.unlock();
     return ETCH_ERROR;
   }
 }
@@ -173,12 +177,12 @@ status_t EtchPlainMailboxManager::sessionControl(capu::SmartPointer<EtchObject> 
 }
 
 status_t EtchPlainMailboxManager::sessionNotify(capu::SmartPointer<EtchObject> event) {
+  mMutex.lock();
   if (event->equals(&EtchSession::UP())) {
     mUp = true;
     ETCH_LOG_TRACE(mRuntime->getLogger(), mRuntime->getLogger().getMailboxContext(), "Connection is up");
   } else if (event->equals(&EtchSession::DOWN())) {
     mUp = false;
-    // TODO check thread safety
     EtchHashTable<EtchLong, EtchMailbox*>::Iterator it = mMailboxes.begin();
     EtchHashTable<EtchLong, EtchMailbox*>::HashTableEntry entry;
     while (it.hasNext()) {
@@ -188,6 +192,8 @@ status_t EtchPlainMailboxManager::sessionNotify(capu::SmartPointer<EtchObject> e
     }
     ETCH_LOG_TRACE(mRuntime->getLogger(), mRuntime->getLogger().getMailboxContext(), "Connection is down");
   }
+  mMutex.unlock();
+
   status_t status;
   if(mSession != NULL) {
     status = mSession->sessionNotify(event);

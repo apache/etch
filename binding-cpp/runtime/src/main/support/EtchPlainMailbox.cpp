@@ -91,7 +91,7 @@ status_t EtchPlainMailbox::read(EtchMailbox::EtchElement *& result, capu::int32_
   return ETCH_ERROR;
 }
 
-status_t EtchPlainMailbox::closeDelivery() {
+status_t EtchPlainMailbox::closeDelivery(capu::bool_t withNotification) {
 
   mMutex.lock();
   if(mQueue.isClosed()) {
@@ -103,12 +103,15 @@ status_t EtchPlainMailbox::closeDelivery() {
   mQueue.close();
   mMutex.unlock();
 
-  fireNotify();
+  if (withNotification) {
+    fireNotify();
+  }
+
   return ETCH_OK;
 }
 
 status_t EtchPlainMailbox::closeRead() {
-  if (closeDelivery() == ETCH_OK) {
+  if (closeDelivery(false) == ETCH_OK) {
     EtchMailbox::EtchElement* mbe = NULL;
     while ((read(mbe)) == ETCH_OK) {
       mMailboxManager->redeliver(mbe->mSender, mbe->mMsg);

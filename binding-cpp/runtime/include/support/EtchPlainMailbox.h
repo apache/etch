@@ -73,7 +73,7 @@ public:
    * @param true if this call closed the mailbox (that is, if action was
    * taken), false if the mailbox was already closed.
    */
-  status_t closeDelivery();
+  status_t closeDelivery(capu::bool_t withNotification = true);
 
   /**
    * Closes the mailbox so that no more messages will be delivered or

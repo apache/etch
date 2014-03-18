@@ -31,7 +31,7 @@ EtchAsyncResultNone::EtchAsyncResultNone(EtchRuntime* runtime, EtchMailbox* mail
 EtchAsyncResultNone::~EtchAsyncResultNone() {
   if(mMailbox != NULL) {
     mMailbox->unregisterNotify(this);
-    mMailbox->closeDelivery();
+    mMailbox->closeDelivery(false);
     delete mMailbox;
   }
 }

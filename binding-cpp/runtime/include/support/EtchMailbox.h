@@ -70,7 +70,7 @@ public:
    * Closes the mailbox so that no more messages can be delivered.
    * Queued messages remain to be read.
    */
-  virtual status_t closeDelivery() = 0;
+  virtual status_t closeDelivery(capu::bool_t withNotification = true) = 0;
 
   /**
    * Closes the mailbox so that no more messages will be delivered or
