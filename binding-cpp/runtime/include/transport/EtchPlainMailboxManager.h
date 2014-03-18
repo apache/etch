@@ -110,7 +110,7 @@ private:
   EtchTransportMessage* mTransport;
   capu::bool_t mUp;
   EtchHashTable<EtchLong, capu::SmartPointer<EtchMailbox> > mMailboxes;
-  capu::Mutex mMutex;
+  capu::Mutex mMailboxesMutex;
   EtchIdGenerator mIdGen;
 };
 

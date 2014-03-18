@@ -135,7 +135,7 @@ private:
   EtchLong mMessageId;
   capu::bool_t mAlarmSet;
   EtchCircularQueue mQueue;
-  capu::Mutex mMutex;
+  capu::Mutex mQueueMutex;
 
   void fireNotify();
 };

@@ -22,12 +22,14 @@ EtchPlainMailbox::EtchPlainMailbox(EtchMailboxManager* mailboxManager, EtchLong 
 }
 
 EtchPlainMailbox::~EtchPlainMailbox() {
+  mQueueMutex.lock();
   while (!mQueue.isEmpty()) {
     EtchMailbox::EtchElement* element = NULL;
     if(ETCH_OK == mQueue.get(&element)) {
       delete element;
     }
   }
+  mQueueMutex.unlock();
 }
 
 EtchMailboxManager* EtchPlainMailbox::getMailboxManager() {
@@ -42,9 +44,9 @@ status_t EtchPlainMailbox::message(capu::SmartPointer<EtchWho> sender, capu::Sma
   status_t status;
   EtchMailbox::EtchElement* element = new EtchMailbox::EtchElement(sender, msg);
 
-  mMutex.lock();
+  mQueueMutex.lock();
   status = mQueue.put(element, -1);
-  mMutex.unlock();
+  mQueueMutex.unlock();
 
   if(status == ETCH_OK) {
      fireNotify();
@@ -62,7 +64,7 @@ void EtchPlainMailbox::fireNotify() {
   EtchObject* s;
   capu::bool_t c;
 
-  mMutex.lock();
+  mQueueMutex.lock();
   n = mNotify;
   s = mState;
   c = mQueue.isClosed();
@@ -70,13 +72,13 @@ void EtchPlainMailbox::fireNotify() {
   if (n != NULL) {
     n->mailboxStatus(this, s, c);
   }
-  mMutex.unlock();
+  mQueueMutex.unlock();
 }
 
 status_t EtchPlainMailbox::read(EtchMailbox::EtchElement*& result) {
-  mMutex.lock();
+  mQueueMutex.lock();
   status_t status = mQueue.get(&result);
-  mMutex.unlock();
+  mQueueMutex.unlock();
   if(ETCH_OK == status) {
     return ETCH_OK;
   }
@@ -85,9 +87,9 @@ status_t EtchPlainMailbox::read(EtchMailbox::EtchElement*& result) {
 }
 
 status_t EtchPlainMailbox::read(EtchMailbox::EtchElement *& result, capu::int32_t maxDelay) {
-  mMutex.lock();
+  mQueueMutex.lock();
   status_t status = mQueue.get(&result, maxDelay);
-  mMutex.unlock();
+  mQueueMutex.unlock();
   if(status == ETCH_OK) {
     return ETCH_OK;
   }
@@ -96,15 +98,15 @@ status_t EtchPlainMailbox::read(EtchMailbox::EtchElement *& result, capu::int32_
 
 status_t EtchPlainMailbox::closeDelivery(capu::bool_t withNotification) {
 
-  mMutex.lock();
+  mQueueMutex.lock();
   if(mQueue.isClosed()) {
-    mMutex.unlock();
+    mQueueMutex.unlock();
     return ETCH_EINVAL;
   }
 
   mMailboxManager->unregisterMailbox(getMessageId());
   mQueue.close();
-  mMutex.unlock();
+  mQueueMutex.unlock();
 
   if (withNotification) {
     fireNotify();
@@ -136,10 +138,10 @@ status_t EtchPlainMailbox::registerNotify(EtchMailbox::EtchNotify* notify, EtchO
 
   capu::bool_t isNotEmptyOrIsClosed;
 
-  mMutex.lock();
+  mQueueMutex.lock();
 
   if(mNotify != NULL) {
-    mMutex.unlock();
+    mQueueMutex.unlock();
     return ETCH_EINVAL;
   }
 
@@ -148,7 +150,7 @@ status_t EtchPlainMailbox::registerNotify(EtchMailbox::EtchNotify* notify, EtchO
 
   isNotEmptyOrIsClosed = !mQueue.isEmpty() || mQueue.isClosed();
 
-  mMutex.unlock();
+  mQueueMutex.unlock();
 
   if(isNotEmptyOrIsClosed) {
     fireNotify();
@@ -167,32 +169,38 @@ status_t EtchPlainMailbox::unregisterNotify(EtchMailbox::EtchNotify* notify) {
     return ETCH_OK;
   }
 
-  mMutex.lock();
+  mQueueMutex.lock();
 
   if(mNotify !=  notify) {
-    mMutex.unlock();
+    mQueueMutex.unlock();
     return ETCH_EINVAL;
   }
 
   mNotify = NULL;
   mState = NULL;
 
-  mMutex.unlock();
+  mQueueMutex.unlock();
 
   return ETCH_OK;
 }
 
 capu::bool_t EtchPlainMailbox::isEmpty() {
+  mQueueMutex.lock();
   capu::bool_t res = mQueue.isEmpty();
+  mQueueMutex.unlock();
   return res;
 }
 
 capu::bool_t EtchPlainMailbox::isClosed() {
+  mQueueMutex.lock();
   capu::bool_t res = mQueue.isClosed();
+  mQueueMutex.unlock();
   return res;
 }
 
 capu::bool_t EtchPlainMailbox::isFull() {
+  mQueueMutex.lock();
   capu::bool_t res = mQueue.isFull();
+  mQueueMutex.unlock();
   return res;
 }
