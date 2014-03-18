@@ -120,7 +120,7 @@ public:
    * @return
    */
   template<class T>
-  static const EtchObjectTypeTrait getTypeTrait() {
+  static EtchObjectTypeTrait getTypeTrait() {
     return __Wrapper__<T>::getTypeTrait();
   }
 
@@ -153,7 +153,7 @@ public:
    * @return NONE if this is not a collection type trait
    *         otherwise component type trait of collection such VALUE, POINTER, SMART_POINTER
    */
-  const EtchObjectTypeTrait getObjectComponentTypeTrait() const;
+  EtchObjectTypeTrait getObjectComponentTypeTrait() const;
 
   /**
    * @return true if two type is equal
@@ -174,7 +174,7 @@ private:
       return T::TYPE();
     }
 
-    static const EtchObjectTypeTrait getTypeTrait() {
+    static EtchObjectTypeTrait getTypeTrait() {
       return EtchObjectType::VALUE;
     }
 
@@ -187,7 +187,7 @@ private:
       return T::TYPE();
     }
 
-    static const EtchObjectTypeTrait getTypeTrait() {
+    static EtchObjectTypeTrait getTypeTrait() {
       return EtchObjectType::POINTER;
     }
   };
@@ -199,7 +199,7 @@ private:
       return EtchObjectType::getType<T>();
     }
 
-    static const EtchObjectTypeTrait getTypeTrait() {
+    static EtchObjectTypeTrait getTypeTrait() {
       return EtchObjectType::SMART_POINTER;
     }
   };
@@ -213,7 +213,7 @@ struct EtchObjectType::__Wrapper__<capu::int32_t> {
     return &EtchObjectType::NATIVE_INT32();
   }
 
-  static const EtchObjectTypeTrait getTypeTrait() {
+  static EtchObjectTypeTrait getTypeTrait() {
     return EtchObjectType::VALUE;
   }
 };
@@ -225,7 +225,7 @@ struct EtchObjectType::__Wrapper__<capu::int16_t> {
     return &EtchObjectType::NATIVE_INT16();
   }
 
-  static const EtchObjectTypeTrait getTypeTrait() {
+  static EtchObjectTypeTrait getTypeTrait() {
     return EtchObjectType::VALUE;
   }
 
@@ -238,7 +238,7 @@ struct EtchObjectType::__Wrapper__<capu::int8_t> {
     return &EtchObjectType::NATIVE_INT8();
   }
 
-  static const EtchObjectTypeTrait getTypeTrait() {
+  static EtchObjectTypeTrait getTypeTrait() {
     return EtchObjectType::VALUE;
   }
 };
@@ -250,7 +250,7 @@ struct EtchObjectType::__Wrapper__<capu::int64_t> {
     return &EtchObjectType::NATIVE_INT64();
   }
 
-  static const EtchObjectTypeTrait getTypeTrait() {
+  static EtchObjectTypeTrait getTypeTrait() {
     return EtchObjectType::VALUE;
   }
 };
@@ -262,7 +262,7 @@ struct EtchObjectType::__Wrapper__<capu::float_t> {
     return &EtchObjectType::NATIVE_FLOAT();
   }
 
-  static const EtchObjectTypeTrait getTypeTrait() {
+  static EtchObjectTypeTrait getTypeTrait() {
     return EtchObjectType::VALUE;
   }
 
@@ -275,7 +275,7 @@ struct EtchObjectType::__Wrapper__<capu::double_t> {
     return &EtchObjectType::NATIVE_DOUBLE();
   }
 
-  static const EtchObjectTypeTrait getTypeTrait() {
+  static EtchObjectTypeTrait getTypeTrait() {
     return EtchObjectType::VALUE;
   }
 
@@ -288,7 +288,7 @@ struct EtchObjectType::__Wrapper__<capu::bool_t> {
     return &EtchObjectType::NATIVE_BOOL();
   }
 
-  static const EtchObjectTypeTrait getTypeTrait() {
+  static EtchObjectTypeTrait getTypeTrait() {
     return EtchObjectType::VALUE;
   }
 
@@ -301,7 +301,7 @@ struct EtchObjectType::__Wrapper__<capu::int32_t*> {
     return &EtchObjectType::NATIVE_INT32();
   }
 
-  static const EtchObjectTypeTrait getTypeTrait() {
+  static EtchObjectTypeTrait getTypeTrait() {
     return EtchObjectType::POINTER;
   }
 
@@ -314,7 +314,7 @@ struct EtchObjectType::__Wrapper__<capu::int16_t*> {
     return &EtchObjectType::NATIVE_INT16();
   }
 
-  static const EtchObjectTypeTrait getTypeTrait() {
+  static EtchObjectTypeTrait getTypeTrait() {
     return EtchObjectType::POINTER;
   }
 
@@ -327,7 +327,7 @@ struct EtchObjectType::__Wrapper__<capu::int8_t*> {
     return &EtchObjectType::NATIVE_INT8();
   }
 
-  static const EtchObjectTypeTrait getTypeTrait() {
+  static EtchObjectTypeTrait getTypeTrait() {
     return EtchObjectType::POINTER;
   }
 
@@ -340,7 +340,7 @@ struct EtchObjectType::__Wrapper__<capu::int64_t*> {
     return &EtchObjectType::NATIVE_INT64();
   }
 
-  static const EtchObjectTypeTrait getTypeTrait() {
+  static EtchObjectTypeTrait getTypeTrait() {
     return EtchObjectType::POINTER;
   }
 
@@ -353,7 +353,7 @@ struct EtchObjectType::__Wrapper__<capu::float_t*> {
     return &EtchObjectType::NATIVE_FLOAT();
   }
 
-  static const EtchObjectTypeTrait getTypeTrait() {
+  static EtchObjectTypeTrait getTypeTrait() {
     return EtchObjectType::POINTER;
   }
 
@@ -366,7 +366,7 @@ struct EtchObjectType::__Wrapper__<capu::double_t*> {
     return &EtchObjectType::NATIVE_DOUBLE();
   }
 
-  static const EtchObjectTypeTrait getTypeTrait() {
+  static EtchObjectTypeTrait getTypeTrait() {
     return EtchObjectType::POINTER;
   }
 
@@ -379,7 +379,7 @@ struct EtchObjectType::__Wrapper__<capu::bool_t*> {
     return &EtchObjectType::NATIVE_BOOL();
   }
 
-  static const EtchObjectTypeTrait getTypeTrait() {
+  static EtchObjectTypeTrait getTypeTrait() {
     return EtchObjectType::POINTER;
   }
 
@@ -392,7 +392,7 @@ struct EtchObjectType::__Wrapper__<capu::SmartPointer<capu::int32_t> > {
     return &EtchObjectType::NATIVE_INT32();
   }
 
-  static const EtchObjectTypeTrait getTypeTrait() {
+  static EtchObjectTypeTrait getTypeTrait() {
     return EtchObjectType::SMART_POINTER;
   }
 };
@@ -404,7 +404,7 @@ struct EtchObjectType::__Wrapper__<capu::SmartPointer<capu::int16_t> > {
     return &EtchObjectType::NATIVE_INT16();
   }
 
-  static const EtchObjectTypeTrait getTypeTrait() {
+  static EtchObjectTypeTrait getTypeTrait() {
     return EtchObjectType::SMART_POINTER;
   }
 
@@ -417,7 +417,7 @@ struct EtchObjectType::__Wrapper__<capu::SmartPointer<capu::int8_t> > {
     return &EtchObjectType::NATIVE_INT8();
   }
 
-  static const EtchObjectTypeTrait getTypeTrait() {
+  static EtchObjectTypeTrait getTypeTrait() {
     return EtchObjectType::SMART_POINTER;
   }
 };
@@ -429,7 +429,7 @@ struct EtchObjectType::__Wrapper__<capu::SmartPointer<capu::int64_t> > {
     return &EtchObjectType::NATIVE_INT64();
   }
 
-  static const EtchObjectTypeTrait getTypeTrait() {
+  static EtchObjectTypeTrait getTypeTrait() {
     return EtchObjectType::SMART_POINTER;
   }
 };
@@ -441,7 +441,7 @@ struct EtchObjectType::__Wrapper__<capu::SmartPointer<capu::float_t> > {
     return &EtchObjectType::NATIVE_FLOAT();
   }
 
-  static const EtchObjectTypeTrait getTypeTrait() {
+  static EtchObjectTypeTrait getTypeTrait() {
     return EtchObjectType::SMART_POINTER;
   }
 
@@ -454,7 +454,7 @@ struct EtchObjectType::__Wrapper__<capu::SmartPointer<capu::double_t> > {
     return &EtchObjectType::NATIVE_DOUBLE();
   }
 
-  static const EtchObjectTypeTrait getTypeTrait() {
+  static EtchObjectTypeTrait getTypeTrait() {
     return EtchObjectType::SMART_POINTER;
   }
 
@@ -467,7 +467,7 @@ struct EtchObjectType::__Wrapper__<capu::SmartPointer<capu::bool_t> > {
     return &EtchObjectType::NATIVE_BOOL();
   }
 
-  static const EtchObjectTypeTrait getTypeTrait() {
+  static EtchObjectTypeTrait getTypeTrait() {
     return EtchObjectType::SMART_POINTER;
   }
 

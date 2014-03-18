@@ -63,7 +63,7 @@ const EtchObjectType* EtchObjectType::getObjectComponentType() const {
   return mComponentType;
 }
 
-const EtchObjectType::EtchObjectTypeTrait EtchObjectType::getObjectComponentTypeTrait() const {
+EtchObjectType::EtchObjectTypeTrait EtchObjectType::getObjectComponentTypeTrait() const {
   return mComponentTypeTrait;
 }
 

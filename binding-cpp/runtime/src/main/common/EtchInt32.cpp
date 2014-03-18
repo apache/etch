@@ -86,7 +86,7 @@ capu::int32_t& EtchInt32::operator++() //pre increment
   ++mValue;
   return mValue;
 }
-const capu::int32_t EtchInt32::operator++(int) //post increment
+capu::int32_t EtchInt32::operator++(int) //post increment
 {
   capu::int32_t tmp(mValue);
   ++mValue;
@@ -99,7 +99,7 @@ capu::int32_t& EtchInt32::operator--() //pre increment
   return mValue;
 }
 
-const capu::int32_t EtchInt32::operator--(int) //post increment
+capu::int32_t EtchInt32::operator--(int) //post increment
 {
   capu::int32_t tmp(mValue);
   --mValue;

@@ -92,7 +92,7 @@ public:
   /**
    * assigns and increments the stored integer value
    */
-  const capu::int32_t operator++(int);
+  capu::int32_t operator++(int);
 
   /**
    * decrement and assigns the stored integer value
@@ -102,7 +102,7 @@ public:
   /**
    * assigns and decrement the stored integer value
    */
-  const capu::int32_t operator--(int);
+  capu::int32_t operator--(int);
 
   /**
    * returns true if two objects are equal
