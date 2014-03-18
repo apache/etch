@@ -14,6 +14,10 @@
 #include "transport/EtchTransportData.h"
 
 
+#ifdef BUILD_CHECK_MEMORY
+#include "vld.h"
+#endif
+
 using namespace org_apache_etch_examples_helloworld_HelloWorld;
 
 HelloWorldClient* MainHelloWorldClientFactory::newHelloWorldClient(RemoteHelloWorldServer* server)
