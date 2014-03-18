@@ -39,6 +39,19 @@ namespace org_apache_etch_examples_helloworld_HelloWorld {
     // messages from the mClient.
     say_helloAsyncResultPtr say_hello(HelloWorld::userPtr to_whom);
 
+    virtual status_t _sessionNotify(capu::SmartPointer<EtchObject> event ) {
+        if (event->getObjectType() == EtchString::TYPE()) {
+            capu::SmartPointer<EtchString> myEvent = capu::smartpointer_cast<EtchString>(event);
+            if (myEvent->equals(&EtchSession::DOWN())) {
+                //client has closed session
+            }
+            if (myEvent->equals(&EtchSession::UP())) {
+                //session to client has been established
+            }
+        }
+        return ETCH_OK;
+    }
+
   };
 }
 
