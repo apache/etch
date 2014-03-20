@@ -131,8 +131,8 @@ protected:
   capu::Thread *mThread;
   capu::bool_t mIsStarted;
   capu::bool_t mIsTerminated;
-  static capu::Mutex mMutex;
-  static capu::Mutex mMutexConnection;
+  capu::Mutex mMutex;
+  capu::Mutex mMutexConnection;
   EtchMonitor mStatus;
 };
 
@@ -144,12 +144,6 @@ const EtchString EtchConnection<S>::REMOTE_ADDRESS("REMOTE_ADDRESS");
 
 template <class S>
 const EtchString EtchConnection<S>::ALL_INTFS("0.0.0.0");
-
-template <class S>
-capu::Mutex EtchConnection<S>::mMutex;
-
-template <class S>
-capu::Mutex EtchConnection<S>::mMutexConnection;
 
 template <class S>
 EtchConnection<S>::EtchConnection()
