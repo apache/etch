@@ -50,7 +50,7 @@ public:
 
   const static EtchString& MAX_PKT_SIZE_TERM();
 
-  const static capu::int32_t& SIG();
+  const static capu::uint32_t& SIG();
   
   const static capu::uint32_t& SIG_SIZE();
   

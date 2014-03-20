@@ -31,9 +31,9 @@ EtchBinaryTaggedDataOutput::EtchBinaryTaggedDataOutput(EtchRuntime* runtime, Etc
   } else {
     mStringTypeAndField = false;
   }
-  EtchValidatorInt::Get(runtime, 0, mIntValidator);
-  EtchValidatorString::Get(runtime, 0, mStringValidator);
-  EtchValidatorNone::Get(runtime, mNoneValidator);
+  EtchValidatorInt::Get(mRuntime, 0, mIntValidator);
+  EtchValidatorString::Get(mRuntime, 0, mStringValidator);
+  EtchValidatorNone::Get(mRuntime, mNoneValidator);
 }
 
 EtchBinaryTaggedDataOutput::~EtchBinaryTaggedDataOutput() {

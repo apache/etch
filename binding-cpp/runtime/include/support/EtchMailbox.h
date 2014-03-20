@@ -151,6 +151,12 @@ public:
   class EtchNotify {
   public:
     /**
+     * Destructor
+     */
+    virtual ~EtchNotify() {
+    }
+
+    /**
      * Notifies of mailbox status change.
      * @param mb the mailbox whose status has changed.
      * @param state the state object passed in the register

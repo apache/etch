@@ -54,9 +54,11 @@ public:
     , mMessagizerContext(createContext("etch.runtime.messagizer"))
     , mValidatorContext(createContext("etch.runtime.messagizer.validator"))
     , mMailboxContext(createContext("etch.runtime.mailbox"))
-    , mRuntimeContext(createContext("etch.runtime"))
-  {
-	  
+    , mRuntimeContext(createContext("etch.runtime")) {
+  }
+
+  virtual ~EtchLogger() {
+
   }
   EtchLogContext& getSerializerContext() {
     return mSerializerContext;

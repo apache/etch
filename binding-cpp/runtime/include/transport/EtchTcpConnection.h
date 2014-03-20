@@ -50,7 +50,7 @@ public:
   /**
    * Destructor
    */
-  ~EtchTcpConnection();
+  virtual ~EtchTcpConnection();
 
   /**
    * @see TransportData

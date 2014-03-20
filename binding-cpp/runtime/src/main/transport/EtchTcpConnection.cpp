@@ -135,7 +135,7 @@ status_t EtchTcpConnection::openSocket(capu::bool_t reconnect) {
     if (mSocket->connect((capu::char_t*) mHost.c_str(), mPort) == ETCH_OK) {
       mMutexConnection.unlock();
       capu::char_t* remoteAddress = NULL;
-      status_t result = mSocket->getRemoteAddress(&remoteAddress);
+      mSocket->getRemoteAddress(&remoteAddress);
 
       ETCH_LOG_DEBUG(mRuntime->getLogger(), mRuntime->getLogger().getTransportContext(), mHost.c_str() << ":" << mPort << " => Connection established to remote " << remoteAddress);
       delete[] remoteAddress;

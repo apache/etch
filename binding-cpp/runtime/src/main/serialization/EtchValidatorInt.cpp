@@ -30,12 +30,13 @@ const EtchObjectType* EtchValidatorInt::TYPE() {
 }
 
 EtchValidatorInt::EtchValidatorInt(EtchRuntime* runtime, capu::uint32_t ndim)
-: mRuntime(runtime), EtchTypeValidator(EtchValidatorInt::TYPE(), EtchInt32::TYPE(), EtchInt32::TYPE(), ndim) {
+: EtchTypeValidator(EtchValidatorInt::TYPE(), EtchInt32::TYPE(), EtchInt32::TYPE(), ndim)
+, mRuntime(runtime) {
 }
 
 EtchValidatorInt::EtchValidatorInt(const EtchValidatorInt& other)
-: mRuntime(other.mRuntime), EtchTypeValidator(other) {
-
+: EtchTypeValidator(other)
+, mRuntime(other.mRuntime) {
 }
 
 EtchValidatorInt::~EtchValidatorInt() {

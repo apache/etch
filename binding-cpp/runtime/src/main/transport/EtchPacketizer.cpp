@@ -24,8 +24,8 @@ const capu::uint32_t& EtchPacketizer::HEADER_SIZE() {
   return headerSize;
 }
 
-const capu::int32_t& EtchPacketizer::SIG() {
-  static const capu::int32_t sig(0xdeadbeef);
+const capu::uint32_t& EtchPacketizer::SIG() {
+  static const capu::uint32_t sig(0xDEADBEEFu);
   return sig;
 }
 

@@ -30,7 +30,8 @@ const EtchObjectType* EtchValidatorBoolean::TYPE() {
 }
 
 EtchValidatorBoolean::EtchValidatorBoolean(EtchRuntime* runtime, capu::uint32_t ndim)
-: mRuntime(runtime), EtchTypeValidator(EtchValidatorBoolean::TYPE(), EtchBool::TYPE(), EtchBool::TYPE(), ndim) {
+: EtchTypeValidator(EtchValidatorBoolean::TYPE(), EtchBool::TYPE(), EtchBool::TYPE(), ndim)
+, mRuntime(runtime)  {
 }
 
 EtchValidatorBoolean::EtchValidatorBoolean(const EtchValidatorBoolean& other)

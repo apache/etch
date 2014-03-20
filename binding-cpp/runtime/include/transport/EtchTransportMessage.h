@@ -28,7 +28,7 @@
 /**
  * Interface used to deliver messages to the transport from the session.
  */
-class EtchTransportMessage : public virtual EtchTransport<EtchSessionMessage> {
+class EtchTransportMessage : public EtchTransport<EtchSessionMessage> {
 
 public:
 

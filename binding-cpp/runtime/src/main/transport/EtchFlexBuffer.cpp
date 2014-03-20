@@ -166,12 +166,15 @@ status_t EtchFlexBuffer::get(capu::int8_t *buf, capu::uint32_t off, capu::uint32
 
   capu::int32_t n = 0;
 
-  if (len - off < getAvailableBytes()) {
-    if (len - off < 0)
+  if ((signed)(len - off) < static_cast<capu::int32_t>(getAvailableBytes())) {
+    if ((signed)(len - off) < 0) {
       return ETCH_EINVAL;
+    }
     n = len - off;
-  } else
+  } else {
     n = getAvailableBytes();
+  }
+
   numBytes = n;
   memcpy(buf, &mBuffer[mIndex], n);
   mIndex += n;

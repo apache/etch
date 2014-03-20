@@ -26,15 +26,15 @@ class EtchHashNative {
 public:
 
   template<class T>
-  static capu::uint32_t Digest(T &key, const capu::uint8_t bitSize) {
+  static capu::uint_t Digest(T &key, const capu::uint8_t bitSize) {
     return capu::CapuDefaultHashFunction::Digest<T>(key, bitSize);
   }
 
-  static capu::uint32_t Digest(char* key, const capu::uint8_t bitSize) {
+  static capu::uint_t Digest(char* key, const capu::uint8_t bitSize) {
     return capu::CapuDefaultHashFunction::Digest(key, bitSize);
   }
 
-  static capu::uint32_t Digest(const char* key, const capu::uint8_t bitSize) {
+  static capu::uint_t Digest(const char* key, const capu::uint8_t bitSize) {
     return capu::CapuDefaultHashFunction::Digest(key, bitSize);
   }
 

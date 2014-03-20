@@ -156,16 +156,16 @@ public:
         capu::uint32_t val;
 
         buf->getInteger(val);
-        EXPECT_EQ(11, val);
+        EXPECT_EQ(11u, val);
 
         buf->getInteger(val);
-        EXPECT_EQ(1122, val);
+        EXPECT_EQ(1122u, val);
 
         buf->getInteger(val);
-        EXPECT_EQ(112233, val);
+        EXPECT_EQ(112233u, val);
 
         buf->getInteger(val);
-        EXPECT_EQ(11223344, val);
+        EXPECT_EQ(11223344u, val);
         return ETCH_OK;
     }
     

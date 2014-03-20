@@ -133,7 +133,6 @@ private:
   EtchMailbox::EtchNotify* mNotify;
   EtchObject* mState;
   EtchLong mMessageId;
-  capu::bool_t mAlarmSet;
   EtchCircularQueue mQueue;
   capu::Mutex mQueueMutex;
 

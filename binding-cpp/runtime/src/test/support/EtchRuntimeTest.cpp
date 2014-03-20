@@ -22,7 +22,10 @@
 
 class MockLogAppender : public IEtchLogAppender {
 public:
+  virtual ~MockLogAppender() {};
+
   MOCK_METHOD1(log, void(const capu::LogMessage& message));
+
 };
 
 capu::uint64_t currentIdCount;

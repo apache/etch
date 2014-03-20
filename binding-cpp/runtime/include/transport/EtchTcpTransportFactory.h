@@ -83,7 +83,7 @@ private:
      * @param resources
      */
     MySessionListener(EtchRuntime* runtime, EtchTcpTransportFactory* factory, EtchTransport<EtchSessionListener<EtchSocket> > *transport,
-            EtchString uri, EtchResources* resources, capu::bool_t secure);
+            EtchString uri, EtchResources* resources);
 
      /**
       * Destructor
@@ -141,7 +141,6 @@ private:
     EtchTransport<EtchSessionListener<EtchSocket> > *mTransport;
     EtchString mUri;
     EtchResources* mResources;
-    capu::bool_t mIsSecure;
     EtchServerFactory* mSession;
     EtchList<EtchStack*>* mConnectionStacks;
   };

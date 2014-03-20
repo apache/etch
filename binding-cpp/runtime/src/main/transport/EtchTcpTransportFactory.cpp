@@ -62,7 +62,6 @@ status_t EtchTcpTransportFactory::newTransport(EtchString uri, EtchResources* re
     //TODO : secure communication via ssl sockets
     return ETCH_EUNIMPL;
   } else {
-    // TODO add runtime
     c = new EtchTcpConnection(mRuntime, (EtchSocket*) socket, &u);
   }
   stack->setTransportData(c);
@@ -99,15 +98,15 @@ status_t EtchTcpTransportFactory::newListener(EtchString uri, EtchResources* res
     l = new EtchTcpListener(mRuntime, &u);
   }
 
-  result = new MySessionListener(mRuntime, this, l, uri, resources, mIsSecure);
+  result = new MySessionListener(mRuntime, this, l, uri, resources);
   if (result == NULL) {
     return ETCH_ERROR;
   }
   return ETCH_OK;
 }
 
-EtchTcpTransportFactory::MySessionListener::MySessionListener(EtchRuntime* runtime, EtchTcpTransportFactory* factory, EtchTransport<EtchSessionListener<EtchSocket> > *transport, EtchString uri, EtchResources* resources, capu::bool_t secure)
-: mRuntime(runtime), mFactory(factory), mTransport(transport), mUri(uri), mResources(resources), mIsSecure(secure) {
+EtchTcpTransportFactory::MySessionListener::MySessionListener(EtchRuntime* runtime, EtchTcpTransportFactory* factory, EtchTransport<EtchSessionListener<EtchSocket> > *transport, EtchString uri, EtchResources* resources)
+: mRuntime(runtime), mFactory(factory), mTransport(transport), mUri(uri), mResources(resources) {
   if (mTransport != NULL) {
     mTransport->setSession(this);
   }
@@ -119,6 +118,7 @@ EtchServerFactory* EtchTcpTransportFactory::MySessionListener::getSession() {
 }
 
 EtchTcpTransportFactory::MySessionListener::~MySessionListener() {
+  
   if(mTransport != NULL) {
     delete mTransport;
   }

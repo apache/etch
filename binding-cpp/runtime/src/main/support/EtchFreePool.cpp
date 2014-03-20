@@ -31,7 +31,7 @@ public:
    * Create a new instance of EtchFreePoolRunnable class.
    */
   EtchFreePoolRunnable(EtchFreePool* pool, capu::SmartPointer<EtchPoolRunnable> runnable)
-    : mPool(pool), mRunnable(runnable) {
+    : mRunnable(runnable) {
   }
 
   /**
@@ -57,7 +57,6 @@ public:
   }
 
 private:
-  EtchFreePool* mPool;
   capu::SmartPointer<EtchPoolRunnable> mRunnable;
 };
 

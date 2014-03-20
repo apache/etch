@@ -65,6 +65,11 @@ namespace $namespace {
     {
     public:
       /**
+       * Destructor
+       */
+      virtual ~${i}ServerFactory(){}
+
+      /**
        * Constructs a new instance implementing ${i}Server. The new
        * instance will receive and process messages from the client session.
        *
@@ -86,6 +91,11 @@ namespace $namespace {
      */
     class ${i}ClientFactory {
     public:
+      /**
+       * Destructor
+       */
+      virtual ~${i}ClientFactory(){}
+
       /**
        * Constructs a new instance implementing ${i}Client. The new
        * instance will receive and process messages from the server session.
