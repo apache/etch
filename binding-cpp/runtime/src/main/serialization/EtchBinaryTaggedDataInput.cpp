@@ -473,7 +473,7 @@ status_t EtchBinaryTaggedDataInput::readValue(capu::SmartPointer<EtchValidator> 
 
     case EtchTypeCode::INT:
     {
-      capu::int32_t tmp;
+      capu::uint32_t tmp;
       if (mBuffer->getInteger(tmp) != ETCH_OK)
         return ETCH_ERROR;
       capu::SmartPointer<EtchInt32> intNum = new EtchInt32(tmp);

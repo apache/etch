@@ -29,6 +29,12 @@ const capu::int32_t& EtchPacketizer::SIG() {
   return sig;
 }
 
+const capu::uint32_t& EtchPacketizer::SIG_SIZE() {
+  static const capu::uint32_t sigSize(4);
+  return sigSize;
+}
+
+
 const capu::int32_t& EtchPacketizer::DEFAULT_MAX_PKT_SIZE(){
   static const capu::int32_t pktSize(16384 - EtchPacketizer::HEADER_SIZE());
   return pktSize;
@@ -40,7 +46,7 @@ const EtchString& EtchPacketizer::MAX_PKT_SIZE_TERM() {
 }
 
 EtchPacketizer::EtchPacketizer(EtchRuntime* runtime, EtchTransportData* transport, EtchString& uri)
-: mRuntime(runtime), mTransport(transport), mBodyLen(0), mWantHeader(true) {
+: mRuntime(runtime), mTransport(transport) {
   if (mTransport != NULL)
     mTransport->setSession(this);
 
@@ -55,11 +61,12 @@ EtchPacketizer::EtchPacketizer(EtchRuntime* runtime, EtchTransportData* transpor
     if (mMaxPktSize <= 0)
       mMaxPktSize = DEFAULT_MAX_PKT_SIZE();
   }
-  mSavedBuf = new EtchFlexBuffer();
+  mReadBuf = new EtchFlexBuffer();
+  mTempBuf = new EtchFlexBuffer();
 }
 
 EtchPacketizer::EtchPacketizer(EtchRuntime* runtime, EtchTransportData* transport, EtchURL* uri)
-: mRuntime(runtime), mTransport(transport), mBodyLen(0), mWantHeader(true) {
+: mRuntime(runtime), mTransport(transport) {
   EtchString value("");
   if (mTransport != NULL)
     transport->setSession(this);
@@ -73,7 +80,8 @@ EtchPacketizer::EtchPacketizer(EtchRuntime* runtime, EtchTransportData* transpor
     if (mMaxPktSize <= 0)
       mMaxPktSize = DEFAULT_MAX_PKT_SIZE();
   }
-  mSavedBuf = new EtchFlexBuffer();
+  mReadBuf = new EtchFlexBuffer();
+  mTempBuf = new EtchFlexBuffer();
 }
 
 EtchPacketizer::~EtchPacketizer() {
@@ -135,123 +143,117 @@ status_t EtchPacketizer::transportPacket(capu::SmartPointer<EtchWho> recipient, 
 }
 
 status_t EtchPacketizer::sessionData(capu::SmartPointer<EtchWho> sender, capu::SmartPointer<EtchFlexBuffer> buf) {
-//TODO: compare with java version
-
-
-  // there are two options here. one is that we have no buffered data
-  // and the entire packet is contained within the buf. in that case
-  // we could optimize the daylights out of the process and directly
-  // drop the packet on the handler.
-
-  status_t result;
-  if (buf->getAvailableBytes() > 0) {
-    if (mWantHeader) {
-      // do we have enough to make a header?
-
-      if (mSavedBuf->getLength() + buf->getAvailableBytes() >= HEADER_SIZE()) {
-        capu::uint32_t pktSize;
-
-        if (mSavedBuf->getLength() == 0) {
-          // savedBuf is empty, entire header in buf.
-
-          result = processHeader(buf.get(), false, pktSize);
-          if (result != ETCH_OK)
-            return result;
-        } else // header split across savedBuf and buf
-        {
-          // move just enough data from buf to savedBuf to have a header.
-
-          capu::uint32_t needFromBuf = HEADER_SIZE() - mSavedBuf->getLength();
-          mSavedBuf->put(*buf, needFromBuf);
-          mSavedBuf->setIndex(0);
-
-          result = processHeader(mSavedBuf.get(), true, pktSize);
-          if (result != ETCH_OK)
-            return result;
-        }
-
-        mBodyLen = pktSize;
-        mWantHeader = false;
-      } else // want header, but there's not enough to make it.
-      {
-        // save buf in savedBuf.
-
-        mSavedBuf->setIndex(mSavedBuf->getLength());
-        mSavedBuf->put(*buf);
-      }
-    }
-    if (!mWantHeader && mSavedBuf->getLength() + buf->getAvailableBytes() >= mBodyLen) {
-      // want body, and there's enough to make it.
-
-      // three possible cases: the body is entirely in savedBuf,
-      // the body is split, or the body is entirely in buf. assert
-      // that the body cannot entirely be in savedBuf, or else
-      // we'd have processed it last time.
-
-      if (mSavedBuf->getLength() == 0) {
-        // savedBuf is empty, entire body in buf.
-
-        capu::uint32_t length = buf->getLength();
-        capu::uint32_t index = buf->getIndex();
-        buf->setLength(index + mBodyLen);
-        ETCH_LOG_DEBUG(mRuntime->getLogger(), mRuntime->getLogger().getPacketizerContext(), "Entire body is in buffer: header is parsed and the body of message is sent to Messagizer");
-        result = mSession->sessionPacket(sender, buf);
-
-        if (result != ETCH_OK) {
-          return result;
-        }
-
-        buf->setLength(length);
-        buf->setIndex(index + mBodyLen);
-
-        mWantHeader = true;
-      } else // body split across savedBuf and buf
-      {
-        // move just enough data from buf to savedBuf to have a body.
-
-        capu::uint32_t needFromBuf = mBodyLen - mSavedBuf->getLength();
-        mSavedBuf->put(*buf, needFromBuf);
-        mSavedBuf->setIndex(0);
-
-        ETCH_LOG_DEBUG(mRuntime->getLogger(), mRuntime->getLogger().getPacketizerContext(), "more data in buffer: header is parsed and the body of message is sent to Messagizer");
-        mSession->sessionPacket(sender, mSavedBuf);
-
-        mSavedBuf->reset();
-        mWantHeader = true;
-      }
-    } else if (!mWantHeader)// want body, but there's not enough to make it.
-    {
-      // save buf in savedBuf.
-      mSavedBuf->setIndex(mSavedBuf->getLength());
-      mSavedBuf->put(*buf);
-    }
+  status_t result = ETCH_OK;
+  
+  if(mReadBuf->getAvailableBytes() > 0)
+  {
+    //If there is already data in the buffer, amend the new buffer by setting the index to the end of the buffer
+    mReadBuf->setIndex(mReadBuf->getLength());
   }
-  // buf is now empty, and there's nothing else to do.
-  if (buf->getAvailableBytes() != 0)
-    return ETCH_ERROR;
-  return ETCH_OK;
+
+  mReadBuf->put(*buf);
+  mReadBuf->setIndex(0);
+
+  while(bufferContainsPacket())
+  {
+    EtchFlexBufferPtr packetData = extractPacket();
+    result = mSession->sessionPacket(sender, packetData);
+  }
+  return result;
 }
 
-status_t EtchPacketizer::processHeader(EtchFlexBuffer* buf, capu::bool_t reset, capu::uint32_t &pktSize) {
-  capu::int32_t sig = 0;
-  buf->getInteger(sig);
-
-  if (sig != SIG()) {
-    ETCH_LOG_ERROR(mRuntime->getLogger(), mRuntime->getLogger().getPacketizerContext(), "SIG is not correct, message will be discarded");
-    return ETCH_ERROR;
+capu::bool_t EtchPacketizer::bufferContainsPacket()
+{
+  if(!bufferContainsHeader())
+  {
+    return false;
+  }
+  capu::uint32_t packetSize = 0;
+  if(mReadBuf->getInteger(packetSize) != ETCH_OK || mReadBuf->getAvailableBytes() < packetSize)
+  {
+    mReadBuf->setIndex(0);
+    return false;
+  }
+  if (packetSize > mMaxPktSize) {
+    ETCH_LOG_ERROR(mRuntime->getLogger(), mRuntime->getLogger().getPacketizerContext(), "EtchPacketizer: PacketSize exceeded Maximum Packetsize. MaximumSize: " << mMaxPktSize << " PacketSize: " << packetSize);
+    mReadBuf->setIndex(mReadBuf->getIndex() + packetSize);
+    bufferClean();
   }
 
-  buf->getInteger((capu::int32_t&)pktSize);
-
-  if (reset)
-    buf->reset();
-
-  if (pktSize > mMaxPktSize) {
-    ETCH_LOG_ERROR(mRuntime->getLogger(), mRuntime->getLogger().getPacketizerContext(), "Packet size exceeds the maximum packet size, message will be discarded");
-    return ETCH_ERROR;
-  }
-  return ETCH_OK;
+  mReadBuf->setIndex(0);
+  return true;
 }
+
+capu::bool_t EtchPacketizer::bufferContainsHeader()
+{
+  if(mReadBuf->getAvailableBytes() < HEADER_SIZE())
+    return false;
+
+  capu::uint32_t sig = 0;
+  mReadBuf->getInteger(sig);
+  
+  if(sig == SIG()) {
+    return true;
+  }
+
+  ETCH_LOG_ERROR(mRuntime->getLogger(), mRuntime->getLogger().getPacketizerContext(), "EtchPacketizer: Packet SIG is incorrect - discarding package and searching for next Valid SIG.");
+  
+  capu::uint32_t length = mReadBuf->getLength() - sizeof(capu::int32_t);
+  capu::uint32_t index = mReadBuf->getIndex();
+    
+  for(capu::uint32_t i = index; i < length; ++i) {
+    mReadBuf->getInteger(sig);
+    if(sig == SIG()) {
+      ETCH_LOG_DEBUG(mRuntime->getLogger(), mRuntime->getLogger().getPacketizerContext(), "EtchPacketizer: Found correct SIG in Buffer after having a damaged Buffer.");
+      mReadBuf->setIndex(i); //we found a correct Header
+      bufferClean();
+      mReadBuf->setIndex(SIG_SIZE());
+      return true;
+    }
+    mReadBuf->setIndex(i+1);
+  }
+
+  mReadBuf->setIndex(mReadBuf->getLength() - HEADER_SIZE()); //Save the last 8 Bytes
+  bufferClean();
+  return false;
+}
+
+void EtchPacketizer::bufferClean()
+{
+  mTempBuf->put(*mReadBuf);
+  mTempBuf->setIndex(0);
+  
+  mReadBuf->reset();
+  mReadBuf->put(*mTempBuf);
+  mReadBuf->setIndex(0);
+  
+  mTempBuf->reset();
+}
+
+EtchFlexBufferPtr EtchPacketizer::extractPacket()
+{
+  mReadBuf->setIndex(mReadBuf->getIndex() + 4);
+  capu::uint32_t packetSize = 0;
+  mReadBuf->getInteger(packetSize);
+  
+  EtchFlexBufferPtr packetData = new EtchFlexBuffer();
+  packetData->put(*mReadBuf, packetSize);
+  
+  mReadBuf->setIndex(mReadBuf->getIndex() + packetSize);
+  if(mReadBuf->getAvailableBytes() > 0)
+  {
+    mTempBuf->put(*mReadBuf);
+    mTempBuf->setIndex(0);
+  }
+  mReadBuf->reset();
+  mReadBuf->put(*mTempBuf);
+  mReadBuf->setIndex(0);
+  mTempBuf->reset();
+  packetData->setIndex(0);
+  ETCH_LOG_DEBUG(mRuntime->getLogger(), mRuntime->getLogger().getPacketizerContext(), "EtchPacketizer: extracted packet - passing " << packetSize << " Bytes to Messagizer.")
+  return packetData;
+}
+
 
 EtchTransportData* EtchPacketizer::getTransport() {
   return mTransport;

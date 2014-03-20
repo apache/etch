@@ -179,7 +179,7 @@ TEST(EtchFlexBufferTest, putAndgetIntegerTest) {
   EtchFlexBuffer *buffer = new EtchFlexBuffer();
   capu::int8_t key [] = {'a', 'b', 'c'};
 
-  capu::int32_t value = 5;
+  capu::uint32_t value = 5;
   EXPECT_TRUE(buffer->put(NULL, 32) == ETCH_EINVAL);
   //try to read an integer
   EXPECT_TRUE(buffer->getInteger(value) == ETCH_ERANGE);

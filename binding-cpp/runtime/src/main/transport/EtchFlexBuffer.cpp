@@ -56,20 +56,20 @@ capu::uint32_t EtchFlexBuffer::getIndex() {
   return mIndex;
 }
 
-status_t EtchFlexBuffer::getInteger(capu::int32_t & value) {
+status_t EtchFlexBuffer::getInteger(capu::uint32_t & value) {
 
-  if (sizeof (capu::int32_t) > getAvailableBytes())
+  if (sizeof (capu::uint32_t) > getAvailableBytes())
     return ETCH_ERANGE;
 
   if (mByteRepresentation == ETCH_LITTLE_ENDIAN) {
     // little-endian
-    capu::int32_t result = (mBuffer[mIndex++] & 255);
+    capu::uint32_t result = (mBuffer[mIndex++] & 255);
     result += (mBuffer[mIndex++] & 255) << 8;
     result += (mBuffer[mIndex++] & 255) << 16;
     value = result + ((mBuffer[mIndex++] & 255) << 24);
   } else if (mByteRepresentation == ETCH_BIG_ENDIAN) {
     // big-endian
-    capu::int32_t result = mBuffer[mIndex++] & 255;
+    capu::uint32_t result = mBuffer[mIndex++] & 255;
     result = (result << 8) + (mBuffer[mIndex++] & 255);
     result = (result << 8) + (mBuffer[mIndex++] & 255);
     value = (result << 8) + (mBuffer[mIndex++] & 255);
@@ -136,7 +136,7 @@ status_t EtchFlexBuffer::getLong(capu::int64_t & value) {
 }
 
 status_t EtchFlexBuffer::getFloat(capu::float_t & value) {
-  capu::int32_t tmp;
+  capu::uint32_t tmp;
   status_t err = getInteger(tmp);
   if (err != ETCH_OK)
     return err;
@@ -219,11 +219,7 @@ status_t EtchFlexBuffer::put(EtchFlexBuffer & buffer) {
 
   copy(&buffer.mBuffer[buffer.mIndex], buffer.getAvailableBytes());
 
-  if (mIndex > mLength)
-    mLength = mIndex;
-
   return ETCH_OK;
-
 }
 
 status_t EtchFlexBuffer::put(EtchFlexBuffer & buffer, capu::uint32_t numBytes) {

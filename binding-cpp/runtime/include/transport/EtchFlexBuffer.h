@@ -18,6 +18,8 @@
 
 #ifndef __ETCHFLEXBUFFER_H__
 #define __ETCHFLEXBUFFER_H__
+
+#include "capu/util/SmartPointer.h"
 #include "common/EtchConfig.h"
 #include "common/EtchError.h"
 #include "transport/EtchByteRepresentation.h"
@@ -90,7 +92,7 @@ public:
    *         ETCH_EINVAL if the byte representation is not BIG ENDIAN or LITTLE ENDIAN
    *         ETCH_ERANGE if there is not enough value to be read (less than 4 byte)
    */
-  status_t getInteger(capu::int32_t & value);
+  status_t getInteger(capu::uint32_t & value);
 
   /**
    * gets an byte value from flexible buffer
@@ -322,6 +324,7 @@ private:
   void copy(capu::int8_t *buffer, capu::uint32_t numBytes);
 };
 
+typedef capu::SmartPointer<EtchFlexBuffer> EtchFlexBufferPtr;
 
 #endif /* ETCHFLEXBUFFER_H */
 

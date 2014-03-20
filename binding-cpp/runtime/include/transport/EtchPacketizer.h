@@ -51,8 +51,12 @@ public:
   const static EtchString& MAX_PKT_SIZE_TERM();
 
   const static capu::int32_t& SIG();
-
+  
+  const static capu::uint32_t& SIG_SIZE();
+  
   const static capu::uint32_t& HEADER_SIZE();
+  
+
 
   /**
    * Constructs the Packetizer with null packet handler and uri specified
@@ -72,6 +76,8 @@ public:
    */
   EtchPacketizer(EtchRuntime* runtime, EtchTransportData* transport, EtchURL* uri);
 
+
+public:
   /**
    * Destructor
    */
@@ -146,13 +152,16 @@ private:
 
   capu::uint32_t mMaxPktSize;
 
-  capu::uint32_t mBodyLen;
-
-  capu::bool_t mWantHeader;
-
-  capu::SmartPointer<EtchFlexBuffer> mSavedBuf;
-
-  status_t processHeader(EtchFlexBuffer* buf, capu::bool_t reset, capu::uint32_t &pktSize);
+  EtchFlexBufferPtr mReadBuf;
+  EtchFlexBufferPtr mTempBuf;
+    
+    
+  capu::bool_t      bufferContainsPacket();
+  capu::bool_t      bufferContainsHeader();
+  void              bufferClean();
+  EtchFlexBufferPtr extractPacket();
+  void              handleCorruptedBuffer();
+  
 
 };
 
