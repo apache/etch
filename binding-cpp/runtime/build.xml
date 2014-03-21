@@ -21,7 +21,7 @@
     <description>Etch-to-CPP runtime binding implementation</description>
     <property name="Etch.basedir" location="${basedir}/../.." />
 
-    <property file="build.properties"/>
+    <loadproperties srcFile="build.properties"/>
 
     <!-- import custom rules which can be used by depending projects to override ant targets -->
     <import file="custom_rules.xml" optional="true" />
@@ -32,6 +32,7 @@
     <!-- Static properties of the sub-project -->
     <property name="proj"                 location="${Etch.basedir}/binding-cpp/runtime" />
     <property name="target"               location="${proj}/target" />
+    <property name="capu3rd"              location="${target}/3rd/capu" />
     <property name="testResultsDirectory" location="${target}/test-results" />
 
     <property name="binaryDir"            location="${Etch.dist}/binding-cpp/bin"/>
@@ -84,7 +85,17 @@
         </if>
         <for list="${target.platforms}" param="platform" delimiter="," trim="true">
             <sequential>
-                <var  name="platform" value="@{platform}"/>
+                <var name="platform" value="@{platform}"/>
+                <var name="cmake.build.etchtests" unset="true"/>
+                <if>
+                    <isset property="target.platforms.${platform}.buildTests" />
+                        <then>
+                            <propertycopy name="cmake.build.etchtests" from="target.platforms.${platform}.buildTests" />
+                        </then>
+                        <else>
+                            <property name="cmake.build.etchtests" value="YES" />
+                        </else>
+                </if>
                 <echo>Init platform: ${platform}</echo>
                 <antcall target="init"/>
                 <echo>Building platform: ${platform}</echo>
@@ -187,14 +198,20 @@
                     <arg value="-DCMAKE_BUILD_TYPE:STRING=${Etch.build.target}"/>
                     <arg value="-DCAPU_INCLUDE_DIR:PATH=${use.capu.include.dir}"/>
                     <arg value="-DCAPU_LIBRARY_DIR:PATH=${use.capu.library.dir}"/>
+                    <arg value="-DCAPU_BUILD_DIR:PATH=${capu3rd}" />
                     <arg value="-DLOCAL_CAPU_SOURCE_DIR:PATH=${use.capu.local.source.dir}"/>
-                    <arg value="-DCONFIG_BUILD_UNITTESTS:BOOLEAN=0"/>
+                    <arg value="-DCONFIG_BUILD_TESTS:BOOL=${cmake.build.etchtests}" />
                     <arg value="${basedir}"/>
                 </exec>
 
                 <!-- run the build -->
+                <exec dir="${target}/${platform}/${Etch.build.target}" executable="cmake" failonerror="false">
+                    <arg line="--build . --target rebuild_cache --config ${Etch.build.target}"/>
+                </exec>
+
+                <!-- run the build -->
                 <exec dir="${target}/${platform}/${Etch.build.target}" executable="cmake" failonerror="true">
-                    <arg line="--build . --target install --config ${Etch.build.target} -- ${use.custom.build.options}"/>
+                    <arg line="--build . --target install --config ${Etch.build.target}"/>
                 </exec>
 
             </then>
@@ -216,7 +233,8 @@
                     <arg value="-DCAPU_INCLUDE_DIR:PATH=${use.capu.include.dir}"/>
                     <arg value="-DCAPU_LIBRARY_DIR:PATH=${use.capu.library.dir}"/>
                     <arg value="-DLOCAL_CAPU_SOURCE_DIR:PATH=${use.capu.local.source.dir}"/>
-                    <arg value="-DCONFIG_BUILD_UNITTESTS:BOOLEAN=0"/>
+                    <arg value="-DCAPU_BUILD_DIR:PATH=${capu3rd}" />
+                    <arg value="-DCONFIG_BUILD_TESTS:BOOL=${cmake.build.etchtests}" />
                     <arg value="${basedir}"/>
                 </exec>
 
@@ -240,11 +258,11 @@
     <target name="postbuild" depends="build,do-postbuild">
     </target>
   
-    <target name="do-test" unless="build.skip.tests">
+    <target name="do-test" unless="skip.tests">
         <if>
-            <isset property="target.platforms.${platform}.crosscompile"/>
+            <not><equals arg1="${cmake.build.etchtests}" arg2="YES"/></not>
             <then>
-                <echo>Not executing tests for cross compiled platform</echo>
+                <echo>Test execution has been disabled.</echo>
             </then>
             <else>
                 <!-- Run Etch Unit Tests -->

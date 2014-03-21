@@ -22,12 +22,11 @@ SET(TARGET_OS Windows)
 SET(TARGET_ARCH X86_64)
 SET(TARGET_COMPILER MSVC)
 
-SET(CMAKE_C_FLAGS_RELEASE "/MD /O2 /Ob2 /DNDEBUG /MP8 /GR-")
-SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} /W3")
+SET(CMAKE_C_FLAGS_RELEASE "/MD /O2 /Ob2 /DNDEBUG /MP8 /GR- ")
+SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} /W3 /WX")
 
 SET(CMAKE_C_FLAGS_DEBUG "/MDd /Zi /Od /RTC1 /D_DEBUG /MP8" )
-SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} /W3")
-
+SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} /W3 /WX")
 
 add_definitions("-DTARGET_OS=Windows")
 add_definitions("-DTARGET_ARCH=X86_64")
@@ -36,5 +35,7 @@ add_definitions("-DARCH_X86_64")
 
 add_definitions("-D_VARIADIC_MAX=10") #this is needed for compiling gtest with visual studio 11
 
-# enable the BUILD_CHECK_MEMORY flag if you would like to check for memory leaks with visual leak detector
-#add_definitions("-DBUILD_CHECK_MEMORY")
+#enables CAPU builds on Windows Version >= Win Vista
+#we need this as some API calls used require this version
+add_definitions("-D_WIN32_WINNT=0x0600")
+add_definitions("-DWINVER=0x0600")

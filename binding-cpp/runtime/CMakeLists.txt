@@ -67,7 +67,10 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 # etch libary
 add_subdirectory (src/main)
 # etch libary tests
-add_subdirectory (src/test)
+
+IF(CONFIG_BUILD_TESTS)
+  add_subdirectory (src/test)
+ENDIF()
 
 #install capu headers and library
 INSTALL(DIRECTORY ${LIBCAPU_INCLUDE_DIR}/capu DESTINATION "${ETCH_INSTALL_DIR}/include")

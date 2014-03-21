@@ -34,23 +34,24 @@ IF ("${CAPU_INCLUDE_DIR}" STREQUAL "" AND "${CAPU_LIBRARY_DIR}" STREQUAL "")
     IF ("${LOCAL_CAPU_SOURCE_DIR}" STREQUAL "")
         #download capu from foreign repository
         SET(CAPU_PROJECT_DIR "${CMAKE_BINARY_DIR}/3rd/capu")
-        SET(CAPU_CMAKE_BUILD_DIR "${CMAKE_BINARY_DIR}/capu")
-        
+        SET(CAPU_CMAKE_BUILD_DIR "${CAPU_BUILD_DIR}/${TARGET_OS}_${TARGET_ARCH}")
+
         ExternalProject_Add(
             Capu
             URL https://github.com/bmwcarit/capu/zipball/master/bmwcarit-capu-v0.13.0-34-g0ca0967.zip
             SOURCE_DIR "${CAPU_PROJECT_DIR}"
             BINARY_DIR "${CAPU_CMAKE_BUILD_DIR}"
-            INSTALL_DIR "${CAPU_PROJECT_DIR}/deliverable"
+            INSTALL_DIR "${CAPU_BUILD_DIR}/deliverable"
             UPDATE_COMMAND ""
             CMAKE_ARGS -DCMAKE_TOOLCHAIN_FILE:PATH=${CMAKE_TOOLCHAIN_FILE}
+                       -DCMAKE_INSTALL_PREFIX:STRING=${CAPU_BUILD_DIR}/deliverable/${TARGET_OS}_${TARGET_ARCH}/${CMAKE_BUILD_TYPE}
                        -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
                        -DCONFIG_BUILD_UNITTESTS:BOOLEAN=${CONFIG_BUILD_UNITTESTS}
                        INSTALL 1
         )
     ELSE()
         SET(CAPU_PROJECT_DIR "${LOCAL_CAPU_SOURCE_DIR}")
-        SET(CAPU_CMAKE_BUILD_DIR "${CAPU_PROJECT_DIR}/build_${TARGET_OS}_${TARGET_ARCH}")
+        SET(CAPU_CMAKE_BUILD_DIR "${CAPU_BUILD_DIR}/${TARGET_OS}_${TARGET_ARCH}")
 
         ExternalProject_Add(
             Capu
@@ -58,16 +59,16 @@ IF ("${CAPU_INCLUDE_DIR}" STREQUAL "" AND "${CAPU_LIBRARY_DIR}" STREQUAL "")
             BINARY_DIR "${CAPU_CMAKE_BUILD_DIR}"
             DOWNLOAD_COMMAND ""
             UPDATE_COMMAND ""
-            INSTALL_DIR "${CAPU_PROJECT_DIR}/deliverable"
+            INSTALL_DIR "${CAPU_BUILD_DIR}/deliverable"
             CMAKE_ARGS -DCMAKE_TOOLCHAIN_FILE:PATH=${CMAKE_TOOLCHAIN_FILE}
+                       -DCMAKE_INSTALL_PREFIX:STRING=${CAPU_BUILD_DIR}/deliverable/${TARGET_OS}_${TARGET_ARCH}/${CMAKE_BUILD_TYPE}
                        -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-                       -DBUILD_DynamicTestLibraryProject:BOOL=1
-                       -DBUILD_GoogleMock:BOOL=0
-                       -DCONFIG_BUILD_UNITTESTS:BOOL=0
+                       -DCONFIG_BUILD_UNITTESTS:BOOL=${CONFIG_BUILD_UNITTESTS}
+                       INSTALL 1
         )
     ENDIF()
-    
-    SET(CAPU_DELIVERABLE_DIR ${CAPU_PROJECT_DIR}/deliverable/${TARGET_OS}_${TARGET_ARCH}/${CMAKE_BUILD_TYPE})
+
+    SET(CAPU_DELIVERABLE_DIR ${CAPU_BUILD_DIR}/deliverable/${TARGET_OS}_${TARGET_ARCH}/${CMAKE_BUILD_TYPE})
 
     SET(LIBCAPU_INCLUDE_DIR ${CAPU_DELIVERABLE_DIR}/include)
     SET(LIBCAPU_LIBRARY_DIR ${CAPU_DELIVERABLE_DIR}/lib)
