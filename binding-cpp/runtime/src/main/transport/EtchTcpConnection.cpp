@@ -45,10 +45,12 @@ EtchTcpConnection::~EtchTcpConnection() {
     delete mThread;
   }
 
+  mMutexConnection.lock();
   if (mSocket != NULL) {
     delete mSocket;
     mSocket = NULL;
   }
+  mMutexConnection.unlock();
 }
 
 status_t EtchTcpConnection::send(capu::int8_t* buf, capu::uint32_t off, capu::uint32_t len) {
@@ -255,12 +257,17 @@ void EtchTcpConnection::setSession(EtchSessionData* session) {
 }
 
 status_t EtchTcpConnection::close() {
+  mMutexConnection.lock();
+  status_t result = ETCH_OK;
   if (mSocket != NULL) {
     ETCH_LOG_DEBUG(mRuntime->getLogger(), mRuntime->getLogger().getTransportContext(), mHost.c_str() << ":" << mPort << " => Socket has been closed");
-    return mSocket->close();
+    result = mSocket->close();
   } else {
-    return ETCH_ERROR;
+    result = ETCH_ERROR;
   }
+  mMutexConnection.unlock();
+
+  return result;
 }
 
 capu::bool_t EtchTcpConnection::isStarted() {

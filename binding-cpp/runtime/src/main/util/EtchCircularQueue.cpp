@@ -33,7 +33,9 @@ EtchCircularQueue::EtchCircularQueue(capu::uint32_t size)
 }
 
 EtchCircularQueue::~EtchCircularQueue() {
+  mMutex.lock();
   delete[] mItems;
+  mMutex.unlock();
 }
 
 capu::uint32_t EtchCircularQueue::getSize() {
