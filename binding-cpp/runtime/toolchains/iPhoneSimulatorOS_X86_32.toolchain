@@ -1,0 +1,55 @@
+#
+# Licensed to the Apache Software Foundation (ASF) under one or more 
+# contributor license agreements. See the NOTICE file distributed with  
+# this work for additional information regarding copyright ownership. 
+# The ASF licenses this file to you under the Apache License, Version  
+# 2.0 (the "License"); you may not use this file except in compliance  
+# with the License. You may obtain a copy of the License at 
+# 
+# http://www.apache.org/licenses/LICENSE-2.0 
+# 
+# Unless required by applicable law or agreed to in writing, software 
+# distributed under the License is distributed on an "AS IS" BASIS, 
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and 
+# limitations under the License. 
+#
+
+SET (TARGET_OS iPhoneSimulatorOS)
+SET (TARGET_ARCH X86_32)
+
+INCLUDE(CMakeForceCompiler)
+CMAKE_FORCE_C_COMPILER(clang clang)
+CMAKE_FORCE_CXX_COMPILER(clang++ clang)
+
+SET (CMAKE_FIND_LIBRARY_SUFFIXES ".dylib" ".so" ".a")
+
+IF(NOT SDK_VERSION)
+	SET (SDK_VERSION "7.1" CACHE STRING "iOS SDK-Version" FORCE)
+	MESSAGE(STATUS "   WARNING: The SDK_VERSION was set to default to ${SDK_VERSION}, you can specify an other SDK by using \"-DSDK_VERSION=7.1\" or by using the CMake GUI")
+ELSE()
+	SET (SDK_VERSION "${SDK_VERSION}" CACHE STRING "iOS SDK-Version" FORCE)
+ENDIF()
+
+SET (DEVELOPER_ROOT "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer" CACHE STRING "Developer Root Path" FORCE)
+SET (SDK_ROOT "${DEVELOPER_ROOT}/SDKs/iPhoneSimulator${SDK_VERSION}.sdk" CACHE STRING "SDK Root Path" FORCE)
+
+SET (CMAKE_OSX_SYSROOT "${SDK_ROOT}")
+SET (CMAKE_OSX_DEPLOYMENT_TARGET "")
+SET (CMAKE_OSX_ARCHITECTURES "i386")
+
+SET (CMAKE_XCODE_EFFECTIVE_PLATFORMS "-iphonesimulator")
+
+SET (CMAKE_C_FLAGS_DEBUG "-miphoneos-version-min=6.1 -ggdb -Wall -D_DEBUG")
+SET (CMAKE_CXX_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG}")
+
+SET (CMAKE_C_FLAGS_RELEASE "-miphoneos-version-min=6.1 -Wall -O3 -DNDEBUG")
+SET (CMAKE_CXX_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE}")
+
+ADD_DEFINITIONS ("-DTARGET_OS=iPhoneSimulatorOS")
+ADD_DEFINITIONS ("-DTARGET_ARCH=X86_32")
+ADD_DEFINITIONS ("-DOS_IPHONESIMULATOROS")
+ADD_DEFINITIONS ("-DARCH_X86_32")
+
+#Use GTEST own tuple implementation for OSX
+ADD_DEFINITIONS ("-DGTEST_USE_OWN_TR1_TUPLE=1")

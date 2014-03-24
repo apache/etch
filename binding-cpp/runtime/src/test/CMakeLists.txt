@@ -112,6 +112,8 @@ ELSEIF(TARGET_OS STREQUAL "QNX")
   target_link_libraries (etch-cpp-test etch-cpp capu c socket)
 ELSEIF(TARGET_OS STREQUAL "MacOSX")
   target_link_libraries (etch-cpp-test etch-cpp capu)
+ELSEIF(TARGET_OS STREQUAL "iPhoneSimulatorOS")
+  target_link_libraries (etch-cpp-test etch-cpp capu)
 ENDIF()
 
 IF (TARGET_OS STREQUAL "Windows" AND BUILD_CHECK_MEMORY)

@@ -87,6 +87,7 @@
             <sequential>
                 <var name="platform" value="@{platform}"/>
                 <var name="cmake.build.etchtests" unset="true"/>
+                <var name="etchtests.writeTestResultsToFile" unset="true"/>
                 <if>
                     <isset property="target.platforms.${platform}.buildTests" />
                         <then>
@@ -96,12 +97,30 @@
                             <property name="cmake.build.etchtests" value="YES" />
                         </else>
                 </if>
+                <if>
+                    <isset property="target.platforms.${platform}.writeTestResultsToFile" />
+                        <then>
+                            <propertycopy name="etchtests.writeTestResultsToFile" from="target.platforms.${platform}.writeTestResultsToFile" />
+                        </then>
+                        <else>
+                            <property name="etchtests.writeTestResultsToFile" value="YES" />
+                        </else>
+                </if>
                 <echo>Init platform: ${platform}</echo>
                 <antcall target="init"/>
                 <echo>Building platform: ${platform}</echo>
                 <antcall target="do-build"/>
                 <echo>Testing platform: ${platform}</echo>
-                <antcall target="do-test"/>
+                <if>
+                    <equals arg1="${etchtests.writeTestResultsToFile}" arg2="YES"/>
+                    <then>
+                        <antcall target="do-test"/>
+                    </then>
+                    <else>
+                        <antcall target="do-test-noTestResults"/>
+                    </else>
+                </if>
+
             </sequential>
         </for>
 
@@ -178,6 +197,16 @@
         </if>
 
         <if>
+            <isset property="ios.sdkVersion" />
+                <then>
+                    <propertycopy name="cmake.ios.sdkVersion" from="ios.sdkVersion" />
+                </then>
+                <else>
+                    <property name="cmake.ios.sdkVersion" value="7.1" />
+                </else>
+        </if>
+
+        <if>
             <isset property="target.platforms.${platform}.generator"/>
             <then>
                 <!-- use specified generator -->
@@ -199,6 +228,7 @@
                     <arg value="-DCAPU_INCLUDE_DIR:PATH=${use.capu.include.dir}"/>
                     <arg value="-DCAPU_LIBRARY_DIR:PATH=${use.capu.library.dir}"/>
                     <arg value="-DCAPU_BUILD_DIR:PATH=${capu3rd}" />
+                    <arg value="-DSDK_VERSION:STRING=${cmake.ios.sdkVersion}" />
                     <arg value="-DLOCAL_CAPU_SOURCE_DIR:PATH=${use.capu.local.source.dir}"/>
                     <arg value="-DCONFIG_BUILD_TESTS:BOOL=${cmake.build.etchtests}" />
                     <arg value="${basedir}"/>
@@ -234,6 +264,7 @@
                     <arg value="-DCAPU_LIBRARY_DIR:PATH=${use.capu.library.dir}"/>
                     <arg value="-DLOCAL_CAPU_SOURCE_DIR:PATH=${use.capu.local.source.dir}"/>
                     <arg value="-DCAPU_BUILD_DIR:PATH=${capu3rd}" />
+                    <arg value="-DSDK_VERSION:STRING=${cmake.ios.sdkVersion}" />
                     <arg value="-DCONFIG_BUILD_TESTS:BOOL=${cmake.build.etchtests}" />
                     <arg value="${basedir}"/>
                 </exec>
@@ -274,6 +305,22 @@
                 <exec executable="${binaryDir}/${platform}/${Etch.build.target}/etch-cpp-test" osfamily="unix"  failonerror="true">
                     <arg value="--gtest_output=xml:${testResultsDirectory}/"/>
                 </exec>
+            </else>
+        </if>
+    </target>
+
+    <target name="do-test-noTestResults" unless="skip.tests">
+         <if>
+            <not><equals arg1="${cmake.build.etchtests}" arg2="YES"/></not>
+            <then>
+                <echo>Test execution has been disabled.</echo>
+            </then>
+            <else>
+                <!-- Run Etch Unit Tests -->
+                <!-- Run Etch Unit Tests on Windows-->
+                <exec executable="${binaryDir}/${platform}/${Etch.build.target}/etch-cpp-test.exe" osfamily="windows"  failonerror="true" />
+                <!-- Run Etch Unit Tests on Unix -->
+                <exec executable="${binaryDir}/${platform}/${Etch.build.target}/etch-cpp-test" osfamily="unix"  failonerror="true" />
             </else>
         </if>
     </target>
