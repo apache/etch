@@ -37,7 +37,7 @@ namespace org_apache_etch_examples_helloworld_HelloWorld {
 
     // TODO insert methods here to provide declarations of HelloWorldServer
     // messages from the mClient.
-    say_helloAsyncResultPtr say_hello(HelloWorld::EtchNativeArrayuserPtr to_whom);
+    say_helloAsyncResultPtr say_hello(HelloWorld::userPtr to_whom);
 
     virtual status_t _sessionNotify(capu::SmartPointer<EtchObject> event ) {
         if (event->getObjectType() == EtchString::TYPE()) {
