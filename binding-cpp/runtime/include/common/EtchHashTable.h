@@ -168,7 +168,7 @@ public:
    * Returns count of the EtchHashTable.
    * @return number of element in hash table
    */
-  inline capu::uint32_t count();
+  inline capu::uint_t count();
 
   /**
    * Clear all key and values of the EtchHashTable.
@@ -241,7 +241,7 @@ inline status_t EtchHashTable<Key, T, C, H>::remove(const Key &key, T* value_old
 }
 
 template <class Key, class T, class C, class H>
-inline capu::uint32_t EtchHashTable<Key, T, C, H>::count() {
+inline capu::uint_t EtchHashTable<Key, T, C, H>::count() {
   return mHashTable.count();
 }
 
