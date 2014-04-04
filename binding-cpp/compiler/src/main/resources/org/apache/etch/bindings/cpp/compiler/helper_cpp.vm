@@ -133,7 +133,11 @@ status_t $clname::newListener(EtchRuntime* runtime, EtchString uri, EtchResource
   
   //get listener
   EtchTransport<EtchServerFactory>* listener;
-  EtchTransportFactory::getListener(runtime, uri, res, listener);
+  status = EtchTransportFactory::getListener(runtime, uri, res, listener);
+  if (status != ETCH_OK) {
+    ETCH_LOG_ERROR(runtime->getLogger(), runtime->getLogger().getRuntimeContext(), "Listener could not be created by the transport factory for the given URI.");
+    return status;
+  }
   
   //create server
   serverFactory = new $clname::Listener${i}Server(listener, implFactory);
