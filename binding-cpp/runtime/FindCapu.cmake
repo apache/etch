@@ -38,7 +38,7 @@ IF ("${CAPU_INCLUDE_DIR}" STREQUAL "" AND "${CAPU_LIBRARY_DIR}" STREQUAL "")
 
         ExternalProject_Add(
             Capu
-            URL https://github.com/bmwcarit/capu/zipball/master/bmwcarit-capu-v0.13.0-34-g0ca0967.zip
+            URL https://github.com/bmwcarit/capu/archive/v0.14.0.zip
             SOURCE_DIR "${CAPU_PROJECT_DIR}"
             BINARY_DIR "${CAPU_CMAKE_BUILD_DIR}"
             INSTALL_DIR "${CAPU_BUILD_DIR}/deliverable"
