@@ -1,4 +1,4 @@
-Welcome to the 1.3.0 release of Apache Etch.
+Welcome to the 1.4.0 release of Apache Etch.
 
 = What is Etch? =
 
@@ -41,23 +41,23 @@ The top-level structure of the install image is:
 Please take a moment to review the RELEASE_NOTES.txt, ChangeLog.txt and
 LICENSE.txt files.
 
-The Windows installer (apache-etch-1.3.0-setup.exe) has created a 
+The Windows installer (apache-etch-1.4.0-setup.exe) has created a 
 user environment variable (ETCH_HOME) which points to the Etch installation
 directory. If you installed Etch using either
 
-  apache-etch-1.3.0-windows-x86-bin.zip
+  apache-etch-1.4.0-windows-x86-bin.zip
 
 or
 
-  apache-etch-1.3.0-linux-x86-bin.tgz
+  apache-etch-1.4.0-linux-x86-bin.tgz
 
 you will want to create this environment variable yourself:
 
 windows:
-  set ETCH_HOME=C:\Program Files (x86)\Apache Software Foundation\apache-etch-1.3.0
+  set ETCH_HOME=C:\Program Files (x86)\Apache Software Foundation\apache-etch-1.4.0
 
 *nix:
-  export ETCH_HOME=/path/to/apache-etch-1.3.0
+  export ETCH_HOME=/path/to/apache-etch-1.4.0
 
 The bin directory has also been put on your path by the Windows installer. If
 you are using the archives, you will need to do this yourself:
@@ -81,16 +81,16 @@ see some basic output:
 
 windows:
   C:\>etch -v
-  Etch version is Apache Etch 1.3.0 (some build info)
+  Etch version is Apache Etch 1.4.0 (some build info)
 
 unix:
   bash-3.2$ etch -v
-  Etch version is Apache Etch 1.3.0 (some build info)
+  Etch version is Apache Etch 1.4.0 (some build info)
 
 The lib directory contains the various jar files for the compiler and the Apache Velocity dependency jar:
 
-  apache-etch-java-compiler-1.3.0.jar
-  apache-etch-java-compiler-1.3.0-src.jar
+  apache-etch-java-compiler-1.4.0.jar
+  apache-etch-java-compiler-1.4.0-src.jar
   ...
 
 The top level folders binding-c, binding-java and binding-csharp contain the language specific 
@@ -100,25 +100,25 @@ runtime libraries:
 
 binding-java is organized as follows:
 
-  apache-etch-java-runtime-1.3.0-src.zip
+  apache-etch-java-runtime-1.4.0-src.zip
   lib/
-    apache-etch-java-runtime-1.3.0.jar
+    apache-etch-java-runtime-1.4.0.jar
 
-The generated java source from the etch compiler needs apache-etch-java-runtime-1.3.0.jar.
-There is source code to go with it in apache-etch-java-runtime-1.3.0-src.zip.
+The generated java source from the etch compiler needs apache-etch-java-runtime-1.4.0.jar.
+There is source code to go with it in apache-etch-java-runtime-1.4.0-src.zip.
 
 = Binding for C# =
 
 binding-csharp is organized as follows:
 
-  apache-etch-csharp-runtime-1.3.0-src.zip  
+  apache-etch-csharp-runtime-1.4.0-src.zip
   lib/
     ApacheEtchCsharp.dll
     ApacheEtchCsharp.pdb
 
 The generated c# source from the etch compiler needs ApacheEtchCsharp.dll
 The C# (.NET 2.0 and later) ApacheEtchCsharp.dll should be added to any C# projects.
-There is source code to go with it in apache-etch-csharp-runtime-1.3.0-src.zip.
+There is source code to go with it in apache-etch-csharp-runtime-1.4.0-src.zip.
 
 = Binding for C =
 
@@ -150,13 +150,13 @@ binding-c is organized as follows:
 	libapriconv-1.lib	(on win32)
 	libapr-1.so		(on linux)
 	libapriconv-1.so	(on linux)
-  apache-etch-c-runtime-1.3.0-src.zip
+  apache-etch-c-runtime-1.4.0-src.zip
 
 Generated C source depends on the dlls/so/a/h files mentioned above. The best choice to 
 build generated code using the c binding is cmake. You can use the examples/helloworld 
 example as a reference. The C binding has external dependencies to the Apache Portable 
 Runtime (APR). We ship dll/so/h for the apr in the extern folder. There is source code 
-to go with it in apache-etch-c-runtime-1.3.0-src.zip
+to go with it in apache-etch-c-runtime-1.4.0-src.zip
 
 = Ant Plugin =
 
@@ -173,8 +173,8 @@ maven directory:
   etch-maven-install.bat
 
 You need to have maven on your path when you run this script. The file
-etch-java-runtime-1.3.0.jar will be installed into your local repository with
-group "etch.etch", artifact id "etch-java-runtime", and version "1.3.0". You
+etch-java-runtime-1.4.0.jar will be installed into your local repository with
+group "etch.etch", artifact id "etch-java-runtime", and version "1.4.0". You
 may then reference Etch from your maven projects.
 
 = Python and XML Bindings =
@@ -196,7 +196,7 @@ file in each example's directory which explains how to build and run it.
 Unit tests can be had by checking out the source code from the subversion
 repository and performing a complete build:
 
-  http://svn.apache.org/repos/asf/etch/releases/release-1.3.0
+  http://svn.apache.org/repos/asf/etch/releases/release-1.4.0
 
 = Help =
 

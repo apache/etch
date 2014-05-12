@@ -1,4 +1,376 @@
 -------------
+Release 1.4.0
+-------------
+
+------------------------------------------------------------------------
+r1584590 | veithm | 2014-04-04 11:55:53 +0200 (Fr, 04 Apr 2014) | 6 lines
+
+Removing loss of precision warning in EtchHashTable
+
+The number of entries (count()) is dependend on the platform (32, 64 bit).
+The getter is changed accordingly.
+
+Change-Id: I1c1047a28eb822a171f8841026823cb45aa7ebb8
+------------------------------------------------------------------------
+r1584587 | veithm | 2014-04-04 11:54:22 +0200 (Fr, 04 Apr 2014) | 7 lines
+
+Helper handles error in creation of TransportFactory
+
+In case the EtchTransportFactory cannot return a ServerFactory for the
+given URI, e.g. in case the user forgets to add the tcp:// prefix in the
+connection URI, now an error is returned.
+
+Change-Id: I636d2e6a507210fa371b73dd380a0e6ed15cef3b
+------------------------------------------------------------------------
+r1584586 | veithm | 2014-04-04 11:52:26 +0200 (Fr, 04 Apr 2014) | 3 lines
+
+Updating dependency of CAPU to official v0.14.0 version
+
+Change-Id: I16aaba1eb8c1e63f55fec8f610b9a82484fe18bf
+------------------------------------------------------------------------
+r1583629 | veithm | 2014-04-01 13:26:18 +0200 (Di, 01 Apr 2014) | 3 lines
+
+Fixing HelloWorldExample C++ implementation
+
+Change-Id: I836836946a9e3663f360dc29f789fb9f7ec1a7c4
+------------------------------------------------------------------------
+r1580796 | veithm | 2014-03-24 10:52:14 +0100 (Mo, 24 Mrz 2014) | 8 lines
+
+ETCH-279 Adding support for iOS platforms
+
+This patch adds support for iOS on the following architectures:
+ARMv7, ARMv7S, ARM64, iPhoneSimulator 32 Bit, iPhoneSimulator 64 Bit
+
+Test execution is only possible on the iPhone simulator.
+
+Change-Id: I2e668df2e8829e94e20f298a8690f146996d263c
+------------------------------------------------------------------------
+r1580795 | veithm | 2014-03-24 10:51:02 +0100 (Mo, 24 Mrz 2014) | 7 lines
+
+Fixing synchronization issues in TcpConnection and CircularQueue
+
+mSocket in EtchTcpConnection and mItems in CircularQueue can be accessed
+and modified from different threads. Till now these members have not been
+protected during shutdown (close() and destructor).
+
+Change-Id: Iaec4a6a43c84c87ad897dea2be355d35903a98ec
+------------------------------------------------------------------------
+r1579900 | veithm | 2014-03-21 09:52:09 +0100 (Fr, 21 Mrz 2014) | 8 lines
+
+ETCH-292 Enable build for several platforms in a row
+
+In order to be able to build several platforms in a row the build
+artifacts must be stored in separate folders. Therefore the build folder
+now containes the platform specifications like operating system and
+architecture.
+
+Change-Id: I75ce8e174b4944ed72324bce0497ee7f7d50a4b1
+------------------------------------------------------------------------
+r1579585 | veithm | 2014-03-20 11:42:46 +0100 (Do, 20 Mrz 2014) | 6 lines
+
+ETCH-291 Fixing some compiler warnings
+
+By removing some unused members and by correcting some unsigned/signed
+some warnings are gone.
+
+Change-Id: I792674667f276c0928b505bff9a3098ac31f9475
+------------------------------------------------------------------------
+r1579568 | veithm | 2014-03-20 10:05:30 +0100 (Do, 20 Mrz 2014) | 8 lines
+
+ETCH-278 Enable receiving of multiple packages in one buffer in EtchPackizer
+
+Till now the packetizer was not able to handle more then one packet in a
+buffer received from the transport layer.
+This patches introduces a new algorithm to handle packets and adds tests
+to ensure it works for all possible situations.
+
+Change-Id: I7ba4b04a012ed8778861dc734ba2574d2b487ac9
+------------------------------------------------------------------------
+r1579566 | veithm | 2014-03-20 10:01:31 +0100 (Do, 20 Mrz 2014) | 6 lines
+
+ETCH-290 Removed Static mutex inside of EtchConnection
+
+EtchConnections suffer to a Deadlock with multiple EtchSessions /
+Connections. Removing the static mutex solves this issue.
+
+Change-Id: If9c5ed101a247a33245a750467e64b1b37dda410
+------------------------------------------------------------------------
+r1578908 | veithm | 2014-03-18 15:04:51 +0100 (Di, 18 Mrz 2014) | 6 lines
+
+Enabling setting of loglevel in EtchRuntime for default logger
+
+An additional constructor for the EtchRuntime makes it possible now to set
+the log level for the default console appender.
+
+Change-Id: I19ab47ca7d6fb941a38e7e952a40ab954efd84f9
+------------------------------------------------------------------------
+r1578907 | veithm | 2014-03-18 15:03:01 +0100 (Di, 18 Mrz 2014) | 7 lines
+
+Enabling support for arrays of custom types
+
+Till now it was not possible to use arrays of custom types as parameters.
+This support is now added by adding new functionality to the valuefactory
+and the value factory code generation.
+
+Change-Id: Id20ec86a55a821289727c7dc00653797ad509129
+------------------------------------------------------------------------
+r1578906 | veithm | 2014-03-18 15:01:00 +0100 (Di, 18 Mrz 2014) | 7 lines
+
+Adding _sessionNotify to server side helloWorld example
+
+The _sessionNotify function has been added to the HelloWorldServer
+implemenation. This code shows how to handle events from the stack on the
+server implementation side.
+
+Change-Id: Ic3089b2a3b5b9f96f6ef353a4461f04e7c6e844a
+------------------------------------------------------------------------
+r1578904 | veithm | 2014-03-18 14:59:13 +0100 (Di, 18 Mrz 2014) | 6 lines
+
+Removing warnings by removing unneeded const keyword
+
+On return of a copy of a primitive datatype like int the const keyword is
+not needed and caused warnings on some compilers.
+
+Change-Id: Ifde2367f836478b48f653dce614ac339d704954d
+------------------------------------------------------------------------
+r1578903 | veithm | 2014-03-18 14:58:40 +0100 (Di, 18 Mrz 2014) | 7 lines
+
+Fixing memory leak in handling of void functions
+
+Void functions are handled differently from non-void functions. In case of
+void functions the resulting mailbox has not been deleted which caused
+memory leaks.
+
+Change-Id: I2e44dacc9d632df0d06cc32c6ac868de5c74720d
+------------------------------------------------------------------------
+r1578902 | veithm | 2014-03-18 14:58:18 +0100 (Di, 18 Mrz 2014) | 6 lines
+
+Handling of Exception in sessionNofity call for HelloWorld example
+
+This patch adds code to the HelloWorldClient implemenation which shows
+how to handle Exceptions send by the stack to session.
+
+Change-Id: I4191c08d7eeb2655813a4c0e89d4873d2dec41d1
+------------------------------------------------------------------------
+r1578896 | veithm | 2014-03-18 14:51:44 +0100 (Di, 18 Mrz 2014) | 5 lines
+
+Adding new paths for VLD to CMakeFile of HelloWorldTest
+
+The structure of VLD has changed. Now it is needed to give more information.
+
+Change-Id: I84bc5ceab38726c294756d2b5b37230af18761e7
+------------------------------------------------------------------------
+r1578894 | veithm | 2014-03-18 14:49:03 +0100 (Di, 18 Mrz 2014) | 6 lines
+
+Fixing memory leak on getRemoteAddress calls
+
+GetRemoteAddress returns a char array which needs to be deleted by
+the caller.
+
+Change-Id: I379b3efca6620e8f8f2f63a8218cc83765020ac7
+------------------------------------------------------------------------
+r1578892 | veithm | 2014-03-18 14:47:50 +0100 (Di, 18 Mrz 2014) | 6 lines
+
+Adding addiontal logging in EtchPlainMailboxmanager
+
+Fixing a TODO by adding logging in case the session object of the
+mailbox manager is NULL.
+
+Change-Id: I9e0374bf9a61bc3b3cd2ded5e7b5cc652514062c
+------------------------------------------------------------------------
+r1578886 | veithm | 2014-03-18 14:43:43 +0100 (Di, 18 Mrz 2014) | 7 lines
+
+Renaming mutexes in EtchPlainMailbox and EtchPlainMailboxManager
+
+Till now the mutexes in both files were named simple mMutex.
+Now the mutexes got more meaningful names which tell what they
+do protect.
+
+Change-Id: I769744e2342714d4536b5f89ef6bfcfdc13456ee
+------------------------------------------------------------------------
+r1578873 | veithm | 2014-03-18 14:34:54 +0100 (Di, 18 Mrz 2014) | 8 lines
+
+Changing mailbox parameter from native pointer to smartpointer
+
+The SmartPointer is needed as due to multi threading it is not know
+who should delete the mailbox at the end. Either the generated code needs
+to delete it or the stack itself. This problem is solved by using
+smartpointers.
+
+Change-Id: I2c1ac6ca3ed126afa438e700f5849ffdaf03b2bb
+------------------------------------------------------------------------
+r1578869 | veithm | 2014-03-18 14:32:22 +0100 (Di, 18 Mrz 2014) | 10 lines
+
+ETCH-287 Fixing deadlock while calling methods on client side
+
+On calls getResult(), hasResult(), getException() or hasException() on a
+AsyncResult object the client waits until it gets notified from the
+mailbox that a respective message has arrived.
+In case the connection on socket level was broken before or during a
+method call the AsyncResult object was not notified about this error
+state and blocked forever.
+
+Change-Id: I511e2fc60eb8b347a0d184cc02a7fd3ec937f2b6
+------------------------------------------------------------------------
+r1578867 | veithm | 2014-03-18 14:28:48 +0100 (Di, 18 Mrz 2014) | 7 lines
+
+ETCH-283 Setting up client socket after creation
+
+When the client connects to a server socket, the socket was
+not set up according to the default or user specified paramters as e.g.
+buffer size or linger time.
+
+Change-Id: I3af98319d06c004cb0416e80cf403b20077ee294
+------------------------------------------------------------------------
+r1578866 | veithm | 2014-03-18 14:22:21 +0100 (Di, 18 Mrz 2014) | 9 lines
+
+ETCH-282 Runtime accepts now log configuration
+
+A new constructor for the EtchRuntime has been added.
+It enables the client/server to register a different log appender for
+different log levels.
+This is especially useful if you e.g. would like to log errors to your console,
+but log info and debug messages to a file.
+
+Change-Id: I0952b4019ef8dc9c5a227fa18a60cc3f5e428058
+------------------------------------------------------------------------
+r1578862 | veithm | 2014-03-18 14:19:20 +0100 (Di, 18 Mrz 2014) | 7 lines
+
+Updating to CAPU v0.14.0
+
+This patch updates the dependency CAPU to version 0.14.0.
+Some changes in the Etch container wrapper classes like EtchList are
+needed in order to deal with the new const iterators from CAPU containers.
+
+Change-Id: I81c8055d0628ef645a02d27d2a7c4246d779cb24
+------------------------------------------------------------------------
+r1578861 | veithm | 2014-03-18 14:18:02 +0100 (Di, 18 Mrz 2014) | 7 lines
+
+Changing representation of datetime from time_t to int64_t
+
+A datetime in Etch is always 64 bit long, independent of the platform.
+However the time_t datatype depends on the platform so it is not a good
+choice here.
+
+Change-Id: I78cfc6962a600a635bac74522b886a3cfd765f6a
+------------------------------------------------------------------------
+r1578855 | veithm | 2014-03-18 14:03:47 +0100 (Di, 18 Mrz 2014) | 7 lines
+
+Adding additional argument for custom build options
+
+Now it is possible to set additional compiler specific build options to
+CMake via ant. This is e.g. needed if you would like to do parallel builds
+by setting -j5.
+
+Change-Id: Ibaa89841512a9ad087fed37618988f11d2a87565
+------------------------------------------------------------------------
+r1578854 | veithm | 2014-03-18 14:01:09 +0100 (Di, 18 Mrz 2014) | 3 lines
+
+Adding processor architecture to QNX toolchain file
+
+Change-Id: Ie7fe9c2b3567a3623d2aa9728300f8a57206d838
+------------------------------------------------------------------------
+r1564654 | veithm | 2014-02-05 08:42:03 +0100 (Mi, 05 Feb 2014) | 9 lines
+
+ETCH-286 Missing newline at end of file
+
+Some header and implementation files generated by the etch-compiler are
+missing a newline at the end of the file.
+
+This might be resolved by updating the the velocity templates used by
+the etch-compiler.
+
+Change-Id: I313605c61c5d55b7ce8727400f72ada851e0dc77
+------------------------------------------------------------------------
+r1550131 | veithm | 2013-12-11 14:20:43 +0100 (Mi, 11 Dez 2013) | 8 lines
+
+Enabling build for 64bit architectures
+
+The C++ runtime can now be build for 32 and 64 bit architectures.
+Therefore the respective CMakefiles have been changed and the
+getHashCode() method has been replaced by a real hash function instead
+the usage of the this pointer.
+
+Change-Id: Ifbe5565efd7d53c2bb21329e332b8df3133450a4
+------------------------------------------------------------------------
+r1550077 | veithm | 2013-12-11 10:12:09 +0100 (Mi, 11 Dez 2013) | 3 lines
+
+ETCH-277 Fixed Corrupt inheritance in ::equals and ::getHashCode functions
+
+Change-Id: I77ad4b631e2e3d95cc2b3fff13e15390e8c39cbb
+------------------------------------------------------------------------
+r1548543 | veithm | 2013-12-06 15:48:04 +0100 (Fr, 06 Dez 2013) | 3 lines
+
+Fixing usage of enum in logging
+
+Change-Id: Ib5ecfbdfb0977ba1b59652606f647560139f95fd
+------------------------------------------------------------------------
+r1548400 | veithm | 2013-12-06 09:07:27 +0100 (Fr, 06 Dez 2013) | 7 lines
+
+Enhancement of logging in TcpTransport
+
+The logging in TcpConnection and TcpListener is now more meaningful
+and allows a better understanding of the log traces during postmortem
+debugging.
+
+Change-Id: I5f999920c5aa9c5acc73f2abbebf23e9aa5e7c06
+------------------------------------------------------------------------
+r1548399 | veithm | 2013-12-06 09:06:49 +0100 (Fr, 06 Dez 2013) | 6 lines
+
+Adding getRemoteAddress() functionality to EtchSocket
+
+This method is based on CAPU and returns the IP address
+of the remote peer the socket is connected to.
+
+Change-Id: I6da81a8029f7fba79808c7ab883787fe05e6f996
+------------------------------------------------------------------------
+r1548398 | veithm | 2013-12-06 09:06:01 +0100 (Fr, 06 Dez 2013) | 10 lines
+
+ETCH-280 Updating CAPU and adapting logger interface
+
+This patch upgrades to CMake dependency to capu 0.13.0.
+Due to this upgrade the logger interface needs to be changed
+to use the new logging mechanism provided by CAPU 0.13.0.
+In order to achieve this the EtchLogger has been extended by
+a new macro called ETCH_LOG_<LOGLEVEL> in order to add an
+abstraction from the CAPU logger.
+
+Change-Id: I118008422c63d9406d006afe1193ba9d49c3213b
+------------------------------------------------------------------------
+r1547310 | veithm | 2013-12-03 09:15:57 +0100 (Di, 03 Dez 2013) | 3 lines
+
+ETCH-276 Added typedef for SmartPointer of EtchNumber
+
+Change-Id: Iaff6a6ab87ac824f4d60bdb3d405b39d329900d9
+------------------------------------------------------------------------
+r1547309 | veithm | 2013-12-03 09:09:07 +0100 (Di, 03 Dez 2013) | 6 lines
+
+ETCH-275 Fixed SRuntimes Mutex unlock in Code generation
+
+The Static SRuntimes Mutex is not unlocked on every Error-Case and
+resolves to deadlocks.
+
+Change-Id: If224cfb273a8627a8e74f1605a863c3b02743d19
+------------------------------------------------------------------------
+r1526414 | veithm | 2013-09-26 10:25:25 +0200 (Do, 26 Sep 2013) | 4 lines
+
+Updating link to known bugs for release 1.3.0
+
+Using affectsVersion now as fixVersion is used for
+planning when the issue gets fixed.
+------------------------------------------------------------------------
+r1526407 | veithm | 2013-09-26 09:55:48 +0200 (Do, 26 Sep 2013) | 3 lines
+
+Adding new release 1.3.0
+
+Moving incubator release 1.2.0 to archive
+------------------------------------------------------------------------
+r1526405 | veithm | 2013-09-26 09:40:31 +0200 (Do, 26 Sep 2013) | 1 line
+
+Releasing 1.3.0
+------------------------------------------------------------------------
+
+-------------
 Release 1.3.0
 -------------
 
