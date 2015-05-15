@@ -44,6 +44,30 @@ class EtchValidatorStringRuntimeListener : public EtchRuntimeListener {         
     return SValidatorCache##validatorClassName.get(runtime);                                    \
 }
 
+#define VALIDATOR_GET_DEF()                                                                                                         \
+    static status_t Get(EtchRuntime* runtime, capu::uint32_t ndim, capu::SmartPointer<EtchValidator> &val);
+
+
+#define VALIDATOR_GET_IMPL(validatorClassName)                                                                                      \
+    status_t validatorClassName::Get(EtchRuntime* runtime, capu::uint32_t ndim, capu::SmartPointer<EtchValidator> &val) {           \
+                                                                                                                                    \
+                                                                                                                                    \
+    if (ndim > MAX_NDIMS) {                                                                                                         \
+        return ETCH_EINVAL;                                                                                                         \
+    }                                                                                                                               \
+    if (ndim >= MAX_CACHED) {                                                                                                       \
+        val = new validatorClassName(runtime, ndim);                                                                                \
+        return ETCH_OK;                                                                                                             \
+    }                                                                                                                               \
+    if (Validators(runtime)[ndim].get() == NULL) {                                                                                  \
+        Validators(runtime)[ndim] = new validatorClassName(runtime, ndim);                                                          \
+        runtime->registerListener(&SRuntimeChangedListener);                                                                        \
+        ETCH_LOG_TRACE(runtime->getLogger(), runtime->getLogger().getValidatorContext(), "##validatorClassName has been created");  \
+    }                                                                                                                               \
+    val = Validators(runtime)[ndim];                                                                                                \
+    return ETCH_OK;                                                                                                                 \
+}
+
 #include "common/EtchObject.h"
 #include "support/EtchRuntime.h"
 
