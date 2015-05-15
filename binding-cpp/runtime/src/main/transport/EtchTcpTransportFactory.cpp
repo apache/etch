@@ -129,6 +129,8 @@ EtchTcpTransportFactory::MySessionListener::~MySessionListener() {
     EtchTransportHelper::DestroyResources(mRuntime, mResources);
   }
 
+  shutdownAllConnections();
+
   EtchList<EtchStack*>::Iterator it = mConnectionStacks->begin();
   while (it.hasNext()) {
     EtchStack* st = NULL;
