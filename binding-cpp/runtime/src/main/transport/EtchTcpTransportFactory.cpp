@@ -187,6 +187,10 @@ status_t EtchTcpTransportFactory::MySessionListener::sessionNotify(capu::SmartPo
     return ETCH_OK;
   }
 
+  if (event->equals(&EtchTcpListener::CONNECTION_SHUTDOWN())) {
+      shutdownAllConnections();
+  }
+
   return mSession->sessionNotify(event);
 
 }
