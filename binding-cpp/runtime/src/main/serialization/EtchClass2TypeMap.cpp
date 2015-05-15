@@ -49,3 +49,8 @@ status_t EtchClass2TypeMap::put(const EtchObjectType* classType, EtchType *type)
 void EtchClass2TypeMap::lock() {
   mLocked = true;
 }
+
+void EtchClass2TypeMap::reset() {
+    mLocked = false;
+    mC2T.clear();
+}

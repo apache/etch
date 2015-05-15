@@ -66,6 +66,11 @@ public:
   void lock();
 
   /**
+   * Resets the map. This removes all entries and unlocks to map.
+   */
+  void reset();
+
+  /**
    * Hashing Functions for the EtchClass2TypeMap
    */
   class Hash {

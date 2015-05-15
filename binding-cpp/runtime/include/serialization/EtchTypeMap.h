@@ -80,6 +80,11 @@ public:
   void lock();
 
   /**
+   * Resets the map. This removes all entries and unlocks to map.
+   */
+  void reset();
+
+  /**
    * @return the number of values in the map.
    */
   capu::int32_t size();

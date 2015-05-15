@@ -26,16 +26,7 @@ EtchTypeMap::EtchTypeMap()
 }
 
 EtchTypeMap::~EtchTypeMap() {
-  EtchHashTable<capu::int32_t, EtchType*, EtchComparatorNative, EtchHashNative>::Iterator it = mById.begin();
-  while (it.hasNext()) {
-    EtchHashTable<capu::int32_t, EtchType*, EtchComparatorNative, EtchHashNative>::HashTableEntry entry;
-    it.next(&entry);
-    if (entry.value != NULL) {
-      delete entry.value;
-    }
-  }
-  mById.clear();
-  mByName.clear();
+  reset();
 }
 
 status_t EtchTypeMap::add(EtchType *type) {
@@ -60,6 +51,21 @@ status_t EtchTypeMap::add(EtchType *type) {
 void EtchTypeMap::lock() {
   mLocked = true;
 };
+
+void EtchTypeMap::reset() {
+    EtchHashTable<capu::int32_t, EtchType*, EtchComparatorNative, EtchHashNative>::Iterator it = mById.begin();
+    while (it.hasNext()) {
+        EtchHashTable<capu::int32_t, EtchType*, EtchComparatorNative, EtchHashNative>::HashTableEntry entry;
+        it.next(&entry);
+        if (entry.value != NULL) {
+            delete entry.value;
+        }
+    }
+    mById.clear();
+    mByName.clear();
+
+    mLocked = false;
+}
 
 capu::int32_t EtchTypeMap::size() {
   return mById.count();
