@@ -233,6 +233,7 @@ status_t EtchTcpListener::transportControl(capu::SmartPointer<EtchObject> contro
     close();
     ETCH_LOG_DEBUG(mRuntime->getLogger(), mRuntime->getLogger().getTransportContext(), "Stop and wait command received and EtchTcpListener sets the stop flag");
     status_t ret = waitDown(((EtchInt32*) value.get())->get());
+    mThread->join();
     return ret;
   }
 
