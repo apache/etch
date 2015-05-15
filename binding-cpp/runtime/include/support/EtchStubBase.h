@@ -154,7 +154,7 @@ status_t EtchStubBase<T>::sessionMessage(capu::SmartPointer<EtchWho> sender, cap
       res = mQueuedPool->add(runnable);
       if (res != ETCH_OK) {
         //CAPU_LOG_ERROR(mRuntime->getLogger(), "EtchStubBase", "Error while adding runnable to pool");
-        sessionNotify(NULL); //TODO Exception Handling
+        sessionNotify(new EtchString(EtchSession::DOWN())); //TODO Exception Handling
       }
       return res;
     case FREE:
@@ -163,7 +163,7 @@ status_t EtchStubBase<T>::sessionMessage(capu::SmartPointer<EtchWho> sender, cap
       res = mFreePool->add(runnable);
       if (res != ETCH_OK) {
         //CAPU_LOG_ERROR(mRuntime->getLogger(), "EtchStubBase", "Error while adding runnable to pool");
-        sessionNotify(NULL); //TODO Exception Handling
+        sessionNotify(new EtchString(EtchSession::DOWN())); //TODO Exception Handling
       }
       return res;
     case NONE:
@@ -171,12 +171,12 @@ status_t EtchStubBase<T>::sessionMessage(capu::SmartPointer<EtchWho> sender, cap
       res = helper->run(this, mSvc, mObj, sender, msg);
       if (res != ETCH_OK) {
         //CAPU_LOG_ERROR(mRuntime->getLogger(), "EtchStubBase", "Error while executing function");
-        sessionNotify(NULL); //TODO Exception Handling
+        sessionNotify(new EtchString(EtchSession::DOWN())); //TODO Exception Handling
       }
       return res;
     default:
       //  throw new IllegalArgumentException("unknown async mode "+type.getAsyncMode());
-      sessionNotify(NULL); //TODO Exception Handling
+      sessionNotify(new EtchString(EtchSession::DOWN())); //TODO Exception Handling
       return ETCH_OK;
   }
 }
