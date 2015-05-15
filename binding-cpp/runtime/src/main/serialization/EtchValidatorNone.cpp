@@ -19,10 +19,7 @@
 #include "serialization/EtchValidatorNone.h"
 #include "support/EtchRuntime.h"
 
-capu::SmartPointer<EtchValidator>* EtchValidatorNone::Validators(EtchRuntime* runtime) {
-  static EtchValidatorCaches validators;
-  return validators.get(runtime);
-}
+VALIDATOR_CACHE_IMPL(EtchValidatorNone)
 
 const EtchObjectType* EtchValidatorNone::TYPE() {
   static const EtchObjectType TYPE(EOTID_VALIDATOR_NONE, NULL);
@@ -59,6 +56,7 @@ status_t EtchValidatorNone::validateValue(capu::SmartPointer<EtchObject> value, 
 status_t EtchValidatorNone::Get(EtchRuntime* runtime, capu::SmartPointer<EtchValidator> &val) {
   if (Validators(runtime)[0].get() == NULL) {
     Validators(runtime)[0] = new EtchValidatorNone(runtime);
+    runtime->registerListener(&SRuntimeChangedListener);
     ETCH_LOG_TRACE(runtime->getLogger(), runtime->getLogger().getValidatorContext(), "EtchValidatorNone has been created");
   }
   val = Validators(runtime)[0];

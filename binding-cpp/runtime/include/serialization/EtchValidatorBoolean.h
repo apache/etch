@@ -58,17 +58,14 @@ public:
    */
   virtual status_t validateValue(capu::SmartPointer<EtchObject> value, capu::SmartPointer<EtchObject>& result);
 
-  /**
-   * @see EtchValidator
-   */
-  static status_t Get(EtchRuntime* runtime, capu::uint32_t ndim, capu::SmartPointer<EtchValidator> &val);
+  VALIDATOR_GET_DEF()
 
 protected:
   EtchValidatorBoolean(EtchRuntime* runtime, capu::uint32_t ndim);
 
 private:
   EtchRuntime* mRuntime;
-  static capu::SmartPointer<EtchValidator>* Validators(EtchRuntime* runtime);
+  VALIDATOR_CACHE_DEF()
 };
 
 

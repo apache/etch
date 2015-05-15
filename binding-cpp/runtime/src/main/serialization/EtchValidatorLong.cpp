@@ -19,10 +19,7 @@
 #include "serialization/EtchValidatorLong.h"
 #include "support/EtchRuntime.h"
 
-capu::SmartPointer<EtchValidator>* EtchValidatorLong::Validators(EtchRuntime* runtime) {
-  static EtchValidatorCaches validators;
-  return validators.get(runtime);
-}
+VALIDATOR_CACHE_IMPL(EtchValidatorLong)
 
 const EtchObjectType* EtchValidatorLong::TYPE() {
   const static EtchObjectType TYPE(EOTID_VALIDATOR_LONG, NULL);
@@ -105,22 +102,8 @@ status_t EtchValidatorLong::validateValue(capu::SmartPointer<EtchObject> value, 
   }
 }
 
-status_t EtchValidatorLong::Get(EtchRuntime* runtime, capu::uint32_t ndim, capu::SmartPointer<EtchValidator> &val) {
-  if (ndim > MAX_NDIMS) {
-    return ETCH_EINVAL;
-  }
-  if (ndim >= MAX_CACHED) {
-    val = new EtchValidatorLong(runtime, ndim);
-    return ETCH_OK;
-  }
-  if (Validators(runtime)[ndim].get() == NULL) {
-    Validators(runtime)[ndim] = new EtchValidatorLong(runtime, ndim);
-    ETCH_LOG_TRACE(runtime->getLogger(), runtime->getLogger().getValidatorContext(), "EtchValidatorLong has been created");
-  }
-  val = Validators(runtime)[ndim];
-  return ETCH_OK;
-}
-
 status_t EtchValidatorLong::getElementValidator(capu::SmartPointer<EtchValidator> &val) {
   return EtchValidatorLong::Get(mRuntime, mNDims - 1, val);
 }
+
+VALIDATOR_GET_IMPL(EtchValidatorLong)

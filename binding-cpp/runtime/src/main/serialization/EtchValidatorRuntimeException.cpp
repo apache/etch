@@ -19,10 +19,7 @@
 #include "serialization/EtchValidatorRuntimeException.h"
 #include "support/EtchRuntime.h"
 
-capu::SmartPointer<EtchValidator>* EtchValidatorRuntimeException::Validators(EtchRuntime* runtime) {
-  static EtchValidatorCaches validators;
-  return validators.get(runtime);
-}
+VALIDATOR_CACHE_IMPL(EtchValidatorRuntimeException)
 
 const EtchObjectType* EtchValidatorRuntimeException::TYPE() {
   const static EtchObjectType TYPE(EOTID_VALIDATOR_RUNTIME_EXCEPTION, NULL);
@@ -61,6 +58,7 @@ status_t EtchValidatorRuntimeException::validateValue(capu::SmartPointer<EtchObj
 status_t EtchValidatorRuntimeException::Get(EtchRuntime* runtime, capu::SmartPointer<EtchValidator> &val) {
   if (Validators(runtime)[0].get() == NULL) {
     Validators(runtime)[0] = new EtchValidatorRuntimeException(runtime);
+    runtime->registerListener(&SRuntimeChangedListener);
     ETCH_LOG_TRACE(runtime->getLogger(), runtime->getLogger().getValidatorContext(),"EtchValidatorRuntimeException has been created");
   }
   val = Validators(runtime)[0];

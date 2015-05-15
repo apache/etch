@@ -66,7 +66,7 @@ protected:
 
 private:
   EtchRuntime* mRuntime;
-  static capu::SmartPointer<EtchValidator>* Validators(EtchRuntime* runtime);
+  VALIDATOR_CACHE_DEF()
 };
 
 #endif
