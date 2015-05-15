@@ -36,6 +36,13 @@ void EtchTcpListener::ConnectionChecker::run() {
       capu::Thread::Sleep(1000);
     }
   }
+  if (mListener->mSession != NULL) {
+      result = mListener->mSession->sessionNotify(new EtchString(EtchTcpListener::CONNECTION_SHUTDOWN()));
+      if (result != ETCH_OK) {
+          //TODO handle error
+      }
+  }
+
 }
 
 const EtchString& EtchTcpListener::BACKLOG() {
@@ -46,6 +53,11 @@ const EtchString& EtchTcpListener::BACKLOG() {
 const EtchString& EtchTcpListener::CONNECTION_CHECK() {
   static const EtchString name("connection.check");
   return name;
+}
+
+const EtchString& EtchTcpListener::CONNECTION_SHUTDOWN() {
+    static const EtchString name("connection.shutdown");
+    return name;
 }
 
 EtchTcpListener::EtchTcpListener(EtchRuntime* runtime, EtchURL *url)

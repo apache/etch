@@ -124,7 +124,7 @@ public:
   const static EtchString& BACKLOG();
 
   const static EtchString& CONNECTION_CHECK();
-
+  const static EtchString& CONNECTION_SHUTDOWN();
 private:
   class ConnectionChecker : public capu::Runnable {
   public:
