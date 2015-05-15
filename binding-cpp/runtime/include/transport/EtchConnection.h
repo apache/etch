@@ -33,6 +33,8 @@ template <class S>
 class EtchConnection : public virtual EtchTransport<S> {
 public:
 
+  friend class EtchTcpTransportFactory;
+
   /**
    * Default Constructor
    */

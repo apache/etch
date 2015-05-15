@@ -136,6 +136,8 @@ private:
     status_t sessionNotify(capu::SmartPointer<EtchObject> event);
 
   private:
+    void shutdownAllConnections();
+
     EtchRuntime* mRuntime;
     EtchTcpTransportFactory* mFactory;
     EtchTransport<EtchSessionListener<EtchSocket> > *mTransport;

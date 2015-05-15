@@ -191,6 +191,24 @@ status_t EtchTcpTransportFactory::MySessionListener::sessionNotify(capu::SmartPo
 
 }
 
+void EtchTcpTransportFactory::MySessionListener::shutdownAllConnections()
+{
+    EtchList<EtchStack*>::Iterator it = mConnectionStacks->begin();
+    while (it.hasNext()) {
+        EtchStack* stack = NULL;
+        status_t res = it.current(stack);
+        if (res == ETCH_OK) {
+            EtchTcpConnection* con = (EtchTcpConnection*) stack->getTransportData();
+            if (con != NULL) {
+                con->mIsStarted = false;
+                con->close();
+                con->mThread->join();
+            }
+        }
+        it.next();
+    }
+}
+
 status_t EtchTcpTransportFactory::MySessionListener::sessionAccepted(EtchSocket* connection) {
   if (connection == NULL) {
     return ETCH_ERROR;
