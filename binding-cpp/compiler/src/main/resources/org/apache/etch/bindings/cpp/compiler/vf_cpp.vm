@@ -45,6 +45,8 @@ status_t $vf::Etch${intf.name()}RuntimeListener::onRuntimeChanged(EtchRuntime* r
   if (runtime->isClosed()) {
     //the runtime is closed and is removed
     $vf::SRuntimes.remove(runtime->getId());
+    $vf::class2type()->reset();
+    $vf::types()->reset();
   }
   return ETCH_OK;
 }
