@@ -76,7 +76,7 @@ capu::int32_t EtchObjectType::getTypeId() const {
 }
 
 capu::uint32_t EtchObjectType::getHashCode() const {
-  return capu::CapuDefaultHashFunction::Digest(this);
+  return capu::CapuDefaultHashFunction<sizeof(capu::uint_t)*8>::Digest(this);
 }
 
 capu::bool_t EtchObjectType::equals(const EtchObjectType* type) const {

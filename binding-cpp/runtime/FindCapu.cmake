@@ -28,25 +28,23 @@ ENDIF()
 IF ("${CAPU_INCLUDE_DIR}" STREQUAL "" AND "${CAPU_LIBRARY_DIR}" STREQUAL "")
     include(ExternalProject)
 
-    MESSAGE(STATUS "using ${CAPU_INCLUDE_DIR} as CAPU include directory")
-    MESSAGE(STATUS "using ${CAPU_LIBRARY_DIR} as CAPU library directory")
-
     IF ("${LOCAL_CAPU_SOURCE_DIR}" STREQUAL "")
         #download capu from foreign repository
+        MESSAGE("Download capu from github repository")
         SET(CAPU_PROJECT_DIR "${CMAKE_BINARY_DIR}/3rd/capu")
         SET(CAPU_CMAKE_BUILD_DIR "${CAPU_BUILD_DIR}/${TARGET_OS}_${TARGET_ARCH}")
-
+        SET(CAPU_INSTALL_DIR ${CAPU_BUILD_DIR}/deliverable)
         ExternalProject_Add(
-            Capu
-            URL https://github.com/bmwcarit/capu/archive/v0.14.0.zip
+            Capu_external
+            URL https://github.com/bmwcarit/capu/archive/v0.19.0.zip
             SOURCE_DIR "${CAPU_PROJECT_DIR}"
             BINARY_DIR "${CAPU_CMAKE_BUILD_DIR}"
-            INSTALL_DIR "${CAPU_BUILD_DIR}/deliverable"
+            INSTALL_DIR "${CAPU_INSTALL_DIR}"
             UPDATE_COMMAND ""
             CMAKE_ARGS -DCMAKE_TOOLCHAIN_FILE:PATH=${CMAKE_TOOLCHAIN_FILE}
-                       -DCMAKE_INSTALL_PREFIX:STRING=${CAPU_BUILD_DIR}/deliverable/${TARGET_OS}_${TARGET_ARCH}/${CMAKE_BUILD_TYPE}
                        -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-                       -DCONFIG_BUILD_UNITTESTS:BOOLEAN=${CONFIG_BUILD_UNITTESTS}
+                       -DCapu_BUILD_TESTS:BOOLEAN=${CONFIG_BUILD_UNITTESTS}
+                       -DCMAKE_INSTALL_PREFIX:PATH=${CAPU_INSTALL_DIR}
                        INSTALL 1
         )
     ELSE()
@@ -54,25 +52,23 @@ IF ("${CAPU_INCLUDE_DIR}" STREQUAL "" AND "${CAPU_LIBRARY_DIR}" STREQUAL "")
         SET(CAPU_CMAKE_BUILD_DIR "${CAPU_BUILD_DIR}/${TARGET_OS}_${TARGET_ARCH}")
 
         ExternalProject_Add(
-            Capu
+            Capu_external
             SOURCE_DIR "${CAPU_PROJECT_DIR}"
             BINARY_DIR "${CAPU_CMAKE_BUILD_DIR}"
             DOWNLOAD_COMMAND ""
             UPDATE_COMMAND ""
-            INSTALL_DIR "${CAPU_BUILD_DIR}/deliverable"
+            INSTALL_DIR "${CAPU_INSTALL_DIR}"
             CMAKE_ARGS -DCMAKE_TOOLCHAIN_FILE:PATH=${CMAKE_TOOLCHAIN_FILE}
-                       -DCMAKE_INSTALL_PREFIX:STRING=${CAPU_BUILD_DIR}/deliverable/${TARGET_OS}_${TARGET_ARCH}/${CMAKE_BUILD_TYPE}
                        -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-                       -DCONFIG_BUILD_UNITTESTS:BOOL=${CONFIG_BUILD_UNITTESTS}
+                       -DCapu_BUILD_TESTS:BOOL=${CONFIG_BUILD_UNITTESTS}
+                       -DCMAKE_INSTALL_PREFIX:PATH=${CAPU_INSTALL_DIR}
                        INSTALL 1
         )
     ENDIF()
 
-    SET(CAPU_DELIVERABLE_DIR ${CAPU_BUILD_DIR}/deliverable/${TARGET_OS}_${TARGET_ARCH}/${CMAKE_BUILD_TYPE})
-
-    SET(LIBCAPU_INCLUDE_DIR ${CAPU_DELIVERABLE_DIR}/include)
-    SET(LIBCAPU_LIBRARY_DIR ${CAPU_DELIVERABLE_DIR}/lib)
-    SET(LIBCAPU_BINARY_DIR ${CAPU_DELIVERABLE_DIR}/bin)
+    SET(LIBCAPU_INCLUDE_DIR ${CAPU_INSTALL_DIR}/include)
+    SET(LIBCAPU_LIBRARY_DIR ${CAPU_INSTALL_DIR}/lib)
+    SET(LIBCAPU_BINARY_DIR ${CAPU_INSTALL_DIR}/bin)
 ELSE()
     SET(LIBCAPU_INCLUDE_DIR ${CAPU_INCLUDE_DIR})
     SET(LIBCAPU_LIBRARY_DIR ${CAPU_LIBRARY_DIR})

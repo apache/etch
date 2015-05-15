@@ -89,7 +89,7 @@ status_t EtchSocket::getKeepAlive(capu::bool_t& keepAlive) {
   return mSocket->getKeepAlive(keepAlive);
 }
 
-status_t EtchSocket::getLingerOption(capu::bool_t& isLinger, capu::int32_t& linger) {
+status_t EtchSocket::getLingerOption(capu::bool_t& isLinger, capu::uint16_t& linger) {
   return mSocket->getLingerOption(isLinger, linger);
 }
 

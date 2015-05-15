@@ -53,7 +53,7 @@ capu::bool_t EtchObject::isInstanceOf(const EtchObjectType* type) const {
 }
 
 capu::uint32_t EtchObject::getHashCode() const{
-  return capu::CapuDefaultHashFunction::Digest(this);
+  return capu::CapuDefaultHashFunction<sizeof(capu::uint_t)*8>::Digest(this);
 }
 
 capu::bool_t EtchObject::equals(const EtchObject* other) const{

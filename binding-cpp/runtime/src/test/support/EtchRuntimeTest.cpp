@@ -25,6 +25,8 @@ public:
   virtual ~MockLogAppender() {};
 
   MOCK_METHOD1(log, void(const capu::LogMessage& message));
+  MOCK_METHOD0(getLogLevel, capu::ELogLevel());
+  MOCK_METHOD1(setLogLevel, void(const capu::ELogLevel level));
 
 };
 

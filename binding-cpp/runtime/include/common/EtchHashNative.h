@@ -27,15 +27,15 @@ public:
 
   template<class T>
   static capu::uint_t Digest(T &key, const capu::uint8_t bitSize) {
-    return capu::CapuDefaultHashFunction::Digest<T>(key, bitSize);
+    return capu::CapuDefaultHashFunction<sizeof(capu::uint_t)*8>::Digest<T>(key, bitSize);
   }
 
   static capu::uint_t Digest(char* key, const capu::uint8_t bitSize) {
-    return capu::CapuDefaultHashFunction::Digest(key, bitSize);
+    return capu::CapuDefaultHashFunction<sizeof(capu::uint_t)*8>::Digest(key, bitSize);
   }
 
   static capu::uint_t Digest(const char* key, const capu::uint8_t bitSize) {
-    return capu::CapuDefaultHashFunction::Digest(key, bitSize);
+    return capu::CapuDefaultHashFunction<sizeof(capu::uint_t)*8>::Digest(key, bitSize);
   }
 
 };

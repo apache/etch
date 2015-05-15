@@ -105,15 +105,15 @@ add_executable (etch-cpp-test
 )
 
 IF (TARGET_OS STREQUAL "Linux")
-  target_link_libraries (etch-cpp-test etch-cpp capu pthread rt)
+  target_link_libraries (etch-cpp-test etch-cpp Capu pthread rt)
 ELSEIF(TARGET_OS STREQUAL "Windows")
-  target_link_libraries (etch-cpp-test etch-cpp capu)
+  target_link_libraries (etch-cpp-test etch-cpp Capu)
 ELSEIF(TARGET_OS STREQUAL "QNX")
-  target_link_libraries (etch-cpp-test etch-cpp capu c socket)
+  target_link_libraries (etch-cpp-test etch-cpp Capu c socket)
 ELSEIF(TARGET_OS STREQUAL "MacOSX")
-  target_link_libraries (etch-cpp-test etch-cpp capu)
+  target_link_libraries (etch-cpp-test etch-cpp Capu)
 ELSEIF(TARGET_OS STREQUAL "iPhoneSimulatorOS")
-  target_link_libraries (etch-cpp-test etch-cpp capu)
+  target_link_libraries (etch-cpp-test etch-cpp Capu)
 ENDIF()
 
 IF (TARGET_OS STREQUAL "Windows" AND BUILD_CHECK_MEMORY)
@@ -125,7 +125,7 @@ IF (TARGET_OS STREQUAL "Windows" AND BUILD_CHECK_MEMORY)
 ENDIF ()
 
 
-add_dependencies (etch-cpp-test etch-cpp Capu)
+add_dependencies (etch-cpp-test etch-cpp Capu_external)
 
 #install test executables
 INSTALL(TARGETS etch-cpp-test DESTINATION "${ETCH_INSTALL_DIR}/bin/${ETCH_TARGET_PLATFORM}/Release" CONFIGURATIONS Release)

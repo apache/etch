@@ -151,7 +151,7 @@ public:
    *         ETCH_SOCKET_ESOCKET if the socket is not created
    *         ETCH_ERROR otherwise
    */
-  status_t getLingerOption(capu::bool_t& isLinger, capu::int32_t& linger);
+  status_t getLingerOption(capu::bool_t& isLinger, capu::uint16_t& linger);
 
   /**
    * Get no delay option

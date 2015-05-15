@@ -242,7 +242,7 @@ add_library (etch-cpp STATIC
 
 set_target_properties (etch-cpp PROPERTIES OUTPUT_NAME "etch")
 
-add_dependencies (etch-cpp Capu)
+add_dependencies (etch-cpp Capu_external)
 
 #install etch headers and library
 INSTALL(DIRECTORY ${PROJECT_SOURCE_DIR}/include DESTINATION "${ETCH_INSTALL_DIR}")
