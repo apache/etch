@@ -19,6 +19,31 @@
 #ifndef __ETCHVALIDATOR_H__
 #define __ETCHVALIDATOR_H__
 
+    #define VALIDATOR_CACHE_DEF()                                                               \
+    static capu::SmartPointer<EtchValidator>* Validators(EtchRuntime* runtime);
+
+#define VALIDATOR_CACHE_IMPL(validatorClassName)                                                \
+    static EtchValidatorCaches SValidatorCache##validatorClassName;                             \
+                                                                                                \
+class EtchValidatorStringRuntimeListener : public EtchRuntimeListener {                         \
+    status_t onRuntimeChanged(EtchRuntime* runtime) {                                           \
+    if (runtime == NULL) {                                                                      \
+        return ETCH_ERROR;                                                                      \
+    }                                                                                           \
+    if (runtime->isClosed()) {                                                                  \
+        SValidatorCache##validatorClassName.clearCache();                                       \
+        runtime->unregisterListener(this);                                                      \
+    }                                                                                           \
+    return ETCH_OK;                                                                             \
+    }                                                                                           \
+};                                                                                              \
+                                                                                                \
+    static EtchValidatorStringRuntimeListener SRuntimeChangedListener;                          \
+                                                                                                \
+    capu::SmartPointer<EtchValidator>* validatorClassName::Validators(EtchRuntime* runtime) { \
+    return SValidatorCache##validatorClassName.get(runtime);                                    \
+}
+
 #include "common/EtchObject.h"
 #include "support/EtchRuntime.h"
 
@@ -102,17 +127,21 @@ public:
    * Destructor
    */
   virtual ~EtchValidatorCaches() {
-    capu::List<ValidatorCache*>::Iterator iter = mValidatorsCache.begin();
-    while(iter != mValidatorsCache.end()) {
-      ValidatorCache* entry = *iter;
-      iter++;
-      delete entry;
-    }
-    mValidatorsCache.clear();
+      clearCache();
   }
 
   status_t onRuntimeChanged(EtchRuntime* runtime) {
     return ETCH_OK;
+  }
+
+  void clearCache() {
+      capu::List<ValidatorCache*>::Iterator iter = mValidatorsCache.begin();
+      while(iter != mValidatorsCache.end()) {
+          ValidatorCache* entry = *iter;
+          iter++;
+          delete entry;
+      }
+      mValidatorsCache.clear();
   }
 
   capu::SmartPointer<EtchValidator>* get(EtchRuntime* runtime) {
