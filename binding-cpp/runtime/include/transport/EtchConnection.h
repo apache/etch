@@ -165,29 +165,30 @@ status_t EtchConnection<S>::fireUp() {
   mMutex.lock();
   EtchString tmp;
   mStatus.set(EtchSession::UP(), tmp);
+  mMutex.unlock();
 
   if (mSession != NULL) {
     //TODO: run this in seperate thread
-    mMutex.unlock();
     return mSession->sessionNotify(new EtchString(EtchSession::UP()));
   }
-  mMutex.unlock();
+
   return ETCH_ERROR;
 }
 
 template <class S>
 status_t EtchConnection<S>::fireDown() {
-  mMutex.lock();
-  EtchString tmp;
-  mStatus.set(EtchSession::DOWN(), tmp);
+  status_t result = ETCH_ERROR;
 
   if (mSession != NULL) {
     //TODO: run this in seperate thread
-    mMutex.unlock();
-    return mSession->sessionNotify(new EtchString(EtchSession::DOWN()));
+    result = mSession->sessionNotify(new EtchString(EtchSession::DOWN()));
   }
+
+  mMutex.lock();
+  EtchString tmp;
+  mStatus.set(EtchSession::DOWN(), tmp);
   mMutex.unlock();
-  return ETCH_ERROR;
+  return result;
 }
 
 #endif /* ETCHCONNECTION_H */
