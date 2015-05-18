@@ -26,11 +26,11 @@ SET(CMAKE_C_COMPILER /opt/pb-a8/cross/armv7a/bin/arm-angstrom-linux-gnueabi-gcc)
 SET(CMAKE_CXX_COMPILER /opt/pb-a8/cross/armv7a/bin/arm-angstrom-linux-gnueabi-g++)
 SET(CMAKE_LINKER /opt/pb-a8/cross/armv7a/bin/arm-angstrom-linux-gnueabi-ld)
 
-SET(CMAKE_C_FLAGS_DEBUG "-ggdb -march=armv7-a -mfpu=neon -mfloat-abi=softfp -D_DEBUG")
-SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG}")
+SET(CMAKE_C_FLAGS_DEBUG "-ggdb -march=armv7-a -mfpu=neon -mfloat-abi=softfp -D_DEBUG" CACHE STRING "C Flags Debug" FORCE)
+SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG}" CACHE STRING "CXX Flags Debug" FORCE)
 
-SET(CMAKE_C_FLAGS_RELEASE "-O3 -march=armv7-a -mfpu=neon -mfloat-abi=softfp -DNDEBUG")
-SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE}")
+SET(CMAKE_C_FLAGS_RELEASE "-O3 -march=armv7-a -mfpu=neon -mfloat-abi=softfp -DNDEBUG" CACHE STRING "C Flags Release" FORCE)
+SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE}" CACHE STRING "CXX Flags Release" FORCE)
 
 SET(CMAKE_FIND_ROOT_PATH /opt/pb-a8/staging/armv7a-angstrom-linux-gnueabi)
 
